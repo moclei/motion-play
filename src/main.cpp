@@ -1,58 +1,118 @@
 #include <Arduino.h>
 #include <TFT_eSPI.h>
 #include <Wire.h>
-#include <Adafruit_ADS1X15.h>
 #include "pin_config.h"
+#include "components/tca9548a/TCA9548A.h"
+#include "components/vcnl4040/VCNL4040.h"
 
-TFT_eSPI tft = TFT_eSPI();
-TFT_eSprite sprite = TFT_eSprite(&tft);
-Adafruit_ADS1015 ads;
+// Display setup
+TFT_eSPI tdisplay = TFT_eSPI();
+TFT_eSprite sprite = TFT_eSprite(&tdisplay);
 
-// Constants
-const int NUM_SENSORS = 3;
-const int CALIBRATION_SAMPLES = 100;
-const float TRIGGER_THRESHOLD = 2.0;        // Number of standard deviations for trigger
-const unsigned long TRIGGER_TIMEOUT = 1000; // Time window for sequence detection (ms)
-const unsigned long COOLDOWN_PERIOD = 500;  // Time to wait after a detection before allowing new ones (ms)
-const int HISTORY_SIZE = 5;                 // Number of recent triggers to display
+// I2C components
+TCA9548A tca;
+VCNL4040 sensor;
 
-// Global cooldown tracking
-unsigned long lastDetectionTime = 0;
+// Build information
+const char *BUILD_INFO = __DATE__ " " __TIME__;
 
-// Sensor data structure
-struct SensorData
+void scanI2C()
 {
-  float baseline;
-  float stdDev;
-  float currentValue;
-  bool isTriggered;
-  unsigned long lastTriggerTime;
-};
+  Serial.println("Scanning I2C addresses...");
+  byte error, address;
+  int deviceCount = 0;
 
-// Trigger sequence structure
-struct TriggerEvent
+  for (address = 1; address < 127; address++)
+  {
+    Wire.beginTransmission(address);
+    error = Wire.endTransmission();
+
+    if (error == 0)
+    {
+      Serial.printf("I2C device found at address 0x%02X\n", address);
+      deviceCount++;
+    }
+  }
+
+  if (deviceCount == 0)
+  {
+    Serial.println("No I2C devices found!");
+  }
+  else
+  {
+    Serial.printf("Found %d device(s)\n", deviceCount);
+  }
+}
+
+void scanVCNL4040()
 {
-  String sequence;
-  unsigned long timestamp;
-};
+  Serial.println("Scanning for VCNL4040 at all possible addresses...");
+  const uint8_t possibleAddresses[] = {0x60, 0x61, 0x62, 0x63};
+  bool found = false;
 
-// Global variables
-SensorData sensors[NUM_SENSORS];
-TriggerEvent triggerHistory[HISTORY_SIZE];
-int historyIndex = 0;
-bool isCalibrating = true;
-unsigned long calibrationStart = 0;
-const unsigned long CALIBRATION_DURATION = 5000; // 5 seconds
+  for (uint8_t addr : possibleAddresses)
+  {
+    Wire.beginTransmission(addr);
+    byte error = Wire.endTransmission();
 
-void updateDisplay();
-void checkTriggers();
-void recordTriggerSequence(const String &sequence);
-void calibrateSensors();
+    if (error == 0)
+    {
+      Serial.printf("Found device at address 0x%02X - checking if it's a VCNL4040...\n", addr);
+
+      // Try to read the device ID register
+      Wire.beginTransmission(addr);
+      Wire.write(0x0C); // ID register
+      Wire.endTransmission(false);
+
+      Wire.requestFrom(addr, (uint8_t)2);
+      if (Wire.available() >= 2)
+      {
+        uint8_t lsb = Wire.read();
+        uint8_t msb = Wire.read();
+        uint16_t id = (msb << 8) | lsb;
+
+        if (id == 0x0186)
+        { // VCNL4040 device ID
+          Serial.printf("Confirmed VCNL4040 at address 0x%02X!\n", addr);
+          found = true;
+          break;
+        }
+      }
+    }
+  }
+
+  if (!found)
+  {
+    Serial.println("No VCNL4040 found at any address!");
+  }
+}
+
+void showError(const char *message)
+{
+  sprite.fillSprite(TFT_BLACK);
+  sprite.setTextColor(TFT_RED);
+  sprite.drawString(message, 160, 85, 4);
+  sprite.setTextColor(TFT_WHITE);
+  sprite.drawString("Build: " + String(BUILD_INFO), 160, 120, 2);
+  sprite.pushSprite(0, 0);
+}
 
 void setup()
 {
+  // Start with a delay to ensure serial monitor is ready
+  delay(2000);
+
+  // Initialize serial with explicit flush
   Serial.begin(115200);
-  Serial.println("Starting Calibrated Detector");
+  Serial.flush();
+  delay(100);
+
+  // Send a clear startup message
+  Serial.println("\n\n=== Motion Play Startup ===");
+  Serial.println("Build: " + String(BUILD_INFO));
+  Serial.println("Serial connection test...");
+  Serial.println("If you can see this, serial is working!");
+  Serial.println("===========================\n");
 
   // Initialize power and display
   pinMode(PIN_POWER_ON, OUTPUT);
@@ -61,215 +121,96 @@ void setup()
   digitalWrite(PIN_LCD_BL, HIGH);
 
   // Initialize display
-  tft.init();
-  tft.setRotation(1);
-  tft.fillScreen(TFT_BLACK);
-
+  tdisplay.init();
+  tdisplay.setRotation(1);
+  tdisplay.fillScreen(TFT_BLACK);
   sprite.createSprite(320, 170);
   sprite.setTextDatum(MC_DATUM);
 
-  // Initialize I2C and ADS1015
+  // Show initial setup screen
+  sprite.fillSprite(TFT_BLACK);
+  sprite.setTextColor(TFT_WHITE);
+  sprite.drawString("Motion Play", 160, 30, 4);
+  sprite.drawString("Initializing...", 160, 70, 2);
+  sprite.drawString("Build: " + String(BUILD_INFO), 160, 100, 2);
+  sprite.pushSprite(0, 0);
+
+  // Initialize I2C
   Wire.begin(PIN_IIC_SDA, PIN_IIC_SCL);
+  Wire.setClock(400000); // Set to 400kHz
 
-  if (!ads.begin())
+  Serial.println("Starting I2C scan...");
+  // Scan I2C bus before initializing components
+  scanI2C();
+
+  // Initialize I2C multiplexer
+  Serial.println("Initializing TCA9548A...");
+  if (!tca.begin())
   {
-    Serial.println("Failed to initialize ADS.");
-    sprite.fillSprite(TFT_BLACK);
-    sprite.setTextColor(TFT_RED);
-    sprite.drawString("ADS1015 not found!", 160, 85, 4);
-    sprite.pushSprite(0, 0);
+    Serial.println("Failed to initialize TCA9548A!");
+    showError("TCA9548A not found!");
     while (1)
-      ; // Halt if ADS not found
+      ;
   }
 
-  // Configure ADS
-  ads.setGain(GAIN_ONE);
-  ads.setDataRate(RATE_ADS1015_1600SPS);
+  Serial.println("TCA9548A initialized successfully");
 
-  // Initialize sensor data
-  for (int i = 0; i < NUM_SENSORS; i++)
+  // Select channel 0 and initialize first sensor
+  Serial.println("Selecting channel 0...");
+  if (!tca.selectChannel(0))
   {
-    sensors[i] = {0, 0, 0, false, 0};
+    Serial.println("Failed to select channel 0!");
+    showError("Failed to select channel!");
+    while (1)
+      ;
   }
 
-  // Initialize trigger history
-  for (int i = 0; i < HISTORY_SIZE; i++)
+  Serial.println("Channel 0 selected, scanning for VCNL4040...");
+  scanVCNL4040(); // Use our new thorough scanning function
+
+  Serial.println("Initializing VCNL4040...");
+  if (!sensor.begin())
   {
-    triggerHistory[i] = {"", 0};
+    Serial.println("Failed to initialize VCNL4040!");
+    showError("VCNL4040 not found!");
+    while (1)
+      ;
   }
 
-  calibrationStart = millis();
-  Serial.println("Starting calibration...");
+  Serial.println("Setup complete!");
 }
 
 void loop()
 {
   static unsigned long lastUpdate = 0;
 
-  // Read current values
-  for (int i = 0; i < NUM_SENSORS; i++)
+  // Update display every 100ms
+  if (millis() - lastUpdate >= 100)
   {
-    sensors[i].currentValue = ads.readADC_SingleEnded(i);
-  }
+    // Read sensor data
+    uint16_t proximity = sensor.readProximity();
+    uint16_t ambient = sensor.readAmbientLight();
 
-  if (isCalibrating)
-  {
-    // Display calibration progress
+    // Update display
     sprite.fillSprite(TFT_BLACK);
-    sprite.setTextColor(TFT_YELLOW);
-    int progress = ((millis() - calibrationStart) * 100) / CALIBRATION_DURATION;
-    sprite.drawString("Calibrating: " + String(progress) + "%", 160, 85, 4);
+    sprite.setTextColor(TFT_WHITE);
+
+    // Display build info at top
+    sprite.drawString("Build: " + String(BUILD_INFO), 160, 10, 2);
+
+    // Display proximity
+    sprite.drawString("Proximity:", 160, 50, 4);
+    sprite.drawString(String(proximity), 160, 80, 4);
+
+    // Display ambient light
+    sprite.drawString("Ambient Light:", 160, 120, 4);
+    sprite.drawString(String(ambient), 160, 150, 4);
+
     sprite.pushSprite(0, 0);
 
-    // Check if calibration period is complete
-    if (millis() - calibrationStart >= CALIBRATION_DURATION)
-    {
-      calibrateSensors();
-      isCalibrating = false;
-      Serial.println("Calibration complete!");
-    }
+    // Print to serial for debugging
+    Serial.printf("Proximity: %d, Ambient: %d\n", proximity, ambient);
+
+    lastUpdate = millis();
   }
-  else
-  {
-    // Normal operation
-    if (millis() - lastUpdate >= 100)
-    { // Update 10 times per second
-      checkTriggers();
-      updateDisplay();
-      lastUpdate = millis();
-    }
-  }
-}
-
-void calibrateSensors()
-{
-  // Arrays to store calibration samples
-  float samples[NUM_SENSORS][CALIBRATION_SAMPLES];
-
-  // Collect samples
-  for (int i = 0; i < CALIBRATION_SAMPLES; i++)
-  {
-    for (int j = 0; j < NUM_SENSORS; j++)
-    {
-      samples[j][i] = ads.readADC_SingleEnded(j);
-    }
-    delay(10);
-  }
-
-  // Calculate baseline and standard deviation for each sensor
-  for (int i = 0; i < NUM_SENSORS; i++)
-  {
-    // Calculate mean
-    float sum = 0;
-    for (int j = 0; j < CALIBRATION_SAMPLES; j++)
-    {
-      sum += samples[i][j];
-    }
-    sensors[i].baseline = sum / CALIBRATION_SAMPLES;
-
-    // Calculate standard deviation
-    float sumSquares = 0;
-    for (int j = 0; j < CALIBRATION_SAMPLES; j++)
-    {
-      float diff = samples[i][j] - sensors[i].baseline;
-      sumSquares += diff * diff;
-    }
-    sensors[i].stdDev = sqrt(sumSquares / CALIBRATION_SAMPLES);
-
-    Serial.printf("Sensor %d - Baseline: %.2f, StdDev: %.2f\n",
-                  i, sensors[i].baseline, sensors[i].stdDev);
-  }
-}
-
-void checkTriggers()
-{
-  // Check if we're still in cooldown period
-  if (millis() - lastDetectionTime < COOLDOWN_PERIOD)
-  {
-    return;
-  }
-
-  // Check each sensor for triggers
-  for (int i = 0; i < NUM_SENSORS; i++)
-  {
-    float deviation = abs(sensors[i].currentValue - sensors[i].baseline);
-    bool newTrigger = deviation > (sensors[i].stdDev * TRIGGER_THRESHOLD);
-
-    // Detect rising edge of trigger
-    if (newTrigger && !sensors[i].isTriggered)
-    {
-      sensors[i].isTriggered = true;
-      sensors[i].lastTriggerTime = millis();
-
-      // Check for sequences
-      if (i == 0 || i == 2)
-      { // Edge sensors
-        unsigned long now = millis();
-        // Check other sensors for recent triggers
-        for (int j = 0; j < NUM_SENSORS; j++)
-        {
-          if (j != i && (now - sensors[j].lastTriggerTime) < TRIGGER_TIMEOUT)
-          {
-            String sequence = "";
-            if (i == 0 && j == 2)
-              sequence = "Left to Right";
-            if (i == 2 && j == 0)
-              sequence = "Right to Left";
-            if (!sequence.isEmpty())
-            {
-              recordTriggerSequence(sequence);
-            }
-          }
-        }
-      }
-    }
-    else if (!newTrigger && sensors[i].isTriggered)
-    {
-      sensors[i].isTriggered = false;
-    }
-  }
-}
-
-void recordTriggerSequence(const String &sequence)
-{
-  lastDetectionTime = millis(); // Update cooldown timer
-  triggerHistory[historyIndex] = {sequence, millis()};
-  historyIndex = (historyIndex + 1) % HISTORY_SIZE;
-  Serial.println("Detected: " + sequence);
-}
-
-void updateDisplay()
-{
-  sprite.fillSprite(TFT_BLACK);
-  sprite.setTextDatum(TL_DATUM); // Top-left alignment
-
-  // Display current readings and status
-  for (int i = 0; i < NUM_SENSORS; i++)
-  {
-    int yPos = 10 + (i * 30);
-    sprite.setTextColor(sensors[i].isTriggered ? TFT_RED : TFT_GREEN);
-
-    String sensorText = "S" + String(i) + ": " +
-                        String(sensors[i].currentValue, 1) +
-                        " (B: " + String(sensors[i].baseline, 1) +
-                        " ±" + String(sensors[i].stdDev * TRIGGER_THRESHOLD, 1) + ")";
-    sprite.drawString(sensorText, 10, yPos, 2);
-  }
-
-  // Display recent trigger history
-  sprite.setTextColor(TFT_YELLOW);
-  sprite.drawString("Recent Triggers:", 10, 100, 2);
-
-  for (int i = 0; i < HISTORY_SIZE; i++)
-  {
-    if (triggerHistory[i].timestamp > 0)
-    {
-      int idx = (historyIndex - i - 1 + HISTORY_SIZE) % HISTORY_SIZE;
-      String timeAgo = String((millis() - triggerHistory[idx].timestamp) / 1000) + "s ago";
-      sprite.drawString(triggerHistory[idx].sequence + " (" + timeAgo + ")",
-                        10, 120 + (i * 20), 2);
-    }
-  }
-
-  sprite.pushSprite(0, 0);
 }
