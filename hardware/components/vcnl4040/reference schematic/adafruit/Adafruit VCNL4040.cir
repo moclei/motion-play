@@ -1,0 +1,22 @@
+.title KiCad schematic
+.save all
+.probe alli
+R1 __R1
+Q2 __Q2
+D1 __D1
+R3 __R3
+CONN4 __CONN4
+FID4 __FID4
+CONN3 __CONN3
+U$1 __U$1
+U$17 __U$17
+FID3 __FID3
+U$19 __U$19
+U$21 __U$21
+C1 __C1
+U3 __U3
+JP1 __JP1
+C3 __C3
+C2 __C2
+U2 __U2
+.end

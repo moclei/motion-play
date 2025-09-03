@@ -1,0 +1,441 @@
+** Drc report for motion-play-power.kicad_pcb **
+** Created on 2025-01-04T13:46:49-0800 **
+
+** Found 99 DRC violations **
+[via_dangling]: Via is not connected or connected on only one layer
+    Local override; warning
+    @(141.5000 mm, 98.0000 mm): Via [+3.3V] on F.Cu - B.Cu
+[via_dangling]: Via is not connected or connected on only one layer
+    Local override; warning
+    @(141.5000 mm, 96.2500 mm): Via [+3.3V] on F.Cu - B.Cu
+[via_dangling]: Via is not connected or connected on only one layer
+    Local override; warning
+    @(156.7500 mm, 97.0000 mm): Via [/Battery Management/VSYS] on F.Cu - B.Cu
+[via_dangling]: Via is not connected or connected on only one layer
+    Local override; warning
+    @(152.5000 mm, 96.2500 mm): Via [/Battery Management/VSYS] on F.Cu - B.Cu
+[via_dangling]: Via is not connected or connected on only one layer
+    Local override; warning
+    @(162.0000 mm, 88.2500 mm): Via [/Battery Management/VSYS] on F.Cu - B.Cu
+[via_dangling]: Via is not connected or connected on only one layer
+    Local override; warning
+    @(158.0000 mm, 88.7500 mm): Via [/Battery Management/VSYS] on F.Cu - B.Cu
+[via_dangling]: Via is not connected or connected on only one layer
+    Local override; warning
+    @(156.2500 mm, 88.7500 mm): Via [/Battery Management/VSYS] on F.Cu - B.Cu
+[via_dangling]: Via is not connected or connected on only one layer
+    Local override; warning
+    @(143.2500 mm, 89.7500 mm): Via [/Battery Management/VSYS] on F.Cu - B.Cu
+[via_dangling]: Via is not connected or connected on only one layer
+    Local override; warning
+    @(146.7500 mm, 84.7500 mm): Via [/Battery Management/VSYS] on F.Cu - B.Cu
+[via_dangling]: Via is not connected or connected on only one layer
+    Local override; warning
+    @(149.7500 mm, 87.5000 mm): Via [/Battery Management/VSYS] on F.Cu - B.Cu
+[via_dangling]: Via is not connected or connected on only one layer
+    Local override; warning
+    @(175.9225 mm, 98.4200 mm): Via [<no net>] on F.Cu - B.Cu
+[via_dangling]: Via is not connected or connected on only one layer
+    Local override; warning
+    @(175.9225 mm, 107.0800 mm): Via [GND] on F.Cu - B.Cu
+[via_dangling]: Via is not connected or connected on only one layer
+    Local override; warning
+    @(132.7500 mm, 98.6575 mm): Via [+3.3V] on F.Cu - B.Cu
+[via_dangling]: Via is not connected or connected on only one layer
+    Local override; warning
+    @(146.4800 mm, 97.0900 mm): Via [+3.3V] on F.Cu - B.Cu
+[clearance]: Clearance violation (netclass 'Default' clearance 0.2000 mm; actual 0.1440 mm)
+    Rule: netclass 'Default'; error
+    @(175.1625 mm, 99.4000 mm): Via [GND] on F.Cu - B.Cu
+    @(175.9225 mm, 98.4200 mm): PTH pad 1 [<no net>] of USBC1
+[clearance]: Clearance violation (rule 'Power_Outer_Clearance' clearance 0.2400 mm; actual 0.2150 mm)
+    Rule: Power_Outer_Clearance; error
+    @(162.2500 mm, 91.0650 mm): Track [/Battery Management/VSYS] on F.Cu, length 0.8150 mm
+    @(161.7500 mm, 91.0650 mm): Pad 17 [GND] of U3 on F.Cu
+[hole_clearance]: Hole clearance violation (board setup constraints hole clearance 0.2500 mm; actual 0.2350 mm)
+    Rule: board setup constraints hole; error
+    @(176.4225 mm, 105.6500 mm): PTH pad [<no net>] of USBC1
+    @(175.1625 mm, 105.8000 mm): Pad B12 [GND] of USBC1 on F.Cu
+[hole_clearance]: Hole clearance violation (board setup constraints hole clearance 0.2500 mm; actual 0.2350 mm)
+    Rule: board setup constraints hole; error
+    @(176.4225 mm, 99.8500 mm): PTH pad [<no net>] of USBC1
+    @(175.1625 mm, 99.7000 mm): Pad B1 [GND] of USBC1 on F.Cu
+[hole_clearance]: Hole clearance violation (board setup constraints hole clearance 0.2500 mm; actual 0.0000 mm)
+    Rule: board setup constraints hole; error
+    @(175.9225 mm, 98.4200 mm): PTH pad 1 [<no net>] of USBC1
+    @(175.9225 mm, 98.4200 mm): Via [<no net>] on F.Cu - B.Cu
+[clearance]: Clearance violation (rule 'Power_Outer_Clearance' clearance 0.2400 mm; actual 0.2300 mm)
+    Rule: Power_Outer_Clearance; error
+    @(161.2500 mm, 94.9350 mm): Pad 1 [Protected_VBUS] of U3 on F.Cu
+    @(161.7500 mm, 94.9350 mm): Pad 2 [GND] of U3 on F.Cu
+[clearance]: Clearance violation (netclass 'Power_Signals' clearance 0.2000 mm; actual 0.1977 mm)
+    Rule: netclass 'Power_Signals'; error
+    @(163.7500 mm, 94.9350 mm): Pad 6 [I2C_SDA] of U3 on F.Cu
+    @(164.4350 mm, 94.2500 mm): Pad 7 [/Battery Management/CHRG_INT] of U3 on F.Cu
+[clearance]: Clearance violation (rule 'Power_Outer_Clearance' clearance 0.2400 mm; actual 0.1977 mm)
+    Rule: Power_Outer_Clearance; error
+    @(164.4350 mm, 91.7500 mm): Pad 12 [GND] of U3 on F.Cu
+    @(163.7500 mm, 91.0650 mm): Pad 13 [VBAT] of U3 on F.Cu
+[clearance]: Clearance violation (rule 'Power_Outer_Clearance' clearance 0.2400 mm; actual 0.2300 mm)
+    Rule: Power_Outer_Clearance; error
+    @(163.2500 mm, 91.0650 mm): Pad 14 [VBAT] of U3 on F.Cu
+    @(162.7500 mm, 91.0650 mm): Pad 15 [/Battery Management/VSYS] of U3 on F.Cu
+[clearance]: Clearance violation (rule 'Power_Outer_Clearance' clearance 0.2400 mm; actual 0.2300 mm)
+    Rule: Power_Outer_Clearance; error
+    @(162.2500 mm, 91.0650 mm): Pad 16 [/Battery Management/VSYS] of U3 on F.Cu
+    @(161.7500 mm, 91.0650 mm): Pad 17 [GND] of U3 on F.Cu
+[clearance]: Clearance violation (netclass 'Default' clearance 0.2000 mm; actual 0.1977 mm)
+    Rule: netclass 'Default'; error
+    @(161.2500 mm, 91.0650 mm): Pad 18 [GND] of U3 on F.Cu
+    @(160.5650 mm, 91.7500 mm): Pad 19 [Net-(U3-SW1)] of U3 on F.Cu
+[clearance]: Clearance violation (rule 'Power_Outer_Clearance' clearance 0.2400 mm; actual 0.2300 mm)
+    Rule: Power_Outer_Clearance; error
+    @(160.5650 mm, 93.7500 mm): Pad 23 [Net-(U3-PMID)] of U3 on F.Cu
+    @(160.5650 mm, 94.2500 mm): Pad 24 [Protected_VBUS] of U3 on F.Cu
+[clearance]: Clearance violation (rule 'Power_Outer_Clearance' clearance 0.2400 mm; actual 0.2108 mm)
+    Rule: Power_Outer_Clearance; error
+    @(167.2500 mm, 103.8200 mm): Pad 1 [unconnected-(U1-CC1DB-Pad1)] of U1 on F.Cu
+    @(167.9300 mm, 104.5000 mm): Pad 24 [Protected_VBUS] of U1 on F.Cu
+[clearance]: Clearance violation (netclass 'Default' clearance 0.2000 mm; actual 0.1600 mm)
+    Rule: netclass 'Default'; error
+    @(167.2500 mm, 103.8200 mm): Pad 1 [unconnected-(U1-CC1DB-Pad1)] of U1 on F.Cu
+    @(166.0000 mm, 105.7500 mm): Pad 25 [GND] of U1 on F.Cu
+[clearance]: Clearance violation (netclass 'Default' clearance 0.2000 mm; actual 0.1600 mm)
+    Rule: netclass 'Default'; error
+    @(166.2500 mm, 103.8200 mm): Pad 3 [unconnected-(U1-NU-Pad3)] of U1 on F.Cu
+    @(166.0000 mm, 105.7500 mm): Pad 25 [GND] of U1 on F.Cu
+[clearance]: Clearance violation (netclass 'Default' clearance 0.2000 mm; actual 0.1600 mm)
+    Rule: netclass 'Default'; error
+    @(165.2500 mm, 103.8200 mm): Pad 5 [unconnected-(U1-CC2DB-Pad5)] of U1 on F.Cu
+    @(166.0000 mm, 105.7500 mm): Pad 25 [GND] of U1 on F.Cu
+[clearance]: Clearance violation (netclass 'Default' clearance 0.2000 mm; actual 0.1600 mm)
+    Rule: netclass 'Default'; error
+    @(164.7500 mm, 103.8200 mm): Pad 6 [Net-(U1-RESET)] of U1 on F.Cu
+    @(166.0000 mm, 105.7500 mm): Pad 25 [GND] of U1 on F.Cu
+[clearance]: Clearance violation (netclass 'Default' clearance 0.2000 mm; actual 0.1600 mm)
+    Rule: netclass 'Default'; error
+    @(164.0700 mm, 104.5000 mm): Pad 7 [I2C_SCL] of U1 on F.Cu
+    @(166.0000 mm, 105.7500 mm): Pad 25 [GND] of U1 on F.Cu
+[clearance]: Clearance violation (netclass 'Default' clearance 0.2000 mm; actual 0.1600 mm)
+    Rule: netclass 'Default'; error
+    @(164.0700 mm, 105.0000 mm): Pad 8 [I2C_SDA] of U1 on F.Cu
+    @(166.0000 mm, 105.7500 mm): Pad 25 [GND] of U1 on F.Cu
+[clearance]: Clearance violation (netclass 'Default' clearance 0.2000 mm; actual 0.1600 mm)
+    Rule: netclass 'Default'; error
+    @(164.0700 mm, 105.5000 mm): Pad 9 [unconnected-(U1-DISCH-Pad9)] of U1 on F.Cu
+    @(166.0000 mm, 105.7500 mm): Pad 25 [GND] of U1 on F.Cu
+[clearance]: Clearance violation (netclass 'Default' clearance 0.2000 mm; actual 0.1600 mm)
+    Rule: netclass 'Default'; error
+    @(164.0700 mm, 106.5000 mm): Pad 11 [/Connectors/USB_ATTACH] of U1 on F.Cu
+    @(166.0000 mm, 105.7500 mm): Pad 25 [GND] of U1 on F.Cu
+[clearance]: Clearance violation (netclass 'Default' clearance 0.2000 mm; actual 0.1600 mm)
+    Rule: netclass 'Default'; error
+    @(165.2500 mm, 107.6800 mm): Pad 14 [unconnected-(U1-RP_1A5-Pad14)] of U1 on F.Cu
+    @(166.0000 mm, 105.7500 mm): Pad 25 [GND] of U1 on F.Cu
+[clearance]: Clearance violation (netclass 'Default' clearance 0.2000 mm; actual 0.1600 mm)
+    Rule: netclass 'Default'; error
+    @(165.7500 mm, 107.6800 mm): Pad 15 [unconnected-(U1-GPIO-Pad15)] of U1 on F.Cu
+    @(166.0000 mm, 105.7500 mm): Pad 25 [GND] of U1 on F.Cu
+[clearance]: Clearance violation (netclass 'Default' clearance 0.2000 mm; actual 0.1600 mm)
+    Rule: netclass 'Default'; error
+    @(166.2500 mm, 107.6800 mm): Pad 16 [unconnected-(U1-VBUS_EN_SNK-Pad16)] of U1 on F.Cu
+    @(166.0000 mm, 105.7500 mm): Pad 25 [GND] of U1 on F.Cu
+[clearance]: Clearance violation (netclass 'Default' clearance 0.2000 mm; actual 0.1600 mm)
+    Rule: netclass 'Default'; error
+    @(166.7500 mm, 107.6800 mm): Pad 17 [unconnected-(U1-A_B_SIDE-Pad17)] of U1 on F.Cu
+    @(166.0000 mm, 105.7500 mm): Pad 25 [GND] of U1 on F.Cu
+[clearance]: Clearance violation (netclass 'Default' clearance 0.2000 mm; actual 0.1600 mm)
+    Rule: netclass 'Default'; error
+    @(167.2500 mm, 107.6800 mm): Pad 18 [unconnected-(U1-VBUS_VS_DISCH-Pad18)] of U1 on F.Cu
+    @(166.0000 mm, 105.7500 mm): Pad 25 [GND] of U1 on F.Cu
+[clearance]: Clearance violation (netclass 'Default' clearance 0.2000 mm; actual 0.1600 mm)
+    Rule: netclass 'Default'; error
+    @(167.9300 mm, 107.0000 mm): Pad 19 [/Connectors/USB_ALERT] of U1 on F.Cu
+    @(166.0000 mm, 105.7500 mm): Pad 25 [GND] of U1 on F.Cu
+[clearance]: Clearance violation (netclass 'Default' clearance 0.2000 mm; actual 0.1600 mm)
+    Rule: netclass 'Default'; error
+    @(167.9300 mm, 106.5000 mm): Pad 20 [unconnected-(U1-RP_3A-Pad20)] of U1 on F.Cu
+    @(166.0000 mm, 105.7500 mm): Pad 25 [GND] of U1 on F.Cu
+[clearance]: Clearance violation (netclass 'Default' clearance 0.2000 mm; actual 0.1600 mm)
+    Rule: netclass 'Default'; error
+    @(167.9300 mm, 106.0000 mm): Pad 21 [unconnected-(U1-VREG_1V2-Pad21)] of U1 on F.Cu
+    @(166.0000 mm, 105.7500 mm): Pad 25 [GND] of U1 on F.Cu
+[clearance]: Clearance violation (rule 'Power_Outer_Clearance' clearance 0.2400 mm; actual 0.1600 mm)
+    Rule: Power_Outer_Clearance; error
+    @(167.9300 mm, 105.5000 mm): Pad 22 [Protected_VBUS] of U1 on F.Cu
+    @(166.0000 mm, 105.7500 mm): Pad 25 [GND] of U1 on F.Cu
+[clearance]: Clearance violation (netclass 'Default' clearance 0.2000 mm; actual 0.1600 mm)
+    Rule: netclass 'Default'; error
+    @(167.9300 mm, 105.0000 mm): Pad 23 [unconnected-(U1-VREG_2V7-Pad23)] of U1 on F.Cu
+    @(166.0000 mm, 105.7500 mm): Pad 25 [GND] of U1 on F.Cu
+[clearance]: Clearance violation (rule 'Power_Outer_Clearance' clearance 0.2400 mm; actual 0.1600 mm)
+    Rule: Power_Outer_Clearance; error
+    @(167.9300 mm, 104.5000 mm): Pad 24 [Protected_VBUS] of U1 on F.Cu
+    @(166.0000 mm, 105.7500 mm): Pad 25 [GND] of U1 on F.Cu
+[clearance]: Clearance violation (netclass 'Default' clearance 0.2000 mm; actual 0.3950 mm)
+    Rule: netclass 'Default'; error
+    @(149.7500 mm, 98.5000 mm): PTH pad [<no net>] of U5
+    @(149.2500 mm, 99.0000 mm): Pad 9 [GND] of U5 on F.Cu
+[clearance]: Clearance violation (netclass 'Default' clearance 0.2000 mm; actual 0.3950 mm)
+    Rule: netclass 'Default'; error
+    @(148.7500 mm, 98.5000 mm): PTH pad [<no net>] of U5
+    @(149.2500 mm, 99.0000 mm): Pad 9 [GND] of U5 on F.Cu
+[clearance]: Clearance violation (netclass 'Default' clearance 0.2000 mm; actual 0.3950 mm)
+    Rule: netclass 'Default'; error
+    @(149.7500 mm, 99.5000 mm): PTH pad [<no net>] of U5
+    @(149.2500 mm, 99.0000 mm): Pad 9 [GND] of U5 on F.Cu
+[clearance]: Clearance violation (netclass 'Default' clearance 0.2000 mm; actual 0.3950 mm)
+    Rule: netclass 'Default'; error
+    @(148.7500 mm, 99.5000 mm): PTH pad [<no net>] of U5
+    @(149.2500 mm, 99.0000 mm): Pad 9 [GND] of U5 on F.Cu
+[silk_edge_clearance]: Silkscreen clipped by board edge
+    Rule: board setup constraints silk; warning
+    @(126.9350 mm, 79.2500 mm): Rectangle on Edge.Cuts
+    @(182.7325 mm, 98.2800 mm): Segment on F.Silkscreen
+[silk_edge_clearance]: Silkscreen clipped by board edge
+    Rule: board setup constraints silk; warning
+    @(126.9350 mm, 79.2500 mm): Rectangle on Edge.Cuts
+    @(182.7325 mm, 107.2200 mm): Segment on F.Silkscreen
+[copper_edge_clearance]: Board edge clearance violation (board setup constraints edge clearance 0.5000 mm; actual 0.0000 mm)
+    Rule: board setup constraints edge; error
+    @(126.9350 mm, 79.2500 mm): Rectangle on Edge.Cuts
+    @(181.1500 mm, 87.3500 mm): Pad MP [<no net>] of J1 on F.Cu
+[copper_edge_clearance]: Board edge clearance violation (board setup constraints edge clearance 0.5000 mm; actual 0.0000 mm)
+    Rule: board setup constraints edge; error
+    @(126.9350 mm, 79.2500 mm): Rectangle on Edge.Cuts
+    @(181.1500 mm, 80.6500 mm): Pad MP [<no net>] of J1 on F.Cu
+[copper_edge_clearance]: Board edge clearance violation (board setup constraints edge clearance 0.5000 mm; actual 0.0000 mm)
+    Rule: board setup constraints edge; error
+    @(126.9350 mm, 79.2500 mm): Rectangle on Edge.Cuts
+    @(149.2000 mm, 108.6250 mm): Pad MP [<no net>] of J4 on F.Cu
+[copper_edge_clearance]: Board edge clearance violation (board setup constraints edge clearance 0.5000 mm; actual 0.0000 mm)
+    Rule: board setup constraints edge; error
+    @(126.9350 mm, 79.2500 mm): Rectangle on Edge.Cuts
+    @(155.8000 mm, 108.6250 mm): Pad MP [<no net>] of J4 on F.Cu
+[copper_edge_clearance]: Board edge clearance violation (board setup constraints edge clearance 0.5000 mm; actual 0.2050 mm)
+    Rule: board setup constraints edge; error
+    @(126.9350 mm, 79.2500 mm): Rectangle on Edge.Cuts
+    @(128.8900 mm, 104.0975 mm): Pad 4 [GND] of CN1 on F.Cu
+[silk_edge_clearance]: Silkscreen clipped by board edge
+    Rule: board setup constraints silk; warning
+    @(126.9350 mm, 79.2500 mm): Rectangle on Edge.Cuts
+    @(131.0900 mm, 109.2175 mm): Segment on F.Silkscreen
+[silk_edge_clearance]: Silkscreen clipped by board edge
+    Rule: board setup constraints silk; warning
+    @(126.9350 mm, 79.2500 mm): Rectangle on Edge.Cuts
+    @(140.4100 mm, 109.2175 mm): Segment on F.Silkscreen
+[silk_edge_clearance]: Silkscreen clipped by board edge
+    Rule: board setup constraints silk; warning
+    @(126.9350 mm, 79.2500 mm): Rectangle on Edge.Cuts
+    @(142.0800 mm, 107.5475 mm): Segment on F.Silkscreen
+[copper_edge_clearance]: Board edge clearance violation (board setup constraints edge clearance 0.5000 mm; actual 0.0000 mm)
+    Rule: board setup constraints edge; error
+    @(126.9350 mm, 79.2500 mm): Rectangle on Edge.Cuts
+    @(158.4500 mm, 108.6250 mm): Pad MP [<no net>] of J3 on F.Cu
+[copper_edge_clearance]: Board edge clearance violation (board setup constraints edge clearance 0.5000 mm; actual 0.0000 mm)
+    Rule: board setup constraints edge; error
+    @(126.9350 mm, 79.2500 mm): Rectangle on Edge.Cuts
+    @(162.0500 mm, 108.6250 mm): Pad MP [<no net>] of J3 on F.Cu
+[padstack]: Padstack is questionable (PTH pad hole leaves no copper)
+    Local override; warning
+    @(176.4225 mm, 105.6500 mm): PTH pad [<no net>] of USBC1
+[padstack]: Padstack is questionable (PTH pad hole leaves no copper)
+    Local override; warning
+    @(176.4225 mm, 99.8500 mm): PTH pad [<no net>] of USBC1
+[text_height]: Text height out of range (board setup constraints silk text height min height 0.8000 mm; actual 0.5000 mm)
+    Rule: board setup constraints silk text height; warning
+[track_width]: Track width (board setup constraints min width 0.8000 mm; actual 0.2500 mm)
+    Rule: Power_Traces; error
+    @(169.0000 mm, 104.5000 mm): Track [Protected_VBUS] on F.Cu, length 0.3536 mm
+[track_width]: Track width (board setup constraints min width 0.8000 mm; actual 0.2500 mm)
+    Rule: Power_Traces; error
+    @(168.7500 mm, 105.5000 mm): Track [Protected_VBUS] on F.Cu, length 0.7071 mm
+[starved_thermal]: Thermal relief connection to zone incomplete (layer F.Cu; rule 'BQ24195_Thermal' min spoke count 2; actual 1)
+    Rule: BQ24195_Thermal; error
+    @(159.0000 mm, 89.5000 mm): Zone [GND] on F.Cu
+    @(161.7500 mm, 94.9350 mm): Pad 2 [GND] of U3 on F.Cu
+[silk_over_copper]: Silkscreen clipped by solder mask
+    Local override; warning
+    @(135.7500 mm, 94.6575 mm): Reference 'CN1'
+[solder_mask_bridge]: Front solder mask aperture bridges items with different nets
+    Rule: board setup solder mask min width; error
+    @(175.9225 mm, 98.4200 mm): Via [<no net>] on F.Cu - B.Cu
+    @(175.9225 mm, 98.4200 mm): PTH pad 1 [<no net>] of USBC1
+[solder_mask_bridge]: Rear solder mask aperture bridges items with different nets
+    Rule: board setup solder mask min width; error
+    @(175.9225 mm, 98.4200 mm): Via [<no net>] on F.Cu - B.Cu
+    @(175.9225 mm, 98.4200 mm): PTH pad 1 [<no net>] of USBC1
+[solder_mask_bridge]: Front solder mask aperture bridges items with different nets
+    Rule: board setup solder mask min width; error
+    @(163.7500 mm, 94.9350 mm): Pad 6 [I2C_SDA] of U3 on F.Cu
+    @(164.4350 mm, 94.2500 mm): Pad 7 [/Battery Management/CHRG_INT] of U3 on F.Cu
+[solder_mask_bridge]: Front solder mask aperture bridges items with different nets
+    Rule: board setup solder mask min width; error
+    @(164.4350 mm, 91.7500 mm): Pad 12 [GND] of U3 on F.Cu
+    @(163.7500 mm, 91.0650 mm): Pad 13 [VBAT] of U3 on F.Cu
+[solder_mask_bridge]: Front solder mask aperture bridges items with different nets
+    Rule: board setup solder mask min width; error
+    @(161.2500 mm, 91.0650 mm): Pad 18 [GND] of U3 on F.Cu
+    @(160.5650 mm, 91.7500 mm): Pad 19 [Net-(U3-SW1)] of U3 on F.Cu
+[solder_mask_bridge]: Front solder mask aperture bridges items with different nets
+    Rule: board setup solder mask min width; error
+    @(167.2500 mm, 103.8200 mm): Pad 1 [unconnected-(U1-CC1DB-Pad1)] of U1 on F.Cu
+    @(166.0000 mm, 105.7500 mm): Pad 25 [GND] of U1 on F.Cu
+[solder_mask_bridge]: Front solder mask aperture bridges items with different nets
+    Rule: board setup solder mask min width; error
+    @(166.2500 mm, 103.8200 mm): Pad 3 [unconnected-(U1-NU-Pad3)] of U1 on F.Cu
+    @(166.0000 mm, 105.7500 mm): Pad 25 [GND] of U1 on F.Cu
+[solder_mask_bridge]: Front solder mask aperture bridges items with different nets
+    Rule: board setup solder mask min width; error
+    @(165.2500 mm, 103.8200 mm): Pad 5 [unconnected-(U1-CC2DB-Pad5)] of U1 on F.Cu
+    @(166.0000 mm, 105.7500 mm): Pad 25 [GND] of U1 on F.Cu
+[solder_mask_bridge]: Front solder mask aperture bridges items with different nets
+    Rule: board setup solder mask min width; error
+    @(164.7500 mm, 103.8200 mm): Pad 6 [Net-(U1-RESET)] of U1 on F.Cu
+    @(166.0000 mm, 105.7500 mm): Pad 25 [GND] of U1 on F.Cu
+[solder_mask_bridge]: Front solder mask aperture bridges items with different nets
+    Rule: board setup solder mask min width; error
+    @(164.0700 mm, 104.5000 mm): Pad 7 [I2C_SCL] of U1 on F.Cu
+    @(166.0000 mm, 105.7500 mm): Pad 25 [GND] of U1 on F.Cu
+[solder_mask_bridge]: Front solder mask aperture bridges items with different nets
+    Rule: board setup solder mask min width; error
+    @(164.0700 mm, 105.0000 mm): Pad 8 [I2C_SDA] of U1 on F.Cu
+    @(166.0000 mm, 105.7500 mm): Pad 25 [GND] of U1 on F.Cu
+[solder_mask_bridge]: Front solder mask aperture bridges items with different nets
+    Rule: board setup solder mask min width; error
+    @(164.0700 mm, 105.5000 mm): Pad 9 [unconnected-(U1-DISCH-Pad9)] of U1 on F.Cu
+    @(166.0000 mm, 105.7500 mm): Pad 25 [GND] of U1 on F.Cu
+[solder_mask_bridge]: Front solder mask aperture bridges items with different nets
+    Rule: board setup solder mask min width; error
+    @(164.0700 mm, 106.5000 mm): Pad 11 [/Connectors/USB_ATTACH] of U1 on F.Cu
+    @(166.0000 mm, 105.7500 mm): Pad 25 [GND] of U1 on F.Cu
+[solder_mask_bridge]: Front solder mask aperture bridges items with different nets
+    Rule: board setup solder mask min width; error
+    @(165.2500 mm, 107.6800 mm): Pad 14 [unconnected-(U1-RP_1A5-Pad14)] of U1 on F.Cu
+    @(166.0000 mm, 105.7500 mm): Pad 25 [GND] of U1 on F.Cu
+[solder_mask_bridge]: Front solder mask aperture bridges items with different nets
+    Rule: board setup solder mask min width; error
+    @(165.7500 mm, 107.6800 mm): Pad 15 [unconnected-(U1-GPIO-Pad15)] of U1 on F.Cu
+    @(166.0000 mm, 105.7500 mm): Pad 25 [GND] of U1 on F.Cu
+[solder_mask_bridge]: Front solder mask aperture bridges items with different nets
+    Rule: board setup solder mask min width; error
+    @(166.2500 mm, 107.6800 mm): Pad 16 [unconnected-(U1-VBUS_EN_SNK-Pad16)] of U1 on F.Cu
+    @(166.0000 mm, 105.7500 mm): Pad 25 [GND] of U1 on F.Cu
+[solder_mask_bridge]: Front solder mask aperture bridges items with different nets
+    Rule: board setup solder mask min width; error
+    @(166.7500 mm, 107.6800 mm): Pad 17 [unconnected-(U1-A_B_SIDE-Pad17)] of U1 on F.Cu
+    @(166.0000 mm, 105.7500 mm): Pad 25 [GND] of U1 on F.Cu
+[solder_mask_bridge]: Front solder mask aperture bridges items with different nets
+    Rule: board setup solder mask min width; error
+    @(167.2500 mm, 107.6800 mm): Pad 18 [unconnected-(U1-VBUS_VS_DISCH-Pad18)] of U1 on F.Cu
+    @(166.0000 mm, 105.7500 mm): Pad 25 [GND] of U1 on F.Cu
+[solder_mask_bridge]: Front solder mask aperture bridges items with different nets
+    Rule: board setup solder mask min width; error
+    @(167.9300 mm, 107.0000 mm): Pad 19 [/Connectors/USB_ALERT] of U1 on F.Cu
+    @(166.0000 mm, 105.7500 mm): Pad 25 [GND] of U1 on F.Cu
+[solder_mask_bridge]: Front solder mask aperture bridges items with different nets
+    Rule: board setup solder mask min width; error
+    @(167.9300 mm, 106.5000 mm): Pad 20 [unconnected-(U1-RP_3A-Pad20)] of U1 on F.Cu
+    @(166.0000 mm, 105.7500 mm): Pad 25 [GND] of U1 on F.Cu
+[solder_mask_bridge]: Front solder mask aperture bridges items with different nets
+    Rule: board setup solder mask min width; error
+    @(167.9300 mm, 106.0000 mm): Pad 21 [unconnected-(U1-VREG_1V2-Pad21)] of U1 on F.Cu
+    @(166.0000 mm, 105.7500 mm): Pad 25 [GND] of U1 on F.Cu
+[solder_mask_bridge]: Front solder mask aperture bridges items with different nets
+    Rule: board setup solder mask min width; error
+    @(167.9300 mm, 105.5000 mm): Pad 22 [Protected_VBUS] of U1 on F.Cu
+    @(166.0000 mm, 105.7500 mm): Pad 25 [GND] of U1 on F.Cu
+[solder_mask_bridge]: Front solder mask aperture bridges items with different nets
+    Rule: board setup solder mask min width; error
+    @(167.9300 mm, 105.0000 mm): Pad 23 [unconnected-(U1-VREG_2V7-Pad23)] of U1 on F.Cu
+    @(166.0000 mm, 105.7500 mm): Pad 25 [GND] of U1 on F.Cu
+[solder_mask_bridge]: Front solder mask aperture bridges items with different nets
+    Rule: board setup solder mask min width; error
+    @(167.9300 mm, 104.5000 mm): Pad 24 [Protected_VBUS] of U1 on F.Cu
+    @(166.0000 mm, 105.7500 mm): Pad 25 [GND] of U1 on F.Cu
+[solder_mask_bridge]: Front solder mask aperture bridges items with different nets
+    Rule: board setup solder mask min width; error
+    @(149.7500 mm, 98.5000 mm): PTH pad [<no net>] of U5
+    @(149.2500 mm, 99.0000 mm): Pad 9 [GND] of U5 on F.Cu
+[solder_mask_bridge]: Front solder mask aperture bridges items with different nets
+    Rule: board setup solder mask min width; error
+    @(148.7500 mm, 98.5000 mm): PTH pad [<no net>] of U5
+    @(149.2500 mm, 99.0000 mm): Pad 9 [GND] of U5 on F.Cu
+[solder_mask_bridge]: Front solder mask aperture bridges items with different nets
+    Rule: board setup solder mask min width; error
+    @(149.7500 mm, 99.5000 mm): PTH pad [<no net>] of U5
+    @(149.2500 mm, 99.0000 mm): Pad 9 [GND] of U5 on F.Cu
+[solder_mask_bridge]: Front solder mask aperture bridges items with different nets
+    Rule: board setup solder mask min width; error
+    @(148.7500 mm, 99.5000 mm): PTH pad [<no net>] of U5
+    @(149.2500 mm, 99.0000 mm): Pad 9 [GND] of U5 on F.Cu
+[silk_overlap]: Silkscreen overlap
+    Rule: board setup constraints silk; warning
+    @(171.9100 mm, 86.5956 mm): Segment on F.Silkscreen
+    @(172.4500 mm, 84.0000 mm): Reference 'J1'
+[silk_overlap]: Silkscreen overlap
+    Rule: board setup constraints silk; warning
+    @(135.7500 mm, 94.6575 mm): Reference 'CN1'
+    @(134.1000 mm, 95.0100 mm): Segment on F.Silkscreen
+
+** Found 14 unconnected pads **
+[unconnected_items]: Missing connection between items
+    Local override; error
+    @(169.4900 mm, 104.0100 mm): Track [Protected_VBUS] on F.Cu, length 0.7350 mm
+    @(170.2250 mm, 102.5000 mm): Pad 1 [Protected_VBUS] of C1 on F.Cu
+[unconnected_items]: Missing connection between items
+    Local override; error
+    @(170.2250 mm, 102.5000 mm): Pad 1 [Protected_VBUS] of C1 on F.Cu
+    @(170.3625 mm, 98.0500 mm): Track [Protected_VBUS] on F.Cu, length 1.2198 mm
+[unconnected_items]: Missing connection between items
+    Local override; error
+    @(159.5650 mm, 137.7500 mm): Pad 1 [Protected_VBUS] of TP3 on F.Cu
+    @(167.9300 mm, 105.5000 mm): Track [Protected_VBUS] on F.Cu, length 0.8200 mm
+[unconnected_items]: Missing connection between items
+    Local override; error
+    @(175.9225 mm, 107.0800 mm): PTH pad 0 [GND] of USBC1
+    @(174.7500 mm, 129.2500 mm): Pad 1 [GND] of TP4 on F.Cu
+[unconnected_items]: Missing connection between items
+    Local override; error
+    @(147.5650 mm, 138.4750 mm): Pad 1 [GND] of TP8 on F.Cu
+    @(174.7500 mm, 129.2500 mm): Pad 1 [GND] of TP4 on F.Cu
+[unconnected_items]: Missing connection between items
+    Local override; error
+    @(142.7500 mm, 79.2500 mm): Zone [/Battery Management/VSYS] on F.Cu
+    @(142.7500 mm, 79.2500 mm): Zone [/Battery Management/VSYS] on F.Cu
+[unconnected_items]: Missing connection between items
+    Local override; error
+    @(150.0650 mm, 138.5000 mm): Pad 1 [/Battery Management/VSYS] of TP9 on F.Cu
+    @(149.5650 mm, 125.5000 mm): Pad 1 [/Battery Management/VSYS] of TP1 on F.Cu
+[unconnected_items]: Missing connection between items
+    Local override; error
+    @(149.5650 mm, 125.5000 mm): Pad 1 [/Battery Management/VSYS] of TP1 on F.Cu
+    @(142.7500 mm, 79.2500 mm): Zone [/Battery Management/VSYS] on F.Cu
+[unconnected_items]: Missing connection between items
+    Local override; error
+    @(142.4750 mm, 98.0000 mm): Track [+3.3V] on F.Cu, length 0.9750 mm
+    @(146.4800 mm, 97.0900 mm): Via [+3.3V] on F.Cu - B.Cu
+[unconnected_items]: Missing connection between items
+    Local override; error
+    @(127.0000 mm, 109.2500 mm): Zone [+3.3V] on F.Cu
+    @(145.8150 mm, 136.4750 mm): Pad 1 [+3.3V] of TP7 on F.Cu
+[unconnected_items]: Missing connection between items
+    Local override; error
+    @(159.7500 mm, 101.8250 mm): Track [I2C_SDA] on F.Cu, length 2.9250 mm
+    @(155.0650 mm, 138.5000 mm): Pad 1 [I2C_SDA] of TP5 on F.Cu
+[unconnected_items]: Missing connection between items
+    Local override; error
+    @(160.7600 mm, 104.7400 mm): Track [I2C_SCL] on F.Cu, length 0.0141 mm
+    @(152.5650 mm, 138.5000 mm): Pad 1 [I2C_SCL] of TP6 on F.Cu
+[unconnected_items]: Missing connection between items
+    Local override; error
+    @(163.7500 mm, 91.0650 mm): Pad 13 [VBAT] of U3 on F.Cu
+    @(174.7500 mm, 131.7500 mm): Pad 1 [VBAT] of TP2 on F.Cu
+[unconnected_items]: Missing connection between items
+    Local override; error
+    @(140.0000 mm, 89.0750 mm): Pad 1 [Net-(U4-FB)] of R10 on F.Cu
+    @(144.5000 mm, 88.0750 mm): Track [Net-(U4-FB)] on F.Cu, length 1.4142 mm
+
+** Found 0 Footprint errors **
+
+** End of Report **

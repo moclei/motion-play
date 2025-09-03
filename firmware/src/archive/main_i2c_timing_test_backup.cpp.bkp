@@ -1,0 +1,185 @@
+#include <Arduino.h>
+#include <TFT_eSPI.h>
+#include <Wire.h>
+#include "pin_config.h"
+#include "components/tca9548a/TCA9548A.h"
+
+// Display setup
+TFT_eSPI tdisplay = TFT_eSPI();
+TFT_eSprite sprite = TFT_eSprite(&tdisplay);
+
+// I2C components
+TCA9548A tca;
+
+// Build information
+const char *BUILD_INFO = __DATE__ " " __TIME__;
+
+// Terminal display system
+#define MAX_DISPLAY_LINES 12
+#define TERMINAL_FONT 2
+#define LINE_HEIGHT 14
+#include <vector>
+std::vector<String> allLogLines;
+
+void updateTerminalDisplay(); // Forward declaration
+
+void terminalPrint(String message) {
+    Serial.println(message);
+    allLogLines.push_back(message);
+    updateTerminalDisplay();
+}
+
+void updateTerminalDisplay() {
+    sprite.fillSprite(TFT_BLACK);
+    sprite.setTextColor(TFT_WHITE);
+    sprite.setTextDatum(TL_DATUM);
+
+    // Show build info at top
+    sprite.setTextColor(TFT_DARKGREY);
+    String buildDate = String(__DATE__).substring(0, 6) + " " + String(__TIME__).substring(0, 5);
+    sprite.drawString("I2C Timing Test", 5, 2, 1);
+    sprite.drawString(buildDate, 5, 12, 1);
+
+    // Show terminal output
+    sprite.setTextColor(TFT_WHITE);
+    int maxLines = min((int)allLogLines.size(), MAX_DISPLAY_LINES);
+    int startLine = max(0, (int)allLogLines.size() - MAX_DISPLAY_LINES);
+    
+    for (int i = 0; i < maxLines; i++) {
+        String line = allLogLines[startLine + i];
+        if (line.length() > 38) {
+            line = line.substring(0, 35) + "...";
+        }
+        sprite.drawString(line, 5, 25 + (i * LINE_HEIGHT), TERMINAL_FONT);
+    }
+    
+    sprite.pushSprite(0, 0);
+}
+
+// I2C speed test configurations
+struct I2CConfig {
+    uint32_t frequency;
+    const char* name;
+    uint32_t timeout_ms;
+};
+
+I2CConfig configs[] = {
+    {50000,  "50kHz (Very Slow)", 2000},
+    {100000, "100kHz (Standard)", 1000},
+    {200000, "200kHz (Fast)", 500},
+    {400000, "400kHz (Fast+)", 250}
+};
+
+uint8_t i2cScanWithTimeout(uint8_t address, uint32_t timeout_ms) {
+    uint32_t start = millis();
+    
+    Wire.beginTransmission(address);
+    uint8_t error = Wire.endTransmission();
+    
+    uint32_t duration = millis() - start;
+    
+    if (duration > timeout_ms) {
+        terminalPrint("  TIMEOUT after " + String(duration) + "ms");
+        return 4; // Timeout error
+    }
+    
+    return error;
+}
+
+void testI2CSpeed(I2CConfig config) {
+    terminalPrint("=== Testing " + String(config.name) + " ===");
+    
+    // Reinitialize I2C with new frequency
+    Wire.end();
+    delay(100);
+    Wire.begin(SDA, SCL, config.frequency);
+    delay(100);
+    
+    terminalPrint("Freq: " + String(config.frequency) + "Hz");
+    
+    // Test TCA9548A communication
+    terminalPrint("Testing TCA9548A...");
+    uint8_t tca_result = i2cScanWithTimeout(0x70, config.timeout_ms);
+    if (tca_result == 0) {
+        terminalPrint("  TCA OK");
+        
+        // Test sensor channels
+        for (int ch = 3; ch <= 5; ch++) {
+            terminalPrint("Ch" + String(ch) + ":");
+            
+            // Select channel
+            if (tca.selectChannel(ch)) {
+                delay(50); // Longer stabilization
+                
+                // Quick scan for any device
+                bool deviceFound = false;
+                uint32_t scanStart = millis();
+                
+                for (uint8_t addr = 0x08; addr <= 0x77; addr++) {
+                    uint8_t result = i2cScanWithTimeout(addr, 200);
+                    if (result == 0) {
+                        terminalPrint("  0x" + String(addr, HEX) + " OK");
+                        deviceFound = true;
+                    } else if (result == 4) {
+                        terminalPrint("  0x" + String(addr, HEX) + " TIMEOUT");
+                        break; // Stop on timeout
+                    }
+                    
+                    // Safety check - don't scan forever
+                    if (millis() - scanStart > 5000) {
+                        terminalPrint("  SCAN TIMEOUT");
+                        break;
+                    }
+                }
+                
+                if (!deviceFound) {
+                    terminalPrint("  No devices");
+                }
+                
+                tca.disableAllChannels();
+                delay(10);
+            } else {
+                terminalPrint("  TCA select failed");
+            }
+        }
+    } else {
+        terminalPrint("  TCA FAIL: " + String(tca_result));
+    }
+    
+    terminalPrint("--- Done ---");
+    delay(1000);
+}
+
+void setup() {
+    Serial.begin(115200);
+    delay(1000);
+    
+    // Initialize display
+    tdisplay.init();
+    tdisplay.setRotation(1);
+    sprite.createSprite(320, 170);
+    sprite.fillSprite(TFT_BLACK);
+    sprite.setTextColor(TFT_WHITE);
+    sprite.pushSprite(0, 0);
+    
+    terminalPrint("=== I2C Timing Test ===");
+    terminalPrint("Build: " + String(BUILD_INFO));
+    delay(2000);
+    
+    // Test different I2C speeds
+    for (int i = 0; i < sizeof(configs)/sizeof(configs[0]); i++) {
+        testI2CSpeed(configs[i]);
+    }
+    
+    terminalPrint("=== ALL TESTS DONE ===");
+    terminalPrint("Check results above");
+    
+    // Return to standard speed
+    Wire.end();
+    delay(100);
+    Wire.begin(SDA, SCL, 100000);
+}
+
+void loop() {
+    delay(1000);
+}

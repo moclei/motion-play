@@ -1,0 +1,29 @@
+Comment,Designator,Footprint,LCSC Part Number
+100nF Unpolarized capacitor,"C1, C3",C_0603_1608Metric,C14663
+10µF Unpolarized capacitor,"C4,C6,C7",C_0603_1608Metric,C96446
+4.7µF Unpolarized capacitor,"C2, C5",C_0603_1608Metric,C19666
+220µF Unpolarized capacitor,C8,CP_Elec_6.3x7.7,C3342
+22µF Unpolarized capacitor,"C9,C10",C_0603_1608Metric,C59461
+2.2µF Unpolarized capacitor,"C11,C12",C_0603_1608Metric,C23630
+47µF Polarized Capacitor,"C13,C14",C_Elec_6.3x5.4,C2836440
+"40V Independent Type 550mV@5A 5A SMA(DO-214AC) Schottky Diodes ROHS Diode, small symbol",D1,D_SMA,C22452
+Fuse Fuse,F1,Fuse_1206_3216Metric,C2897466
+X3025WRS-03D-LPSW,CN1,CONN-SMD_3P-H-P3.00-R_X3025WRS-03D-LPSW,C405941
+PH 2mm 2-pin connector horizontal,J1,JST_PH_S2B-PH-SM4-TB_1x02-1MP_P2.00mm_Horizontal,C18221575
+SH 1mm 2-pin connector horizontal,J3,JST_SH_SM02B-SRSS-TB_1x02-1MP_P1.00mm_Horizontal,C160402
+SH 1mm 5-pin connector horizontal,J4,JST_SH_SM05B-SRSS-TB_1x05-1MP_P1.00mm_Horizontal,C136657
+2.2uH Inductor,L1,L_Changjiang_FNR6028S,C266426
+4.7uH Inductor,L2,L_Changjiang_FNR6028S,C307880
+"PMOS P-MOSFET transistor, drain/source/gate",Q1,SOT-23,C3040193
+5.1kΩ Resistor,"R1,R2",R_0603_1608Metric,C23186
+10kΩ Resistor,"R3,R4,R5,R9,R11",R_0603_1608Metric,C25804
+2.7k Resistor,R6,R_0603_1608Metric,C13167
+100kΩ Resistor,"R7,R8",R_0603_1608Metric,C14675
+47kΩ Resistor,R10,R_0603_1608Metric,C25819
+"Thermistor_NTC Temperature dependent resistor, negative temperature coefficient",TH1,R_0603_1608Metric,C13564
+STUSB4500LQTR,U1,QFN50P400X400X100-25N,C506650
+"USBLC6-2SC6 Very low capacitance ESD protection diode, 2 data-line, SOT-23-6",U2,SOT-23-6,C7519
+BQ24195RGET,U3,QFN50P400X400X100-25N,C2876710
+MT3608,U4,SOT95P280X145-6N,C84817
+LR1801G-33-SH2-R,U5,HSOP-8_L5.0-W4.0-P1.27-LS6.2-BL-EP,C410479
+TYPE-C-31-M-12,USBC1,USB-C_SMD-TYPE-C-31-M-12,C165948
