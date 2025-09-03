@@ -1,0 +1,451 @@
+(kicad_sch
+	(version 20231120)
+	(generator "eeschema")
+	(generator_version "8.0")
+	(uuid "3777f582-7bb9-4901-9083-a30e0a55f963")
+	(paper "A4")
+	(title_block
+		(title "MotionPlay Power Management")
+		(date "2024-12-30")
+		(rev "1.0")
+		(company "Marc O'Cleirigh")
+	)
+	(lib_symbols)
+	(wire
+		(pts
+			(xy 80.01 74.93) (xy 82.55 74.93)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "09f29263-59bb-40b6-a55d-77308e806c43")
+	)
+	(wire
+		(pts
+			(xy 85.09 27.94) (xy 85.09 77.47)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "4e74fb90-eac2-4e62-ba74-6d4e770ddda6")
+	)
+	(wire
+		(pts
+			(xy 80.01 77.47) (xy 85.09 77.47)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "4f62a0fc-ec6a-41a3-beb2-2bf764378223")
+	)
+	(wire
+		(pts
+			(xy 80.01 92.71) (xy 157.48 92.71)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "58db02de-f9de-45ef-be3f-2e369f3b0571")
+	)
+	(wire
+		(pts
+			(xy 148.59 33.02) (xy 157.48 33.02)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "6b5d9996-f9f6-4605-9624-9c0a4d0e6039")
+	)
+	(wire
+		(pts
+			(xy 148.59 40.64) (xy 152.4 40.64)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "70cb0521-35a6-4c5c-8f08-cfb369ec84fb")
+	)
+	(wire
+		(pts
+			(xy 82.55 31.75) (xy 82.55 74.93)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "8e34e012-f42c-42b9-81e0-1d15c0e9b11d")
+	)
+	(wire
+		(pts
+			(xy 80.01 31.75) (xy 82.55 31.75)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "918f07fc-be78-40ad-b1e4-15cc806789f0")
+	)
+	(wire
+		(pts
+			(xy 152.4 40.64) (xy 152.4 87.63)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "aecd8159-86e9-4e18-98e0-d87eb1c7b020")
+	)
+	(wire
+		(pts
+			(xy 154.94 36.83) (xy 154.94 90.17)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "b2f07bff-286e-4e73-8487-83629b6f5fc8")
+	)
+	(wire
+		(pts
+			(xy 80.01 90.17) (xy 154.94 90.17)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "b305e4e5-2f2f-459c-a611-ac8e8fbfeb98")
+	)
+	(wire
+		(pts
+			(xy 80.01 27.94) (xy 85.09 27.94)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "c06f1a63-eaeb-40aa-87fe-0285232c4733")
+	)
+	(wire
+		(pts
+			(xy 148.59 36.83) (xy 154.94 36.83)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "d7c8c470-5849-4a1d-8f64-233561c23564")
+	)
+	(wire
+		(pts
+			(xy 157.48 33.02) (xy 157.48 92.71)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "da072c74-75eb-4762-a1f8-489061509959")
+	)
+	(wire
+		(pts
+			(xy 80.01 87.63) (xy 152.4 87.63)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "de00b688-e3c2-4ad3-a999-e36a5badbdc6")
+	)
+	(wire
+		(pts
+			(xy 148.59 29.21) (xy 167.64 29.21)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "ed829313-412b-45ae-9dfe-7679f8c1ee93")
+	)
+	(sheet
+		(at 20.828 20.193)
+		(size 60.325 40.005)
+		(fields_autoplaced yes)
+		(stroke
+			(width 0.1524)
+			(type solid)
+		)
+		(fill
+			(color 0 0 0 0.0000)
+		)
+		(uuid "232b579c-87ba-4c5b-9aa1-09aed85ee107")
+		(property "Sheetname" "USB-C & PD Control"
+			(at 20.828 19.4814 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left bottom)
+			)
+		)
+		(property "Sheetfile" "usb_pd.kicad_sch"
+			(at 20.828 60.7826 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left top)
+			)
+		)
+		(pin "USB_ATTACH" output
+			(at 81.153 27.94 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+			(uuid "05509a9f-93d7-437e-947f-6885885a8d26")
+		)
+		(pin "USB_ALERT" output
+			(at 81.153 31.75 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+			(uuid "6b29cb98-08f0-4662-9f1e-7493c74af4cc")
+		)
+		(instances
+			(project "motion-play-power"
+				(path "/3777f582-7bb9-4901-9083-a30e0a55f963"
+					(page "2")
+				)
+			)
+		)
+	)
+	(sheet
+		(at 90.043 20.447)
+		(size 59.055 40.005)
+		(fields_autoplaced yes)
+		(stroke
+			(width 0.1524)
+			(type solid)
+		)
+		(fill
+			(color 0 0 0 0.0000)
+		)
+		(uuid "3665ea08-45a3-44d1-9743-015100a3d17a")
+		(property "Sheetname" "Battery Management"
+			(at 90.043 19.7354 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left bottom)
+			)
+		)
+		(property "Sheetfile" "battery_mgmt.kicad_sch"
+			(at 90.043 61.0366 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left top)
+			)
+		)
+		(pin "VSYS" bidirectional
+			(at 149.098 29.21 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+			(uuid "b3a56981-3471-477e-a679-c6aedfd8ec87")
+		)
+		(pin "CHRG_STAT" output
+			(at 149.098 33.02 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+			(uuid "7f9d9ba7-c4f9-41c0-8dfe-afbf8359eb04")
+		)
+		(pin "CHRG_INT" output
+			(at 149.098 36.83 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+			(uuid "216b31c6-27e6-4f2f-8193-4aa46a69bfc9")
+		)
+		(pin "CHRG_PG" output
+			(at 149.098 40.64 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+			(uuid "6a76f6c3-fb23-47e9-a68d-5f34f0b65462")
+		)
+		(instances
+			(project "motion-play-power"
+				(path "/3777f582-7bb9-4901-9083-a30e0a55f963"
+					(page "3")
+				)
+			)
+		)
+	)
+	(sheet
+		(at 20.574 69.088)
+		(size 60.452 35.814)
+		(fields_autoplaced yes)
+		(stroke
+			(width 0.1524)
+			(type solid)
+		)
+		(fill
+			(color 0 0 0 0.0000)
+		)
+		(uuid "cfb7bda4-9ac9-4371-88c4-47da031cf9ba")
+		(property "Sheetname" "Connectors"
+			(at 20.574 68.3764 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left bottom)
+			)
+		)
+		(property "Sheetfile" "connectors.kicad_sch"
+			(at 20.574 105.4866 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left top)
+			)
+		)
+		(pin "USB_ATTACH" passive
+			(at 81.026 77.47 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+			(uuid "edd82dda-1e54-4cc1-af11-32ca6648dc8e")
+		)
+		(pin "USB_ALERT" passive
+			(at 81.026 74.93 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+			(uuid "8ce0f168-c71f-458f-b6d4-7943a03ecb7b")
+		)
+		(pin "CHRG_STAT" passive
+			(at 81.026 92.71 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+			(uuid "85b04103-24c0-4831-ac19-665a5379491f")
+		)
+		(pin "CHRG_INT" passive
+			(at 81.026 90.17 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+			(uuid "8ebd92c7-6be0-4ab5-99ea-d750bce99e07")
+		)
+		(pin "CHRG_PG" passive
+			(at 81.026 87.63 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+			(uuid "cf6f332e-9004-434d-aca7-fdecc8c207fa")
+		)
+		(instances
+			(project "motion-play-power"
+				(path "/3777f582-7bb9-4901-9083-a30e0a55f963"
+					(page "5")
+				)
+			)
+		)
+	)
+	(sheet
+		(at 167.64 19.685)
+		(size 55.88 40.005)
+		(fields_autoplaced yes)
+		(stroke
+			(width 0.1524)
+			(type solid)
+		)
+		(fill
+			(color 0 0 0 0.0000)
+		)
+		(uuid "f3e2583c-7920-4fd3-91d2-83ab021a262e")
+		(property "Sheetname" "Power Distribution"
+			(at 167.64 18.9734 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left bottom)
+			)
+		)
+		(property "Sheetfile" "power_dist.kicad_sch"
+			(at 167.64 60.2746 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left top)
+			)
+		)
+		(pin "VSYS" bidirectional
+			(at 167.64 29.21 180)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+			(uuid "e2707ccd-def8-42db-acad-83745403c19f")
+		)
+		(instances
+			(project "motion-play-power"
+				(path "/3777f582-7bb9-4901-9083-a30e0a55f963"
+					(page "4")
+				)
+			)
+		)
+	)
+	(sheet_instances
+		(path "/"
+			(page "1")
+		)
+	)
+)

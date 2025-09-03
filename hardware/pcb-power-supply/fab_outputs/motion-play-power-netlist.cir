@@ -1,0 +1,52 @@
+.title KiCad schematic
+.model __Q1 VDMOS PCHAN
+.model __D1 D
+USBC1 __USBC1
+R4 I2C_SCL Protected_VBUS 10k
+R3 I2C_SCL Protected_VBUS 10k
+C1 Protected_VBUS GND 0.1u
+U1 __U1
+R5 Net-_U1-RESET_ Protected_VBUS 10k
+U2 __U2
+C2 Protected_VBUS GND 4.7u
+F1 __F1
+R2 Net-_USBC1-CC2_ GND 5.1k
+R1 Net-_USBC1-CC1_ GND 5.1k
+C7 GND /Battery_Management/VSYS 10u
+C6 GND /Battery_Management/VSYS 10u
+C8 /Battery_Management/VSYS GND 220u
+TP4 __TP4
+TP1 __TP1
+L1 Net-_U3-SW1_ /Battery_Management/VSYS 2.2u
+U3 __U3
+C4 Net-_U3-PMID_ GND 10u
+R8 Net-_Q1-G_ Net-_J2-Pin_1_ 100k
+MQ1 Net-_J2-Pin_1_ Net-_Q1-G_ VBAT __Q1
+TP2 __TP2
+R7 VBAT Net-_Q1-G_ 100k
+J2 __J2
+C5 Net-_U3-REGN_ GND 4.7u
+C3 Net-_U3-BTST_ Net-_U3-SW1_ 100n
+TP3 __TP3
+R6 GND Net-_U3-ILIM_ 2.7k
+TP5 __TP5
+TP6 __TP6
+TH1 __TH1
+L2 Net-_U4-SW_ Net-_D1-A_ 4.7u
+TP9 __TP9
+D1 Net-_D1-A_ +5V __D1
+C10 +5V GND 22u
+R10 Net-_U4-FB_ +5V 47k
+R9 GND Net-_U4-FB_ 10k
+U4 __U4
+C9 /Battery_Management/VSYS GND 22u
+TP7 __TP7
+C12 +3.3V GND 2.2u
+TP8 __TP8
+C11 /Battery_Management/VSYS GND 2.2u
+R11 Net-_U5-ON/_OFF_ +3.3V 10k
+U5 __U5
+J3 __J3
+J4 __J4
+CN1 __CN1
+.end

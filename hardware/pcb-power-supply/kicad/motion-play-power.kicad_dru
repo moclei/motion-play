@@ -1,0 +1,60 @@
+(version 1)
+(rule "Component_Breakout"
+    (condition "A.insideCourtyard('U*')")
+    (constraint clearance (min 0.15mm))
+    (constraint track_width (min 0.15mm)))
+
+# Via specifications for power nets
+(rule "Power_Via_Specs"
+    (condition "A.NetClass == 'Power_USB' || A.NetClass == 'Power_Battery' || A.NetClass == 'Power_5V'")
+    (constraint annular_width (min 0.2mm))
+    (constraint via_diameter (min 0.8mm)))
+
+# Modify board setup constraints for USB connector
+(rule "USB_Clearance"
+    (condition "A.insideCourtyard('USBC*')")
+    (constraint hole_clearance (min 0.2mm))
+    (constraint clearance (min 0.15mm)))
+
+# Switching node clearance for MT3608 boost converter
+(rule "MT3608_SW_Node"
+    (condition "A.NetClass == 'Power_5V' && A.insideCourtyard('U4')")
+    (constraint clearance (min 0.5mm)))
+
+# Thermal relief settings for BQ24195 battery management IC
+(rule "BQ24195_Thermal"
+    (condition "A.insideCourtyard('U3')")
+    (constraint thermal_relief_gap (min 0.3mm))
+    (constraint thermal_spoke_width (min 0.4mm)))
+
+# High voltage clearance for USB-PD related nets
+#(rule "USBPD_Clearance"
+#    (condition "A.NetClass == 'Power_USB'")
+#    (constraint clearance (min 0.1mm)))
+
+# Ground plane thermal relief settings
+(rule "Ground_Plane_Relief"
+    (condition "A.Net == 'GND'")
+    (constraint thermal_relief_gap (min 0.2mm))
+    (constraint thermal_spoke_width (min 0.3mm)))
+
+# Edge clearance for power nets
+(rule "Power_Edge_Clearance"
+    (condition "A.NetClass == 'Power_USB' || A.NetClass == 'Power_Battery' || A.NetClass == 'Power_5V'")
+    (constraint edge_clearance (min 0.5mm)))
+
+# Larger clearance on outer layers for power nets
+# Adjust Power_Outer_Clearance
+(rule "Power_Outer_Clearance"
+    (condition "A.NetClass == 'Power_USB' || A.NetClass == 'Power_Battery' || A.NetClass == 'Power_5V' && && !A.insideCourtyard('U3')" )
+    (constraint clearance (min 0.2mm)))
+
+# Minimum width for power traces on inner layers
+(rule "Power_Inner_Width"
+    (layer inner)
+    (condition "A.NetClass == 'Power_USB' || A.NetClass == 'Power_Battery' || A.NetClass == 'Power_5V'")
+    (constraint track_width (min 0.5mm)))
+
+(rule "Power_Traces"
+    (condition "A.NetClass == 'Power_USB' && !A.insideCourtyard('*')")
+    (constraint track_width (min 0.8mm)))

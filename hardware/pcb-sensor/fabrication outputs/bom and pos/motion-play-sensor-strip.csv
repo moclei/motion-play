@@ -1,0 +1,9 @@
+Comment,Designator,Footprint,LCSC Part #
+100nF Unpolarized capacitor,C1,C_0603_1608Metric,C1590
+2.2μF Unpolarized capacitor,C2,C_0603_1608Metric,C1607
+"Power In Generic connector, single row, 01x02, script generated (kicad-library-utils/schlib/autogen/connector/)",J1,JST_SH_SM02B-SRSS-TB_1x02-1MP_P1.00mm_Horizontal,C18337480
+"Power Out Generic connector, single row, 01x02, script generated (kicad-library-utils/schlib/autogen/connector/)",J2,JST_SH_SM02B-SRSS-TB_1x02-1MP_P1.00mm_Horizontal,C18337480
+"I2C+INT Generic connector, single row, 01x03, script generated (kicad-library-utils/schlib/autogen/connector/)",J3,JST_SH_SM03B-SRSS-TB_1x03-1MP_P1.00mm_Horizontal,C160403
+2.2kΩ Resistor,"R1,R2",R_0603_1608Metric,C4190
+8.2kΩ Resistor,R3,R_0603_1608Metric,C25981
+VCNL4040M3OE-H3 ,U1,VISHAY_VCNL4040,C142526

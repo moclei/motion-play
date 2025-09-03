@@ -1,0 +1,23 @@
+%TF.GenerationSoftware,KiCad,Pcbnew,8.0.7*%
+%TF.CreationDate,2024-12-19T12:35:45+01:00*%
+%TF.ProjectId,motion-play-sensor-strip,6d6f7469-6f6e-42d7-906c-61792d73656e,rev?*%
+%TF.SameCoordinates,Original*%
+%TF.FileFunction,Profile,NP*%
+%FSLAX46Y46*%
+G04 Gerber Fmt 4.6, Leading zero omitted, Abs format (unit mm)*
+G04 Created by KiCad (PCBNEW 8.0.7) date 2024-12-19 12:35:45*
+%MOMM*%
+%LPD*%
+G01*
+G04 APERTURE LIST*
+%TA.AperFunction,Profile*%
+%ADD10C,0.050000*%
+%TD*%
+G04 APERTURE END LIST*
+D10*
+X100000000Y-93000000D02*
+X169800000Y-93000000D01*
+X169800000Y-103000000D01*
+X100000000Y-103000000D01*
+X100000000Y-93000000D01*
+M02*
