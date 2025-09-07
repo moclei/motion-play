@@ -1,0 +1,2367 @@
+{
+  "circuitName": "motion-play-v3.kicad_sch",
+  "components": [
+    {
+      "refDes": "3V1",
+      "partName": "TestPoint",
+      "value": "TestPoint",
+      "footprint": "TestPoint:TestPoint_Pad_D2.0mm",
+      "customFields": {},
+      "pins": [
+        {
+          "pinName": "1",
+          "pinNumber": "1",
+          "pinType": "passive",
+          "net": "Net-(3V1-Pad1)"
+        }
+      ]
+    },
+    {
+      "refDes": "3V2",
+      "partName": "TestPoint",
+      "value": "TestPoint",
+      "footprint": "TestPoint:TestPoint_Pad_D2.0mm",
+      "customFields": {},
+      "pins": [
+        {
+          "pinName": "1",
+          "pinNumber": "1",
+          "pinType": "passive",
+          "net": "Net-(3V2-Pad1)"
+        }
+      ]
+    },
+    {
+      "refDes": "5V1",
+      "partName": "TestPoint",
+      "value": "TestPoint",
+      "footprint": "TestPoint:TestPoint_Pad_D2.0mm",
+      "customFields": {},
+      "pins": [
+        {
+          "pinName": "1",
+          "pinNumber": "1",
+          "pinType": "passive",
+          "net": "/+5V"
+        }
+      ]
+    },
+    {
+      "refDes": "C1",
+      "partName": "C_1",
+      "value": "10\u00b5F",
+      "footprint": "Capacitor_SMD:C_0603_1608Metric",
+      "customFields": {},
+      "pins": [
+        {
+          "pinName": "",
+          "pinNumber": "2",
+          "pinType": "passive",
+          "net": "/GND"
+        },
+        {
+          "pinName": "",
+          "pinNumber": "1",
+          "pinType": "passive",
+          "net": "Net-(D1-K)"
+        }
+      ]
+    },
+    {
+      "refDes": "C2",
+      "partName": "C_3",
+      "value": "22\u00b5F",
+      "footprint": "Capacitor_SMD:C_0603_1608Metric",
+      "customFields": {},
+      "pins": [
+        {
+          "pinName": "",
+          "pinNumber": "1",
+          "pinType": "passive",
+          "net": "/+3.3V"
+        },
+        {
+          "pinName": "",
+          "pinNumber": "2",
+          "pinType": "passive",
+          "net": "/GND"
+        }
+      ]
+    },
+    {
+      "refDes": "C3",
+      "partName": "C_2",
+      "value": "0.1\u00b5F",
+      "footprint": "Capacitor_SMD:C_0603_1608Metric",
+      "customFields": {},
+      "pins": [
+        {
+          "pinName": "",
+          "pinNumber": "2",
+          "pinType": "passive",
+          "net": "/GND"
+        },
+        {
+          "pinName": "",
+          "pinNumber": "1",
+          "pinType": "passive",
+          "net": "Net-(D1-K)"
+        }
+      ]
+    },
+    {
+      "refDes": "C4",
+      "partName": "C",
+      "value": "0.1\u00b5F",
+      "footprint": "Capacitor_SMD:C_0603_1608Metric",
+      "customFields": {},
+      "pins": [
+        {
+          "pinName": "",
+          "pinNumber": "1",
+          "pinType": "passive",
+          "net": "/+3.3V"
+        },
+        {
+          "pinName": "",
+          "pinNumber": "2",
+          "pinType": "passive",
+          "net": "/GND"
+        }
+      ]
+    },
+    {
+      "refDes": "D1",
+      "partName": "D_Schottky",
+      "value": "D_Schottky",
+      "footprint": "Diode_SMD:D_SMA",
+      "customFields": {},
+      "pins": [
+        {
+          "pinName": "A",
+          "pinNumber": "2",
+          "pinType": "passive",
+          "net": "/+5V"
+        },
+        {
+          "pinName": "K",
+          "pinNumber": "1",
+          "pinType": "passive",
+          "net": "Net-(D1-K)"
+        }
+      ]
+    },
+    {
+      "refDes": "GND1",
+      "partName": "TestPoint",
+      "value": "TestPoint",
+      "footprint": "TestPoint:TestPoint_Pad_D2.0mm",
+      "customFields": {},
+      "pins": [
+        {
+          "pinName": "1",
+          "pinNumber": "1",
+          "pinType": "passive",
+          "net": "/GND"
+        }
+      ]
+    },
+    {
+      "refDes": "GND2",
+      "partName": "TestPoint",
+      "value": "TestPoint",
+      "footprint": "TestPoint:TestPoint_Pad_D2.0mm",
+      "customFields": {},
+      "pins": [
+        {
+          "pinName": "1",
+          "pinNumber": "1",
+          "pinType": "passive",
+          "net": "/GND"
+        }
+      ]
+    },
+    {
+      "refDes": "GPIO1",
+      "partName": "TestPoint",
+      "value": "TestPoint",
+      "footprint": "TestPoint:TestPoint_Pad_D2.0mm",
+      "customFields": {},
+      "pins": [
+        {
+          "pinName": "1",
+          "pinNumber": "1",
+          "pinType": "passive",
+          "net": "Net-(U2-1)"
+        }
+      ]
+    },
+    {
+      "refDes": "GPIO2",
+      "partName": "TestPoint",
+      "value": "TestPoint",
+      "footprint": "TestPoint:TestPoint_Pad_D2.0mm",
+      "customFields": {},
+      "pins": [
+        {
+          "pinName": "1",
+          "pinNumber": "1",
+          "pinType": "passive",
+          "net": "Net-(J3-Pin_2)"
+        }
+      ]
+    },
+    {
+      "refDes": "GPIO3",
+      "partName": "TestPoint",
+      "value": "TestPoint",
+      "footprint": "TestPoint:TestPoint_Pad_D2.0mm",
+      "customFields": {},
+      "pins": [
+        {
+          "pinName": "1",
+          "pinNumber": "1",
+          "pinType": "passive",
+          "net": "Net-(U2-3)"
+        }
+      ]
+    },
+    {
+      "refDes": "GPIO10",
+      "partName": "TestPoint",
+      "value": "TestPoint",
+      "footprint": "TestPoint:TestPoint_Pad_D2.0mm",
+      "customFields": {},
+      "pins": [
+        {
+          "pinName": "1",
+          "pinNumber": "1",
+          "pinType": "passive",
+          "net": "Net-(U2-10)"
+        }
+      ]
+    },
+    {
+      "refDes": "GPIO12",
+      "partName": "TestPoint",
+      "value": "TestPoint",
+      "footprint": "TestPoint:TestPoint_Pad_D2.0mm",
+      "customFields": {},
+      "pins": [
+        {
+          "pinName": "1",
+          "pinNumber": "1",
+          "pinType": "passive",
+          "net": "Net-(J4-Pin_3)"
+        }
+      ]
+    },
+    {
+      "refDes": "GPIO13",
+      "partName": "TestPoint",
+      "value": "TestPoint",
+      "footprint": "TestPoint:TestPoint_Pad_D2.0mm",
+      "customFields": {},
+      "pins": [
+        {
+          "pinName": "1",
+          "pinNumber": "1",
+          "pinType": "passive",
+          "net": "Net-(J8-Pin_3)"
+        }
+      ]
+    },
+    {
+      "refDes": "GPIO16",
+      "partName": "TestPoint",
+      "value": "TestPoint",
+      "footprint": "TestPoint:TestPoint_Pad_D2.0mm",
+      "customFields": {},
+      "pins": [
+        {
+          "pinName": "1",
+          "pinNumber": "1",
+          "pinType": "passive",
+          "net": "Net-(U2-16)"
+        }
+      ]
+    },
+    {
+      "refDes": "GPIO17",
+      "partName": "TestPoint",
+      "value": "TestPoint",
+      "footprint": "TestPoint:TestPoint_Pad_D2.0mm",
+      "customFields": {},
+      "pins": [
+        {
+          "pinName": "1",
+          "pinNumber": "1",
+          "pinType": "passive",
+          "net": "Net-(U2-17)"
+        }
+      ]
+    },
+    {
+      "refDes": "GPIO18",
+      "partName": "TestPoint",
+      "value": "TestPoint",
+      "footprint": "TestPoint:TestPoint_Pad_D2.0mm",
+      "customFields": {},
+      "pins": [
+        {
+          "pinName": "1",
+          "pinNumber": "1",
+          "pinType": "passive",
+          "net": "Net-(U2-18)"
+        }
+      ]
+    },
+    {
+      "refDes": "GPIO21",
+      "partName": "TestPoint",
+      "value": "TestPoint",
+      "footprint": "TestPoint:TestPoint_Pad_D2.0mm",
+      "customFields": {},
+      "pins": [
+        {
+          "pinName": "1",
+          "pinNumber": "1",
+          "pinType": "passive",
+          "net": "Net-(U2-21)"
+        }
+      ]
+    },
+    {
+      "refDes": "GPIO43",
+      "partName": "TestPoint",
+      "value": "TestPoint",
+      "footprint": "TestPoint:TestPoint_Pad_D2.0mm",
+      "customFields": {},
+      "pins": [
+        {
+          "pinName": "1",
+          "pinNumber": "1",
+          "pinType": "passive",
+          "net": "/SDA"
+        }
+      ]
+    },
+    {
+      "refDes": "GPIO44",
+      "partName": "TestPoint",
+      "value": "TestPoint",
+      "footprint": "TestPoint:TestPoint_Pad_D2.0mm",
+      "customFields": {},
+      "pins": [
+        {
+          "pinName": "1",
+          "pinNumber": "1",
+          "pinType": "passive",
+          "net": "/SCL"
+        }
+      ]
+    },
+    {
+      "refDes": "J2",
+      "partName": "USBC_Power_Module",
+      "value": "~",
+      "footprint": "Library:USBC_Power_Module",
+      "customFields": {},
+      "pins": [
+        {
+          "pinName": "5V",
+          "pinNumber": "2",
+          "pinType": "power_out",
+          "net": "/+5V"
+        },
+        {
+          "pinName": "GND",
+          "pinNumber": "1",
+          "pinType": "power_out",
+          "net": "/GND"
+        }
+      ]
+    },
+    {
+      "refDes": "J3",
+      "partName": "Conn_01x03_1",
+      "value": "LED_Strip",
+      "footprint": "Connector_JST:JST_PH_S3B-PH-SM4-TB_1x03-1MP_P2.00mm_Horizontal",
+      "customFields": {},
+      "pins": [
+        {
+          "pinName": "Pin_1",
+          "pinNumber": "31",
+          "pinType": "passive",
+          "net": "/+5V"
+        },
+        {
+          "pinName": "Pin_3",
+          "pinNumber": "33",
+          "pinType": "passive",
+          "net": "/GND"
+        },
+        {
+          "pinName": "Pin_2",
+          "pinNumber": "32",
+          "pinType": "passive",
+          "net": "Net-(J3-Pin_2)"
+        }
+      ]
+    },
+    {
+      "refDes": "J4",
+      "partName": "Conn_01x03",
+      "value": "Conn_01x03",
+      "footprint": "Connector_JST:JST_SH_SM03B-SRSS-TB_1x03-1MP_P1.00mm_Horizontal",
+      "customFields": {},
+      "pins": [
+        {
+          "pinName": "Pin_1",
+          "pinNumber": "1",
+          "pinType": "passive",
+          "net": "Net-(J4-Pin_1)"
+        },
+        {
+          "pinName": "Pin_2",
+          "pinNumber": "2",
+          "pinType": "passive",
+          "net": "Net-(J4-Pin_2)"
+        },
+        {
+          "pinName": "Pin_3",
+          "pinNumber": "3",
+          "pinType": "passive",
+          "net": "Net-(J4-Pin_3)"
+        }
+      ]
+    },
+    {
+      "refDes": "J5",
+      "partName": "Conn_01x03",
+      "value": "Conn_01x03",
+      "footprint": "Connector_JST:JST_SH_SM03B-SRSS-TB_1x03-1MP_P1.00mm_Horizontal",
+      "customFields": {},
+      "pins": [
+        {
+          "pinName": "Pin_3",
+          "pinNumber": "3",
+          "pinType": "passive",
+          "net": "Net-(J4-Pin_3)"
+        },
+        {
+          "pinName": "Pin_1",
+          "pinNumber": "1",
+          "pinType": "passive",
+          "net": "Net-(J5-Pin_1)"
+        },
+        {
+          "pinName": "Pin_2",
+          "pinNumber": "2",
+          "pinType": "passive",
+          "net": "Net-(J5-Pin_2)"
+        }
+      ]
+    },
+    {
+      "refDes": "J6",
+      "partName": "Conn_01x03",
+      "value": "Conn_01x03",
+      "footprint": "Connector_JST:JST_SH_SM03B-SRSS-TB_1x03-1MP_P1.00mm_Horizontal",
+      "customFields": {},
+      "pins": [
+        {
+          "pinName": "Pin_1",
+          "pinNumber": "1",
+          "pinType": "passive",
+          "net": "Net-(J6-Pin_1)"
+        },
+        {
+          "pinName": "Pin_2",
+          "pinNumber": "2",
+          "pinType": "passive",
+          "net": "Net-(J6-Pin_2)"
+        },
+        {
+          "pinName": "Pin_3",
+          "pinNumber": "3",
+          "pinType": "passive",
+          "net": "Net-(J6-Pin_3)"
+        }
+      ]
+    },
+    {
+      "refDes": "J7",
+      "partName": "Conn_01x03",
+      "value": "Conn_01x03",
+      "footprint": "Connector_JST:JST_SH_SM03B-SRSS-TB_1x03-1MP_P1.00mm_Horizontal",
+      "customFields": {},
+      "pins": [
+        {
+          "pinName": "Pin_3",
+          "pinNumber": "3",
+          "pinType": "passive",
+          "net": "Net-(J6-Pin_3)"
+        },
+        {
+          "pinName": "Pin_1",
+          "pinNumber": "1",
+          "pinType": "passive",
+          "net": "Net-(J7-Pin_1)"
+        },
+        {
+          "pinName": "Pin_2",
+          "pinNumber": "2",
+          "pinType": "passive",
+          "net": "Net-(J7-Pin_2)"
+        }
+      ]
+    },
+    {
+      "refDes": "J8",
+      "partName": "Conn_01x03",
+      "value": "Conn_01x03",
+      "footprint": "Connector_JST:JST_SH_SM03B-SRSS-TB_1x03-1MP_P1.00mm_Horizontal",
+      "customFields": {},
+      "pins": [
+        {
+          "pinName": "Pin_1",
+          "pinNumber": "1",
+          "pinType": "passive",
+          "net": "Net-(J8-Pin_1)"
+        },
+        {
+          "pinName": "Pin_2",
+          "pinNumber": "2",
+          "pinType": "passive",
+          "net": "Net-(J8-Pin_2)"
+        },
+        {
+          "pinName": "Pin_3",
+          "pinNumber": "3",
+          "pinType": "passive",
+          "net": "Net-(J8-Pin_3)"
+        }
+      ]
+    },
+    {
+      "refDes": "J9",
+      "partName": "Conn_01x03",
+      "value": "Conn_01x03",
+      "footprint": "Connector_JST:JST_SH_SM03B-SRSS-TB_1x03-1MP_P1.00mm_Horizontal",
+      "customFields": {},
+      "pins": [
+        {
+          "pinName": "Pin_3",
+          "pinNumber": "3",
+          "pinType": "passive",
+          "net": "Net-(J8-Pin_3)"
+        },
+        {
+          "pinName": "Pin_1",
+          "pinNumber": "1",
+          "pinType": "passive",
+          "net": "Net-(J9-Pin_1)"
+        },
+        {
+          "pinName": "Pin_2",
+          "pinNumber": "2",
+          "pinType": "passive",
+          "net": "Net-(J9-Pin_2)"
+        }
+      ]
+    },
+    {
+      "refDes": "J10",
+      "partName": "Conn_01x02",
+      "value": "Conn_01x02",
+      "footprint": "Connector_JST:JST_SH_SM02B-SRSS-TB_1x02-1MP_P1.00mm_Horizontal",
+      "customFields": {},
+      "pins": [
+        {
+          "pinName": "Pin_1",
+          "pinNumber": "1",
+          "pinType": "passive",
+          "net": "/+3.3V"
+        },
+        {
+          "pinName": "Pin_2",
+          "pinNumber": "2",
+          "pinType": "passive",
+          "net": "/GND"
+        }
+      ]
+    },
+    {
+      "refDes": "R3",
+      "partName": "R",
+      "value": "10k\u03a9",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "customFields": {},
+      "pins": [
+        {
+          "pinName": "",
+          "pinNumber": "1",
+          "pinType": "passive",
+          "net": "/+3.3V"
+        },
+        {
+          "pinName": "",
+          "pinNumber": "2",
+          "pinType": "passive",
+          "net": "Net-(J4-Pin_3)"
+        }
+      ]
+    },
+    {
+      "refDes": "R4",
+      "partName": "R",
+      "value": "10k\u03a9",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "customFields": {},
+      "pins": [
+        {
+          "pinName": "",
+          "pinNumber": "1",
+          "pinType": "passive",
+          "net": "/+3.3V"
+        },
+        {
+          "pinName": "",
+          "pinNumber": "2",
+          "pinType": "passive",
+          "net": "Net-(J4-Pin_3)"
+        }
+      ]
+    },
+    {
+      "refDes": "R5",
+      "partName": "R",
+      "value": "10k\u03a9",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "customFields": {},
+      "pins": [
+        {
+          "pinName": "",
+          "pinNumber": "1",
+          "pinType": "passive",
+          "net": "/+3.3V"
+        },
+        {
+          "pinName": "",
+          "pinNumber": "2",
+          "pinType": "passive",
+          "net": "Net-(J6-Pin_3)"
+        }
+      ]
+    },
+    {
+      "refDes": "R6",
+      "partName": "R",
+      "value": "10k\u03a9",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "customFields": {},
+      "pins": [
+        {
+          "pinName": "",
+          "pinNumber": "2",
+          "pinType": "passive",
+          "net": "/+3.3V"
+        },
+        {
+          "pinName": "",
+          "pinNumber": "1",
+          "pinType": "passive",
+          "net": "Net-(U2-10)"
+        }
+      ]
+    },
+    {
+      "refDes": "R7",
+      "partName": "R",
+      "value": "10k\u03a9",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "customFields": {},
+      "pins": [
+        {
+          "pinName": "",
+          "pinNumber": "1",
+          "pinType": "passive",
+          "net": "/+3.3V"
+        },
+        {
+          "pinName": "",
+          "pinNumber": "2",
+          "pinType": "passive",
+          "net": "Net-(J6-Pin_3)"
+        }
+      ]
+    },
+    {
+      "refDes": "R8",
+      "partName": "R",
+      "value": "10k\u03a9",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "customFields": {},
+      "pins": [
+        {
+          "pinName": "",
+          "pinNumber": "1",
+          "pinType": "passive",
+          "net": "/+3.3V"
+        },
+        {
+          "pinName": "",
+          "pinNumber": "2",
+          "pinType": "passive",
+          "net": "Net-(J8-Pin_3)"
+        }
+      ]
+    },
+    {
+      "refDes": "R9",
+      "partName": "R",
+      "value": "10k\u03a9",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "customFields": {},
+      "pins": [
+        {
+          "pinName": "",
+          "pinNumber": "1",
+          "pinType": "passive",
+          "net": "/+3.3V"
+        },
+        {
+          "pinName": "",
+          "pinNumber": "2",
+          "pinType": "passive",
+          "net": "Net-(J8-Pin_3)"
+        }
+      ]
+    },
+    {
+      "refDes": "R10",
+      "partName": "R",
+      "value": "100\u03a9",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "customFields": {},
+      "pins": [
+        {
+          "pinName": "",
+          "pinNumber": "1",
+          "pinType": "passive",
+          "net": "Net-(J4-Pin_1)"
+        },
+        {
+          "pinName": "",
+          "pinNumber": "2",
+          "pinType": "passive",
+          "net": "Net-(U3-SD0)"
+        }
+      ]
+    },
+    {
+      "refDes": "R11",
+      "partName": "R",
+      "value": "100\u03a9",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "customFields": {},
+      "pins": [
+        {
+          "pinName": "",
+          "pinNumber": "1",
+          "pinType": "passive",
+          "net": "Net-(J4-Pin_2)"
+        },
+        {
+          "pinName": "",
+          "pinNumber": "2",
+          "pinType": "passive",
+          "net": "Net-(U3-SC0)"
+        }
+      ]
+    },
+    {
+      "refDes": "R12",
+      "partName": "R",
+      "value": "100\u03a9",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "customFields": {},
+      "pins": [
+        {
+          "pinName": "",
+          "pinNumber": "1",
+          "pinType": "passive",
+          "net": "Net-(J5-Pin_1)"
+        },
+        {
+          "pinName": "",
+          "pinNumber": "2",
+          "pinType": "passive",
+          "net": "Net-(U3-SD1)"
+        }
+      ]
+    },
+    {
+      "refDes": "R13",
+      "partName": "R",
+      "value": "100\u03a9",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "customFields": {},
+      "pins": [
+        {
+          "pinName": "",
+          "pinNumber": "1",
+          "pinType": "passive",
+          "net": "Net-(J5-Pin_2)"
+        },
+        {
+          "pinName": "",
+          "pinNumber": "2",
+          "pinType": "passive",
+          "net": "Net-(U3-SC1)"
+        }
+      ]
+    },
+    {
+      "refDes": "R14",
+      "partName": "R",
+      "value": "100\u03a9",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "customFields": {},
+      "pins": [
+        {
+          "pinName": "",
+          "pinNumber": "1",
+          "pinType": "passive",
+          "net": "Net-(J6-Pin_1)"
+        },
+        {
+          "pinName": "",
+          "pinNumber": "2",
+          "pinType": "passive",
+          "net": "Net-(U3-SD2)"
+        }
+      ]
+    },
+    {
+      "refDes": "R15",
+      "partName": "R",
+      "value": "100\u03a9",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "customFields": {},
+      "pins": [
+        {
+          "pinName": "",
+          "pinNumber": "1",
+          "pinType": "passive",
+          "net": "Net-(J6-Pin_2)"
+        },
+        {
+          "pinName": "",
+          "pinNumber": "2",
+          "pinType": "passive",
+          "net": "Net-(U3-SC2)"
+        }
+      ]
+    },
+    {
+      "refDes": "R16",
+      "partName": "R",
+      "value": "100\u03a9",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "customFields": {},
+      "pins": [
+        {
+          "pinName": "",
+          "pinNumber": "1",
+          "pinType": "passive",
+          "net": "Net-(J7-Pin_1)"
+        },
+        {
+          "pinName": "",
+          "pinNumber": "2",
+          "pinType": "passive",
+          "net": "Net-(U3-SD3)"
+        }
+      ]
+    },
+    {
+      "refDes": "R17",
+      "partName": "R",
+      "value": "100\u03a9",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "customFields": {},
+      "pins": [
+        {
+          "pinName": "",
+          "pinNumber": "1",
+          "pinType": "passive",
+          "net": "Net-(J7-Pin_2)"
+        },
+        {
+          "pinName": "",
+          "pinNumber": "2",
+          "pinType": "passive",
+          "net": "Net-(U3-SC3)"
+        }
+      ]
+    },
+    {
+      "refDes": "R18",
+      "partName": "R",
+      "value": "100\u03a9",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "customFields": {},
+      "pins": [
+        {
+          "pinName": "",
+          "pinNumber": "1",
+          "pinType": "passive",
+          "net": "Net-(J8-Pin_1)"
+        },
+        {
+          "pinName": "",
+          "pinNumber": "2",
+          "pinType": "passive",
+          "net": "Net-(U3-SD4)"
+        }
+      ]
+    },
+    {
+      "refDes": "R19",
+      "partName": "R",
+      "value": "100\u03a9",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "customFields": {},
+      "pins": [
+        {
+          "pinName": "",
+          "pinNumber": "1",
+          "pinType": "passive",
+          "net": "Net-(J8-Pin_2)"
+        },
+        {
+          "pinName": "",
+          "pinNumber": "2",
+          "pinType": "passive",
+          "net": "Net-(U3-SC4)"
+        }
+      ]
+    },
+    {
+      "refDes": "R20",
+      "partName": "R",
+      "value": "100\u03a9",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "customFields": {},
+      "pins": [
+        {
+          "pinName": "",
+          "pinNumber": "1",
+          "pinType": "passive",
+          "net": "Net-(J9-Pin_1)"
+        },
+        {
+          "pinName": "",
+          "pinNumber": "2",
+          "pinType": "passive",
+          "net": "Net-(U3-SD5)"
+        }
+      ]
+    },
+    {
+      "refDes": "R21",
+      "partName": "R",
+      "value": "100\u03a9",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "customFields": {},
+      "pins": [
+        {
+          "pinName": "",
+          "pinNumber": "1",
+          "pinType": "passive",
+          "net": "Net-(J9-Pin_2)"
+        },
+        {
+          "pinName": "",
+          "pinNumber": "2",
+          "pinType": "passive",
+          "net": "Net-(U3-SC5)"
+        }
+      ]
+    },
+    {
+      "refDes": "TCA-SCL1",
+      "partName": "TestPoint",
+      "value": "TestPoint",
+      "footprint": "TestPoint:TestPoint_Pad_D2.0mm",
+      "customFields": {},
+      "pins": [
+        {
+          "pinName": "1",
+          "pinNumber": "1",
+          "pinType": "passive",
+          "net": "Net-(U3-SCL)"
+        }
+      ]
+    },
+    {
+      "refDes": "TCA-SDA1",
+      "partName": "TestPoint",
+      "value": "TestPoint",
+      "footprint": "TestPoint:TestPoint_Pad_D2.0mm",
+      "customFields": {},
+      "pins": [
+        {
+          "pinName": "1",
+          "pinNumber": "1",
+          "pinType": "passive",
+          "net": "Net-(U3-SDA)"
+        }
+      ]
+    },
+    {
+      "refDes": "TPIO12",
+      "partName": "TestPoint",
+      "value": "TestPoint",
+      "footprint": "TestPoint:TestPoint_Pad_D2.0mm",
+      "customFields": {},
+      "pins": [
+        {
+          "pinName": "1",
+          "pinNumber": "1",
+          "pinType": "passive",
+          "net": "Net-(J6-Pin_3)"
+        }
+      ]
+    },
+    {
+      "refDes": "U2",
+      "partName": "T-Display-S3",
+      "value": "T-Display-S3",
+      "footprint": "Library:T-Display-S3",
+      "customFields": {},
+      "pins": [
+        {
+          "pinName": "5V",
+          "pinNumber": "12",
+          "pinType": "power_in",
+          "net": "/+5V"
+        },
+        {
+          "pinName": "GND",
+          "pinNumber": "11",
+          "pinType": "power_in",
+          "net": "/GND"
+        },
+        {
+          "pinName": "GND",
+          "pinNumber": "13",
+          "pinType": "power_in",
+          "net": "/GND"
+        },
+        {
+          "pinName": "GND",
+          "pinNumber": "14",
+          "pinType": "power_in",
+          "net": "/GND"
+        },
+        {
+          "pinName": "GND",
+          "pinNumber": "22",
+          "pinType": "power_in",
+          "net": "/GND"
+        },
+        {
+          "pinName": "GND",
+          "pinNumber": "23",
+          "pinType": "power_in",
+          "net": "/GND"
+        },
+        {
+          "pinName": "44",
+          "pinNumber": "16",
+          "pinType": "bidirectional",
+          "net": "/SCL"
+        },
+        {
+          "pinName": "43",
+          "pinNumber": "15",
+          "pinType": "bidirectional",
+          "net": "/SDA"
+        },
+        {
+          "pinName": "3v",
+          "pinNumber": "24",
+          "pinType": "bidirectional",
+          "net": "Net-(3V1-Pad1)"
+        },
+        {
+          "pinName": "3v",
+          "pinNumber": "1",
+          "pinType": "power_in",
+          "net": "Net-(3V2-Pad1)"
+        },
+        {
+          "pinName": "2",
+          "pinNumber": "3",
+          "pinType": "bidirectional",
+          "net": "Net-(J3-Pin_2)"
+        },
+        {
+          "pinName": "11",
+          "pinNumber": "6",
+          "pinType": "bidirectional",
+          "net": "Net-(J4-Pin_3)"
+        },
+        {
+          "pinName": "12",
+          "pinNumber": "7",
+          "pinType": "bidirectional",
+          "net": "Net-(J6-Pin_3)"
+        },
+        {
+          "pinName": "13",
+          "pinNumber": "8",
+          "pinType": "bidirectional",
+          "net": "Net-(J8-Pin_3)"
+        },
+        {
+          "pinName": "1",
+          "pinNumber": "2",
+          "pinType": "bidirectional",
+          "net": "Net-(U2-1)"
+        },
+        {
+          "pinName": "3",
+          "pinNumber": "4",
+          "pinType": "bidirectional",
+          "net": "Net-(U2-3)"
+        },
+        {
+          "pinName": "10",
+          "pinNumber": "5",
+          "pinType": "bidirectional",
+          "net": "Net-(U2-10)"
+        },
+        {
+          "pinName": "16",
+          "pinNumber": "20",
+          "pinType": "bidirectional",
+          "net": "Net-(U2-16)"
+        },
+        {
+          "pinName": "17",
+          "pinNumber": "18",
+          "pinType": "bidirectional",
+          "net": "Net-(U2-17)"
+        },
+        {
+          "pinName": "18",
+          "pinNumber": "17",
+          "pinType": "bidirectional",
+          "net": "Net-(U2-18)"
+        },
+        {
+          "pinName": "21",
+          "pinNumber": "19",
+          "pinType": "bidirectional",
+          "net": "Net-(U2-21)"
+        },
+        {
+          "pinName": "NC",
+          "pinNumber": "9",
+          "pinType": "no_connect",
+          "net": "unconnected-(U2-NC-Pad9)"
+        },
+        {
+          "pinName": "NC",
+          "pinNumber": "10",
+          "pinType": "no_connect",
+          "net": "unconnected-(U2-NC-Pad10)"
+        },
+        {
+          "pinName": "NC",
+          "pinNumber": "21",
+          "pinType": "bidirectional+no_connect",
+          "net": "unconnected-(U2-NC-Pad21)"
+        }
+      ]
+    },
+    {
+      "refDes": "U3",
+      "partName": "TCA9548APWR",
+      "value": "TCA9548APWR",
+      "footprint": "TCA9548:SOP65P640X120-24N",
+      "customFields": {},
+      "pins": [
+        {
+          "pinName": "VCC",
+          "pinNumber": "24",
+          "pinType": "power_in",
+          "net": "/+3.3V"
+        },
+        {
+          "pinName": "A0",
+          "pinNumber": "1",
+          "pinType": "input",
+          "net": "/GND"
+        },
+        {
+          "pinName": "GND",
+          "pinNumber": "12",
+          "pinType": "power_in",
+          "net": "/GND"
+        },
+        {
+          "pinName": "A1",
+          "pinNumber": "2",
+          "pinType": "input",
+          "net": "/GND"
+        },
+        {
+          "pinName": "A2",
+          "pinNumber": "21",
+          "pinType": "input",
+          "net": "/GND"
+        },
+        {
+          "pinName": "~{RESET}",
+          "pinNumber": "3",
+          "pinType": "input",
+          "net": "Net-(U2-10)"
+        },
+        {
+          "pinName": "SC0",
+          "pinNumber": "5",
+          "pinType": "bidirectional",
+          "net": "Net-(U3-SC0)"
+        },
+        {
+          "pinName": "SC1",
+          "pinNumber": "7",
+          "pinType": "bidirectional",
+          "net": "Net-(U3-SC1)"
+        },
+        {
+          "pinName": "SC2",
+          "pinNumber": "9",
+          "pinType": "bidirectional",
+          "net": "Net-(U3-SC2)"
+        },
+        {
+          "pinName": "SC3",
+          "pinNumber": "11",
+          "pinType": "bidirectional",
+          "net": "Net-(U3-SC3)"
+        },
+        {
+          "pinName": "SC4",
+          "pinNumber": "14",
+          "pinType": "bidirectional",
+          "net": "Net-(U3-SC4)"
+        },
+        {
+          "pinName": "SC5",
+          "pinNumber": "16",
+          "pinType": "bidirectional",
+          "net": "Net-(U3-SC5)"
+        },
+        {
+          "pinName": "SCL",
+          "pinNumber": "22",
+          "pinType": "input",
+          "net": "Net-(U3-SCL)"
+        },
+        {
+          "pinName": "SD0",
+          "pinNumber": "4",
+          "pinType": "bidirectional",
+          "net": "Net-(U3-SD0)"
+        },
+        {
+          "pinName": "SD1",
+          "pinNumber": "6",
+          "pinType": "bidirectional",
+          "net": "Net-(U3-SD1)"
+        },
+        {
+          "pinName": "SD2",
+          "pinNumber": "8",
+          "pinType": "bidirectional",
+          "net": "Net-(U3-SD2)"
+        },
+        {
+          "pinName": "SD3",
+          "pinNumber": "10",
+          "pinType": "bidirectional",
+          "net": "Net-(U3-SD3)"
+        },
+        {
+          "pinName": "SD4",
+          "pinNumber": "13",
+          "pinType": "bidirectional",
+          "net": "Net-(U3-SD4)"
+        },
+        {
+          "pinName": "SD5",
+          "pinNumber": "15",
+          "pinType": "bidirectional",
+          "net": "Net-(U3-SD5)"
+        },
+        {
+          "pinName": "SDA",
+          "pinNumber": "23",
+          "pinType": "bidirectional",
+          "net": "Net-(U3-SDA)"
+        },
+        {
+          "pinName": "SC6",
+          "pinNumber": "18",
+          "pinType": "bidirectional+no_connect",
+          "net": "unconnected-(U3-SC6-Pad18)"
+        },
+        {
+          "pinName": "SC7",
+          "pinNumber": "20",
+          "pinType": "bidirectional+no_connect",
+          "net": "unconnected-(U3-SC7-Pad20)"
+        },
+        {
+          "pinName": "SD6",
+          "pinNumber": "17",
+          "pinType": "bidirectional+no_connect",
+          "net": "unconnected-(U3-SD6-Pad17)"
+        },
+        {
+          "pinName": "SD7",
+          "pinNumber": "19",
+          "pinType": "bidirectional+no_connect",
+          "net": "unconnected-(U3-SD7-Pad19)"
+        }
+      ]
+    },
+    {
+      "refDes": "U4",
+      "partName": "AMS1117-3.3",
+      "value": "AMS1117-3.3",
+      "footprint": "AMS1117-3.3:SOT229P700X180-4N",
+      "customFields": {},
+      "pins": [
+        {
+          "pinName": "VOUT",
+          "pinNumber": "2",
+          "pinType": "output",
+          "net": "/+3.3V"
+        },
+        {
+          "pinName": "GND/ADJ",
+          "pinNumber": "1",
+          "pinType": "power_in",
+          "net": "/GND"
+        },
+        {
+          "pinName": "VIN",
+          "pinNumber": "3",
+          "pinType": "input",
+          "net": "Net-(D1-K)"
+        }
+      ]
+    }
+  ],
+  "nets": [
+    {
+      "netName": "/+3.3V",
+      "connections": {
+        "class": "Default",
+        "connections": [
+          {
+            "refDes": "C2",
+            "pin": "1"
+          },
+          {
+            "refDes": "C4",
+            "pin": "1"
+          },
+          {
+            "refDes": "J10",
+            "pin": "Pin_1"
+          },
+          {
+            "refDes": "R3",
+            "pin": "1"
+          },
+          {
+            "refDes": "R4",
+            "pin": "1"
+          },
+          {
+            "refDes": "R5",
+            "pin": "1"
+          },
+          {
+            "refDes": "R6",
+            "pin": "2"
+          },
+          {
+            "refDes": "R7",
+            "pin": "1"
+          },
+          {
+            "refDes": "R8",
+            "pin": "1"
+          },
+          {
+            "refDes": "R9",
+            "pin": "1"
+          },
+          {
+            "refDes": "U3",
+            "pin": "VCC"
+          },
+          {
+            "refDes": "U4",
+            "pin": "VOUT"
+          }
+        ]
+      }
+    },
+    {
+      "netName": "/+5V",
+      "connections": {
+        "class": "Default",
+        "connections": [
+          {
+            "refDes": "5V1",
+            "pin": "1"
+          },
+          {
+            "refDes": "D1",
+            "pin": "A"
+          },
+          {
+            "refDes": "J2",
+            "pin": "5V"
+          },
+          {
+            "refDes": "J3",
+            "pin": "Pin_1"
+          },
+          {
+            "refDes": "U2",
+            "pin": "5V"
+          }
+        ]
+      }
+    },
+    {
+      "netName": "/GND",
+      "connections": {
+        "class": "Default",
+        "connections": [
+          {
+            "refDes": "C1",
+            "pin": "2"
+          },
+          {
+            "refDes": "C2",
+            "pin": "2"
+          },
+          {
+            "refDes": "C3",
+            "pin": "2"
+          },
+          {
+            "refDes": "C4",
+            "pin": "2"
+          },
+          {
+            "refDes": "GND1",
+            "pin": "1"
+          },
+          {
+            "refDes": "GND2",
+            "pin": "1"
+          },
+          {
+            "refDes": "J10",
+            "pin": "Pin_2"
+          },
+          {
+            "refDes": "J2",
+            "pin": "GND"
+          },
+          {
+            "refDes": "J3",
+            "pin": "Pin_3"
+          },
+          {
+            "refDes": "U2",
+            "pin": "GND"
+          },
+          {
+            "refDes": "U2",
+            "pin": "GND"
+          },
+          {
+            "refDes": "U2",
+            "pin": "GND"
+          },
+          {
+            "refDes": "U2",
+            "pin": "GND"
+          },
+          {
+            "refDes": "U2",
+            "pin": "GND"
+          },
+          {
+            "refDes": "U3",
+            "pin": "A0"
+          },
+          {
+            "refDes": "U3",
+            "pin": "GND"
+          },
+          {
+            "refDes": "U3",
+            "pin": "A1"
+          },
+          {
+            "refDes": "U3",
+            "pin": "A2"
+          },
+          {
+            "refDes": "U4",
+            "pin": "GND/ADJ"
+          }
+        ]
+      }
+    },
+    {
+      "netName": "/SCL",
+      "connections": {
+        "class": "Default",
+        "connections": [
+          {
+            "refDes": "GPIO44",
+            "pin": "1"
+          },
+          {
+            "refDes": "U2",
+            "pin": "44"
+          }
+        ]
+      }
+    },
+    {
+      "netName": "/SDA",
+      "connections": {
+        "class": "Default",
+        "connections": [
+          {
+            "refDes": "GPIO43",
+            "pin": "1"
+          },
+          {
+            "refDes": "U2",
+            "pin": "43"
+          }
+        ]
+      }
+    },
+    {
+      "netName": "Net-(3V1-Pad1)",
+      "connections": {
+        "class": "Default",
+        "connections": [
+          {
+            "refDes": "3V1",
+            "pin": "1"
+          },
+          {
+            "refDes": "U2",
+            "pin": "3v"
+          }
+        ]
+      }
+    },
+    {
+      "netName": "Net-(3V2-Pad1)",
+      "connections": {
+        "class": "Default",
+        "connections": [
+          {
+            "refDes": "3V2",
+            "pin": "1"
+          },
+          {
+            "refDes": "U2",
+            "pin": "3v"
+          }
+        ]
+      }
+    },
+    {
+      "netName": "Net-(D1-K)",
+      "connections": {
+        "class": "Default",
+        "connections": [
+          {
+            "refDes": "C1",
+            "pin": "1"
+          },
+          {
+            "refDes": "C3",
+            "pin": "1"
+          },
+          {
+            "refDes": "D1",
+            "pin": "K"
+          },
+          {
+            "refDes": "U4",
+            "pin": "VIN"
+          }
+        ]
+      }
+    },
+    {
+      "netName": "Net-(J3-Pin_2)",
+      "connections": {
+        "class": "Default",
+        "connections": [
+          {
+            "refDes": "GPIO2",
+            "pin": "1"
+          },
+          {
+            "refDes": "J3",
+            "pin": "Pin_2"
+          },
+          {
+            "refDes": "U2",
+            "pin": "2"
+          }
+        ]
+      }
+    },
+    {
+      "netName": "Net-(J4-Pin_1)",
+      "connections": {
+        "class": "Default",
+        "connections": [
+          {
+            "refDes": "J4",
+            "pin": "Pin_1"
+          },
+          {
+            "refDes": "R10",
+            "pin": "1"
+          }
+        ]
+      }
+    },
+    {
+      "netName": "Net-(J4-Pin_2)",
+      "connections": {
+        "class": "Default",
+        "connections": [
+          {
+            "refDes": "J4",
+            "pin": "Pin_2"
+          },
+          {
+            "refDes": "R11",
+            "pin": "1"
+          }
+        ]
+      }
+    },
+    {
+      "netName": "Net-(J4-Pin_3)",
+      "connections": {
+        "class": "Default",
+        "connections": [
+          {
+            "refDes": "GPIO12",
+            "pin": "1"
+          },
+          {
+            "refDes": "J4",
+            "pin": "Pin_3"
+          },
+          {
+            "refDes": "J5",
+            "pin": "Pin_3"
+          },
+          {
+            "refDes": "R3",
+            "pin": "2"
+          },
+          {
+            "refDes": "R4",
+            "pin": "2"
+          },
+          {
+            "refDes": "U2",
+            "pin": "11"
+          }
+        ]
+      }
+    },
+    {
+      "netName": "Net-(J5-Pin_1)",
+      "connections": {
+        "class": "Default",
+        "connections": [
+          {
+            "refDes": "J5",
+            "pin": "Pin_1"
+          },
+          {
+            "refDes": "R12",
+            "pin": "1"
+          }
+        ]
+      }
+    },
+    {
+      "netName": "Net-(J5-Pin_2)",
+      "connections": {
+        "class": "Default",
+        "connections": [
+          {
+            "refDes": "J5",
+            "pin": "Pin_2"
+          },
+          {
+            "refDes": "R13",
+            "pin": "1"
+          }
+        ]
+      }
+    },
+    {
+      "netName": "Net-(J6-Pin_1)",
+      "connections": {
+        "class": "Default",
+        "connections": [
+          {
+            "refDes": "J6",
+            "pin": "Pin_1"
+          },
+          {
+            "refDes": "R14",
+            "pin": "1"
+          }
+        ]
+      }
+    },
+    {
+      "netName": "Net-(J6-Pin_2)",
+      "connections": {
+        "class": "Default",
+        "connections": [
+          {
+            "refDes": "J6",
+            "pin": "Pin_2"
+          },
+          {
+            "refDes": "R15",
+            "pin": "1"
+          }
+        ]
+      }
+    },
+    {
+      "netName": "Net-(J6-Pin_3)",
+      "connections": {
+        "class": "Default",
+        "connections": [
+          {
+            "refDes": "J6",
+            "pin": "Pin_3"
+          },
+          {
+            "refDes": "J7",
+            "pin": "Pin_3"
+          },
+          {
+            "refDes": "R5",
+            "pin": "2"
+          },
+          {
+            "refDes": "R7",
+            "pin": "2"
+          },
+          {
+            "refDes": "TPIO12",
+            "pin": "1"
+          },
+          {
+            "refDes": "U2",
+            "pin": "12"
+          }
+        ]
+      }
+    },
+    {
+      "netName": "Net-(J7-Pin_1)",
+      "connections": {
+        "class": "Default",
+        "connections": [
+          {
+            "refDes": "J7",
+            "pin": "Pin_1"
+          },
+          {
+            "refDes": "R16",
+            "pin": "1"
+          }
+        ]
+      }
+    },
+    {
+      "netName": "Net-(J7-Pin_2)",
+      "connections": {
+        "class": "Default",
+        "connections": [
+          {
+            "refDes": "J7",
+            "pin": "Pin_2"
+          },
+          {
+            "refDes": "R17",
+            "pin": "1"
+          }
+        ]
+      }
+    },
+    {
+      "netName": "Net-(J8-Pin_1)",
+      "connections": {
+        "class": "Default",
+        "connections": [
+          {
+            "refDes": "J8",
+            "pin": "Pin_1"
+          },
+          {
+            "refDes": "R18",
+            "pin": "1"
+          }
+        ]
+      }
+    },
+    {
+      "netName": "Net-(J8-Pin_2)",
+      "connections": {
+        "class": "Default",
+        "connections": [
+          {
+            "refDes": "J8",
+            "pin": "Pin_2"
+          },
+          {
+            "refDes": "R19",
+            "pin": "1"
+          }
+        ]
+      }
+    },
+    {
+      "netName": "Net-(J8-Pin_3)",
+      "connections": {
+        "class": "Default",
+        "connections": [
+          {
+            "refDes": "GPIO13",
+            "pin": "1"
+          },
+          {
+            "refDes": "J8",
+            "pin": "Pin_3"
+          },
+          {
+            "refDes": "J9",
+            "pin": "Pin_3"
+          },
+          {
+            "refDes": "R8",
+            "pin": "2"
+          },
+          {
+            "refDes": "R9",
+            "pin": "2"
+          },
+          {
+            "refDes": "U2",
+            "pin": "13"
+          }
+        ]
+      }
+    },
+    {
+      "netName": "Net-(J9-Pin_1)",
+      "connections": {
+        "class": "Default",
+        "connections": [
+          {
+            "refDes": "J9",
+            "pin": "Pin_1"
+          },
+          {
+            "refDes": "R20",
+            "pin": "1"
+          }
+        ]
+      }
+    },
+    {
+      "netName": "Net-(J9-Pin_2)",
+      "connections": {
+        "class": "Default",
+        "connections": [
+          {
+            "refDes": "J9",
+            "pin": "Pin_2"
+          },
+          {
+            "refDes": "R21",
+            "pin": "1"
+          }
+        ]
+      }
+    },
+    {
+      "netName": "Net-(U2-1)",
+      "connections": {
+        "class": "Default",
+        "connections": [
+          {
+            "refDes": "GPIO1",
+            "pin": "1"
+          },
+          {
+            "refDes": "U2",
+            "pin": "1"
+          }
+        ]
+      }
+    },
+    {
+      "netName": "Net-(U2-3)",
+      "connections": {
+        "class": "Default",
+        "connections": [
+          {
+            "refDes": "GPIO3",
+            "pin": "1"
+          },
+          {
+            "refDes": "U2",
+            "pin": "3"
+          }
+        ]
+      }
+    },
+    {
+      "netName": "Net-(U2-10)",
+      "connections": {
+        "class": "Default",
+        "connections": [
+          {
+            "refDes": "GPIO10",
+            "pin": "1"
+          },
+          {
+            "refDes": "R6",
+            "pin": "1"
+          },
+          {
+            "refDes": "U2",
+            "pin": "10"
+          },
+          {
+            "refDes": "U3",
+            "pin": "~{RESET}"
+          }
+        ]
+      }
+    },
+    {
+      "netName": "Net-(U2-16)",
+      "connections": {
+        "class": "Default",
+        "connections": [
+          {
+            "refDes": "GPIO16",
+            "pin": "1"
+          },
+          {
+            "refDes": "U2",
+            "pin": "16"
+          }
+        ]
+      }
+    },
+    {
+      "netName": "Net-(U2-17)",
+      "connections": {
+        "class": "Default",
+        "connections": [
+          {
+            "refDes": "GPIO17",
+            "pin": "1"
+          },
+          {
+            "refDes": "U2",
+            "pin": "17"
+          }
+        ]
+      }
+    },
+    {
+      "netName": "Net-(U2-18)",
+      "connections": {
+        "class": "Default",
+        "connections": [
+          {
+            "refDes": "GPIO18",
+            "pin": "1"
+          },
+          {
+            "refDes": "U2",
+            "pin": "18"
+          }
+        ]
+      }
+    },
+    {
+      "netName": "Net-(U2-21)",
+      "connections": {
+        "class": "Default",
+        "connections": [
+          {
+            "refDes": "GPIO21",
+            "pin": "1"
+          },
+          {
+            "refDes": "U2",
+            "pin": "21"
+          }
+        ]
+      }
+    },
+    {
+      "netName": "Net-(U3-SC0)",
+      "connections": {
+        "class": "Default",
+        "connections": [
+          {
+            "refDes": "R11",
+            "pin": "2"
+          },
+          {
+            "refDes": "U3",
+            "pin": "SC0"
+          }
+        ]
+      }
+    },
+    {
+      "netName": "Net-(U3-SC1)",
+      "connections": {
+        "class": "Default",
+        "connections": [
+          {
+            "refDes": "R13",
+            "pin": "2"
+          },
+          {
+            "refDes": "U3",
+            "pin": "SC1"
+          }
+        ]
+      }
+    },
+    {
+      "netName": "Net-(U3-SC2)",
+      "connections": {
+        "class": "Default",
+        "connections": [
+          {
+            "refDes": "R15",
+            "pin": "2"
+          },
+          {
+            "refDes": "U3",
+            "pin": "SC2"
+          }
+        ]
+      }
+    },
+    {
+      "netName": "Net-(U3-SC3)",
+      "connections": {
+        "class": "Default",
+        "connections": [
+          {
+            "refDes": "R17",
+            "pin": "2"
+          },
+          {
+            "refDes": "U3",
+            "pin": "SC3"
+          }
+        ]
+      }
+    },
+    {
+      "netName": "Net-(U3-SC4)",
+      "connections": {
+        "class": "Default",
+        "connections": [
+          {
+            "refDes": "R19",
+            "pin": "2"
+          },
+          {
+            "refDes": "U3",
+            "pin": "SC4"
+          }
+        ]
+      }
+    },
+    {
+      "netName": "Net-(U3-SC5)",
+      "connections": {
+        "class": "Default",
+        "connections": [
+          {
+            "refDes": "R21",
+            "pin": "2"
+          },
+          {
+            "refDes": "U3",
+            "pin": "SC5"
+          }
+        ]
+      }
+    },
+    {
+      "netName": "Net-(U3-SCL)",
+      "connections": {
+        "class": "Default",
+        "connections": [
+          {
+            "refDes": "TCA-SCL1",
+            "pin": "1"
+          },
+          {
+            "refDes": "U3",
+            "pin": "SCL"
+          }
+        ]
+      }
+    },
+    {
+      "netName": "Net-(U3-SD0)",
+      "connections": {
+        "class": "Default",
+        "connections": [
+          {
+            "refDes": "R10",
+            "pin": "2"
+          },
+          {
+            "refDes": "U3",
+            "pin": "SD0"
+          }
+        ]
+      }
+    },
+    {
+      "netName": "Net-(U3-SD1)",
+      "connections": {
+        "class": "Default",
+        "connections": [
+          {
+            "refDes": "R12",
+            "pin": "2"
+          },
+          {
+            "refDes": "U3",
+            "pin": "SD1"
+          }
+        ]
+      }
+    },
+    {
+      "netName": "Net-(U3-SD2)",
+      "connections": {
+        "class": "Default",
+        "connections": [
+          {
+            "refDes": "R14",
+            "pin": "2"
+          },
+          {
+            "refDes": "U3",
+            "pin": "SD2"
+          }
+        ]
+      }
+    },
+    {
+      "netName": "Net-(U3-SD3)",
+      "connections": {
+        "class": "Default",
+        "connections": [
+          {
+            "refDes": "R16",
+            "pin": "2"
+          },
+          {
+            "refDes": "U3",
+            "pin": "SD3"
+          }
+        ]
+      }
+    },
+    {
+      "netName": "Net-(U3-SD4)",
+      "connections": {
+        "class": "Default",
+        "connections": [
+          {
+            "refDes": "R18",
+            "pin": "2"
+          },
+          {
+            "refDes": "U3",
+            "pin": "SD4"
+          }
+        ]
+      }
+    },
+    {
+      "netName": "Net-(U3-SD5)",
+      "connections": {
+        "class": "Default",
+        "connections": [
+          {
+            "refDes": "R20",
+            "pin": "2"
+          },
+          {
+            "refDes": "U3",
+            "pin": "SD5"
+          }
+        ]
+      }
+    },
+    {
+      "netName": "Net-(U3-SDA)",
+      "connections": {
+        "class": "Default",
+        "connections": [
+          {
+            "refDes": "TCA-SDA1",
+            "pin": "1"
+          },
+          {
+            "refDes": "U3",
+            "pin": "SDA"
+          }
+        ]
+      }
+    },
+    {
+      "netName": "unconnected-(U2-NC-Pad9)",
+      "connections": {
+        "class": "Default",
+        "connections": [
+          {
+            "refDes": "U2",
+            "pin": "NC"
+          }
+        ]
+      }
+    },
+    {
+      "netName": "unconnected-(U2-NC-Pad10)",
+      "connections": {
+        "class": "Default",
+        "connections": [
+          {
+            "refDes": "U2",
+            "pin": "NC"
+          }
+        ]
+      }
+    },
+    {
+      "netName": "unconnected-(U2-NC-Pad21)",
+      "connections": {
+        "class": "Default",
+        "connections": [
+          {
+            "refDes": "U2",
+            "pin": "NC"
+          }
+        ]
+      }
+    },
+    {
+      "netName": "unconnected-(U3-SC6-Pad18)",
+      "connections": {
+        "class": "Default",
+        "connections": [
+          {
+            "refDes": "U3",
+            "pin": "SC6"
+          }
+        ]
+      }
+    },
+    {
+      "netName": "unconnected-(U3-SC7-Pad20)",
+      "connections": {
+        "class": "Default",
+        "connections": [
+          {
+            "refDes": "U3",
+            "pin": "SC7"
+          }
+        ]
+      }
+    },
+    {
+      "netName": "unconnected-(U3-SD6-Pad17)",
+      "connections": {
+        "class": "Default",
+        "connections": [
+          {
+            "refDes": "U3",
+            "pin": "SD6"
+          }
+        ]
+      }
+    },
+    {
+      "netName": "unconnected-(U3-SD7-Pad19)",
+      "connections": {
+        "class": "Default",
+        "connections": [
+          {
+            "refDes": "U3",
+            "pin": "SD7"
+          }
+        ]
+      }
+    }
+  ]
+}
