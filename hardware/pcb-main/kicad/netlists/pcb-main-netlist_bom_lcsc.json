@@ -1,0 +1,357 @@
+{
+  "metadata": {
+    "circuitName": "motion-play-main.kicad_sch",
+    "generatedAt": "2025-09-08T18:36:37.368523",
+    "totalComponents": 35,
+    "componentsWithLCSC": 18,
+    "componentsWithoutLCSC": 17,
+    "uniqueLCSCParts": 13,
+    "lcscFieldNamesFound": [
+      "LCSC Part"
+    ]
+  },
+  "partsWithLCSC": [
+    {
+      "lcscPart": "C114662",
+      "quantity": 2,
+      "references": [
+        "R28",
+        "R29"
+      ],
+      "values": [
+        "2.2k\u03a9"
+      ],
+      "footprints": [
+        "Resistor_SMD:R_0603_1608Metric"
+      ],
+      "lcscFieldNames": [
+        "LCSC Part"
+      ],
+      "primaryValue": "2.2k\u03a9",
+      "primaryFootprint": "Resistor_SMD:R_0603_1608Metric",
+      "customFields": {
+        "LCSC Part": "C114662",
+        "LCSC Part No": "C114662"
+      },
+      "hasInconsistency": false
+    },
+    {
+      "lcscPart": "C130026",
+      "quantity": 1,
+      "references": [
+        "U4"
+      ],
+      "values": [
+        "TCA9548APWR"
+      ],
+      "footprints": [
+        "TCA9548:SOP65P640X120-24N"
+      ],
+      "lcscFieldNames": [
+        "LCSC Part"
+      ],
+      "primaryValue": "TCA9548APWR",
+      "primaryFootprint": "TCA9548:SOP65P640X120-24N",
+      "customFields": {
+        "LCSC Part": "C130026"
+      },
+      "hasInconsistency": false
+    },
+    {
+      "lcscPart": "C14663",
+      "quantity": 2,
+      "references": [
+        "C7",
+        "C9"
+      ],
+      "values": [
+        "100nF"
+      ],
+      "footprints": [
+        "Capacitor_SMD:C_0603_1608Metric"
+      ],
+      "lcscFieldNames": [
+        "LCSC Part"
+      ],
+      "primaryValue": "100nF",
+      "primaryFootprint": "Capacitor_SMD:C_0603_1608Metric",
+      "customFields": {
+        "LCSC Part": "C14663",
+        "LCSC Part No": "C14663"
+      },
+      "hasInconsistency": false
+    },
+    {
+      "lcscPart": "C15849",
+      "quantity": 1,
+      "references": [
+        "C1"
+      ],
+      "values": [
+        "1\u00b5F"
+      ],
+      "footprints": [
+        "Capacitor_SMD:C_0603_1608Metric"
+      ],
+      "lcscFieldNames": [
+        "LCSC Part"
+      ],
+      "primaryValue": "1\u00b5F",
+      "primaryFootprint": "Capacitor_SMD:C_0603_1608Metric",
+      "customFields": {
+        "LCSC Part": "C15849"
+      },
+      "hasInconsistency": false
+    },
+    {
+      "lcscPart": "C160403",
+      "quantity": 3,
+      "references": [
+        "J4",
+        "J5",
+        "J6"
+      ],
+      "values": [
+        "Conn_01x05"
+      ],
+      "footprints": [
+        ""
+      ],
+      "lcscFieldNames": [
+        "LCSC Part"
+      ],
+      "primaryValue": "Conn_01x05",
+      "primaryFootprint": "",
+      "customFields": {
+        "LCSC Part": "C160403",
+        "LCSC Part No": "C160403"
+      },
+      "hasInconsistency": false
+    },
+    {
+      "lcscPart": "C19702",
+      "quantity": 2,
+      "references": [
+        "C8",
+        "C10"
+      ],
+      "values": [
+        "10uF"
+      ],
+      "footprints": [
+        "Capacitor_SMD:C_0603_1608Metric"
+      ],
+      "lcscFieldNames": [
+        "LCSC Part"
+      ],
+      "primaryValue": "10uF",
+      "primaryFootprint": "Capacitor_SMD:C_0603_1608Metric",
+      "customFields": {
+        "LCSC Part": "C19702",
+        "LCSC Part No": "C19702"
+      },
+      "hasInconsistency": false
+    },
+    {
+      "lcscPart": "C23630",
+      "quantity": 1,
+      "references": [
+        "C2"
+      ],
+      "values": [
+        "2.2\u00b5F"
+      ],
+      "footprints": [
+        "Capacitor_SMD:C_0603_1608Metric"
+      ],
+      "lcscFieldNames": [
+        "LCSC Part"
+      ],
+      "primaryValue": "2.2\u00b5F",
+      "primaryFootprint": "Capacitor_SMD:C_0603_1608Metric",
+      "customFields": {
+        "LCSC Part": "C23630"
+      },
+      "hasInconsistency": false
+    },
+    {
+      "lcscPart": "C25804",
+      "quantity": 1,
+      "references": [
+        "R6"
+      ],
+      "values": [
+        "10k\u03a9"
+      ],
+      "footprints": [
+        "Resistor_SMD:R_0603_1608Metric"
+      ],
+      "lcscFieldNames": [
+        "LCSC Part"
+      ],
+      "primaryValue": "10k\u03a9",
+      "primaryFootprint": "Resistor_SMD:R_0603_1608Metric",
+      "customFields": {
+        "LCSC Part": "C25804"
+      },
+      "hasInconsistency": false
+    },
+    {
+      "lcscPart": "C265101",
+      "quantity": 1,
+      "references": [
+        "J3"
+      ],
+      "values": [
+        "LED_Strip"
+      ],
+      "footprints": [
+        "Connector_JST:JST_XH_B3B-XH-AM_1x03_P2.50mm_Vertical"
+      ],
+      "lcscFieldNames": [
+        "LCSC Part"
+      ],
+      "primaryValue": "LED_Strip",
+      "primaryFootprint": "Connector_JST:JST_XH_B3B-XH-AM_1x03_P2.50mm_Vertical",
+      "customFields": {
+        "LCSC Part": "C265101",
+        "LCSC": "C265091"
+      },
+      "hasInconsistency": false
+    },
+    {
+      "lcscPart": "C354897",
+      "quantity": 1,
+      "references": [
+        "F1"
+      ],
+      "values": [
+        "3A"
+      ],
+      "footprints": [
+        "Fuse:Fuse_1206_3216Metric"
+      ],
+      "lcscFieldNames": [
+        "LCSC Part"
+      ],
+      "primaryValue": "3A",
+      "primaryFootprint": "Fuse:Fuse_1206_3216Metric",
+      "customFields": {
+        "LCSC Part": "C354897",
+        "LCSC Part No": "C354897"
+      },
+      "hasInconsistency": false
+    },
+    {
+      "lcscPart": "C36365",
+      "quantity": 1,
+      "references": [
+        "IC1"
+      ],
+      "values": [
+        "SN74AHCT125PWR"
+      ],
+      "footprints": [
+        "motion-play-footprints:SOP65P640X120-14N"
+      ],
+      "lcscFieldNames": [
+        "LCSC Part"
+      ],
+      "primaryValue": "SN74AHCT125PWR",
+      "primaryFootprint": "motion-play-footprints:SOP65P640X120-14N",
+      "customFields": {
+        "LCSC Part": "C36365"
+      },
+      "hasInconsistency": false
+    },
+    {
+      "lcscPart": "C500724",
+      "quantity": 1,
+      "references": [
+        "R27"
+      ],
+      "values": [
+        "0.1R"
+      ],
+      "footprints": [
+        "Resistor_SMD:R_2512_6332Metric"
+      ],
+      "lcscFieldNames": [
+        "LCSC Part"
+      ],
+      "primaryValue": "0.1R",
+      "primaryFootprint": "Resistor_SMD:R_2512_6332Metric",
+      "customFields": {
+        "LCSC Part": "C500724",
+        "LCSC Part No": "C500724"
+      },
+      "hasInconsistency": false
+    },
+    {
+      "lcscPart": "C51118",
+      "quantity": 1,
+      "references": [
+        "U1"
+      ],
+      "values": [
+        "AP2112K-3.3TRG1"
+      ],
+      "footprints": [
+        "AP2112K-3.3TRG1:SOT95P285X140-5N"
+      ],
+      "lcscFieldNames": [
+        "LCSC Part"
+      ],
+      "primaryValue": "AP2112K-3.3TRG1",
+      "primaryFootprint": "AP2112K-3.3TRG1:SOT95P285X140-5N",
+      "customFields": {
+        "LCSC Part": "C51118"
+      },
+      "hasInconsistency": false
+    }
+  ],
+  "partsWithoutLCSC": [
+    {
+      "quantity": 1,
+      "references": [
+        "J2"
+      ],
+      "value": "DWEII Power Module",
+      "footprint": "Library:USBC_Power_Module",
+      "suggestion": "Consider adding LCSC part number"
+    },
+    {
+      "quantity": 1,
+      "references": [
+        "U2"
+      ],
+      "value": "T-Display-S3",
+      "footprint": "Library:T-Display-S3",
+      "suggestion": "Consider adding LCSC part number"
+    },
+    {
+      "quantity": 15,
+      "references": [
+        "TP_GND1",
+        "TPIO1",
+        "TPIO2",
+        "TPIO3",
+        "TPIO10",
+        "TPIO11",
+        "TPIO12",
+        "TPIO13",
+        "TPIO16",
+        "TPIO17",
+        "TPIO18",
+        "TPIO21",
+        "TPIO43",
+        "TPIO44",
+        "TP_5V1"
+      ],
+      "value": "TestPoint",
+      "footprint": "TestPoint:TestPoint_Pad_D2.0mm",
+      "suggestion": "Consider adding LCSC part number"
+    }
+  ],
+  "inconsistencies": []
+}
