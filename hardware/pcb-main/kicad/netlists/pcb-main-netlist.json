@@ -1,0 +1,1984 @@
+{
+  "circuitName": "motion-play-main.kicad_sch",
+  "components": [
+    {
+      "refDes": "C1",
+      "partName": "C",
+      "value": "1\u00b5F",
+      "footprint": "Capacitor_SMD:C_0603_1608Metric",
+      "customFields": {
+        "LCSC Part": "C15849"
+      },
+      "pins": [
+        {
+          "pinName": "",
+          "pinNumber": "2",
+          "pinType": "passive",
+          "net": "+5V"
+        },
+        {
+          "pinName": "",
+          "pinNumber": "1",
+          "pinType": "passive",
+          "net": "GND"
+        }
+      ]
+    },
+    {
+      "refDes": "C2",
+      "partName": "C",
+      "value": "2.2\u00b5F",
+      "footprint": "Capacitor_SMD:C_0603_1608Metric",
+      "customFields": {
+        "LCSC Part": "C23630"
+      },
+      "pins": [
+        {
+          "pinName": "",
+          "pinNumber": "2",
+          "pinType": "passive",
+          "net": "+3.3V"
+        },
+        {
+          "pinName": "",
+          "pinNumber": "1",
+          "pinType": "passive",
+          "net": "GND"
+        }
+      ]
+    },
+    {
+      "refDes": "J2",
+      "partName": "USBC_Power_Module",
+      "value": "DWEII Power Module",
+      "footprint": "Library:USBC_Power_Module",
+      "customFields": {},
+      "pins": [
+        {
+          "pinName": "5V",
+          "pinNumber": "2",
+          "pinType": "power_out",
+          "net": "+5V"
+        },
+        {
+          "pinName": "GND",
+          "pinNumber": "1",
+          "pinType": "power_out",
+          "net": "GND"
+        }
+      ]
+    },
+    {
+      "refDes": "J3",
+      "partName": "Conn_01x03_1",
+      "value": "LED_Strip",
+      "footprint": "Connector_JST:JST_XH_B3B-XH-AM_1x03_P2.50mm_Vertical",
+      "customFields": {
+        "LCSC Part": "C265101",
+        "LCSC": "C265091"
+      },
+      "pins": [
+        {
+          "pinName": "Pin_1",
+          "pinNumber": "31",
+          "pinType": "passive",
+          "net": "/LED Controller/+5V_TO_LEDS"
+        },
+        {
+          "pinName": "Pin_2",
+          "pinNumber": "32",
+          "pinType": "passive",
+          "net": "/LED Controller/DATA_TO_LEDS"
+        },
+        {
+          "pinName": "Pin_3",
+          "pinNumber": "33",
+          "pinType": "passive",
+          "net": "GND"
+        }
+      ]
+    },
+    {
+      "refDes": "J4",
+      "partName": "Conn_01x05",
+      "value": "Conn_01x05",
+      "footprint": "",
+      "customFields": {
+        "LCSC Part": "C160403",
+        "LCSC Part No": "C160403"
+      },
+      "pins": [
+        {
+          "pinName": "Pin_1",
+          "pinNumber": "1",
+          "pinType": "passive",
+          "net": "+3.3V"
+        },
+        {
+          "pinName": "Pin_5",
+          "pinNumber": "5",
+          "pinType": "passive",
+          "net": "/INT1"
+        },
+        {
+          "pinName": "Pin_4",
+          "pinNumber": "4",
+          "pinType": "passive",
+          "net": "/TCA9548A_Subsystem/CH0_SCL"
+        },
+        {
+          "pinName": "Pin_3",
+          "pinNumber": "3",
+          "pinType": "passive",
+          "net": "/TCA9548A_Subsystem/CH0_SDA"
+        },
+        {
+          "pinName": "Pin_2",
+          "pinNumber": "2",
+          "pinType": "passive",
+          "net": "GND"
+        }
+      ]
+    },
+    {
+      "refDes": "J5",
+      "partName": "Conn_01x05",
+      "value": "Conn_01x05",
+      "footprint": "",
+      "customFields": {
+        "LCSC Part": "C160403",
+        "LCSC Part No": "C160403"
+      },
+      "pins": [
+        {
+          "pinName": "Pin_1",
+          "pinNumber": "1",
+          "pinType": "passive",
+          "net": "+3.3V"
+        },
+        {
+          "pinName": "Pin_5",
+          "pinNumber": "5",
+          "pinType": "passive",
+          "net": "/INT2"
+        },
+        {
+          "pinName": "Pin_4",
+          "pinNumber": "4",
+          "pinType": "passive",
+          "net": "/TCA9548A_Subsystem/CH1_SCL"
+        },
+        {
+          "pinName": "Pin_3",
+          "pinNumber": "3",
+          "pinType": "passive",
+          "net": "/TCA9548A_Subsystem/CH1_SDA"
+        },
+        {
+          "pinName": "Pin_2",
+          "pinNumber": "2",
+          "pinType": "passive",
+          "net": "GND"
+        }
+      ]
+    },
+    {
+      "refDes": "J6",
+      "partName": "Conn_01x05",
+      "value": "Conn_01x05",
+      "footprint": "",
+      "customFields": {
+        "LCSC Part": "C160403",
+        "LCSC Part No": "C160403"
+      },
+      "pins": [
+        {
+          "pinName": "Pin_1",
+          "pinNumber": "1",
+          "pinType": "passive",
+          "net": "+3.3V"
+        },
+        {
+          "pinName": "Pin_5",
+          "pinNumber": "5",
+          "pinType": "passive",
+          "net": "/INT3"
+        },
+        {
+          "pinName": "Pin_4",
+          "pinNumber": "4",
+          "pinType": "passive",
+          "net": "/TCA9548A_Subsystem/CH2_SCL"
+        },
+        {
+          "pinName": "Pin_3",
+          "pinNumber": "3",
+          "pinType": "passive",
+          "net": "/TCA9548A_Subsystem/CH2_SDA"
+        },
+        {
+          "pinName": "Pin_2",
+          "pinNumber": "2",
+          "pinType": "passive",
+          "net": "GND"
+        }
+      ]
+    },
+    {
+      "refDes": "TPIO1",
+      "partName": "TestPoint",
+      "value": "TestPoint",
+      "footprint": "TestPoint:TestPoint_Pad_D2.0mm",
+      "customFields": {},
+      "pins": [
+        {
+          "pinName": "1",
+          "pinNumber": "1",
+          "pinType": "passive",
+          "net": "Net-(U2-1)"
+        }
+      ]
+    },
+    {
+      "refDes": "TPIO2",
+      "partName": "TestPoint",
+      "value": "TestPoint",
+      "footprint": "TestPoint:TestPoint_Pad_D2.0mm",
+      "customFields": {},
+      "pins": [
+        {
+          "pinName": "1",
+          "pinNumber": "1",
+          "pinType": "passive",
+          "net": "/LED Controller/+5V_TO_LEDS"
+        }
+      ]
+    },
+    {
+      "refDes": "TPIO3",
+      "partName": "TestPoint",
+      "value": "TestPoint",
+      "footprint": "TestPoint:TestPoint_Pad_D2.0mm",
+      "customFields": {},
+      "pins": [
+        {
+          "pinName": "1",
+          "pinNumber": "1",
+          "pinType": "passive",
+          "net": "Net-(U2-3)"
+        }
+      ]
+    },
+    {
+      "refDes": "TPIO10",
+      "partName": "TestPoint",
+      "value": "TestPoint",
+      "footprint": "TestPoint:TestPoint_Pad_D2.0mm",
+      "customFields": {},
+      "pins": [
+        {
+          "pinName": "1",
+          "pinNumber": "1",
+          "pinType": "passive",
+          "net": "/TCA9548A_Subsystem/TCA_RESET"
+        }
+      ]
+    },
+    {
+      "refDes": "TPIO11",
+      "partName": "TestPoint",
+      "value": "TestPoint",
+      "footprint": "TestPoint:TestPoint_Pad_D2.0mm",
+      "customFields": {},
+      "pins": [
+        {
+          "pinName": "1",
+          "pinNumber": "1",
+          "pinType": "passive",
+          "net": "/INT1"
+        }
+      ]
+    },
+    {
+      "refDes": "TPIO12",
+      "partName": "TestPoint",
+      "value": "TestPoint",
+      "footprint": "TestPoint:TestPoint_Pad_D2.0mm",
+      "customFields": {},
+      "pins": [
+        {
+          "pinName": "1",
+          "pinNumber": "1",
+          "pinType": "passive",
+          "net": "/INT2"
+        }
+      ]
+    },
+    {
+      "refDes": "TPIO13",
+      "partName": "TestPoint",
+      "value": "TestPoint",
+      "footprint": "TestPoint:TestPoint_Pad_D2.0mm",
+      "customFields": {},
+      "pins": [
+        {
+          "pinName": "1",
+          "pinNumber": "1",
+          "pinType": "passive",
+          "net": "/INT3"
+        }
+      ]
+    },
+    {
+      "refDes": "TPIO16",
+      "partName": "TestPoint",
+      "value": "TestPoint",
+      "footprint": "TestPoint:TestPoint_Pad_D2.0mm",
+      "customFields": {},
+      "pins": [
+        {
+          "pinName": "1",
+          "pinNumber": "1",
+          "pinType": "passive",
+          "net": "/LED Controller/DATA_IN"
+        }
+      ]
+    },
+    {
+      "refDes": "TPIO17",
+      "partName": "TestPoint",
+      "value": "TestPoint",
+      "footprint": "TestPoint:TestPoint_Pad_D2.0mm",
+      "customFields": {},
+      "pins": [
+        {
+          "pinName": "1",
+          "pinNumber": "1",
+          "pinType": "passive",
+          "net": "Net-(U2-17)"
+        }
+      ]
+    },
+    {
+      "refDes": "TPIO18",
+      "partName": "TestPoint",
+      "value": "TestPoint",
+      "footprint": "TestPoint:TestPoint_Pad_D2.0mm",
+      "customFields": {},
+      "pins": [
+        {
+          "pinName": "1",
+          "pinNumber": "1",
+          "pinType": "passive",
+          "net": "Net-(U2-18)"
+        }
+      ]
+    },
+    {
+      "refDes": "TPIO21",
+      "partName": "TestPoint",
+      "value": "TestPoint",
+      "footprint": "TestPoint:TestPoint_Pad_D2.0mm",
+      "customFields": {},
+      "pins": [
+        {
+          "pinName": "1",
+          "pinNumber": "1",
+          "pinType": "passive",
+          "net": "Net-(U2-21)"
+        }
+      ]
+    },
+    {
+      "refDes": "TPIO43",
+      "partName": "TestPoint",
+      "value": "TestPoint",
+      "footprint": "TestPoint:TestPoint_Pad_D2.0mm",
+      "customFields": {},
+      "pins": [
+        {
+          "pinName": "1",
+          "pinNumber": "1",
+          "pinType": "passive",
+          "net": "/I2C_SDA"
+        }
+      ]
+    },
+    {
+      "refDes": "TPIO44",
+      "partName": "TestPoint",
+      "value": "TestPoint",
+      "footprint": "TestPoint:TestPoint_Pad_D2.0mm",
+      "customFields": {},
+      "pins": [
+        {
+          "pinName": "1",
+          "pinNumber": "1",
+          "pinType": "passive",
+          "net": "/I2C_SCL"
+        }
+      ]
+    },
+    {
+      "refDes": "TP_5V1",
+      "partName": "TestPoint",
+      "value": "TestPoint",
+      "footprint": "TestPoint:TestPoint_Pad_D2.0mm",
+      "customFields": {},
+      "pins": [
+        {
+          "pinName": "1",
+          "pinNumber": "1",
+          "pinType": "passive",
+          "net": "+5V"
+        }
+      ]
+    },
+    {
+      "refDes": "TP_GND1",
+      "partName": "TestPoint",
+      "value": "TestPoint",
+      "footprint": "TestPoint:TestPoint_Pad_D2.0mm",
+      "customFields": {},
+      "pins": [
+        {
+          "pinName": "1",
+          "pinNumber": "1",
+          "pinType": "passive",
+          "net": "GND"
+        }
+      ]
+    },
+    {
+      "refDes": "U1",
+      "partName": "AP2112K-3.3TRG1",
+      "value": "AP2112K-3.3TRG1",
+      "footprint": "AP2112K-3.3TRG1:SOT95P285X140-5N",
+      "customFields": {
+        "LCSC Part": "C51118"
+      },
+      "pins": [
+        {
+          "pinName": "VOUT",
+          "pinNumber": "5",
+          "pinType": "power_in",
+          "net": "+3.3V"
+        },
+        {
+          "pinName": "VIN",
+          "pinNumber": "1",
+          "pinType": "power_in",
+          "net": "+5V"
+        },
+        {
+          "pinName": "EN",
+          "pinNumber": "3",
+          "pinType": "input",
+          "net": "+5V"
+        },
+        {
+          "pinName": "GND",
+          "pinNumber": "2",
+          "pinType": "power_in",
+          "net": "GND"
+        }
+      ]
+    },
+    {
+      "refDes": "U2",
+      "partName": "T-Display-S3",
+      "value": "T-Display-S3",
+      "footprint": "Library:T-Display-S3",
+      "customFields": {},
+      "pins": [
+        {
+          "pinName": "5V",
+          "pinNumber": "12",
+          "pinType": "power_in",
+          "net": "+5V"
+        },
+        {
+          "pinName": "44",
+          "pinNumber": "16",
+          "pinType": "bidirectional",
+          "net": "/I2C_SCL"
+        },
+        {
+          "pinName": "43",
+          "pinNumber": "15",
+          "pinType": "bidirectional",
+          "net": "/I2C_SDA"
+        },
+        {
+          "pinName": "11",
+          "pinNumber": "6",
+          "pinType": "bidirectional",
+          "net": "/INT1"
+        },
+        {
+          "pinName": "12",
+          "pinNumber": "7",
+          "pinType": "bidirectional",
+          "net": "/INT2"
+        },
+        {
+          "pinName": "13",
+          "pinNumber": "8",
+          "pinType": "bidirectional",
+          "net": "/INT3"
+        },
+        {
+          "pinName": "2",
+          "pinNumber": "3",
+          "pinType": "bidirectional",
+          "net": "/LED Controller/+5V_TO_LEDS"
+        },
+        {
+          "pinName": "16",
+          "pinNumber": "20",
+          "pinType": "bidirectional",
+          "net": "/LED Controller/DATA_IN"
+        },
+        {
+          "pinName": "10",
+          "pinNumber": "5",
+          "pinType": "bidirectional",
+          "net": "/TCA9548A_Subsystem/TCA_RESET"
+        },
+        {
+          "pinName": "GND",
+          "pinNumber": "11",
+          "pinType": "power_in",
+          "net": "GND"
+        },
+        {
+          "pinName": "GND",
+          "pinNumber": "13",
+          "pinType": "power_in",
+          "net": "GND"
+        },
+        {
+          "pinName": "GND",
+          "pinNumber": "14",
+          "pinType": "power_in",
+          "net": "GND"
+        },
+        {
+          "pinName": "GND",
+          "pinNumber": "22",
+          "pinType": "power_in",
+          "net": "GND"
+        },
+        {
+          "pinName": "GND",
+          "pinNumber": "23",
+          "pinType": "power_in",
+          "net": "GND"
+        },
+        {
+          "pinName": "1",
+          "pinNumber": "2",
+          "pinType": "bidirectional",
+          "net": "Net-(U2-1)"
+        },
+        {
+          "pinName": "3",
+          "pinNumber": "4",
+          "pinType": "bidirectional",
+          "net": "Net-(U2-3)"
+        },
+        {
+          "pinName": "17",
+          "pinNumber": "18",
+          "pinType": "bidirectional",
+          "net": "Net-(U2-17)"
+        },
+        {
+          "pinName": "18",
+          "pinNumber": "17",
+          "pinType": "bidirectional",
+          "net": "Net-(U2-18)"
+        },
+        {
+          "pinName": "21",
+          "pinNumber": "19",
+          "pinType": "bidirectional",
+          "net": "Net-(U2-21)"
+        },
+        {
+          "pinName": "3v",
+          "pinNumber": "1",
+          "pinType": "power_in+no_connect",
+          "net": "unconnected-(U2-3v-Pad1)"
+        },
+        {
+          "pinName": "3v",
+          "pinNumber": "24",
+          "pinType": "bidirectional+no_connect",
+          "net": "unconnected-(U2-3v-Pad24)"
+        },
+        {
+          "pinName": "NC",
+          "pinNumber": "9",
+          "pinType": "no_connect",
+          "net": "unconnected-(U2-NC-Pad9)"
+        },
+        {
+          "pinName": "NC",
+          "pinNumber": "10",
+          "pinType": "no_connect",
+          "net": "unconnected-(U2-NC-Pad10)"
+        },
+        {
+          "pinName": "NC",
+          "pinNumber": "21",
+          "pinType": "bidirectional+no_connect",
+          "net": "unconnected-(U2-NC-Pad21)"
+        }
+      ]
+    },
+    {
+      "refDes": "C7",
+      "partName": "C",
+      "value": "100nF",
+      "footprint": "Capacitor_SMD:C_0603_1608Metric",
+      "customFields": {
+        "LCSC Part": "C14663",
+        "LCSC Part No": "C14663"
+      },
+      "pins": [
+        {
+          "pinName": "",
+          "pinNumber": "1",
+          "pinType": "passive",
+          "net": "GND"
+        },
+        {
+          "pinName": "",
+          "pinNumber": "2",
+          "pinType": "passive",
+          "net": "Net-(C7-Pad2)"
+        }
+      ]
+    },
+    {
+      "refDes": "C8",
+      "partName": "C",
+      "value": "10uF",
+      "footprint": "Capacitor_SMD:C_0603_1608Metric",
+      "customFields": {
+        "LCSC Part": "C19702",
+        "LCSC Part No": "C19702"
+      },
+      "pins": [
+        {
+          "pinName": "",
+          "pinNumber": "1",
+          "pinType": "passive",
+          "net": "/LED Controller/+5V_TO_LEDS"
+        },
+        {
+          "pinName": "",
+          "pinNumber": "2",
+          "pinType": "passive",
+          "net": "GND"
+        }
+      ]
+    },
+    {
+      "refDes": "F1",
+      "partName": "Fuse",
+      "value": "3A",
+      "footprint": "Fuse:Fuse_1206_3216Metric",
+      "customFields": {
+        "LCSC Part": "C354897",
+        "LCSC Part No": "C354897"
+      },
+      "pins": [
+        {
+          "pinName": "",
+          "pinNumber": "1",
+          "pinType": "passive",
+          "net": "+5V"
+        },
+        {
+          "pinName": "",
+          "pinNumber": "2",
+          "pinType": "passive",
+          "net": "Net-(C7-Pad2)"
+        }
+      ]
+    },
+    {
+      "refDes": "IC1",
+      "partName": "SN74AHCT125PWR",
+      "value": "SN74AHCT125PWR",
+      "footprint": "motion-play-footprints:SOP65P640X120-14N",
+      "customFields": {
+        "LCSC Part": "C36365"
+      },
+      "pins": [
+        {
+          "pinName": "VCC",
+          "pinNumber": "14",
+          "pinType": "passive",
+          "net": "/LED Controller/+5V_TO_LEDS"
+        },
+        {
+          "pinName": "1A",
+          "pinNumber": "2",
+          "pinType": "passive",
+          "net": "/LED Controller/DATA_IN"
+        },
+        {
+          "pinName": "1Y",
+          "pinNumber": "3",
+          "pinType": "passive",
+          "net": "/LED Controller/DATA_TO_LEDS"
+        },
+        {
+          "pinName": "1~{OE}",
+          "pinNumber": "1",
+          "pinType": "passive",
+          "net": "GND"
+        },
+        {
+          "pinName": "GND",
+          "pinNumber": "7",
+          "pinType": "passive",
+          "net": "GND"
+        },
+        {
+          "pinName": "2A",
+          "pinNumber": "5",
+          "pinType": "passive+no_connect",
+          "net": "unconnected-(IC1-2A-Pad5)"
+        },
+        {
+          "pinName": "2Y",
+          "pinNumber": "6",
+          "pinType": "passive+no_connect",
+          "net": "unconnected-(IC1-2Y-Pad6)"
+        },
+        {
+          "pinName": "2~{OE}",
+          "pinNumber": "4",
+          "pinType": "passive+no_connect",
+          "net": "unconnected-(IC1-2~{OE}-Pad4)"
+        },
+        {
+          "pinName": "3A",
+          "pinNumber": "9",
+          "pinType": "passive+no_connect",
+          "net": "unconnected-(IC1-3A-Pad9)"
+        },
+        {
+          "pinName": "3Y",
+          "pinNumber": "8",
+          "pinType": "passive+no_connect",
+          "net": "unconnected-(IC1-3Y-Pad8)"
+        },
+        {
+          "pinName": "3~{OE}",
+          "pinNumber": "10",
+          "pinType": "passive+no_connect",
+          "net": "unconnected-(IC1-3~{OE}-Pad10)"
+        },
+        {
+          "pinName": "4A",
+          "pinNumber": "12",
+          "pinType": "passive+no_connect",
+          "net": "unconnected-(IC1-4A-Pad12)"
+        },
+        {
+          "pinName": "4Y",
+          "pinNumber": "11",
+          "pinType": "passive+no_connect",
+          "net": "unconnected-(IC1-4Y-Pad11)"
+        },
+        {
+          "pinName": "4~{OE}",
+          "pinNumber": "13",
+          "pinType": "passive+no_connect",
+          "net": "unconnected-(IC1-4~{OE}-Pad13)"
+        }
+      ]
+    },
+    {
+      "refDes": "R27",
+      "partName": "R",
+      "value": "0.1R",
+      "footprint": "Resistor_SMD:R_2512_6332Metric",
+      "customFields": {
+        "LCSC Part": "C500724",
+        "LCSC Part No": "C500724"
+      },
+      "pins": [
+        {
+          "pinName": "",
+          "pinNumber": "2",
+          "pinType": "passive",
+          "net": "/LED Controller/+5V_TO_LEDS"
+        },
+        {
+          "pinName": "",
+          "pinNumber": "1",
+          "pinType": "passive",
+          "net": "Net-(C7-Pad2)"
+        }
+      ]
+    },
+    {
+      "refDes": "C9",
+      "partName": "C",
+      "value": "100nF",
+      "footprint": "Capacitor_SMD:C_0603_1608Metric",
+      "customFields": {
+        "LCSC Part": "C14663",
+        "LCSC Part No": "C14663"
+      },
+      "pins": [
+        {
+          "pinName": "",
+          "pinNumber": "2",
+          "pinType": "passive",
+          "net": "+3.3V"
+        },
+        {
+          "pinName": "",
+          "pinNumber": "1",
+          "pinType": "passive",
+          "net": "GND"
+        }
+      ]
+    },
+    {
+      "refDes": "C10",
+      "partName": "C",
+      "value": "10uF",
+      "footprint": "Capacitor_SMD:C_0603_1608Metric",
+      "customFields": {
+        "LCSC Part": "C19702",
+        "LCSC Part No": "C19702"
+      },
+      "pins": [
+        {
+          "pinName": "",
+          "pinNumber": "2",
+          "pinType": "passive",
+          "net": "+3.3V"
+        },
+        {
+          "pinName": "",
+          "pinNumber": "1",
+          "pinType": "passive",
+          "net": "GND"
+        }
+      ]
+    },
+    {
+      "refDes": "R6",
+      "partName": "R",
+      "value": "10k\u03a9",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "customFields": {
+        "LCSC Part": "C25804"
+      },
+      "pins": [
+        {
+          "pinName": "",
+          "pinNumber": "2",
+          "pinType": "passive",
+          "net": "+3.3V"
+        },
+        {
+          "pinName": "",
+          "pinNumber": "1",
+          "pinType": "passive",
+          "net": "/TCA9548A_Subsystem/TCA_RESET"
+        }
+      ]
+    },
+    {
+      "refDes": "R28",
+      "partName": "R",
+      "value": "2.2k\u03a9",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "customFields": {
+        "LCSC Part": "C114662",
+        "LCSC Part No": "C114662"
+      },
+      "pins": [
+        {
+          "pinName": "",
+          "pinNumber": "2",
+          "pinType": "passive",
+          "net": "+3.3V"
+        },
+        {
+          "pinName": "",
+          "pinNumber": "1",
+          "pinType": "passive",
+          "net": "/I2C_SDA"
+        }
+      ]
+    },
+    {
+      "refDes": "R29",
+      "partName": "R",
+      "value": "2.2k\u03a9",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "customFields": {
+        "LCSC Part": "C114662",
+        "LCSC Part No": "C114662"
+      },
+      "pins": [
+        {
+          "pinName": "",
+          "pinNumber": "2",
+          "pinType": "passive",
+          "net": "+3.3V"
+        },
+        {
+          "pinName": "",
+          "pinNumber": "1",
+          "pinType": "passive",
+          "net": "/I2C_SCL"
+        }
+      ]
+    },
+    {
+      "refDes": "U4",
+      "partName": "TCA9548APWR",
+      "value": "TCA9548APWR",
+      "footprint": "TCA9548:SOP65P640X120-24N",
+      "customFields": {
+        "LCSC Part": "C130026"
+      },
+      "pins": [
+        {
+          "pinName": "VCC",
+          "pinNumber": "24",
+          "pinType": "power_in",
+          "net": "+3.3V"
+        },
+        {
+          "pinName": "SCL",
+          "pinNumber": "22",
+          "pinType": "input",
+          "net": "/I2C_SCL"
+        },
+        {
+          "pinName": "SDA",
+          "pinNumber": "23",
+          "pinType": "bidirectional",
+          "net": "/I2C_SDA"
+        },
+        {
+          "pinName": "SC0",
+          "pinNumber": "5",
+          "pinType": "bidirectional",
+          "net": "/TCA9548A_Subsystem/CH0_SCL"
+        },
+        {
+          "pinName": "SD0",
+          "pinNumber": "4",
+          "pinType": "bidirectional",
+          "net": "/TCA9548A_Subsystem/CH0_SDA"
+        },
+        {
+          "pinName": "SC1",
+          "pinNumber": "7",
+          "pinType": "bidirectional",
+          "net": "/TCA9548A_Subsystem/CH1_SCL"
+        },
+        {
+          "pinName": "SD1",
+          "pinNumber": "6",
+          "pinType": "bidirectional",
+          "net": "/TCA9548A_Subsystem/CH1_SDA"
+        },
+        {
+          "pinName": "SC2",
+          "pinNumber": "9",
+          "pinType": "bidirectional",
+          "net": "/TCA9548A_Subsystem/CH2_SCL"
+        },
+        {
+          "pinName": "SD2",
+          "pinNumber": "8",
+          "pinType": "bidirectional",
+          "net": "/TCA9548A_Subsystem/CH2_SDA"
+        },
+        {
+          "pinName": "~{RESET}",
+          "pinNumber": "3",
+          "pinType": "input",
+          "net": "/TCA9548A_Subsystem/TCA_RESET"
+        },
+        {
+          "pinName": "A0",
+          "pinNumber": "1",
+          "pinType": "input",
+          "net": "GND"
+        },
+        {
+          "pinName": "GND",
+          "pinNumber": "12",
+          "pinType": "power_in",
+          "net": "GND"
+        },
+        {
+          "pinName": "A1",
+          "pinNumber": "2",
+          "pinType": "input",
+          "net": "GND"
+        },
+        {
+          "pinName": "A2",
+          "pinNumber": "21",
+          "pinType": "input",
+          "net": "GND"
+        },
+        {
+          "pinName": "SC3",
+          "pinNumber": "11",
+          "pinType": "bidirectional+no_connect",
+          "net": "unconnected-(U4-SC3-Pad11)"
+        },
+        {
+          "pinName": "SC4",
+          "pinNumber": "14",
+          "pinType": "bidirectional+no_connect",
+          "net": "unconnected-(U4-SC4-Pad14)"
+        },
+        {
+          "pinName": "SC5",
+          "pinNumber": "16",
+          "pinType": "bidirectional+no_connect",
+          "net": "unconnected-(U4-SC5-Pad16)"
+        },
+        {
+          "pinName": "SC6",
+          "pinNumber": "18",
+          "pinType": "bidirectional+no_connect",
+          "net": "unconnected-(U4-SC6-Pad18)"
+        },
+        {
+          "pinName": "SC7",
+          "pinNumber": "20",
+          "pinType": "bidirectional+no_connect",
+          "net": "unconnected-(U4-SC7-Pad20)"
+        },
+        {
+          "pinName": "SD3",
+          "pinNumber": "10",
+          "pinType": "bidirectional+no_connect",
+          "net": "unconnected-(U4-SD3-Pad10)"
+        },
+        {
+          "pinName": "SD4",
+          "pinNumber": "13",
+          "pinType": "bidirectional+no_connect",
+          "net": "unconnected-(U4-SD4-Pad13)"
+        },
+        {
+          "pinName": "SD5",
+          "pinNumber": "15",
+          "pinType": "bidirectional+no_connect",
+          "net": "unconnected-(U4-SD5-Pad15)"
+        },
+        {
+          "pinName": "SD6",
+          "pinNumber": "17",
+          "pinType": "bidirectional+no_connect",
+          "net": "unconnected-(U4-SD6-Pad17)"
+        },
+        {
+          "pinName": "SD7",
+          "pinNumber": "19",
+          "pinType": "bidirectional+no_connect",
+          "net": "unconnected-(U4-SD7-Pad19)"
+        }
+      ]
+    }
+  ],
+  "nets": [
+    {
+      "netName": "+3.3V",
+      "connections": {
+        "class": "Default",
+        "connections": [
+          {
+            "refDes": "C10",
+            "pin": "2"
+          },
+          {
+            "refDes": "C2",
+            "pin": "2"
+          },
+          {
+            "refDes": "C9",
+            "pin": "2"
+          },
+          {
+            "refDes": "J4",
+            "pin": "Pin_1"
+          },
+          {
+            "refDes": "J5",
+            "pin": "Pin_1"
+          },
+          {
+            "refDes": "J6",
+            "pin": "Pin_1"
+          },
+          {
+            "refDes": "R28",
+            "pin": "2"
+          },
+          {
+            "refDes": "R29",
+            "pin": "2"
+          },
+          {
+            "refDes": "R6",
+            "pin": "2"
+          },
+          {
+            "refDes": "U1",
+            "pin": "VOUT"
+          },
+          {
+            "refDes": "U4",
+            "pin": "VCC"
+          }
+        ]
+      }
+    },
+    {
+      "netName": "+5V",
+      "connections": {
+        "class": "Power_5V",
+        "connections": [
+          {
+            "refDes": "C1",
+            "pin": "2"
+          },
+          {
+            "refDes": "F1",
+            "pin": "1"
+          },
+          {
+            "refDes": "J2",
+            "pin": "5V"
+          },
+          {
+            "refDes": "TP_5V1",
+            "pin": "1"
+          },
+          {
+            "refDes": "U1",
+            "pin": "VIN"
+          },
+          {
+            "refDes": "U1",
+            "pin": "EN"
+          },
+          {
+            "refDes": "U2",
+            "pin": "5V"
+          }
+        ]
+      }
+    },
+    {
+      "netName": "/I2C_SCL",
+      "connections": {
+        "class": "Default",
+        "connections": [
+          {
+            "refDes": "R29",
+            "pin": "1"
+          },
+          {
+            "refDes": "TPIO44",
+            "pin": "1"
+          },
+          {
+            "refDes": "U2",
+            "pin": "44"
+          },
+          {
+            "refDes": "U4",
+            "pin": "SCL"
+          }
+        ]
+      }
+    },
+    {
+      "netName": "/I2C_SDA",
+      "connections": {
+        "class": "Default",
+        "connections": [
+          {
+            "refDes": "R28",
+            "pin": "1"
+          },
+          {
+            "refDes": "TPIO43",
+            "pin": "1"
+          },
+          {
+            "refDes": "U2",
+            "pin": "43"
+          },
+          {
+            "refDes": "U4",
+            "pin": "SDA"
+          }
+        ]
+      }
+    },
+    {
+      "netName": "/INT1",
+      "connections": {
+        "class": "Default",
+        "connections": [
+          {
+            "refDes": "J4",
+            "pin": "Pin_5"
+          },
+          {
+            "refDes": "TPIO11",
+            "pin": "1"
+          },
+          {
+            "refDes": "U2",
+            "pin": "11"
+          }
+        ]
+      }
+    },
+    {
+      "netName": "/INT2",
+      "connections": {
+        "class": "Default",
+        "connections": [
+          {
+            "refDes": "J5",
+            "pin": "Pin_5"
+          },
+          {
+            "refDes": "TPIO12",
+            "pin": "1"
+          },
+          {
+            "refDes": "U2",
+            "pin": "12"
+          }
+        ]
+      }
+    },
+    {
+      "netName": "/INT3",
+      "connections": {
+        "class": "Default",
+        "connections": [
+          {
+            "refDes": "J6",
+            "pin": "Pin_5"
+          },
+          {
+            "refDes": "TPIO13",
+            "pin": "1"
+          },
+          {
+            "refDes": "U2",
+            "pin": "13"
+          }
+        ]
+      }
+    },
+    {
+      "netName": "/LED Controller/+5V_TO_LEDS",
+      "connections": {
+        "class": "Default",
+        "connections": [
+          {
+            "refDes": "C8",
+            "pin": "1"
+          },
+          {
+            "refDes": "IC1",
+            "pin": "VCC"
+          },
+          {
+            "refDes": "J3",
+            "pin": "Pin_1"
+          },
+          {
+            "refDes": "R27",
+            "pin": "2"
+          },
+          {
+            "refDes": "TPIO2",
+            "pin": "1"
+          },
+          {
+            "refDes": "U2",
+            "pin": "2"
+          }
+        ]
+      }
+    },
+    {
+      "netName": "/LED Controller/DATA_IN",
+      "connections": {
+        "class": "Default",
+        "connections": [
+          {
+            "refDes": "IC1",
+            "pin": "1A"
+          },
+          {
+            "refDes": "TPIO16",
+            "pin": "1"
+          },
+          {
+            "refDes": "U2",
+            "pin": "16"
+          }
+        ]
+      }
+    },
+    {
+      "netName": "/LED Controller/DATA_TO_LEDS",
+      "connections": {
+        "class": "Default",
+        "connections": [
+          {
+            "refDes": "IC1",
+            "pin": "1Y"
+          },
+          {
+            "refDes": "J3",
+            "pin": "Pin_2"
+          }
+        ]
+      }
+    },
+    {
+      "netName": "/TCA9548A_Subsystem/CH0_SCL",
+      "connections": {
+        "class": "Default",
+        "connections": [
+          {
+            "refDes": "J4",
+            "pin": "Pin_4"
+          },
+          {
+            "refDes": "U4",
+            "pin": "SC0"
+          }
+        ]
+      }
+    },
+    {
+      "netName": "/TCA9548A_Subsystem/CH0_SDA",
+      "connections": {
+        "class": "Default",
+        "connections": [
+          {
+            "refDes": "J4",
+            "pin": "Pin_3"
+          },
+          {
+            "refDes": "U4",
+            "pin": "SD0"
+          }
+        ]
+      }
+    },
+    {
+      "netName": "/TCA9548A_Subsystem/CH1_SCL",
+      "connections": {
+        "class": "Default",
+        "connections": [
+          {
+            "refDes": "J5",
+            "pin": "Pin_4"
+          },
+          {
+            "refDes": "U4",
+            "pin": "SC1"
+          }
+        ]
+      }
+    },
+    {
+      "netName": "/TCA9548A_Subsystem/CH1_SDA",
+      "connections": {
+        "class": "Default",
+        "connections": [
+          {
+            "refDes": "J5",
+            "pin": "Pin_3"
+          },
+          {
+            "refDes": "U4",
+            "pin": "SD1"
+          }
+        ]
+      }
+    },
+    {
+      "netName": "/TCA9548A_Subsystem/CH2_SCL",
+      "connections": {
+        "class": "Default",
+        "connections": [
+          {
+            "refDes": "J6",
+            "pin": "Pin_4"
+          },
+          {
+            "refDes": "U4",
+            "pin": "SC2"
+          }
+        ]
+      }
+    },
+    {
+      "netName": "/TCA9548A_Subsystem/CH2_SDA",
+      "connections": {
+        "class": "Default",
+        "connections": [
+          {
+            "refDes": "J6",
+            "pin": "Pin_3"
+          },
+          {
+            "refDes": "U4",
+            "pin": "SD2"
+          }
+        ]
+      }
+    },
+    {
+      "netName": "/TCA9548A_Subsystem/TCA_RESET",
+      "connections": {
+        "class": "Default",
+        "connections": [
+          {
+            "refDes": "R6",
+            "pin": "1"
+          },
+          {
+            "refDes": "TPIO10",
+            "pin": "1"
+          },
+          {
+            "refDes": "U2",
+            "pin": "10"
+          },
+          {
+            "refDes": "U4",
+            "pin": "~{RESET}"
+          }
+        ]
+      }
+    },
+    {
+      "netName": "GND",
+      "connections": {
+        "class": "Default",
+        "connections": [
+          {
+            "refDes": "C1",
+            "pin": "1"
+          },
+          {
+            "refDes": "C10",
+            "pin": "1"
+          },
+          {
+            "refDes": "C2",
+            "pin": "1"
+          },
+          {
+            "refDes": "C7",
+            "pin": "1"
+          },
+          {
+            "refDes": "C8",
+            "pin": "2"
+          },
+          {
+            "refDes": "C9",
+            "pin": "1"
+          },
+          {
+            "refDes": "IC1",
+            "pin": "1~{OE}"
+          },
+          {
+            "refDes": "IC1",
+            "pin": "GND"
+          },
+          {
+            "refDes": "J2",
+            "pin": "GND"
+          },
+          {
+            "refDes": "J3",
+            "pin": "Pin_3"
+          },
+          {
+            "refDes": "J4",
+            "pin": "Pin_2"
+          },
+          {
+            "refDes": "J5",
+            "pin": "Pin_2"
+          },
+          {
+            "refDes": "J6",
+            "pin": "Pin_2"
+          },
+          {
+            "refDes": "TP_GND1",
+            "pin": "1"
+          },
+          {
+            "refDes": "U1",
+            "pin": "GND"
+          },
+          {
+            "refDes": "U2",
+            "pin": "GND"
+          },
+          {
+            "refDes": "U2",
+            "pin": "GND"
+          },
+          {
+            "refDes": "U2",
+            "pin": "GND"
+          },
+          {
+            "refDes": "U2",
+            "pin": "GND"
+          },
+          {
+            "refDes": "U2",
+            "pin": "GND"
+          },
+          {
+            "refDes": "U4",
+            "pin": "A0"
+          },
+          {
+            "refDes": "U4",
+            "pin": "GND"
+          },
+          {
+            "refDes": "U4",
+            "pin": "A1"
+          },
+          {
+            "refDes": "U4",
+            "pin": "A2"
+          }
+        ]
+      }
+    },
+    {
+      "netName": "Net-(C7-Pad2)",
+      "connections": {
+        "class": "Default",
+        "connections": [
+          {
+            "refDes": "C7",
+            "pin": "2"
+          },
+          {
+            "refDes": "F1",
+            "pin": "2"
+          },
+          {
+            "refDes": "R27",
+            "pin": "1"
+          }
+        ]
+      }
+    },
+    {
+      "netName": "Net-(U2-1)",
+      "connections": {
+        "class": "Default",
+        "connections": [
+          {
+            "refDes": "TPIO1",
+            "pin": "1"
+          },
+          {
+            "refDes": "U2",
+            "pin": "1"
+          }
+        ]
+      }
+    },
+    {
+      "netName": "Net-(U2-3)",
+      "connections": {
+        "class": "Default",
+        "connections": [
+          {
+            "refDes": "TPIO3",
+            "pin": "1"
+          },
+          {
+            "refDes": "U2",
+            "pin": "3"
+          }
+        ]
+      }
+    },
+    {
+      "netName": "Net-(U2-17)",
+      "connections": {
+        "class": "Default",
+        "connections": [
+          {
+            "refDes": "TPIO17",
+            "pin": "1"
+          },
+          {
+            "refDes": "U2",
+            "pin": "17"
+          }
+        ]
+      }
+    },
+    {
+      "netName": "Net-(U2-18)",
+      "connections": {
+        "class": "Default",
+        "connections": [
+          {
+            "refDes": "TPIO18",
+            "pin": "1"
+          },
+          {
+            "refDes": "U2",
+            "pin": "18"
+          }
+        ]
+      }
+    },
+    {
+      "netName": "Net-(U2-21)",
+      "connections": {
+        "class": "Default",
+        "connections": [
+          {
+            "refDes": "TPIO21",
+            "pin": "1"
+          },
+          {
+            "refDes": "U2",
+            "pin": "21"
+          }
+        ]
+      }
+    },
+    {
+      "netName": "unconnected-(IC1-2A-Pad5)",
+      "connections": {
+        "class": "Default",
+        "connections": [
+          {
+            "refDes": "IC1",
+            "pin": "2A"
+          }
+        ]
+      }
+    },
+    {
+      "netName": "unconnected-(IC1-2Y-Pad6)",
+      "connections": {
+        "class": "Default",
+        "connections": [
+          {
+            "refDes": "IC1",
+            "pin": "2Y"
+          }
+        ]
+      }
+    },
+    {
+      "netName": "unconnected-(IC1-2~{OE}-Pad4)",
+      "connections": {
+        "class": "Default",
+        "connections": [
+          {
+            "refDes": "IC1",
+            "pin": "2~{OE}"
+          }
+        ]
+      }
+    },
+    {
+      "netName": "unconnected-(IC1-3A-Pad9)",
+      "connections": {
+        "class": "Default",
+        "connections": [
+          {
+            "refDes": "IC1",
+            "pin": "3A"
+          }
+        ]
+      }
+    },
+    {
+      "netName": "unconnected-(IC1-3Y-Pad8)",
+      "connections": {
+        "class": "Default",
+        "connections": [
+          {
+            "refDes": "IC1",
+            "pin": "3Y"
+          }
+        ]
+      }
+    },
+    {
+      "netName": "unconnected-(IC1-3~{OE}-Pad10)",
+      "connections": {
+        "class": "Default",
+        "connections": [
+          {
+            "refDes": "IC1",
+            "pin": "3~{OE}"
+          }
+        ]
+      }
+    },
+    {
+      "netName": "unconnected-(IC1-4A-Pad12)",
+      "connections": {
+        "class": "Default",
+        "connections": [
+          {
+            "refDes": "IC1",
+            "pin": "4A"
+          }
+        ]
+      }
+    },
+    {
+      "netName": "unconnected-(IC1-4Y-Pad11)",
+      "connections": {
+        "class": "Default",
+        "connections": [
+          {
+            "refDes": "IC1",
+            "pin": "4Y"
+          }
+        ]
+      }
+    },
+    {
+      "netName": "unconnected-(IC1-4~{OE}-Pad13)",
+      "connections": {
+        "class": "Default",
+        "connections": [
+          {
+            "refDes": "IC1",
+            "pin": "4~{OE}"
+          }
+        ]
+      }
+    },
+    {
+      "netName": "unconnected-(U2-3v-Pad1)",
+      "connections": {
+        "class": "Default",
+        "connections": [
+          {
+            "refDes": "U2",
+            "pin": "3v"
+          }
+        ]
+      }
+    },
+    {
+      "netName": "unconnected-(U2-3v-Pad24)",
+      "connections": {
+        "class": "Default",
+        "connections": [
+          {
+            "refDes": "U2",
+            "pin": "3v"
+          }
+        ]
+      }
+    },
+    {
+      "netName": "unconnected-(U2-NC-Pad9)",
+      "connections": {
+        "class": "Default",
+        "connections": [
+          {
+            "refDes": "U2",
+            "pin": "NC"
+          }
+        ]
+      }
+    },
+    {
+      "netName": "unconnected-(U2-NC-Pad10)",
+      "connections": {
+        "class": "Default",
+        "connections": [
+          {
+            "refDes": "U2",
+            "pin": "NC"
+          }
+        ]
+      }
+    },
+    {
+      "netName": "unconnected-(U2-NC-Pad21)",
+      "connections": {
+        "class": "Default",
+        "connections": [
+          {
+            "refDes": "U2",
+            "pin": "NC"
+          }
+        ]
+      }
+    },
+    {
+      "netName": "unconnected-(U4-SC3-Pad11)",
+      "connections": {
+        "class": "Default",
+        "connections": [
+          {
+            "refDes": "U4",
+            "pin": "SC3"
+          }
+        ]
+      }
+    },
+    {
+      "netName": "unconnected-(U4-SC4-Pad14)",
+      "connections": {
+        "class": "Default",
+        "connections": [
+          {
+            "refDes": "U4",
+            "pin": "SC4"
+          }
+        ]
+      }
+    },
+    {
+      "netName": "unconnected-(U4-SC5-Pad16)",
+      "connections": {
+        "class": "Default",
+        "connections": [
+          {
+            "refDes": "U4",
+            "pin": "SC5"
+          }
+        ]
+      }
+    },
+    {
+      "netName": "unconnected-(U4-SC6-Pad18)",
+      "connections": {
+        "class": "Default",
+        "connections": [
+          {
+            "refDes": "U4",
+            "pin": "SC6"
+          }
+        ]
+      }
+    },
+    {
+      "netName": "unconnected-(U4-SC7-Pad20)",
+      "connections": {
+        "class": "Default",
+        "connections": [
+          {
+            "refDes": "U4",
+            "pin": "SC7"
+          }
+        ]
+      }
+    },
+    {
+      "netName": "unconnected-(U4-SD3-Pad10)",
+      "connections": {
+        "class": "Default",
+        "connections": [
+          {
+            "refDes": "U4",
+            "pin": "SD3"
+          }
+        ]
+      }
+    },
+    {
+      "netName": "unconnected-(U4-SD4-Pad13)",
+      "connections": {
+        "class": "Default",
+        "connections": [
+          {
+            "refDes": "U4",
+            "pin": "SD4"
+          }
+        ]
+      }
+    },
+    {
+      "netName": "unconnected-(U4-SD5-Pad15)",
+      "connections": {
+        "class": "Default",
+        "connections": [
+          {
+            "refDes": "U4",
+            "pin": "SD5"
+          }
+        ]
+      }
+    },
+    {
+      "netName": "unconnected-(U4-SD6-Pad17)",
+      "connections": {
+        "class": "Default",
+        "connections": [
+          {
+            "refDes": "U4",
+            "pin": "SD6"
+          }
+        ]
+      }
+    },
+    {
+      "netName": "unconnected-(U4-SD7-Pad19)",
+      "connections": {
+        "class": "Default",
+        "connections": [
+          {
+            "refDes": "U4",
+            "pin": "SD7"
+          }
+        ]
+      }
+    }
+  ]
+}
