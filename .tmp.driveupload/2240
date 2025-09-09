@@ -21,7 +21,3 @@ f7d7fcbbd9c782b95d0f72907e5142667124ba72 31571e0577535735cfe625228cb77887aa1d512
 31571e0577535735cfe625228cb77887aa1d5125 2529e32cd538bbf5aeffcccc0e0524cd94cb7f93 Marc O'Cleirigh <marc.ocleirigh@gmail.com> 1757267480 -0700	checkout: moving from chore/consolidate-libraries to main
 2529e32cd538bbf5aeffcccc0e0524cd94cb7f93 4c4ae47f4817fcc24ba701e9ccfde41f1f02500a Marc O'Cleirigh <marc.ocleirigh@gmail.com> 1757267483 -0700	pull: Fast-forward
 4c4ae47f4817fcc24ba701e9ccfde41f1f02500a 4c4ae47f4817fcc24ba701e9ccfde41f1f02500a Marc O'Cleirigh <marc.ocleirigh@gmail.com> 1757379123 -0700	checkout: moving from main to feat/simplify-3v-circuit
-4c4ae47f4817fcc24ba701e9ccfde41f1f02500a 46541d03c5ae7909f944e15c4949e3ced6e43271 Marc O'Cleirigh <marc.ocleirigh@gmail.com> 1757379142 -0700	commit: Updated to use ultra simplified 3v buck converter
-46541d03c5ae7909f944e15c4949e3ced6e43271 46541d03c5ae7909f944e15c4949e3ced6e43271 Marc O'Cleirigh <marc.ocleirigh@gmail.com> 1757446331 -0700	reset: moving to HEAD
-46541d03c5ae7909f944e15c4949e3ced6e43271 4c4ae47f4817fcc24ba701e9ccfde41f1f02500a Marc O'Cleirigh <marc.ocleirigh@gmail.com> 1757446333 -0700	checkout: moving from feat/simplify-3v-circuit to main
-4c4ae47f4817fcc24ba701e9ccfde41f1f02500a 4c4ae47f4817fcc24ba701e9ccfde41f1f02500a Marc O'Cleirigh <marc.ocleirigh@gmail.com> 1757446350 -0700	checkout: moving from main to feat/update-project-docs

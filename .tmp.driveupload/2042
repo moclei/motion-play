@@ -31,7 +31,3 @@
 	merge = refs/heads/chore/consolidate-libraries
 [branch "feat/simplify-3v-circuit"]
 	vscode-merge-base = origin/main
-	remote = origin
-	merge = refs/heads/feat/simplify-3v-circuit
-[branch "feat/update-project-docs"]
-	vscode-merge-base = origin/main

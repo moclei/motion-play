@@ -538,14 +538,7 @@
       "version": 4
     },
     "net_colors": null,
-    "netclass_assignments": {
-      "+3.3V": [
-        "Power_3V3"
-      ],
-      "+5V": [
-        "Power_5V"
-      ]
-    },
+    "netclass_assignments": null,
     "netclass_patterns": [
       {
         "netclass": "Power_5V",
@@ -634,12 +627,120 @@
           "group_by": false,
           "label": "LCSC Part",
           "name": "LCSC Part",
-          "show": false
+          "show": true
         },
         {
           "group_by": false,
           "label": "Description",
           "name": "Description",
+          "show": false
+        },
+        {
+          "group_by": false,
+          "label": "Description_1",
+          "name": "Description_1",
+          "show": false
+        },
+        {
+          "group_by": false,
+          "label": "Height",
+          "name": "Height",
+          "show": false
+        },
+        {
+          "group_by": false,
+          "label": "Availability",
+          "name": "Availability",
+          "show": false
+        },
+        {
+          "group_by": false,
+          "label": "LCSC Part No",
+          "name": "LCSC Part No",
+          "show": true
+        },
+        {
+          "group_by": false,
+          "label": "MANUFACTURER",
+          "name": "MANUFACTURER",
+          "show": false
+        },
+        {
+          "group_by": false,
+          "label": "MAXIMUM_PACKAGE_HEIGHT",
+          "name": "MAXIMUM_PACKAGE_HEIGHT",
+          "show": false
+        },
+        {
+          "group_by": false,
+          "label": "MF",
+          "name": "MF",
+          "show": false
+        },
+        {
+          "group_by": false,
+          "label": "MP",
+          "name": "MP",
+          "show": false
+        },
+        {
+          "group_by": false,
+          "label": "Manufacturer_Name",
+          "name": "Manufacturer_Name",
+          "show": false
+        },
+        {
+          "group_by": false,
+          "label": "Manufacturer_Part_Number",
+          "name": "Manufacturer_Part_Number",
+          "show": false
+        },
+        {
+          "group_by": false,
+          "label": "Mouser Part Number",
+          "name": "Mouser Part Number",
+          "show": false
+        },
+        {
+          "group_by": false,
+          "label": "Mouser Price/Stock",
+          "name": "Mouser Price/Stock",
+          "show": false
+        },
+        {
+          "group_by": false,
+          "label": "PARTREV",
+          "name": "PARTREV",
+          "show": false
+        },
+        {
+          "group_by": false,
+          "label": "Package",
+          "name": "Package",
+          "show": false
+        },
+        {
+          "group_by": false,
+          "label": "Price",
+          "name": "Price",
+          "show": false
+        },
+        {
+          "group_by": false,
+          "label": "STANDARD",
+          "name": "STANDARD",
+          "show": false
+        },
+        {
+          "group_by": false,
+          "label": "SnapEDA_Link",
+          "name": "SnapEDA_Link",
+          "show": false
+        },
+        {
+          "group_by": false,
+          "label": "Check_prices",
+          "name": "Check_prices",
           "show": false
         }
       ],
@@ -647,12 +748,8 @@
       "group_symbols": true,
       "include_excluded_from_bom": false,
       "name": "",
-      "sort_asc": true,
-<<<<<<< Updated upstream
-      "sort_field": "Reference"
-=======
+      "sort_asc": false,
       "sort_field": "LCSC Part No"
->>>>>>> Stashed changes
     },
     "connection_grid_size": 50.0,
     "drawing": {
@@ -681,7 +778,7 @@
     "meta": {
       "version": 1
     },
-    "net_format_name": "KiCad",
+    "net_format_name": "JSON Netlist",
     "page_layout_descr_file": "",
     "plot_directory": "",
     "space_save_all_events": true,
@@ -698,10 +795,6 @@
     [
       "6e095bf3-d8d5-4f67-b79f-a2965409c7a9",
       "Root"
-    ],
-    [
-      "2ffce8ae-9641-47f1-a479-52b10ea18190",
-      "3V3 Power Supply"
     ],
     [
       "22a71174-d1ab-41ca-9de7-73d077ebe0b0",

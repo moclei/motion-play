@@ -157,3 +157,54 @@ Software interrupt handler optimization for multi-sensor triggers
 
 
 This document serves as the complete specification for both PCB redesigns. The modular approach with PCA9546A on sensor boards provides maximum flexibility while the MP2393-based main board ensures adequate power delivery for the complete system.
+
+
+
+Update 09/07/2025:
+
+Implementation Updates from Original Plan
+Connector Pin Assignments Finalized
+During implementation, the 5-pin JST-SH connector pinout for sensor boards was finalized as:
+
+Pin 1: 3.3V
+Pin 2: GND
+Pin 3: SDA
+Pin 4: SCL
+Pin 5: INT
+
+This order was chosen to keep power and ground together, reducing the chance of noise coupling into the I2C signals.
+GPIO Pin Assignments Confirmed
+The T-Display-S3 GPIO allocation has been finalized based on available pins:
+
+GPIO 43, 44: I2C bus (SDA/SCL)
+GPIO 10: TCA9548A RESET control
+GPIO 11, 12, 13: Interrupt inputs from sensor boards 1, 2, 3
+GPIO 16: WS2812B LED data (moved from GPIO 2 for cleaner operation)
+GPIO 3: ADC current sensing for LED strip monitoring
+GPIO 1: Power Good signal from MP2393
+
+LED Strip Connector Updated
+Replaced the incorrect JST PH 2.0mm connector (C265101) with a proper JST XH-compatible 2.5mm pitch connector (LCSC: C7429672) to match standard WS2812B LED strips. The connector is a 3-pin SMD right-angle type with pinout matching the standard +5V/Data/GND configuration.
+Hierarchical Schematic Organization
+The TCA9548A multiplexer and its support components have been organized into a hierarchical sheet for better schematic clarity. The main sheet retains the MCU, power system, and all connectors for easier PCB layout planning.
+
+
+Next Steps:
+
+* Complete Design Rule Check (DRC) and Electrical Rules Check (ERC) on main schematic
+* Begin sensor board schematic with PCA9546A implementation
+* Create PCB layout for main board with attention to:
+
+* Power plane design for MP2393
+* I2C trace routing and length matching
+* Connector placement for cable management
+
+
+* Design flex PCB layout for sensor boards with 2mm sensor spacing
+
+Open Items:
+
+* Verify MP2393 inductor selection for optimal efficiency
+* Confirm pull-up resistor values after prototype testing
+* Determine optimal flex PCB stiffener placement
+* Select specific cable assemblies or specify build requirements
