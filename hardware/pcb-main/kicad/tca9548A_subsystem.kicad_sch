@@ -4,6 +4,11 @@
 	(generator_version "9.0")
 	(uuid "7a85d242-a147-4415-9410-60509630e50f")
 	(paper "A4")
+	(title_block
+		(title "Motion Play Main Board")
+		(date "2025-09-07")
+		(rev "5.0")
+	)
 	(lib_symbols
 		(symbol "Device:C"
 			(pin_numbers
@@ -1569,7 +1574,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "20d76ed9-220f-4ec8-ba67-df4a94d4f791")
-		(property "Reference" "R27"
+		(property "Reference" "R29"
 			(at 123.19 64.77 0)
 			(effects
 				(font
@@ -1632,7 +1637,7 @@
 		(instances
 			(project ""
 				(path "/6e095bf3-d8d5-4f67-b79f-a2965409c7a9/bfeba651-d961-4d9b-b09b-91dbbe05d3fa"
-					(reference "R27")
+					(reference "R29")
 					(unit 1)
 				)
 			)
