@@ -13,188 +13,6 @@
 		(comment 3 "3.3V/3A Power via MP2393")
 	)
 	(lib_symbols
-		(symbol "Conn_01x03_1"
-			(pin_names
-				(offset 1.016)
-				(hide yes)
-			)
-			(exclude_from_sim no)
-			(in_bom yes)
-			(on_board yes)
-			(property "Reference" "J3"
-				(at -1.2701 5.08 90)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-					(justify left)
-				)
-			)
-			(property "Value" "LED_Strip"
-				(at 1.2699 5.08 90)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-					(justify left)
-				)
-			)
-			(property "Footprint" "Connector_JST:JST_PH_S3B-PH-SM4-TB_1x03-1MP_P2.00mm_Horizontal"
-				(at 0 0 0)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-					(hide yes)
-				)
-			)
-			(property "Datasheet" "~"
-				(at 0 0 0)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-					(hide yes)
-				)
-			)
-			(property "Description" "Generic connector, single row, 01x03, script generated (kicad-library-utils/schlib/autogen/connector/)"
-				(at 0 0 0)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-					(hide yes)
-				)
-			)
-			(property "LCSC" "C265091"
-				(at 0 0 90)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-					(hide yes)
-				)
-			)
-			(property "ki_keywords" "connector"
-				(at 0 0 0)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-					(hide yes)
-				)
-			)
-			(property "ki_fp_filters" "Connector*:*_1x??_*"
-				(at 0 0 0)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-					(hide yes)
-				)
-			)
-			(symbol "Conn_01x03_1_1_1"
-				(rectangle
-					(start -1.27 3.81)
-					(end 1.27 -3.81)
-					(stroke
-						(width 0.254)
-						(type default)
-					)
-					(fill
-						(type background)
-					)
-				)
-				(rectangle
-					(start -1.27 2.667)
-					(end 0 2.413)
-					(stroke
-						(width 0.1524)
-						(type default)
-					)
-					(fill
-						(type none)
-					)
-				)
-				(rectangle
-					(start -1.27 0.127)
-					(end 0 -0.127)
-					(stroke
-						(width 0.1524)
-						(type default)
-					)
-					(fill
-						(type none)
-					)
-				)
-				(rectangle
-					(start -1.27 -2.413)
-					(end 0 -2.667)
-					(stroke
-						(width 0.1524)
-						(type default)
-					)
-					(fill
-						(type none)
-					)
-				)
-				(pin passive line
-					(at -5.08 2.54 0)
-					(length 3.81)
-					(name "Pin_1"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-					(number "31"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-				)
-				(pin passive line
-					(at -5.08 0 0)
-					(length 3.81)
-					(name "Pin_2"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-					(number "32"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-				)
-				(pin passive line
-					(at -5.08 -2.54 0)
-					(length 3.81)
-					(name "Pin_3"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-					(number "33"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-				)
-			)
-			(embedded_fonts no)
-		)
 		(symbol "Connector:TestPoint"
 			(pin_numbers
 				(hide yes)
@@ -292,6 +110,177 @@
 						)
 					)
 					(number "1"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+			)
+			(embedded_fonts no)
+		)
+		(symbol "Connector_Generic:Conn_01x03"
+			(pin_names
+				(offset 1.016)
+				(hide yes)
+			)
+			(exclude_from_sim no)
+			(in_bom yes)
+			(on_board yes)
+			(property "Reference" "J"
+				(at 0 5.08 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Value" "Conn_01x03"
+				(at 0 -5.08 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Footprint" ""
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Datasheet" "~"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Description" "Generic connector, single row, 01x03, script generated (kicad-library-utils/schlib/autogen/connector/)"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "ki_keywords" "connector"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "ki_fp_filters" "Connector*:*_1x??_*"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(symbol "Conn_01x03_1_1"
+				(rectangle
+					(start -1.27 3.81)
+					(end 1.27 -3.81)
+					(stroke
+						(width 0.254)
+						(type default)
+					)
+					(fill
+						(type background)
+					)
+				)
+				(rectangle
+					(start -1.27 2.667)
+					(end 0 2.413)
+					(stroke
+						(width 0.1524)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(rectangle
+					(start -1.27 0.127)
+					(end 0 -0.127)
+					(stroke
+						(width 0.1524)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(rectangle
+					(start -1.27 -2.413)
+					(end 0 -2.667)
+					(stroke
+						(width 0.1524)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(pin passive line
+					(at -5.08 2.54 0)
+					(length 3.81)
+					(name "Pin_1"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "1"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin passive line
+					(at -5.08 0 0)
+					(length 3.81)
+					(name "Pin_2"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "2"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin passive line
+					(at -5.08 -2.54 0)
+					(length 3.81)
+					(name "Pin_3"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "3"
 						(effects
 							(font
 								(size 1.27 1.27)
@@ -670,7 +659,247 @@
 			)
 			(embedded_fonts no)
 		)
-		(symbol "T-Display-S3:T-Display-S3"
+		(symbol "motion-play-symbols:AP2112K-3.3TRG1"
+			(pin_names
+				(offset 1.016)
+			)
+			(exclude_from_sim no)
+			(in_bom yes)
+			(on_board yes)
+			(property "Reference" "U"
+				(at -7.663 8.6476 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(justify left bottom)
+				)
+			)
+			(property "Value" "AP2112K-3.3TRG1"
+				(at -7.6489 -11.6507 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(justify left bottom)
+				)
+			)
+			(property "Footprint" "AP2112K-3.3TRG1:SOT95P285X140-5N"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(justify bottom)
+					(hide yes)
+				)
+			)
+			(property "Datasheet" ""
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Description" ""
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "MF" "Diodes Inc."
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(justify bottom)
+					(hide yes)
+				)
+			)
+			(property "Description_1" "Voltage Regulators, LDO, 600mA CMOS LDO 50mA 3.3V 250mV | Diodes Inc AP2112K-3.3TRG1"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(justify bottom)
+					(hide yes)
+				)
+			)
+			(property "Package" "SOT-753 Diodes Inc."
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(justify bottom)
+					(hide yes)
+				)
+			)
+			(property "Price" "None"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(justify bottom)
+					(hide yes)
+				)
+			)
+			(property "Check_prices" "https://www.snapeda.com/parts/AP2112K-3.3TRG1/Diodes+Inc./view-part/?ref=eda"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(justify bottom)
+					(hide yes)
+				)
+			)
+			(property "PARTREV" "2-2"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(justify bottom)
+					(hide yes)
+				)
+			)
+			(property "SnapEDA_Link" "https://www.snapeda.com/parts/AP2112K-3.3TRG1/Diodes+Inc./view-part/?ref=snap"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(justify bottom)
+					(hide yes)
+				)
+			)
+			(property "MP" "AP2112K-3.3TRG1"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(justify bottom)
+					(hide yes)
+				)
+			)
+			(property "Availability" "In Stock"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(justify bottom)
+					(hide yes)
+				)
+			)
+			(property "MANUFACTURER" "Diodes Inc."
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(justify bottom)
+					(hide yes)
+				)
+			)
+			(symbol "AP2112K-3.3TRG1_0_0"
+				(rectangle
+					(start -7.62 -7.62)
+					(end 7.62 7.62)
+					(stroke
+						(width 0.41)
+						(type default)
+					)
+					(fill
+						(type background)
+					)
+				)
+				(pin power_in line
+					(at -12.7 5.08 0)
+					(length 5.08)
+					(name "VIN"
+						(effects
+							(font
+								(size 1.016 1.016)
+							)
+						)
+					)
+					(number "1"
+						(effects
+							(font
+								(size 1.016 1.016)
+							)
+						)
+					)
+				)
+				(pin input line
+					(at -12.7 0 0)
+					(length 5.08)
+					(name "EN"
+						(effects
+							(font
+								(size 1.016 1.016)
+							)
+						)
+					)
+					(number "3"
+						(effects
+							(font
+								(size 1.016 1.016)
+							)
+						)
+					)
+				)
+				(pin power_in line
+					(at 12.7 5.08 180)
+					(length 5.08)
+					(name "VOUT"
+						(effects
+							(font
+								(size 1.016 1.016)
+							)
+						)
+					)
+					(number "5"
+						(effects
+							(font
+								(size 1.016 1.016)
+							)
+						)
+					)
+				)
+				(pin power_in line
+					(at 12.7 -5.08 180)
+					(length 5.08)
+					(name "GND"
+						(effects
+							(font
+								(size 1.016 1.016)
+							)
+						)
+					)
+					(number "2"
+						(effects
+							(font
+								(size 1.016 1.016)
+							)
+						)
+					)
+				)
+			)
+			(embedded_fonts no)
+		)
+		(symbol "motion-play-symbols:T-Display-S3"
 			(exclude_from_sim no)
 			(in_bom yes)
 			(on_board yes)
@@ -690,7 +919,7 @@
 					)
 				)
 			)
-			(property "Footprint" "Library:T-Display-S3"
+			(property "Footprint" "motion-play-footprints:T-Display-S3"
 				(at 0 10.16 0)
 				(effects
 					(font
@@ -1166,269 +1395,27 @@
 			)
 			(embedded_fonts no)
 		)
-		(symbol "motion-play-symbols:AP2112K-3.3TRG1"
-			(pin_names
-				(offset 1.016)
-			)
+		(symbol "motion-play-symbols:USBC_Power_Module"
 			(exclude_from_sim no)
 			(in_bom yes)
 			(on_board yes)
-			(property "Reference" "U"
-				(at -7.663 8.6476 0)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-					(justify left bottom)
-				)
-			)
-			(property "Value" "AP2112K-3.3TRG1"
-				(at -7.6489 -11.6507 0)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-					(justify left bottom)
-				)
-			)
-			(property "Footprint" "AP2112K-3.3TRG1:SOT95P285X140-5N"
+			(property "Reference" "J"
 				(at 0 0 0)
 				(effects
 					(font
 						(size 1.27 1.27)
 					)
-					(justify bottom)
-					(hide yes)
 				)
 			)
-			(property "Datasheet" ""
+			(property "Value" ""
 				(at 0 0 0)
 				(effects
 					(font
 						(size 1.27 1.27)
 					)
-					(hide yes)
 				)
 			)
-			(property "Description" ""
-				(at 0 0 0)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-					(hide yes)
-				)
-			)
-			(property "MF" "Diodes Inc."
-				(at 0 0 0)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-					(justify bottom)
-					(hide yes)
-				)
-			)
-			(property "Description_1" "Voltage Regulators, LDO, 600mA CMOS LDO 50mA 3.3V 250mV | Diodes Inc AP2112K-3.3TRG1"
-				(at 0 0 0)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-					(justify bottom)
-					(hide yes)
-				)
-			)
-			(property "Package" "SOT-753 Diodes Inc."
-				(at 0 0 0)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-					(justify bottom)
-					(hide yes)
-				)
-			)
-			(property "Price" "None"
-				(at 0 0 0)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-					(justify bottom)
-					(hide yes)
-				)
-			)
-			(property "Check_prices" "https://www.snapeda.com/parts/AP2112K-3.3TRG1/Diodes+Inc./view-part/?ref=eda"
-				(at 0 0 0)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-					(justify bottom)
-					(hide yes)
-				)
-			)
-			(property "PARTREV" "2-2"
-				(at 0 0 0)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-					(justify bottom)
-					(hide yes)
-				)
-			)
-			(property "SnapEDA_Link" "https://www.snapeda.com/parts/AP2112K-3.3TRG1/Diodes+Inc./view-part/?ref=snap"
-				(at 0 0 0)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-					(justify bottom)
-					(hide yes)
-				)
-			)
-			(property "MP" "AP2112K-3.3TRG1"
-				(at 0 0 0)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-					(justify bottom)
-					(hide yes)
-				)
-			)
-			(property "Availability" "In Stock"
-				(at 0 0 0)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-					(justify bottom)
-					(hide yes)
-				)
-			)
-			(property "MANUFACTURER" "Diodes Inc."
-				(at 0 0 0)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-					(justify bottom)
-					(hide yes)
-				)
-			)
-			(symbol "AP2112K-3.3TRG1_0_0"
-				(rectangle
-					(start -7.62 -7.62)
-					(end 7.62 7.62)
-					(stroke
-						(width 0.41)
-						(type default)
-					)
-					(fill
-						(type background)
-					)
-				)
-				(pin power_in line
-					(at -12.7 5.08 0)
-					(length 5.08)
-					(name "VIN"
-						(effects
-							(font
-								(size 1.016 1.016)
-							)
-						)
-					)
-					(number "1"
-						(effects
-							(font
-								(size 1.016 1.016)
-							)
-						)
-					)
-				)
-				(pin input line
-					(at -12.7 0 0)
-					(length 5.08)
-					(name "EN"
-						(effects
-							(font
-								(size 1.016 1.016)
-							)
-						)
-					)
-					(number "3"
-						(effects
-							(font
-								(size 1.016 1.016)
-							)
-						)
-					)
-				)
-				(pin power_in line
-					(at 12.7 5.08 180)
-					(length 5.08)
-					(name "VOUT"
-						(effects
-							(font
-								(size 1.016 1.016)
-							)
-						)
-					)
-					(number "5"
-						(effects
-							(font
-								(size 1.016 1.016)
-							)
-						)
-					)
-				)
-				(pin power_in line
-					(at 12.7 -5.08 180)
-					(length 5.08)
-					(name "GND"
-						(effects
-							(font
-								(size 1.016 1.016)
-							)
-						)
-					)
-					(number "2"
-						(effects
-							(font
-								(size 1.016 1.016)
-							)
-						)
-					)
-				)
-			)
-			(embedded_fonts no)
-		)
-		(symbol "motion-play_Library:USBC_Power_Module"
-			(exclude_from_sim no)
-			(in_bom yes)
-			(on_board yes)
-			(property "Reference" "J2"
-				(at -3.81 -2.286 90)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-					(justify left)
-				)
-			)
-			(property "Value" "~"
-				(at 7.1766 7.62 90)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-					(justify left)
-				)
-			)
-			(property "Footprint" "Library:USBC_Power_Module"
+			(property "Footprint" ""
 				(at 0 0 0)
 				(effects
 					(font
@@ -1493,8 +1480,8 @@
 						)
 					)
 				)
-				(pin power_out line
-					(at -6.35 5.08 270)
+				(pin passive line
+					(at -6.35 3.81 90)
 					(length 2.54)
 					(name "GND"
 						(effects
@@ -1512,7 +1499,7 @@
 					)
 				)
 				(pin power_out line
-					(at -3.81 5.08 270)
+					(at -3.81 3.81 90)
 					(length 2.54)
 					(name "5V"
 						(effects
@@ -1883,6 +1870,107 @@
 			)
 			(embedded_fonts no)
 		)
+		(symbol "power:PWR_FLAG"
+			(power)
+			(pin_numbers
+				(hide yes)
+			)
+			(pin_names
+				(offset 0)
+				(hide yes)
+			)
+			(exclude_from_sim no)
+			(in_bom yes)
+			(on_board yes)
+			(property "Reference" "#FLG"
+				(at 0 1.905 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Value" "PWR_FLAG"
+				(at 0 3.81 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Footprint" ""
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Datasheet" "~"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Description" "Special symbol for telling ERC where power comes from"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "ki_keywords" "flag power"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(symbol "PWR_FLAG_0_0"
+				(pin power_out line
+					(at 0 0 90)
+					(length 0)
+					(name "~"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "1"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+			)
+			(symbol "PWR_FLAG_0_1"
+				(polyline
+					(pts
+						(xy 0 0) (xy 0 1.27) (xy -1.016 1.905) (xy 0 2.54) (xy 1.016 1.905) (xy 0 1.27)
+					)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+			)
+			(embedded_fonts no)
+		)
 	)
 	(junction
 		(at 104.14 40.64)
@@ -1909,16 +1997,16 @@
 		(uuid "2c218a57-f8a8-4ec4-9f78-d5caf2f5b691")
 	)
 	(junction
-		(at 130.81 135.89)
-		(diameter 0)
-		(color 0 0 0 0)
-		(uuid "2c9a155b-cde6-4bec-bca8-39939251b385")
-	)
-	(junction
 		(at 101.6 114.3)
 		(diameter 0)
 		(color 0 0 0 0)
 		(uuid "3ff12381-6cd2-4776-929d-d51ef42dbddb")
+	)
+	(junction
+		(at 129.54 50.8)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "5e60f0c8-b595-4e84-952f-80d27811e087")
 	)
 	(junction
 		(at 90.17 93.98)
@@ -1931,6 +2019,12 @@
 		(diameter 0)
 		(color 0 0 0 0)
 		(uuid "a2e57ce8-c9a3-4c1a-9b61-df3e1820beed")
+	)
+	(junction
+		(at 193.04 129.54)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "a3c82079-fb33-40a4-8853-fe536e5d7462")
 	)
 	(junction
 		(at 96.52 138.43)
@@ -1949,12 +2043,6 @@
 		(diameter 0)
 		(color 0 0 0 0)
 		(uuid "f3f7b178-7b47-4f3a-9edf-0a5044f4892c")
-	)
-	(junction
-		(at 53.34 43.18)
-		(diameter 0)
-		(color 0 0 0 0)
-		(uuid "f42fbf08-6fb1-4f35-930b-697c1d7a130b")
 	)
 	(junction
 		(at 124.46 116.84)
@@ -2006,16 +2094,6 @@
 	)
 	(wire
 		(pts
-			(xy 132.08 135.89) (xy 130.81 135.89)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "0eb78d8c-61ba-42b2-8281-85c265a09f6a")
-	)
-	(wire
-		(pts
 			(xy 166.37 81.28) (xy 170.18 81.28)
 		)
 		(stroke
@@ -2023,16 +2101,6 @@
 			(type default)
 		)
 		(uuid "14bd98ef-af1b-46ff-8a38-6c2810351dbc")
-	)
-	(wire
-		(pts
-			(xy 53.34 43.18) (xy 53.34 36.83)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "174e5aa5-4ffa-47d9-b09f-428538d1dedd")
 	)
 	(wire
 		(pts
@@ -2066,16 +2134,6 @@
 	)
 	(wire
 		(pts
-			(xy 130.81 93.98) (xy 130.81 135.89)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "24f08f5c-923d-4daa-a66b-3e8be8fe136f")
-	)
-	(wire
-		(pts
 			(xy 194.31 118.11) (xy 205.74 118.11)
 		)
 		(stroke
@@ -2106,6 +2164,16 @@
 	)
 	(wire
 		(pts
+			(xy 130.81 50.8) (xy 129.54 50.8)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "3a41d68b-f3d3-45ea-876b-27f75eee671a")
+	)
+	(wire
+		(pts
 			(xy 127 138.43) (xy 129.54 138.43)
 		)
 		(stroke
@@ -2116,7 +2184,7 @@
 	)
 	(wire
 		(pts
-			(xy 124.46 93.98) (xy 130.81 93.98)
+			(xy 124.46 93.98) (xy 133.35 93.98)
 		)
 		(stroke
 			(width 0)
@@ -2186,13 +2254,13 @@
 	)
 	(wire
 		(pts
-			(xy 127 135.89) (xy 130.81 135.89)
+			(xy 55.88 39.37) (xy 55.88 44.45)
 		)
 		(stroke
 			(width 0)
 			(type default)
 		)
-		(uuid "57e1ee96-a8bb-4d04-9627-dd3d741240ab")
+		(uuid "52a037f8-7d93-401b-89d9-d46d25f0469a")
 	)
 	(wire
 		(pts
@@ -2276,16 +2344,6 @@
 	)
 	(wire
 		(pts
-			(xy 55.88 39.37) (xy 55.88 43.18)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "67329ea6-fd38-47e1-a974-97c5c746273c")
-	)
-	(wire
-		(pts
 			(xy 96.52 106.68) (xy 96.52 138.43)
 		)
 		(stroke
@@ -2356,7 +2414,7 @@
 	)
 	(wire
 		(pts
-			(xy 193.04 128.27) (xy 193.04 130.81)
+			(xy 193.04 128.27) (xy 193.04 129.54)
 		)
 		(stroke
 			(width 0)
@@ -2616,16 +2674,6 @@
 	)
 	(wire
 		(pts
-			(xy 53.34 44.45) (xy 53.34 43.18)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "d4e40b69-5444-48e2-847e-130bbad02f79")
-	)
-	(wire
-		(pts
 			(xy 196.85 111.76) (xy 196.85 116.84)
 		)
 		(stroke
@@ -2643,6 +2691,16 @@
 			(type default)
 		)
 		(uuid "db2ffb3e-f001-4f9a-a444-6241286eb582")
+	)
+	(wire
+		(pts
+			(xy 53.34 35.56) (xy 53.34 44.45)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "ee275c68-0d15-4c65-85f6-102de7f8f919")
 	)
 	(wire
 		(pts
@@ -2683,6 +2741,16 @@
 			(type default)
 		)
 		(uuid "f31b04b9-99f1-43c2-875a-9b979f66f896")
+	)
+	(wire
+		(pts
+			(xy 193.04 129.54) (xy 193.04 130.81)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "f6cc3252-0af8-4aa5-abef-591f1bd48529")
 	)
 	(wire
 		(pts
@@ -2853,6 +2921,72 @@
 			(justify left bottom)
 		)
 		(uuid "cbe65432-0a2d-44e5-a7b2-9f32743539e0")
+	)
+	(symbol
+		(lib_id "power:PWR_FLAG")
+		(at 193.04 129.54 270)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "013d4869-7e3d-4192-b91c-83ee5f235669")
+		(property "Reference" "#FLG03"
+			(at 194.945 129.54 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "PWR_FLAG"
+			(at 192.532 131.318 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" ""
+			(at 193.04 129.54 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "~"
+			(at 193.04 129.54 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Special symbol for telling ERC where power comes from"
+			(at 193.04 129.54 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "eea6067b-4568-4483-80ed-89b63296173a")
+		)
+		(instances
+			(project "motion-play-main"
+				(path "/6e095bf3-d8d5-4f67-b79f-a2965409c7a9"
+					(reference "#FLG03")
+					(unit 1)
+				)
+			)
+		)
 	)
 	(symbol
 		(lib_id "power:+5V")
@@ -3276,7 +3410,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Connector_JST:JST_SH_SM05B-SRSS-TB_1x05-1MP_P1.00mm_Horizontal"
 			(at 205.74 135.89 0)
 			(effects
 				(font
@@ -3566,7 +3700,7 @@
 		(dnp no)
 		(uuid "414e2286-7bdd-4742-9c65-194d2cfa011e")
 		(property "Reference" "TPIO1"
-			(at 134.112 89.408 90)
+			(at 137.922 91.44 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -4064,7 +4198,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Connector_JST:JST_SH_SM05B-SRSS-TB_1x05-1MP_P1.00mm_Horizontal"
 			(at 187.96 135.89 0)
 			(effects
 				(font
@@ -4463,6 +4597,72 @@
 		)
 	)
 	(symbol
+		(lib_id "power:PWR_FLAG")
+		(at 129.54 50.8 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "7e27bdbc-6264-4466-bb53-d16d41fd0c39")
+		(property "Reference" "#FLG01"
+			(at 129.54 48.895 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "PWR_FLAG"
+			(at 129.54 45.72 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 129.54 50.8 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "~"
+			(at 129.54 50.8 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Special symbol for telling ERC where power comes from"
+			(at 129.54 50.8 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "1846f935-3008-4375-8d01-6646d990e12a")
+		)
+		(instances
+			(project ""
+				(path "/6e095bf3-d8d5-4f67-b79f-a2965409c7a9"
+					(reference "#FLG01")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
 		(lib_id "Connector:TestPoint")
 		(at 90.17 104.14 90)
 		(unit 1)
@@ -4605,7 +4805,7 @@
 		(dnp no)
 		(uuid "879ab411-ce66-4d98-9001-32e516de5eb6")
 		(property "Reference" "TPIO3"
-			(at 138.43 96.52 90)
+			(at 137.922 96.52 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -4730,7 +4930,7 @@
 		)
 	)
 	(symbol
-		(lib_id "motion-play_Library:USBC_Power_Module")
+		(lib_id "motion-play-symbols:USBC_Power_Module")
 		(at 59.69 48.26 0)
 		(unit 1)
 		(exclude_from_sim no)
@@ -4756,7 +4956,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Library:USBC_Power_Module"
+		(property "Footprint" "motion-play-footprints:USBC_Power_Module"
 			(at 59.69 48.26 0)
 			(effects
 				(font
@@ -5154,7 +5354,7 @@
 				)
 			)
 		)
-		(property "Footprint" "AP2112K-3.3TRG1:SOT95P285X140-5N"
+		(property "Footprint" "motion-play-footprints:SOT95P285X140-5N"
 			(at 116.84 45.72 0)
 			(effects
 				(font
@@ -5447,7 +5647,6 @@
 		)
 	)
 	(symbol
-		(lib_name "Conn_01x03_1")
 		(lib_id "Connector_Generic:Conn_01x03")
 		(at 143.51 153.67 0)
 		(unit 1)
@@ -5458,7 +5657,7 @@
 		(fields_autoplaced yes)
 		(uuid "ec3f214b-9e08-4f28-bf36-76edb3023838")
 		(property "Reference" "J3"
-			(at 142.2399 148.59 90)
+			(at 146.05 152.3999 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -5467,7 +5666,7 @@
 			)
 		)
 		(property "Value" "LED_Strip"
-			(at 144.7799 148.59 90)
+			(at 146.05 154.9399 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -5475,7 +5674,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Connector_JST:JST_XH_B3B-XH-AM_1x03_P2.50mm_Vertical"
+		(property "Footprint" "Connector_JST:JST_PH_S3B-PH-SM4-TB_1x03-1MP_P2.00mm_Horizontal"
 			(at 143.51 153.67 0)
 			(effects
 				(font
@@ -5493,7 +5692,7 @@
 				(hide yes)
 			)
 		)
-		(property "Description" "Generic connector, single row, 01x03"
+		(property "Description" "Generic connector, single row, 01x03, script generated (kicad-library-utils/schlib/autogen/connector/)"
 			(at 143.51 153.67 0)
 			(effects
 				(font
@@ -5511,13 +5710,13 @@
 				(hide yes)
 			)
 		)
-		(pin "32"
+		(pin "1"
 			(uuid "a98ff3f4-6c43-4a11-b9ce-ef2abeaa0f23")
 		)
-		(pin "33"
+		(pin "2"
 			(uuid "11f665bd-d4c2-4158-af20-8ef43c531415")
 		)
-		(pin "31"
+		(pin "3"
 			(uuid "d6892766-a1e8-4814-87ac-67124f002f53")
 		)
 		(instances
@@ -5598,7 +5797,7 @@
 	)
 	(symbol
 		(lib_id "power:GND")
-		(at 129.54 50.8 90)
+		(at 130.81 50.8 90)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -5607,7 +5806,7 @@
 		(fields_autoplaced yes)
 		(uuid "f5d471d9-d39e-42be-8d67-73d249d3897c")
 		(property "Reference" "#PWR01"
-			(at 135.89 50.8 0)
+			(at 137.16 50.8 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -5616,7 +5815,7 @@
 			)
 		)
 		(property "Value" "GND"
-			(at 133.35 50.7999 90)
+			(at 134.62 50.7999 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -5625,7 +5824,7 @@
 			)
 		)
 		(property "Footprint" ""
-			(at 129.54 50.8 0)
+			(at 130.81 50.8 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -5634,7 +5833,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 129.54 50.8 0)
+			(at 130.81 50.8 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -5643,7 +5842,7 @@
 			)
 		)
 		(property "Description" "Power symbol creates a global label with name \"GND\" , ground"
-			(at 129.54 50.8 0)
+			(at 130.81 50.8 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -5757,7 +5956,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Connector_JST:JST_SH_SM05B-SRSS-TB_1x05-1MP_P1.00mm_Horizontal"
 			(at 171.45 135.89 0)
 			(effects
 				(font
@@ -5827,11 +6026,11 @@
 		)
 	)
 	(symbol
-		(lib_id "T-Display-S3:T-Display-S3")
+		(lib_id "motion-play-symbols:T-Display-S3")
 		(at 121.92 119.38 0)
 		(unit 1)
 		(exclude_from_sim no)
-		(in_bom no)
+		(in_bom yes)
 		(on_board yes)
 		(dnp no)
 		(fields_autoplaced yes)
@@ -5852,7 +6051,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Library:T-Display-S3"
+		(property "Footprint" "motion-play-footprints:T-Display-S3"
 			(at 121.92 109.22 0)
 			(effects
 				(font
@@ -5962,7 +6161,7 @@
 	)
 	(symbol
 		(lib_id "Connector:TestPoint")
-		(at 132.08 135.89 270)
+		(at 133.35 93.98 270)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -5970,7 +6169,7 @@
 		(dnp no)
 		(uuid "f72b7b81-00a0-4817-93d9-7aada4cfce89")
 		(property "Reference" "TPIO2"
-			(at 136.906 135.89 90)
+			(at 137.922 93.98 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -5979,7 +6178,7 @@
 			)
 		)
 		(property "Value" "TestPoint"
-			(at 134.1121 138.43 0)
+			(at 135.3821 96.52 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -5989,7 +6188,7 @@
 			)
 		)
 		(property "Footprint" "TestPoint:TestPoint_Pad_D2.0mm"
-			(at 132.08 140.97 0)
+			(at 133.35 99.06 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -5998,7 +6197,7 @@
 			)
 		)
 		(property "Datasheet" "~"
-			(at 132.08 140.97 0)
+			(at 133.35 99.06 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -6007,7 +6206,7 @@
 			)
 		)
 		(property "Description" "test point"
-			(at 132.08 135.89 0)
+			(at 133.35 93.98 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -6029,7 +6228,7 @@
 	)
 	(symbol
 		(lib_id "power:GND")
-		(at 53.34 36.83 180)
+		(at 53.34 35.56 180)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -6037,7 +6236,7 @@
 		(dnp no)
 		(uuid "f7aacdbd-d3ba-4b1b-8e1b-a112f888c256")
 		(property "Reference" "#PWR011"
-			(at 53.34 30.48 0)
+			(at 53.34 29.21 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -6046,7 +6245,7 @@
 			)
 		)
 		(property "Value" "GND"
-			(at 53.34 33.02 0)
+			(at 53.34 31.75 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -6054,7 +6253,7 @@
 			)
 		)
 		(property "Footprint" ""
-			(at 53.34 36.83 0)
+			(at 53.34 35.56 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -6063,7 +6262,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 53.34 36.83 0)
+			(at 53.34 35.56 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -6072,7 +6271,7 @@
 			)
 		)
 		(property "Description" "Power symbol creates a global label with name \"GND\" , ground"
-			(at 53.34 36.83 0)
+			(at 53.34 35.56 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -6205,16 +6404,6 @@
 		(pin "+5V_TO_LEDS" output
 			(at 127 151.13 0)
 			(uuid "58cdcbba-bfb4-43a8-a94d-7616125e45dd")
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify right)
-			)
-		)
-		(pin "ADC_CURRENT_SENSE" output
-			(at 127 135.89 0)
-			(uuid "f0f74bbc-a3d2-43ab-a1d7-f511035bd220")
 			(effects
 				(font
 					(size 1.27 1.27)

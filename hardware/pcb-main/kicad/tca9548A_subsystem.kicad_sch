@@ -273,7 +273,7 @@
 			)
 			(embedded_fonts no)
 		)
-		(symbol "TCA9548:TCA9548APWR"
+		(symbol "motion-play-symbols:TCA9548APWR"
 			(pin_names
 				(offset 1.016)
 			)
@@ -326,7 +326,17 @@
 					(hide yes)
 				)
 			)
-			(property "MF" "Texas Instruments"
+			(property "DigiKey_Part_Number" "296-34905-1-ND"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(justify bottom)
+					(hide yes)
+				)
+			)
+			(property "SnapEDA_Link" "https://www.snapeda.com/parts/TCA9548APWR/Texas+Instruments/view-part/?ref=snap"
 				(at 0 0 0)
 				(effects
 					(font
@@ -347,16 +357,6 @@
 				)
 			)
 			(property "Package" "TSSOP-24 Texas Instruments"
-				(at 0 0 0)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-					(justify bottom)
-					(hide yes)
-				)
-			)
-			(property "Price" "None"
 				(at 0 0 0)
 				(effects
 					(font
@@ -396,7 +396,7 @@
 					(hide yes)
 				)
 			)
-			(property "SnapEDA_Link" "https://www.snapeda.com/parts/TCA9548APWR/Texas+Instruments/view-part/?ref=snap"
+			(property "MF" "Texas Instruments"
 				(at 0 0 0)
 				(effects
 					(font
@@ -416,17 +416,7 @@
 					(hide yes)
 				)
 			)
-			(property "Description_1" "\n                        \n                            8-channel 1.65- to 5.5-V I2C/SMBus switch with reset & voltage translation\n                        \n"
-				(at 0 0 0)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-					(justify bottom)
-					(hide yes)
-				)
-			)
-			(property "Availability" "In Stock"
+			(property "Description_1" "8-channel 1.65- to 5.5-V I2C/SMBus switch with reset & voltage translation"
 				(at 0 0 0)
 				(effects
 					(font
@@ -2100,7 +2090,7 @@
 		)
 	)
 	(symbol
-		(lib_id "TCA9548:TCA9548APWR")
+		(lib_id "motion-play-symbols:TCA9548APWR")
 		(at 163.83 91.44 0)
 		(unit 1)
 		(exclude_from_sim no)
@@ -2125,7 +2115,7 @@
 				)
 			)
 		)
-		(property "Footprint" "TCA9548:SOP65P640X120-24N"
+		(property "Footprint" "motion-play-footprints:SOP65P640X120-24N"
 			(at 163.83 91.44 0)
 			(effects
 				(font
@@ -2243,7 +2233,7 @@
 				(hide yes)
 			)
 		)
-		(property "Description_1" "\n                        \n                            8-channel 1.65- to 5.5-V I2C/SMBus switch with reset & voltage translation\n                        \n"
+		(property "Description_1" "8-channel 1.65- to 5.5-V I2C/SMBus switch with reset & voltage translation"
 			(at 163.83 91.44 0)
 			(effects
 				(font
@@ -2279,6 +2269,16 @@
 				(font
 					(size 1.27 1.27)
 				)
+				(hide yes)
+			)
+		)
+		(property "DigiKey_Part_Number" "296-34905-1-ND"
+			(at 163.83 91.44 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify bottom)
 				(hide yes)
 			)
 		)

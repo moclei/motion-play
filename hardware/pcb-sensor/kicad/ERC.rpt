@@ -1,0 +1,38 @@
+ERC report (2025-09-11T15:07:49-0700, Encoding UTF8)
+
+***** Sheet /
+[power_pin_not_driven]: Input Power pin not driven by any Output Power pins
+    ; error
+    @(2050 mils, 2550 mils): Symbol #PWR01 Pin 1 [Power input, Line]
+[pin_not_driven]: Input pin not driven by any Output pins
+    ; error
+    @(4300 mils, 3150 mils): Symbol U1 Pin 7 [SC1, Input, Line]
+[pin_not_driven]: Input pin not driven by any Output pins
+    ; error
+    @(4400 mils, 3150 mils): Symbol U1 Pin 5 [SC0, Input, Line]
+[footprint_link_issues]: The current configuration does not include the footprint library 'PCA9546APWR'.
+    ; warning
+    @(4100 mils, 3850 mils): Symbol U1 [PCA9546APWR]
+[power_pin_not_driven]: Input Power pin not driven by any Output Power pins
+    ; error
+    @(3200 mils, 4750 mils): Symbol #PWR03 Pin 1 [Power input, Line]
+[footprint_link_issues]: The current configuration does not include the footprint library 'VCNL4040'.
+    ; warning
+    @(7850 mils, 2450 mils): Symbol U2 [VCNL4040M3OE-H3]
+[lib_symbol_issues]: The current configuration does not include the symbol library 'VCNL4040'
+    ; warning
+    @(7850 mils, 2450 mils): Symbol U2 [VCNL4040M3OE-H3]
+[power_pin_not_driven]: Input Power pin not driven by any Output Power pins
+    ; error
+    @(8550 mils, 2150 mils): Symbol U2 Pin 4 [Power input, Line]
+[footprint_link_issues]: The current configuration does not include the footprint library 'VCNL4040'.
+    ; warning
+    @(7850 mils, 4400 mils): Symbol U3 [VCNL4040M3OE-H3]
+[lib_symbol_issues]: The current configuration does not include the symbol library 'VCNL4040'
+    ; warning
+    @(7850 mils, 4400 mils): Symbol U3 [VCNL4040M3OE-H3]
+[power_pin_not_driven]: Input Power pin not driven by any Output Power pins
+    ; error
+    @(8550 mils, 4100 mils): Symbol U3 Pin 4 [Power input, Line]
+
+ ** ERC messages: 11  Errors 6  Warnings 5
