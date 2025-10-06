@@ -1,0 +1,94 @@
+Info: Total warnings: 11, errors: 0.
+Info: Processing symbol 'C1:Capacitor_SMD:C_0603_1608Metric'.
+Info: Processing symbol 'C7:Capacitor_SMD:C_0603_1608Metric'.
+Info: Processing symbol 'C8:Capacitor_SMD:C_0603_1608Metric'.
+Info: Processing symbol 'C9:Capacitor_SMD:C_0603_1608Metric'.
+Info: Processing symbol 'C10:Capacitor_SMD:C_0603_1608Metric'.
+Info: Processing symbol 'F1:Fuse:Fuse_1206_3216Metric'.
+Info: Processing symbol 'IC1:motion-play-footprints:SOP65P640X120-14N'.
+Info: Processing symbol 'J2:motion-play-footprints:USBC_Power_Module'.
+Info: Processing symbol 'J3:Connector_JST:JST_PH_S3B-PH-SM4-TB_1x03-1MP_P2.00mm_Horizontal'.
+Info: Processing symbol 'J4:Connector_JST:JST_SH_SM05B-SRSS-TB_1x05-1MP_P1.00mm_Horizontal'.
+Info: Processing symbol 'U4:motion-play-footprints:SOP65P640X120-24N'.
+Info: Processing symbol 'U2:motion-play-footprints:T-Display-S3'.
+Info: Processing symbol 'U1:motion-play-footprints:SOT95P285X140-5N'.
+Info: Processing symbol 'TP_GND1:TestPoint:TestPoint_Pad_D2.0mm'.
+Info: Processing symbol 'TP_5V1:TestPoint:TestPoint_Pad_D2.0mm'.
+Info: Processing symbol 'TPIO44:TestPoint:TestPoint_Pad_D2.0mm'.
+Info: Processing symbol 'TPIO43:TestPoint:TestPoint_Pad_D2.0mm'.
+Info: Processing symbol 'TPIO21:TestPoint:TestPoint_Pad_D2.0mm'.
+Info: Processing symbol 'TPIO18:TestPoint:TestPoint_Pad_D2.0mm'.
+Info: Processing symbol 'TPIO17:TestPoint:TestPoint_Pad_D2.0mm'.
+Info: Processing symbol 'TPIO16:TestPoint:TestPoint_Pad_D2.0mm'.
+Info: Processing symbol 'TPIO13:TestPoint:TestPoint_Pad_D2.0mm'.
+Info: Processing symbol 'TPIO12:TestPoint:TestPoint_Pad_D2.0mm'.
+Info: Processing symbol 'TPIO11:TestPoint:TestPoint_Pad_D2.0mm'.
+Info: Processing symbol 'TPIO10:TestPoint:TestPoint_Pad_D2.0mm'.
+Info: Processing symbol 'TPIO3:TestPoint:TestPoint_Pad_D2.0mm'.
+Info: Processing symbol 'TPIO2:TestPoint:TestPoint_Pad_D2.0mm'.
+Info: Processing symbol 'TPIO1:TestPoint:TestPoint_Pad_D2.0mm'.
+Info: Processing symbol 'R29:Resistor_SMD:R_0603_1608Metric'.
+Info: Processing symbol 'R28:Resistor_SMD:R_0603_1608Metric'.
+Info: Processing symbol 'J5:Connector_JST:JST_SH_SM05B-SRSS-TB_1x05-1MP_P1.00mm_Horizontal'.
+Info: Processing symbol 'R27:Resistor_SMD:R_2512_6332Metric'.
+Info: Processing symbol 'R6:Resistor_SMD:R_0603_1608Metric'.
+Info: Processing symbol 'J6:Connector_JST:JST_SH_SM05B-SRSS-TB_1x05-1MP_P1.00mm_Horizontal'.
+Info: Processing symbol 'C2:Capacitor_SMD:C_0603_1608Metric'.
+Connected J5 pin 4 to /TCA9548A_Subsystem/CH1_SCL.
+Updated J4 fields.
+Updated J5 sheetfile to 'motion-play-main.kicad_sch'.
+Updated J5 footprint filters to 'Connector*:*_1x??_*'.
+Connected J5 pin 1 to +3.3V.
+Connected J5 pin 2 to GND.
+Connected J5 pin 5 to /INT2.
+Connected J5 pin 3 to /TCA9548A_Subsystem/CH1_SDA.
+
+Updated J5 fields.
+Updated J5 symbol association from  to /60dbae38-d658-4e60-b4dc-5a1fd34cbf21.
+Changed J5 value from JST_SH_SM05B-SRSS-TB_1x05-1MP_P1.00mm_Horizontal to Conn_01x05.
+Added J6 (footprint 'Connector_JST:JST_SH_SM05B-SRSS-TB_1x05-1MP_P1.00mm_Horizontal').
+Changed REF** reference designator to J6.
+Changed J6 value from JST_SH_SM05B-SRSS-TB_1x05-1MP_P1.00mm_Horizontal to Conn_01x05.
+Updated J6 symbol association from  to /f6b9dbd2-3352-4e46-b9e6-a28697d89cf1.
+Updated J6 fields.
+Updated J6 sheetname to '/'.
+Updated J6 sheetfile to 'motion-play-main.kicad_sch'.
+Updated J6 footprint filters to 'Connector*:*_1x??_*'.
+Connected J6 pin 4 to /TCA9548A_Subsystem/CH2_SCL.
+
+Updated U4 fields.
+Connected J6 pin 2 to GND.
+Connected J6 pin 3 to /TCA9548A_Subsystem/CH2_SDA.
+Connected J6 pin 1 to +3.3V.
+Connected J6 pin 5 to /INT3.
+Changed REF** reference designator to J5.
+Added J5 (footprint 'Connector_JST:JST_SH_SM05B-SRSS-TB_1x05-1MP_P1.00mm_Horizontal').
+Connected J4 pin 2 to GND.
+Connected J4 pin 1 to +3.3V.
+Updated J3 fields.
+Connected J4 pin 5 to /INT1.
+Connected J4 pin 3 to /TCA9548A_Subsystem/CH0_SDA.
+Connected J4 pin 4 to /TCA9548A_Subsystem/CH0_SCL.
+Added J4 (footprint 'Connector_JST:JST_SH_SM05B-SRSS-TB_1x05-1MP_P1.00mm_Horizontal').
+Updated J4 footprint filters to 'Connector*:*_1x??_*'.
+Updated J4 sheetfile to 'motion-play-main.kicad_sch'.
+Updated J4 sheetname to '/'.
+Updated U1 fields.
+Changed REF** reference designator to J4.
+Changed J4 value from JST_SH_SM05B-SRSS-TB_1x05-1MP_P1.00mm_Horizontal to Conn_01x05.
+Updated J4 symbol association from  to /1fcac6f0-69e6-4b35-8c20-2859a91b14d0.
+Updated J5 sheetname to '/'.
+Warning: No net found for component J2 pad GND (no pin GND in symbol).
+Warning: No net found for component J2 pad 5V (no pin 5V in symbol).
+Warning: No net found for component J3 pad MP (no pin MP in symbol).
+Warning: No net found for component J3 pad MP (no pin MP in symbol).
+Warning: No net found for component U1 pad 4 (no pin 4 in symbol).
+Warning: No net found for component J4 pad MP (no pin MP in symbol).
+Warning: No net found for component J4 pad MP (no pin MP in symbol).
+Warning: No net found for component J6 pad MP (no pin MP in symbol).
+Warning: No net found for component J6 pad MP (no pin MP in symbol).
+Warning: No net found for component J5 pad MP (no pin MP in symbol).
+Warning: No net found for component J5 pad MP (no pin MP in symbol).
+
+
+Info: Total warnings: 11, errors: 0.

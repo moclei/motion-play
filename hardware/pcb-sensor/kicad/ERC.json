@@ -1,0 +1,120 @@
+{
+    "$schema": "https://schemas.kicad.org/erc.v1.json",
+    "coordinate_units": "mils",
+    "date": "2025-09-11T15:15:44-0700",
+    "kicad_version": "9.0.4",
+    "sheets": [
+        {
+            "path": "/",
+            "uuid_path": "/fa8d533f-0ba2-4fce-afb7-2b2d9b4781b1",
+            "violations": [
+                {
+                    "description": "The current configuration does not include the footprint library 'PCA9546APWR'.",
+                    "items": [
+                        {
+                            "description": "Symbol U1 [PCA9546APWR]",
+                            "pos": {
+                                "x": 41.0,
+                                "y": 38.5
+                            },
+                            "uuid": "2da0524a-002a-48a4-b426-3e341cc0c237"
+                        }
+                    ],
+                    "severity": "warning",
+                    "type": "footprint_link_issues"
+                },
+                {
+                    "description": "Symbol 'PCA9546APWR' doesn't match copy in library 'motion-play-symbols'",
+                    "items": [
+                        {
+                            "description": "Symbol U1 [PCA9546APWR]",
+                            "pos": {
+                                "x": 41.0,
+                                "y": 38.5
+                            },
+                            "uuid": "2da0524a-002a-48a4-b426-3e341cc0c237"
+                        }
+                    ],
+                    "severity": "warning",
+                    "type": "lib_symbol_mismatch"
+                },
+                {
+                    "description": "Input Power pin not driven by any Output Power pins",
+                    "items": [
+                        {
+                            "description": "Symbol #PWR03 Pin 1 [Power input, Line]",
+                            "pos": {
+                                "x": 32.0,
+                                "y": 47.5
+                            },
+                            "uuid": "e91723d4-3ed3-4d56-ac8b-587b63d26603"
+                        }
+                    ],
+                    "severity": "error",
+                    "type": "power_pin_not_driven"
+                },
+                {
+                    "description": "The current configuration does not include the footprint library 'VCNL4040'.",
+                    "items": [
+                        {
+                            "description": "Symbol U2 [VCNL4040M3OE-H3]",
+                            "pos": {
+                                "x": 78.5,
+                                "y": 24.5
+                            },
+                            "uuid": "6654c9b7-a860-49a7-8030-0c0b928373a3"
+                        }
+                    ],
+                    "severity": "warning",
+                    "type": "footprint_link_issues"
+                },
+                {
+                    "description": "The current configuration does not include the symbol library 'VCNL4040'",
+                    "items": [
+                        {
+                            "description": "Symbol U2 [VCNL4040M3OE-H3]",
+                            "pos": {
+                                "x": 78.5,
+                                "y": 24.5
+                            },
+                            "uuid": "6654c9b7-a860-49a7-8030-0c0b928373a3"
+                        }
+                    ],
+                    "severity": "warning",
+                    "type": "lib_symbol_issues"
+                },
+                {
+                    "description": "The current configuration does not include the footprint library 'VCNL4040'.",
+                    "items": [
+                        {
+                            "description": "Symbol U3 [VCNL4040M3OE-H3]",
+                            "pos": {
+                                "x": 78.5,
+                                "y": 44.0
+                            },
+                            "uuid": "25c9a18f-8136-4933-af2f-4d17c0d526f1"
+                        }
+                    ],
+                    "severity": "warning",
+                    "type": "footprint_link_issues"
+                },
+                {
+                    "description": "The current configuration does not include the symbol library 'VCNL4040'",
+                    "items": [
+                        {
+                            "description": "Symbol U3 [VCNL4040M3OE-H3]",
+                            "pos": {
+                                "x": 78.5,
+                                "y": 44.0
+                            },
+                            "uuid": "25c9a18f-8136-4933-af2f-4d17c0d526f1"
+                        }
+                    ],
+                    "severity": "warning",
+                    "type": "lib_symbol_issues"
+                }
+            ]
+        }
+    ],
+    "source": "motion-play-sensor-strip.kicad_sch"
+}

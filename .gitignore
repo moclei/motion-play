@@ -28,6 +28,7 @@ dist/*
 *~
 _autosave-*
 *.tmp
+*.tmp.driveupload
 *-save.pro
 *-save.kicad_pcb
 fp-info-cache

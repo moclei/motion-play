@@ -1,7 +1,7 @@
 {
   "metadata": {
     "circuitName": "motion-play-main.kicad_sch",
-    "generatedAt": "2025-09-08T18:36:37.368523",
+    "generatedAt": "2025-09-12T13:26:56.923827",
     "totalComponents": 35,
     "componentsWithLCSC": 18,
     "componentsWithoutLCSC": 17,
@@ -45,13 +45,13 @@
         "TCA9548APWR"
       ],
       "footprints": [
-        "TCA9548:SOP65P640X120-24N"
+        "motion-play-footprints:SOP65P640X120-24N"
       ],
       "lcscFieldNames": [
         "LCSC Part"
       ],
       "primaryValue": "TCA9548APWR",
-      "primaryFootprint": "TCA9548:SOP65P640X120-24N",
+      "primaryFootprint": "motion-play-footprints:SOP65P640X120-24N",
       "customFields": {
         "LCSC Part": "C130026"
       },
@@ -214,8 +214,7 @@
       "primaryValue": "LED_Strip",
       "primaryFootprint": "Connector_JST:JST_XH_B3B-XH-AM_1x03_P2.50mm_Vertical",
       "customFields": {
-        "LCSC Part": "C265101",
-        "LCSC": "C265091"
+        "LCSC Part": "C265101"
       },
       "hasInconsistency": false
     },
@@ -297,13 +296,13 @@
         "AP2112K-3.3TRG1"
       ],
       "footprints": [
-        "AP2112K-3.3TRG1:SOT95P285X140-5N"
+        "motion-play-footprints:SOT95P285X140-5N"
       ],
       "lcscFieldNames": [
         "LCSC Part"
       ],
       "primaryValue": "AP2112K-3.3TRG1",
-      "primaryFootprint": "AP2112K-3.3TRG1:SOT95P285X140-5N",
+      "primaryFootprint": "motion-play-footprints:SOT95P285X140-5N",
       "customFields": {
         "LCSC Part": "C51118"
       },
@@ -317,7 +316,7 @@
         "J2"
       ],
       "value": "DWEII Power Module",
-      "footprint": "Library:USBC_Power_Module",
+      "footprint": "motion-play-footprints:USBC_Power_Module",
       "suggestion": "Consider adding LCSC part number"
     },
     {
@@ -326,7 +325,7 @@
         "U2"
       ],
       "value": "T-Display-S3",
-      "footprint": "Library:T-Display-S3",
+      "footprint": "motion-play-footprints:T-Display-S3",
       "suggestion": "Consider adding LCSC part number"
     },
     {
