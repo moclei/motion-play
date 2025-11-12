@@ -1,0 +1,12 @@
+# AWS setup artifacts
+certificate-output.json
+iot-policy.json
+aws-metadata.json
+aws-config.local.json
+*.pem
+*.key
+
+# Keep documentation
+!aws-setup-guide.md
+!*.example
+!*.template

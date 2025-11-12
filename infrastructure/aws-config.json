@@ -1,0 +1,37 @@
+{
+  "region": "us-west-2",
+  "iot": {
+    "endpoint": "a2ug8vnc248ve8-ats.iot.us-west-2.amazonaws.com",
+    "thing_name": "motionplay-device-001",
+    "policy_name": "MotionPlayDevicePolicy"
+  },
+  "dynamodb": {
+    "tables": {
+      "sessions": "MotionPlaySessions",
+      "sensor_data": "MotionPlaySensorData",
+      "devices": "MotionPlayDevices"
+    }
+  },
+  "lambda": {
+    "functions": {
+      "processData": "motionplay-processData",
+      "processStatus": "motionplay-processStatus",
+      "sendCommand": "motionplay-sendCommand",
+      "getSessions": "motionplay-getSessions",
+      "getSessionData": "motionplay-getSessionData",
+      "updateSession": "motionplay-updateSession",
+      "deleteSession": "motionplay-deleteSession"
+    },
+    "roles": {
+      "lambda": {
+        "name": "MotionPlayLambdaRole",
+        "policy": "MotionPlayLambdaPolicy",
+        "arn_template": "arn:aws:iam::ACCOUNT_ID:role/MotionPlayLambdaRole"
+      }
+    }
+  },
+  "api_gateway": {
+    "name": "motionplay-api",
+    "stage": "dev"
+  }
+}
