@@ -1,0 +1,14 @@
+# Ignore all certificate files for security
+*.pem
+*.key
+*.crt
+*.der
+
+# Ignore config files that may contain sensitive data
+config.json
+wifi_credentials.json
+
+# Allow example/template files
+!*.example
+!*.template
+

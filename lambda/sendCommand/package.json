@@ -1,0 +1,12 @@
+{
+  "name": "motion-play-send-command",
+  "version": "1.0.0",
+  "description": "Send commands to Motion Play devices",
+  "main": "index.js",
+  "dependencies": {
+    "@aws-sdk/client-iot-data-plane": "^3.0.0"
+  },
+  "author": "Marc",
+  "license": "ISC"
+}
+

@@ -1,0 +1,17 @@
+{
+  "device_id": "motionplay-device-001",
+  "wifi": {
+    "ssid": "your-wifi-ssid",
+    "password": "your-wifi-password"
+  },
+  "mqtt": {
+    "broker": "xxxxx.iot.us-west-2.amazonaws.com",
+    "port": 8883,
+    "client_id": "motionplay-device-001"
+  },
+  "sampling": {
+    "rate_hz": 1000,
+    "max_duration_seconds": 30
+  }
+}
+
