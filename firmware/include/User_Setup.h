@@ -13,29 +13,27 @@
 //
 // ##################################################################################
 
-// Only define one driver, the other ones must be commented out
-#define ILI9341_DRIVER // For T-Display-S3 display
+// CORRECT driver for T-Display-S3
+#define ST7789_DRIVER // Full configuration option, define additional parameters below for this display
 
-// Display resolution configuration
-// #define TFT_WIDTH 170
-// #define TFT_HEIGHT 320
+// T-Display-S3 Display Resolution
+#define TFT_WIDTH 170
+#define TFT_HEIGHT 320
 
 // T-Display-S3 Pin Configuration
 #include "pin_config.h" // Include the pin definitions
 
-// Configure the display interface pins
-#define TFT_MISO -1
-#define TFT_MOSI PIN_LCD_D0
-#define TFT_SCLK PIN_LCD_WR
-#define TFT_CS PIN_LCD_CS
-#define TFT_DC PIN_LCD_DC
-#define TFT_RST PIN_LCD_RES
-
-// For the T-Display-S3, we're using parallel interface
+// For T-Display-S3 we use 8-bit parallel interface
 #define TFT_PARALLEL_8_BIT
-#define ESP32_PARALLEL
 
-// Parallel port pins
+// Configure the display interface pins
+#define TFT_CS PIN_LCD_CS   // Chip select control pin
+#define TFT_DC PIN_LCD_DC   // Data Command control pin
+#define TFT_RST PIN_LCD_RES // Reset pin (could connect to RST pin)
+#define TFT_WR PIN_LCD_WR   // Write strobe control pin - must use pin 8 for the T-Display-S3
+#define TFT_RD PIN_LCD_RD   // Read strobe control pin
+
+// Parallel port pins (8-bit parallel interface)
 #define TFT_D0 PIN_LCD_D0 // Must use pins in sequence starting with D0...D7
 #define TFT_D1 PIN_LCD_D1
 #define TFT_D2 PIN_LCD_D2

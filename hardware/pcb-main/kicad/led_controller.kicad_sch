@@ -1085,16 +1085,6 @@
 	)
 	(wire
 		(pts
-			(xy 186.69 72.39) (xy 189.23 72.39)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "ed98062b-8bce-401a-9578-1b103a9fda22")
-	)
-	(wire
-		(pts
 			(xy 158.75 57.15) (xy 158.75 58.42)
 		)
 		(stroke
@@ -1146,17 +1136,6 @@
 		)
 		(uuid "66cb5c6b-3093-4f1a-96e6-2edf9bfeb406")
 	)
-	(hierarchical_label "LED_GND"
-		(shape output)
-		(at 189.23 72.39 0)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left)
-		)
-		(uuid "cc3490c3-8aae-4309-97bb-98b5a3a26f3e")
-	)
 	(hierarchical_label "+5V_IN"
 		(shape input)
 		(at 133.35 58.42 180)
@@ -1178,73 +1157,6 @@
 			(justify right)
 		)
 		(uuid "f3a446fc-f539-44f8-a56f-df28eee224d9")
-	)
-	(symbol
-		(lib_id "power:GND")
-		(at 186.69 72.39 270)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(fields_autoplaced yes)
-		(uuid "153b89ab-6fd3-4ee8-ba61-91e4e0864690")
-		(property "Reference" "#PWR021"
-			(at 180.34 72.39 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Value" "GND"
-			(at 182.88 72.3899 90)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify right)
-			)
-		)
-		(property "Footprint" ""
-			(at 186.69 72.39 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" ""
-			(at 186.69 72.39 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Description" "Power symbol creates a global label with name \"GND\" , ground"
-			(at 186.69 72.39 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(pin "1"
-			(uuid "259f9c6e-8968-4192-bd7e-91a7272adc2c")
-		)
-		(instances
-			(project "motion-play-main"
-				(path "/6e095bf3-d8d5-4f67-b79f-a2965409c7a9/22a71174-d1ab-41ca-9de7-73d077ebe0b0"
-					(reference "#PWR021")
-					(unit 1)
-				)
-			)
-		)
 	)
 	(symbol
 		(lib_id "Device:Fuse")

@@ -1,0 +1,201 @@
+(footprint "VISHAY_VCNL4040_4.34X2.35X3.25"
+	(version 20241229)
+	(generator "pcbnew")
+	(generator_version "9.0")
+	(layer "F.Cu")
+	(property "Reference" "REF**"
+		(at 0.266408 -3.45024 0)
+		(layer "F.SilkS")
+		(uuid "6fd2c48f-4897-4e1a-83e2-7b08af209044")
+		(effects
+			(font
+				(size 0.600913 0.600913)
+				(thickness 0.15)
+			)
+		)
+	)
+	(property "Value" "VISHAY_VCNL4040_4.34X2.35X3.25"
+		(at 9.687145 3.053045 0)
+		(layer "F.Fab")
+		(uuid "48664ea4-778f-47f6-bf4c-1b199c1fc402")
+		(effects
+			(font
+				(size 0.600009 0.600009)
+				(thickness 0.15)
+			)
+		)
+	)
+	(property "Datasheet" ""
+		(at 0 0 0)
+		(layer "F.Fab")
+		(hide yes)
+		(uuid "60e26521-874b-4ac9-940c-bc6c800a54d5")
+		(effects
+			(font
+				(size 1.27 1.27)
+				(thickness 0.15)
+			)
+		)
+	)
+	(property "Description" ""
+		(at 0 0 0)
+		(layer "F.Fab")
+		(hide yes)
+		(uuid "592278da-775f-4294-8c21-cb69db3c350c")
+		(effects
+			(font
+				(size 1.27 1.27)
+				(thickness 0.15)
+			)
+		)
+	)
+	(attr smd)
+	(fp_circle
+		(center -2.107 -1.65)
+		(end -2.057 -1.65)
+		(stroke
+			(width 0.127)
+			(type solid)
+		)
+		(fill no)
+		(layer "F.SilkS")
+		(uuid "ec04e143-d4ed-4f88-baf6-fd5e246f936f")
+	)
+	(fp_line
+		(start -1.6 -2.4)
+		(end 1.6 -2.4)
+		(stroke
+			(width 0.127)
+			(type solid)
+		)
+		(layer "F.CrtYd")
+		(uuid "ba800452-fcf7-4faf-b852-01c6c139b9ff")
+	)
+	(fp_line
+		(start -1.6 2.4)
+		(end -1.6 -2.4)
+		(stroke
+			(width 0.127)
+			(type solid)
+		)
+		(layer "F.CrtYd")
+		(uuid "d24a1e75-4493-44f8-99be-c8fa94b4b248")
+	)
+	(fp_line
+		(start 1.6 -2.4)
+		(end 1.6 2.4)
+		(stroke
+			(width 0.127)
+			(type solid)
+		)
+		(layer "F.CrtYd")
+		(uuid "1b68760b-4887-4746-8bde-057430a8e89a")
+	)
+	(fp_line
+		(start 1.6 2.4)
+		(end -1.6 2.4)
+		(stroke
+			(width 0.127)
+			(type solid)
+		)
+		(layer "F.CrtYd")
+		(uuid "c3f3ed7a-3f6e-4b23-9434-c5cfda8cc6ba")
+	)
+	(fp_line
+		(start -1.175 -2.17)
+		(end 1.175 -2.17)
+		(stroke
+			(width 0.127)
+			(type solid)
+		)
+		(layer "F.Fab")
+		(uuid "18945b0f-df9f-41ec-8b7b-3c9fd6cccf76")
+	)
+	(fp_line
+		(start -1.175 2.17)
+		(end -1.175 -2.17)
+		(stroke
+			(width 0.127)
+			(type solid)
+		)
+		(layer "F.Fab")
+		(uuid "01756d18-ddb3-4e73-a157-b056c21063f2")
+	)
+	(fp_line
+		(start 1.175 -2.17)
+		(end 1.175 2.17)
+		(stroke
+			(width 0.127)
+			(type solid)
+		)
+		(layer "F.Fab")
+		(uuid "167dce10-9201-4ac5-a4c1-48615b4fedce")
+	)
+	(fp_line
+		(start 1.175 2.17)
+		(end -1.175 2.17)
+		(stroke
+			(width 0.127)
+			(type solid)
+		)
+		(layer "F.Fab")
+		(uuid "cf3668d4-d418-4f7b-990a-ba1083898bb6")
+	)
+	(pad "1" smd rect
+		(at -0.9 -1.6125)
+		(size 0.9 0.725)
+		(layers "F.Cu" "F.Mask" "F.Paste")
+		(solder_mask_margin 0.102)
+		(uuid "54c4d385-7338-496a-9aa4-49fc328880b3")
+	)
+	(pad "2" smd rect
+		(at -0.9 -0.5375)
+		(size 0.9 0.725)
+		(layers "F.Cu" "F.Mask" "F.Paste")
+		(solder_mask_margin 0.102)
+		(uuid "af529e7a-e2cb-451e-872d-cd5b084e8470")
+	)
+	(pad "3" smd rect
+		(at -0.9 0.5375)
+		(size 0.9 0.725)
+		(layers "F.Cu" "F.Mask" "F.Paste")
+		(solder_mask_margin 0.102)
+		(uuid "90b73eb6-72f1-4b5a-966a-03d669c2a447")
+	)
+	(pad "4" smd rect
+		(at -0.9 1.6125)
+		(size 0.9 0.725)
+		(layers "F.Cu" "F.Mask" "F.Paste")
+		(solder_mask_margin 0.102)
+		(uuid "98a26471-5fec-45bb-a4dd-e86af683869f")
+	)
+	(pad "5" smd rect
+		(at 0.9 1.6125)
+		(size 0.9 0.725)
+		(layers "F.Cu" "F.Mask" "F.Paste")
+		(solder_mask_margin 0.102)
+		(uuid "95ab3ccf-a706-4584-8bba-3965ca5f2346")
+	)
+	(pad "6" smd rect
+		(at 0.9 0.5375)
+		(size 0.9 0.725)
+		(layers "F.Cu" "F.Mask" "F.Paste")
+		(solder_mask_margin 0.102)
+		(uuid "b504d1e1-86e1-4817-9418-b918679b79ae")
+	)
+	(pad "7" smd rect
+		(at 0.9 -0.5375)
+		(size 0.9 0.725)
+		(layers "F.Cu" "F.Mask" "F.Paste")
+		(solder_mask_margin 0.102)
+		(uuid "912a2220-164f-4a0b-98b5-2c648c233746")
+	)
+	(pad "8" smd rect
+		(at 0.9 -1.61225)
+		(size 0.9 0.725)
+		(layers "F.Cu" "F.Mask" "F.Paste")
+		(solder_mask_margin 0.102)
+		(uuid "22b9ed79-cdeb-471c-ad6d-783ec1828a9d")
+	)
+	(embedded_fonts no)
+)
