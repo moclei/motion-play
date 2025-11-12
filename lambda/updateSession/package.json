@@ -1,0 +1,13 @@
+{
+  "name": "motion-play-update-session",
+  "version": "1.0.0",
+  "description": "Update Motion Play session metadata",
+  "main": "index.js",
+  "dependencies": {
+    "@aws-sdk/client-dynamodb": "^3.0.0",
+    "@aws-sdk/lib-dynamodb": "^3.0.0"
+  },
+  "author": "Marc",
+  "license": "ISC"
+}
+
