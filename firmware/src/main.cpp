@@ -1,35 +1,52 @@
 /**
- * Motion Play v2.0 - Phase 1: Foundation & Display Test
+ * Motion Play v4.0 - Proximity Detection System - November 6, 2025
  *
- * This is the initial phase of the complete system rebuild using vetted libraries.
+ * APPROACH: Baseline-relative proximity detection for directional motion sensing
+ * - Using VCNL4040 proximity sensors (IR LED + photodiode)
+ * - BASELINE-RELATIVE detection: detects ANY deviation from baseline (like ambient light!)
+ * - Supporting up to 3 sensor boards with 2 sensors each (6 total sensors)
+ * - S1 (PCA channel 0) vs S2 (PCA channel 1) for directional detection
  *
- * Phase 1 Objectives:
- * - Verify T-Display-S3 initialization and functionality
- * - Display system information and build details
- * - Implement basic terminal/logging system
- * - Test button navigation
- * - Prepare placeholders for upcoming phases
+ * Hardware Configuration:
+ * - T-Display-S3 (ESP32-S3) main controller
+ * - TCA9548A I2C multiplexer (3 channels for 3 sensor boards)
+ * - Each sensor board: PCA9546A + 2x VCNL4040 sensors
+ * - Total: 6 sensors arranged as 3 pairs around circular hoop
+ * - Sensor positions: 6 o'clock, 9 o'clock, 3 o'clock
  *
- * Hardware: T-Display-S3 (ESP32-S3) with built-in display and buttons
- * Libraries:
- * - TFT_eSPI for display control
- * - robtillaart/TCA9548 for I2C multiplexer (Phase 2+)
- * - Adafruit VCNL4040 for proximity sensors (Phase 4+)
+ * Detection Logic (BASELINE-RELATIVE):
+ * - Establish proximity baseline for each sensor (when nothing present)
+ * - Detect ANY variation > threshold from baseline (typically 8 counts)
+ * - Works for FAST and SLOW motion (unlike absolute thresholds!)
+ * - S1 → S2 within 150ms = Player 1 (Green LEDs)
+ * - S2 → S1 within 150ms = Player 2 (Blue LEDs)
+ * - Fast sampling: 66 readings/sec (15ms interval)
+ *
+ * LED Feedback:
+ * - 🟢 Green: Player 1 scored (S1 → S2)
+ * - 🔵 Blue: Player 2 scored (S2 → S1)
+ * - 72 WS2812B LEDs, 3-second display duration
  */
 
 #include <Arduino.h>
 #include <TFT_eSPI.h>
 #include <Wire.h>
+#include <FastLED.h>           // FastLED library for WS2812B LED strip
 #include <TCA9548.h>           // robtillaart TCA9548 library
 #include <Adafruit_VCNL4040.h> // Adafruit VCNL4040 library
 #include "pin_config.h"
+
+// ==================================================================================
+// HARDWARE CONFIGURATION
+// ==================================================================================
 
 // TCA9548A I2C Multiplexer
 #define TCA9548A_ADDRESS 0x70
 TCA9548 tca(TCA9548A_ADDRESS);
 
-// PCA9546A I2C Multiplexer (on sensor boards)
-#define PCA9546A_ADDRESS 0x70
+// PCA9546A I2C Multiplexer addresses (different for each sensor board)
+// Will be auto-detected during initialization (0 = not found)
+uint8_t pca_addresses[3] = {0, 0, 0}; // PCA0, PCA1, PCA2 addresses
 
 // Simple PCA9546A wrapper class
 class PCA9546A
@@ -42,13 +59,6 @@ public:
 
     bool begin()
     {
-        // Test communication
-        Wire.beginTransmission(address);
-        return (Wire.endTransmission() == 0);
-    }
-
-    bool isConnected()
-    {
         Wire.beginTransmission(address);
         return (Wire.endTransmission() == 0);
     }
@@ -58,67 +68,81 @@ public:
         if (channel > 3)
             return false;
         Wire.beginTransmission(address);
-        Wire.write(1 << channel); // Set bit for channel
+        Wire.write(1 << channel);
         return (Wire.endTransmission() == 0);
     }
 
     bool disableAllChannels()
     {
         Wire.beginTransmission(address);
-        Wire.write(0x00); // All channels off
+        Wire.write(0x00);
         return (Wire.endTransmission() == 0);
-    }
-
-    uint8_t getChannelMask()
-    {
-        Wire.beginTransmission(address);
-        if (Wire.endTransmission() != 0)
-            return 0xFF; // Error
-
-        Wire.requestFrom(address, (uint8_t)1);
-        if (Wire.available())
-        {
-            return Wire.read();
-        }
-        return 0xFF; // Error
     }
 };
 
-PCA9546A pca(PCA9546A_ADDRESS);
+// PCA instances - will be initialized when found
+PCA9546A pca_instances[3] = {PCA9546A(0x74), PCA9546A(0x75), PCA9546A(0x76)};
 
-// VCNL4040 Proximity Sensors (test all PCA channels)
-Adafruit_VCNL4040 vcnl_sensors[4]; // One for each possible PCA channel
+// VCNL4040 Proximity Sensors (6 total: 3 boards × 2 sensors each)
+Adafruit_VCNL4040 vcnl_sensors[6];
 
-// Sensor readings structure
-struct SensorReadings
+// ==================================================================================
+// SENSOR DATA STRUCTURE
+// ==================================================================================
+
+struct SensorData
 {
-    uint16_t proximity[4] = {0, 0, 0, 0}; // One for each PCA channel
-    uint16_t ambient[4] = {0, 0, 0, 0};   // One for each PCA channel
-    bool object_detected[4] = {false, false, false, false};
-    bool sensor_active[4] = {false, false, false, false}; // Which sensors are working
+    bool initialized = false;
+    bool active = false;
+
+    // Sensor readings
+    uint16_t proximity = 0;     // Current proximity reading (0-65535)
+    uint16_t ambient = 0;       // Current ambient light reading
+    uint16_t max_proximity = 0; // Maximum proximity seen (for calibration)
+
+    // Baseline-relative detection (like ambient light!)
+    uint16_t proximity_baseline = 0;   // Baseline proximity when nothing there
+    uint16_t proximity_threshold = 10; // Change from baseline needed to trigger
+    int16_t proximity_variation = 0;   // Current variation from baseline
+    uint32_t baseline_update_time = 0; // When baseline was last updated
+
+    // Detection state
+    bool object_detected = false;
     uint32_t last_reading_time = 0;
-    int active_sensor_count = 0;
-} sensor_readings;
+    uint32_t last_detection_time = 0;
+    uint32_t error_count = 0;
 
-// Detection thresholds
-#define PROXIMITY_THRESHOLD 1000   // Default threshold - adjust based on testing
-#define SENSOR_UPDATE_INTERVAL 100 // ms between sensor readings
+    // Sensor identification
+    uint8_t tca_channel = 0;      // Which TCA channel (0-2 for 3 boards)
+    uint8_t pca_channel = 0;      // Which PCA channel (0=S1, 1=S2)
+    String side_name = "Unknown"; // "S1" or "S2"
+    String status = "Unknown";
+};
+
+SensorData sensors[6]; // 6 sensors total: 3 boards × 2 sensors each
+
+// Sensor mapping (P1S1/P2S2 naming):
+// sensors[0] = TCA0/PCA0 (P1S1 - PCB 1, Sensor 1)
+// sensors[1] = TCA0/PCA1 (P1S2 - PCB 1, Sensor 2)
+// sensors[2] = TCA1/PCA0 (P2S1 - PCB 2, Sensor 1)
+// sensors[3] = TCA1/PCA1 (P2S2 - PCB 2, Sensor 2)
+// sensors[4] = TCA2/PCA0 (P3S1 - PCB 3, Sensor 1)
+// sensors[5] = TCA2/PCA1 (P3S2 - PCB 3, Sensor 2)
+
+uint32_t last_display_update = 0;
+uint32_t system_start_time = 0;
 
 // ==================================================================================
-// CONSTANTS & CONFIGURATION
+// DISPLAY CONFIGURATION
 // ==================================================================================
 
-#define VERSION_MAJOR 2
+#define VERSION_MAJOR 4
 #define VERSION_MINOR 0
 #define VERSION_PATCH 0
-#define PHASE_NUMBER 4
 
 // Display configuration (Landscape mode: 320x170)
 #define SCREEN_WIDTH 320
 #define SCREEN_HEIGHT 170
-#define LINE_HEIGHT 12
-#define MAX_LOG_LINES 10
-#define HEADER_HEIGHT 25
 
 // Colors (RGB565)
 #define COLOR_BLACK 0x0000
@@ -131,125 +155,989 @@ struct SensorReadings
 #define COLOR_MAGENTA 0xF81F
 #define COLOR_GRAY 0x8410
 #define COLOR_DARK_GRAY 0x4208
+#define COLOR_ORANGE 0xFD20
 
-// Button debounce
-#define BUTTON_DEBOUNCE_MS 50
+// Proximity detection thresholds (BASELINE-RELATIVE, like ambient light!)
+#define PROXIMITY_VARIATION_THRESHOLD 8 // Change from baseline needed (any deviation triggers!)
+#define BASELINE_UPDATE_INTERVAL 1000   // ms between baseline updates
+#define SENSOR_UPDATE_INTERVAL 15       // ms between sensor readings (optimized for fast ball/hand detection)
+#define DISPLAY_UPDATE_INTERVAL 200     // ms between display updates
 
-// ==================================================================================
-// GLOBAL VARIABLES
-// ==================================================================================
+// Ball detection timing
+#define SIDE_CORRELATION_WINDOW 150   // ms window to correlate S1→S2 or S2→S1
+#define DETECTION_PAUSE_DURATION 3000 // ms to pause detection after trigger (LED display time)
+
+// Debug mode
+#define DEBUG_MODE_SENSORS_ONLY false // Set true to disable ball detection
+#define VERBOSE_SENSOR_LOGGING false  // Set true for detailed logging (helps tune threshold)
+#define TEST_MODE_ANY_DETECTION false // Set true to trigger green LEDs on ANY detection (for testing - DISABLED, using directional now!)
+
+// LED control (WS2812B/WS2818B strip)
+#define LED_TYPE WS2812B
+#define COLOR_ORDER GRB
+#define LED_DISPLAY_DURATION 3000 // ms to show LED feedback
+#define NUM_LEDS 72               // Number of LEDs in strip
+#define LED_BRIGHTNESS 128        // 0-255, 50% brightness
+
+// Detection history
+#define MAX_DETECTION_HISTORY 5
+struct DetectionEvent
+{
+    uint32_t timestamp;
+    int sensor_id;            // 0-5 for the 6 sensors
+    uint16_t proximity_value; // Proximity reading that triggered
+    String side_name;         // "S1" or "S2"
+    String event_type;        // "Player 1", "Player 2", "Detection"
+    bool active;
+};
+DetectionEvent detection_history[MAX_DETECTION_HISTORY];
+int detection_history_count = 0;
+
+// Ball detection state
+enum BallTriggerType
+{
+    NO_TRIGGER,
+    PLAYER_1_TRIGGER, // S1 → S2 (Green)
+    PLAYER_2_TRIGGER, // S2 → S1 (Blue)
+    UNKNOWN_TRIGGER   // Detected but direction unclear
+};
+
+struct BallDetectionState
+{
+    BallTriggerType last_trigger = NO_TRIGGER;
+    uint32_t last_trigger_time = 0;
+    uint32_t detection_pause_until = 0;
+    bool detection_paused = false;
+
+    // Rolling detection windows
+    uint32_t side_a_last_trigger = 0;
+    uint32_t side_b_last_trigger = 0;
+    int side_a_trigger_sensor = -1;
+    int side_b_trigger_sensor = -1;
+
+    // LED state
+    bool led_active = false;
+    uint32_t led_start_time = 0;
+} ball_state;
+
+// FastLED array for WS2812B strip
+CRGB leds[NUM_LEDS];
 
 TFT_eSPI tft = TFT_eSPI();
 
-// System state
-struct SystemStatus
+// ==================================================================================
+// LED CONTROL FUNCTIONS
+// ==================================================================================
+
+void initializeLEDs()
 {
-    bool display_initialized = false;
-    bool i2c_initialized = false;
-    bool tca_detected = false;
-    bool pca_detected = false;
-    bool sensors_detected = false;
-    uint32_t boot_time = 0;
-    uint32_t last_update = 0;
-} system_status;
+    Serial.println("*** INITIALIZING LED STRIP ***");
+    Serial.println("Make sure DWEII power module is connected for 72 LEDs!");
 
-// Button state
-struct ButtonState
-{
-    bool button1_pressed = false;
-    bool button2_pressed = false;
-    uint32_t button1_last_press = 0;
-    uint32_t button2_last_press = 0;
-} button_state;
+    // Initialize FastLED with WS2812B strip on GPIO 16
+    FastLED.addLeds<LED_TYPE, PIN_LED_STRIP_DATA, COLOR_ORDER>(leds, NUM_LEDS);
+    FastLED.setBrightness(LED_BRIGHTNESS);
 
-// Terminal/logging system
-String log_buffer[MAX_LOG_LINES];
-int log_line_count = 0;
-int log_scroll_offset = 0;
-bool auto_scroll = true;
+    // Clear all LEDs to start
+    FastLED.clear();
+    FastLED.show();
 
-// ==================================================================================
-// FUNCTION DECLARATIONS
-// ==================================================================================
-
-void runPhase4Tests();
-void initializeI2C();
-void scanI2CBus();
-void testTCA9548A();
-void testPCA9546A();
-void testVCNL4040Sensors();
-void readSensors();
-void updateSensorDisplay();
-
-// ==================================================================================
-// UTILITY FUNCTIONS
-// ==================================================================================
-
-/**
- * Get formatted build timestamp
- */
-String getBuildTimestamp()
-{
-    return String(__DATE__) + " " + String(__TIME__);
+    Serial.println("FastLED strip initialized successfully");
+    Serial.printf("  Type: WS2812B/WS2818B\n");
+    Serial.printf("  Count: %d LEDs\n", NUM_LEDS);
+    Serial.printf("  Data Pin: GPIO %d\n", PIN_LED_STRIP_DATA);
+    Serial.printf("  Brightness: %d/255\n", LED_BRIGHTNESS);
 }
 
-/**
- * Get version string
- */
-String getVersionString()
+// Helper function to format sensor name in P1S1/P2S2 format
+String getSensorName(int sensor_id)
 {
-    return "v" + String(VERSION_MAJOR) + "." + String(VERSION_MINOR) + "." + String(VERSION_PATCH);
+    int pcb_num = (sensor_id / 2) + 1;    // 0,1 → P1; 2,3 → P2; 4,5 → P3
+    int sensor_num = (sensor_id % 2) + 1; // 0,2,4 → S1; 1,3,5 → S2
+    return "P" + String(pcb_num) + "S" + String(sensor_num);
 }
 
-/**
- * Get uptime in human readable format
- */
-String getUptimeString()
+void setLEDColor(BallTriggerType trigger_type)
 {
-    uint32_t uptime_ms = millis() - system_status.boot_time;
-    uint32_t seconds = uptime_ms / 1000;
-    uint32_t minutes = seconds / 60;
-    uint32_t hours = minutes / 60;
+    CRGB color;
+    String trigger_name;
 
-    seconds %= 60;
-    minutes %= 60;
-
-    return String(hours) + "h " + String(minutes) + "m " + String(seconds) + "s";
-}
-
-/**
- * Add message to terminal log
- */
-void logMessage(String message, uint16_t color = COLOR_WHITE)
-{
-    // Add timestamp prefix
-    uint32_t timestamp = millis() - system_status.boot_time;
-    String timestamped_msg = "[" + String(timestamp / 1000) + "s] " + message;
-
-    // Add to buffer
-    if (log_line_count < MAX_LOG_LINES)
+    switch (trigger_type)
     {
-        log_buffer[log_line_count] = timestamped_msg;
-        log_line_count++;
+    case PLAYER_1_TRIGGER:
+        color = CRGB::Green;
+        trigger_name = "Player 1 (Green)";
+        break;
+    case PLAYER_2_TRIGGER:
+        color = CRGB::Blue;
+        trigger_name = "Player 2 (Blue)";
+        break;
+    case UNKNOWN_TRIGGER:
+        color = CRGB::Red;
+        trigger_name = "Unknown (Red)";
+        break;
+    default:
+        color = CRGB::Black;
+        trigger_name = "Off";
+        break;
+    }
+
+    ball_state.led_active = (trigger_type != NO_TRIGGER);
+    ball_state.led_start_time = millis();
+
+    // Set all LEDs to the specified color
+    if (ball_state.led_active)
+    {
+        fill_solid(leds, NUM_LEDS, color);
+        FastLED.show();
+        Serial.println("🎯 BALL DETECTED! " + trigger_name);
     }
     else
     {
-        // Shift buffer up
-        for (int i = 0; i < MAX_LOG_LINES - 1; i++)
+        FastLED.clear();
+        FastLED.show();
+    }
+}
+
+void updateLEDs()
+{
+    if (ball_state.led_active)
+    {
+        uint32_t elapsed = millis() - ball_state.led_start_time;
+        if (elapsed >= LED_DISPLAY_DURATION)
         {
-            log_buffer[i] = log_buffer[i + 1];
+            setLEDColor(NO_TRIGGER); // Turn off LEDs
         }
-        log_buffer[MAX_LOG_LINES - 1] = timestamped_msg;
+    }
+}
+
+// ==================================================================================
+// SYSTEM INITIALIZATION
+// ==================================================================================
+
+bool initializeDisplay()
+{
+    Serial.println("Initializing T-Display-S3...");
+
+    // Power on display and backlight
+    pinMode(PIN_POWER_ON, OUTPUT);
+    digitalWrite(PIN_POWER_ON, HIGH);
+
+    pinMode(PIN_LCD_BL, OUTPUT);
+    digitalWrite(PIN_LCD_BL, HIGH);
+
+    delay(100);
+
+    // Initialize TFT
+    tft.init();
+    tft.setRotation(1); // Landscape mode
+    tft.fillScreen(COLOR_BLACK);
+
+    // Welcome message
+    tft.setTextColor(COLOR_GREEN, COLOR_BLACK);
+    tft.setTextSize(2);
+    tft.setCursor(10, 10);
+    tft.println("Motion Play v4.0");
+    tft.setTextSize(1);
+    tft.setCursor(10, 35);
+    tft.setTextColor(COLOR_CYAN, COLOR_BLACK);
+    tft.println("Proximity Detection Test");
+
+    delay(2000);
+    return true;
+}
+
+bool initializeI2C()
+{
+    Serial.println("Initializing I2C...");
+
+    // Initialize I2C with custom pins
+    Wire.begin(PIN_IIC_SDA, PIN_IIC_SCL);
+    Wire.setClock(100000); // 100kHz for reliability
+
+    // Initialize TCA reset pin
+    pinMode(PIN_TCA_RESET, OUTPUT);
+    digitalWrite(PIN_TCA_RESET, HIGH);
+
+    Serial.println("I2C initialized - SDA: GPIO" + String(PIN_IIC_SDA) + ", SCL: GPIO" + String(PIN_IIC_SCL));
+    return true;
+}
+
+bool initializeTCA()
+{
+    Serial.println("Initializing TCA9548A...");
+
+    if (!tca.begin())
+    {
+        Serial.println("TCA9548A initialization FAILED!");
+        return false;
     }
 
-    // ALWAYS print to serial first (for debugging)
-    Serial.println(timestamped_msg);
-    Serial.flush(); // Ensure immediate output
-
-    // Auto-scroll to bottom if enabled
-    if (auto_scroll)
+    if (!tca.isConnected())
     {
-        log_scroll_offset = max(0, log_line_count - MAX_LOG_LINES);
+        Serial.println("TCA9548A not responding!");
+        return false;
+    }
+
+    tca.disableAllChannels();
+    Serial.println("TCA9548A initialized successfully");
+    return true;
+}
+
+bool initializePCA()
+{
+    Serial.println("Initializing PCA9546A multiplexers on all TCA channels...");
+
+    int pca_found_count = 0;
+
+    // Scan all 3 TCA channels for sensor boards
+    for (int tca_ch = 0; tca_ch < 3; tca_ch++)
+    {
+        Serial.println("\n=== Scanning TCA Channel " + String(tca_ch) + " ===");
+
+        // Select TCA channel
+        if (!tca.selectChannel(tca_ch))
+        {
+            Serial.println("  ❌ Failed to select TCA channel " + String(tca_ch));
+            continue;
+        }
+
+        delay(10);
+
+        // Try common PCA9546A addresses
+        uint8_t test_addresses[] = {0x74, 0x75, 0x76, 0x72, 0x71, 0x73, 0x77};
+        bool pca_found = false;
+        uint8_t working_address = 0;
+
+        for (int i = 0; i < 7; i++)
+        {
+            uint8_t test_addr = test_addresses[i];
+
+            PCA9546A test_pca(test_addr);
+            if (test_pca.begin())
+            {
+                Serial.println("  ✅ PCA9546A found at 0x" + String(test_addr, HEX));
+                working_address = test_addr;
+                pca_found = true;
+                test_pca.disableAllChannels();
+                break;
+            }
+        }
+
+        if (pca_found)
+        {
+            // Update PCA instance for this TCA channel
+            pca_addresses[tca_ch] = working_address;
+            pca_instances[tca_ch] = PCA9546A(working_address);
+            pca_instances[tca_ch].disableAllChannels();
+            pca_found_count++;
+
+            Serial.println("  ✅ Initialized PCA" + String(tca_ch) + " at address 0x" + String(working_address, HEX));
+        }
+        else
+        {
+            Serial.println("  ℹ️  No PCA9546A found on TCA channel " + String(tca_ch));
+        }
+    }
+
+    tca.disableAllChannels();
+
+    Serial.println("\n=== PCA Initialization Summary ===");
+    Serial.println("Found " + String(pca_found_count) + " sensor board(s)");
+
+    if (pca_found_count == 0)
+    {
+        Serial.println("❌ No PCA9546A multiplexers found!");
+        return false;
+    }
+
+    for (int i = 0; i < 3; i++)
+    {
+        if (pca_addresses[i] != 0)
+        {
+            Serial.println("  Board " + String(i + 1) + ": TCA" + String(i) + " → PCA at 0x" + String(pca_addresses[i], HEX));
+        }
+    }
+
+    Serial.println("✅ PCA9546A initialization complete");
+    return true;
+}
+
+// ==================================================================================
+// SENSOR MANAGEMENT
+// ==================================================================================
+
+// Add detection to history
+void addDetectionEvent(int sensor_id, uint16_t proximity_value, String event_type)
+{
+    // Shift history array
+    for (int i = MAX_DETECTION_HISTORY - 1; i > 0; i--)
+    {
+        detection_history[i] = detection_history[i - 1];
+    }
+
+    // Add new event
+    detection_history[0].timestamp = millis();
+    detection_history[0].sensor_id = sensor_id;
+    detection_history[0].proximity_value = proximity_value;
+    detection_history[0].side_name = sensors[sensor_id].side_name;
+    detection_history[0].event_type = event_type;
+    detection_history[0].active = true;
+
+    if (detection_history_count < MAX_DETECTION_HISTORY)
+    {
+        detection_history_count++;
+    }
+
+    Serial.println("🔴 DETECTION! " + getSensorName(sensor_id) +
+                   " - " + event_type + ": Proximity=" + String(proximity_value));
+}
+
+// Initialize sensor mapping (which TCA/PCA channels each sensor uses)
+void initializeSensorMapping()
+{
+    for (int i = 0; i < 6; i++)
+    {
+        sensors[i].tca_channel = i / 2; // 0,1→0  2,3→1  4,5→2
+        sensors[i].pca_channel = i % 2; // 0,2,4→0  1,3,5→1
+        sensors[i].side_name = (sensors[i].pca_channel == 0) ? "S1" : "S2";
+
+        Serial.println(getSensorName(i) + ": TCA" + String(sensors[i].tca_channel) +
+                       "/PCA" + String(sensors[i].pca_channel) + " (" + sensors[i].side_name + ")");
+    }
+
+    Serial.println("\n✅ Full dual-sensor support (S1 and S2 per board)");
+    Serial.println("   S1 sensors (P1S1, P2S1, P3S1) + S2 sensors (P1S2, P2S2, P3S2) = Directional detection");
+}
+
+void initializeSensors()
+{
+    Serial.println("Initializing VCNL4040 proximity sensors for 6-sensor system...");
+    Serial.println("Target: 3 sensor boards × 2 sensors each = 6 total sensors");
+
+    // Initialize sensor mapping first
+    initializeSensorMapping();
+
+    delay(500); // Give hardware time to settle
+
+    int active_count = 0;
+
+    // Test all 6 sensors across 3 TCA channels
+    for (int sensor_id = 0; sensor_id < 6; sensor_id++)
+    {
+        uint8_t tca_ch = sensors[sensor_id].tca_channel;
+        uint8_t pca_ch = sensors[sensor_id].pca_channel;
+
+        Serial.println("\n=== Initializing Sensor " + String(sensor_id) + " ===");
+        Serial.println("    TCA Channel: " + String(tca_ch) + ", PCA Channel: " + String(pca_ch));
+        Serial.println("    Side: " + sensors[sensor_id].side_name);
+
+        // Update display with overall progress
+        tft.fillRect(0, 50, SCREEN_WIDTH, 25, COLOR_DARK_GRAY);
+        tft.setTextColor(COLOR_WHITE, COLOR_DARK_GRAY);
+        tft.setTextSize(1);
+        tft.setCursor(10, 55);
+        tft.println("Initializing Sensor " + String(sensor_id + 1) + " of 6");
+        tft.setCursor(10, 65);
+        tft.println("TCA" + String(tca_ch) + "/PCA" + String(pca_ch) + " (" + sensors[sensor_id].side_name + ")");
+
+        // Reset sensor data
+        sensors[sensor_id].initialized = false;
+        sensors[sensor_id].active = false;
+        sensors[sensor_id].status = "Testing...";
+
+        // Skip if no PCA was found on this TCA channel
+        if (pca_addresses[tca_ch] == 0)
+        {
+            sensors[sensor_id].status = "No Board";
+            Serial.println("    ⚠️  No sensor board on TCA channel " + String(tca_ch));
+            continue;
+        }
+
+        // Select TCA channel for this sensor board
+        if (!tca.selectChannel(tca_ch))
+        {
+            sensors[sensor_id].status = "TCA Select Failed";
+            Serial.println("    ❌ Failed to select TCA channel " + String(tca_ch));
+            continue;
+        }
+
+        delay(50); // TCA switching delay
+
+        // Select PCA channel on the sensor board
+        if (!pca_instances[tca_ch].selectChannel(pca_ch))
+        {
+            sensors[sensor_id].status = "PCA Select Failed";
+            Serial.println("    ❌ Failed to select PCA channel " + String(pca_ch));
+            continue;
+        }
+
+        delay(50); // PCA switching delay
+
+        // Check if VCNL4040 responds at standard address 0x60
+        Wire.beginTransmission(0x60);
+        byte error = Wire.endTransmission();
+        if (error != 0)
+        {
+            sensors[sensor_id].status = "No Device (0x60)";
+            Serial.println("    ❌ No VCNL4040 found at 0x60 (I2C error: " + String(error) + ")");
+            Serial.println("       Check: Sensor soldering, VDDIO power (3.3V to pin 3), I2C connections");
+            continue;
+        }
+
+        // Try to initialize VCNL4040
+        if (!vcnl_sensors[sensor_id].begin())
+        {
+            sensors[sensor_id].status = "Init Failed";
+            Serial.println("    ❌ VCNL4040 initialization failed");
+            continue;
+        }
+
+        Serial.println("    ✅ VCNL4040 found and initialized!");
+
+        // Configure for proximity detection
+        Serial.println("    🔧 Configuring for proximity detection...");
+
+        // Enable proximity sensor
+        vcnl_sensors[sensor_id].enableProximity(true);
+        Serial.println("      ✅ Proximity sensor enabled");
+
+        // Set LED current to 200mA for maximum range
+        vcnl_sensors[sensor_id].setProximityLEDCurrent(VCNL4040_LED_CURRENT_200MA);
+        Serial.println("      ✅ LED current set to 200mA (maximum)");
+
+        // Set integration time to 8T for best sensitivity
+        vcnl_sensors[sensor_id].setProximityIntegrationTime(VCNL4040_PROXIMITY_INTEGRATION_TIME_8T);
+        Serial.println("      ✅ Integration time set to 8T (highest sensitivity)");
+
+        // Enable high resolution mode for 16-bit proximity values (0-65535)
+        vcnl_sensors[sensor_id].setProximityHighResolution(true);
+        Serial.println("      ✅ High resolution mode enabled (16-bit)");
+
+        // Set duty cycle for good balance
+        vcnl_sensors[sensor_id].setProximityLEDDutyCycle(VCNL4040_LED_DUTY_1_160);
+        Serial.println("      ✅ LED duty cycle set to 1/160");
+
+        delay(100); // Allow settings to take effect
+
+        // Test readings
+        Serial.println("    🧪 PROXIMITY TEST - Place hand at different distances!");
+        Serial.println("    Expected: Values 100+ when hand close (1-10cm)");
+
+        for (int test = 0; test < 10; test++)
+        {
+            delay(200);
+            uint16_t prox = vcnl_sensors[sensor_id].getProximity();
+            uint16_t amb = vcnl_sensors[sensor_id].getAmbientLight();
+
+            String detection_status = "CLEAR";
+            if (prox > 500)
+                detection_status = "🔴 VERY CLOSE";
+            else if (prox > 200)
+                detection_status = "🟡 CLOSE";
+            else if (prox > 100)
+                detection_status = "🟢 DETECTED";
+
+            Serial.println("      Test " + String(test + 1) + " - Prox: " + String(prox) +
+                           ", Amb: " + String(amb) + " - " + detection_status);
+        }
+
+        // Take baseline proximity readings (like ambient light calibration!)
+        Serial.println("    📊 Establishing proximity baseline...");
+        uint32_t baseline_sum = 0;
+        const int baseline_samples = 10;
+
+        for (int sample = 0; sample < baseline_samples; sample++)
+        {
+            delay(50);
+            uint16_t prox = vcnl_sensors[sensor_id].getProximity();
+            baseline_sum += prox;
+            if (sample % 3 == 0)
+            {
+                Serial.println("      Sample " + String(sample + 1) + ": " + String(prox));
+            }
+        }
+
+        uint16_t baseline = baseline_sum / baseline_samples;
+        Serial.println("    ✅ Baseline proximity: " + String(baseline) + " (will detect ANY change > " +
+                       String(PROXIMITY_VARIATION_THRESHOLD) + ")");
+
+        // Initialize sensor data
+        sensors[sensor_id].initialized = true;
+        sensors[sensor_id].active = true;
+        sensors[sensor_id].status = "Active";
+        sensors[sensor_id].error_count = 0;
+        sensors[sensor_id].max_proximity = 0;
+        sensors[sensor_id].proximity_baseline = baseline;
+        sensors[sensor_id].proximity_threshold = PROXIMITY_VARIATION_THRESHOLD;
+        sensors[sensor_id].baseline_update_time = millis();
+
+        // Set startup delay (2 seconds to prevent false triggers)
+        sensors[sensor_id].last_reading_time = millis() + 2000;
+        Serial.println("    ⏱️  Detection disabled for 2 seconds to prevent false startup detections");
+
+        active_count++;
+    }
+
+    // Clean up - disable all PCA instances
+    for (int i = 0; i < 3; i++)
+    {
+        pca_instances[i].disableAllChannels();
+    }
+    tca.disableAllChannels();
+
+    // Show completion screen
+    tft.fillScreen(COLOR_BLACK);
+    tft.setTextColor(COLOR_GREEN, COLOR_BLACK);
+    tft.setTextSize(2);
+    tft.setCursor(10, 20);
+    tft.println("Initialization Complete!");
+
+    tft.setTextColor(COLOR_WHITE, COLOR_BLACK);
+    tft.setTextSize(1);
+    tft.setCursor(10, 50);
+    tft.println("Active sensors: " + String(active_count) + " / 6");
+
+    if (active_count >= 4)
+    {
+        tft.setTextColor(COLOR_GREEN, COLOR_BLACK);
+        tft.setCursor(10, 70);
+        tft.println("Working sensors: " + String(active_count));
+        tft.setCursor(10, 85);
+        tft.println("Directional detection active!");
+        tft.setCursor(10, 100);
+        tft.setTextColor(COLOR_CYAN, COLOR_BLACK);
+        tft.println("Green=A->B  Blue=B->A  150ms window");
+    }
+    else if (active_count > 0)
+    {
+        tft.setTextColor(COLOR_YELLOW, COLOR_BLACK);
+        tft.setCursor(10, 70);
+        tft.println("Partial system - " + String(active_count) + " sensor(s)");
+        tft.setCursor(10, 85);
+        tft.println("Limited directional detection");
+    }
+    else
+    {
+        tft.setTextColor(COLOR_RED, COLOR_BLACK);
+        tft.setCursor(10, 70);
+        tft.println("No sensors detected!");
+        tft.setCursor(10, 85);
+        tft.println("Check hardware connections");
+    }
+
+    delay(3000); // Show completion screen
+
+    Serial.println("\n" + String("=").substring(0, 60));
+    Serial.println("SENSOR INITIALIZATION COMPLETE");
+    Serial.println("Active sensors: " + String(active_count) + " / 6");
+
+    if (active_count == 0)
+    {
+        Serial.println("❌ NO SENSORS ACTIVE - Check hardware connections!");
+    }
+    else if (active_count < 4)
+    {
+        Serial.println("⚠️  Partial system - " + String(active_count) + " sensors active");
+        Serial.println("   Directional detection possible but limited");
+        Serial.println("   Need at least 2 boards with both sensors for best results");
+    }
+    else
+    {
+        Serial.println("✅ DIRECTIONAL DETECTION READY!");
+        Serial.println("   🟢 Green LEDs: Player 1 (S1 → S2)");
+        Serial.println("   🔵 Blue LEDs: Player 2 (S2 → S1)");
+        Serial.println("   ⏱️  Detection window: 20-" + String(SIDE_CORRELATION_WINDOW) + "ms");
+        Serial.println("   🎯 Using baseline-relative detection for all speeds!");
+    }
+    Serial.println(String("=").substring(0, 60));
+}
+
+// Ball detection with directional sensing
+void detectBallPassage(uint32_t current_time)
+{
+    // Check if we're in detection pause period
+    if (ball_state.detection_paused)
+    {
+        if (current_time >= ball_state.detection_pause_until)
+        {
+            ball_state.detection_paused = false;
+            Serial.println("🔄 Ball detection resumed");
+        }
+        else
+        {
+            return; // Skip detection during pause
+        }
+    }
+
+    // Look for NEW proximity detections (rising edge only, not continuous detection)
+    bool side_a_triggered = false;
+    bool side_b_triggered = false;
+    int strongest_side_a_sensor = -1;
+    int strongest_side_b_sensor = -1;
+    int max_side_a_proximity = 0;
+    int max_side_b_proximity = 0;
+
+    // Check S1 sensors (0, 2, 4: P1S1, P2S1, P3S1) - only VERY NEW detections (rising edge)
+    for (int i = 0; i < 6; i += 2)
+    {
+        if (sensors[i].active && sensors[i].object_detected)
+        {
+            // Only count if this is a VERY NEW detection (within last 20ms = ~1 reading)
+            // This ensures we only capture the rising edge, not continuous detection
+            if ((current_time - sensors[i].last_detection_time) < 20)
+            {
+                if (sensors[i].proximity > max_side_a_proximity)
+                {
+                    max_side_a_proximity = sensors[i].proximity;
+                    strongest_side_a_sensor = i;
+                }
+            }
+        }
+    }
+    side_a_triggered = (strongest_side_a_sensor >= 0);
+
+    // Check S2 sensors (1, 3, 5: P1S2, P2S2, P3S2) - only VERY NEW detections (rising edge)
+    for (int i = 1; i < 6; i += 2)
+    {
+        if (sensors[i].active && sensors[i].object_detected)
+        {
+            // Only count if this is a VERY NEW detection (within last 20ms = ~1 reading)
+            // This ensures we only capture the rising edge, not continuous detection
+            if ((current_time - sensors[i].last_detection_time) < 20)
+            {
+                if (sensors[i].proximity > max_side_b_proximity)
+                {
+                    max_side_b_proximity = sensors[i].proximity;
+                    strongest_side_b_sensor = i;
+                }
+            }
+        }
+    }
+    side_b_triggered = (strongest_side_b_sensor >= 0);
+
+    // Update side trigger timestamps (only on NEW detections, don't overwrite recent triggers)
+    if (side_a_triggered)
+    {
+        // Only update if we don't have a recent trigger (prevent timestamp overwriting)
+        if (ball_state.side_a_last_trigger == 0 ||
+            (current_time - ball_state.side_a_last_trigger) > SIDE_CORRELATION_WINDOW)
+        {
+            ball_state.side_a_last_trigger = current_time;
+            ball_state.side_a_trigger_sensor = strongest_side_a_sensor;
+            Serial.println("1️⃣  S1 trigger: " + getSensorName(strongest_side_a_sensor) + " (Prox: " + String(max_side_a_proximity) + ")");
+        }
+        else
+        {
+            // Timestamp locked - waiting for correlation or expiry
+            Serial.println("⏸️  S1 re-detection blocked (timestamp locked, waiting for S2 or timeout)");
+        }
+    }
+
+    if (side_b_triggered)
+    {
+        // Only update if we don't have a recent trigger (prevent timestamp overwriting)
+        if (ball_state.side_b_last_trigger == 0 ||
+            (current_time - ball_state.side_b_last_trigger) > SIDE_CORRELATION_WINDOW)
+        {
+            ball_state.side_b_last_trigger = current_time;
+            ball_state.side_b_trigger_sensor = strongest_side_b_sensor;
+            Serial.println("2️⃣  S2 trigger: " + getSensorName(strongest_side_b_sensor) + " (Prox: " + String(max_side_b_proximity) + ")");
+        }
+        else
+        {
+            // Timestamp locked - waiting for correlation or expiry
+            Serial.println("⏸️  S2 re-detection blocked (timestamp locked, waiting for S1 or timeout)");
+        }
+    }
+
+    // Analyze directional patterns
+    BallTriggerType detected_trigger = NO_TRIGGER;
+
+    // Check for S1 → S2 pattern (Player 1)
+    if (ball_state.side_a_last_trigger > 0 && ball_state.side_b_last_trigger > ball_state.side_a_last_trigger)
+    {
+        uint32_t time_diff = ball_state.side_b_last_trigger - ball_state.side_a_last_trigger;
+
+        if (time_diff >= 20 && time_diff <= SIDE_CORRELATION_WINDOW)
+        {
+            detected_trigger = PLAYER_1_TRIGGER;
+            Serial.println("🏀 PLAYER 1 DETECTED! S1→S2 in " + String(time_diff) + "ms");
+            Serial.println("    Sensors: " + getSensorName(ball_state.side_a_trigger_sensor) +
+                           " → " + getSensorName(ball_state.side_b_trigger_sensor));
+        }
+        else if (time_diff < 20)
+        {
+            Serial.println("⏱️  S1→S2 sequence TOO FAST: " + String(time_diff) + "ms (min 20ms) - " +
+                           getSensorName(ball_state.side_a_trigger_sensor) + " → " + getSensorName(ball_state.side_b_trigger_sensor));
+        }
+        else if (time_diff > SIDE_CORRELATION_WINDOW)
+        {
+            Serial.println("⏱️  S1→S2 sequence TOO SLOW: " + String(time_diff) + "ms (max " + String(SIDE_CORRELATION_WINDOW) + "ms) - " +
+                           getSensorName(ball_state.side_a_trigger_sensor) + " → " + getSensorName(ball_state.side_b_trigger_sensor));
+        }
+    }
+
+    // Check for S2 → S1 pattern (Player 2)
+    else if (ball_state.side_b_last_trigger > 0 && ball_state.side_a_last_trigger > ball_state.side_b_last_trigger)
+    {
+        uint32_t time_diff = ball_state.side_a_last_trigger - ball_state.side_b_last_trigger;
+
+        if (time_diff >= 20 && time_diff <= SIDE_CORRELATION_WINDOW)
+        {
+            detected_trigger = PLAYER_2_TRIGGER;
+            Serial.println("🏀 PLAYER 2 DETECTED! S2→S1 in " + String(time_diff) + "ms");
+            Serial.println("    Sensors: " + getSensorName(ball_state.side_b_trigger_sensor) +
+                           " → " + getSensorName(ball_state.side_a_trigger_sensor));
+        }
+        else if (time_diff < 20)
+        {
+            Serial.println("⏱️  S2→S1 sequence TOO FAST: " + String(time_diff) + "ms (min 20ms) - " +
+                           getSensorName(ball_state.side_b_trigger_sensor) + " → " + getSensorName(ball_state.side_a_trigger_sensor));
+        }
+        else if (time_diff > SIDE_CORRELATION_WINDOW)
+        {
+            Serial.println("⏱️  S2→S1 sequence TOO SLOW: " + String(time_diff) + "ms (max " + String(SIDE_CORRELATION_WINDOW) + "ms) - " +
+                           getSensorName(ball_state.side_b_trigger_sensor) + " → " + getSensorName(ball_state.side_a_trigger_sensor));
+        }
+    }
+
+    // Trigger LED response
+    if (detected_trigger != NO_TRIGGER)
+    {
+        // Prevent rapid-fire triggers
+        static uint32_t last_ball_detection = 0;
+        if (current_time - last_ball_detection < 1000)
+        {
+            return;
+        }
+        last_ball_detection = current_time;
+
+        ball_state.last_trigger = detected_trigger;
+        ball_state.last_trigger_time = current_time;
+        ball_state.detection_paused = true;
+        ball_state.detection_pause_until = current_time + DETECTION_PAUSE_DURATION;
+
+        // Set LED color
+        setLEDColor(detected_trigger);
+
+        String trigger_name = (detected_trigger == PLAYER_1_TRIGGER) ? "Player 1" : "Player 2";
+
+        int primary_sensor = (detected_trigger == PLAYER_1_TRIGGER) ? ball_state.side_b_trigger_sensor
+                                                                    : ball_state.side_a_trigger_sensor;
+
+        if (primary_sensor >= 0)
+        {
+            addDetectionEvent(primary_sensor, sensors[primary_sensor].proximity, trigger_name);
+        }
+
+        // Reset trigger timestamps
+        ball_state.side_a_last_trigger = 0;
+        ball_state.side_b_last_trigger = 0;
+
+        Serial.println("🔄 Detection paused for " + String(DETECTION_PAUSE_DURATION) + "ms");
+    }
+
+    // Clean up old single-side triggers
+    if (ball_state.side_a_last_trigger > 0 &&
+        (current_time - ball_state.side_a_last_trigger) > SIDE_CORRELATION_WINDOW)
+    {
+        ball_state.side_a_last_trigger = 0;
+    }
+    if (ball_state.side_b_last_trigger > 0 &&
+        (current_time - ball_state.side_b_last_trigger) > SIDE_CORRELATION_WINDOW)
+    {
+        ball_state.side_b_last_trigger = 0;
+    }
+}
+
+void readSensors()
+{
+    uint32_t current_time = millis();
+
+    // Check if it's time to read sensors
+    static uint32_t last_sensor_read = 0;
+    if (current_time - last_sensor_read < SENSOR_UPDATE_INTERVAL)
+    {
+        return;
+    }
+    last_sensor_read = current_time;
+
+    // Read all 6 sensors across 3 TCA channels
+    for (int sensor_id = 0; sensor_id < 6; sensor_id++)
+    {
+        if (!sensors[sensor_id].active)
+        {
+            continue;
+        }
+
+        uint8_t tca_ch = sensors[sensor_id].tca_channel;
+        uint8_t pca_ch = sensors[sensor_id].pca_channel;
+
+        // Select TCA channel for this sensor board
+        if (!tca.selectChannel(tca_ch))
+        {
+            sensors[sensor_id].error_count++;
+            if (sensors[sensor_id].error_count > 10)
+            {
+                sensors[sensor_id].status = "TCA Error";
+                sensors[sensor_id].active = false;
+            }
+            continue;
+        }
+
+        // Select PCA channel on the sensor board
+        if (!pca_instances[tca_ch].selectChannel(pca_ch))
+        {
+            sensors[sensor_id].error_count++;
+            if (sensors[sensor_id].error_count > 10)
+            {
+                sensors[sensor_id].status = "PCA Error";
+                sensors[sensor_id].active = false;
+            }
+            continue;
+        }
+
+        // Read sensor values (no delay needed - I2C is fast enough)
+        try
+        {
+            uint16_t new_proximity = vcnl_sensors[sensor_id].getProximity();
+            uint16_t new_ambient = vcnl_sensors[sensor_id].getAmbientLight();
+
+            // Update readings
+            sensors[sensor_id].proximity = new_proximity;
+            sensors[sensor_id].ambient = new_ambient;
+            sensors[sensor_id].status = "Active";
+            sensors[sensor_id].error_count = 0;
+
+            // Calculate variation from baseline (like ambient light!)
+            int16_t variation = (int16_t)new_proximity - (int16_t)sensors[sensor_id].proximity_baseline;
+            sensors[sensor_id].proximity_variation = variation;
+            uint16_t abs_variation = abs(variation);
+
+            // Update baseline slowly when stable
+            if (current_time - sensors[sensor_id].baseline_update_time > BASELINE_UPDATE_INTERVAL)
+            {
+                if (abs_variation <= 2) // Very stable
+                {
+                    // Fast update (1/4 weight)
+                    sensors[sensor_id].proximity_baseline = (sensors[sensor_id].proximity_baseline * 3 + new_proximity) / 4;
+                }
+                else if (abs_variation <= sensors[sensor_id].proximity_threshold)
+                {
+                    // Slow update (1/16 weight)
+                    sensors[sensor_id].proximity_baseline = (sensors[sensor_id].proximity_baseline * 15 + new_proximity) / 16;
+                }
+                sensors[sensor_id].baseline_update_time = current_time;
+            }
+
+            // Track maximum proximity
+            if (new_proximity > sensors[sensor_id].max_proximity)
+            {
+                sensors[sensor_id].max_proximity = new_proximity;
+            }
+
+            // Log proximity values for tuning
+            if (VERBOSE_SENSOR_LOGGING && abs_variation > 2)
+            {
+                static uint32_t last_log = 0;
+                if (current_time - last_log > 100) // Every 100ms
+                {
+                    Serial.println("📊 S" + String(sensor_id) +
+                                   " Prox: " + String(new_proximity) +
+                                   ", Baseline: " + String(sensors[sensor_id].proximity_baseline) +
+                                   ", Variation: " + String(variation) +
+                                   " (Thresh: " + String(sensors[sensor_id].proximity_threshold) + ")");
+                    last_log = current_time;
+                }
+            }
+
+            // BASELINE-RELATIVE DETECTION (like ambient light!)
+            bool was_detected = sensors[sensor_id].object_detected;
+            bool is_detected = false;
+
+            // Check if past startup delay
+            if (current_time > sensors[sensor_id].last_reading_time)
+            {
+                // Detect ANY significant deviation from baseline!
+                is_detected = (abs_variation > sensors[sensor_id].proximity_threshold);
+                sensors[sensor_id].object_detected = is_detected;
+
+                // If we just detected an object
+                if (is_detected && !was_detected)
+                {
+                    sensors[sensor_id].last_detection_time = current_time;
+
+                    if (VERBOSE_SENSOR_LOGGING)
+                    {
+                        Serial.println("🔍 SENSOR " + String(sensor_id) + " TRIGGER:");
+                        Serial.println("    Prox: " + String(new_proximity) +
+                                       " (Baseline: " + String(sensors[sensor_id].proximity_baseline) +
+                                       ", Variation: " + String(variation) + ")");
+                    }
+
+                    addDetectionEvent(sensor_id, new_proximity, "Detection");
+                }
+            }
+            else
+            {
+                // Still in startup delay
+                sensors[sensor_id].object_detected = false;
+            }
+        }
+        catch (...)
+        {
+            sensors[sensor_id].error_count++;
+            if (sensors[sensor_id].error_count > 10)
+            {
+                sensors[sensor_id].status = "Read Error";
+                sensors[sensor_id].active = false;
+            }
+        }
+    }
+
+    // Clean up - disable all channels after reading
+    for (int i = 0; i < 3; i++)
+    {
+        pca_instances[i].disableAllChannels();
+    }
+    tca.disableAllChannels();
+
+    // TEST MODE: Trigger green LEDs on ANY detection (for testing with single sensors)
+    if (TEST_MODE_ANY_DETECTION)
+    {
+        // Check if any sensor is currently detecting and find max proximity
+        bool any_detection = false;
+        int max_proximity = 0;
+        int detecting_sensor = -1;
+
+        for (int i = 0; i < 6; i++)
+        {
+            if (sensors[i].active && sensors[i].object_detected)
+            {
+                any_detection = true;
+                if (sensors[i].proximity > max_proximity)
+                {
+                    max_proximity = sensors[i].proximity;
+                    detecting_sensor = i;
+                }
+            }
+        }
+
+        // Trigger green LEDs on detection (reduced cooldown from 1000ms to 300ms)
+        static uint32_t last_test_trigger = 0;
+        if (any_detection && (current_time - last_test_trigger > 300))
+        {
+            last_test_trigger = current_time;
+            setLEDColor(PLAYER_1_TRIGGER); // Green LEDs
+            Serial.println("🟢 TEST MODE: Detection on S" + String(detecting_sensor) +
+                           " - Proximity: " + String(max_proximity) + " - GREEN LEDs ON");
+        }
+    }
+    // Check for ball passage detection (unless in debug mode or test mode)
+    else if (!DEBUG_MODE_SENSORS_ONLY)
+    {
+        detectBallPassage(current_time);
     }
 }
 
@@ -257,800 +1145,255 @@ void logMessage(String message, uint16_t color = COLOR_WHITE)
 // DISPLAY FUNCTIONS
 // ==================================================================================
 
-/**
- * Initialize display
- */
-bool initializeDisplay()
-{
-    logMessage("Initializing T-Display-S3...", COLOR_CYAN);
-
-    // Power on display
-    pinMode(PIN_POWER_ON, OUTPUT);
-    digitalWrite(PIN_POWER_ON, HIGH);
-    delay(100);
-
-    // Initialize TFT
-    tft.init();
-    tft.setRotation(1); // Landscape mode (320x170)
-    tft.fillScreen(COLOR_BLACK);
-
-    // Test display with welcome message
-    tft.setTextColor(COLOR_GREEN, COLOR_BLACK);
-    tft.setTextSize(1);
-    tft.setCursor(10, 10);
-    tft.println("Motion Play " + getVersionString());
-    tft.setCursor(10, 25);
-    tft.setTextColor(COLOR_YELLOW, COLOR_BLACK);
-    tft.println("Phase " + String(PHASE_NUMBER) + ": Display Test");
-
-    delay(1000); // Show welcome message briefly
-
-    system_status.display_initialized = true;
-    logMessage("Display initialized successfully", COLOR_GREEN);
-    return true;
-}
-
-/**
- * Draw system header
- */
 void drawHeader()
 {
     // Clear header area
-    tft.fillRect(0, 0, SCREEN_WIDTH, HEADER_HEIGHT, COLOR_DARK_GRAY);
+    tft.fillRect(0, 0, SCREEN_WIDTH, 25, COLOR_DARK_GRAY);
 
-    // Left side - Title and Phase
+    // Title
     tft.setTextColor(COLOR_WHITE, COLOR_DARK_GRAY);
     tft.setTextSize(1);
     tft.setCursor(5, 5);
-    tft.println("Motion Play " + getVersionString());
-    tft.setCursor(5, 15);
-    tft.setTextColor(COLOR_YELLOW, COLOR_DARK_GRAY);
-    tft.println("Phase " + String(PHASE_NUMBER) + " - Sensors");
+    tft.println("Motion Play v4.0 - Proximity");
 
-    // Right side - Uptime
+    // Uptime
+    uint32_t uptime_seconds = (millis() - system_start_time) / 1000;
+    String uptime = "Up: " + String(uptime_seconds) + "s";
     tft.setTextColor(COLOR_CYAN, COLOR_DARK_GRAY);
-    String uptime = "Up: " + getUptimeString();
-    tft.setCursor(SCREEN_WIDTH - (uptime.length() * 6) - 5, 10);
+    tft.setCursor(SCREEN_WIDTH - (uptime.length() * 6) - 5, 5);
     tft.println(uptime);
+
+    // Active sensor count
+    int active_count = 0;
+    for (int i = 0; i < 6; i++)
+    {
+        if (sensors[i].active)
+            active_count++;
+    }
+    tft.setTextColor(COLOR_YELLOW, COLOR_DARK_GRAY);
+    tft.setCursor(5, 15);
+    tft.println("Active Sensors: " + String(active_count));
 }
 
-/**
- * Draw system status indicators
- */
-void drawStatusIndicators()
+void drawDetectionHistory()
 {
-    int y_pos = HEADER_HEIGHT + 5;
-    int indicator_height = 12;
+    int history_y = 160;
+    tft.fillRect(0, history_y, SCREEN_WIDTH, 10, COLOR_BLACK);
 
-    // Status indicators
-    struct StatusIndicator
+    if (detection_history_count > 0)
     {
-        String label;
-        bool status;
-        String description;
-    };
-
-    StatusIndicator indicators[] = {
-        {"DISP", system_status.display_initialized, "Display"},
-        {"I2C ", system_status.i2c_initialized, "I2C Bus"},
-        {"TCA ", system_status.tca_detected, "TCA9548A Mux"},
-        {"PCA ", system_status.pca_detected, "PCA9546A Mux"},
-        {"SENS", system_status.sensors_detected, "VCNL4040 Sensors"}};
-
-    for (int i = 0; i < 5; i++)
-    {
-        uint16_t bg_color = indicators[i].status ? COLOR_GREEN : COLOR_RED;
-        uint16_t text_color = COLOR_WHITE;
-
-        // Draw indicator box - spread across width
-        int indicator_width = 50;
-        int x_pos = 5 + (i * (indicator_width + 5));
-        tft.fillRect(x_pos, y_pos, indicator_width, indicator_height, bg_color);
-        tft.drawRect(x_pos, y_pos, indicator_width, indicator_height, COLOR_WHITE);
-
-        // Draw label
-        tft.setTextColor(text_color, bg_color);
+        tft.setTextColor(COLOR_MAGENTA, COLOR_BLACK);
         tft.setTextSize(1);
-        tft.setCursor(x_pos + 2, y_pos + 2);
-        tft.println(indicators[i].label);
+        tft.setCursor(5, history_y);
+
+        uint32_t last_detection_age = (millis() - detection_history[0].timestamp) / 1000;
+        tft.println("Last: " + getSensorName(detection_history[0].sensor_id) + " " +
+                    detection_history[0].event_type + " (" + String(detection_history[0].proximity_value) + ") " +
+                    String(last_detection_age) + "s ago");
+    }
+    else
+    {
+        tft.setTextColor(COLOR_GRAY, COLOR_BLACK);
+        tft.setTextSize(1);
+        tft.setCursor(5, history_y);
+        tft.println("No detections yet - place hand near sensors");
     }
 }
 
-/**
- * Draw terminal log
- */
-void drawTerminalLog()
+void drawSensorDisplay()
 {
-    int terminal_start_y = HEADER_HEIGHT + 20;
-    int terminal_height = SCREEN_HEIGHT - terminal_start_y - 5;
+    int start_y = 30;
+    int sensor_height = 22;
 
-    // Clear terminal area
-    tft.fillRect(0, terminal_start_y, SCREEN_WIDTH, terminal_height, COLOR_BLACK);
-
-    // Draw terminal border
-    tft.drawRect(2, terminal_start_y, SCREEN_WIDTH - 4, terminal_height, COLOR_GRAY);
-
-    // Draw log messages
-    tft.setTextColor(COLOR_WHITE, COLOR_BLACK);
-    tft.setTextSize(1);
-
-    int visible_lines = min(MAX_LOG_LINES, (terminal_height - 4) / LINE_HEIGHT);
-    int start_line = max(0, log_line_count - visible_lines + log_scroll_offset);
-
-    for (int i = 0; i < visible_lines && (start_line + i) < log_line_count; i++)
+    for (int i = 0; i < 6; i++)
     {
-        int y_pos = terminal_start_y + 4 + (i * LINE_HEIGHT);
-        tft.setCursor(6, y_pos);
+        int y_pos = start_y + (i * sensor_height);
 
-        String line = log_buffer[start_line + i];
-        // Truncate line if too long (landscape mode = more characters)
-        if (line.length() > 50)
+        // Clear sensor area
+        tft.fillRect(0, y_pos, SCREEN_WIDTH, sensor_height - 1, COLOR_BLACK);
+
+        // Sensor header with new P1S1/P2S2 naming
+        tft.setTextColor(COLOR_WHITE, COLOR_BLACK);
+        tft.setTextSize(1);
+        tft.setCursor(5, y_pos + 2);
+        tft.println(getSensorName(i) + ":");
+
+        // Status indicator
+        uint16_t status_color = COLOR_RED;
+        if (sensors[i].active)
         {
-            line = line.substring(0, 47) + "...";
+            status_color = sensors[i].object_detected ? COLOR_ORANGE : COLOR_GREEN;
         }
-        tft.println(line);
+        else if (sensors[i].initialized)
+        {
+            status_color = COLOR_YELLOW;
+        }
+
+        tft.fillCircle(30, y_pos + 6, 3, status_color);
+
+        // Status text
+        tft.setTextColor(COLOR_CYAN, COLOR_BLACK);
+        tft.setCursor(38, y_pos + 2);
+        String short_status = sensors[i].status;
+        if (short_status.length() > 8)
+            short_status = short_status.substring(0, 8);
+        tft.println(short_status);
+
+        if (sensors[i].active)
+        {
+            // Proximity reading
+            tft.setTextColor(sensors[i].object_detected ? COLOR_RED : COLOR_WHITE, COLOR_BLACK);
+            tft.setCursor(5, y_pos + 12);
+            tft.println("P:" + String(sensors[i].proximity) + " Max:" + String(sensors[i].max_proximity));
+
+            // Detection status
+            if (sensors[i].object_detected)
+            {
+                tft.setTextColor(COLOR_RED, COLOR_BLACK);
+                tft.setCursor(200, y_pos + 2);
+                tft.println("DETECT!");
+            }
+            else
+            {
+                tft.setTextColor(COLOR_GREEN, COLOR_BLACK);
+                tft.setCursor(200, y_pos + 2);
+                tft.println("Clear");
+            }
+
+            // Last detection time
+            if (millis() < sensors[i].last_reading_time)
+            {
+                // Still in startup delay
+                uint32_t remaining = (sensors[i].last_reading_time - millis()) / 1000;
+                tft.setTextColor(COLOR_GRAY, COLOR_BLACK);
+                tft.setCursor(200, y_pos + 12);
+                tft.println("Delay:" + String(remaining));
+            }
+            else if (sensors[i].last_detection_time > 0)
+            {
+                uint32_t since_detection = (millis() - sensors[i].last_detection_time) / 1000;
+                tft.setTextColor(COLOR_YELLOW, COLOR_BLACK);
+                tft.setCursor(200, y_pos + 12);
+                if (since_detection < 60)
+                    tft.println(String(since_detection) + "s ago");
+                else
+                    tft.println(">1m ago");
+            }
+        }
+        else
+        {
+            // Show why sensor is not active
+            tft.setTextColor(COLOR_GRAY, COLOR_BLACK);
+            tft.setCursor(5, y_pos + 12);
+            if (sensors[i].error_count > 0)
+            {
+                tft.println("Err:" + String(sensors[i].error_count));
+            }
+            else
+            {
+                tft.println("Not found");
+            }
+        }
+
+        // Separator line
+        tft.drawLine(0, y_pos + sensor_height - 1, SCREEN_WIDTH, y_pos + sensor_height - 1, COLOR_DARK_GRAY);
     }
 
-    // Draw scroll indicator if needed
-    if (log_line_count > visible_lines)
-    {
-        int scroll_bar_height = max(10, (visible_lines * terminal_height) / log_line_count);
-        int scroll_bar_pos = (log_scroll_offset * (terminal_height - scroll_bar_height)) / max(1, log_line_count - visible_lines);
-
-        tft.fillRect(SCREEN_WIDTH - 8, terminal_start_y + scroll_bar_pos, 4, scroll_bar_height, COLOR_CYAN);
-    }
+    // Detection history at bottom
+    drawDetectionHistory();
 }
 
-/**
- * Update display
- */
 void updateDisplay()
 {
+    uint32_t current_time = millis();
+
+    if (current_time - last_display_update < DISPLAY_UPDATE_INTERVAL)
+    {
+        return;
+    }
+    last_display_update = current_time;
+
     drawHeader();
-    drawStatusIndicators();
-    drawTerminalLog();
+    drawSensorDisplay();
 }
 
 // ==================================================================================
 // BUTTON HANDLING
 // ==================================================================================
 
-/**
- * Initialize buttons
- */
 void initializeButtons()
 {
     pinMode(PIN_BUTTON_1, INPUT_PULLUP);
     pinMode(PIN_BUTTON_2, INPUT_PULLUP);
-    logMessage("Buttons initialized", COLOR_GREEN);
 }
 
-/**
- * Handle button presses
- */
 void handleButtons()
 {
+    static uint32_t last_button_check = 0;
+    static bool button1_last_state = true;
+    static bool button2_last_state = true;
+
     uint32_t current_time = millis();
+    if (current_time - last_button_check < 50)
+        return; // Debounce
+    last_button_check = current_time;
 
-    // Button 1 (scroll up / toggle auto-scroll)
-    bool button1_current = !digitalRead(PIN_BUTTON_1);
-    if (button1_current && !button_state.button1_pressed &&
-        (current_time - button_state.button1_last_press) > BUTTON_DEBOUNCE_MS)
+    bool button1_current = digitalRead(PIN_BUTTON_1);
+    bool button2_current = digitalRead(PIN_BUTTON_2);
+
+    // Button 1 pressed (reinitialize sensors)
+    if (!button1_current && button1_last_state)
     {
+        Serial.println("Button 1 pressed - Reinitializing sensors...");
 
-        button_state.button1_pressed = true;
-        button_state.button1_last_press = current_time;
-
-        // Toggle auto-scroll or scroll up
-        if (auto_scroll)
-        {
-            auto_scroll = false;
-            logMessage("Auto-scroll OFF", COLOR_YELLOW);
-        }
-        else
-        {
-            log_scroll_offset = max(log_scroll_offset - 1, -(log_line_count - MAX_LOG_LINES));
-            logMessage("Scroll up", COLOR_GRAY);
-        }
-    }
-    else if (!button1_current)
-    {
-        button_state.button1_pressed = false;
-    }
-
-    // Button 2 (scroll down / enable auto-scroll)
-    bool button2_current = !digitalRead(PIN_BUTTON_2);
-    if (button2_current && !button_state.button2_pressed &&
-        (current_time - button_state.button2_last_press) > BUTTON_DEBOUNCE_MS)
-    {
-
-        button_state.button2_pressed = true;
-        button_state.button2_last_press = current_time;
-
-        // Enable auto-scroll or scroll down
-        if (!auto_scroll)
-        {
-            log_scroll_offset = min(log_scroll_offset + 1, 0);
-            if (log_scroll_offset == 0)
-            {
-                auto_scroll = true;
-                logMessage("Auto-scroll ON", COLOR_YELLOW);
-            }
-            else
-            {
-                logMessage("Scroll down", COLOR_GRAY);
-            }
-        }
-        else
-        {
-            // Run test sequence
-            Serial.println("\n>>> USER PRESSED BUTTON 2 - STARTING PHASE 4 TESTS <<<");
-            Serial.flush();
-            logMessage("Running Phase 4 tests...", COLOR_MAGENTA);
-            runPhase4Tests();
-        }
-    }
-    else if (!button2_current)
-    {
-        button_state.button2_pressed = false;
-    }
-}
-
-// ==================================================================================
-// TEST FUNCTIONS
-// ==================================================================================
-
-/**
- * Run Phase 4 specific tests
- */
-void runPhase4Tests()
-{
-    logMessage("=== PHASE 4 TEST SEQUENCE ===", COLOR_MAGENTA);
-
-    // I2C Bus Scan
-    scanI2CBus();
-    delay(1000);
-
-    // TCA9548A Testing (prerequisite)
-    testTCA9548A();
-    delay(1000);
-
-    // PCA9546A Testing (prerequisite)
-    if (system_status.tca_detected)
-    {
-        testPCA9546A();
-        delay(1000);
-    }
-    else
-    {
-        logMessage("Skipping PCA test - TCA failed", COLOR_YELLOW);
-        system_status.pca_detected = false;
-    }
-
-    // VCNL4040 Sensor Testing (main focus)
-    if (system_status.tca_detected && system_status.pca_detected)
-    {
-        testVCNL4040Sensors();
-        delay(1000);
-    }
-    else
-    {
-        logMessage("Skipping sensor test - prerequisites failed", COLOR_YELLOW);
-        system_status.sensors_detected = false;
-    }
-
-    // System status
-    logMessage("--- SYSTEM STATUS ---", COLOR_CYAN);
-    logMessage("Display: " + String(system_status.display_initialized ? "OK" : "FAIL"),
-               system_status.display_initialized ? COLOR_GREEN : COLOR_RED);
-    logMessage("I2C Bus: " + String(system_status.i2c_initialized ? "OK" : "FAIL"),
-               system_status.i2c_initialized ? COLOR_GREEN : COLOR_RED);
-    logMessage("TCA9548A: " + String(system_status.tca_detected ? "OK" : "FAIL"),
-               system_status.tca_detected ? COLOR_GREEN : COLOR_RED);
-    logMessage("PCA9546A: " + String(system_status.pca_detected ? "OK" : "FAIL"),
-               system_status.pca_detected ? COLOR_GREEN : COLOR_RED);
-    logMessage("VCNL4040: " + String(system_status.sensors_detected ? "OK" : "FAIL"),
-               system_status.sensors_detected ? COLOR_GREEN : COLOR_RED);
-
-    // Communication path status
-    if (system_status.tca_detected && system_status.pca_detected && system_status.sensors_detected)
-    {
-        logMessage("Full sensor chain ready!", COLOR_GREEN);
-        logMessage("Live sensor readings enabled", COLOR_GREEN);
-    }
-    else
-    {
-        logMessage("Sensor chain incomplete", COLOR_YELLOW);
-    }
-
-    // Memory status
-    logMessage("Free heap: " + String(ESP.getFreeHeap()) + " bytes", COLOR_CYAN);
-
-    // Next phase
-    logMessage("--- NEXT PHASE ---", COLOR_GRAY);
-    logMessage("Phase 5: Integration & LED", COLOR_GRAY);
-
-    if (system_status.tca_detected && system_status.pca_detected && system_status.sensors_detected)
-    {
-        logMessage("=== PHASE 4 COMPLETE ===", COLOR_GREEN);
-    }
-    else
-    {
-        logMessage("=== PHASE 4 INCOMPLETE ===", COLOR_YELLOW);
-        if (!system_status.tca_detected)
-            logMessage("Check TCA9548A connection", COLOR_YELLOW);
-        if (!system_status.pca_detected)
-            logMessage("Check sensor board connection", COLOR_YELLOW);
-        if (!system_status.sensors_detected)
-            logMessage("Check VCNL4040 sensor", COLOR_YELLOW);
-    }
-}
-
-// ==================================================================================
-// MAIN FUNCTIONS
-// ==================================================================================
-
-/**
- * Initialize I2C bus
- */
-void initializeI2C()
-{
-    // Initialize I2C with custom pins (GPIO 43=SDA, 44=SCL)
-    Wire.begin(PIN_IIC_SDA, PIN_IIC_SCL);
-    Wire.setClock(400000); // 400kHz fast mode
-
-    // Initialize TCA reset pin
-    pinMode(PIN_TCA_RESET, OUTPUT);
-    digitalWrite(PIN_TCA_RESET, HIGH); // TCA9548A active (reset is active low)
-
-    logMessage("I2C initialized", COLOR_GREEN);
-    logMessage("SDA: GPIO" + String(PIN_IIC_SDA) + ", SCL: GPIO" + String(PIN_IIC_SCL), COLOR_CYAN);
-    logMessage("Clock: 400kHz", COLOR_CYAN);
-    system_status.i2c_initialized = true;
-}
-
-/**
- * Scan I2C bus for devices
- */
-void scanI2CBus()
-{
-    logMessage("=== I2C BUS SCAN ===", COLOR_CYAN);
-    int device_count = 0;
-
-    for (byte address = 1; address < 127; address++)
-    {
-        Wire.beginTransmission(address);
-        byte error = Wire.endTransmission();
-
-        if (error == 0)
-        {
-            device_count++;
-            String addr_str = "0x" + String(address, HEX);
-            if (address < 16)
-                addr_str = "0x0" + String(address, HEX);
-
-            String device_name = "Unknown";
-            if (address == 0x70)
-                device_name = "TCA9548A Mux";
-            else if (address == 0x60)
-                device_name = "VCNL4040 Sensor";
-
-            logMessage("Found: " + addr_str + " (" + device_name + ")", COLOR_GREEN);
-        }
-        else if (error == 4)
-        {
-            String addr_str = "0x" + String(address, HEX);
-            if (address < 16)
-                addr_str = "0x0" + String(address, HEX);
-            logMessage("Error at: " + addr_str, COLOR_RED);
-        }
-    }
-
-    if (device_count == 0)
-    {
-        logMessage("No I2C devices found!", COLOR_RED);
-    }
-    else
-    {
-        logMessage("Scan complete: " + String(device_count) + " devices", COLOR_CYAN);
-    }
-}
-
-/**
- * Test TCA9548A communication and channel switching
- */
-void testTCA9548A()
-{
-    logMessage("=== TCA9548A TEST ===", COLOR_CYAN);
-
-    // Initialize TCA9548A
-    if (!tca.begin())
-    {
-        logMessage("TCA9548A init FAILED!", COLOR_RED);
-        system_status.tca_detected = false;
-        return;
-    }
-
-    logMessage("TCA9548A initialized", COLOR_GREEN);
-
-    // Test basic communication
-    if (!tca.isConnected())
-    {
-        logMessage("TCA9548A not responding!", COLOR_RED);
-        system_status.tca_detected = false;
-        return;
-    }
-
-    logMessage("TCA9548A responding", COLOR_GREEN);
-
-    // Disable all channels first
-    tca.disableAllChannels();
-    logMessage("All channels disabled", COLOR_YELLOW);
-
-    // Test channel 0 (sensor board 1)
-    logMessage("Testing channel 0...", COLOR_CYAN);
-
-    if (tca.selectChannel(0))
-    {
-        logMessage("Channel 0 selected", COLOR_GREEN);
-
-        // Verify channel selection by reading back
-        uint8_t channels = tca.getChannelMask();
-        if (channels & 0x01) // Check if bit 0 is set (channel 0)
-        {
-            logMessage("Channel 0 confirmed active", COLOR_GREEN);
-        }
-        else
-        {
-            logMessage("Channel 0 selection failed", COLOR_RED);
-        }
-
-        // Disable channel 0
-        tca.disableChannel(0);
-        logMessage("Channel 0 disabled", COLOR_YELLOW);
-    }
-    else
-    {
-        logMessage("Channel 0 select FAILED!", COLOR_RED);
-        system_status.tca_detected = false;
-        return;
-    }
-
-    // Mark TCA as working
-    system_status.tca_detected = true;
-    logMessage("TCA9548A test PASSED", COLOR_GREEN);
-}
-
-/**
- * Test PCA9546A communication through TCA9548A
- */
-void testPCA9546A()
-{
-    logMessage("=== PCA9546A TEST ===", COLOR_CYAN);
-
-    // First, select TCA channel 0 (sensor board 1)
-    if (!tca.selectChannel(0))
-    {
-        logMessage("TCA channel 0 select FAILED!", COLOR_RED);
-        system_status.pca_detected = false;
-        return;
-    }
-    logMessage("TCA channel 0 selected", COLOR_GREEN);
-
-    // Small delay for I2C settling
-    delay(10);
-
-    // Try to communicate with PCA9546A
-    if (!pca.begin())
-    {
-        logMessage("PCA9546A init FAILED!", COLOR_RED);
-        logMessage("Check sensor board connection", COLOR_YELLOW);
-        system_status.pca_detected = false;
-        tca.disableAllChannels();
-        return;
-    }
-
-    logMessage("PCA9546A initialized", COLOR_GREEN);
-
-    // Test basic communication
-    if (!pca.isConnected())
-    {
-        logMessage("PCA9546A not responding!", COLOR_RED);
-        system_status.pca_detected = false;
-        tca.disableAllChannels();
-        return;
-    }
-
-    logMessage("PCA9546A responding", COLOR_GREEN);
-
-    // Disable all PCA channels first
-    pca.disableAllChannels();
-    logMessage("All PCA channels disabled", COLOR_YELLOW);
-
-    // Test PCA channel 0 (sensor A)
-    logMessage("Testing PCA channel 0...", COLOR_CYAN);
-    if (pca.selectChannel(0))
-    {
-        logMessage("PCA channel 0 selected", COLOR_GREEN);
-
-        // Verify channel selection
-        uint8_t channels = pca.getChannelMask();
-        if (channels != 0xFF && (channels & 0x01))
-        {
-            logMessage("PCA channel 0 confirmed", COLOR_GREEN);
-        }
-        else
-        {
-            logMessage("PCA channel 0 verify failed", COLOR_RED);
-        }
-
-        pca.disableAllChannels();
-        logMessage("PCA channel 0 disabled", COLOR_YELLOW);
-    }
-    else
-    {
-        logMessage("PCA channel 0 select FAILED!", COLOR_RED);
-        system_status.pca_detected = false;
-        tca.disableAllChannels();
-        return;
-    }
-
-    // Test PCA channel 1 (sensor B)
-    logMessage("Testing PCA channel 1...", COLOR_CYAN);
-    if (pca.selectChannel(1))
-    {
-        logMessage("PCA channel 1 selected", COLOR_GREEN);
-
-        // Verify channel selection
-        uint8_t channels = pca.getChannelMask();
-        if (channels != 0xFF && (channels & 0x02))
-        {
-            logMessage("PCA channel 1 confirmed", COLOR_GREEN);
-        }
-        else
-        {
-            logMessage("PCA channel 1 verify failed", COLOR_RED);
-        }
-
-        pca.disableAllChannels();
-        logMessage("PCA channel 1 disabled", COLOR_YELLOW);
-    }
-    else
-    {
-        logMessage("PCA channel 1 select FAILED!", COLOR_RED);
-        system_status.pca_detected = false;
-        tca.disableAllChannels();
-        return;
-    }
-
-    // Clean up - disable all channels
-    tca.disableAllChannels();
-    logMessage("TCA channels disabled", COLOR_YELLOW);
-
-    // Mark PCA as working
-    system_status.pca_detected = true;
-    logMessage("PCA9546A test PASSED", COLOR_GREEN);
-}
-
-/**
- * Test VCNL4040 sensors on ALL PCA channels (comprehensive scan)
- */
-void testVCNL4040Sensors()
-{
-    logMessage("=== VCNL4040 COMPREHENSIVE TEST ===", COLOR_CYAN);
-
-    // First, select TCA channel 0 (sensor board 1)
-    if (!tca.selectChannel(0))
-    {
-        logMessage("TCA channel 0 select FAILED!", COLOR_RED);
-        system_status.sensors_detected = false;
-        return;
-    }
-    logMessage("TCA channel 0 selected", COLOR_GREEN);
-    delay(10);
-
-    // Reset sensor count
-    sensor_readings.active_sensor_count = 0;
-
-    // Test all 4 PCA channels for VCNL4040 sensors
-    for (int pca_channel = 0; pca_channel < 4; pca_channel++)
-    {
-        logMessage("=== Testing PCA Channel " + String(pca_channel) + " ===", COLOR_CYAN);
-
-        // Select PCA channel
-        if (!pca.selectChannel(pca_channel))
-        {
-            logMessage("PCA ch" + String(pca_channel) + " select FAILED!", COLOR_RED);
-            sensor_readings.sensor_active[pca_channel] = false;
-            continue;
-        }
-        logMessage("PCA ch" + String(pca_channel) + " selected", COLOR_GREEN);
-        delay(10);
-
-        // Check if VCNL4040 is visible on I2C bus
-        Wire.beginTransmission(0x60);
-        byte error = Wire.endTransmission();
-        if (error != 0)
-        {
-            logMessage("PCA ch" + String(pca_channel) + ": No device at 0x60", COLOR_YELLOW);
-            logMessage("I2C error code: " + String(error), COLOR_GRAY);
-            sensor_readings.sensor_active[pca_channel] = false;
-            continue;
-        }
-        logMessage("PCA ch" + String(pca_channel) + ": Device found at 0x60!", COLOR_GREEN);
-
-        // Try to initialize VCNL4040 sensor
-        if (!vcnl_sensors[pca_channel].begin())
-        {
-            logMessage("PCA ch" + String(pca_channel) + ": VCNL4040 init FAILED!", COLOR_RED);
-            sensor_readings.sensor_active[pca_channel] = false;
-            continue;
-        }
-        logMessage("PCA ch" + String(pca_channel) + ": VCNL4040 initialized!", COLOR_GREEN);
-
-        // Read test values
-        uint16_t prox = vcnl_sensors[pca_channel].getProximity();
-        uint16_t amb = vcnl_sensors[pca_channel].getAmbientLight();
-        logMessage("PCA ch" + String(pca_channel) + " - Prox:" + String(prox) + " Amb:" + String(amb), COLOR_WHITE);
-
-        // Test detection threshold
-        bool detected = (prox > PROXIMITY_THRESHOLD);
-        logMessage("PCA ch" + String(pca_channel) + " Detection: " + String(detected ? "OBJECT" : "CLEAR"),
-                   detected ? COLOR_RED : COLOR_GREEN);
-
-        // Mark this sensor as active
-        sensor_readings.sensor_active[pca_channel] = true;
-        sensor_readings.active_sensor_count++;
-
-        logMessage("PCA ch" + String(pca_channel) + ": SENSOR WORKING!", COLOR_GREEN);
-    }
-
-    // Clean up - disable all channels
-    pca.disableAllChannels();
-    tca.disableAllChannels();
-    logMessage("All channels disabled", COLOR_YELLOW);
-
-    // Summary of findings
-    logMessage("=== SENSOR DISCOVERY SUMMARY ===", COLOR_MAGENTA);
-    logMessage("Active sensors found: " + String(sensor_readings.active_sensor_count), COLOR_CYAN);
-
-    for (int i = 0; i < 4; i++)
-    {
-        if (sensor_readings.sensor_active[i])
-        {
-            logMessage("✓ PCA Channel " + String(i) + ": VCNL4040 ACTIVE", COLOR_GREEN);
-        }
-        else
-        {
-            logMessage("✗ PCA Channel " + String(i) + ": No sensor", COLOR_GRAY);
-        }
-    }
-
-    // Set detection thresholds
-    logMessage("Proximity threshold: " + String(PROXIMITY_THRESHOLD), COLOR_CYAN);
-
-    // Mark sensors as working if any found
-    if (sensor_readings.active_sensor_count > 0)
-    {
-        system_status.sensors_detected = true;
-        logMessage("VCNL4040 sensor test PASSED - " + String(sensor_readings.active_sensor_count) + " sensors", COLOR_GREEN);
-    }
-    else
-    {
-        system_status.sensors_detected = false;
-        logMessage("VCNL4040 sensor test FAILED - No sensors found", COLOR_RED);
-    }
-}
-
-/**
- * Read all active sensors continuously for live display
- */
-void readSensors()
-{
-    uint32_t current_time = millis();
-    if (current_time - sensor_readings.last_reading_time < SENSOR_UPDATE_INTERVAL)
-    {
-        return; // Not time to update yet
-    }
-
-    if (!system_status.sensors_detected || sensor_readings.active_sensor_count == 0)
-    {
-        return; // No sensors initialized
-    }
-
-    // Select TCA channel 0
-    if (!tca.selectChannel(0))
-    {
-        return; // TCA communication failed
-    }
-
-    // Read all active sensors
-    for (int pca_channel = 0; pca_channel < 4; pca_channel++)
-    {
-        if (!sensor_readings.sensor_active[pca_channel])
-        {
-            continue; // Skip inactive sensors
-        }
-
-        // Select PCA channel
-        if (!pca.selectChannel(pca_channel))
-        {
-            continue; // Skip if channel selection fails
-        }
-
-        delay(5); // Small delay for I2C settling
-
-        // Read sensor values
-        sensor_readings.proximity[pca_channel] = vcnl_sensors[pca_channel].getProximity();
-        sensor_readings.ambient[pca_channel] = vcnl_sensors[pca_channel].getAmbientLight();
-        sensor_readings.object_detected[pca_channel] = (sensor_readings.proximity[pca_channel] > PROXIMITY_THRESHOLD);
-    }
-
-    // Clean up
-    pca.disableAllChannels();
-    tca.disableAllChannels();
-
-    sensor_readings.last_reading_time = current_time;
-}
-
-/**
- * Update sensor display area with live readings from all active sensors
- */
-void updateSensorDisplay()
-{
-    if (!system_status.sensors_detected || sensor_readings.active_sensor_count == 0)
-    {
-        return; // No sensors to display
-    }
-
-    // Display sensor readings in bottom right area
-    int sensor_x = SCREEN_WIDTH - 120;
-    int sensor_y = SCREEN_HEIGHT - 50;
-
-    // Clear sensor area
-    tft.fillRect(sensor_x, sensor_y, 115, 45, COLOR_BLACK);
-
-    // Show active sensor count
-    tft.setTextSize(1);
-    tft.setTextColor(COLOR_CYAN, COLOR_BLACK);
-    tft.setCursor(sensor_x, sensor_y);
-    tft.println("Sensors: " + String(sensor_readings.active_sensor_count));
-
-    int line = 1;
-    // Display readings for each active sensor
-    for (int pca_channel = 0; pca_channel < 4 && line < 4; pca_channel++)
-    {
-        if (!sensor_readings.sensor_active[pca_channel])
-        {
-            continue; // Skip inactive sensors
-        }
-
-        // Sensor reading line
-        tft.setTextColor(sensor_readings.object_detected[pca_channel] ? COLOR_RED : COLOR_GREEN, COLOR_BLACK);
-        tft.setCursor(sensor_x, sensor_y + (line * 10));
-        tft.println("Ch" + String(pca_channel) + ":" + String(sensor_readings.proximity[pca_channel]));
-        line++;
-    }
-
-    // Detection summary
-    if (line < 4)
-    {
+        // Show initialization screen
+        tft.fillScreen(COLOR_BLACK);
         tft.setTextColor(COLOR_YELLOW, COLOR_BLACK);
-        tft.setCursor(sensor_x, sensor_y + (line * 10));
-        String det_status = "Det:";
-        bool any_detected = false;
-        for (int i = 0; i < 4; i++)
-        {
-            if (sensor_readings.sensor_active[i] && sensor_readings.object_detected[i])
-            {
-                det_status += String(i);
-                any_detected = true;
-            }
-        }
-        if (!any_detected)
-            det_status += "-";
-        tft.println(det_status);
+        tft.setTextSize(2);
+        tft.setCursor(10, 20);
+        tft.println("Initializing...");
+
+        tft.setTextSize(1);
+        tft.setTextColor(COLOR_CYAN, COLOR_BLACK);
+        tft.setCursor(10, 45);
+        tft.println("6-sensor proximity system");
+
+        // Initialize sensors with progress display
+        initializeSensors();
     }
+
+    // Button 2 pressed (test LED feedback)
+    if (!button2_current && button2_last_state)
+    {
+        Serial.println("Button 2 pressed - Testing LED feedback...");
+
+        static int test_mode = 0;
+
+        switch (test_mode)
+        {
+        case 0:
+            Serial.println("Testing Green (Player A)");
+            setLEDColor(PLAYER_1_TRIGGER);
+            break;
+        case 1:
+            Serial.println("Testing Blue (Player B)");
+            setLEDColor(PLAYER_2_TRIGGER);
+            break;
+        case 2:
+            Serial.println("Testing Red (Unknown)");
+            setLEDColor(UNKNOWN_TRIGGER);
+            break;
+        case 3:
+            Serial.println("LEDs Off");
+            setLEDColor(NO_TRIGGER);
+            break;
+        }
+
+        test_mode = (test_mode + 1) % 4;
+    }
+
+    button1_last_state = button1_current;
+    button2_last_state = button2_current;
 }
 
 // ==================================================================================
@@ -1059,24 +1402,21 @@ void updateSensorDisplay()
 
 void setup()
 {
-    // Initialize serial communication
     Serial.begin(115200);
     delay(1000);
 
-    system_status.boot_time = millis();
+    system_start_time = millis();
 
     Serial.println("\n" + String("=").substring(0, 60));
-    Serial.println("MOTION PLAY DEBUG SESSION");
-    Serial.println("Motion Play " + getVersionString() + " - Phase " + String(PHASE_NUMBER));
-    Serial.println("Build: " + getBuildTimestamp());
-    Serial.println("Chip: " + String(ESP.getChipModel()) + " @ " + String(ESP.getCpuFreqMHz()) + "MHz");
+    Serial.println("MOTION PLAY v4.0 - PROXIMITY DETECTION SYSTEM");
+    Serial.println("Build: " + String(__DATE__) + " " + String(__TIME__));
+    Serial.println("Chip: " + String(ESP.getChipModel()));
     Serial.println("Free heap: " + String(ESP.getFreeHeap()) + " bytes");
-    Serial.println("PSRAM free: " + String(ESP.getFreePsram()) + " bytes");
-    Serial.println("Serial logging: ENABLED (parallel to display)");
+    Serial.println("Target: 6 sensors (3 boards × 2 sensors each)");
+    Serial.println("Detection: Proximity (IR reflection)");
     Serial.println(String("=").substring(0, 60));
-    Serial.flush();
 
-    // Initialize display first
+    // Initialize hardware
     if (!initializeDisplay())
     {
         Serial.println("FATAL: Display initialization failed!");
@@ -1084,47 +1424,70 @@ void setup()
             delay(1000);
     }
 
-    // Initialize buttons
     initializeButtons();
+    initializeLEDs();
 
-    // Initialize placeholders for future phases
-    initializeI2C();
-    testTCA9548A();
-    testPCA9546A();
-    testVCNL4040Sensors();
+    if (!initializeI2C())
+    {
+        Serial.println("FATAL: I2C initialization failed!");
+        while (1)
+            delay(1000);
+    }
 
-    // Initial log messages
-    logMessage("=== MOTION PLAY v" + getVersionString() + " ===", COLOR_GREEN);
-    logMessage("Phase " + String(PHASE_NUMBER) + ": VCNL4040 Sensors", COLOR_CYAN);
-    logMessage("Build: " + getBuildTimestamp(), COLOR_YELLOW);
-    logMessage("Ready! Press BTN2 for tests", COLOR_WHITE);
-    logMessage("BTN1: Toggle scroll mode", COLOR_GRAY);
-    logMessage("BTN2: Run Phase 4 tests", COLOR_GRAY);
+    if (!initializeTCA())
+    {
+        Serial.println("FATAL: TCA9548A initialization failed!");
+        while (1)
+            delay(1000);
+    }
 
-    // Initial display update
-    updateDisplay();
+    if (!initializePCA())
+    {
+        Serial.println("FATAL: PCA9546A initialization failed!");
+        while (1)
+            delay(1000);
+    }
+
+    // Clear screen for main display
+    tft.fillScreen(COLOR_BLACK);
+
+    // Show instructions
+    tft.setTextColor(COLOR_YELLOW, COLOR_BLACK);
+    tft.setTextSize(1);
+    tft.setCursor(10, 60);
+    tft.println("Press Button 1 to initialize 6 sensors");
+    tft.setCursor(10, 80);
+    tft.println("(Testing proximity on new fixed PCBs!)");
 
     Serial.println("Setup complete. System ready.");
+    Serial.println("\n📋 BUTTON CONTROLS:");
+    Serial.println("  Button 1: Initialize 6-sensor proximity system");
+    Serial.println("  Button 2: Test LED feedback (cycles colors)");
+    Serial.println("\n⚙️  DETECTION PARAMETERS (BASELINE-RELATIVE!):");
+    Serial.println("  Detection: ANY variation > " + String(PROXIMITY_VARIATION_THRESHOLD) + " from baseline");
+    Serial.println("  Side correlation window: " + String(SIDE_CORRELATION_WINDOW) + "ms");
+    Serial.println("  Sensor update interval: " + String(SENSOR_UPDATE_INTERVAL) + "ms (~66 readings/sec)");
+    Serial.println("  Baseline updates: Every " + String(BASELINE_UPDATE_INTERVAL) + "ms (adaptive tracking)");
+    Serial.println("\n🔧 SENSOR CONFIG:");
+    Serial.println("  LED current: 200mA (maximum)");
+    Serial.println("  Integration time: 8T (highest sensitivity)");
+    Serial.println("  Resolution: 16-bit (0-65535)");
+
+    if (TEST_MODE_ANY_DETECTION)
+    {
+        Serial.println("\n🟢 TEST MODE ACTIVE:");
+        Serial.println("  Green LEDs will trigger on ANY proximity detection");
+        Serial.println("  This is for testing with single-sensor boards");
+        Serial.println("  Full directional detection needs both S1+S2 working per board");
+    }
 }
 
 void loop()
 {
-    uint32_t current_time = millis();
-
-    // Handle button presses
     handleButtons();
-
-    // Read sensors continuously (if initialized)
     readSensors();
+    updateDisplay();
+    updateLEDs(); // Update LED state
 
-    // Update display periodically
-    if (current_time - system_status.last_update > 1000)
-    {
-        updateDisplay();
-        updateSensorDisplay(); // Show live sensor readings
-        system_status.last_update = current_time;
-    }
-
-    // Small delay to prevent excessive CPU usage
-    delay(10);
+    delay(1); // Minimal delay for fast response
 }

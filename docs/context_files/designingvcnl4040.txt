@@ -1,0 +1,1201 @@
+V I S H AY S E M I C O N D U C T O R S
+www.vishay.com
+Optical Sensors Application Note
+Designing the VCNL4040 Into an Application
+By Reinhard Schaar
+INTRODUCTION AND BASIC OPERATION
+The VCNL4040 is a fully integrated proximity and ambient
+light sensor. It combines an infrared emitter and
+photodiode for proximity measurement, ambient light
+sensor, and signal processing IC in a single package with
+a 16-bit ADC. The device provides ambient light sensing
+to support conventional backlight and display brightness
+auto-adjustment, and proximity sensing to minimize
+accidental touch input that can lead to call drops and
+camera launch.
+With a range of up to 20 cm (7.9"), this stand-alone
+component greatly simplifies the use and design-in of a
+proximity sensor in consumer and industrial applications,
+because no mechanical barriers are required to optically
+isolate the emitter from the detector. The VCNL4040
+features a miniature, surface-mount 4.0 mm by 2.36 mm
+leadless package (LLP) with a low profile of 0.75 mm. The
+device is designed specifically to meet the low height
+requirements of smartphone, mobile phone, digital camera,
+and tablet PC applications.
+Through its standard I2C bus serial digital interface, it allows
+easy access to a “proximity signal” and “light intensity”
+measurements. The programmable interrupt function offers
+wake-up functionality for the microcontroller when a
+proximity event or ambient light change occurs, which
+reduces processing overhead by eliminating the need for
+continuous polling.
+Fig. 2 - VCNL4040 Bottom View
+COMPONENTS (BLOCK DIAGRAM)
+The major components of the VCNL4040 are shown in the
+block diagram.
+In addition to the ASIC with the ambient light and proximity
+photodiode, the infrared emitter is also implemented. Its
+cathode needs to be connected to the driver (pin 2)
+externally.
+GND
+1
+Cathode
+(sensor)
+2
+VDD
+3
+VCNL4040
+ALS-PD PS-PD
+Driver
+DSP
+Oscillator
+PS
+data buffer
+8
+7
+SCL
+SDA
+Output buffer
+I2C Interface
+ALS 16-bit
+data buffer
+Low pass
+filter
+Temperature
+compensation
+IRED
+6
+5
+Fig. 1 - VCNL4040 Top View
+INT
+Anode
+4
+Cathode
+(IRED)
+Fig. 3 - VCNL4040 Detailed Block Diagram
+The integrated infrared emitter has a peak wavelength of
+940 nm. It emits light that reflects off an object within 20 cm
+of the sensor. An added lens helps to increase peak
+intensity due to enabling a small angle of just ± 15°, as
+shown in Fig. 4.
+Revision: 06-Mar-2025 1 Document Number: 84307
+For technical questions, contact: consumersensors@vishay.com
+THIS DOCUMENT IS SUBJECT TO CHANGE WITHOUT NOTICE. THE PRODUCTS DESCRIBED HEREIN AND THIS DOCUMENT
+ARE SUBJECT TO SPECIFIC DISCLAIMERS, SET FORTH AT www.vishay.com/doc?91000
+A P P L I C A T I O N N O T E
+Application Note
+www.vishay.com Vishay Semiconductors
+Relative Radiant Intensity
+1st line
+1.0
+0.9
+0.8
+0.7
+0.6
+0.5
+0.4
+0.3
+0.2
+0.1
+0
+-90 -60 -30 0 30 60 90
+Angle (deg)
+2nd line
+Fig. 4 - Angle of Half Intensity of the Emitter
+The infrared emitter has a programmable drive current from
+50 mA to 200 mA in eight steps. The infrared light is emitted
+in short pulses with a programmable duty ratio from 1/40 to
+1/320. The proximity photodiode receives the light that is
+reflected off the object and converts it to a current. It has a
+peak sensitivity of 940 nm, matching the peak wavelength of
+the emitter. The sensitivity of the proximity stage is also
+programmable by choosing from eight different integration
+times. It is insensitive to ambient light. It ignores the DC
+component of light and “looks for” the pulsed light at the
+proximity frequency used by the emitter.
+The ambient light sensor receives the visible light and
+converts it to a current. The human eye can see light with
+wavelengths from 400 nm to 700 nm, with a peak of 560 nm.
+Vishay’s ambient light sensor closely matches this range of
+sensitivity. It has peak sensitivity at 540 nm and a bandwidth
+from 430 nm to 610 nm.
+The application-specific integrated circuit, or ASIC, includes
+an LED driver, I2C bus interface, amplifier, integrated
+analog-to-digital converter, oscillator, and Vishay’s “secret
+sauce” signal processor. For proximity, it converts the
+current from the photodiode to a 12-bit or 16-bit digital data
+output value. For ambient light sensing, it converts the
+current from the ambient light detector, amplifies it, and
+converts it to a 16-bit digital output stream.
+Designing the VCNL4040 Into an Application
+Axis Title
+10000
+1000
+1st line
+2nd line
+100
+10
+PIN CONNECTIONS
+Fig. 3 shows the pin assignments of the VCNL4040.
+The connections include:
+• Pin 1 - connect to ground
+• Pin 2 - IR cathode (sensor side)
+• Pin 3 - VDD to the power supply
+• Pin 4 - IRED anode to the power supply
+• Pin 5 - IRED cathode (IRED side)
+• Pin 6 - INT to microcontroller
+• Pin 7 - SDA to microcontroller
+• Pin 8 - SCL to microcontroller
+The power supply for the ASIC (VDD) has a defined range
+from 2.5 V to 3.6 V. The infrared emitter can also be within
+this range and also here 3.6 V is maximum. It is best if VDD
+is connected to a regulated power supply and pin 4, the
+anode, is connected directly to the battery. This eliminates
+any influence of the high infrared emitter current pulses on
+the VDD supply line. The power supply decoupling
+components C1 and R4 (shown in fig. 5) are optional. They
+isolate the sensor from other possible noise on the same
+power rail, but in most applications are not needed.
+If separate power supplies for the VDD and the infrared
+emitter are used and there are no negative spikes below
+2.5 V, only one capacitor at VDD could be used. The 100 nF
+capacitor should be placed close to the VDD pin. The SCL
+and SDA, as well as the interrupt lines, need pull-up
+resistors. The resistor values depend on the application and
+on the I2C bus speed. Common values are about 2.2 kΩ to
+4.7 kΩ for the SDA and SCL, and about 8.2 kΩ to 22 kΩ for
+the interrupt lines.
+1.8 V to 3.6 V
+R1 R2 R3
+2.5 V to 3.6 V R4
+C2
+10R
+C1 10 μF 100 nF
+2.5 V to 3.6 V
+C3
+470 nF
+C1 and R4 are
+optional for very
+disturbed supply
+GND (1)
+VDD (3)
+VCNL4040
+ANODE (4)
+CATHODE (5)
+(IRED)
+CATHODE (2)
+(driver)
+SDA (7)
+SCL (8)
+INT (6)
+Host
+Micro Controller
+I2C bus data SDA
+I2C bus clock SCL
+GPIO (INT)
+Fig. 5 - VCNL4040 Application Circuit
+Revision: 06-Mar-2025 2 Document Number: 84307
+For technical questions, contact: consumersensors@vishay.com
+THIS DOCUMENT IS SUBJECT TO CHANGE WITHOUT NOTICE. THE PRODUCTS DESCRIBED HEREIN AND THIS DOCUMENT
+ARE SUBJECT TO SPECIFIC DISCLAIMERS, SET FORTH AT www.vishay.com/doc?91000
+A P P L I C A T I O N N O T E
+Application Note
+www.vishay.com Vishay Semiconductors
+Designing the VCNL4040 Into an Application
+MECHANICAL DESIGN CONSIDERATIONS
+The VCNL4040 is a fully integrated proximity and ambient
+light sensor. Competing sensors use a discrete infrared
+emitter, which leads to complex geometrical calculations to
+determine the position of the emitter. Competing sensors
+also require a mechanical barrier between the emitter and
+detectors to eliminate crosstalk - light reflecting off the
+inside of the window cover that can produce false proximity
+readings.
+The VCNL4040 does not require a mechanical barrier. The
+signal processor continuously compensates for the light
+reflected from windows, thus ensuring a proper proximity
+reading. As a fully integrated sensor, the design process is
+greatly simplified.
+The only dimensions that the design engineer needs to
+consider are the distance from the top surface of the sensor
+to the outside surface of the window, and the size of the
+window. These dimensions will determine the size of the
+detection zone.
+The angle of half intensity of the emitter is about ± 15°, as
+shown in fig. 6, and the sensitivity of the photodiodes is
+showing about ± 55°.
+0° 20°
+1.0
+Radiant Intensity
+0.9
+0.8
+0.7
+0.6
+± 40°
+± 15°
+40°
+Fig. 8 - Emitter and Detector Angle
+To achieve a good ambient light response, the diameter of
+the hole within the cover glass should not be too small. An
+angle of ± 40° will be sufficient in most applications. The
+package drawing shows the position of the IRED and
+photosensitive area. The +40° line should be set at the side
+of the photodiode, towards pin 1. The -40° line should be set
+no closer than 1 mm to that edge. The following are
+dimensions for the distance from the top surface of the
+sensor to the outside surface of the glass, a, and the width
+of the window, d.
+d
+Angle (deg)
+4.0 x
+D
+a
+60°
+80°
+α
+1.1
+0.5
+0.4
+0.3
+0.2
+0.1
+0
+Fig. 6 - Angle of the Half Intensity of the Emitter
+0° 20°
+dimensions in mm
+Fig. 9 - Window Dimensions for One Hole
+For a single round hole, the diameter should be at least wide
+enough that the openings can freely look through; so,
+about 4 mm. Two much smaller holes are also possible.
+These should be at least the same as the diameter for the
+IRED = 1.2 mm.
+Srel - Relative Sensitivity
+1.0
+0.9
+0.8
+0.7
+0.6
+40°
+60°
+80°
+ϕ - Angular Displacement
+0.5
+0.4
+0.3
+0.2
+0.1
+0
+Fig. 7 - Angle of the Half Sensitivity of the Photodiode
+Revision: 06-Mar-2025 3 Document Number: 84307
+For technical questions, contact: consumersensors@vishay.com
+THIS DOCUMENT IS SUBJECT TO CHANGE WITHOUT NOTICE. THE PRODUCTS DESCRIBED HEREIN AND THIS DOCUMENT
+ARE SUBJECT TO SPECIFIC DISCLAIMERS, SET FORTH AT www.vishay.com/doc?91000
+A P P L I C A T I O N N O T E
+Application Note
+www.vishay.com Vishay Semiconductors
+Designing the VCNL4040 Into an Application
+Ø 1.2
+4 ± 0.1
+4 ± 0.1
+Fig. 10 - Light Holes Diameters
+The diameter needs to be increased with distances between
+the sensor and cover glass according to the following
+calculation.
+The width calculation for distances from 0 mm to 4 mm
+results with this in:
+a = 0.0 mm → x = 0.0 → d = 4.0 mm + 0.0 = 4.0 mm
+a = 0.5 mm → x = 0.42 → d = 4.0 mm + 0.84 = 4.84 mm
+a = 1.0 mm → x = 0.84 → d = 4.0 mm + 1.68 = 5.68 mm
+a = 1.5 mm → x = 1.28 → d = 4.0 mm + 2.56 = 6.56 mm
+a = 2.0 mm → x = 1.68 → d = 4.0 mm + 3.36 = 7.36 mm
+a = 2.5 mm → x = 2.10 → d = 4.0 mm + 4.20 = 8.20 mm
+a = 3.0 mm → x = 2.52 → d = 4.0 mm + 5.04 = 9.04 mm
+a = 3.5 mm → x = 2.94 → d = 4.0 mm + 5.88 = 9.58 mm
+a = 4.0 mm → x = 3.36 → d = 4.0 mm + 6.72 = 10.72 mm
+For the two smaller holes, the diameter for the IRED can be
+as small as 1.2 mm.
+d1
+Axis Title
+10000
+Relative Response (%)
+ALS
+1st line
+PS
+1st line
+2nd line
+The results above represent the ideal diameters of the
+window. The mechanical design of the device may not allow
+for these diameters.
+PROXIMITY SENSOR
+The main DC light sources found in the environment are
+sunlight and tungsten (incandescent) bulbs. These kinds of
+disturbance sources will cause a DC current in the detector
+inside the sensor, which in turn will produce noise in the
+receiver circuit. The negative influence of this DC light can
+be reduced by optical filtering, but is reduced much more
+efficiently by a so-called DC kill function. The proximity
+photodiode shows its best sensitivity at about 940 nm, as
+shown in fig. 12.
+100
+90
+80
+70
+60
+50
+40
+30
+20
+10
+0
+1000
+100
+10
+Fig. 12 - Spectral Sensitivity of ALS and Proximity Photodiode
+The proximity sensor uses a short pulse signal of about
+100 μs (PS_IT = 1T) up to 800 μs (PS_IT = 8T). The on / off
+duty ratio setting now defines which repetition rate to be
+used, which can be programmed from 1/40 up to 1/320.
+In addition to DC light source noise, there is some reflection
+of the infrared emitted light off the surfaces of the
+components surrounding the VCNL4040. The distance to
+the cover, proximity of surrounding components, tolerances
+of the sensor, defined infrared emitter current, ambient
+temperature, and type of window material used all
+contribute to this reflection. The result of the reflection and
+DC noise is the production of an output current on the
+proximity and light sensing photodiode. This current is
+converted into a count called the offset count.
+In addition to the offset count, there could also be a small
+noise floor during the proximity measurement, which comes
+from the DC light suppression circuitry. This noise is
+typically just one or two counts. Only with light sources with
+strong infrared content could it be in the range from
+± 5 counts to ± 10 counts.
+400 500 600 700 800 900 1000
+Wavelength (nm)
+2nd line
+x
+a
+α
+D
+1.1
+dimensions in mm
+Fig. 11 - Window Diameters for Two Holes
+Only the diameter for the photodiode needs to be increased,
+as shown in the example below, with distances between the
+sensor and cover glass.
+The width calculation for distances from 0 mm to 1.5 mm
+results in:
+a = 0.0 mm → x = 0.0 → d = 1.2 mm + 0.0 = 1.2 mm
+a = 0.5 mm → x = 0.42 → d = 1.2 mm + 0.84 = 2.04 mm
+a = 1.0 mm → x = 0.84 → d = 1.2 mm + 1.68 = 2.88 mm
+a = 1.5 mm → x = 1.28 → d = 1.2 mm + 2.56 = 3.76 mm
+Revision: 06-Mar-2025 4 Document Number: 84307
+For technical questions, contact: consumersensors@vishay.com
+THIS DOCUMENT IS SUBJECT TO CHANGE WITHOUT NOTICE. THE PRODUCTS DESCRIBED HEREIN AND THIS DOCUMENT
+ARE SUBJECT TO SPECIFIC DISCLAIMERS, SET FORTH AT www.vishay.com/doc?91000
+A P P L I C A T I O N N O T E
+Application Note
+www.vishay.com Vishay Semiconductors
+Designing the VCNL4040 Into an Application
+The application should “ignore” this offset and small noise
+floor by subtracting them from the total proximity readings.
+The VCNL4040 offers a subtraction feature what
+automatically does this: PS_CANC. During the development
+of the end product, this offset count is evaluated and may
+now be written into register 5: PS_CANC_L/M. Now the
+proximity output data will just show the subtraction result of
+proximity counts - offset counts.
+Results most often do not need to be averaged. If an object
+with very low reflectivity or at longer range needs to be
+detected, the sensor provides a register where the customer
+can define the number of consecutive measurements that
+the signal must exceed before producing an interrupt. This
+provides stable results without requiring averaging.
+PROXIMITY CURRENT COSUMPTION
+Both the ambient light sensor (ALS) and the proximity
+sensor (PS) within the VCNL4040 offer a separate shutdown
+mode. Default values after start-up have them both
+disabled. The application may activate just the one wanted
+or both.
+The VCNL4040’s embedded LED driver drives the internal
+IRED via the “LED CATHODE” pin with a pulsed duty cycle.
+The IRED on / off duty ratio is programmable by an I2C
+command at register PS_Duty. Depending on this pulse /
+pause ratio, the overall proximity current consumption can
+be calculated. When higher measurement speed or faster
+response time is needed, PS_Duty may be selected to a
+maximum value of 1/40, which means one measurement will
+be made every 4.85 ms, but this will then also lead to the
+highest current consumption:
+PS_Duty = 1/40: peak IRED current = 100 mA,
+averaged current consumption is 100 mA/40 = 2.5 mA.
+For proximity measurements executed just every 40 ms:
+PS_Duty = 1/320 peak IRED current = 100 mA,
+averaged current consumption is 100 mA/320 = 0.3125 mA.
+The above is always valid for the normal pulse width of
+T = 1T = 125 μs, as well as for 2T, 4T, 8T, and all others in
+between. These pulse lengths are always doubled, resulting
+in 1000 μs for 8T, but the repetition time is also doubled,
+ending in a period time of about 320 ms.
+An extremely power-efficient way to execute proximity
+measurements is to apply a PS active force mode (register:
+PS_CONF3, command: PS_AF = 1).
+If only a single proximity measurement should be done,
+PS_AF is set to “1” and then PS_SD = 0 = active. Setting
+PS_Trig = 1 will then execute just one single measurement.
+In this mode, only the I2C interface is active. In most
+consumer electronic applications the sensor will spend the
+majority of time in sleep mode, it only needs to be woken up
+for a proximity or light measurement. In standby mode the
+power consumption is about 0.2 μA.
+The pulse for proximity measurement looks to have a higher
+landing / step. This second trap is for smooth switch-off of
+the LED and is executed with very low IRED current. The
+pulse length in total is 200 μs. Amplitude of that first half is
+dependent on the IRED current. The higher this current is
+programmed, the higher that pulse amplitude will be. Taking
+a scope picture at IR_Cathode (pin 5) will look like this:
+0.5 V/div
+125 μs 125 μs
+40 μs/div
+Fig. 13 - Proximity IRED Pulse for 1T
+INITIALIZATION AND I2C TIMINGS
+The VCNL4040 contains thirteen 16-bit command codes
+for operation control, parameter setup, and result buffering.
+All registers are accessible via I2C communication. The
+built-in I2C interface is compatible with the standard and
+high-speed I2C modes. The I2C H-level voltage range is from
+2.5 V to 3.6 V.
+There are only five registers out of the thirteen that typically
+need to be defined:
+1. LED_I = 50 mA to 200 mA (IRED current)
+REGISTER PS_MS #04 [0x04h]
+2. PS_Duty = 1/40 to 1/320 (proximity duty ratio),
+PS_IT (proximity integration time = pulse length),
+PS_PERS (number of consecutive measurements
+above / below threshold), and PS_SD (PS power_on)
+REGISTER PS_CONF1 #03 [0x03h]
+3. ALS_IT (ALS_integration time)
+ALS_PERS (number of consecutive measurements
+above / below threshold), and
+ALS_SD (ALS power_on)
+REGISTER ALS_CONF #00 [0x00h]
+4. and 5. Definition of the threshold value from the number
+of counts the detection of an object should be signaled.
+Proximity TOP Threshold REGISTER
+PS_THDL_L #06 [0x06h] for the low byte and
+PS_THDL_H #07 [0x07h] for the high byte.
+To define the infrared emitter current, as well as the
+integration time (length of the proximity pulsing), evaluation
+tests should be performed using the least reflective material
+at the maximum distance specified.
+Revision: 06-Mar-2025 5 Document Number: 84307
+For technical questions, contact: consumersensors@vishay.com
+THIS DOCUMENT IS SUBJECT TO CHANGE WITHOUT NOTICE. THE PRODUCTS DESCRIBED HEREIN AND THIS DOCUMENT
+ARE SUBJECT TO SPECIFIC DISCLAIMERS, SET FORTH AT www.vishay.com/doc?91000
+A P P L I C A T I O N N O T E
+1/40 each 5 ms
+1st line
+50 mA
+100 mA
+1st line
+2nd line
+200 mA
+Fig. 16 - Proximity Measurements with PS_Duty = 1/40
+Application Note
+www.vishay.com Vishay Semiconductors
+Designing the VCNL4040 Into an Application
+Fig. 13 shows the typical digital counts output versus
+distance for three different emitter currents for integration
+time T1. The reflective reference medium is the Kodak Gray
+card. This card shows approximately 18 % reflectivity at
+940 nm.
+With defining the duty time (PS_Duty), the repetition
+rate = the number of proximity measurements per second
+(speed of proximity measurements) is defined. This is
+possible between 5 ms (about 200 measurements/s) by
+programming PS_Duty with 1/40 and 40 ms (about
+25 measurements/s) with programming PS_Duty with 1/320.
+Axis Title
+10 000
+10000
+Proximity Value (counts)
+1000
+1000
+100
+100
+10
+1
+10
+0.1 1 10 100 1000
+Distance to Reflecting Card (mm)
+2nd line
+Fig. 14 - Proximity Value vs. Distance for 1T
+This first diagram shows the possible detection counts with
+a short pulse of just 125 μs.
+If higher detection distances and / or objects with very low
+reflectivity should be detected, there is the option to extend
+these proximity pulses up to about 1000 μs for 8T. This
+results in higher counts but may also lead to saturation
+effects for very close and very bright objects. This leads then
+to the diagram in fig. 15 below.
+In order to reach the high reflection counts of the Kodak
+Gray card, one has to define the proximity range to 16 bit,
+otherwise the 12-bit range would just lead to 4095 counts.
+This is possible to select with: PS_HD = 1 within PS_CONF3
+byte of command code #3.
+Axis Title
+100 000
+10000
+10 000
+Proximity Value (counts)
+1000
+1000
+1st line
+100
+100
+10
+1
+10
+Fig. 15 - Proximity Value vs. Distance; PS_IT = 8T
+1/320 each 40 ms
+50 mA
+100 200 mA
+mA
+1st line
+2nd line
+Fig. 17 - Proximity Measurements with PS_Duty = 1/320
+This duty cycle also determines how fast the application
+reacts when an object appears in, or is removed from, the
+proximity zone.
+Reaction time is also determined by the number of counts
+that must be exceeded before an interrupt is set. This is
+possible to define with proximity persist: PS_PERS.
+Possible values are from 1 to 4.
+To define all these register values, an evaluation test should
+be performed. These tests can be made just using the
+VCNL4040 sensor board together with the SensorXplorerTM
+.
+Both boards are available from any of Vishay’s distributors.
+Please see:
+www.vishay.com/optoelectronics/SensorXplorer.
+0.1 1 10 100 1000
+Distance to Reflecting Card (mm)
+2nd line
+Revision: 06-Mar-2025 6 Document Number: 84307
+For technical questions, contact: consumersensors@vishay.com
+THIS DOCUMENT IS SUBJECT TO CHANGE WITHOUT NOTICE. THE PRODUCTS DESCRIBED HEREIN AND THIS DOCUMENT
+ARE SUBJECT TO SPECIFIC DISCLAIMERS, SET FORTH AT www.vishay.com/doc?91000
+A P P L I C A T I O N N O T E
+Application Note
+www.vishay.com Vishay Semiconductors
+Designing the VCNL4040 Into an Application
+Timing
+For an I2C bus operating at 100 kHz, to write or read an 8-bit
+byte, plus start (or stop) and bit acknowledgement, takes
+100 μs. Together with the slave address byte and the 8-bit
+command code byte, plus the 16-bit data, this results in a
+total of 400 μs. When the device is powered on, the
+initialization with just these five registers needs 5 x 4 bytes
+(slave address, command register, and 16-bit data) for a
+total of 20 bytes. So, 20 x 100 μs = 2000 μs = 2 ms.
+Send Byte → Write Command to VCNL4040
+1 7 8 1 1 1 8 1 8
+1 1
+S Slave Address Wr A Command Code A Data Byte Low A Data Byte High A
+P
+The read-out of 16-bit data would take a total of five bytes
+(slave address, command code, slave address with read bit
+set) and 16-bit data sent from the VCNL4040. So, 500 μs:
+Receive Byte → Read Data from VCNL4040
+1
+S
+7
+Slave Address
+1 1 8 1 1 7 1 1 8 1 8 1 1
+Wr A Command Code A S Slave Address Rd A Data Byte Low A Data Byte High A P
+Power Up
+The release of the internal reset, the start of the oscillator,
+and the signal processor need 2.5 ms
+Initialize Registers
+Write to four registers 1600 μs
+- IRED current
+- Proximity duty ratio
+- ALS integration time
+- Proximity interrupt TOP threshold
+Once the device is powered on and the VCNL4040 is
+initialized, a proximity measurement can be taken.
+Asking for one forced proximity measurement For (active forced, PS_IT = 8)
+Time to trigger [0.5 x PS_IT] DC-kill ambient light [3 x PS_IT] Proximity measurement [1 x PS_IT] IRED shutdown [1 x PS_IT] Read out of the proximity data AMBIENT LIGHT SENSING
+Ambient light sensors are used to detect light or brightness
+in a manner similar to the human eye. They allow settings to
+be adjusted automatically in response to changing ambient
+light conditions. By turning on, turning off, or adjusting
+features, ambient light sensors can conserve battery power
+or provide extra safety by eliminating the need for manual
+adjustments.
+Illuminance is the measure of the intensity of a light incident
+on a surface and can be correlated to the brightness
+perceived by the human eye. In the visible range, it is
+measured in units called “lux.” Light sources with the same
+lux measurement appear to be equally bright. In fig. 19, the
+incandescent light and sunlight have been scaled to have
+the same lux measurement.
+In the infrared region, the intensity of the incandescent light
+is significantly higher. A standard silicon photodiode is
+much more sensitive to infrared light than visible light. Using
+it to measure ambient light will result in serious deviations
+between the lux measurements of different light sources and
+human eye perception. Using Vishay’s ambient light sensors
+will solve this problem because they are most sensitive to
+the visible part of the spectrum.
+Visible Infrared
+400 μs
+500 μs
+3000 μs
+1000 μs
+1000 μs
+500 μs
+total: 6400 μs
+0.5T 3T 1T 1T
+1.0
+Incandescent light
+Ambient Light Sensor
+0.8
+Silicon Photodiode
+0.6
+0.4
+0.2
+Human Eye
+0.0
+Wavelength (nm)
+0 500 700 1000 1500
+Photopic Peak 550 nm
+Fig. 19 - Relative Spectral Sensitivity vs. Wavelength
+The human eye can see light with wavelengths from 400 nm
+to approximately 700 nm. The ambient light sensor array in
+the VCNL4040 closely matches this range of sensitivity and
+provides a digital output based on a 16-bit signal.
+Fig. 18 - Timing Specification for Active Forced Mode
+Revision: 06-Mar-2025 7 Document Number: 84307
+For technical questions, contact: consumersensors@vishay.com
+THIS DOCUMENT IS SUBJECT TO CHANGE WITHOUT NOTICE. THE PRODUCTS DESCRIBED HEREIN AND THIS DOCUMENT
+ARE SUBJECT TO SPECIFIC DISCLAIMERS, SET FORTH AT www.vishay.com/doc?91000
+A P P L I C A T I O N N O T E
+Application Note
+www.vishay.com Vishay Semiconductors
+Designing the VCNL4040 Into an Application
+AMBIENT LIGHT MEASUREMENT,
+RESOLUTION, AND CALCULATION
+The ambient light sensors’ measurement resolution is
+defined to about 0.01 lux/count for the highest sensitivity
+with a 640 ms integration time. The first production versions
+shown here are a bit higher in value: 0.015 lux/count. The
+16-bit digital resolution is equivalent to 65 536 counts. This
+yields a measurement range from 0.015 lux to 983 lux. For
+higher illuminance, shorter integration time needs to be
+selected, which results in lower resolution.
+Normalized Output
+1st line
+Axis Title
+1st line
+2nd line
+ALS RESOLUTION AND
+MAXIMUM DETECTION RANGE
+ALS_IT SENSITIVITY MAXIMUM
+DETECTION RANGE
+ALS_IT
+(7 : 6)
+INTEGRATION
+TIME (typ.)
+UNIT
+(lux/step)
+UNIT
+(lux)
+(0, 0) 80 ms 0.120 7864
+(0, 1) 160 ms 0.060 3932
+(1, 0) 320 ms 0.030 1966
+(1, 1) 640 ms 0.015 983
+Normalized Ouput
+1st line
+1st line
+2nd line
+The sensitivity curve below shows the behavior of this ALS
+photodiode.
+Axis Title
+1.2
+1.0
+0.8
+0.6
+0.4
+0.2
+0
+10000
+1000
+100
+10
+Fig. 20 - Relative Spectral Sensitivity vs. Wavelength
+Besides the ALS, a white channel is also available.
+400 500 600 700 800 900 1000
+Wavelength (nm)
+2nd line
+1.0
+10000
+0.9
+0.8
+0.7
+1000
+0.6
+0.5
+0.4
+100
+0.3
+0.2
+0.1
+0
+10
+400 500 600 700 800 900 1000
+Wavelength (nm)
+2nd line
+Fig. 21 - Relative Spectral Sensitivity vs. Wavelength
+(White Channel)
+With the help of this white channel, more information can be
+determined, e.g. the kind of light source.
+AMBIENT LIGHT SENSOR CURRENT
+CONSUMPTION
+The ambient light sensor can operate with four selectable
+integration times from 80 ms to 640 ms.
+During ALS measurements, the device consumes
+approximately 260 μA.
+AMBIENT LIGHT INITIALIZATION
+AND I2C INTERFACE
+For ambient light sensing, only the low byte of command
+code #0 needs to be initialized:
+• ALS_SD (bit 0 = 0 = ALS Power_on)
+• ALS_INT_EN (bit 1 = 1 = ALS interrupt enable)
+• ALS_PERS (bit 2, 3: no. of interrupt persistence)
+• ALS_IT (bit 6, 7: integration time)
+The rate for self-timed measurements is dependent on the
+integration time.
+For unknown brightness conditions, it should always be
+started with the shortest integration time. This avoids
+possible overload / saturation. Only if ambient light result
+register values are very low, e.g. no content within the high
+byte of the 16-bit register (#9), should the next more
+sensitive integration time be used.
+Calculating the available lux level is done by multiplying the
+ambient light result value from register 9 (L and H byte) with
+the integration time / resolution.
+Example: integration time is at 80 ms and 0x09H and 0x09L
+show 01010100 and 01110110, expressed in
+decimals: 21 622 counts leading to 21 622 x 0.12
+to 2595 lx.
+Revision: 06-Mar-2025 8 Document Number: 84307
+For technical questions, contact: consumersensors@vishay.com
+THIS DOCUMENT IS SUBJECT TO CHANGE WITHOUT NOTICE. THE PRODUCTS DESCRIBED HEREIN AND THIS DOCUMENT
+ARE SUBJECT TO SPECIFIC DISCLAIMERS, SET FORTH AT www.vishay.com/doc?91000
+A P P L I C A T I O N N O T E
+Application Note
+www.vishay.com Vishay Semiconductors
+Designing the VCNL4040 Into an Application
+Within the ready-made application, this factor should be
+fine-tuned, as cover glass and the size of the opening will
+also impact the result.
+Interrupt
+The VCNL4040 features a very intelligent interrupt function.
+The interrupt function enables the sensor to work
+independently until a predefined proximity or ambient light
+event or threshold occurs. It then sets an interrupt which
+requires the microcontroller to awaken. This helps
+customers reduce their software effort, and reduces power
+consumption by eliminating polling communication traffic
+between the sensor and microcontroller.
+The interrupt pin, pin 6, of the VCNL4040 should be
+connected to a dedicated GPIO of the controller. A pull-up
+resistor is added to the same power supply that the
+controller is connected to. This INT pull-up resistor may be
+in the range of 8.2 kΩ to 100 kΩ.
+The events that can generate an interrupt include:
+1. A lower and an upper threshold for the proximity value
+can be defined. If the proximity value falls below the
+lower limit or exceeds the upper limit, an interrupt event
+will be generated. In this case, an interrupt flag bit in the
+read-out register 0x0B will be set and the interrupt pad
+of the VCNL will be pulled to low by an open drain
+pull-down circuit. In order to eliminate false triggering of
+the interrupt by noise or disturbances, it is possible to
+define the number of consecutive measurements that
+have to occur before the interrupt is triggered.
+2. A lower and an upper threshold for the ambient light
+value can be defined. If the ambient light value falls
+below the lower limit or exceeds the upper limit, an
+interrupt event will be generated. There are two sets of
+high and low threshold registers, so both thresholds for
+proximity and ambient light can be observed in parallel.
+Beside this “normal” interrupt mode, an automatic mode is
+also available, which is called the logic output mode.
+This mode automatically pulls the interrupt pin low when an
+object exceeds the programmed upper threshold and also
+resets it if the lower threshold is exceeded. So no actions
+from the controller are needed if, for example, a smartphone
+is held close to an ear but quickly taken away (e.g. for a short
+look at the display).
+Application Example
+The following example will demonstrate the ease of using
+the VCNL4040 sensor. Customers are strongly encouraged
+to purchase a SensorXplorer and VCNL4040 sensor board
+from any listed distributer:
+www.vishay.com/optoelectronics/SensorXplorer.
+Offset
+During development, the application-specific offset counts
+for the sensor were determined. As previously mentioned,
+the offset count is affected by the components surrounding
+the VCNL4040, the window or cover being used, the
+distance from the sensor to the cover, and emitter intensity,
+which is controlled by the forward current.
+In the following example, with a cover over the sensor and
+setting the emitter current to 100 mA, the offset counts are
+540 counts (fig. 22). Offset counts vary by application and
+can be anywhere from 0 counts to several thousand counts.
+It is important to note that the offset count may change
+slightly over time due to, for example, the window becoming
+scratched or dirty, or being exposed to high-temperature
+changes. If possible, the offset value should occasionally be
+checked and, if necessary, modified.
+16 bit
+value
+FFFF
+(65 535)
+Time 0 to A: Power Up
+• Lower interrupt threshold = 0
+• Upper interrupt threshold = FFFF (65 535)
+• Interrupt flag = 0, interrupt line high
+• High limit and low limit flags = 0
+Offset:
+021Ch
+(540)
+Interrupt
+flags
+t
+0
+A
+t
+0
+Fig. 22
+Power Up
+As mentioned, there are four variables for proximity
+measurement that need to be set in the register when the
+sensor is powered up: the emitter current, the number of
+occurrences that must exceed a threshold to generate an
+interrupt, the threshold values, and the number of proximity
+measurements per second.
+The sensor should detect skin at a distance of 5 cm.
+Development testing determined that a current of 100 mA
+produces adequate counts for detection. The proximity
+measurement rate is set so that about 100 measurements
+are done within a second and the number of occurrences to
+trigger an interrupt is set to four. Based on development
+testing, with a hand or skin approximately 5 cm above the
+window cover, the resulting total count is 550. This will be
+used as the upper threshold (high threshold).
+For smartphone applications it would be typical to initially
+set this top threshold and a lower threshold (bottom
+threshold). This is needed to indicate the removal of the
+phone from the user’s ear. The measured counts without
+any additional object close by will be around this offset
+count value, always below the lower threshold value, as
+shown in Fig. 23.
+Revision: 06-Mar-2025 9 Document Number: 84307
+For technical questions, contact: consumersensors@vishay.com
+THIS DOCUMENT IS SUBJECT TO CHANGE WITHOUT NOTICE. THE PRODUCTS DESCRIBED HEREIN AND THIS DOCUMENT
+ARE SUBJECT TO SPECIFIC DISCLAIMERS, SET FORTH AT www.vishay.com/doc?91000
+A P P L I C A T I O N N O T E
+Application Note
+www.vishay.com Vishay Semiconductors
+Designing the VCNL4040 Into an Application
+Time A: μC Sleep
+• Upper interrupt threshold = 550
+• Lower interrupt threshold = 545
+• PS_INT (1 : 1) = 0
+• Interrupt flag = 0, interrupt line high
+• High limit (close) and low limit (away) flags = 0
+Upper
+threshold
+Lower
+threshold
+Time C: Upper Threshold Exceeded
+Time D: Number of Occurence > 4
+• Interrupt is generated
+• Interrupt flag prox_th_top is set to 1
+Upper
+threshold
+Lower
+threshold
+0
+0
+16 bit
+value
+FFFF
+(65 535)
+Upper
+threshold:
+0226h
+(550)
+Lower
+threshold:
+0221h
+(545)
+(OC:540)
+t
+Interrupt
+flags
+A
+t
+Fig. 23
+By setting the number of occurences before generating an
+interrupt to 4, a single proximity value above or below the
+thresholds will have no effect, as shown in fig. 24.
+16 bit
+value
+FFFF
+(65 535)
+Time B: Single Event Above Upper Threshold
+• Lower interrupt threshold = 545
+• Upper interrupt threshold = 550
+• Interrupt flags = 0, interrupt line high
+Upper
+threshold:
+0226h
+(550)
+Lower
+threshold:
+0221h
+(545)
+(OC:540)
+Upper
+threshold
+Lower
+threshold
+t
+Interrupt
+flags
+0
+A
+B
+t
+0
+Fig. 24
+A smartphone application will use a proximity sensor to
+detect when the phone is brought to the user’s ear and
+disable the touchscreen and turn off the backlight. For other
+applications, such as automatic dispensing, the soap or
+towel will be dispensed.
+D
+t
+t
+16 bit
+value
+FFFF
+(65 535)
+Upper
+threshold:
+0226h
+(550)
+Lower
+threshold:
+0221h
+(545)
+(OC:540)
+Interrupt
+flags
+0
+A
+B
+C
+0
+Fig. 25
+In smartphone applications, the bottom threshold will also
+be programmed and waits for an interrupt signal. The
+prox_threshold_bottom should be set to “1” now and the
+prox_threshold_top cleared by entering a “1” again, since
+the phone is already next to the user’s ear. A lower threshold
+will occur when the phone call is complete and the phone is
+brought away from the user’s ear, and the backlight and
+touchscreen will be turned back on.
+For this example, the upper threshold will only be set to
+560 counts. The lower threshold is set to 545 counts; a value
+that is higher than the offset but low enough to indicate the
+removal of the phone from the user’s ear.
+16 bit
+value
+Time F: Call Ends
+• Interrupt is generated
+• Interrupt flag prox_th_bottom is set to 1
+• Interrupt line goes low
+FFFF
+(65 535)
+Upper
+threshold:
+0226h
+(550)
+Lower
+threshold:
+0221h
+(545)
+(OC:540)
+Upper
+threshold
+Lower
+threshold
+t
+Interrupt
+flags
+0
+A
+B
+C
+D
+E
+F
+t
+0
+Fig. 26
+Revision: 06-Mar-2025 10 Document Number: 84307
+For technical questions, contact: consumersensors@vishay.com
+THIS DOCUMENT IS SUBJECT TO CHANGE WITHOUT NOTICE. THE PRODUCTS DESCRIBED HEREIN AND THIS DOCUMENT
+ARE SUBJECT TO SPECIFIC DISCLAIMERS, SET FORTH AT www.vishay.com/doc?91000
+A P P L I C A T I O N N O T E
+Application Note
+www.vishay.com Vishay Semiconductors
+Designing the VCNL4040 Into an Application
+Time E: μC Awake, Threshold Reset
+• Interrupt is cleared
+• Interrupt flag prox_th_top programmed to 1
+• Lower interrupt threshold = 545
+• Interrupt flag prox_th_bottom programmed to 1
+• High limit and low limit flags = 0
+16 bit
+value
+FFFF
+(65 535)
+Upper
+threshold:
+0226h
+(550)
+Lower
+threshold:
+0221h
+(545)
+(OC:540)
+Upper
+threshold
+Lower
+threshold
+t
+Interrupt
+flags
+0
+A
+B
+C
+D
+E
+t
+0
+Fig. 27
+Some measurements and features are shown with the demo tool and demo software with a cover glass at about a 5 mm
+distance.
+1. Proximity set-up with 8T wide pulses, 200 mA emitter current, and a duty cycle of 1/80, which results in about
+10 measurements per second.
+Revision: 06-Mar-2025 11 Document Number: 84307
+For technical questions, contact: consumersensors@vishay.com
+THIS DOCUMENT IS SUBJECT TO CHANGE WITHOUT NOTICE. THE PRODUCTS DESCRIBED HEREIN AND THIS DOCUMENT
+ARE SUBJECT TO SPECIFIC DISCLAIMERS, SET FORTH AT www.vishay.com/doc?91000
+A P P L I C A T I O N N O T E
+Application Note
+www.vishay.com Vishay Semiconductors
+Designing the VCNL4040 Into an Application
+2. If a hand or skin now comes as close as 5 cm, these 540 counts rise up to more than 550 counts.
+3. Here the thresholds are programmed as 550 for the upper and 545 for the lower. To see these, both “Show” buttons are
+activated. The presence of an object should only be recognized when four consecutive measurements are above that
+threshold.
+Revision: 06-Mar-2025 12 Document Number: 84307
+For technical questions, contact: consumersensors@vishay.com
+THIS DOCUMENT IS SUBJECT TO CHANGE WITHOUT NOTICE. THE PRODUCTS DESCRIBED HEREIN AND THIS DOCUMENT
+ARE SUBJECT TO SPECIFIC DISCLAIMERS, SET FORTH AT www.vishay.com/doc?91000
+A P P L I C A T I O N N O T E
+Application Note
+www.vishay.com Vishay Semiconductors
+Designing the VCNL4040 Into an Application
+4. Just one or two measurements above the threshold will not activate the interrupt.
+5. With more than four measurements above the threshold, however, the interrupt is pulled low, as indicated by the red LED
+on the demo board and the red light: “Int Pin Triggered PS.”
+A P P L I C A T I O N N O T E
+Revision: 06-Mar-2025 13 Document Number: 84307
+For technical questions, contact: consumersensors@vishay.com
+THIS DOCUMENT IS SUBJECT TO CHANGE WITHOUT NOTICE. THE PRODUCTS DESCRIBED HEREIN AND THIS DOCUMENT
+ARE SUBJECT TO SPECIFIC DISCLAIMERS, SET FORTH AT www.vishay.com/doc?91000
+Application Note
+www.vishay.com Vishay Semiconductors
+Designing the VCNL4040 Into an Application
+6. The cancellation feature is used below. The “before seen” offset counts are subtracted. To do so, the value of 540 is entered
+for register number 05 = Prox_Cancellation.
+7. The “before seen” measured proximity result data of 542 is now 542 - 542 = 0. Also, the thresholds are now 542 counts
+lower. The higher threshold is 10 and lower is just 5.
+A P P L I C A T I O N N O T E
+Revision: 06-Mar-2025 14 Document Number: 84307
+For technical questions, contact: consumersensors@vishay.com
+THIS DOCUMENT IS SUBJECT TO CHANGE WITHOUT NOTICE. THE PRODUCTS DESCRIBED HEREIN AND THIS DOCUMENT
+ARE SUBJECT TO SPECIFIC DISCLAIMERS, SET FORTH AT www.vishay.com/doc?91000
+Application Note
+www.vishay.com Vishay Semiconductors
+Designing the VCNL4040 Into an Application
+If one chooses “logic mode” now and redefines the high threshold to 10 and low threshold as 5...
+… the interrupt will indicate the rise above the upper threshold and will also automatically be cleared when it falls below the
+lower threshold.
+One special feature for faster proximity measurements is also implemented, which is called “smart persist.”
+This feature reduces the total reaction time until the interrupt is set to active, although four consecutive measurements should
+be above (or below) the defined threshold for safe acknowledgment.
+A P P L I C A T I O N N O T E
+Revision: 06-Mar-2025 15 Document Number: 84307
+For technical questions, contact: consumersensors@vishay.com
+THIS DOCUMENT IS SUBJECT TO CHANGE WITHOUT NOTICE. THE PRODUCTS DESCRIBED HEREIN AND THIS DOCUMENT
+ARE SUBJECT TO SPECIFIC DISCLAIMERS, SET FORTH AT www.vishay.com/doc?91000
+Application Note
+www.vishay.com Vishay Semiconductors
+Designing the VCNL4040 Into an Application
+Without “smart persist”, but with programmed hits above the defined threshold set to four, it will take four times the time of
+PS_Duty. With PS_Duty set to 1/320 this would be 4 x 38.4 ms.
+4 hits needed
+4 hits needed: total time = 115.2 ms
+... where without smart persist
+it takes this four times of being
+above the defined threshold
+before the interrupt goes low.
+With “smart persist” activated (bit 4 of PS_CONF3):
+REGISTER: PS_CONF3 DESCRIPTION
+REGISTER: PS_CONF3 COMMAND CODE: 0x04_L (0x04 DATA BYTE LOW)
+Command Bit Description
+Reserved 7 0
+Reserved 6 : 5 (0 : 0)
+PS_SMART_PERS 4 0 = disable; 1 = enable PS smart persistence
+or within the demo-tool:
+The total needed time is reduced to just one time of 38.5 ms, followed by three times of just 1.3 ms between the next
+three measurements, for a total of 39.7 ms.
+With smart persist enabled,
+the interrupt is set after
+four measurements shortly
+after each other...
+4 hits needed:
+total time =
+38.4 ms + 3 x
+1.3 ms = 39.7 ms
+Remark:
+With “smart persist” enabled, there will always be four pulses shortly after each other, whether PS_PERS is set to 2, 3, or 4.
+Revision: 06-Mar-2025 16 Document Number: 84307
+For technical questions, contact: consumersensors@vishay.com
+THIS DOCUMENT IS SUBJECT TO CHANGE WITHOUT NOTICE. THE PRODUCTS DESCRIBED HEREIN AND THIS DOCUMENT
+ARE SUBJECT TO SPECIFIC DISCLAIMERS, SET FORTH AT www.vishay.com/doc?91000
+A P P L I C A T I O N N O T E

@@ -1,0 +1,11 @@
+(version 1)
+
+(rule "Edge_Connectors"
+    (constraint edge_clearance (min -0.1mm))
+    (condition "A.Pad_Number == 'MP'")
+)
+
+(rule "USB_Connectors"
+    (constraint edge_clearance (min 0.1mm))
+    (condition "(A.Reference == 'U2' || A.Reference == 'J2') && A.Type == 'pad'")
+)
