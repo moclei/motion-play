@@ -5,16 +5,42 @@ NetworkManager::NetworkManager() {
 }
 
 bool NetworkManager::loadConfig() {
-    if (!SPIFFS.begin(true)) {
-        Serial.println("Failed to mount SPIFFS");
+    Serial.println("Attempting to mount LittleFS...");
+    if (!LittleFS.begin(true)) {
+        Serial.println("ERROR: Failed to mount LittleFS");
         return false;
+    }
+    Serial.println("LittleFS mounted successfully!");
+
+    // List files in root directory
+    Serial.println("Listing files in LittleFS root:");
+    File root = LittleFS.open("/");
+    if (!root) {
+        Serial.println("Failed to open root directory");
+    } else {
+        File file = root.openNextFile();
+        while (file) {
+            Serial.print("  Found file: ");
+            Serial.print(file.name());
+            Serial.print(" (");
+            Serial.print(file.size());
+            Serial.println(" bytes)");
+            file = root.openNextFile();
+        }
     }
 
-    File configFile = SPIFFS.open("/config.json", "r");
+    Serial.println("Attempting to open /config.json...");
+    File configFile = LittleFS.open("/config.json", "r");
     if (!configFile) {
-        Serial.println("Failed to open config file");
-        return false;
+        Serial.println("ERROR: Failed to open config file");
+        Serial.println("Trying alternate path /data/config.json...");
+        configFile = LittleFS.open("/data/config.json", "r");
+        if (!configFile) {
+            Serial.println("ERROR: Config file not found in either location");
+            return false;
+        }
     }
+    Serial.println("Config file opened successfully!");
 
     DynamicJsonDocument doc(1024);
     DeserializationError error = deserializeJson(doc, configFile);
