@@ -3,13 +3,14 @@
 
 #include <PubSubClient.h>
 #include <ArduinoJson.h>
-#include <SPIFFS.h>
-#include "NetworkManager.h"
+#include <LittleFS.h>
+#include "../network/NetworkManager.h"
 
-class MQTTManager {
+class MQTTManager
+{
 private:
     PubSubClient mqttClient;
-    NetworkManager* networkManager;
+    NetworkManager *networkManager;
     String broker;
     int port;
     String clientId;
@@ -26,18 +27,18 @@ private:
     String privateKey;
 
     bool loadCertificates();
-    static void messageCallback(char* topic, byte* payload, unsigned int length);
+    static void messageCallback(char *topic, byte *payload, unsigned int length);
 
 public:
-    MQTTManager(NetworkManager* netManager);
+    MQTTManager(NetworkManager *netManager);
     bool loadConfig();
     bool connect();
     void disconnect();
     bool isConnected();
     void loop();
-    bool publishStatus(const char* status);
-    bool publishData(const JsonDocument& data);
-    void setCallback(std::function<void(char*, byte*, unsigned int)> callback);
+    bool publishStatus(const char *status);
+    bool publishData(const JsonDocument &data);
+    void setCallback(std::function<void(char *, byte *, unsigned int)> callback);
 };
 
 #endif

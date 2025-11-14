@@ -6,9 +6,13 @@ Motion Play is an ESP32-based sensor system for detecting and tracking fast-movi
 
 ## Current Project Status
 
-**Hardware:** Custom PCBs fabricated and assembled
-**Software:** Basic test code uploaded, display showing sensor readings
-**Testing Phase:** Verifying PCB functionality and sensor operation
+**Hardware:** ✅ Custom PCBs operational with dual-MUX architecture (TCA→PCA→Sensors)
+**Firmware:** ✅ Full data collection pipeline (1000 Hz, PSRAM buffering, MQTT transmission)
+**Backend:** ✅ AWS IoT Core + Lambda + DynamoDB + API Gateway
+**Frontend:** ✅ React web interface with real-time visualization and device control
+**Current Phase:** Phase 4 - Integration & Polish (77% complete overall)
+
+📊 **For detailed status:** See `docs/data collection/PROJECT_STATUS.md`
 
 ## Hardware Architecture
 
@@ -81,6 +85,39 @@ board_build.flash_mode = qio
 board_build.f_cpu = 240000000L
 board_build.f_flash = 80000000L
 
+## System Architecture
+
+### Data Collection System
+The Motion Play system collects high-frequency sensor data for ML training:
+
+1. **Device Layer** (ESP32)
+   - 1000 Hz data collection from VCNL4040 sensors
+   - PSRAM buffering (30,000+ samples)
+   - Batch transmission via MQTT
+
+2. **Cloud Layer** (AWS)
+   - IoT Core: Device connectivity and command routing
+   - Lambda: Data processing and API logic
+   - DynamoDB: Session metadata and sensor readings
+   - API Gateway: REST API for web interface
+
+3. **Frontend Layer** (React)
+   - Session management and visualization
+   - Device control (start/stop, mode selection)
+   - Data export for ML training
+   - Configuration tracking
+
+### Web Interface
+Access at: `https://[api-gateway-url]/prod`
+
+Features:
+- Real-time session list with filtering
+- Interactive charts (side-by-side comparison)
+- Label and annotate sessions
+- Export data (JSON/CSV)
+- Configure sensors (sample rate, LED current, etc.)
+- Track configuration for ML training
+
 ## Building and Deployment
 
 1. **Prerequisites**
@@ -106,22 +143,42 @@ board_build.f_flash = 80000000L
 ## Project Structure
 
 motion-play/
-├── .context/               # Project documentation
-│   ├── datasheets/        # Component datasheets
-│   │   ├── TCA9548A.pdf
-│   │   ├── VCNL4040.pdf
-│   │   ├── AMS1117-3.3.pdf
-│   │   ├── DWEII_Power_Module.pdf
-│   │   └── T_Display_S3.pdf
-│   └── schematics/        # PCB designs
-│       ├── mpv3-main-schematic.pdf
-│       ├── mpv3-main-pcb.pdf
-│       ├── mpv3-sensor-schematic.pdf
-│       └── mpv3-sensor-pcb.pdf
-├── src/                   # Source code
-│   └── main.cpp          # Main application
-├── platformio.ini        # PlatformIO configuration
-└── README.md            # This document
+├── docs/                      # Project documentation
+│   ├── data collection/      # Data collection system docs
+│   │   ├── PROJECT_STATUS.md
+│   │   ├── IMPLEMENTATION_GUIDE.md
+│   │   ├── phase1-connectivity-guide.md
+│   │   ├── phase2-data-pipeline-guide.md
+│   │   ├── phase3-web-interface-guide.md
+│   │   └── phase3-b-enhancements-guide.md
+│   └── DEVELOPMENT_PLAN.md
+├── firmware/                  # ESP32 firmware
+│   ├── src/
+│   │   ├── main.cpp
+│   │   └── components/       # Modular firmware components
+│   │       ├── data/         # Data collection & transmission
+│   │       ├── mqtt/         # MQTT client
+│   │       ├── sensor/       # Sensor management
+│   │       └── display/      # TFT display
+│   └── platformio.ini
+├── frontend/                  # React web interface
+│   └── motion-play-ui/
+│       ├── src/
+│       │   ├── components/   # React components
+│       │   ├── services/     # API client
+│       │   └── App.tsx
+│       └── package.json
+├── lambda/                    # AWS Lambda functions
+│   ├── processData/          # Process sensor data
+│   ├── getSessionData/       # Retrieve sessions
+│   ├── sendCommand/          # Send device commands
+│   └── updateSession/        # Update session metadata
+├── infrastructure/            # AWS infrastructure
+│   └── aws-setup-guide.md
+├── .context/                  # Hardware documentation
+│   ├── datasheets/           # Component datasheets
+│   └── schematics/           # PCB designs
+└── README.md                 # This document
 
 ## Technical Details
 
@@ -149,31 +206,45 @@ The TCA9548A enables multiple VCNL4040 sensors (all with address 0x60) to coexis
 
 ## Development Roadmap
 
-### Phase 1: Hardware Validation ✓
-- PCB fabrication and assembly
-- Basic connectivity testing
-- Display integration
+### Phase 0: Setup & Preparation ✅ COMPLETE
+- AWS infrastructure (IoT Core, DynamoDB, Lambda)
+- Development environments (ESP32, React, PlatformIO)
+- Repository structure and documentation
 
-### Phase 2: Core Functionality (Current)
-- Sensor calibration
-- Multi-sensor coordination
-- Movement detection algorithms
+### Phase 1: Basic Connectivity ✅ COMPLETE
+- WiFi connection with certificate management
+- MQTT client with AWS IoT Core
+- TLS communication with device certificates
+- Command processing (ping/pong)
 
-### Phase 3: Enhanced Features
-- LED feedback system
-- Direction detection refinement
-- Response time optimization
+### Phase 2: Data Pipeline ✅ COMPLETE
+- Sensor manager with dual-MUX architecture (TCA→PCA→VCNL4040)
+- High-frequency data collection (1000 Hz)
+- PSRAM buffering (30,000+ samples)
+- Batch MQTT transmission with enhanced metadata
+- Lambda processing to DynamoDB
 
-### Phase 4: Connectivity
-- Bluetooth mesh networking
-- WiFi configuration portal
-- Mobile app development
+### Phase 3: Web Interface ✅ COMPLETE
+- API Gateway REST API with CORS
+- React frontend (TypeScript + Tailwind CSS)
+- Session list and detail views
+- Interactive data visualization
+- Device control (start/stop collection)
 
-### Phase 5: Applications
-- Game mode implementations
-- Training program presets
-- Performance analytics
-- Data logging and export
+### Phase 3-B: Enhancements ✅ COMPLETE
+- Session labels and notes
+- Data export (JSON/CSV for ML training)
+- Mode selector (Idle/Debug/Play)
+- Sensor configuration panel
+- Configuration tracking (critical for ML)
+- Advanced filtering
+
+### Phase 4: Integration & Polish (Current)
+- End-to-end testing
+- Error handling and validation
+- Performance optimization
+- Security review
+- Monitoring and logging
 
 ## Troubleshooting
 
@@ -231,14 +302,38 @@ When contributing to this project:
 
 [Specify your license here]
 
+## Documentation
+
+### Getting Started
+- `QUICK_START_GUIDE.md` - Quick setup reference
+- `docs/data collection/IMPLEMENTATION_GUIDE.md` - Detailed walkthrough
+- `docs/data collection/PROJECT_STATUS.md` - Current progress (77% complete)
+
+### Phase Guides (Step-by-Step)
+- `docs/data collection/phase1-connectivity-guide.md` - WiFi + MQTT
+- `docs/data collection/phase2-data-pipeline-guide.md` - Sensors + Data
+- `docs/data collection/phase3-web-interface-guide.md` - API + Frontend
+- `docs/data collection/phase3-b-enhancements-guide.md` - Enhancements
+
+### Planning & Design
+- `docs/data collection/implementation_plan.md` - Full implementation plan
+- `docs/data collection/technical_design_doc.md` - Design decisions
+- `docs/data collection/tech_reqs.md` - Technical requirements
+
+### Hardware Documentation
+- `.context/datasheets/` - Component datasheets (TCA9548A, VCNL4040, etc.)
+- `.context/schematics/` - PCB designs (Main PCB, Sensor PCB)
+
 ## Support
 
 For questions or issues:
-- Check troubleshooting section
+- Check troubleshooting section above
+- Review phase guides for detailed implementation steps
+- Consult `docs/data collection/PROJECT_STATUS.md` for current status
 - Review component datasheets in `.context/datasheets/`
 - Consult PCB schematics in `.context/schematics/`
 
 ---
 
-*Last Updated: [Current Date]*
+*Last Updated: November 14, 2025*
 *Build Info: Accessible via `__DATE__` and `__TIME__` macros in code*

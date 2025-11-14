@@ -30,7 +30,7 @@ exports.handler = async (event) => {
         const sessionItem = {
             session_id: data.session_id,
             device_id: data.device_id,
-            start_timestamp: data.start_timestamp,
+            start_timestamp: String(data.start_timestamp), // Convert to string for GSI
             end_timestamp: new Date().toISOString(),
             duration_ms: data.duration_ms || 0,
             mode: data.mode || 'debug',
@@ -38,7 +38,15 @@ exports.handler = async (event) => {
             sample_rate: data.sample_rate || 1000,
             labels: data.labels || [],
             notes: data.notes || '',
-            created_at: Date.now()
+            created_at: Date.now(),
+            // Store both sensor status and VCNL4040 configuration
+            active_sensors: data.active_sensors || data.sensor_config || [],  // Backward compatible
+            vcnl4040_config: data.vcnl4040_config || {
+                sample_rate_hz: data.sample_rate || 1000,
+                led_current: "200mA",
+                integration_time: "1T",
+                high_resolution: true
+            }
         };
         
         await docClient.send(new PutCommand({
@@ -59,9 +67,10 @@ exports.handler = async (event) => {
                     PutRequest: {
                         Item: {
                             session_id: data.session_id,
-                            timestamp_offset: reading.t,
-                            position: reading.p,
-                            sensor_index: reading.s,
+                            timestamp_offset: reading.ts || reading.t, // Sort key - DynamoDB expects this name
+                            position: reading.pos || reading.p, // Sensor array index (0-5)
+                            pcb_id: reading.pcb, // PCB board number (1-3)
+                            side: reading.side, // Sensor side (1=S1, 2=S2)
                             proximity: reading.prox,
                             ambient: reading.amb
                         }

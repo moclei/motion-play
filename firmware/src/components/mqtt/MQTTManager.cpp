@@ -5,7 +5,7 @@ MQTTManager::MQTTManager(NetworkManager* netManager) : networkManager(netManager
 }
 
 bool MQTTManager::loadConfig() {
-    File configFile = SPIFFS.open("/config.json", "r");
+    File configFile = LittleFS.open("/config.json", "r");
     if (!configFile) return false;
 
     DynamicJsonDocument doc(1024);
@@ -32,13 +32,18 @@ bool MQTTManager::loadConfig() {
 
     mqttClient.setServer(broker.c_str(), port);
     mqttClient.setCallback(messageCallback);
+    
+    // Set buffer size for large data payloads (default is 256 bytes)
+    // AWS IoT Core max is 128KB, we set to 16KB for batch data
+    mqttClient.setBufferSize(16384);
+    Serial.println("MQTT buffer size set to 16KB");
 
     return true;
 }
 
 bool MQTTManager::loadCertificates() {
     // Load CA certificate
-    File ca = SPIFFS.open("/certs/root-ca.pem", "r");
+    File ca = LittleFS.open("/certs/root-ca.pem", "r");
     if (!ca) {
         Serial.println("Failed to open CA certificate");
         return false;
@@ -47,7 +52,7 @@ bool MQTTManager::loadCertificates() {
     ca.close();
 
     // Load client certificate
-    File cert = SPIFFS.open("/certs/device-cert.pem", "r");
+    File cert = LittleFS.open("/certs/device-cert.pem", "r");
     if (!cert) {
         Serial.println("Failed to open device certificate");
         return false;
@@ -56,7 +61,7 @@ bool MQTTManager::loadCertificates() {
     cert.close();
 
     // Load private key
-    File key = SPIFFS.open("/certs/private-key.pem", "r");
+    File key = LittleFS.open("/certs/private-key.pem", "r");
     if (!key) {
         Serial.println("Failed to open private key");
         return false;
@@ -141,9 +146,28 @@ bool MQTTManager::publishStatus(const char* status) {
 
 bool MQTTManager::publishData(const JsonDocument& data) {
     String payload;
-    serializeJson(data, payload);
+    size_t payloadSize = serializeJson(data, payload);
+    
+    Serial.print("Publishing to data topic, size: ");
+    Serial.print(payloadSize);
+    Serial.println(" bytes");
 
-    return mqttClient.publish(dataTopic.c_str(), payload.c_str());
+    bool success = mqttClient.publish(dataTopic.c_str(), payload.c_str());
+    
+    if (!success) {
+        Serial.println("ERROR: mqttClient.publish() returned false!");
+        Serial.print("  MQTT state: ");
+        Serial.println(mqttClient.state());
+        Serial.print("  MQTT connected: ");
+        Serial.println(mqttClient.connected() ? "YES" : "NO");
+        Serial.print("  Payload size: ");
+        Serial.print(payloadSize);
+        Serial.println(" bytes");
+    } else {
+        Serial.println("  Published successfully");
+    }
+    
+    return success;
 }
 
 void MQTTManager::messageCallback(char* topic, byte* payload, unsigned int length) {

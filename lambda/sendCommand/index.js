@@ -15,18 +15,18 @@ exports.handler = async (event) => {
     
     try {
         // Parse API Gateway event
-        const deviceId = event.pathParameters?.device_id;
         const body = JSON.parse(event.body || '{}');
+        const deviceId = body.device_id || 'motionplay-device-001'; // Default device ID
         const command = body.command;
         
-        if (!deviceId || !command) {
+        if (!command) {
             return {
                 statusCode: 400,
                 headers: {
                     'Content-Type': 'application/json',
                     'Access-Control-Allow-Origin': '*'
                 },
-                body: JSON.stringify({ error: 'Missing device_id or command' })
+                body: JSON.stringify({ error: 'Missing command' })
             };
         }
         
@@ -44,6 +44,11 @@ exports.handler = async (event) => {
         // Add mode for set_mode commands
         if (command === 'set_mode' && body.mode) {
             payload.mode = body.mode;
+        }
+
+        // Add sensor configuration for configure_sensors commands
+        if (command === 'configure_sensors' && body.sensor_config) {
+            payload.sensor_config = body.sensor_config;
         }
         
         // Publish to IoT Core
