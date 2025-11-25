@@ -39,6 +39,7 @@ export interface VCNL4040Config {
     led_current: string;
     integration_time: string;
     high_resolution: boolean;
+    read_ambient: boolean;
 }
 
 export interface ActiveSensor {
@@ -85,6 +86,19 @@ class MotionPlayAPI {
             command,
             timestamp: Date.now(),
             ...params
+        });
+    }
+
+    // Configure sensors
+    async configureSensors(config: {
+        sample_rate: number;
+        led_current: string;
+        integration_time: string;
+        high_resolution: boolean;
+        read_ambient: boolean;
+    }): Promise<void> {
+        await this.sendCommand('configure_sensors', {
+            sensor_config: config
         });
     }
 }

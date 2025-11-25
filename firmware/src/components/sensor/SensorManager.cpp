@@ -5,6 +5,73 @@ SensorManager::SensorManager() : mux(0x70)
     // Constructor
 }
 
+VCNL4040_LEDCurrent SensorManager::parseLEDCurrent(const String &current)
+{
+    if (current == "50mA")
+        return VCNL4040_LED_CURRENT_50MA;
+    if (current == "75mA")
+        return VCNL4040_LED_CURRENT_75MA;
+    if (current == "100mA")
+        return VCNL4040_LED_CURRENT_100MA;
+    if (current == "120mA")
+        return VCNL4040_LED_CURRENT_120MA;
+    if (current == "140mA")
+        return VCNL4040_LED_CURRENT_140MA;
+    if (current == "160mA")
+        return VCNL4040_LED_CURRENT_160MA;
+    if (current == "180mA")
+        return VCNL4040_LED_CURRENT_180MA;
+    // Default to 200mA
+    return VCNL4040_LED_CURRENT_200MA;
+}
+
+VCNL4040_ProximityIntegration SensorManager::parseIntegrationTime(const String &time)
+{
+    if (time == "1T")
+        return VCNL4040_PROXIMITY_INTEGRATION_TIME_1T;
+    if (time == "1.5T")
+        return VCNL4040_PROXIMITY_INTEGRATION_TIME_1_5T;
+    if (time == "2T")
+        return VCNL4040_PROXIMITY_INTEGRATION_TIME_2T;
+    if (time == "2.5T")
+        return VCNL4040_PROXIMITY_INTEGRATION_TIME_2_5T;
+    if (time == "3T")
+        return VCNL4040_PROXIMITY_INTEGRATION_TIME_3T;
+    if (time == "3.5T")
+        return VCNL4040_PROXIMITY_INTEGRATION_TIME_3_5T;
+    if (time == "4T")
+        return VCNL4040_PROXIMITY_INTEGRATION_TIME_4T;
+    if (time == "8T")
+        return VCNL4040_PROXIMITY_INTEGRATION_TIME_8T;
+    // Default to 1T (fastest)
+    return VCNL4040_PROXIMITY_INTEGRATION_TIME_1T;
+}
+
+bool SensorManager::applySensorConfig(uint8_t sensorIndex)
+{
+    if (sensorIndex >= NUM_SENSORS || activeConfig == nullptr)
+        return false;
+
+    // Apply LED current
+    VCNL4040_LEDCurrent led = parseLEDCurrent(activeConfig->led_current);
+    sensors[sensorIndex].setProximityLEDCurrent(led);
+
+    // Apply integration time
+    VCNL4040_ProximityIntegration integration = parseIntegrationTime(activeConfig->integration_time);
+    sensors[sensorIndex].setProximityIntegrationTime(integration);
+
+    // Apply high resolution setting
+    sensors[sensorIndex].setProximityHighResolution(activeConfig->high_resolution);
+
+    Serial.printf("  Applied config: LED=%s, Integration=%s, HighRes=%s, ReadAmbient=%s\n",
+                  activeConfig->led_current.c_str(),
+                  activeConfig->integration_time.c_str(),
+                  activeConfig->high_resolution ? "true" : "false",
+                  activeConfig->read_ambient ? "true" : "false");
+
+    return true;
+}
+
 bool SensorManager::initializePCA()
 {
     Serial.println("Scanning for PCA9546A multiplexers on TCA channels...");
@@ -76,13 +143,27 @@ bool SensorManager::initializePCA()
     return true;
 }
 
-bool SensorManager::init()
+bool SensorManager::init(SensorConfiguration *config)
 {
     Serial.println("Initializing Sensor Manager...");
 
+    // Store configuration reference
+    activeConfig = config;
+
     // Initialize I2C
     Wire.begin(43, 44);    // SDA=43, SCL=44 for T-Display S3
-    Wire.setClock(400000); // 400kHz I2C
+    Wire.setClock(400000); // 400 kHz (Fast Mode) - set BEFORE sensor initialization
+    Serial.println("I2C clock set to 400 kHz");
+
+    if (activeConfig != nullptr)
+    {
+        Serial.println("Configuration:");
+        Serial.printf("  Sample Rate: %d Hz\n", activeConfig->sample_rate_hz);
+        Serial.printf("  LED Current: %s\n", activeConfig->led_current.c_str());
+        Serial.printf("  Integration Time: %s\n", activeConfig->integration_time.c_str());
+        Serial.printf("  High Resolution: %s\n", activeConfig->high_resolution ? "enabled" : "disabled");
+        Serial.printf("  Read Ambient: %s\n", activeConfig->read_ambient ? "enabled" : "disabled");
+    }
 
     // Initialize TCA9548A multiplexer
     if (!mux.begin())
@@ -167,9 +248,91 @@ bool SensorManager::init()
 
         // Configure sensor (using Adafruit VCNL4040 API)
         sensors[i].enableProximity(true);
-        sensors[i].setProximityLEDCurrent(VCNL4040_LED_CURRENT_200MA);
-        sensors[i].setProximityIntegrationTime(VCNL4040_PROXIMITY_INTEGRATION_TIME_1T);
-        sensors[i].setProximityHighResolution(true);
+
+        // Apply configuration if provided, otherwise use defaults
+        if (activeConfig != nullptr)
+        {
+            applySensorConfig(i);
+        }
+        else
+        {
+            // Default configuration
+            sensors[i].setProximityLEDCurrent(VCNL4040_LED_CURRENT_200MA);
+            sensors[i].setProximityIntegrationTime(VCNL4040_PROXIMITY_INTEGRATION_TIME_1T);
+            sensors[i].setProximityHighResolution(true);
+        }
+
+        // Query and log actual integration time (WARNING: has 50ms delay!)
+        VCNL4040_ProximityIntegration pit = sensors[i].getProximityIntegrationTime();
+        Serial.printf("  Proximity Integration Time: %d (", pit);
+        switch (pit)
+        {
+        case VCNL4040_PROXIMITY_INTEGRATION_TIME_1T:
+            Serial.print("1T");
+            break;
+        case VCNL4040_PROXIMITY_INTEGRATION_TIME_1_5T:
+            Serial.print("1.5T");
+            break;
+        case VCNL4040_PROXIMITY_INTEGRATION_TIME_2T:
+            Serial.print("2T");
+            break;
+        case VCNL4040_PROXIMITY_INTEGRATION_TIME_2_5T:
+            Serial.print("2.5T");
+            break;
+        case VCNL4040_PROXIMITY_INTEGRATION_TIME_3T:
+            Serial.print("3T");
+            break;
+        case VCNL4040_PROXIMITY_INTEGRATION_TIME_3_5T:
+            Serial.print("3.5T");
+            break;
+        case VCNL4040_PROXIMITY_INTEGRATION_TIME_4T:
+            Serial.print("4T");
+            break;
+        case VCNL4040_PROXIMITY_INTEGRATION_TIME_8T:
+            Serial.print("8T");
+            break;
+        default:
+            Serial.print("UNKNOWN");
+        }
+        Serial.println(")");
+
+        // Read PS_CONF1 register directly to check PS_Duty setting
+        // PS_Duty is in bits 7:6 of PS_CONF1 low byte (register 0x03)
+        Wire.beginTransmission(0x60);
+        Wire.write(0x03); // PS_CONF1 register
+        Wire.endTransmission();
+        Wire.requestFrom(0x60, 2);
+
+        if (Wire.available() >= 2)
+        {
+            uint8_t ps_conf1_low = Wire.read();
+            uint8_t ps_conf1_high = Wire.read();
+
+            uint8_t ps_duty = (ps_conf1_low >> 6) & 0x03; // Extract bits 7:6
+            Serial.printf("  PS_Duty setting: %d (", ps_duty);
+
+            switch (ps_duty)
+            {
+            case 0:
+                Serial.println("1/40 -> ~200 Hz max) FAST");
+                break;
+            case 1:
+                Serial.println("1/80 -> ~100 Hz max)");
+                break;
+            case 2:
+                Serial.println("1/160 -> ~50 Hz max)");
+                break;
+            case 3:
+                Serial.println("1/320 -> ~25 Hz max) SLOW - THIS IS YOUR BOTTLENECK!");
+                break;
+            }
+
+            Serial.printf("  PS_CONF1 register: 0x%02X%02X\n", ps_conf1_high, ps_conf1_low);
+        }
+        else
+        {
+            Serial.println("  WARNING: Failed to read PS_CONF1 register!");
+        }
 
         Serial.println("  Sensor initialized successfully!");
         sensorsActive[i] = true;
@@ -230,8 +393,18 @@ bool SensorManager::readSensor(uint8_t sensorIndex, SensorReading &reading)
     // Position 0,2,4 -> Side 1 (S1); Position 1,3,5 -> Side 2 (S2)
     reading.side = (sensorIndex % 2) + 1; // 0,2,4->1  1,3,5->2
 
+    // Always read proximity
     reading.proximity = sensors[sensorIndex].getProximity();
-    reading.ambient = sensors[sensorIndex].getAmbientLight();
+
+    // Conditionally read ambient light (skip if disabled for speed)
+    if (activeConfig != nullptr && !activeConfig->read_ambient)
+    {
+        reading.ambient = 0; // Mark as not read
+    }
+    else
+    {
+        reading.ambient = sensors[sensorIndex].getAmbientLight();
+    }
 
     return true;
 }
@@ -243,6 +416,8 @@ void SensorManager::sensorTaskFunction(void *parameter)
     Serial.println("Sensor task started on Core 0");
 
     unsigned long lastSampleTime = micros();
+    unsigned long lastErrorLog = 0;
+    int consecutiveFailures = 0;
     SensorReading reading;
 
     while (true)
@@ -254,6 +429,15 @@ void SensorManager::sensorTaskFunction(void *parameter)
         {
             lastSampleTime = currentTime;
 
+            // Capture timestamp ONCE for all sensors in this cycle
+            // This ensures all sensors from the same sample have the same timestamp
+            // ⚠️ IMPORTANT: This synchronized timestamping requires the backend to use
+            // a composite key. See: infrastructure/DATABASE_SCHEMA.md for details.
+            unsigned long cycleTimestamp = millis();
+
+            int successfulReads = 0;
+            int failedReads = 0;
+
             // Read all active sensors
             for (int i = 0; i < NUM_SENSORS; i++)
             {
@@ -263,6 +447,10 @@ void SensorManager::sensorTaskFunction(void *parameter)
 
                 if (manager->readSensor(i, reading))
                 {
+                    // Override timestamp with cycle timestamp for synchronization
+                    reading.timestamp_ms = cycleTimestamp;
+
+                    successfulReads++;
                     // Send to queue (non-blocking)
                     if (xQueueSend(manager->dataQueue, &reading, 0) != pdTRUE)
                     {
@@ -270,6 +458,30 @@ void SensorManager::sensorTaskFunction(void *parameter)
                         // Could increment a dropped sample counter here
                     }
                 }
+                else
+                {
+                    failedReads++;
+                }
+            }
+
+            // Track consecutive failures and log errors
+            if (failedReads > 0)
+            {
+                consecutiveFailures++;
+                // Log every 100 failures or first 3 failures
+                if (consecutiveFailures <= 3 || (millis() - lastErrorLog > 5000))
+                {
+                    Serial.print("WARNING: Sensor read failures: ");
+                    Serial.print(failedReads);
+                    Serial.print(" failed, ");
+                    Serial.print(successfulReads);
+                    Serial.println(" succeeded");
+                    lastErrorLog = millis();
+                }
+            }
+            else
+            {
+                consecutiveFailures = 0;
             }
 
             // Clean up - disable all channels after reading cycle
@@ -280,8 +492,8 @@ void SensorManager::sensorTaskFunction(void *parameter)
             manager->mux.disableAllChannels();
         }
 
-        // Small yield to prevent watchdog
-        vTaskDelay(1);
+        // Note: Removed vTaskDelay(1) to maximize sample rate
+        // I2C operations provide enough yield time for other tasks
     }
 }
 
@@ -350,4 +562,66 @@ std::vector<SensorMetadata> SensorManager::getSensorMetadata()
     }
 
     return metadata;
+}
+
+bool SensorManager::reinitialize(SensorConfiguration *config)
+{
+    Serial.println("Reinitializing sensors with new configuration...");
+
+    // Stop collection if running
+    bool wasCollecting = isCollecting();
+    if (wasCollecting)
+    {
+        Serial.println("  Stopping sensor collection task...");
+        stopCollection();
+        taskYIELD(); // Give scheduler time to clean up
+        delay(250);  // Allow task to fully stop and release I2C bus
+        Serial.println("  Collection stopped.");
+    }
+
+    // Update configuration
+    activeConfig = config;
+    Serial.println("  Applying new configuration to sensors...");
+
+    // Reapply configuration to all active sensors
+    for (int i = 0; i < NUM_SENSORS; i++)
+    {
+        if (sensorsActive[i] && activeConfig != nullptr)
+        {
+            Serial.printf("  Reconfiguring sensor %d...\n", i);
+
+            uint8_t tca_ch = sensorMapping[i].tca_channel;
+            uint8_t pca_ch = sensorMapping[i].pca_channel;
+
+            // Select channels
+            if (!mux.selectChannel(tca_ch))
+            {
+                Serial.printf("    WARNING: Failed to select TCA channel %d\n", tca_ch);
+                continue;
+            }
+            delay(10);
+
+            if (!pca_instances[tca_ch].selectChannel(pca_ch))
+            {
+                Serial.printf("    WARNING: Failed to select PCA channel %d\n", pca_ch);
+                continue;
+            }
+            delay(10);
+
+            // Reapply configuration (Note: has 50ms delay in setProximityIntegrationTime)
+            applySensorConfig(i);
+            Serial.printf("    Sensor %d reconfigured.\n", i);
+        }
+    }
+
+    // Clean up
+    Serial.println("  Cleaning up multiplexer channels...");
+    for (int i = 0; i < 3; i++)
+    {
+        pca_instances[i].disableAllChannels();
+    }
+    mux.disableAllChannels();
+
+    Serial.println("  Sensors reconfigured successfully!");
+    return true;
 }

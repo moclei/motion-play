@@ -30,20 +30,20 @@ bool systemInitialized = false;
 SensorConfiguration currentConfig;
 
 // Forward declarations
+void initializeSystem();
 void handleCommand(const String &command, JsonDocument *doc = nullptr);
 
 void setup()
 {
     Serial.begin(115200);
-    delay(2000);
+    delay(1500); // Initial stabilization delay
 
     Serial.println("\n\n\n=================================");
     Serial.println("Motion Play Device - BOOT");
     Serial.println("=================================");
     Serial.println("Serial is working!");
-    Serial.println("Waiting for button press to initialize...");
-    Serial.println("Press LEFT button (BOOT/GPIO 0) to start");
-    Serial.println("Press RIGHT button (GPIO 14) to restart");
+    Serial.println("Auto-initializing in 3 seconds...");
+    Serial.println("Press RIGHT button (GPIO 14) to restart anytime");
     Serial.println("=================================\n");
 
     // Initialize buttons
@@ -53,66 +53,74 @@ void setup()
 
     // Initialize display
     display.init();
-    display.showBootScreen();
-    display.updateStatus("Waiting for button...", TFT_CYAN);
+    display.showInitScreen();
     Serial.println("Display initialized");
+
+    // Longer delay for WiFi hardware stabilization (ESP32 needs 3-5 seconds)
+    Serial.println("Waiting for hardware to stabilize...");
+    delay(3000);
+
+    // Auto-initialize system
+    Serial.println("\n=== Starting Auto-Initialization ===\n");
+    initializeSystem();
 
     Serial.println("\n=== Setup Complete - Entering Loop ===\n");
 }
 
 void initializeSystem()
 {
-    Serial.println("\n=== Button pressed! Starting initialization ===\n");
-    display.updateStatus("Initializing...", TFT_YELLOW);
+    Serial.println("\n=== Starting System Initialization ===\n");
 
-    // Initialize sensors first
+    display.updateInitStage(INIT_BOOT, "Booting up...");
+    delay(500);
+
+    // Initialize sensors first (with current configuration)
     Serial.println("Initializing sensors...");
-    display.updateStatus("Init sensors...");
-    if (!sensorManager.init())
+    display.updateInitStage(INIT_SENSORS, "Initializing sensors...");
+    if (!sensorManager.init(&currentConfig))
     {
         Serial.println("ERROR: Sensor initialization failed!");
-        display.updateStatus("Sensor init failed!", TFT_RED);
+        display.setInitError("Sensor init failed!");
         while (1)
             delay(1000);
     }
     Serial.println("Sensors initialized successfully");
-    display.updateStatus("Sensors OK", TFT_GREEN);
+    delay(500);
 
     // Load network configuration
-    Serial.println("Loading config...");
-    display.updateStatus("Loading config...");
+    Serial.println("Loading WiFi config...");
     if (!networkManager.loadConfig())
     {
         Serial.println("ERROR: Config failed!");
-        display.updateStatus("Config failed!", TFT_RED);
+        display.setInitError("Config load failed!");
         while (1)
             delay(1000);
     }
     Serial.println("Config loaded successfully");
-    display.updateStatus("Config loaded", TFT_GREEN);
+    delay(500); // Give WiFi stack time to initialize
 
     // Connect to WiFi
     Serial.println("Connecting to WiFi...");
-    display.updateStatus("Connecting WiFi...");
+    display.updateInitStage(INIT_WIFI_CONNECTING, "Connecting to WiFi...");
     if (!networkManager.connectWiFi())
     {
         Serial.println("ERROR: WiFi failed!");
-        display.updateStatus("WiFi failed!", TFT_RED);
+        display.setInitError("WiFi connection failed!");
         while (1)
             delay(1000);
     }
     Serial.println("WiFi connected!");
-    display.updateStatus("WiFi connected", TFT_GREEN);
+    display.updateInitStage(INIT_WIFI_CONNECTED, "WiFi connected");
+    delay(500);
 
     // Initialize MQTT
     mqttManager = new MQTTManager(&networkManager);
 
     Serial.println("Loading MQTT config...");
-    display.updateStatus("Loading MQTT config...");
     if (!mqttManager->loadConfig())
     {
         Serial.println("ERROR: MQTT config failed!");
-        display.updateStatus("MQTT config failed!", TFT_RED);
+        display.setInitError("MQTT config failed!");
         while (1)
             delay(1000);
     }
@@ -120,17 +128,19 @@ void initializeSystem()
 
     // Connect to MQTT
     Serial.println("Connecting to MQTT...");
-    display.updateStatus("Connecting MQTT...");
+    display.updateInitStage(INIT_MQTT_CONNECTING, "Connecting to AWS IoT...");
     if (!mqttManager->connect())
     {
         Serial.println("WARNING: MQTT connection failed");
-        display.updateStatus("MQTT failed!", TFT_RED);
+        display.setInitError("MQTT connection failed!");
+        delay(3000); // Show error, but continue (can retry later)
     }
     else
     {
         Serial.println("MQTT connected!");
-        display.updateStatus("MQTT connected", TFT_GREEN);
+        display.updateInitStage(INIT_MQTT_CONNECTED, "AWS IoT connected");
     }
+    delay(500);
 
     // Initialize data transmitter
     dataTransmitter = new DataTransmitter(mqttManager);
@@ -150,7 +160,13 @@ void initializeSystem()
             handleCommand(command, &doc);
         } });
 
+    // Initialization complete!
     Serial.println("\n=== System Initialization Complete ===\n");
+    display.updateInitStage(INIT_COMPLETE, "System ready!");
+    delay(1500);
+
+    // Switch to session screen
+    display.showSessionScreen();
     systemInitialized = true;
 }
 
@@ -162,12 +178,13 @@ void handleCommand(const String &command, JsonDocument *doc)
     if (command == "ping")
     {
         mqttManager->publishStatus("pong");
-        display.updateStatus("Ping received", TFT_YELLOW);
+        display.showMessage("Ping received", TFT_YELLOW);
+        delay(1000);
+        display.setDisplayState(DISPLAY_IDLE);
     }
     else if (command == "start_collection")
     {
         Serial.println("Starting data collection...");
-        display.updateStatus("Starting collection", TFT_CYAN);
 
         if (sessionManager.startSession())
         {
@@ -177,42 +194,57 @@ void handleCommand(const String &command, JsonDocument *doc)
 
             sensorManager.startCollection(sessionManager.getQueue());
             mqttManager->publishStatus("collection_started");
-            display.updateStatus("Collecting...", TFT_GREEN);
+
+            // Update display to recording state
+            display.setDisplayState(DISPLAY_RECORDING);
         }
         else
         {
             mqttManager->publishStatus("collection_failed");
+            display.setDisplayState(DISPLAY_ERROR);
         }
     }
     else if (command == "stop_collection")
     {
         Serial.println("Stopping data collection...");
-        display.updateStatus("Stopping...", TFT_YELLOW);
 
         sensorManager.stopCollection();
         sessionManager.stopSession();
 
+        // Update display to uploading state
+        display.setDisplayState(DISPLAY_UPLOADING);
+
         // Transmit data (include current sensor configuration)
-        display.updateStatus("Uploading data...", TFT_YELLOW);
         if (dataTransmitter->transmitSession(sessionManager, &currentConfig))
         {
             mqttManager->publishStatus("upload_complete");
-            display.updateStatus("Upload complete!", TFT_GREEN);
+            display.setDisplayState(DISPLAY_SUCCESS);
+
+            // Return to idle after showing success
+            delay(3000);
+            sessionManager.clearBuffer();
+            display.setDisplayState(DISPLAY_IDLE);
         }
         else
         {
+            Serial.println("ERROR: Session transmission failed!");
             mqttManager->publishStatus("upload_failed");
-            display.updateStatus("Upload failed!", TFT_RED);
-        }
+            display.setDisplayState(DISPLAY_ERROR);
+            display.showMessage("Upload failed - Restarting...", TFT_RED);
 
-        // Clear buffer
-        sessionManager.clearBuffer();
-        display.updateStatus("Ready", TFT_CYAN);
+            // Return to idle after showing error
+            delay(3000);
+            sessionManager.clearBuffer();
+
+            // Restart device to recover from potential I2C/sensor issues
+            Serial.println("Restarting device to recover from upload failure...");
+            ESP.restart();
+        }
     }
     else if (command == "configure_sensors")
     {
         Serial.println("Configuring sensors...");
-        display.updateStatus("Configuring sensors", TFT_CYAN);
+        display.showMessage("Configuring sensors...", TFT_CYAN);
 
         if (doc != nullptr && doc->containsKey("sensor_config"))
         {
@@ -223,25 +255,39 @@ void handleCommand(const String &command, JsonDocument *doc)
             currentConfig.led_current = config["led_current"] | "200mA";
             currentConfig.integration_time = config["integration_time"] | "1T";
             currentConfig.high_resolution = config["high_resolution"] | true;
+            currentConfig.read_ambient = config["read_ambient"] | true;
 
             Serial.println("Configuration updated:");
             Serial.printf("  Sample Rate: %d Hz\n", currentConfig.sample_rate_hz);
             Serial.printf("  LED Current: %s\n", currentConfig.led_current.c_str());
             Serial.printf("  Integration Time: %s\n", currentConfig.integration_time.c_str());
             Serial.printf("  High Resolution: %s\n", currentConfig.high_resolution ? "enabled" : "disabled");
+            Serial.printf("  Read Ambient: %s\n", currentConfig.read_ambient ? "enabled" : "disabled");
 
-            display.updateStatus("Config updated", TFT_GREEN);
-            display.updateStatus("Restart for changes", TFT_YELLOW);
+            // Apply configuration to sensors immediately
+            if (sensorManager.reinitialize(&currentConfig))
+            {
+                display.showMessage("Config applied successfully!", TFT_GREEN);
+                mqttManager->publishStatus("config_applied");
+            }
+            else
+            {
+                display.showMessage("Config apply failed", TFT_RED);
+                mqttManager->publishStatus("config_failed");
+            }
         }
         else
         {
             Serial.println("No sensor_config in command payload");
-            display.updateStatus("Config missing", TFT_RED);
+            display.showMessage("Config data missing", TFT_RED);
         }
+
+        delay(2000);
+        display.setDisplayState(DISPLAY_IDLE);
     }
     else if (command == "reboot")
     {
-        display.updateStatus("Rebooting...", TFT_YELLOW);
+        display.showMessage("Rebooting...", TFT_YELLOW);
         delay(1000);
         ESP.restart();
     }
@@ -249,51 +295,17 @@ void handleCommand(const String &command, JsonDocument *doc)
 
 void loop()
 {
-    static unsigned long lastHeartbeat = 0;
-    static int buttonState1 = HIGH;
     static int buttonState2 = HIGH;
+    static unsigned long lastSampleUpdate = 0;
 
-    int currentButton1 = digitalRead(BUTTON_1);
     int currentButton2 = digitalRead(BUTTON_2);
 
-    if (!systemInitialized)
-    {
-        // Print heartbeat while waiting
-        if (millis() - lastHeartbeat > 2000)
-        {
-            lastHeartbeat = millis();
-            Serial.print(". Waiting for button... (uptime: ");
-            Serial.print(millis() / 1000);
-            Serial.println("s)");
-        }
-
-        // Check for LEFT button press to initialize
-        if (currentButton1 == LOW && buttonState1 == HIGH)
-        {
-            Serial.println("\n*** LEFT BUTTON PRESSED! ***");
-            delay(200);
-            initializeSystem();
-        }
-        buttonState1 = currentButton1;
-
-        // Check for RIGHT button press to restart
-        if (currentButton2 == LOW && buttonState2 == HIGH)
-        {
-            Serial.println("\n*** RIGHT BUTTON PRESSED - RESTARTING ***");
-            ESP.restart();
-        }
-        buttonState2 = currentButton2;
-
-        delay(50);
-        return;
-    }
-
-    // System is initialized - normal operation
-
-    // Check for button press to restart
+    // Check for RIGHT button press to restart anytime
     if (currentButton2 == LOW && buttonState2 == HIGH)
     {
         Serial.println("RIGHT BUTTON - Restarting...");
+        display.showMessage("Restarting...", TFT_YELLOW);
+        delay(500);
         ESP.restart();
     }
     buttonState2 = currentButton2;
@@ -308,6 +320,54 @@ void loop()
     if (sessionManager.getState() == COLLECTING)
     {
         sessionManager.processQueue();
+
+        // Check for maximum session duration (30 seconds safety limit)
+        if (sessionManager.getDuration() >= 30000) // 30 seconds in milliseconds
+        {
+            Serial.println("WARNING: Maximum session duration reached (30s), auto-stopping...");
+            display.showMessage("Max duration reached!", TFT_ORANGE);
+            delay(1000);
+
+            // Auto-stop collection
+            sensorManager.stopCollection();
+            sessionManager.stopSession();
+            display.setDisplayState(DISPLAY_UPLOADING);
+
+            // Transmit data
+            if (dataTransmitter->transmitSession(sessionManager, &currentConfig))
+            {
+                mqttManager->publishStatus("upload_complete_auto_stopped");
+                display.setDisplayState(DISPLAY_SUCCESS);
+                delay(2000);
+                sessionManager.clearBuffer();
+                display.setDisplayState(DISPLAY_IDLE);
+            }
+            else
+            {
+                Serial.println("ERROR: Auto-stop session transmission failed!");
+                mqttManager->publishStatus("upload_failed");
+                display.setDisplayState(DISPLAY_ERROR);
+                display.showMessage("Upload failed - Restarting...", TFT_RED);
+                delay(3000);
+                sessionManager.clearBuffer();
+
+                // Restart device to recover from potential I2C/sensor issues
+                Serial.println("Restarting device to recover from upload failure...");
+                ESP.restart();
+            }
+        }
+
+        // Update sample count on display every second
+        if (millis() - lastSampleUpdate > 1000)
+        {
+            lastSampleUpdate = millis();
+            int sampleCount = sessionManager.getDataCount();
+            display.updateSampleCount(sampleCount);
+
+            // Also log to serial
+            Serial.print("Samples collected: ");
+            Serial.println(sampleCount);
+        }
     }
 
     // Send periodic status updates

@@ -48,16 +48,54 @@ exports.handler = async (event) => {
             };
         }
         
-        // Get sensor data
-        const dataResult = await docClient.send(new QueryCommand({
-            TableName: SENSOR_DATA_TABLE,
-            KeyConditionExpression: 'session_id = :sessionId',
-            ExpressionAttributeValues: {
-                ':sessionId': sessionId
-            }
-        }));
+        // Get sensor data with pagination support
+        let allReadings = [];
+        let lastEvaluatedKey = undefined;
+        let pageCount = 0;
         
-        console.log(`Retrieved session ${sessionId} with ${dataResult.Items.length} readings`);
+        do {
+            const queryParams = {
+                TableName: SENSOR_DATA_TABLE,
+                KeyConditionExpression: 'session_id = :sessionId',
+                ExpressionAttributeValues: {
+                    ':sessionId': sessionId
+                }
+            };
+            
+            // Add pagination token if we have one
+            if (lastEvaluatedKey) {
+                queryParams.ExclusiveStartKey = lastEvaluatedKey;
+            }
+            
+            const dataResult = await docClient.send(new QueryCommand(queryParams));
+            
+            allReadings = allReadings.concat(dataResult.Items || []);
+            lastEvaluatedKey = dataResult.LastEvaluatedKey;
+            pageCount++;
+            
+            console.log(`Page ${pageCount}: Retrieved ${dataResult.Items?.length || 0} readings (Total: ${allReadings.length})`);
+            
+        } while (lastEvaluatedKey); // Keep fetching until no more pages
+        
+        console.log(`Retrieved session ${sessionId} with ${allReadings.length} readings across ${pageCount} page(s)`);
+        
+        // Transform readings to use actual timestamp for frontend compatibility
+        const readings = allReadings.map(item => {
+            // Use timestamp_ms if available (new format)
+            let numericTimestamp = item.timestamp_ms;
+            
+            // If timestamp_ms not available, decode from composite timestamp_offset
+            if (numericTimestamp === undefined && item.timestamp_offset) {
+                // New format: composite key (timestamp * 10 + position)
+                // Decode: timestamp = Math.floor(composite / 10)
+                numericTimestamp = Math.floor(item.timestamp_offset / 10);
+            }
+            
+            return {
+                ...item,
+                timestamp_offset: numericTimestamp  // Frontend expects base timestamp
+            };
+        });
         
         return {
             statusCode: 200,
@@ -67,7 +105,7 @@ exports.handler = async (event) => {
             },
             body: JSON.stringify({
                 session: sessionResult.Item,
-                readings: dataResult.Items
+                readings: readings
             })
         };
         

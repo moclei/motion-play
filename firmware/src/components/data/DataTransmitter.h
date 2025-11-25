@@ -11,7 +11,7 @@ class DataTransmitter
 {
 private:
     MQTTManager *mqttManager;
-    static const size_t BATCH_SIZE = 100; // Send 100 readings at a time
+    static const size_t BATCH_SIZE = 25; // Send 25 samples (100 sensor readings) at a time
 
 public:
     DataTransmitter(MQTTManager *mqtt);

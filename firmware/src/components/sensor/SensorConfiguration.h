@@ -11,10 +11,12 @@ struct SensorConfiguration
     String led_current = "200mA";
     String integration_time = "1T";
     bool high_resolution = true;
+    bool read_ambient = true; // If false, only proximity is read (faster)
+    uint32_t i2c_clock_khz = 400; // I2C clock speed in kHz (400 or 1000)
+    uint16_t actual_sample_rate_hz = 0; // Measured actual sample rate (populated during session)
 
-    // Note: String/enum conversion functions will be added in Phase 3-B
-    // when implementing dynamic sensor reconfiguration.
-    // For now, configuration is stored as strings and applied on device restart.
+    // Note: Configuration is applied during sensor initialization.
+    // Dynamic reconfiguration requires sensor reinitialization.
 };
 
 #endif
