@@ -23,7 +23,7 @@ export const SessionConfig = ({ session }: SessionConfigProps) => {
             <div className="flex items-center gap-2 mb-4">
                 <Settings size={20} className="text-gray-700" />
                 <h3 className="font-semibold text-gray-800">
-                    Sensor Configuration
+                    Session Configuration
                 </h3>
             </div>
 
@@ -79,6 +79,21 @@ export const SessionConfig = ({ session }: SessionConfigProps) => {
                         </div>
                     </div>
                 </div>
+
+                {/* Ambient Light Reading */}
+                {config.read_ambient !== undefined && (
+                    <div className="flex items-start gap-3 p-3 bg-indigo-50 rounded col-span-2">
+                        <Settings size={20} className="text-indigo-600 mt-1" />
+                        <div>
+                            <div className="text-sm font-medium text-gray-700">
+                                Ambient Light Reading
+                            </div>
+                            <div className="text-lg font-bold text-gray-900">
+                                {config.read_ambient ? 'Enabled' : 'Disabled (Speed Optimized)'}
+                            </div>
+                        </div>
+                    </div>
+                )}
             </div>
 
             {/* Active Sensors Count */}

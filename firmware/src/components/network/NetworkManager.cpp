@@ -63,6 +63,7 @@ bool NetworkManager::connectWiFi() {
     Serial.println(ssid);
 
     WiFi.mode(WIFI_STA);
+    delay(100); // Give WiFi mode change time to take effect
     WiFi.begin(ssid.c_str(), password.c_str());
 
     int attempts = 0;

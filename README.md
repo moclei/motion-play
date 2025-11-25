@@ -12,7 +12,20 @@ Motion Play is an ESP32-based sensor system for detecting and tracking fast-movi
 **Frontend:** ✅ React web interface with real-time visualization and device control
 **Current Phase:** Phase 4 - Integration & Polish (77% complete overall)
 
-📊 **For detailed status:** See `docs/data collection/PROJECT_STATUS.md`
+### 📚 Documentation
+
+- **Documentation Guide**: [DOCUMENTATION.md](DOCUMENTATION.md) - How documentation is organized
+- **Documentation Index**: [docs/INDEX.md](docs/INDEX.md) - Master index of all documentation
+- **Technical Reference**: [.context/PROJECT.md](.context/PROJECT.md) - Comprehensive technical details for AI assistants
+- **Getting Started**: [QUICK_START_GUIDE.md](QUICK_START_GUIDE.md) - Quick setup guide
+
+### 📍 Key Project Documents
+
+- **Data Collection Initiative**: [docs/initiatives/data-collection/](docs/initiatives/data-collection/) - Full documentation for data collection system
+- **Project Status**: [docs/initiatives/data-collection/PROJECT_STATUS.md](docs/initiatives/data-collection/PROJECT_STATUS.md) - Current implementation status
+- **Database Schema**: [infrastructure/DATABASE_SCHEMA.md](infrastructure/DATABASE_SCHEMA.md) ⚠️ Read this for composite key details
+- **Lambda Functions**: [lambda/README.md](lambda/README.md)
+- **Deployment Guide**: [infrastructure/lambda-deployment-guide.md](infrastructure/lambda-deployment-guide.md)
 
 ## Hardware Architecture
 
@@ -45,45 +58,18 @@ The main PCB supports up to 6 sensor PCBs.
 
 ### Hardware Connections
 
+The T-Display-S3 connects to multiple VCNL4040 sensors via the TCA9548A I2C multiplexer. The main PCB supports up to 6 sensor PCBs, each with dual sensors managed by a local PCA9546A multiplexer.
 
-T-Display-S3 (I2C Master)
-    ├── SDA ───→ TCA9548A SDA
-    └── SCL ───→ TCA9548A SCL
-    
-TCA9548A Channels:
-    ├── Channel 0 (SC0/SD0) → Sensor #1 (VCNL4040)
-    ├── Channel 1 (SC1/SD1) → Sensor #2 (VCNL4040)
-    └── Channels 2-7 → Available for expansion
-
-
-### Pin Configuration
-
-- **T-Display-S3 I2C**: Default SDA/SCL pins
-- **TCA9548A Address**: 0x70 (default, configurable via A0-A2)
-- **VCNL4040 Address**: 0x60 (fixed)
+> **For detailed pin configurations, I2C addressing, and connection diagrams**, see [.context/PROJECT.md](.context/PROJECT.md)
 
 ## Software Stack
 
-### Development Environment
 - **Framework**: Arduino
 - **Platform**: PlatformIO
 - **Board**: ESP32-S3
+- **Key Libraries**: TFT_eSPI, Adafruit BusIO, AWS IoT SDK
 
-### Dependencies
-ini
-lib_deps = 
-    TFT_eSPI @ ^2.5.31
-    Adafruit BusIO @ ^1.14.5
-    Adafruit ADS1X15 @ ^2.4.0
-
-
-### Configuration Parameters
-
-monitor_speed = 115200
-upload_speed = 921600
-board_build.flash_mode = qio
-board_build.f_cpu = 240000000L
-board_build.f_flash = 80000000L
+> **For complete configuration details and dependencies**, see [firmware/README.md](firmware/README.md) and [.context/PROJECT.md](.context/PROJECT.md)
 
 ## System Architecture
 
@@ -142,67 +128,65 @@ Features:
 
 ## Project Structure
 
-motion-play/
+```
+motion-play/                   # Monorepo root
 ├── docs/                      # Project documentation
-│   ├── data collection/      # Data collection system docs
-│   │   ├── PROJECT_STATUS.md
-│   │   ├── IMPLEMENTATION_GUIDE.md
-│   │   ├── phase1-connectivity-guide.md
-│   │   ├── phase2-data-pipeline-guide.md
-│   │   ├── phase3-web-interface-guide.md
-│   │   └── phase3-b-enhancements-guide.md
-│   └── DEVELOPMENT_PLAN.md
-├── firmware/                  # ESP32 firmware
+│   ├── INDEX.md              # Master documentation index
+│   ├── initiatives/          # Cross-cutting features
+│   │   └── data-collection/  # Data collection system
+│   │       ├── README.md     # Initiative overview
+│   │       ├── guides/       # Implementation guides
+│   │       └── work/         # Ephemeral working docs
+│   ├── references/           # Hardware datasheets & vendor docs
+│   │   ├── vcnl4040/        # Sensor documentation
+│   │   └── i2c-multiplexer/ # Multiplexer docs
+│   └── archive/             # Historical documentation
+├── firmware/                 # ESP32-S3 firmware
 │   ├── src/
 │   │   ├── main.cpp
-│   │   └── components/       # Modular firmware components
-│   │       ├── data/         # Data collection & transmission
-│   │       ├── mqtt/         # MQTT client
-│   │       ├── sensor/       # Sensor management
-│   │       └── display/      # TFT display
-│   └── platformio.ini
-├── frontend/                  # React web interface
+│   │   └── components/      # Modular components
+│   │       ├── data/        # Data collection & transmission
+│   │       ├── mqtt/        # MQTT client
+│   │       ├── sensor/      # Sensor management
+│   │       ├── network/     # WiFi & connectivity
+│   │       ├── session/     # Session management
+│   │       └── display/     # TFT display UI
+│   └── README.md            # Firmware documentation
+├── frontend/                # React web interface
 │   └── motion-play-ui/
 │       ├── src/
-│       │   ├── components/   # React components
-│       │   ├── services/     # API client
+│       │   ├── components/  # React components
+│       │   ├── services/    # API client
 │       │   └── App.tsx
-│       └── package.json
-├── lambda/                    # AWS Lambda functions
-│   ├── processData/          # Process sensor data
-│   ├── getSessionData/       # Retrieve sessions
-│   ├── sendCommand/          # Send device commands
-│   └── updateSession/        # Update session metadata
-├── infrastructure/            # AWS infrastructure
-│   └── aws-setup-guide.md
-├── .context/                  # Hardware documentation
-│   ├── datasheets/           # Component datasheets
-│   └── schematics/           # PCB designs
-└── README.md                 # This document
+│       └── README.md        # Frontend documentation
+├── lambda/                  # AWS Lambda functions
+│   ├── processData/         # Process sensor data
+│   ├── getSessionData/      # Retrieve sessions
+│   ├── sendCommand/         # Send device commands
+│   └── updateSession/       # Update session metadata
+├── infrastructure/          # AWS infrastructure
+│   ├── aws-setup-guide.md
+│   ├── lambda-deployment-guide.md
+│   └── DATABASE_SCHEMA.md
+├── hardware/                # PCB designs & schematics
+│   ├── pcb-main/           # Main controller board
+│   ├── pcb-sensor/         # Sensor boards
+│   └── components/         # Component libraries
+├── .context/               # AI assistant context
+│   └── PROJECT.md          # Comprehensive technical reference
+├── DOCUMENTATION.md        # Documentation guide
+├── README.md               # This document (project overview)
+└── QUICK_START_GUIDE.md    # Quick setup guide
+```
 
-## Technical Details
+## Technical Highlights
 
-### I2C Multiplexing
-The TCA9548A enables multiple VCNL4040 sensors (all with address 0x60) to coexist on the same I2C bus. Features:
-- 8 independent I2C channels
-- Voltage translation (1.65V to 5.5V)
-- Active-low RESET for recovery
-- Software-selectable channels via control register
+- **I2C Multiplexing**: TCA9548A enables multiple sensors with the same address to coexist on one bus
+- **Sensors**: VCNL4040 proximity/ambient light sensors with programmable detection thresholds
+- **Power**: USB-C 5V input, regulated to 3.3V for logic and sensors
+- **Data Rate**: 1000 Hz sensor sampling with PSRAM buffering
 
-### VCNL4040 Sensor Capabilities
-- **Proximity Detection**: IR LED emission and reflection measurement
-- **Ambient Light Sensing**: Human eye response approximation
-- **Programmable Features**:
-  - Integration time
-  - Interrupt thresholds
-  - LED current control
-- **Communication**: I2C up to 400kHz
-
-### Power Management
-- USB-C input via DWEII module (5V)
-- AMS1117 regulates to 3.3V for logic
-- Separate power distribution to sensor PCBs
-- Daisy-chain capability reduces cable complexity
+> **For complete technical specifications, pin configurations, and power management details**, see [.context/PROJECT.md](.context/PROJECT.md)
 
 ## Development Roadmap
 
@@ -248,46 +232,10 @@ The TCA9548A enables multiple VCNL4040 sensors (all with address 0x60) to coexis
 
 ## Troubleshooting
 
-### Common Issues
-
-1. **TCA9548A Not Found**
-   - Check I2C connections
-   - Verify pull-up resistors (2.2kΩ)
-   - Scan I2C bus for address conflicts
-
-2. **VCNL4040 Not Responding**
-   - Ensure TCA9548A channel selection
-   - Check sensor PCB connections
-   - Verify 3.3V power supply
-
-3. **Display Issues**
-   - Confirm TFT_eSPI configuration
-   - Check display backlight pin
-   - Verify SPI connections
-
-## AI Development Context
-
-When developing for this project:
-
-1. **Use component shorthands** in code for clarity:
-   - `tdisplay` for T-Display-S3
-   - `tca` for TCA9548A
-   - `sensor` for VCNL4040
-
-2. **Consider hardware constraints**:
-   - I2C multiplexing required for multiple sensors
-   - 3.3V logic levels throughout
-   - Display update rate vs sensor polling balance
-
-3. **Maintain compatibility**:
-   - Arduino framework conventions
-   - PlatformIO project structure
-   - Existing pin assignments
-
-4. **Document changes**:
-   - Update this file with new features
-   - Comment code thoroughly
-   - Track pin usage and I2C addresses
+For common issues (I2C connection problems, sensor not responding, display issues), see:
+- [.context/PROJECT.md](.context/PROJECT.md) - Comprehensive troubleshooting guide
+- [QUICK_START_GUIDE.md](QUICK_START_GUIDE.md) - Setup and deployment issues
+- [docs/INDEX.md](docs/INDEX.md) - Find specific technical documentation
 
 ## Contributing
 
@@ -302,38 +250,33 @@ When contributing to this project:
 
 [Specify your license here]
 
-## Documentation
+## Additional Documentation
 
 ### Getting Started
-- `QUICK_START_GUIDE.md` - Quick setup reference
-- `docs/data collection/IMPLEMENTATION_GUIDE.md` - Detailed walkthrough
-- `docs/data collection/PROJECT_STATUS.md` - Current progress (77% complete)
+- [QUICK_START_GUIDE.md](QUICK_START_GUIDE.md) - Quick setup reference
+- [DOCUMENTATION.md](DOCUMENTATION.md) - How documentation is organized
+- [docs/INDEX.md](docs/INDEX.md) - Master documentation index
 
-### Phase Guides (Step-by-Step)
-- `docs/data collection/phase1-connectivity-guide.md` - WiFi + MQTT
-- `docs/data collection/phase2-data-pipeline-guide.md` - Sensors + Data
-- `docs/data collection/phase3-web-interface-guide.md` - API + Frontend
-- `docs/data collection/phase3-b-enhancements-guide.md` - Enhancements
+### Data Collection System
+- [Initiative Overview](docs/initiatives/data-collection/README.md) - Data collection system overview
+- [Project Status](docs/initiatives/data-collection/PROJECT_STATUS.md) - Current progress (77% complete)
+- [Implementation Guides](docs/initiatives/data-collection/guides/) - Step-by-step phase guides
 
-### Planning & Design
-- `docs/data collection/implementation_plan.md` - Full implementation plan
-- `docs/data collection/technical_design_doc.md` - Design decisions
-- `docs/data collection/tech_reqs.md` - Technical requirements
-
-### Hardware Documentation
-- `.context/datasheets/` - Component datasheets (TCA9548A, VCNL4040, etc.)
-- `.context/schematics/` - PCB designs (Main PCB, Sensor PCB)
+### Technical Reference
+- [.context/PROJECT.md](.context/PROJECT.md) - Comprehensive technical reference for AI assistants
+- [docs/references/](docs/references/) - Hardware component documentation and datasheets
 
 ## Support
 
 For questions or issues:
 - Check troubleshooting section above
-- Review phase guides for detailed implementation steps
-- Consult `docs/data collection/PROJECT_STATUS.md` for current status
-- Review component datasheets in `.context/datasheets/`
-- Consult PCB schematics in `.context/schematics/`
+- Review [DOCUMENTATION.md](DOCUMENTATION.md) to find relevant documentation
+- Consult [docs/INDEX.md](docs/INDEX.md) for master documentation index
+- Check [Data Collection Project Status](docs/initiatives/data-collection/PROJECT_STATUS.md)
+- Review component datasheets in [docs/references/](docs/references/)
+- See [.context/PROJECT.md](.context/PROJECT.md) for comprehensive technical reference
 
 ---
 
-*Last Updated: November 14, 2025*
+*Last Updated: November 21, 2025*
 *Build Info: Accessible via `__DATE__` and `__TIME__` macros in code*

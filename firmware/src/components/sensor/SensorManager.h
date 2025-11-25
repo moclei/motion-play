@@ -5,6 +5,7 @@
 #include <vector>
 #include "../tca9548a/TCA9548A.h"
 #include <Adafruit_VCNL4040.h>
+#include "SensorConfiguration.h"
 
 // Sensor configuration
 #define NUM_SENSORS 6
@@ -93,18 +94,25 @@ private:
     bool sensorsActive[NUM_SENSORS] = {false};  // Track which sensors initialized
     TaskHandle_t sensorTask = NULL;
     QueueHandle_t dataQueue = NULL;
+    SensorConfiguration* activeConfig = nullptr;  // Reference to active configuration
     
     bool initializePCA();
     static void sensorTaskFunction(void *parameter);
+    
+    // Configuration helpers
+    VCNL4040_LEDCurrent parseLEDCurrent(const String& current);
+    VCNL4040_ProximityIntegration parseIntegrationTime(const String& time);
+    bool applySensorConfig(uint8_t sensorIndex);
 
 public:
     SensorManager();
-    bool init();
+    bool init(SensorConfiguration* config = nullptr);
     bool startCollection(QueueHandle_t queue);
     void stopCollection();
     bool isCollecting();
     bool readSensor(uint8_t sensorIndex, SensorReading &reading);
     std::vector<SensorMetadata> getSensorMetadata();
+    bool reinitialize(SensorConfiguration* config);
 };
 
 #endif

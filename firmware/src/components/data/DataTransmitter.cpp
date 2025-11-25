@@ -50,6 +50,9 @@ bool DataTransmitter::transmitBatch(const String &sessionId,
             configObj["led_current"] = config->led_current;
             configObj["integration_time"] = config->integration_time;
             configObj["high_resolution"] = config->high_resolution;
+            configObj["read_ambient"] = config->read_ambient;
+            configObj["i2c_clock_khz"] = config->i2c_clock_khz;
+            configObj["actual_sample_rate_hz"] = config->actual_sample_rate_hz;
         }
     }
 
