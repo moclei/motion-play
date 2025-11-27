@@ -352,7 +352,7 @@ export const SessionList = forwardRef<SessionListRef, SessionListProps>(({
                                             <span>{session.sample_rate} Hz</span>
                                         </div>
                                         {session.labels && session.labels.length > 0 && (
-                                            <div className="flex flex-wrap gap-1">
+                                            <div className="flex flex-wrap gap-1 mb-1">
                                                 {session.labels.slice(0, 3).map((label, i) => (
                                                     <span key={i} className="px-1.5 py-0.5 bg-blue-100 text-blue-800 rounded text-xs">
                                                         {label}
@@ -361,6 +361,33 @@ export const SessionList = forwardRef<SessionListRef, SessionListProps>(({
                                                 {session.labels.length > 3 && (
                                                     <span className="text-xs text-gray-500">
                                                         +{session.labels.length - 3} more
+                                                    </span>
+                                                )}
+                                            </div>
+                                        )}
+                                        {/* Config Badges */}
+                                        {session.vcnl4040_config && (
+                                            <div className="flex flex-wrap gap-1 mt-1">
+                                                <span className="px-1.5 py-0.5 bg-purple-100 text-purple-800 rounded text-xs font-mono">
+                                                    {session.vcnl4040_config.sample_rate_hz}Hz
+                                                </span>
+                                                <span className="px-1.5 py-0.5 bg-orange-100 text-orange-800 rounded text-xs font-mono">
+                                                    {session.vcnl4040_config.led_current}
+                                                </span>
+                                                <span className="px-1.5 py-0.5 bg-green-100 text-green-800 rounded text-xs font-mono">
+                                                    {session.vcnl4040_config.integration_time}
+                                                </span>
+                                                <span className="px-1.5 py-0.5 bg-indigo-100 text-indigo-800 rounded text-xs">
+                                                    {session.vcnl4040_config.high_resolution ? '16-bit' : '12-bit'}
+                                                </span>
+                                                {session.vcnl4040_config.read_ambient && (
+                                                    <span className="px-1.5 py-0.5 bg-teal-100 text-teal-800 rounded text-xs">
+                                                        Ambient
+                                                    </span>
+                                                )}
+                                                {session.vcnl4040_config.i2c_clock_khz && (
+                                                    <span className="px-1.5 py-0.5 bg-gray-100 text-gray-800 rounded text-xs font-mono">
+                                                        {session.vcnl4040_config.i2c_clock_khz}kHz
                                                     </span>
                                                 )}
                                             </div>

@@ -47,6 +47,20 @@ VCNL4040_ProximityIntegration SensorManager::parseIntegrationTime(const String &
     return VCNL4040_PROXIMITY_INTEGRATION_TIME_1T;
 }
 
+VCNL4040_LEDDutyCycle SensorManager::parseDutyCycle(const String &duty)
+{
+    if (duty == "1/40")
+        return VCNL4040_LED_DUTY_1_40; // ~200 Hz - Fastest
+    if (duty == "1/80")
+        return VCNL4040_LED_DUTY_1_80; // ~100 Hz
+    if (duty == "1/160")
+        return VCNL4040_LED_DUTY_1_160; // ~50 Hz
+    if (duty == "1/320")
+        return VCNL4040_LED_DUTY_1_320; // ~25 Hz - Slowest, best battery
+    // Default to 1/40 (fastest)
+    return VCNL4040_LED_DUTY_1_40;
+}
+
 bool SensorManager::applySensorConfig(uint8_t sensorIndex)
 {
     if (sensorIndex >= NUM_SENSORS || activeConfig == nullptr)
@@ -60,12 +74,17 @@ bool SensorManager::applySensorConfig(uint8_t sensorIndex)
     VCNL4040_ProximityIntegration integration = parseIntegrationTime(activeConfig->integration_time);
     sensors[sensorIndex].setProximityIntegrationTime(integration);
 
+    // Apply duty cycle
+    VCNL4040_LEDDutyCycle duty = parseDutyCycle(activeConfig->duty_cycle);
+    sensors[sensorIndex].setProximityLEDDutyCycle(duty);
+
     // Apply high resolution setting
     sensors[sensorIndex].setProximityHighResolution(activeConfig->high_resolution);
 
-    Serial.printf("  Applied config: LED=%s, Integration=%s, HighRes=%s, ReadAmbient=%s\n",
+    Serial.printf("  Applied config: LED=%s, Integration=%s, Duty=%s, HighRes=%s, ReadAmbient=%s\n",
                   activeConfig->led_current.c_str(),
                   activeConfig->integration_time.c_str(),
+                  activeConfig->duty_cycle.c_str(),
                   activeConfig->high_resolution ? "true" : "false",
                   activeConfig->read_ambient ? "true" : "false");
 
@@ -419,6 +438,7 @@ void SensorManager::sensorTaskFunction(void *parameter)
     unsigned long lastErrorLog = 0;
     int consecutiveFailures = 0;
     SensorReading reading;
+    unsigned long lastYield = micros();
 
     while (true)
     {
@@ -492,8 +512,14 @@ void SensorManager::sensorTaskFunction(void *parameter)
             manager->mux.disableAllChannels();
         }
 
-        // Note: Removed vTaskDelay(1) to maximize sample rate
-        // I2C operations provide enough yield time for other tasks
+        // CRITICAL: Yield periodically to prevent watchdog timer reset
+        // Yield every 100ms to keep watchdog happy without impacting sample rate
+        unsigned long currentYieldTime = micros();
+        if (currentYieldTime - lastYield >= 100000) // 100ms
+        {
+            taskYIELD();
+            lastYield = currentYieldTime;
+        }
     }
 }
 
@@ -514,14 +540,15 @@ bool SensorManager::startCollection(QueueHandle_t queue)
     dataQueue = queue;
 
     // Create sensor task on Core 0
+    // Stack size increased to 8192 to handle I2C operations and error logging
     xTaskCreatePinnedToCore(
         sensorTaskFunction,
         "SensorTask",
-        4096, // Stack size
+        8192, // Stack size (increased from 4096)
         this, // Parameter
-        2,    // Priority
+        2,    // Priority (higher = more important)
         &sensorTask,
-        0 // Core 0
+        0 // Core 0 (protocol CPU)
     );
 
     Serial.println("Sensor collection started");
@@ -611,6 +638,10 @@ bool SensorManager::reinitialize(SensorConfiguration *config)
             // Reapply configuration (Note: has 50ms delay in setProximityIntegrationTime)
             applySensorConfig(i);
             Serial.printf("    Sensor %d reconfigured.\n", i);
+
+            // CRITICAL: Feed watchdog timer during lengthy reconfiguration
+            // This prevents Core 1 watchdog reset during sensor reconfiguration
+            taskYIELD();
         }
     }
 
@@ -621,6 +652,9 @@ bool SensorManager::reinitialize(SensorConfiguration *config)
         pca_instances[i].disableAllChannels();
     }
     mux.disableAllChannels();
+
+    // Final yield to ensure watchdog is fed
+    taskYIELD();
 
     Serial.println("  Sensors reconfigured successfully!");
     return true;

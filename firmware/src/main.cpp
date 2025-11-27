@@ -1,5 +1,7 @@
 #include <Arduino.h>
 #include <Adafruit_VCNL4040.h>
+#include <HTTPClient.h>
+#include <ArduinoJson.h>
 #include "components/network/NetworkManager.h"
 #include "components/mqtt/MQTTManager.h"
 #include "components/display/DisplayManager.h"
@@ -7,6 +9,7 @@
 #include "components/sensor/SensorConfiguration.h"
 #include "components/session/SessionManager.h"
 #include "components/data/DataTransmitter.h"
+#include "components/diagnostics/MemoryMonitor.h"
 
 // Button pins for T-Display-S3
 #define BUTTON_1 0  // Left button (BOOT)
@@ -32,6 +35,7 @@ SensorConfiguration currentConfig;
 // Forward declarations
 void initializeSystem();
 void handleCommand(const String &command, JsonDocument *doc = nullptr);
+bool fetchConfigFromCloud();
 
 void setup()
 {
@@ -65,6 +69,101 @@ void setup()
     initializeSystem();
 
     Serial.println("\n=== Setup Complete - Entering Loop ===\n");
+}
+
+bool fetchConfigFromCloud()
+{
+    Serial.println("\n=== Fetching Config from Cloud ===");
+
+    // Get device ID and API endpoint from NetworkManager
+    String deviceId = networkManager.getDeviceId();
+    String apiEndpoint = networkManager.getApiEndpoint();
+
+    if (apiEndpoint.isEmpty())
+    {
+        Serial.println("WARNING: No API endpoint configured, using defaults");
+        return false;
+    }
+
+    // Construct URL
+    String url = apiEndpoint + "/device/" + deviceId + "/config";
+    Serial.printf("Fetching config from: %s\n", url.c_str());
+
+    HTTPClient http;
+    http.begin(url);
+    http.setTimeout(10000); // 10 second timeout
+
+    int httpCode = http.GET();
+
+    if (httpCode == HTTP_CODE_OK)
+    {
+        String payload = http.getString();
+        Serial.println("Config received:");
+        Serial.println(payload);
+
+        // Parse JSON response
+        DynamicJsonDocument doc(2048);
+        DeserializationError error = deserializeJson(doc, payload);
+
+        if (error)
+        {
+            Serial.print("JSON parse error: ");
+            Serial.println(error.c_str());
+            http.end();
+            return false;
+        }
+
+        // Extract sensor_config
+        if (doc.containsKey("sensor_config"))
+        {
+            JsonObject config = doc["sensor_config"];
+
+            // Update current configuration
+            // Handle both sample_rate and sample_rate_hz for compatibility
+            if (config.containsKey("sample_rate_hz"))
+            {
+                currentConfig.sample_rate_hz = config["sample_rate_hz"];
+            }
+            else if (config.containsKey("sample_rate"))
+            {
+                currentConfig.sample_rate_hz = config["sample_rate"];
+            }
+
+            currentConfig.led_current = config["led_current"] | "200mA";
+            currentConfig.integration_time = config["integration_time"] | "1T";
+            currentConfig.high_resolution = config["high_resolution"] | true;
+            currentConfig.read_ambient = config["read_ambient"] | true;
+
+            // New field: I2C clock speed
+            if (config.containsKey("i2c_clock_khz"))
+            {
+                currentConfig.i2c_clock_khz = config["i2c_clock_khz"];
+            }
+
+            Serial.println("\nConfig loaded from cloud:");
+            Serial.printf("  Sample Rate: %d Hz\n", currentConfig.sample_rate_hz);
+            Serial.printf("  LED Current: %s\n", currentConfig.led_current.c_str());
+            Serial.printf("  Integration Time: %s\n", currentConfig.integration_time.c_str());
+            Serial.printf("  High Resolution: %s\n", currentConfig.high_resolution ? "enabled" : "disabled");
+            Serial.printf("  Read Ambient: %s\n", currentConfig.read_ambient ? "enabled" : "disabled");
+            Serial.printf("  I2C Clock: %d kHz\n", currentConfig.i2c_clock_khz);
+
+            http.end();
+            return true;
+        }
+        else
+        {
+            Serial.println("WARNING: No sensor_config in response");
+            http.end();
+            return false;
+        }
+    }
+    else
+    {
+        Serial.printf("HTTP GET failed, error: %s (code: %d)\n", http.errorToString(httpCode).c_str(), httpCode);
+        http.end();
+        return false;
+    }
 }
 
 void initializeSystem()
@@ -160,8 +259,34 @@ void initializeSystem()
             handleCommand(command, &doc);
         } });
 
+    // Fetch configuration from cloud
+    Serial.println("Fetching sensor config from cloud...");
+    display.updateInitStage(INIT_COMPLETE, "Loading config...");
+    if (fetchConfigFromCloud())
+    {
+        Serial.println("Config fetched successfully, applying to sensors...");
+
+        // Apply config to sensors
+        if (sensorManager.reinitialize(&currentConfig))
+        {
+            Serial.println("Config applied to sensors successfully!");
+        }
+        else
+        {
+            Serial.println("WARNING: Failed to apply config to sensors, using defaults");
+        }
+    }
+    else
+    {
+        Serial.println("WARNING: Failed to fetch config from cloud, using defaults");
+    }
+
     // Initialization complete!
     Serial.println("\n=== System Initialization Complete ===\n");
+
+    // Print memory statistics after initialization
+    MemoryMonitor::printMemoryStats();
+
     display.updateInitStage(INIT_COMPLETE, "System ready!");
     delay(1500);
 
@@ -186,6 +311,18 @@ void handleCommand(const String &command, JsonDocument *doc)
     {
         Serial.println("Starting data collection...");
 
+        // Check memory health before starting collection
+        MemoryMonitor::printMemoryStats();
+        if (!MemoryMonitor::isMemoryHealthy())
+        {
+            Serial.println("ERROR: Insufficient memory to start collection!");
+            mqttManager->publishStatus("collection_failed_low_memory");
+            display.showMessage("Low memory!", TFT_RED);
+            delay(2000);
+            display.setDisplayState(DISPLAY_ERROR);
+            return;
+        }
+
         if (sessionManager.startSession())
         {
             // Set sensor metadata for this session
@@ -194,6 +331,14 @@ void handleCommand(const String &command, JsonDocument *doc)
 
             sensorManager.startCollection(sessionManager.getQueue());
             mqttManager->publishStatus("collection_started");
+
+            // Build config string for display
+            String configStr = String(currentConfig.sample_rate_hz) + "Hz | " +
+                               currentConfig.led_current + " | " +
+                               currentConfig.integration_time + " | " +
+                               (currentConfig.high_resolution ? "Hi-Res" : "Lo-Res") +
+                               (currentConfig.read_ambient ? " | Amb" : "");
+            display.setConfigString(configStr);
 
             // Update display to recording state
             display.setDisplayState(DISPLAY_RECORDING);
@@ -210,6 +355,10 @@ void handleCommand(const String &command, JsonDocument *doc)
 
         sensorManager.stopCollection();
         sessionManager.stopSession();
+
+        // Print memory stats after collection
+        Serial.printf("Collected %d samples\n", sessionManager.getDataCount());
+        MemoryMonitor::printMemoryStats();
 
         // Update display to uploading state
         display.setDisplayState(DISPLAY_UPLOADING);
@@ -251,11 +400,30 @@ void handleCommand(const String &command, JsonDocument *doc)
             JsonObject config = (*doc)["sensor_config"];
 
             // Update current configuration
-            currentConfig.sample_rate_hz = config["sample_rate"] | 1000;
+            // Handle both sample_rate and sample_rate_hz for compatibility
+            if (config.containsKey("sample_rate_hz"))
+            {
+                currentConfig.sample_rate_hz = config["sample_rate_hz"];
+            }
+            else if (config.containsKey("sample_rate"))
+            {
+                currentConfig.sample_rate_hz = config["sample_rate"];
+            }
+            else
+            {
+                currentConfig.sample_rate_hz = 1000; // Default
+            }
+
             currentConfig.led_current = config["led_current"] | "200mA";
             currentConfig.integration_time = config["integration_time"] | "1T";
             currentConfig.high_resolution = config["high_resolution"] | true;
             currentConfig.read_ambient = config["read_ambient"] | true;
+
+            // Handle I2C clock speed if provided
+            if (config.containsKey("i2c_clock_khz"))
+            {
+                currentConfig.i2c_clock_khz = config["i2c_clock_khz"];
+            }
 
             Serial.println("Configuration updated:");
             Serial.printf("  Sample Rate: %d Hz\n", currentConfig.sample_rate_hz);
@@ -263,6 +431,7 @@ void handleCommand(const String &command, JsonDocument *doc)
             Serial.printf("  Integration Time: %s\n", currentConfig.integration_time.c_str());
             Serial.printf("  High Resolution: %s\n", currentConfig.high_resolution ? "enabled" : "disabled");
             Serial.printf("  Read Ambient: %s\n", currentConfig.read_ambient ? "enabled" : "disabled");
+            Serial.printf("  I2C Clock: %d kHz\n", currentConfig.i2c_clock_khz);
 
             // Apply configuration to sensors immediately
             if (sensorManager.reinitialize(&currentConfig))
@@ -364,9 +533,15 @@ void loop()
             int sampleCount = sessionManager.getDataCount();
             display.updateSampleCount(sampleCount);
 
-            // Also log to serial
-            Serial.print("Samples collected: ");
-            Serial.println(sampleCount);
+            // Log to serial with memory status
+            Serial.printf("Samples: %d | ", sampleCount);
+            MemoryMonitor::printCompactStatus();
+
+            // Check memory health during collection
+            if (!MemoryMonitor::isMemoryHealthy())
+            {
+                Serial.println("WARNING: Memory getting low during collection!");
+            }
         }
     }
 

@@ -1,4 +1,5 @@
 #include "DataTransmitter.h"
+#include "../memory/PSRAMAllocator.h"
 
 DataTransmitter::DataTransmitter(MQTTManager *mqtt) : mqttManager(mqtt)
 {
@@ -9,7 +10,7 @@ bool DataTransmitter::transmitBatch(const String &sessionId,
                                     const String &deviceId,
                                     unsigned long startTime,
                                     unsigned long duration,
-                                    std::vector<SensorReading> &readings,
+                                    std::vector<SensorReading, PSRAMAllocator<SensorReading>> &readings,
                                     size_t offset,
                                     size_t count,
                                     const std::vector<SensorMetadata> *sensorMetadata,
@@ -113,7 +114,7 @@ bool DataTransmitter::transmitSession(SessionManager &session, const SensorConfi
     unsigned long startTime = millis() - session.getDuration();
     unsigned long duration = session.getDuration();
 
-    std::vector<SensorReading> &readings = session.getDataBuffer();
+    std::vector<SensorReading, PSRAMAllocator<SensorReading>> &readings = session.getDataBuffer();
     const std::vector<SensorMetadata> &sensorMetadata = session.getSensorMetadata();
     size_t totalReadings = readings.size();
 

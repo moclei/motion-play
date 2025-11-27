@@ -21,7 +21,8 @@ function sanitizeConfig(config) {
     return {
         sample_rate_hz: Number.isFinite(config.sample_rate_hz) ? config.sample_rate_hz : 1000,
         led_current: config.led_current || "200mA",
-        integration_time: config.integration_time || "1T",
+        integration_time: config.integration_time || "2T",
+        duty_cycle: config.duty_cycle || "1/40",
         high_resolution: typeof config.high_resolution === 'boolean' ? config.high_resolution : true,
         read_ambient: typeof config.read_ambient === 'boolean' ? config.read_ambient : true,
         i2c_clock_khz: Number.isFinite(config.i2c_clock_khz) ? config.i2c_clock_khz : 400,
@@ -140,7 +141,8 @@ exports.handler = async (event) => {
                     vcnl4040_config: sanitizeConfig(data.vcnl4040_config) || {
                         sample_rate_hz: data.sample_rate || 1000,
                         led_current: "200mA",
-                        integration_time: "1T",
+                        integration_time: "2T",
+                        duty_cycle: "1/40",
                         high_resolution: true,
                         read_ambient: true,
                         i2c_clock_khz: 400,

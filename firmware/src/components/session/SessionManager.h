@@ -5,6 +5,7 @@
 #include <ArduinoJson.h>
 #include <vector>
 #include "../sensor/SensorManager.h"
+#include "../memory/PSRAMAllocator.h"
 
 enum SessionState
 {
@@ -22,7 +23,10 @@ private:
     String sessionId;
     unsigned long sessionStartTime = 0;
     unsigned long sessionDuration = 0;
-    std::vector<SensorReading> dataBuffer;
+    // CRITICAL: Use PSRAM allocator to prevent heap exhaustion
+    // 30,000 samples × 12 bytes = 360KB would exhaust the 400KB heap
+    // PSRAM has 8MB available
+    std::vector<SensorReading, PSRAMAllocator<SensorReading>> dataBuffer;
     std::vector<SensorMetadata> activeSensors;
 
     static const size_t MAX_BUFFER_SIZE = 30000; // 30 seconds * 1000 Hz
@@ -39,7 +43,7 @@ public:
     SessionState getState();
     String getSessionId();
     unsigned long getDuration();
-    std::vector<SensorReading> &getDataBuffer();
+    std::vector<SensorReading, PSRAMAllocator<SensorReading>> &getDataBuffer();
     void setSensorMetadata(const std::vector<SensorMetadata> &metadata);
     const std::vector<SensorMetadata> &getSensorMetadata();
     void clearBuffer();

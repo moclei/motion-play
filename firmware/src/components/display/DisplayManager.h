@@ -33,6 +33,7 @@ private:
     DisplayState currentDisplayState = DISPLAY_IDLE;
     String errorMessage = "";
     int sampleCount = 0;
+    String configString = ""; // For displaying config during recording
 
     // Layout constants
     static const int SCREEN_WIDTH = 320;
@@ -62,6 +63,7 @@ public:
     void setDisplayState(DisplayState state);
     void updateSampleCount(int count);
     void showMessage(const String &message, uint16_t color = TFT_WHITE);
+    void setConfigString(const String &config); // Set config for display during recording
 
     // Legacy compatibility (for gradual migration)
     void showBootScreen();

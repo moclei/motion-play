@@ -10,6 +10,7 @@ struct SensorConfiguration
     uint16_t sample_rate_hz = 1000;
     String led_current = "200mA";
     String integration_time = "1T";
+    String duty_cycle = "1/40"; // Controls measurement frequency: 1/40 (~200Hz), 1/80 (~100Hz), 1/160 (~50Hz), 1/320 (~25Hz)
     bool high_resolution = true;
     bool read_ambient = true; // If false, only proximity is read (faster)
     uint32_t i2c_clock_khz = 400; // I2C clock speed in kHz (400 or 1000)

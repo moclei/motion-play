@@ -10,6 +10,8 @@ class NetworkManager {
 private:
     String ssid;
     String password;
+    String deviceId;
+    String apiEndpoint;
     WiFiClientSecure wifiClient;
     bool connected = false;
 
@@ -21,6 +23,8 @@ public:
     bool isConnected();
     WiFiClientSecure& getClient();
     void checkConnection();
+    String getDeviceId();
+    String getApiEndpoint();
 };
 
 #endif
