@@ -6,6 +6,7 @@
 #include "../mqtt/MQTTManager.h"
 #include "../session/SessionManager.h"
 #include "../sensor/SensorConfiguration.h"
+#include "../memory/PSRAMAllocator.h"
 
 class DataTransmitter
 {
@@ -20,7 +21,7 @@ public:
                        const String &deviceId,
                        unsigned long startTime,
                        unsigned long duration,
-                       std::vector<SensorReading> &readings,
+                       std::vector<SensorReading, PSRAMAllocator<SensorReading>> &readings,
                        size_t offset,
                        size_t count,
                        const std::vector<SensorMetadata> *sensorMetadata,

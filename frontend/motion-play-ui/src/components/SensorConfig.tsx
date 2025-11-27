@@ -5,7 +5,8 @@ import { Settings } from 'lucide-react';
 export const SensorConfig = () => {
     const [sampleRate, setSampleRate] = useState(1000);
     const [ledCurrent, setLedCurrent] = useState('200mA');
-    const [integrationTime, setIntegrationTime] = useState('1T');
+    const [integrationTime, setIntegrationTime] = useState('2T');
+    const [dutyCycle, setDutyCycle] = useState('1/40');
     const [highResolution, setHighResolution] = useState(true);
     const [applying, setApplying] = useState(false);
     const [status, setStatus] = useState('');
@@ -20,6 +21,7 @@ export const SensorConfig = () => {
                     sample_rate: sampleRate,
                     led_current: ledCurrent,
                     integration_time: integrationTime,
+                    duty_cycle: dutyCycle,
                     high_resolution: highResolution
                 }
             });
@@ -88,21 +90,41 @@ export const SensorConfig = () => {
                 {/* Integration Time */}
                 <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
-                        Integration Time
+                        Integration Time (Pulse Length)
                     </label>
                     <select
                         value={integrationTime}
                         onChange={(e) => setIntegrationTime(e.target.value)}
                         className="w-full px-3 py-2 border rounded bg-white text-gray-900"
                     >
-                        <option value="1T">1T (Fast, 1x)</option>
+                        <option value="1T">1T (Fastest pulse, 1x)</option>
                         <option value="1.5T">1.5T (1.5x)</option>
-                        <option value="2T">2T (2x)</option>
+                        <option value="2T">2T (2x - Recommended)</option>
                         <option value="4T">4T (4x)</option>
-                        <option value="8T">8T (Slow, 8x)</option>
+                        <option value="8T">8T (8x - Strongest)</option>
                     </select>
                     <p className="text-xs text-gray-500 mt-1">
-                        Longer time = more accurate, slower response
+                        Longer pulse = stronger signal, better range & SNR
+                    </p>
+                </div>
+
+                {/* Duty Cycle */}
+                <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                        Duty Cycle (Sample Rate)
+                    </label>
+                    <select
+                        value={dutyCycle}
+                        onChange={(e) => setDutyCycle(e.target.value)}
+                        className="w-full px-3 py-2 border rounded bg-white text-gray-900"
+                    >
+                        <option value="1/40">1/40 (~200 Hz - Fastest)</option>
+                        <option value="1/80">1/80 (~100 Hz)</option>
+                        <option value="1/160">1/160 (~50 Hz)</option>
+                        <option value="1/320">1/320 (~25 Hz - Slowest)</option>
+                    </select>
+                    <p className="text-xs text-gray-500 mt-1">
+                        Controls measurement frequency (1/40 = fastest response)
                     </p>
                 </div>
 

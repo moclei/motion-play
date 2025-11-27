@@ -38,8 +38,10 @@ export interface VCNL4040Config {
     sample_rate_hz: number;
     led_current: string;
     integration_time: string;
+    duty_cycle: string;
     high_resolution: boolean;
     read_ambient: boolean;
+    i2c_clock_khz?: number; // Optional for backward compatibility with old sessions
 }
 
 export interface ActiveSensor {
@@ -89,17 +91,43 @@ class MotionPlayAPI {
         });
     }
 
-    // Configure sensors
+    // Configure sensors (DEPRECATED - use updateDeviceConfig instead)
     async configureSensors(config: {
         sample_rate: number;
         led_current: string;
         integration_time: string;
+        duty_cycle: string;
         high_resolution: boolean;
         read_ambient: boolean;
     }): Promise<void> {
         await this.sendCommand('configure_sensors', {
             sensor_config: config
         });
+    }
+
+    // Get device configuration from cloud (single source of truth)
+    async getDeviceConfig(deviceId?: string): Promise<{
+        device_id: string;
+        sensor_config: VCNL4040Config;
+        config_updated_at: number | null;
+    }> {
+        const device = deviceId || import.meta.env.VITE_DEVICE_ID || 'motionplay-device-001';
+        const response = await axios.get(`${API_BASE_URL}/device/${device}/config`);
+        return response.data;
+    }
+
+    // Update device configuration in cloud (and sends to firmware via MQTT)
+    async updateDeviceConfig(config: VCNL4040Config, deviceId?: string): Promise<{
+        device_id: string;
+        sensor_config: VCNL4040Config;
+        config_updated_at: number;
+        message: string;
+    }> {
+        const device = deviceId || import.meta.env.VITE_DEVICE_ID || 'motionplay-device-001';
+        const response = await axios.put(`${API_BASE_URL}/device/${device}/config`, {
+            sensor_config: config
+        });
+        return response.data;
     }
 }
 

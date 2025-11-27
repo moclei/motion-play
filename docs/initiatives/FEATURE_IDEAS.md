@@ -9,6 +9,7 @@
 - Frontend is not synched when firmware is reset
 - Frontend should be the "source of truth"
 - Config settings should be stored in the cloud when the frontend modifies them
-- Firmware pulls the cloud config settings on boot. 
+- Firmware pulls the cloud config settings on boot.
+- Config settings are visible as labels on each session in the session list
 
 

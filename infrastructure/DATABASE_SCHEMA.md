@@ -164,6 +164,37 @@ Partition Key: device_id (String)
 | wifi_rssi | Number | WiFi signal strength |
 | free_heap | Number | Free memory (bytes) |
 | uptime_ms | Number | Device uptime (milliseconds) |
+| **sensor_config** | **Object** | **Persistent sensor configuration (added Nov 2025)** |
+| **config_updated_at** | **Number** | **Timestamp when config was last updated (epoch ms)** |
+
+### Sensor Configuration Object
+
+The `sensor_config` field stores the active sensor configuration for the device. This is the **single source of truth** for device settings and persists across firmware reboots.
+
+```json
+{
+  "sample_rate_hz": 1000,
+  "led_current": "200mA",
+  "integration_time": "1T",
+  "high_resolution": true,
+  "read_ambient": true,
+  "i2c_clock_khz": 400
+}
+```
+
+**Configuration Flow**:
+1. Frontend → `PUT /device/{id}/config` → Updates DynamoDB
+2. Lambda sends MQTT command to firmware
+3. Firmware applies config immediately
+4. On firmware reboot → `GET /device/{id}/config` → Restores from cloud
+
+**Default Values** (if config doesn't exist):
+- `sample_rate_hz`: 1000
+- `led_current`: "200mA"
+- `integration_time`: "1T"
+- `high_resolution`: true
+- `read_ambient`: true
+- `i2c_clock_khz`: 400
 
 ---
 
@@ -231,7 +262,7 @@ If you ever need to change the composite key scheme:
 
 ---
 
-**Last Updated**: November 15, 2025  
+**Last Updated**: November 25, 2025  
 **Author**: Marc  
-**Version**: 1.1 (Added composite key documentation)
+**Version**: 1.2 (Added sensor_config field to MotionPlayDevices table)
 

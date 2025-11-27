@@ -232,6 +232,15 @@ void DisplayManager::drawSessionStatus()
         // Draw pulsing effect (filled circle)
         tft.fillCircle(centerX, STATUS_INDICATOR_Y + STATUS_INDICATOR_SIZE / 2, STATUS_INDICATOR_SIZE / 2 - 5, TFT_RED);
         showMessage("Recording in progress...", TFT_RED);
+        
+        // Show config on second line if available
+        if (!configString.isEmpty())
+        {
+            tft.setTextSize(1);
+            tft.setTextColor(TFT_CYAN, TFT_BLACK);
+            int configY = MESSAGE_Y + 15; // Below the main message
+            tft.drawString(configString, SCREEN_WIDTH / 2, configY);
+        }
         break;
 
     case DISPLAY_UPLOADING:
@@ -281,6 +290,17 @@ void DisplayManager::showBootScreen()
 void DisplayManager::updateStatus(const String &status, uint16_t color)
 {
     showMessage(status, color);
+}
+
+void DisplayManager::setConfigString(const String &config)
+{
+    configString = config;
+    
+    // Refresh display if we're currently recording
+    if (currentDisplayState == DISPLAY_RECORDING)
+    {
+        drawSessionStatus();
+    }
 }
 
 void DisplayManager::showNetworkInfo(const String &ip, int rssi)

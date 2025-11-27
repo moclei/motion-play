@@ -54,6 +54,15 @@ bool NetworkManager::loadConfig() {
 
     ssid = doc["wifi"]["ssid"].as<String>();
     password = doc["wifi"]["password"].as<String>();
+    deviceId = doc["device_id"].as<String>();
+    
+    // Load API endpoint if available
+    if (doc.containsKey("api") && doc["api"].containsKey("endpoint"))
+    {
+        apiEndpoint = doc["api"]["endpoint"].as<String>();
+        Serial.print("API Endpoint: ");
+        Serial.println(apiEndpoint);
+    }
 
     return true;
 }
@@ -103,4 +112,12 @@ void NetworkManager::checkConnection() {
         Serial.println("WiFi connection lost, reconnecting...");
         connectWiFi();
     }
+}
+
+String NetworkManager::getDeviceId() {
+    return deviceId;
+}
+
+String NetworkManager::getApiEndpoint() {
+    return apiEndpoint;
 }

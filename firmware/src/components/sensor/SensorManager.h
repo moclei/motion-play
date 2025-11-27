@@ -102,6 +102,7 @@ private:
     // Configuration helpers
     VCNL4040_LEDCurrent parseLEDCurrent(const String& current);
     VCNL4040_ProximityIntegration parseIntegrationTime(const String& time);
+    VCNL4040_LEDDutyCycle parseDutyCycle(const String& duty);
     bool applySensorConfig(uint8_t sensorIndex);
 
 public:

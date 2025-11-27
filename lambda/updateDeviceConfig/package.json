@@ -1,0 +1,12 @@
+{
+  "name": "update-device-config",
+  "version": "1.0.0",
+  "description": "Lambda function to update device sensor configuration",
+  "main": "index.js",
+  "dependencies": {
+    "@aws-sdk/client-dynamodb": "^3.490.0",
+    "@aws-sdk/lib-dynamodb": "^3.490.0",
+    "@aws-sdk/client-iot-data-plane": "^3.490.0"
+  }
+}
+

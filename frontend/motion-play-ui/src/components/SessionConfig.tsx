@@ -59,13 +59,28 @@ export const SessionConfig = ({ session }: SessionConfigProps) => {
                     <Clock size={20} className="text-green-600 mt-1" />
                     <div>
                         <div className="text-sm font-medium text-gray-700">
-                            Integration Time
+                            Integration Time (Pulse)
                         </div>
                         <div className="text-lg font-bold text-gray-900">
                             {config.integration_time}
                         </div>
                     </div>
                 </div>
+
+                {/* Duty Cycle */}
+                {config.duty_cycle && (
+                    <div className="flex items-start gap-3 p-3 bg-orange-50 rounded">
+                        <Gauge size={20} className="text-orange-600 mt-1" />
+                        <div>
+                            <div className="text-sm font-medium text-gray-700">
+                                Duty Cycle (Sample Rate)
+                            </div>
+                            <div className="text-lg font-bold text-gray-900">
+                                {config.duty_cycle}
+                            </div>
+                        </div>
+                    </div>
+                )}
 
                 {/* Resolution */}
                 <div className="flex items-start gap-3 p-3 bg-purple-50 rounded">
