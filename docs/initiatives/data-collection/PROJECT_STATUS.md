@@ -1,7 +1,32 @@
 # Motion Play Project Status
 
-**Last Updated:** November 14, 2025  
-**Overall Progress:** Phase 3-B - 100% Complete ✅
+**Last Updated:** November 28, 2025  
+**Overall Progress:** Phase 3-B - 100% Complete ✅ | Ongoing enhancements in progress
+
+---
+
+## 🔄 Recent Updates (November 28, 2025)
+
+### Data Analysis Enhancements
+Enhanced SessionChart component with ML preparation and analysis tools:
+
+- ✅ **Time Window Zooming** - Recharts Brush component for drilling down into brief detection events
+  - Drag handles to zoom from full 10-15s session to millisecond-level detail
+  - Mini-chart overview shows full session context
+  - Perfect for analyzing sensor trigger sequences
+
+- ✅ **Data Processing Filters** - Toggleable analysis tools:
+  - Moving average smoothing (3-21 sample window) for noise reduction
+  - Baseline removal for normalizing sensors with different idle values
+  - Peak threshold filter (0-20 range) for isolating detection events
+  - Non-destructive processing applied on-the-fly
+
+- ✅ **Visual Improvements**
+  - Increased chart height to 500px to accommodate brush timeline
+  - Processing status indicator when filters are active
+  - Helpful UI hints for new features
+
+**Why This Matters:** These tools make it much easier to analyze brief detection events (50-100ms windows) within longer sessions, and to prepare data for ML model training by reducing noise and highlighting meaningful signals.
 
 ---
 

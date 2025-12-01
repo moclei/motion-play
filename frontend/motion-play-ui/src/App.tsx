@@ -1,8 +1,8 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useCallback } from 'react';
 import { Toaster } from 'react-hot-toast';
 import toast from 'react-hot-toast';
 import { SessionList, type SessionListRef } from './components/SessionList';
-import { SessionChart } from './components/SessionChart';
+import { SessionChart, type BrushTimeRange } from './components/SessionChart';
 import { LabelEditor } from './components/LabelEditor';
 import { ExportButton } from './components/ExportButton';
 import { SessionConfig } from './components/SessionConfig';
@@ -18,12 +18,19 @@ function App() {
   const [loading, setLoading] = useState(false);
   const [loadingSessionId, setLoadingSessionId] = useState<string | null>(null);
   const [settingsOpen, setSettingsOpen] = useState(false);
+  const [brushTimeRange, setBrushTimeRange] = useState<BrushTimeRange | null>(null);
   const sessionListRef = useRef<SessionListRef>(null);
+
+  // Stable callback for brush changes (won't cause SessionChart to re-render)
+  const handleBrushChange = useCallback((range: BrushTimeRange | null) => {
+    setBrushTimeRange(range);
+  }, []);
 
   const handleSelectSession = async (session: Session) => {
     setSelectedSession(session);
     setLoading(true);
     setLoadingSessionId(session.session_id);
+    setBrushTimeRange(null); // Reset brush selection when changing sessions
 
     try {
       const data = await api.getSessionData(session.session_id);
@@ -95,9 +102,9 @@ function App() {
   return (
     <div className="h-screen bg-gray-50 flex flex-col overflow-hidden">
       <Toaster position="top-right" />
-      
+
       {/* Header with controls */}
-      <Header 
+      <Header
         onCollectionStopped={handleCollectionStopped}
         onSettingsClick={() => setSettingsOpen(true)}
       />
@@ -107,8 +114,8 @@ function App() {
         <div className="flex gap-6 p-6 h-full w-full">
           {/* Left - Session List (narrower, scrollable) */}
           <div className="w-80 bg-white rounded-lg shadow flex flex-col max-h-full">
-            <SessionList 
-              ref={sessionListRef} 
+            <SessionList
+              ref={sessionListRef}
               onSelectSession={handleSelectSession}
               onSessionDeleted={handleSessionDeleted}
               loadingSessionId={loadingSessionId}
@@ -152,7 +159,10 @@ function App() {
 
                 {/* Chart - Most important, show first */}
                 <div className="mb-6">
-                  <SessionChart readings={sessionData.readings} />
+                  <SessionChart
+                    readings={sessionData.readings}
+                    onBrushChange={handleBrushChange}
+                  />
                 </div>
 
                 {/* Session Config - Context about data collection */}
@@ -173,14 +183,17 @@ function App() {
                 {/* Export - Utility function */}
                 <div className="p-4 border rounded bg-gray-50">
                   <h3 className="font-semibold text-gray-800 mb-3">Export Data</h3>
-                  <ExportButton sessionData={sessionData} />
+                  <ExportButton
+                    sessionData={sessionData}
+                    brushTimeRange={brushTimeRange}
+                  />
                 </div>
               </div>
             ) : (
               <div className="flex items-center justify-center h-full">
                 <div className="text-center text-red-500">
                   <p className="text-lg">Failed to load session data</p>
-                  <button 
+                  <button
                     onClick={() => handleSelectSession(selectedSession)}
                     className="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
                   >
@@ -194,7 +207,7 @@ function App() {
       </main>
 
       {/* Settings Modal */}
-      <SettingsModal 
+      <SettingsModal
         isOpen={settingsOpen}
         onClose={() => setSettingsOpen(false)}
       />
