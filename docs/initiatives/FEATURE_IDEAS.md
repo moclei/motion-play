@@ -1,8 +1,22 @@
-## New Feature Ideas
+## Feature Ideas & Implementation Tracking
 
-**Date:** November 22, 2025  
-**Status:** Proposed - Not Yet Implemented  
-**Context:** One place to note all ideas I have
+**Last Updated:** November 28, 2025  
+**Context:** One place to note all ideas and track implementation
+
+---
+
+## ✅ Recently Implemented
+
+#### Data Analysis Tools (November 28, 2025)
+- ✅ Time window zooming with Recharts Brush component
+- ✅ Data processing filters: smoothing, baseline removal, peak threshold
+- ✅ Enhanced visualization for ML data preparation
+
+---
+
+## 💡 New Feature Ideas
+
+**Status:** Proposed - Not Yet Implemented
 
 #### Config settings saved in the cloud, pulled by device on initialization
 - Config settings are baked into the firmware

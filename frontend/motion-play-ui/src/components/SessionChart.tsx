@@ -1,9 +1,16 @@
-import { useState } from 'react';
+import { useState, useRef, useCallback, memo } from 'react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Brush } from 'recharts';
 import type { SensorReading } from '../services/api';
 
+// Time range selection for export (decoupled from chart behavior)
+export interface BrushTimeRange {
+    startTime: number;
+    endTime: number;
+}
+
 interface Props {
     readings: SensorReading[];
+    onBrushChange?: (range: BrushTimeRange | null) => void;
 }
 
 // Data processing utilities
@@ -23,9 +30,14 @@ const applyThreshold = (data: number[], threshold: number): (number | null)[] =>
     return data.map(val => val >= threshold ? val : null);
 };
 
-export const SessionChart = ({ readings }: Props) => {
+export const SessionChart = memo(({ readings, onBrushChange }: Props) => {
     const [selectedSide, setSelectedSide] = useState<number | null>(null);
     const [selectedPcb, setSelectedPcb] = useState<number | null>(null);
+
+    // Ref for debouncing brush change notifications (doesn't affect chart behavior)
+    const brushDebounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+    const onBrushChangeRef = useRef(onBrushChange);
+    onBrushChangeRef.current = onBrushChange;
 
     // Data processing options
     const [enableSmoothing, setEnableSmoothing] = useState(false);
@@ -147,6 +159,42 @@ export const SessionChart = ({ readings }: Props) => {
         });
         return dataPoint;
     });
+
+    // Debounced brush change handler - notifies parent of time range without affecting chart
+    const handleBrushChange = useCallback((brushState: { startIndex?: number; endIndex?: number }) => {
+        // Cancel any pending notification
+        if (brushDebounceRef.current) {
+            clearTimeout(brushDebounceRef.current);
+        }
+
+        // Debounce: wait 300ms after last change before notifying parent
+        brushDebounceRef.current = setTimeout(() => {
+            if (!onBrushChangeRef.current) return;
+
+            console.log('handleBrushChange, we have a brush change function');
+
+            if (brushState.startIndex === undefined || brushState.endIndex === undefined) {
+                console.log('handleBrushChange, no start or end index');
+                onBrushChangeRef.current(null);
+                return;
+            }
+            console.log('handleBrushChange, we had start and end index');
+
+            const startTime = chartData[brushState.startIndex]?.time ?? 0;
+            const endTime = chartData[brushState.endIndex]?.time ?? 0;
+
+            // Only report as a selection if it's not the full range
+            const isFullRange = brushState.startIndex === 0 && brushState.endIndex === chartData.length - 1;
+
+            if (isFullRange) {
+                console.log('handleBrushChange, it was full range so we are sending null');
+                onBrushChangeRef.current(null);
+            } else {
+                console.log('handleBrushChange, it was not full range so we are sending the time range');
+                onBrushChangeRef.current({ startTime, endTime });
+            }
+        }, 300);
+    }, [chartData]);
 
     // Calculate statistics (guard against empty arrays and invalid values)
     const validProximities = filteredReadings
@@ -401,6 +449,7 @@ export const SessionChart = ({ readings }: Props) => {
                             stroke="#8884d8"
                             fill="#e0e7ff"
                             travellerWidth={10}
+                            onChange={handleBrushChange}
                         >
                             {/* Mini chart in brush - simplified view */}
                             <LineChart>
@@ -530,4 +579,4 @@ export const SessionChart = ({ readings }: Props) => {
             </div>
         </div>
     );
-};
+});

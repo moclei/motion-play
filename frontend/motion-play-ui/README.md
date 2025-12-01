@@ -79,7 +79,7 @@ interface SessionListProps {
 - Mode badge
 
 #### `SessionChart.tsx`
-**Purpose:** Interactive time-series visualization with statistics
+**Purpose:** Interactive time-series visualization with statistics and data analysis tools
 
 **Props:**
 ```typescript
@@ -89,19 +89,34 @@ interface SessionChartProps {
 ```
 
 **Features:**
-- Dual-line chart (Side 1: dark green, Side 2: dark blue)
-- Clickable side filtering (show one or both sides)
+- Multi-sensor line chart with color coding:
+  - Side 1: Dark green, Side 2: Dark blue
+  - Line styles vary by PCB (solid/dashed/dotted)
+- PCB and side filtering (show specific sensors or all)
+- **Time window zooming** with interactive brush component
+- **Data processing filters** for analysis and ML prep:
+  - Moving average smoothing (3-21 sample window)
+  - Baseline removal (subtract minimum value)
+  - Peak threshold filter (0-20 range)
 - Real-time statistics:
-  - Average proximity (overall + per side)
+  - Average proximity (overall + per side + per sensor)
   - Max/Min proximity
-  - Sample counts per side
+  - Sample counts per side and per sensor
 - Handles empty/invalid data gracefully
 
 **Chart Details:**
 - X-axis: Time offset (ms)
 - Y-axis: Proximity value
 - Tooltip: Shows exact values on hover
+- Brush timeline: Drag handles to zoom into specific time windows
 - `connectNulls` for smooth lines
+
+**Data Analysis:**
+The processing filters are designed for:
+- Noise reduction (smoothing)
+- Normalizing sensors with different baselines (baseline removal)
+- Isolating detection events (threshold filter)
+- Preparing data for ML model training
 
 #### `DeviceControl.tsx`
 **Purpose:** Start/stop data collection
@@ -617,7 +632,16 @@ Currently no automated tests. For manual testing:
 - **React Docs:** https://react.dev/
 - **Tailwind Docs:** https://tailwindcss.com/
 
+## Recent Updates
+
+### November 28, 2025
+- **Enhanced SessionChart with data analysis tools:**
+  - Added interactive Brush component for time window zooming
+  - Added data processing filters: moving average smoothing, baseline removal, peak threshold
+  - Increased chart height to 500px to accommodate brush timeline
+  - Added visual indicators for processed data
+
 ---
 
-*Last Updated: November 14, 2025*
+*Last Updated: November 28, 2025*
 *For questions: Consult main project README.md*
