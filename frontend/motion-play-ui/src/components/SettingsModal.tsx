@@ -11,6 +11,7 @@ interface SensorConfig {
     high_resolution: boolean;
     read_ambient: boolean;
     i2c_clock_khz: number;
+    multi_pulse: string;
 }
 
 interface SettingsModalProps {
@@ -26,6 +27,7 @@ const DEFAULT_CONFIG: SensorConfig = {
     high_resolution: true,
     read_ambient: true,
     i2c_clock_khz: 400,
+    multi_pulse: '1',
 };
 
 export const SettingsModal = ({ isOpen, onClose }: SettingsModalProps) => {
@@ -47,6 +49,7 @@ export const SettingsModal = ({ isOpen, onClose }: SettingsModalProps) => {
             setConfig({
                 ...response.sensor_config,
                 i2c_clock_khz: response.sensor_config.i2c_clock_khz || 400,
+                multi_pulse: response.sensor_config.multi_pulse || '1',
             });
         } catch (err) {
             console.error('Failed to load config from cloud:', err);
@@ -72,6 +75,13 @@ export const SettingsModal = ({ isOpen, onClose }: SettingsModalProps) => {
         '1/80',   // ~100 Hz
         '1/160',  // ~50 Hz
         '1/320'   // ~25 Hz - Slowest, best battery
+    ];
+
+    const multiPulseOptions = [
+        { value: '1', label: '1 pulse (default)' },
+        { value: '2', label: '2 pulses (~2× signal)' },
+        { value: '4', label: '4 pulses (~4× signal)' },
+        { value: '8', label: '8 pulses (~8× signal)' },
     ];
 
     const handleApplyConfig = async () => {
@@ -181,6 +191,27 @@ export const SettingsModal = ({ isOpen, onClose }: SettingsModalProps) => {
                                 </select>
                                 <p className="mt-1 text-sm text-gray-500">
                                     Controls measurement frequency. 1/40 = fastest response, 1/320 = best battery life.
+                                </p>
+                            </div>
+
+                            {/* Multi-Pulse Mode */}
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-2">
+                                    Multi-Pulse Mode
+                                </label>
+                                <select
+                                    value={config.multi_pulse}
+                                    onChange={(e) => setConfig({ ...config, multi_pulse: e.target.value })}
+                                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                >
+                                    {multiPulseOptions.map((option) => (
+                                        <option key={option.value} value={option.value}>
+                                            {option.label}
+                                        </option>
+                                    ))}
+                                </select>
+                                <p className="mt-1 text-sm text-gray-500">
+                                    Fires multiple IR pulses per measurement. More pulses = stronger signal, same sample rate.
                                 </p>
                             </div>
 

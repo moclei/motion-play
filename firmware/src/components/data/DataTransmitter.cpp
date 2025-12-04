@@ -77,15 +77,7 @@ bool DataTransmitter::transmitBatch(const String &sessionId,
     String payload;
     size_t payloadSize = serializeJson(doc, payload);
 
-    // Publish via MQTT
-    Serial.print("Transmitting batch ");
-    Serial.print(offset / BATCH_SIZE);
-    Serial.print(" (");
-    Serial.print(count);
-    Serial.print(" samples, ");
-    Serial.print(payloadSize);
-    Serial.println(" bytes)");
-
+    // Publish via MQTT (silent on success, only log errors)
     bool success = mqttManager->publishData(doc);
 
     if (!success)
@@ -111,7 +103,9 @@ bool DataTransmitter::transmitSession(SessionManager &session, const SensorConfi
 
     String sessionId = session.getSessionId();
     String deviceId = "motionplay-device-001"; // TODO: Get from config
-    unsigned long startTime = millis() - session.getDuration();
+    // Use actual session start time, not calculated from current millis()
+    // This ensures timestamps are relative to when recording actually started
+    unsigned long startTime = session.getStartTime();
     unsigned long duration = session.getDuration();
 
     std::vector<SensorReading, PSRAMAllocator<SensorReading>> &readings = session.getDataBuffer();

@@ -96,13 +96,18 @@ private:
     QueueHandle_t dataQueue = NULL;
     SensorConfiguration* activeConfig = nullptr;  // Reference to active configuration
     
+    // Graceful shutdown flag - volatile because accessed from multiple cores
+    volatile bool stopRequested = false;
+    
     bool initializePCA();
+    void cleanupI2CBus();  // Clean up I2C bus state
     static void sensorTaskFunction(void *parameter);
     
     // Configuration helpers
     VCNL4040_LEDCurrent parseLEDCurrent(const String& current);
     VCNL4040_ProximityIntegration parseIntegrationTime(const String& time);
     VCNL4040_LEDDutyCycle parseDutyCycle(const String& duty);
+    uint8_t parseMultiPulse(const String& mp);  // Multi-pulse mode: 1, 2, 4, or 8 pulses
     bool applySensorConfig(uint8_t sensorIndex);
 
 public:
@@ -114,6 +119,7 @@ public:
     bool readSensor(uint8_t sensorIndex, SensorReading &reading);
     std::vector<SensorMetadata> getSensorMetadata();
     bool reinitialize(SensorConfiguration* config);
+    void dumpSensorConfiguration();  // Diagnostic: print all sensor configs to serial
 };
 
 #endif

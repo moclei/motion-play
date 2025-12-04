@@ -1,4 +1,4 @@
-import { Settings, Zap, Clock, Gauge } from 'lucide-react';
+import { Settings, Zap, Clock, Gauge, Repeat } from 'lucide-react';
 import type { Session } from '../services/api';
 
 interface SessionConfigProps {
@@ -77,6 +77,21 @@ export const SessionConfig = ({ session }: SessionConfigProps) => {
                             </div>
                             <div className="text-lg font-bold text-gray-900">
                                 {config.duty_cycle}
+                            </div>
+                        </div>
+                    </div>
+                )}
+
+                {/* Multi-Pulse Mode */}
+                {config.multi_pulse && (
+                    <div className="flex items-start gap-3 p-3 bg-pink-50 rounded">
+                        <Repeat size={20} className="text-pink-600 mt-1" />
+                        <div>
+                            <div className="text-sm font-medium text-gray-700">
+                                Multi-Pulse Mode
+                            </div>
+                            <div className="text-lg font-bold text-gray-900">
+                                {config.multi_pulse === '1' ? '1 pulse (normal)' : `${config.multi_pulse} pulses`}
                             </div>
                         </div>
                     </div>

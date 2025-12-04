@@ -1,5 +1,6 @@
 #include "DisplayManager.h"
 #include "pin_config.h"
+#include "components/sensor/SensorConfiguration.h"
 
 void DisplayManager::init()
 {
@@ -156,6 +157,224 @@ void DisplayManager::drawCheckmark(int x, int y, uint16_t color)
     tft.drawLine(x + 3, y + 9, x + 8, y + 1, color);
 }
 
+void DisplayManager::drawModeBadge()
+{
+    // Draw mode badge in top-right corner
+    const int badgeX = SCREEN_WIDTH - 60;
+    const int badgeY = 4;
+    const int badgeW = 55;
+    const int badgeH = 20;
+    
+    // Get mode text and color
+    String modeText;
+    uint16_t bgColor;
+    uint16_t textColor = TFT_WHITE;
+    
+    switch (currentMode)
+    {
+    case MODE_IDLE:
+        modeText = "IDLE";
+        bgColor = TFT_DARKGREY;
+        break;
+    case MODE_DEBUG:
+        modeText = "DEBUG";
+        bgColor = TFT_BLUE;
+        break;
+    case MODE_PLAY:
+        modeText = "PLAY";
+        bgColor = TFT_GREEN;
+        textColor = TFT_BLACK;
+        break;
+    default:
+        modeText = "???";
+        bgColor = TFT_DARKGREY;
+        break;
+    }
+    
+    // Draw badge background with rounded corners effect
+    tft.fillRoundRect(badgeX, badgeY, badgeW, badgeH, 4, bgColor);
+    
+    // Draw badge text centered
+    tft.setTextSize(1);
+    tft.setTextColor(textColor, bgColor);
+    int textWidth = modeText.length() * 6;
+    tft.drawString(modeText, badgeX + (badgeW - textWidth) / 2, badgeY + 6);
+}
+
+void DisplayManager::drawStatusBadge()
+{
+    // Draw compact status badge in header (next to title)
+    String statusText;
+    uint16_t bgColor;
+    uint16_t textColor = TFT_WHITE;
+    
+    switch (currentDisplayState)
+    {
+    case DISPLAY_IDLE:
+        statusText = "IDLE";
+        bgColor = TFT_DARKGREY;
+        break;
+    case DISPLAY_RECORDING:
+        statusText = "REC";
+        bgColor = TFT_RED;
+        break;
+    case DISPLAY_UPLOADING:
+        statusText = "UP";
+        bgColor = TFT_YELLOW;
+        textColor = TFT_BLACK;
+        break;
+    case DISPLAY_SUCCESS:
+        statusText = "OK";
+        bgColor = TFT_GREEN;
+        textColor = TFT_BLACK;
+        break;
+    case DISPLAY_ERROR:
+        statusText = "ERR";
+        bgColor = TFT_RED;
+        break;
+    default:
+        statusText = "?";
+        bgColor = TFT_DARKGREY;
+        break;
+    }
+    
+    // Draw badge background
+    tft.fillRoundRect(STATUS_BADGE_X, STATUS_BADGE_Y, STATUS_BADGE_W, STATUS_BADGE_H, 4, bgColor);
+    
+    // Draw badge text centered
+    tft.setTextSize(1);
+    tft.setTextColor(textColor, bgColor);
+    int textWidth = statusText.length() * 6;
+    tft.drawString(statusText, STATUS_BADGE_X + (STATUS_BADGE_W - textWidth) / 2, STATUS_BADGE_Y + 6);
+    
+    // Add pulsing dot for recording
+    if (currentDisplayState == DISPLAY_RECORDING)
+    {
+        tft.fillCircle(STATUS_BADGE_X + 8, STATUS_BADGE_Y + STATUS_BADGE_H / 2, 4, TFT_WHITE);
+    }
+}
+
+void DisplayManager::drawConfigPanel()
+{
+    // Draw sensor configuration in center area
+    const int panelX = 8;
+    const int panelY = CONFIG_AREA_Y;
+    const int panelW = SCREEN_WIDTH - 16;
+    const int panelH = CONFIG_AREA_HEIGHT;
+    
+    // Clear config area
+    tft.fillRect(panelX, panelY, panelW, panelH, TFT_BLACK);
+    
+    // Draw subtle border
+    tft.drawRoundRect(panelX, panelY, panelW, panelH, 4, 0x3186);  // Dark gray border
+    
+    // Config title
+    tft.setTextSize(1);
+    tft.setTextColor(TFT_CYAN, TFT_BLACK);
+    tft.drawString("SENSOR CONFIG", panelX + 6, panelY + 4);
+    
+    // Horizontal line under title
+    tft.drawFastHLine(panelX + 4, panelY + 15, panelW - 8, 0x3186);
+    
+    // Layout: 3 columns for main settings
+    const int col1X = panelX + 8;
+    const int col2X = panelX + 110;
+    const int col3X = panelX + 210;
+    const int row1Y = panelY + 22;
+    const int row2Y = panelY + 42;
+    const int row3Y = panelY + 62;
+    const int row4Y = panelY + 82;
+    
+    // Row 1: Rate, LED Current, Integration Time
+    tft.setTextColor(TFT_LIGHTGREY, TFT_BLACK);
+    tft.drawString("Rate:", col1X, row1Y);
+    tft.drawString("LED:", col2X, row1Y);
+    tft.drawString("IT:", col3X, row1Y);
+    
+    tft.setTextColor(TFT_WHITE, TFT_BLACK);
+    tft.drawString(String(cachedSampleRate) + "Hz", col1X + 35, row1Y);
+    tft.drawString(cachedLedCurrent, col2X + 30, row1Y);
+    tft.drawString(cachedIntegrationTime, col3X + 20, row1Y);
+    
+    // Row 2: Duty Cycle, I2C Clock
+    tft.setTextColor(TFT_LIGHTGREY, TFT_BLACK);
+    tft.drawString("Duty:", col1X, row2Y);
+    tft.drawString("I2C:", col2X, row2Y);
+    
+    tft.setTextColor(TFT_WHITE, TFT_BLACK);
+    tft.drawString(cachedDutyCycle, col1X + 35, row2Y);
+    tft.drawString(String(cachedI2cClock) + "kHz", col2X + 30, row2Y);
+    
+    // Row 3: Boolean flags with colored indicators
+    // Hi-Res indicator
+    tft.setTextColor(TFT_LIGHTGREY, TFT_BLACK);
+    tft.drawString("Hi-Res:", col1X, row3Y);
+    if (cachedHighRes)
+    {
+        tft.fillCircle(col1X + 50, row3Y + 3, 4, TFT_GREEN);
+        tft.setTextColor(TFT_GREEN, TFT_BLACK);
+        tft.drawString("ON", col1X + 58, row3Y);
+    }
+    else
+    {
+        tft.fillCircle(col1X + 50, row3Y + 3, 4, TFT_DARKGREY);
+        tft.setTextColor(TFT_DARKGREY, TFT_BLACK);
+        tft.drawString("OFF", col1X + 58, row3Y);
+    }
+    
+    // Ambient indicator
+    tft.setTextColor(TFT_LIGHTGREY, TFT_BLACK);
+    tft.drawString("Ambient:", col2X, row3Y);
+    if (cachedReadAmbient)
+    {
+        tft.fillCircle(col2X + 55, row3Y + 3, 4, TFT_GREEN);
+        tft.setTextColor(TFT_GREEN, TFT_BLACK);
+        tft.drawString("ON", col2X + 63, row3Y);
+    }
+    else
+    {
+        tft.fillCircle(col2X + 55, row3Y + 3, 4, TFT_DARKGREY);
+        tft.setTextColor(TFT_DARKGREY, TFT_BLACK);
+        tft.drawString("OFF", col2X + 63, row3Y);
+    }
+    
+    // Row 4: Sample count during recording
+    if (currentDisplayState == DISPLAY_RECORDING)
+    {
+        tft.setTextColor(TFT_CYAN, TFT_BLACK);
+        tft.drawString("Samples:", col1X, row4Y);
+        tft.setTextColor(TFT_WHITE, TFT_BLACK);
+        tft.drawString(String(sampleCount), col1X + 55, row4Y);
+    }
+}
+
+void DisplayManager::setMode(DisplayMode mode)
+{
+    currentMode = mode;
+    // Redraw the badge immediately
+    drawModeBadge();
+}
+
+void DisplayManager::setSensorConfig(const SensorConfiguration* config)
+{
+    if (config == nullptr) return;
+    
+    // Cache config values
+    cachedSampleRate = config->sample_rate_hz;
+    cachedLedCurrent = config->led_current;
+    cachedIntegrationTime = config->integration_time;
+    cachedDutyCycle = config->duty_cycle;
+    cachedHighRes = config->high_resolution;
+    cachedReadAmbient = config->read_ambient;
+    cachedI2cClock = config->i2c_clock_khz;
+    
+    // Redraw config panel if on session screen
+    if (currentDisplayState != DISPLAY_ERROR)
+    {
+        drawConfigPanel();
+    }
+}
+
 // ============================================================================
 // SESSION SCREEN
 // ============================================================================
@@ -177,22 +396,24 @@ void DisplayManager::updateSampleCount(int count)
 {
     sampleCount = count;
 
-    // Update sample counter (only in recording state)
+    // Update sample counter in config panel (only in recording state)
     if (currentDisplayState == DISPLAY_RECORDING)
     {
-        tft.fillRect(SCREEN_WIDTH / 2 - 60, STATUS_INDICATOR_Y + STATUS_INDICATOR_SIZE + 10, 120, 20, TFT_BLACK);
-        tft.setTextSize(2);
+        // Clear and redraw just the sample count area in config panel
+        const int panelX = 8;
+        const int row4Y = CONFIG_AREA_Y + 82;
+        
+        tft.fillRect(panelX + 8 + 55, row4Y, 80, 12, TFT_BLACK);
+        tft.setTextSize(1);
         tft.setTextColor(TFT_WHITE, TFT_BLACK);
-        String countStr = String(count) + " samples";
-        int textWidth = countStr.length() * 12;
-        tft.drawString(countStr, SCREEN_WIDTH / 2 - textWidth / 2, STATUS_INDICATOR_Y + STATUS_INDICATOR_SIZE + 10);
+        tft.drawString(String(count), panelX + 8 + 55, row4Y);
     }
 }
 
 void DisplayManager::showMessage(const String &message, uint16_t color)
 {
     // Clear message area
-    tft.fillRect(0, MESSAGE_Y, SCREEN_WIDTH, 20, TFT_BLACK);
+    tft.fillRect(0, MESSAGE_Y, SCREEN_WIDTH, 25, TFT_BLACK);
 
     // Draw message centered
     tft.setTextSize(1);
@@ -203,79 +424,46 @@ void DisplayManager::showMessage(const String &message, uint16_t color)
 
 void DisplayManager::drawSessionStatus()
 {
-    // Clear screen
-    tft.fillRect(0, 0, SCREEN_WIDTH, STATUS_INDICATOR_Y + STATUS_INDICATOR_SIZE + 30, TFT_BLACK);
+    // Clear header area
+    tft.fillRect(0, 0, SCREEN_WIDTH, HEADER_HEIGHT, TFT_BLACK);
 
     // Title
     tft.setTextSize(2);
     tft.setTextColor(TFT_CYAN, TFT_BLACK);
-    tft.drawString("MOTION PLAY", 10, 5);
+    tft.drawString("MOTION", 8, 5);
+    
+    // Status badge (next to title)
+    drawStatusBadge();
+    
+    // Mode badge (top-right corner)
+    drawModeBadge();
+    
+    // Draw config panel in center area
+    drawConfigPanel();
 
-    // Status display
-    tft.setTextSize(1);
-    tft.setTextColor(TFT_LIGHTGREY, TFT_BLACK);
-    tft.drawString("Status:", 10, 30);
-
-    // Center status indicator
-    int centerX = SCREEN_WIDTH / 2;
-    int indicatorX = centerX - STATUS_INDICATOR_SIZE / 2;
-
+    // Show appropriate message based on state
     switch (currentDisplayState)
     {
     case DISPLAY_IDLE:
-        drawStatusIndicator(indicatorX, STATUS_INDICATOR_Y, TFT_DARKGREY, "IDLE");
         showMessage("Ready to record", TFT_LIGHTGREY);
         break;
 
     case DISPLAY_RECORDING:
-        drawStatusIndicator(indicatorX, STATUS_INDICATOR_Y, TFT_RED, "REC");
-        // Draw pulsing effect (filled circle)
-        tft.fillCircle(centerX, STATUS_INDICATOR_Y + STATUS_INDICATOR_SIZE / 2, STATUS_INDICATOR_SIZE / 2 - 5, TFT_RED);
         showMessage("Recording in progress...", TFT_RED);
-        
-        // Show config on second line if available
-        if (!configString.isEmpty())
-        {
-            tft.setTextSize(1);
-            tft.setTextColor(TFT_CYAN, TFT_BLACK);
-            int configY = MESSAGE_Y + 15; // Below the main message
-            tft.drawString(configString, SCREEN_WIDTH / 2, configY);
-        }
         break;
 
     case DISPLAY_UPLOADING:
-        drawStatusIndicator(indicatorX, STATUS_INDICATOR_Y, TFT_YELLOW, "UP");
         showMessage("Uploading to cloud...", TFT_YELLOW);
         break;
 
     case DISPLAY_SUCCESS:
-        drawStatusIndicator(indicatorX, STATUS_INDICATOR_Y, TFT_GREEN, "OK");
-        drawCheckmark(centerX - 10, STATUS_INDICATOR_Y + STATUS_INDICATOR_SIZE / 2 - 10, TFT_WHITE);
         showMessage("Upload complete!", TFT_GREEN);
         break;
 
     case DISPLAY_ERROR:
-        drawStatusIndicator(indicatorX, STATUS_INDICATOR_Y, TFT_RED, "ERR");
-        showMessage(errorMessage, TFT_RED);
+        showMessage(errorMessage.isEmpty() ? "Error occurred" : errorMessage, TFT_RED);
         break;
     }
-}
-
-void DisplayManager::drawStatusIndicator(int x, int y, uint16_t color, const String &label)
-{
-    // Draw circle
-    int centerX = x + STATUS_INDICATOR_SIZE / 2;
-    int centerY = y + STATUS_INDICATOR_SIZE / 2;
-
-    tft.drawCircle(centerX, centerY, STATUS_INDICATOR_SIZE / 2, color);
-    tft.drawCircle(centerX, centerY, STATUS_INDICATOR_SIZE / 2 - 1, color);
-    tft.drawCircle(centerX, centerY, STATUS_INDICATOR_SIZE / 2 - 2, color);
-
-    // Draw label inside circle
-    tft.setTextSize(2);
-    tft.setTextColor(color, TFT_BLACK);
-    int textWidth = label.length() * 12;
-    tft.drawString(label, centerX - textWidth / 2, centerY - 8);
 }
 
 // ============================================================================

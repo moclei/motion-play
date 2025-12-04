@@ -42,6 +42,7 @@ export interface VCNL4040Config {
     high_resolution: boolean;
     read_ambient: boolean;
     i2c_clock_khz?: number; // Optional for backward compatibility with old sessions
+    multi_pulse?: string;   // Multi-pulse mode: "1", "2", "4", or "8" pulses per measurement
 }
 
 export interface ActiveSensor {

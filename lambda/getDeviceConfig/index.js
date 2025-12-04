@@ -21,7 +21,8 @@ const DEFAULT_CONFIG = {
     duty_cycle: "1/40",
     high_resolution: true,
     read_ambient: true,
-    i2c_clock_khz: 400
+    i2c_clock_khz: 400,
+    multi_pulse: "1"  // Multi-pulse mode: "1", "2", "4", or "8" pulses per measurement
 };
 
 exports.handler = async (event) => {

@@ -5,6 +5,22 @@ SensorManager::SensorManager() : mux(0x70)
     // Constructor
 }
 
+void SensorManager::cleanupI2CBus()
+{
+    // Disable all multiplexer channels to release the I2C bus
+    // IMPORTANT: Must select each TCA channel before disabling its PCA!
+    for (int i = 0; i < 3; i++)
+    {
+        mux.selectChannel(i);
+        delay(2);
+        pca_instances[i].disableAllChannels();
+    }
+    mux.disableAllChannels();
+    
+    // Small delay to ensure bus is stable
+    delayMicroseconds(100);
+}
+
 VCNL4040_LEDCurrent SensorManager::parseLEDCurrent(const String &current)
 {
     if (current == "50mA")
@@ -61,34 +77,121 @@ VCNL4040_LEDDutyCycle SensorManager::parseDutyCycle(const String &duty)
     return VCNL4040_LED_DUTY_1_40;
 }
 
+// Parse multi-pulse setting string to register value
+// PS_MPS bits 6:5 of PS_CONF3: 00=1, 01=2, 10=4, 11=8 pulses
+uint8_t SensorManager::parseMultiPulse(const String &mp)
+{
+    if (mp == "2")
+        return 0x01; // 01 = 2 pulses
+    if (mp == "4")
+        return 0x02; // 10 = 4 pulses
+    if (mp == "8")
+        return 0x03; // 11 = 8 pulses
+    // Default to 1 pulse (00)
+    return 0x00;
+}
+
 bool SensorManager::applySensorConfig(uint8_t sensorIndex)
 {
     if (sensorIndex >= NUM_SENSORS || activeConfig == nullptr)
         return false;
 
-    // Apply LED current
+    // Parse configuration values
     VCNL4040_LEDCurrent led = parseLEDCurrent(activeConfig->led_current);
-    sensors[sensorIndex].setProximityLEDCurrent(led);
-
-    // Apply integration time
     VCNL4040_ProximityIntegration integration = parseIntegrationTime(activeConfig->integration_time);
-    sensors[sensorIndex].setProximityIntegrationTime(integration);
-
-    // Apply duty cycle
     VCNL4040_LEDDutyCycle duty = parseDutyCycle(activeConfig->duty_cycle);
-    sensors[sensorIndex].setProximityLEDDutyCycle(duty);
+    uint8_t multiPulse = parseMultiPulse(activeConfig->multi_pulse);
+    bool highRes = activeConfig->high_resolution;
 
-    // Apply high resolution setting
-    sensors[sensorIndex].setProximityHighResolution(activeConfig->high_resolution);
+    // Debug: Print what we're trying to set
+    Serial.printf("  Config request: LED=%d (want %s), IT=%d, Duty=%d, MultiPulse=%d, HighRes=%d\n", 
+                  (int)led, activeConfig->led_current.c_str(), (int)integration, (int)duty, multiPulse, highRes);
 
-    Serial.printf("  Applied config: LED=%s, Integration=%s, Duty=%s, HighRes=%s, ReadAmbient=%s\n",
-                  activeConfig->led_current.c_str(),
-                  activeConfig->integration_time.c_str(),
-                  activeConfig->duty_cycle.c_str(),
-                  activeConfig->high_resolution ? "true" : "false",
-                  activeConfig->read_ambient ? "true" : "false");
+    // ========================================================================
+    // DIRECT REGISTER WRITES - Bypass Adafruit library for reliable config
+    // Using SparkFun-style approach: write full register values directly
+    // ========================================================================
 
-    return true;
+    // Step 1: Configure PS_CONF1/2 register (0x03)
+    // PS_CONF1 (low byte): bits 7:6 = PS_Duty, bits 3:1 = PS_IT, bit 0 = PS_SD
+    // PS_CONF2 (high byte): bit 3 = PS_HD
+    uint8_t ps_conf1 = ((duty & 0x03) << 6) |      // PS_Duty in bits 7:6
+                       ((integration & 0x07) << 1) | // PS_IT in bits 3:1
+                       0x00;                          // PS_SD = 0 (proximity enabled)
+    uint8_t ps_conf2 = (highRes ? 0x08 : 0x00);    // PS_HD in bit 3
+
+    Wire.beginTransmission(0x60);
+    Wire.write(0x03);
+    Wire.write(ps_conf1);
+    Wire.write(ps_conf2);
+    uint8_t err1 = Wire.endTransmission();
+    
+    delayMicroseconds(500); // Allow register to settle
+
+    // Step 2: Configure PS_CONF3/PS_MS register (0x04)
+    // PS_CONF3 (low byte): bits 6:5 = PS_MPS (multi-pulse), other bits default off
+    // PS_MS (high byte): bits 2:0 = LED_I
+    uint8_t ps_conf3 = (multiPulse & 0x03) << 5;  // PS_MPS in bits 6:5 (1, 2, 4, or 8 pulses)
+    uint8_t ps_ms = (led & 0x07);  // LED_I in bits 2:0, White channel enabled (bit 7 = 0)
+
+    Wire.beginTransmission(0x60);
+    Wire.write(0x04);
+    Wire.write(ps_conf3);
+    Wire.write(ps_ms);
+    uint8_t err2 = Wire.endTransmission();
+
+    Serial.printf("  Write: PS_CONF1/2=0x%02X%02X (err:%d), PS_CONF3/MS=0x%02X%02X (err:%d)\n",
+                  ps_conf2, ps_conf1, err1, ps_ms, ps_conf3, err2);
+
+    // Step 3: Verify by reading back - add longer delay for register to fully settle
+    delay(10);
+
+    // Read PS_CONF3/PS_MS (0x04)
+    Wire.beginTransmission(0x60);
+    Wire.write(0x04);
+    Wire.endTransmission(false);
+    Wire.requestFrom((uint8_t)0x60, (uint8_t)2);
+    uint8_t verify_low = Wire.available() ? Wire.read() : 0xFF;
+    uint8_t verify_high = Wire.available() ? Wire.read() : 0xFF;
+
+    uint8_t actual_led = verify_high & 0x07;
+    const char* led_ma[] = {"50mA", "75mA", "100mA", "120mA", "140mA", "160mA", "180mA", "200mA"};
+    
+    Serial.printf("  Verify read: PS_CONF3/MS=0x%02X%02X, LED_I bits=%d (%s)\n", 
+                  verify_high, verify_low, actual_led, led_ma[actual_led]);
+    
+    if (actual_led != (led & 0x07)) {
+        Serial.printf("  ⚠️ LED VERIFY FAILED: wrote %d, read %d (%s)\n", 
+                      (int)(led & 0x07), actual_led, led_ma[actual_led]);
+        
+        // Try writing AGAIN with extra delay
+        Serial.println("  Retrying LED current write...");
+        delay(50);
+        
+        Wire.beginTransmission(0x60);
+        Wire.write(0x04);
+        Wire.write(ps_conf3);
+        Wire.write(ps_ms);
+        uint8_t err_retry = Wire.endTransmission();
+        
+        delay(20);
+        
+        // Verify again
+        Wire.beginTransmission(0x60);
+        Wire.write(0x04);
+        Wire.endTransmission(false);
+        Wire.requestFrom((uint8_t)0x60, (uint8_t)2);
+        verify_low = Wire.available() ? Wire.read() : 0xFF;
+        verify_high = Wire.available() ? Wire.read() : 0xFF;
+        actual_led = verify_high & 0x07;
+        
+        Serial.printf("  Retry result: err=%d, LED_I=%d (%s)\n", 
+                      err_retry, actual_led, led_ma[actual_led]);
+    } else {
+        Serial.printf("  ✓ LED verified: %s\n", led_ma[actual_led]);
+    }
+
+    return (err1 == 0 && err2 == 0);
 }
 
 bool SensorManager::initializePCA()
@@ -257,100 +360,55 @@ bool SensorManager::init(SensorConfiguration *config)
             continue;
         }
 
-        // Try to initialize VCNL4040
-        if (!sensors[i].begin())
-        {
-            Serial.println("  ERROR: VCNL4040 initialization failed");
+        // Initialize VCNL4040 - just verify device ID, don't use Adafruit library's begin()
+        // The Adafruit library's begin() and subsequent calls were resetting our config!
+        
+        // Read device ID to verify sensor is present
+        Wire.beginTransmission(0x60);
+        Wire.write(0x0C); // Device ID register
+        Wire.endTransmission(false);
+        Wire.requestFrom(0x60, 2);
+        
+        if (Wire.available() >= 2) {
+            uint8_t id_low = Wire.read();
+            uint8_t id_high = Wire.read();
+            uint16_t device_id = (id_high << 8) | id_low;
+            
+            if (device_id != 0x0186) {
+                Serial.printf("  ERROR: Wrong device ID 0x%04X (expected 0x0186)\n", device_id);
+                sensorsActive[i] = false;
+                continue;
+            }
+            Serial.printf("  Device ID: 0x%04X ✓\n", device_id);
+        } else {
+            Serial.println("  ERROR: Failed to read device ID");
             sensorsActive[i] = false;
             continue;
         }
 
-        // Configure sensor (using Adafruit VCNL4040 API)
-        sensors[i].enableProximity(true);
-
-        // Apply configuration if provided, otherwise use defaults
+        // Apply configuration using DIRECT I2C only (no Adafruit library!)
         if (activeConfig != nullptr)
         {
             applySensorConfig(i);
         }
         else
         {
-            // Default configuration
-            sensors[i].setProximityLEDCurrent(VCNL4040_LED_CURRENT_200MA);
-            sensors[i].setProximityIntegrationTime(VCNL4040_PROXIMITY_INTEGRATION_TIME_1T);
-            sensors[i].setProximityHighResolution(true);
-        }
-
-        // Query and log actual integration time (WARNING: has 50ms delay!)
-        VCNL4040_ProximityIntegration pit = sensors[i].getProximityIntegrationTime();
-        Serial.printf("  Proximity Integration Time: %d (", pit);
-        switch (pit)
-        {
-        case VCNL4040_PROXIMITY_INTEGRATION_TIME_1T:
-            Serial.print("1T");
-            break;
-        case VCNL4040_PROXIMITY_INTEGRATION_TIME_1_5T:
-            Serial.print("1.5T");
-            break;
-        case VCNL4040_PROXIMITY_INTEGRATION_TIME_2T:
-            Serial.print("2T");
-            break;
-        case VCNL4040_PROXIMITY_INTEGRATION_TIME_2_5T:
-            Serial.print("2.5T");
-            break;
-        case VCNL4040_PROXIMITY_INTEGRATION_TIME_3T:
-            Serial.print("3T");
-            break;
-        case VCNL4040_PROXIMITY_INTEGRATION_TIME_3_5T:
-            Serial.print("3.5T");
-            break;
-        case VCNL4040_PROXIMITY_INTEGRATION_TIME_4T:
-            Serial.print("4T");
-            break;
-        case VCNL4040_PROXIMITY_INTEGRATION_TIME_8T:
-            Serial.print("8T");
-            break;
-        default:
-            Serial.print("UNKNOWN");
-        }
-        Serial.println(")");
-
-        // Read PS_CONF1 register directly to check PS_Duty setting
-        // PS_Duty is in bits 7:6 of PS_CONF1 low byte (register 0x03)
-        Wire.beginTransmission(0x60);
-        Wire.write(0x03); // PS_CONF1 register
-        Wire.endTransmission();
-        Wire.requestFrom(0x60, 2);
-
-        if (Wire.available() >= 2)
-        {
-            uint8_t ps_conf1_low = Wire.read();
-            uint8_t ps_conf1_high = Wire.read();
-
-            uint8_t ps_duty = (ps_conf1_low >> 6) & 0x03; // Extract bits 7:6
-            Serial.printf("  PS_Duty setting: %d (", ps_duty);
-
-            switch (ps_duty)
-            {
-            case 0:
-                Serial.println("1/40 -> ~200 Hz max) FAST");
-                break;
-            case 1:
-                Serial.println("1/80 -> ~100 Hz max)");
-                break;
-            case 2:
-                Serial.println("1/160 -> ~50 Hz max)");
-                break;
-            case 3:
-                Serial.println("1/320 -> ~25 Hz max) SLOW - THIS IS YOUR BOTTLENECK!");
-                break;
-            }
-
-            Serial.printf("  PS_CONF1 register: 0x%02X%02X\n", ps_conf1_high, ps_conf1_low);
-        }
-        else
-        {
-            Serial.println("  WARNING: Failed to read PS_CONF1 register!");
+            // Default configuration - direct I2C write
+            // PS_CONF1/2: Enable proximity, 1T integration, 1/40 duty, high res
+            Wire.beginTransmission(0x60);
+            Wire.write(0x03);
+            Wire.write(0x00); // PS_CONF1: PS_IT=0 (1T), PS_Duty=0 (1/40), PS_SD=0 (enabled)
+            Wire.write(0x08); // PS_CONF2: PS_HD=1 (high res)
+            Wire.endTransmission();
+            
+            // PS_MS: 200mA LED current
+            Wire.beginTransmission(0x60);
+            Wire.write(0x04);
+            Wire.write(0x00); // PS_MS low
+            Wire.write(0x07); // PS_MS high: LED_I=7 (200mA)
+            Wire.endTransmission();
+            
+            Serial.println("  Applied default config (200mA, 1T, 1/40, HighRes)");
         }
 
         Serial.println("  Sensor initialized successfully!");
@@ -359,8 +417,11 @@ bool SensorManager::init(SensorConfiguration *config)
     }
 
     // Clean up - disable all channels
+    // IMPORTANT: Must select each TCA channel before disabling its PCA!
     for (int i = 0; i < 3; i++)
     {
+        mux.selectChannel(i);
+        delay(2);
         pca_instances[i].disableAllChannels();
     }
     mux.disableAllChannels();
@@ -379,6 +440,10 @@ bool SensorManager::init(SensorConfiguration *config)
 
     initialized = true;
     Serial.println("Sensor Manager initialization complete!");
+
+    // Dump configuration for all sensors to verify they were configured correctly
+    dumpSensorConfiguration();
+
     return true;
 }
 
@@ -412,8 +477,19 @@ bool SensorManager::readSensor(uint8_t sensorIndex, SensorReading &reading)
     // Position 0,2,4 -> Side 1 (S1); Position 1,3,5 -> Side 2 (S2)
     reading.side = (sensorIndex % 2) + 1; // 0,2,4->1  1,3,5->2
 
-    // Always read proximity
-    reading.proximity = sensors[sensorIndex].getProximity();
+    // Read proximity directly via I2C (bypass Adafruit library to avoid config conflicts)
+    Wire.beginTransmission(0x60);
+    Wire.write(0x08); // PS_DATA register
+    Wire.endTransmission(false);
+    Wire.requestFrom(0x60, 2);
+    
+    if (Wire.available() >= 2) {
+        uint8_t prox_low = Wire.read();
+        uint8_t prox_high = Wire.read();
+        reading.proximity = (prox_high << 8) | prox_low;
+    } else {
+        reading.proximity = 0;
+    }
 
     // Conditionally read ambient light (skip if disabled for speed)
     if (activeConfig != nullptr && !activeConfig->read_ambient)
@@ -422,7 +498,19 @@ bool SensorManager::readSensor(uint8_t sensorIndex, SensorReading &reading)
     }
     else
     {
-        reading.ambient = sensors[sensorIndex].getAmbientLight();
+        // Read ambient light directly via I2C
+        Wire.beginTransmission(0x60);
+        Wire.write(0x09); // ALS_DATA register
+        Wire.endTransmission(false);
+        Wire.requestFrom(0x60, 2);
+        
+        if (Wire.available() >= 2) {
+            uint8_t als_low = Wire.read();
+            uint8_t als_high = Wire.read();
+            reading.ambient = (als_high << 8) | als_low;
+        } else {
+            reading.ambient = 0;
+        }
     }
 
     return true;
@@ -440,7 +528,7 @@ void SensorManager::sensorTaskFunction(void *parameter)
     SensorReading reading;
     unsigned long lastYield = micros();
 
-    while (true)
+    while (!manager->stopRequested)  // Check stop flag instead of infinite loop
     {
         unsigned long currentTime = micros();
 
@@ -461,6 +549,10 @@ void SensorManager::sensorTaskFunction(void *parameter)
             // Read all active sensors
             for (int i = 0; i < NUM_SENSORS; i++)
             {
+                // Check stop flag between sensor reads for faster response
+                if (manager->stopRequested)
+                    break;
+                    
                 // Skip inactive sensors
                 if (!manager->sensorsActive[i])
                     continue;
@@ -505,8 +597,11 @@ void SensorManager::sensorTaskFunction(void *parameter)
             }
 
             // Clean up - disable all channels after reading cycle
+            // IMPORTANT: Must select each TCA channel before disabling its PCA!
             for (int j = 0; j < 3; j++)
             {
+                manager->mux.selectChannel(j);
+                delayMicroseconds(100);
                 manager->pca_instances[j].disableAllChannels();
             }
             manager->mux.disableAllChannels();
@@ -521,6 +616,21 @@ void SensorManager::sensorTaskFunction(void *parameter)
             lastYield = currentYieldTime;
         }
     }
+    
+    // ===== GRACEFUL CLEANUP BEFORE EXIT =====
+    // This ensures the I2C bus is in a clean state before task ends
+    Serial.println("Sensor task stopping gracefully...");
+    
+    // Clean up I2C bus state
+    manager->cleanupI2CBus();
+    
+    Serial.println("Sensor task cleanup complete, exiting.");
+    
+    // Mark task as NULL before deleting (atomic-ish on ESP32)
+    manager->sensorTask = NULL;
+    
+    // Delete ourselves - this is the proper way to end a FreeRTOS task
+    vTaskDelete(NULL);
 }
 
 bool SensorManager::startCollection(QueueHandle_t queue)
@@ -538,6 +648,9 @@ bool SensorManager::startCollection(QueueHandle_t queue)
     }
 
     dataQueue = queue;
+    
+    // Reset stop flag before starting new task
+    stopRequested = false;
 
     // Create sensor task on Core 0
     // Stack size increased to 8192 to handle I2C operations and error logging
@@ -557,12 +670,48 @@ bool SensorManager::startCollection(QueueHandle_t queue)
 
 void SensorManager::stopCollection()
 {
-    if (sensorTask != NULL)
+    if (sensorTask == NULL)
     {
+        Serial.println("No sensor task running");
+        return;
+    }
+    
+    Serial.println("Requesting sensor task to stop...");
+    
+    // Signal the task to stop gracefully
+    stopRequested = true;
+    
+    // Wait for task to finish with timeout (max 500ms)
+    // The task checks stopRequested frequently and will exit cleanly
+    unsigned long startWait = millis();
+    const unsigned long STOP_TIMEOUT_MS = 500;
+    
+    while (sensorTask != NULL && (millis() - startWait) < STOP_TIMEOUT_MS)
+    {
+        // Feed watchdog while waiting
+        taskYIELD();
+        delay(10);
+    }
+    
+    // Check if task stopped gracefully
+    if (sensorTask == NULL)
+    {
+        Serial.println("Sensor task stopped gracefully");
+    }
+    else
+    {
+        // Task didn't stop in time - force delete as fallback
+        // This shouldn't happen normally, but provides safety
+        Serial.println("WARNING: Sensor task did not stop in time, forcing deletion");
         vTaskDelete(sensorTask);
         sensorTask = NULL;
-        Serial.println("Sensor collection stopped");
+        
+        // Clean up I2C bus since task couldn't do it
+        cleanupI2CBus();
+        Serial.println("I2C bus cleaned up after forced stop");
     }
+    
+    Serial.println("Sensor collection stopped");
 }
 
 bool SensorManager::isCollecting()
@@ -602,15 +751,24 @@ bool SensorManager::reinitialize(SensorConfiguration *config)
         Serial.println("  Stopping sensor collection task...");
         stopCollection();
         taskYIELD(); // Give scheduler time to clean up
-        delay(250);  // Allow task to fully stop and release I2C bus
+        delay(100);  // Small extra delay for safety
         Serial.println("  Collection stopped.");
     }
+    
+    // CRITICAL: Ensure I2C bus is in a clean state before reconfiguration
+    // This prevents hangs if the bus was left in an inconsistent state
+    Serial.println("  Ensuring I2C bus is clean...");
+    cleanupI2CBus();
+    delay(50);  // Give hardware time to settle
 
     // Update configuration
     activeConfig = config;
     Serial.println("  Applying new configuration to sensors...");
 
     // Reapply configuration to all active sensors
+    // Track the last TCA channel to properly clean up when switching
+    int8_t lastTcaChannel = -1;
+    
     for (int i = 0; i < NUM_SENSORS; i++)
     {
         if (sensorsActive[i] && activeConfig != nullptr)
@@ -620,24 +778,39 @@ bool SensorManager::reinitialize(SensorConfiguration *config)
             uint8_t tca_ch = sensorMapping[i].tca_channel;
             uint8_t pca_ch = sensorMapping[i].pca_channel;
 
-            // Select channels
+            // CRITICAL FIX: If switching TCA channels, disable the PCA on the previous channel first
+            // This prevents I2C bus contention when moving between sensor boards
+            if (lastTcaChannel != -1 && lastTcaChannel != tca_ch)
+            {
+                Serial.printf("    Switching TCA channel %d -> %d, cleaning up...\n", lastTcaChannel, tca_ch);
+                // Select the old TCA channel and disable its PCA
+                mux.selectChannel(lastTcaChannel);
+                delay(5);
+                pca_instances[lastTcaChannel].disableAllChannels();
+                delay(5);
+            }
+
+            // Select TCA channel for this sensor board
             if (!mux.selectChannel(tca_ch))
             {
                 Serial.printf("    WARNING: Failed to select TCA channel %d\n", tca_ch);
                 continue;
             }
-            delay(10);
+            delay(10);  // Increased delay for TCA settling
 
             if (!pca_instances[tca_ch].selectChannel(pca_ch))
             {
                 Serial.printf("    WARNING: Failed to select PCA channel %d\n", pca_ch);
                 continue;
             }
-            delay(10);
+            delay(10);  // Increased delay for PCA settling
 
-            // Reapply configuration (Note: has 50ms delay in setProximityIntegrationTime)
+            // Reapply configuration
             applySensorConfig(i);
             Serial.printf("    Sensor %d reconfigured.\n", i);
+            
+            // Remember this TCA channel for cleanup on next iteration
+            lastTcaChannel = tca_ch;
 
             // CRITICAL: Feed watchdog timer during lengthy reconfiguration
             // This prevents Core 1 watchdog reset during sensor reconfiguration
@@ -647,8 +820,11 @@ bool SensorManager::reinitialize(SensorConfiguration *config)
 
     // Clean up
     Serial.println("  Cleaning up multiplexer channels...");
+    // IMPORTANT: Must select each TCA channel before disabling its PCA!
     for (int i = 0; i < 3; i++)
     {
+        mux.selectChannel(i);
+        delay(2);
         pca_instances[i].disableAllChannels();
     }
     mux.disableAllChannels();
@@ -657,5 +833,181 @@ bool SensorManager::reinitialize(SensorConfiguration *config)
     taskYIELD();
 
     Serial.println("  Sensors reconfigured successfully!");
+
+    // Dump configuration to verify all sensors got the new settings
+    dumpSensorConfiguration();
+
     return true;
+}
+
+void SensorManager::dumpSensorConfiguration()
+{
+    Serial.println("\n");
+    Serial.println("╔══════════════════════════════════════════════════════════════════════════════╗");
+    Serial.println("║                    SENSOR CONFIGURATION DIAGNOSTIC DUMP                      ║");
+    Serial.println("╠══════════════════════════════════════════════════════════════════════════════╣");
+    Serial.println("║ Sensor │ TCA │ PCA │ Active │ LED Current │ Integration │ Duty  │ HighRes  ║");
+    Serial.println("╠════════╪═════╪═════╪════════╪═════════════╪═════════════╪═══════╪══════════╣");
+
+    const char* led_current_names[] = {"50mA", "75mA", "100mA", "120mA", "140mA", "160mA", "180mA", "200mA"};
+    const char* integration_names[] = {"1T", "1.5T", "2T", "2.5T", "3T", "3.5T", "4T", "8T"};
+    const char* duty_names[] = {"1/40", "1/80", "1/160", "1/320"};
+
+    int mismatches = 0;
+
+    for (int i = 0; i < NUM_SENSORS; i++)
+    {
+        uint8_t tca_ch = sensorMapping[i].tca_channel;
+        uint8_t pca_ch = sensorMapping[i].pca_channel;
+
+        // Build sensor name
+        char sensorName[8];
+        snprintf(sensorName, sizeof(sensorName), "P%dS%d", tca_ch + 1, pca_ch + 1);
+
+        if (!sensorsActive[i])
+        {
+            Serial.printf("║ %-6s │  %d  │  %d  │   NO   │     N/A     │     N/A     │  N/A  │   N/A    ║\n",
+                          sensorName, tca_ch, pca_ch);
+            continue;
+        }
+
+        // Select the sensor's channel with proper delays
+        if (!mux.selectChannel(tca_ch))
+        {
+            Serial.printf("║ %-6s │  %d  │  %d  │  YES   │  TCA ERR    │   TCA ERR   │ ERR   │   ERR    ║\n",
+                          sensorName, tca_ch, pca_ch);
+            continue;
+        }
+        delay(10); // Increased delay for multiplexer settling
+
+        if (!pca_instances[tca_ch].selectChannel(pca_ch))
+        {
+            Serial.printf("║ %-6s │  %d  │  %d  │  YES   │  PCA ERR    │   PCA ERR   │ ERR   │   ERR    ║\n",
+                          sensorName, tca_ch, pca_ch);
+            continue;
+        }
+        delay(10); // Increased delay for multiplexer settling
+
+        // Verify we can communicate with the sensor by checking device ID first
+        Wire.beginTransmission(0x60);
+        Wire.write(0x0C);  // Device ID register
+        if (Wire.endTransmission(false) != 0)
+        {
+            Serial.printf("║ %-6s │  %d  │  %d  │  YES   │  I2C ERR    │   I2C ERR   │ ERR   │   ERR    ║\n",
+                          sensorName, tca_ch, pca_ch);
+            continue;
+        }
+        Wire.requestFrom((uint8_t)0x60, (uint8_t)2);
+        uint8_t id_low = Wire.available() ? Wire.read() : 0;
+        uint8_t id_high = Wire.available() ? Wire.read() : 0;
+        uint16_t device_id = (id_high << 8) | id_low;
+        
+        if (device_id != 0x0186)
+        {
+            Serial.printf("║ %-6s │  %d  │  %d  │  YES   │ BAD ID 0x%04X                              ║\n",
+                          sensorName, tca_ch, pca_ch, device_id);
+            continue;
+        }
+
+        // Read PS_CONF1/2 register (0x03) - contains integration time, duty cycle, high-res
+        uint8_t ps_conf1_low = 0, ps_conf1_high = 0;
+        Wire.beginTransmission(0x60);
+        Wire.write(0x03);
+        if (Wire.endTransmission(false) == 0)
+        {
+            Wire.requestFrom((uint8_t)0x60, (uint8_t)2);
+            if (Wire.available() >= 2)
+            {
+                ps_conf1_low = Wire.read();
+                ps_conf1_high = Wire.read();
+            }
+        }
+
+        // Read PS_CONF3/PS_MS register (0x04) - contains LED current
+        uint8_t ps_ms_low = 0, ps_ms_high = 0;
+        Wire.beginTransmission(0x60);
+        Wire.write(0x04);
+        if (Wire.endTransmission(false) == 0)
+        {
+            Wire.requestFrom((uint8_t)0x60, (uint8_t)2);
+            if (Wire.available() >= 2)
+            {
+                ps_ms_low = Wire.read();
+                ps_ms_high = Wire.read();
+            }
+        }
+
+        // Parse register values
+        // PS_CONF1 low byte: bits 7:6 = PS_Duty, bits 3:1 = PS_IT
+        // PS_CONF2 (high byte of reg 0x03): bit 3 = PS_HD (high resolution)
+        uint8_t duty_bits = (ps_conf1_low >> 6) & 0x03;
+        uint8_t integration_bits = (ps_conf1_low >> 1) & 0x07;
+        bool high_res = (ps_conf1_high >> 3) & 0x01;
+
+        // PS_MS (high byte of reg 0x04): bits 2:0 = LED_I (LED current)
+        uint8_t led_current_bits = ps_ms_high & 0x07;
+
+        // Get string representations (with bounds checking)
+        const char* led_str = (led_current_bits < 8) ? led_current_names[led_current_bits] : "???";
+        const char* int_str = (integration_bits < 8) ? integration_names[integration_bits] : "???";
+        const char* duty_str = (duty_bits < 4) ? duty_names[duty_bits] : "???";
+
+        // Check for mismatches with expected config
+        bool led_match = true;
+        if (activeConfig != nullptr) {
+            VCNL4040_LEDCurrent expected_led = parseLEDCurrent(activeConfig->led_current);
+            if (led_current_bits != (expected_led & 0x07)) {
+                led_match = false;
+                mismatches++;
+            }
+        }
+
+        Serial.printf("║ %-6s │  %d  │  %d  │  YES   │ %s %-7s %s │    %-6s   │ %-5s │   %-5s  ║\n",
+                      sensorName, tca_ch, pca_ch,
+                      led_match ? " " : "⚠",
+                      led_str, 
+                      led_match ? " " : "⚠",
+                      int_str, duty_str,
+                      high_res ? "YES" : "NO");
+        
+        // Debug: print raw register values if there's a mismatch
+        if (!led_match) {
+            Serial.printf("║        │ RAW: PS_CONF1/2=0x%02X%02X PS_CONF3/MS=0x%02X%02X                       ║\n",
+                          ps_conf1_high, ps_conf1_low, ps_ms_high, ps_ms_low);
+        }
+    }
+
+    Serial.println("╠══════════════════════════════════════════════════════════════════════════════╣");
+
+    // Show expected configuration
+    if (activeConfig != nullptr)
+    {
+        Serial.printf("║ EXPECTED: LED=%-7s IT=%-5s Duty=%-5s MultiP=%sP HighRes=%-3s        ║\n",
+                      activeConfig->led_current.c_str(),
+                      activeConfig->integration_time.c_str(),
+                      activeConfig->duty_cycle.c_str(),
+                      activeConfig->multi_pulse.c_str(),
+                      activeConfig->high_resolution ? "YES" : "NO");
+    }
+    else
+    {
+        Serial.println("║ EXPECTED: (no configuration provided - using defaults)                       ║");
+    }
+    
+    if (mismatches > 0) {
+        Serial.printf("║ ⚠️ WARNING: %d sensor(s) have configuration mismatches!                       ║\n", mismatches);
+    }
+
+    Serial.println("╚══════════════════════════════════════════════════════════════════════════════╝");
+    Serial.println();
+
+    // Clean up
+    // IMPORTANT: Must select each TCA channel before disabling its PCA!
+    for (int i = 0; i < 3; i++)
+    {
+        mux.selectChannel(i);
+        delay(2);
+        pca_instances[i].disableAllChannels();
+    }
+    mux.disableAllChannels();
 }
