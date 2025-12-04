@@ -148,23 +148,15 @@ bool MQTTManager::publishData(const JsonDocument& data) {
     String payload;
     size_t payloadSize = serializeJson(data, payload);
     
-    Serial.print("Publishing to data topic, size: ");
-    Serial.print(payloadSize);
-    Serial.println(" bytes");
-
     bool success = mqttClient.publish(dataTopic.c_str(), payload.c_str());
     
+    // Only log errors, not every successful publish
     if (!success) {
-        Serial.println("ERROR: mqttClient.publish() returned false!");
-        Serial.print("  MQTT state: ");
-        Serial.println(mqttClient.state());
-        Serial.print("  MQTT connected: ");
-        Serial.println(mqttClient.connected() ? "YES" : "NO");
-        Serial.print("  Payload size: ");
-        Serial.print(payloadSize);
-        Serial.println(" bytes");
-    } else {
-        Serial.println("  Published successfully");
+        Serial.println("ERROR: mqttClient.publish() failed!");
+        Serial.printf("  MQTT state: %d, connected: %s, size: %d bytes\n",
+                      mqttClient.state(),
+                      mqttClient.connected() ? "YES" : "NO",
+                      payloadSize);
     }
     
     return success;

@@ -131,6 +131,11 @@ unsigned long SessionManager::getDuration()
     return sessionDuration;
 }
 
+unsigned long SessionManager::getStartTime()
+{
+    return sessionStartTime;
+}
+
 std::vector<SensorReading, PSRAMAllocator<SensorReading>> &SessionManager::getDataBuffer()
 {
     return dataBuffer;

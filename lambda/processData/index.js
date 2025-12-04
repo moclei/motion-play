@@ -18,6 +18,10 @@ const SENSOR_DATA_TABLE = process.env.SENSOR_DATA_TABLE || 'MotionPlaySensorData
 function sanitizeConfig(config) {
     if (!config) return null;
     
+    // Validate multi_pulse is a valid value
+    const validMultiPulse = ["1", "2", "4", "8"];
+    const multiPulse = validMultiPulse.includes(config.multi_pulse) ? config.multi_pulse : "1";
+    
     return {
         sample_rate_hz: Number.isFinite(config.sample_rate_hz) ? config.sample_rate_hz : 1000,
         led_current: config.led_current || "200mA",
@@ -26,6 +30,7 @@ function sanitizeConfig(config) {
         high_resolution: typeof config.high_resolution === 'boolean' ? config.high_resolution : true,
         read_ambient: typeof config.read_ambient === 'boolean' ? config.read_ambient : true,
         i2c_clock_khz: Number.isFinite(config.i2c_clock_khz) ? config.i2c_clock_khz : 400,
+        multi_pulse: multiPulse,
         actual_sample_rate_hz: Number.isFinite(config.actual_sample_rate_hz) ? config.actual_sample_rate_hz : 0
     };
 }
@@ -71,14 +76,20 @@ exports.handler = async (event) => {
             }));
             
             if (existingSessionResult.Item) {
-                // Session exists - UPDATE ONLY, preserving user-editable fields
-                console.log('Session already exists, updating (preserving labels/notes):', data.session_id);
+                // Session exists - UPDATE, preserving user-editable fields if they exist
+                // RACE CONDITION FIX: A subsequent batch may have created a skeleton session
+                // with only session_id and sample_count. We need to fill in missing essential fields.
+                const existingSession = existingSessionResult.Item;
+                const isSkeletonSession = !existingSession.device_id || !existingSession.created_at;
+                
+                console.log('Session already exists, updating:', data.session_id, 
+                    isSkeletonSession ? '(skeleton session - will fill missing fields)' : '(preserving labels/notes)');
                 
                 const updateExpressions = [];
                 const expressionAttributeNames = {};
                 const expressionAttributeValues = {};
                 
-                // Update system fields only (DO NOT touch labels, notes, created_at)
+                // Always update these system fields
                 updateExpressions.push('#end_timestamp = :end_timestamp');
                 expressionAttributeNames['#end_timestamp'] = 'end_timestamp';
                 expressionAttributeValues[':end_timestamp'] = new Date().toISOString();
@@ -87,7 +98,6 @@ exports.handler = async (event) => {
                 expressionAttributeNames['#duration_ms'] = 'duration_ms';
                 expressionAttributeValues[':duration_ms'] = data.duration_ms || 0;
                 
-                // Update start_timestamp if present (important for batch 0 arriving late)
                 if (data.start_timestamp !== undefined && data.start_timestamp !== null) {
                     updateExpressions.push('#start_timestamp = :start_timestamp');
                     expressionAttributeNames['#start_timestamp'] = 'start_timestamp';
@@ -98,7 +108,34 @@ exports.handler = async (event) => {
                 expressionAttributeNames['#sample_count'] = 'sample_count';
                 expressionAttributeValues[':sample_count'] = readingsCount;
                 
-                // Only update sensor config if provided (for first batch of NEW data)
+                // If skeleton session (created by race condition), fill in ALL essential fields
+                if (isSkeletonSession) {
+                    updateExpressions.push('#device_id = :device_id');
+                    expressionAttributeNames['#device_id'] = 'device_id';
+                    expressionAttributeValues[':device_id'] = data.device_id;
+                    
+                    updateExpressions.push('#mode = :mode');
+                    expressionAttributeNames['#mode'] = 'mode';
+                    expressionAttributeValues[':mode'] = data.mode || 'debug';
+                    
+                    updateExpressions.push('#sample_rate = :sample_rate');
+                    expressionAttributeNames['#sample_rate'] = 'sample_rate';
+                    expressionAttributeValues[':sample_rate'] = data.sample_rate || 1000;
+                    
+                    updateExpressions.push('#created_at = :created_at');
+                    expressionAttributeNames['#created_at'] = 'created_at';
+                    expressionAttributeValues[':created_at'] = Date.now();
+                    
+                    updateExpressions.push('#labels = :labels');
+                    expressionAttributeNames['#labels'] = 'labels';
+                    expressionAttributeValues[':labels'] = data.labels || [];
+                    
+                    updateExpressions.push('#notes = :notes');
+                    expressionAttributeNames['#notes'] = 'notes';
+                    expressionAttributeValues[':notes'] = data.notes || '';
+                }
+                
+                // Update sensor config if provided
                 if (data.active_sensors || data.sensor_config) {
                     updateExpressions.push('#active_sensors = :active_sensors');
                     expressionAttributeNames['#active_sensors'] = 'active_sensors';
@@ -108,7 +145,7 @@ exports.handler = async (event) => {
                 if (data.vcnl4040_config) {
                     updateExpressions.push('#vcnl4040_config = :vcnl4040_config');
                     expressionAttributeNames['#vcnl4040_config'] = 'vcnl4040_config';
-                    expressionAttributeValues[':vcnl4040_config'] = data.vcnl4040_config;
+                    expressionAttributeValues[':vcnl4040_config'] = sanitizeConfig(data.vcnl4040_config);
                 }
                 
                 await docClient.send(new UpdateCommand({
@@ -119,7 +156,7 @@ exports.handler = async (event) => {
                     ExpressionAttributeValues: expressionAttributeValues
                 }));
                 
-                console.log('Session metadata updated (labels/notes preserved)');
+                console.log('Session metadata updated', isSkeletonSession ? '(skeleton filled)' : '(labels/notes preserved)');
             } else {
                 // Session does NOT exist - create new one
                 console.log('Creating new session:', data.session_id);

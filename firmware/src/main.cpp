@@ -10,10 +10,19 @@
 #include "components/session/SessionManager.h"
 #include "components/data/DataTransmitter.h"
 #include "components/diagnostics/MemoryMonitor.h"
+#include "components/detection/DirectionDetector.h"
+#include "components/led/LEDController.h"
 
 // Button pins for T-Display-S3
 #define BUTTON_1 0  // Left button (BOOT)
 #define BUTTON_2 14 // Right button
+
+// Device modes
+enum class DeviceMode {
+    IDLE,   // Standby mode
+    DEBUG,  // Data collection for algorithm development
+    PLAY    // Active game mode with direction detection
+};
 
 // Managers
 NetworkManager networkManager;
@@ -22,6 +31,16 @@ DisplayManager display;
 SensorManager sensorManager;
 SessionManager sessionManager;
 DataTransmitter *dataTransmitter;
+DirectionDetector directionDetector;
+LEDController ledController;
+
+// Current device mode
+DeviceMode currentMode = DeviceMode::DEBUG;  // Default to debug for backwards compatibility
+
+// Play mode state
+bool playModeActive = false;
+unsigned long lastDetectionTime = 0;
+const unsigned long DETECTION_COOLDOWN = 3000; // 3 seconds between detections
 
 // Timing
 unsigned long lastStatusUpdate = 0;
@@ -140,10 +159,21 @@ bool fetchConfigFromCloud()
                 currentConfig.i2c_clock_khz = config["i2c_clock_khz"];
             }
 
+            // New field: Multi-pulse mode
+            if (config.containsKey("multi_pulse"))
+            {
+                currentConfig.multi_pulse = config["multi_pulse"].as<String>();
+            }
+            else
+            {
+                currentConfig.multi_pulse = "1";  // Default: 1 pulse
+            }
+
             Serial.println("\nConfig loaded from cloud:");
             Serial.printf("  Sample Rate: %d Hz\n", currentConfig.sample_rate_hz);
             Serial.printf("  LED Current: %s\n", currentConfig.led_current.c_str());
             Serial.printf("  Integration Time: %s\n", currentConfig.integration_time.c_str());
+            Serial.printf("  Multi-Pulse: %s pulses\n", currentConfig.multi_pulse.c_str());
             Serial.printf("  High Resolution: %s\n", currentConfig.high_resolution ? "enabled" : "disabled");
             Serial.printf("  Read Ambient: %s\n", currentConfig.read_ambient ? "enabled" : "disabled");
             Serial.printf("  I2C Clock: %d kHz\n", currentConfig.i2c_clock_khz);
@@ -290,7 +320,8 @@ void initializeSystem()
     display.updateInitStage(INIT_COMPLETE, "System ready!");
     delay(1500);
 
-    // Switch to session screen
+    // Switch to session screen and show current config
+    display.setSensorConfig(&currentConfig);
     display.showSessionScreen();
     systemInitialized = true;
 }
@@ -309,85 +340,137 @@ void handleCommand(const String &command, JsonDocument *doc)
     }
     else if (command == "start_collection")
     {
-        Serial.println("Starting data collection...");
-
-        // Check memory health before starting collection
-        MemoryMonitor::printMemoryStats();
-        if (!MemoryMonitor::isMemoryHealthy())
+        if (currentMode == DeviceMode::PLAY)
         {
-            Serial.println("ERROR: Insufficient memory to start collection!");
-            mqttManager->publishStatus("collection_failed_low_memory");
-            display.showMessage("Low memory!", TFT_RED);
-            delay(2000);
-            display.setDisplayState(DISPLAY_ERROR);
-            return;
-        }
-
-        if (sessionManager.startSession())
-        {
-            // Set sensor metadata for this session
-            std::vector<SensorMetadata> metadata = sensorManager.getSensorMetadata();
-            sessionManager.setSensorMetadata(metadata);
-
-            sensorManager.startCollection(sessionManager.getQueue());
-            mqttManager->publishStatus("collection_started");
-
-            // Build config string for display
-            String configStr = String(currentConfig.sample_rate_hz) + "Hz | " +
-                               currentConfig.led_current + " | " +
-                               currentConfig.integration_time + " | " +
-                               (currentConfig.high_resolution ? "Hi-Res" : "Lo-Res") +
-                               (currentConfig.read_ambient ? " | Amb" : "");
-            display.setConfigString(configStr);
-
-            // Update display to recording state
-            display.setDisplayState(DISPLAY_RECORDING);
+            // PLAY MODE: Start direction detection
+            Serial.println("Starting PLAY mode - Direction detection active");
+            
+            // Initialize LED controller if not already done
+            if (!ledController.init())
+            {
+                Serial.println("WARNING: LED controller init failed");
+            }
+            
+            // Reset the detector
+            directionDetector.reset();
+            
+            // Start sensor collection with internal queue for detection
+            if (sessionManager.startSession())
+            {
+                sensorManager.startCollection(sessionManager.getQueue());
+                playModeActive = true;
+                lastDetectionTime = 0;
+                
+                mqttManager->publishStatus("play_started");
+                display.showMessage("PLAY MODE ACTIVE", TFT_GREEN);
+                display.setDisplayState(DISPLAY_RECORDING);
+                
+                // Show ready state on LEDs
+                ledController.showReady();
+            }
+            else
+            {
+                mqttManager->publishStatus("play_failed");
+                display.setDisplayState(DISPLAY_ERROR);
+            }
         }
         else
         {
-            mqttManager->publishStatus("collection_failed");
-            display.setDisplayState(DISPLAY_ERROR);
+            // DEBUG MODE: Standard data collection
+            Serial.println("Starting data collection (DEBUG mode)...");
+
+            // Check memory health before starting collection
+            MemoryMonitor::printMemoryStats();
+            if (!MemoryMonitor::isMemoryHealthy())
+            {
+                Serial.println("ERROR: Insufficient memory to start collection!");
+                mqttManager->publishStatus("collection_failed_low_memory");
+                display.showMessage("Low memory!", TFT_RED);
+                delay(2000);
+                display.setDisplayState(DISPLAY_ERROR);
+                return;
+            }
+
+            if (sessionManager.startSession())
+            {
+                // Set sensor metadata for this session
+                std::vector<SensorMetadata> metadata = sensorManager.getSensorMetadata();
+                sessionManager.setSensorMetadata(metadata);
+
+                sensorManager.startCollection(sessionManager.getQueue());
+                mqttManager->publishStatus("collection_started");
+
+                // Update display to recording state (config panel already shows settings)
+                display.setDisplayState(DISPLAY_RECORDING);
+            }
+            else
+            {
+                mqttManager->publishStatus("collection_failed");
+                display.setDisplayState(DISPLAY_ERROR);
+            }
         }
     }
     else if (command == "stop_collection")
     {
-        Serial.println("Stopping data collection...");
-
-        sensorManager.stopCollection();
-        sessionManager.stopSession();
-
-        // Print memory stats after collection
-        Serial.printf("Collected %d samples\n", sessionManager.getDataCount());
-        MemoryMonitor::printMemoryStats();
-
-        // Update display to uploading state
-        display.setDisplayState(DISPLAY_UPLOADING);
-
-        // Transmit data (include current sensor configuration)
-        if (dataTransmitter->transmitSession(sessionManager, &currentConfig))
+        if (playModeActive && currentMode == DeviceMode::PLAY)
         {
-            mqttManager->publishStatus("upload_complete");
-            display.setDisplayState(DISPLAY_SUCCESS);
-
-            // Return to idle after showing success
-            delay(3000);
+            // PLAY MODE: Just stop detection, no upload needed
+            Serial.println("Stopping PLAY mode...");
+            
+            sensorManager.stopCollection();
+            sessionManager.stopSession();
             sessionManager.clearBuffer();
+            
+            playModeActive = false;
+            directionDetector.reset();
+            ledController.off();
+            
+            mqttManager->publishStatus("play_stopped");
+            display.showMessage("Play mode stopped", TFT_YELLOW);
+            delay(1500);
             display.setDisplayState(DISPLAY_IDLE);
         }
         else
         {
-            Serial.println("ERROR: Session transmission failed!");
-            mqttManager->publishStatus("upload_failed");
-            display.setDisplayState(DISPLAY_ERROR);
-            display.showMessage("Upload failed - Restarting...", TFT_RED);
+            // DEBUG MODE: Stop collection and upload data
+            Serial.println("Stopping data collection...");
 
-            // Return to idle after showing error
-            delay(3000);
-            sessionManager.clearBuffer();
+            sensorManager.stopCollection();
+            sessionManager.stopSession();
 
-            // Restart device to recover from potential I2C/sensor issues
-            Serial.println("Restarting device to recover from upload failure...");
-            ESP.restart();
+            // Print memory stats after collection
+            Serial.printf("Collected %d samples\n", sessionManager.getDataCount());
+            MemoryMonitor::printMemoryStats();
+
+            // Update display to uploading state
+            display.setDisplayState(DISPLAY_UPLOADING);
+
+            // Transmit data (include current sensor configuration)
+            if (dataTransmitter->transmitSession(sessionManager, &currentConfig))
+            {
+                mqttManager->publishStatus("upload_complete");
+                display.setDisplayState(DISPLAY_SUCCESS);
+
+                // Return to idle after showing success
+                delay(3000);
+                sessionManager.clearBuffer();
+                display.setDisplayState(DISPLAY_IDLE);
+            }
+            else
+            {
+                Serial.println("ERROR: Session transmission failed!");
+                mqttManager->publishStatus("upload_failed");
+                display.setDisplayState(DISPLAY_ERROR);
+                display.showMessage("Upload failed - Restarting...", TFT_RED);
+
+                // Return to idle after showing error
+                delay(3000);
+                sessionManager.clearBuffer();
+
+                // Restart device to recover from potential I2C/sensor issues
+                Serial.println("Restarting device to recover from upload failure...");
+                ESP.restart();
+            }
         }
     }
     else if (command == "configure_sensors")
@@ -416,6 +499,7 @@ void handleCommand(const String &command, JsonDocument *doc)
 
             currentConfig.led_current = config["led_current"] | "200mA";
             currentConfig.integration_time = config["integration_time"] | "1T";
+            currentConfig.duty_cycle = config["duty_cycle"] | "1/40";  // CRITICAL: Was missing!
             currentConfig.high_resolution = config["high_resolution"] | true;
             currentConfig.read_ambient = config["read_ambient"] | true;
 
@@ -425,10 +509,22 @@ void handleCommand(const String &command, JsonDocument *doc)
                 currentConfig.i2c_clock_khz = config["i2c_clock_khz"];
             }
 
+            // Handle multi-pulse mode if provided
+            if (config.containsKey("multi_pulse"))
+            {
+                currentConfig.multi_pulse = config["multi_pulse"].as<String>();
+            }
+            else
+            {
+                currentConfig.multi_pulse = "1";  // Default: 1 pulse
+            }
+
             Serial.println("Configuration updated:");
             Serial.printf("  Sample Rate: %d Hz\n", currentConfig.sample_rate_hz);
             Serial.printf("  LED Current: %s\n", currentConfig.led_current.c_str());
             Serial.printf("  Integration Time: %s\n", currentConfig.integration_time.c_str());
+            Serial.printf("  Duty Cycle: %s\n", currentConfig.duty_cycle.c_str());
+            Serial.printf("  Multi-Pulse: %s pulses\n", currentConfig.multi_pulse.c_str());
             Serial.printf("  High Resolution: %s\n", currentConfig.high_resolution ? "enabled" : "disabled");
             Serial.printf("  Read Ambient: %s\n", currentConfig.read_ambient ? "enabled" : "disabled");
             Serial.printf("  I2C Clock: %d kHz\n", currentConfig.i2c_clock_khz);
@@ -436,6 +532,8 @@ void handleCommand(const String &command, JsonDocument *doc)
             // Apply configuration to sensors immediately
             if (sensorManager.reinitialize(&currentConfig))
             {
+                // Update display with new config
+                display.setSensorConfig(&currentConfig);
                 display.showMessage("Config applied successfully!", TFT_GREEN);
                 mqttManager->publishStatus("config_applied");
             }
@@ -453,6 +551,49 @@ void handleCommand(const String &command, JsonDocument *doc)
 
         delay(2000);
         display.setDisplayState(DISPLAY_IDLE);
+    }
+    else if (command == "set_mode")
+    {
+        if (doc != nullptr && doc->containsKey("mode"))
+        {
+            String modeStr = (*doc)["mode"].as<String>();
+            
+            if (modeStr == "idle")
+            {
+                currentMode = DeviceMode::IDLE;
+                playModeActive = false;
+                ledController.off();
+                display.setMode(MODE_IDLE);
+                display.showMessage("Mode: IDLE", TFT_DARKGREY);
+                mqttManager->publishStatus("mode_idle");
+            }
+            else if (modeStr == "debug")
+            {
+                currentMode = DeviceMode::DEBUG;
+                playModeActive = false;
+                ledController.off();
+                display.setMode(MODE_DEBUG);
+                display.showMessage("Mode: DEBUG", TFT_BLUE);
+                mqttManager->publishStatus("mode_debug");
+            }
+            else if (modeStr == "play")
+            {
+                currentMode = DeviceMode::PLAY;
+                display.setMode(MODE_PLAY);
+                display.showMessage("Mode: PLAY", TFT_GREEN);
+                mqttManager->publishStatus("mode_play");
+                // LED controller will be initialized when play starts
+            }
+            else
+            {
+                display.showMessage("Unknown mode", TFT_RED);
+                mqttManager->publishStatus("mode_invalid");
+            }
+            
+            Serial.printf("Device mode set to: %s\n", modeStr.c_str());
+            delay(1500);
+            display.setDisplayState(DISPLAY_IDLE);
+        }
     }
     else if (command == "reboot")
     {
@@ -490,57 +631,153 @@ void loop()
     {
         sessionManager.processQueue();
 
-        // Check for maximum session duration (30 seconds safety limit)
-        if (sessionManager.getDuration() >= 30000) // 30 seconds in milliseconds
+        // PLAY MODE: Run direction detection on collected data
+        if (playModeActive && currentMode == DeviceMode::PLAY)
         {
-            Serial.println("WARNING: Maximum session duration reached (30s), auto-stopping...");
-            display.showMessage("Max duration reached!", TFT_ORANGE);
-            delay(1000);
-
-            // Auto-stop collection
-            sensorManager.stopCollection();
-            sessionManager.stopSession();
-            display.setDisplayState(DISPLAY_UPLOADING);
-
-            // Transmit data
-            if (dataTransmitter->transmitSession(sessionManager, &currentConfig))
+            // Update LED animation (handles fade-out after detection)
+            bool animating = ledController.update();
+            
+            // Debug: log buffer status periodically
+            static unsigned long lastPlayDebug = 0;
+            if (millis() - lastPlayDebug > 2000)
             {
-                mqttManager->publishStatus("upload_complete_auto_stopped");
-                display.setDisplayState(DISPLAY_SUCCESS);
-                delay(2000);
-                sessionManager.clearBuffer();
-                display.setDisplayState(DISPLAY_IDLE);
+                lastPlayDebug = millis();
+                Serial.printf("[PLAY] Buffer: %d samples, Detector ready: %s\n", 
+                    sessionManager.getDataCount(),
+                    directionDetector.hasEnoughData() ? "YES" : "no");
             }
-            else
+            
+            // Check cooldown between detections
+            unsigned long now = millis();
+            bool inCooldown = (lastDetectionTime > 0) && (now - lastDetectionTime < DETECTION_COOLDOWN);
+            
+            if (!inCooldown)
             {
-                Serial.println("ERROR: Auto-stop session transmission failed!");
-                mqttManager->publishStatus("upload_failed");
-                display.setDisplayState(DISPLAY_ERROR);
-                display.showMessage("Upload failed - Restarting...", TFT_RED);
-                delay(3000);
-                sessionManager.clearBuffer();
-
-                // Restart device to recover from potential I2C/sensor issues
-                Serial.println("Restarting device to recover from upload failure...");
-                ESP.restart();
+                // Feed new readings to the detector
+                auto& buffer = sessionManager.getDataBuffer();
+                static size_t lastProcessedIndex = 0;
+                
+                // Add new readings since last check
+                size_t bufferSize = buffer.size();
+                for (size_t i = lastProcessedIndex; i < bufferSize; i++)
+                {
+                    directionDetector.addReading(buffer[i]);
+                }
+                lastProcessedIndex = bufferSize;
+                
+                // Try to detect direction
+                if (directionDetector.hasEnoughData())
+                {
+                    DetectionResult result = directionDetector.analyze();
+                    
+                    if (result.direction != Direction::UNKNOWN)
+                    {
+                        // Detection successful!
+                        Serial.printf("DETECTION: %s (confidence: %.2f, gap: %dms)\n",
+                            DirectionDetector::directionToString(result.direction),
+                            result.confidence,
+                            result.gapMs);
+                        
+                        // Show on LEDs
+                        ledController.showDirection(result.direction, 3000);
+                        
+                        // Show on display
+                        if (result.direction == Direction::A_TO_B)
+                        {
+                            display.showMessage("A -> B", TFT_BLUE);
+                        }
+                        else
+                        {
+                            display.showMessage("B -> A", TFT_ORANGE);
+                        }
+                        
+                        // Publish detection result
+                        String statusMsg = "detection_" + String(DirectionDetector::directionToString(result.direction));
+                        mqttManager->publishStatus(statusMsg.c_str());
+                        
+                        // Reset for next detection (clear buffer without changing state)
+                        lastDetectionTime = now;
+                        directionDetector.reset();
+                        lastProcessedIndex = 0;
+                        buffer.clear();  // Clear buffer directly, don't reset session state
+                        Serial.println("Detection complete, buffer cleared for next event");
+                    }
+                }
+                
+                // Limit buffer size to prevent memory issues in play mode
+                if (bufferSize > 500)
+                {
+                    // Keep only recent data, reset detector
+                    Serial.printf("Buffer overflow prevention: clearing %d samples\n", bufferSize);
+                    directionDetector.reset();
+                    lastProcessedIndex = 0;
+                    buffer.clear();  // Clear buffer directly, don't reset session state
+                }
             }
+            else if (!ledController.isAnimating())
+            {
+                // Show ready pulse while in cooldown (but not animating a detection)
+                ledController.showReady();
+            }
+            
+            // No timeout in play mode - it runs until stopped
         }
-
-        // Update sample count on display every second
-        if (millis() - lastSampleUpdate > 1000)
+        else
         {
-            lastSampleUpdate = millis();
-            int sampleCount = sessionManager.getDataCount();
-            display.updateSampleCount(sampleCount);
-
-            // Log to serial with memory status
-            Serial.printf("Samples: %d | ", sampleCount);
-            MemoryMonitor::printCompactStatus();
-
-            // Check memory health during collection
-            if (!MemoryMonitor::isMemoryHealthy())
+            // DEBUG MODE: Standard collection behavior
+            
+            // Check for maximum session duration (30 seconds safety limit)
+            if (sessionManager.getDuration() >= 30000) // 30 seconds in milliseconds
             {
-                Serial.println("WARNING: Memory getting low during collection!");
+                Serial.println("WARNING: Maximum session duration reached (30s), auto-stopping...");
+                display.showMessage("Max duration reached!", TFT_ORANGE);
+                delay(1000);
+
+                // Auto-stop collection
+                sensorManager.stopCollection();
+                sessionManager.stopSession();
+                display.setDisplayState(DISPLAY_UPLOADING);
+
+                // Transmit data
+                if (dataTransmitter->transmitSession(sessionManager, &currentConfig))
+                {
+                    mqttManager->publishStatus("upload_complete_auto_stopped");
+                    display.setDisplayState(DISPLAY_SUCCESS);
+                    delay(2000);
+                    sessionManager.clearBuffer();
+                    display.setDisplayState(DISPLAY_IDLE);
+                }
+                else
+                {
+                    Serial.println("ERROR: Auto-stop session transmission failed!");
+                    mqttManager->publishStatus("upload_failed");
+                    display.setDisplayState(DISPLAY_ERROR);
+                    display.showMessage("Upload failed - Restarting...", TFT_RED);
+                    delay(3000);
+                    sessionManager.clearBuffer();
+
+                    // Restart device to recover from potential I2C/sensor issues
+                    Serial.println("Restarting device to recover from upload failure...");
+                    ESP.restart();
+                }
+            }
+
+            // Update sample count on display every second
+            if (millis() - lastSampleUpdate > 1000)
+            {
+                lastSampleUpdate = millis();
+                int sampleCount = sessionManager.getDataCount();
+                display.updateSampleCount(sampleCount);
+
+                // Log to serial with memory status
+                Serial.printf("Samples: %d | ", sampleCount);
+                MemoryMonitor::printCompactStatus();
+
+                // Check memory health during collection
+                if (!MemoryMonitor::isMemoryHealthy())
+                {
+                    Serial.println("WARNING: Memory getting low during collection!");
+                }
             }
         }
     }

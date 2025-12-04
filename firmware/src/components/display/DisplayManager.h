@@ -3,6 +3,9 @@
 
 #include <TFT_eSPI.h>
 
+// Forward declaration
+struct SensorConfiguration;
+
 // Initialization stages
 enum InitStage
 {
@@ -25,30 +28,61 @@ enum DisplayState
     DISPLAY_ERROR
 };
 
+// Device operating modes
+enum DisplayMode
+{
+    MODE_IDLE,
+    MODE_DEBUG,
+    MODE_PLAY
+};
+
 class DisplayManager
 {
 private:
     TFT_eSPI tft = TFT_eSPI();
     InitStage currentInitStage = INIT_BOOT;
     DisplayState currentDisplayState = DISPLAY_IDLE;
+    DisplayMode currentMode = MODE_DEBUG;  // Default to debug mode
     String errorMessage = "";
     int sampleCount = 0;
     String configString = ""; // For displaying config during recording
+    
+    // Cached config values for display
+    uint16_t cachedSampleRate = 1000;
+    String cachedLedCurrent = "200mA";
+    String cachedIntegrationTime = "1T";
+    String cachedDutyCycle = "1/40";
+    bool cachedHighRes = true;
+    bool cachedReadAmbient = true;
+    uint32_t cachedI2cClock = 400;
 
     // Layout constants
     static const int SCREEN_WIDTH = 320;
     static const int SCREEN_HEIGHT = 170;
     static const int PROGRESS_BAR_Y = 20;
     static const int PROGRESS_BAR_HEIGHT = 40;
-    static const int STATUS_INDICATOR_Y = 80;
-    static const int STATUS_INDICATOR_SIZE = 60;
-    static const int MESSAGE_Y = 150;
+    
+    // New layout: Header with status badge
+    static const int HEADER_HEIGHT = 28;
+    static const int STATUS_BADGE_X = 130;  // After title
+    static const int STATUS_BADGE_Y = 4;
+    static const int STATUS_BADGE_W = 50;
+    static const int STATUS_BADGE_H = 20;
+    
+    // Config area (center of screen)
+    static const int CONFIG_AREA_Y = 35;
+    static const int CONFIG_AREA_HEIGHT = 100;
+    
+    // Message area at bottom
+    static const int MESSAGE_Y = 145;
 
     // Drawing helpers
     void drawProgressBar();
     void drawSessionStatus();
-    void drawStatusIndicator(int x, int y, uint16_t color, const String &label);
+    void drawStatusBadge();  // New: compact status in header
+    void drawConfigPanel();  // New: config display in center
     void drawCheckmark(int x, int y, uint16_t color);
+    void drawModeBadge();
 
 public:
     void init();
@@ -63,7 +97,9 @@ public:
     void setDisplayState(DisplayState state);
     void updateSampleCount(int count);
     void showMessage(const String &message, uint16_t color = TFT_WHITE);
-    void setConfigString(const String &config); // Set config for display during recording
+    void setConfigString(const String &config); // Legacy: Set config string for display
+    void setSensorConfig(const SensorConfiguration* config); // New: Set full config for display
+    void setMode(DisplayMode mode); // Set current device mode (idle/debug/play)
 
     // Legacy compatibility (for gradual migration)
     void showBootScreen();

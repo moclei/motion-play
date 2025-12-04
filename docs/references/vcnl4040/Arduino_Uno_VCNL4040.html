@@ -1,0 +1,1104 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="profile" href="http://gmpg.org/xfn/11"/>
+	        <link rel="shortcut icon" href="https://arduinolearning.b-cdn.net/wp-content/uploads/2020/06/alfav.png"
+              type="image/x-icon"/>
+        <link rel="apple-touch-icon" sizes="180x180" href="https://arduinolearning.b-cdn.net/wp-content/uploads/2020/06/alfav.png">
+	    <link rel="alternate" type="application/rss+xml" title="Arduino Learning RSS Feed"
+          href="https://www.arduinolearning.com/feed"/>
+    <link rel="alternate" type="application/atom+xml" title="Arduino Learning Atom Feed"
+          href="https://www.arduinolearning.com/feed/atom"/>
+    <link rel="pingback" href="https://www.arduinolearning.com/xmlrpc.php"/>
+    <!--[if lt IE 9]>
+	<script src="https://www.arduinolearning.com/wp-content/themes/soledad/js/html5.js"></script>
+	<![endif]-->
+	<meta name='robots' content='index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1' />
+	<style>img:is([sizes="auto" i], [sizes^="auto," i]) { contain-intrinsic-size: 3000px 1500px }</style>
+	
+	<!-- This site is optimized with the Yoast SEO Premium plugin v21.4 (Yoast SEO v26.5) - https://yoast.com/wordpress/plugins/seo/ -->
+	<title>Arduino Uno and VCNL4040 Proximity and Ambient Light Sensor</title>
+	<link rel="canonical" href="https://www.arduinolearning.com/code/arduino-uno-and-vcnl4040-proximity-and-ambient-light-sensor.php" />
+	<meta property="og:locale" content="en_GB" />
+	<meta property="og:type" content="article" />
+	<meta property="og:title" content="Arduino Uno and VCNL4040 Proximity and Ambient Light Sensor" />
+	<meta property="og:description" content="In this example we connect a VCNL4040 Proximity and Ambient Light Sensor from Vishay to an Arduino Uno First lets look at some information about the sensor from the manufacturer VCNL4040 integrates a proximity sensor (PS), ambientlight sensor (ALS), and&hellip;" />
+	<meta property="og:url" content="https://www.arduinolearning.com/code/arduino-uno-and-vcnl4040-proximity-and-ambient-light-sensor.php" />
+	<meta property="og:site_name" content="Arduino Learning" />
+	<meta property="article:published_time" content="2021-06-22T17:17:56+00:00" />
+	<meta property="og:image" content="https://www.arduinolearning.com/wp-content/uploads/2021/05/arduino-and-VCNL4040_bb.png" />
+	<meta property="og:image:width" content="1143" />
+	<meta property="og:image:height" content="870" />
+	<meta property="og:image:type" content="image/png" />
+	<meta name="author" content="shedboy71" />
+	<meta name="twitter:label1" content="Written by" />
+	<meta name="twitter:data1" content="shedboy71" />
+	<meta name="twitter:label2" content="Estimated reading time" />
+	<meta name="twitter:data2" content="4 minutes" />
+	<script type="application/ld+json" class="yoast-schema-graph">{"@context":"https://schema.org","@graph":[{"@type":"WebPage","@id":"https://www.arduinolearning.com/code/arduino-uno-and-vcnl4040-proximity-and-ambient-light-sensor.php","url":"https://www.arduinolearning.com/code/arduino-uno-and-vcnl4040-proximity-and-ambient-light-sensor.php","name":"Arduino Uno and VCNL4040 Proximity and Ambient Light Sensor","isPartOf":{"@id":"http://www.arduinolearning.com/#website"},"primaryImageOfPage":{"@id":"https://www.arduinolearning.com/code/arduino-uno-and-vcnl4040-proximity-and-ambient-light-sensor.php#primaryimage"},"image":{"@id":"https://www.arduinolearning.com/code/arduino-uno-and-vcnl4040-proximity-and-ambient-light-sensor.php#primaryimage"},"thumbnailUrl":"https://www.arduinolearning.com/wp-content/uploads/2021/05/arduino-and-VCNL4040_bb.png","datePublished":"2021-06-22T17:17:56+00:00","author":{"@id":"http://www.arduinolearning.com/#/schema/person/12acb7bd4a5069d1958aab718cba1a03"},"breadcrumb":{"@id":"https://www.arduinolearning.com/code/arduino-uno-and-vcnl4040-proximity-and-ambient-light-sensor.php#breadcrumb"},"inLanguage":"en-GB","potentialAction":[{"@type":"ReadAction","target":["https://www.arduinolearning.com/code/arduino-uno-and-vcnl4040-proximity-and-ambient-light-sensor.php"]}]},{"@type":"ImageObject","inLanguage":"en-GB","@id":"https://www.arduinolearning.com/code/arduino-uno-and-vcnl4040-proximity-and-ambient-light-sensor.php#primaryimage","url":"https://www.arduinolearning.com/wp-content/uploads/2021/05/arduino-and-VCNL4040_bb.png","contentUrl":"https://www.arduinolearning.com/wp-content/uploads/2021/05/arduino-and-VCNL4040_bb.png","width":1143,"height":870,"caption":"arduino and VCNL4040"},{"@type":"BreadcrumbList","@id":"https://www.arduinolearning.com/code/arduino-uno-and-vcnl4040-proximity-and-ambient-light-sensor.php#breadcrumb","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"http://www.arduinolearning.com/"},{"@type":"ListItem","position":2,"name":"Arduino Uno and VCNL4040 Proximity and Ambient Light Sensor"}]},{"@type":"WebSite","@id":"http://www.arduinolearning.com/#website","url":"http://www.arduinolearning.com/","name":"Arduino Learning","description":"","potentialAction":[{"@type":"SearchAction","target":{"@type":"EntryPoint","urlTemplate":"http://www.arduinolearning.com/?s={search_term_string}"},"query-input":{"@type":"PropertyValueSpecification","valueRequired":true,"valueName":"search_term_string"}}],"inLanguage":"en-GB"},{"@type":"Person","@id":"http://www.arduinolearning.com/#/schema/person/12acb7bd4a5069d1958aab718cba1a03","name":"shedboy71"}]}</script>
+	<!-- / Yoast SEO Premium plugin. -->
+
+
+<link rel='dns-prefetch' href='//static.addtoany.com' />
+<link rel='preconnect' href='https://arduinolearning.b-cdn.net' />
+<link rel="alternate" type="application/rss+xml" title="Arduino Learning &raquo; Feed" href="https://www.arduinolearning.com/feed" />
+<link rel='stylesheet' id='wp-block-library-css' href='https://www.arduinolearning.com/wp-includes/css/dist/block-library/style.min.css?ver=6.7.4' type='text/css' media='all' />
+<style id='wp-block-library-theme-inline-css' type='text/css'>
+.wp-block-audio :where(figcaption){color:#555;font-size:13px;text-align:center}.is-dark-theme .wp-block-audio :where(figcaption){color:#ffffffa6}.wp-block-audio{margin:0 0 1em}.wp-block-code{border:1px solid #ccc;border-radius:4px;font-family:Menlo,Consolas,monaco,monospace;padding:.8em 1em}.wp-block-embed :where(figcaption){color:#555;font-size:13px;text-align:center}.is-dark-theme .wp-block-embed :where(figcaption){color:#ffffffa6}.wp-block-embed{margin:0 0 1em}.blocks-gallery-caption{color:#555;font-size:13px;text-align:center}.is-dark-theme .blocks-gallery-caption{color:#ffffffa6}:root :where(.wp-block-image figcaption){color:#555;font-size:13px;text-align:center}.is-dark-theme :root :where(.wp-block-image figcaption){color:#ffffffa6}.wp-block-image{margin:0 0 1em}.wp-block-pullquote{border-bottom:4px solid;border-top:4px solid;color:currentColor;margin-bottom:1.75em}.wp-block-pullquote cite,.wp-block-pullquote footer,.wp-block-pullquote__citation{color:currentColor;font-size:.8125em;font-style:normal;text-transform:uppercase}.wp-block-quote{border-left:.25em solid;margin:0 0 1.75em;padding-left:1em}.wp-block-quote cite,.wp-block-quote footer{color:currentColor;font-size:.8125em;font-style:normal;position:relative}.wp-block-quote:where(.has-text-align-right){border-left:none;border-right:.25em solid;padding-left:0;padding-right:1em}.wp-block-quote:where(.has-text-align-center){border:none;padding-left:0}.wp-block-quote.is-large,.wp-block-quote.is-style-large,.wp-block-quote:where(.is-style-plain){border:none}.wp-block-search .wp-block-search__label{font-weight:700}.wp-block-search__button{border:1px solid #ccc;padding:.375em .625em}:where(.wp-block-group.has-background){padding:1.25em 2.375em}.wp-block-separator.has-css-opacity{opacity:.4}.wp-block-separator{border:none;border-bottom:2px solid;margin-left:auto;margin-right:auto}.wp-block-separator.has-alpha-channel-opacity{opacity:1}.wp-block-separator:not(.is-style-wide):not(.is-style-dots){width:100px}.wp-block-separator.has-background:not(.is-style-dots){border-bottom:none;height:1px}.wp-block-separator.has-background:not(.is-style-wide):not(.is-style-dots){height:2px}.wp-block-table{margin:0 0 1em}.wp-block-table td,.wp-block-table th{word-break:normal}.wp-block-table :where(figcaption){color:#555;font-size:13px;text-align:center}.is-dark-theme .wp-block-table :where(figcaption){color:#ffffffa6}.wp-block-video :where(figcaption){color:#555;font-size:13px;text-align:center}.is-dark-theme .wp-block-video :where(figcaption){color:#ffffffa6}.wp-block-video{margin:0 0 1em}:root :where(.wp-block-template-part.has-background){margin-bottom:0;margin-top:0;padding:1.25em 2.375em}
+</style>
+<style id='block-soledad-style-inline-css' type='text/css'>
+.pchead-e-block{--pcborder-cl:#dedede;--pcaccent-cl:#6eb48c}.heading1-style-1>h1,.heading1-style-2>h1,.heading2-style-1>h2,.heading2-style-2>h2,.heading3-style-1>h3,.heading3-style-2>h3,.heading4-style-1>h4,.heading4-style-2>h4,.heading5-style-1>h5,.heading5-style-2>h5{padding-bottom:8px;border-bottom:1px solid var(--pcborder-cl);overflow:hidden}.heading1-style-2>h1,.heading2-style-2>h2,.heading3-style-2>h3,.heading4-style-2>h4,.heading5-style-2>h5{border-bottom-width:0;position:relative}.heading1-style-2>h1:before,.heading2-style-2>h2:before,.heading3-style-2>h3:before,.heading4-style-2>h4:before,.heading5-style-2>h5:before{content:'';width:50px;height:2px;bottom:0;left:0;z-index:2;background:var(--pcaccent-cl);position:absolute}.heading1-style-2>h1:after,.heading2-style-2>h2:after,.heading3-style-2>h3:after,.heading4-style-2>h4:after,.heading5-style-2>h5:after{content:'';width:100%;height:2px;bottom:0;left:20px;z-index:1;background:var(--pcborder-cl);position:absolute}.heading1-style-3>h1,.heading1-style-4>h1,.heading2-style-3>h2,.heading2-style-4>h2,.heading3-style-3>h3,.heading3-style-4>h3,.heading4-style-3>h4,.heading4-style-4>h4,.heading5-style-3>h5,.heading5-style-4>h5{position:relative;padding-left:20px}.heading1-style-3>h1:before,.heading1-style-4>h1:before,.heading2-style-3>h2:before,.heading2-style-4>h2:before,.heading3-style-3>h3:before,.heading3-style-4>h3:before,.heading4-style-3>h4:before,.heading4-style-4>h4:before,.heading5-style-3>h5:before,.heading5-style-4>h5:before{width:10px;height:100%;content:'';position:absolute;top:0;left:0;bottom:0;background:var(--pcaccent-cl)}.heading1-style-4>h1,.heading2-style-4>h2,.heading3-style-4>h3,.heading4-style-4>h4,.heading5-style-4>h5{padding:10px 20px;background:#f1f1f1}.heading1-style-5>h1,.heading2-style-5>h2,.heading3-style-5>h3,.heading4-style-5>h4,.heading5-style-5>h5{position:relative;z-index:1}.heading1-style-5>h1:before,.heading2-style-5>h2:before,.heading3-style-5>h3:before,.heading4-style-5>h4:before,.heading5-style-5>h5:before{content:"";position:absolute;left:0;bottom:0;width:200px;height:50%;transform:skew(-25deg) translateX(0);background:var(--pcaccent-cl);z-index:-1;opacity:.4}.heading1-style-6>h1,.heading2-style-6>h2,.heading3-style-6>h3,.heading4-style-6>h4,.heading5-style-6>h5{text-decoration:underline;text-underline-offset:2px;text-decoration-thickness:4px;text-decoration-color:var(--pcaccent-cl)}
+</style>
+<style id='classic-theme-styles-inline-css' type='text/css'>
+/*! This file is auto-generated */
+.wp-block-button__link{color:#fff;background-color:#32373c;border-radius:9999px;box-shadow:none;text-decoration:none;padding:calc(.667em + 2px) calc(1.333em + 2px);font-size:1.125em}.wp-block-file__button{background:#32373c;color:#fff;text-decoration:none}
+</style>
+<style id='global-styles-inline-css' type='text/css'>
+:root{--wp--preset--aspect-ratio--square: 1;--wp--preset--aspect-ratio--4-3: 4/3;--wp--preset--aspect-ratio--3-4: 3/4;--wp--preset--aspect-ratio--3-2: 3/2;--wp--preset--aspect-ratio--2-3: 2/3;--wp--preset--aspect-ratio--16-9: 16/9;--wp--preset--aspect-ratio--9-16: 9/16;--wp--preset--color--black: #000000;--wp--preset--color--cyan-bluish-gray: #abb8c3;--wp--preset--color--white: #ffffff;--wp--preset--color--pale-pink: #f78da7;--wp--preset--color--vivid-red: #cf2e2e;--wp--preset--color--luminous-vivid-orange: #ff6900;--wp--preset--color--luminous-vivid-amber: #fcb900;--wp--preset--color--light-green-cyan: #7bdcb5;--wp--preset--color--vivid-green-cyan: #00d084;--wp--preset--color--pale-cyan-blue: #8ed1fc;--wp--preset--color--vivid-cyan-blue: #0693e3;--wp--preset--color--vivid-purple: #9b51e0;--wp--preset--gradient--vivid-cyan-blue-to-vivid-purple: linear-gradient(135deg,rgba(6,147,227,1) 0%,rgb(155,81,224) 100%);--wp--preset--gradient--light-green-cyan-to-vivid-green-cyan: linear-gradient(135deg,rgb(122,220,180) 0%,rgb(0,208,130) 100%);--wp--preset--gradient--luminous-vivid-amber-to-luminous-vivid-orange: linear-gradient(135deg,rgba(252,185,0,1) 0%,rgba(255,105,0,1) 100%);--wp--preset--gradient--luminous-vivid-orange-to-vivid-red: linear-gradient(135deg,rgba(255,105,0,1) 0%,rgb(207,46,46) 100%);--wp--preset--gradient--very-light-gray-to-cyan-bluish-gray: linear-gradient(135deg,rgb(238,238,238) 0%,rgb(169,184,195) 100%);--wp--preset--gradient--cool-to-warm-spectrum: linear-gradient(135deg,rgb(74,234,220) 0%,rgb(151,120,209) 20%,rgb(207,42,186) 40%,rgb(238,44,130) 60%,rgb(251,105,98) 80%,rgb(254,248,76) 100%);--wp--preset--gradient--blush-light-purple: linear-gradient(135deg,rgb(255,206,236) 0%,rgb(152,150,240) 100%);--wp--preset--gradient--blush-bordeaux: linear-gradient(135deg,rgb(254,205,165) 0%,rgb(254,45,45) 50%,rgb(107,0,62) 100%);--wp--preset--gradient--luminous-dusk: linear-gradient(135deg,rgb(255,203,112) 0%,rgb(199,81,192) 50%,rgb(65,88,208) 100%);--wp--preset--gradient--pale-ocean: linear-gradient(135deg,rgb(255,245,203) 0%,rgb(182,227,212) 50%,rgb(51,167,181) 100%);--wp--preset--gradient--electric-grass: linear-gradient(135deg,rgb(202,248,128) 0%,rgb(113,206,126) 100%);--wp--preset--gradient--midnight: linear-gradient(135deg,rgb(2,3,129) 0%,rgb(40,116,252) 100%);--wp--preset--font-size--small: 12px;--wp--preset--font-size--medium: 20px;--wp--preset--font-size--large: 32px;--wp--preset--font-size--x-large: 42px;--wp--preset--font-size--normal: 14px;--wp--preset--font-size--huge: 42px;--wp--preset--spacing--20: 0.44rem;--wp--preset--spacing--30: 0.67rem;--wp--preset--spacing--40: 1rem;--wp--preset--spacing--50: 1.5rem;--wp--preset--spacing--60: 2.25rem;--wp--preset--spacing--70: 3.38rem;--wp--preset--spacing--80: 5.06rem;--wp--preset--shadow--natural: 6px 6px 9px rgba(0, 0, 0, 0.2);--wp--preset--shadow--deep: 12px 12px 50px rgba(0, 0, 0, 0.4);--wp--preset--shadow--sharp: 6px 6px 0px rgba(0, 0, 0, 0.2);--wp--preset--shadow--outlined: 6px 6px 0px -3px rgba(255, 255, 255, 1), 6px 6px rgba(0, 0, 0, 1);--wp--preset--shadow--crisp: 6px 6px 0px rgba(0, 0, 0, 1);}:where(.is-layout-flex){gap: 0.5em;}:where(.is-layout-grid){gap: 0.5em;}body .is-layout-flex{display: flex;}.is-layout-flex{flex-wrap: wrap;align-items: center;}.is-layout-flex > :is(*, div){margin: 0;}body .is-layout-grid{display: grid;}.is-layout-grid > :is(*, div){margin: 0;}:where(.wp-block-columns.is-layout-flex){gap: 2em;}:where(.wp-block-columns.is-layout-grid){gap: 2em;}:where(.wp-block-post-template.is-layout-flex){gap: 1.25em;}:where(.wp-block-post-template.is-layout-grid){gap: 1.25em;}.has-black-color{color: var(--wp--preset--color--black) !important;}.has-cyan-bluish-gray-color{color: var(--wp--preset--color--cyan-bluish-gray) !important;}.has-white-color{color: var(--wp--preset--color--white) !important;}.has-pale-pink-color{color: var(--wp--preset--color--pale-pink) !important;}.has-vivid-red-color{color: var(--wp--preset--color--vivid-red) !important;}.has-luminous-vivid-orange-color{color: var(--wp--preset--color--luminous-vivid-orange) !important;}.has-luminous-vivid-amber-color{color: var(--wp--preset--color--luminous-vivid-amber) !important;}.has-light-green-cyan-color{color: var(--wp--preset--color--light-green-cyan) !important;}.has-vivid-green-cyan-color{color: var(--wp--preset--color--vivid-green-cyan) !important;}.has-pale-cyan-blue-color{color: var(--wp--preset--color--pale-cyan-blue) !important;}.has-vivid-cyan-blue-color{color: var(--wp--preset--color--vivid-cyan-blue) !important;}.has-vivid-purple-color{color: var(--wp--preset--color--vivid-purple) !important;}.has-black-background-color{background-color: var(--wp--preset--color--black) !important;}.has-cyan-bluish-gray-background-color{background-color: var(--wp--preset--color--cyan-bluish-gray) !important;}.has-white-background-color{background-color: var(--wp--preset--color--white) !important;}.has-pale-pink-background-color{background-color: var(--wp--preset--color--pale-pink) !important;}.has-vivid-red-background-color{background-color: var(--wp--preset--color--vivid-red) !important;}.has-luminous-vivid-orange-background-color{background-color: var(--wp--preset--color--luminous-vivid-orange) !important;}.has-luminous-vivid-amber-background-color{background-color: var(--wp--preset--color--luminous-vivid-amber) !important;}.has-light-green-cyan-background-color{background-color: var(--wp--preset--color--light-green-cyan) !important;}.has-vivid-green-cyan-background-color{background-color: var(--wp--preset--color--vivid-green-cyan) !important;}.has-pale-cyan-blue-background-color{background-color: var(--wp--preset--color--pale-cyan-blue) !important;}.has-vivid-cyan-blue-background-color{background-color: var(--wp--preset--color--vivid-cyan-blue) !important;}.has-vivid-purple-background-color{background-color: var(--wp--preset--color--vivid-purple) !important;}.has-black-border-color{border-color: var(--wp--preset--color--black) !important;}.has-cyan-bluish-gray-border-color{border-color: var(--wp--preset--color--cyan-bluish-gray) !important;}.has-white-border-color{border-color: var(--wp--preset--color--white) !important;}.has-pale-pink-border-color{border-color: var(--wp--preset--color--pale-pink) !important;}.has-vivid-red-border-color{border-color: var(--wp--preset--color--vivid-red) !important;}.has-luminous-vivid-orange-border-color{border-color: var(--wp--preset--color--luminous-vivid-orange) !important;}.has-luminous-vivid-amber-border-color{border-color: var(--wp--preset--color--luminous-vivid-amber) !important;}.has-light-green-cyan-border-color{border-color: var(--wp--preset--color--light-green-cyan) !important;}.has-vivid-green-cyan-border-color{border-color: var(--wp--preset--color--vivid-green-cyan) !important;}.has-pale-cyan-blue-border-color{border-color: var(--wp--preset--color--pale-cyan-blue) !important;}.has-vivid-cyan-blue-border-color{border-color: var(--wp--preset--color--vivid-cyan-blue) !important;}.has-vivid-purple-border-color{border-color: var(--wp--preset--color--vivid-purple) !important;}.has-vivid-cyan-blue-to-vivid-purple-gradient-background{background: var(--wp--preset--gradient--vivid-cyan-blue-to-vivid-purple) !important;}.has-light-green-cyan-to-vivid-green-cyan-gradient-background{background: var(--wp--preset--gradient--light-green-cyan-to-vivid-green-cyan) !important;}.has-luminous-vivid-amber-to-luminous-vivid-orange-gradient-background{background: var(--wp--preset--gradient--luminous-vivid-amber-to-luminous-vivid-orange) !important;}.has-luminous-vivid-orange-to-vivid-red-gradient-background{background: var(--wp--preset--gradient--luminous-vivid-orange-to-vivid-red) !important;}.has-very-light-gray-to-cyan-bluish-gray-gradient-background{background: var(--wp--preset--gradient--very-light-gray-to-cyan-bluish-gray) !important;}.has-cool-to-warm-spectrum-gradient-background{background: var(--wp--preset--gradient--cool-to-warm-spectrum) !important;}.has-blush-light-purple-gradient-background{background: var(--wp--preset--gradient--blush-light-purple) !important;}.has-blush-bordeaux-gradient-background{background: var(--wp--preset--gradient--blush-bordeaux) !important;}.has-luminous-dusk-gradient-background{background: var(--wp--preset--gradient--luminous-dusk) !important;}.has-pale-ocean-gradient-background{background: var(--wp--preset--gradient--pale-ocean) !important;}.has-electric-grass-gradient-background{background: var(--wp--preset--gradient--electric-grass) !important;}.has-midnight-gradient-background{background: var(--wp--preset--gradient--midnight) !important;}.has-small-font-size{font-size: var(--wp--preset--font-size--small) !important;}.has-medium-font-size{font-size: var(--wp--preset--font-size--medium) !important;}.has-large-font-size{font-size: var(--wp--preset--font-size--large) !important;}.has-x-large-font-size{font-size: var(--wp--preset--font-size--x-large) !important;}
+:where(.wp-block-post-template.is-layout-flex){gap: 1.25em;}:where(.wp-block-post-template.is-layout-grid){gap: 1.25em;}
+:where(.wp-block-columns.is-layout-flex){gap: 2em;}:where(.wp-block-columns.is-layout-grid){gap: 2em;}
+:root :where(.wp-block-pullquote){font-size: 1.5em;line-height: 1.6;}
+</style>
+<link rel='stylesheet' id='penci-main-style-css' href='https://www.arduinolearning.com/wp-content/themes/soledad/main.css?ver=8.5.4' type='text/css' media='all' />
+<link rel='stylesheet' id='penci-swiper-bundle-css' href='https://www.arduinolearning.com/wp-content/themes/soledad/css/swiper-bundle.min.css?ver=8.5.4' type='text/css' media='all' />
+<link rel='stylesheet' id='penci-font-awesomeold-css' href='https://www.arduinolearning.com/wp-content/themes/soledad/css/font-awesome.4.7.0.swap.min.css?ver=4.7.0' type='text/css' media='all' />
+<link rel='stylesheet' id='penci_icon-css' href='https://www.arduinolearning.com/wp-content/themes/soledad/css/penci-icon.css?ver=8.5.4' type='text/css' media='all' />
+<link rel='stylesheet' id='penci_style-css' href='https://www.arduinolearning.com/wp-content/themes/soledad/style.css?ver=8.5.4' type='text/css' media='all' />
+<link rel='stylesheet' id='penci_social_counter-css' href='https://www.arduinolearning.com/wp-content/themes/soledad/css/social-counter.css?ver=8.5.4' type='text/css' media='all' />
+<link rel='stylesheet' id='addtoany-css' href='https://www.arduinolearning.com/wp-content/plugins/add-to-any/addtoany.min.css?ver=1.16' type='text/css' media='all' />
+<link rel='stylesheet' id='enlighterjs-css' href='https://www.arduinolearning.com/wp-content/plugins/enlighter/cache/enlighterjs.min.css?ver=0A0B0C' type='text/css' media='all' />
+<script type="text/javascript" id="addtoany-core-js-before">
+/* <![CDATA[ */
+window.a2a_config=window.a2a_config||{};a2a_config.callbacks=[];a2a_config.overlays=[];a2a_config.templates={};a2a_localize = {
+	Share: "Share",
+	Save: "Save",
+	Subscribe: "Subscribe",
+	Email: "Email",
+	Bookmark: "Bookmark",
+	ShowAll: "Show All",
+	ShowLess: "Show less",
+	FindServices: "Find service(s)",
+	FindAnyServiceToAddTo: "Instantly find any service to add to",
+	PoweredBy: "Powered by",
+	ShareViaEmail: "Share via email",
+	SubscribeViaEmail: "Subscribe via email",
+	BookmarkInYourBrowser: "Bookmark in your browser",
+	BookmarkInstructions: "Press Ctrl+D or \u2318+D to bookmark this page",
+	AddToYourFavorites: "Add to your favourites",
+	SendFromWebOrProgram: "Send from any email address or email program",
+	EmailProgram: "Email program",
+	More: "More&#8230;",
+	ThanksForSharing: "Thanks for sharing!",
+	ThanksForFollowing: "Thanks for following!"
+};
+/* ]]> */
+</script>
+<script type="text/javascript" defer src="https://static.addtoany.com/menu/page.js" id="addtoany-core-js"></script>
+<script type="text/javascript" src="https://www.arduinolearning.com/wp-includes/js/jquery/jquery.min.js?ver=3.7.1" id="jquery-core-js"></script>
+<script type="text/javascript" src="https://www.arduinolearning.com/wp-includes/js/jquery/jquery-migrate.min.js?ver=3.4.1" id="jquery-migrate-js"></script>
+<script type="text/javascript" defer src="https://www.arduinolearning.com/wp-content/plugins/add-to-any/addtoany.min.js?ver=1.1" id="addtoany-jquery-js"></script>
+<link rel="https://api.w.org/" href="https://www.arduinolearning.com/wp-json/" /><link rel="alternate" title="JSON" type="application/json" href="https://www.arduinolearning.com/wp-json/wp/v2/posts/1366" />
+<!-- This site is using AdRotate v5.17 to display their advertisements - https://ajdg.solutions/ -->
+<!-- AdRotate CSS -->
+<style type="text/css" media="screen">
+	.g { margin:0px; padding:0px; overflow:hidden; line-height:1; zoom:1; }
+	.g img { height:auto; }
+	.g-col { position:relative; float:left; }
+	.g-col:first-child { margin-left: 0; }
+	.g-col:last-child { margin-right: 0; }
+	.g-1 { min-width:5px; max-width:295px; }
+	.b-1 { margin:5px; }
+	.g-3 { margin:0px;  width:100%; max-width:230px; height:100%; max-height:240px; }
+	.g-4 { min-width:0px; max-width:255px; }
+	.b-4 { margin:0px; }
+	.g-5 { min-width:5px; max-width:295px; }
+	.b-5 { margin:5px; }
+	@media only screen and (max-width: 480px) {
+		.g-col, .g-dyn, .g-single { width:100%; margin-left:0; margin-right:0; }
+	}
+</style>
+<!-- /AdRotate CSS -->
+
+<script async src="https://epnt.ebay.com/static/epn-smart-tools.js"></script>
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3520634452456567"
+     crossorigin="anonymous"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3520634452456567"
+     crossorigin="anonymous"></script><style id="penci-custom-style" type="text/css">body{ --pcbg-cl: #fff; --pctext-cl: #313131; --pcborder-cl: #dedede; --pcheading-cl: #313131; --pcmeta-cl: #888888; --pcaccent-cl: #6eb48c; --pcbody-font: 'PT Serif', serif; --pchead-font: 'Raleway', sans-serif; --pchead-wei: bold; --pcava_bdr:10px;--pcajs_fvw:470px;--pcajs_fvmw:220px; } .single.penci-body-single-style-5 #header, .single.penci-body-single-style-6 #header, .single.penci-body-single-style-10 #header, .single.penci-body-single-style-5 .pc-wrapbuilder-header, .single.penci-body-single-style-6 .pc-wrapbuilder-header, .single.penci-body-single-style-10 .pc-wrapbuilder-header { --pchd-mg: 40px; } .fluid-width-video-wrapper > div { position: absolute; left: 0; right: 0; top: 0; width: 100%; height: 100%; } .yt-video-place { position: relative; text-align: center; } .yt-video-place.embed-responsive .start-video { display: block; top: 0; left: 0; bottom: 0; right: 0; position: absolute; transform: none; } .yt-video-place.embed-responsive .start-video img { margin: 0; padding: 0; top: 50%; display: inline-block; position: absolute; left: 50%; transform: translate(-50%, -50%); width: 68px; height: auto; } .mfp-bg { top: 0; left: 0; width: 100%; height: 100%; z-index: 9999999; overflow: hidden; position: fixed; background: #0b0b0b; opacity: .8; filter: alpha(opacity=80) } .mfp-wrap { top: 0; left: 0; width: 100%; height: 100%; z-index: 9999999; position: fixed; outline: none !important; -webkit-backface-visibility: hidden } .penci-hide-tagupdated{ display: none !important; } .featured-area .penci-image-holder, .featured-area .penci-slider4-overlay, .featured-area .penci-slide-overlay .overlay-link, .featured-style-29 .featured-slider-overlay, .penci-slider38-overlay{ border-radius: ; -webkit-border-radius: ; } .penci-featured-content-right:before{ border-top-right-radius: ; border-bottom-right-radius: ; } .penci-flat-overlay .penci-slide-overlay .penci-mag-featured-content:before{ border-bottom-left-radius: ; border-bottom-right-radius: ; } .container-single .post-image{ border-radius: ; -webkit-border-radius: ; } .penci-mega-thumbnail .penci-image-holder{ border-radius: ; -webkit-border-radius: ; } #penci-login-popup:before{ opacity: ; } .penci-header-signup-form { padding-top: px; padding-bottom: px; } .penci-slide-overlay .overlay-link, .penci-slider38-overlay, .penci-flat-overlay .penci-slide-overlay .penci-mag-featured-content:before, .slider-40-wrapper .list-slider-creative .item-slider-creative .img-container:before { opacity: ; } .penci-item-mag:hover .penci-slide-overlay .overlay-link, .featured-style-38 .item:hover .penci-slider38-overlay, .penci-flat-overlay .penci-item-mag:hover .penci-slide-overlay .penci-mag-featured-content:before { opacity: ; } .penci-featured-content .featured-slider-overlay { opacity: ; } .slider-40-wrapper .list-slider-creative .item-slider-creative:hover .img-container:before { opacity:; } .featured-style-29 .featured-slider-overlay { opacity: ; } .penci-more-link a.more-link:hover:before { right: 100%; margin-right: 10px; width: 60px; } .penci-more-link a.more-link:hover:after{ left: 100%; margin-left: 10px; width: 60px; } .standard-post-entry a.more-link:hover, .standard-post-entry a.more-link:hover:before, .standard-post-entry a.more-link:hover:after { opacity: 0.8; } .penci-grid li.typography-style .overlay-typography { opacity: ; } .penci-grid li.typography-style:hover .overlay-typography { opacity: ; } .post-entry blockquote:before, .wpb_text_column blockquote:before, .woocommerce .page-description blockquote:before, .woocommerce div.product .entry-summary div[itemprop="description"] blockquote:before, .woocommerce div.product .woocommerce-tabs #tab-description blockquote:before, .woocommerce-product-details__short-description blockquote:before, .format-post-box .post-format-icon i.fa-quote-left:before { font-family: 'FontAwesome'; content: '\f10d'; font-size: 30px; left: 2px; top: 0px; font-weight: normal; } .penci-fawesome-ver5 .post-entry blockquote:before, .penci-fawesome-ver5 .wpb_text_column blockquote:before, .penci-fawesome-ver5 .woocommerce .page-description blockquote:before, .penci-fawesome-ver5 .woocommerce div.product .entry-summary div[itemprop="description"] blockquote:before, .penci-fawesome-ver5 .woocommerce div.product .woocommerce-tabs #tab-description blockquote:before, .penci-fawesome-ver5 .woocommerce-product-details__short-description blockquote:before, .penci-fawesome-ver5 .format-post-box .post-format-icon i.fa-quote-left:before{ font-family: 'Font Awesome 5 Free'; font-weight: 900; } .home-featured-cat-content .mag-photo .mag-overlay-photo { opacity: ; } .home-featured-cat-content .mag-photo:hover .mag-overlay-photo { opacity: ; } .inner-item-portfolio:hover .penci-portfolio-thumbnail a:after { opacity: ; } .penci_header.penci-header-builder.main-builder-header{}.penci-header-image-logo,.penci-header-text-logo{}.pc-logo-desktop.penci-header-image-logo img{}@media only screen and (max-width: 767px){.penci_navbar_mobile .penci-header-image-logo img{}}.penci_builder_sticky_header_desktop .penci-header-image-logo img{}.penci_navbar_mobile .penci-header-text-logo{}.penci_navbar_mobile .penci-header-image-logo img{}.penci_navbar_mobile .sticky-enable .penci-header-image-logo img{}.pb-logo-sidebar-mobile{}.pc-builder-element.pb-logo-sidebar-mobile img{}.pc-logo-sticky{}.pc-builder-element.pc-logo-sticky.pc-logo img{}.pc-builder-element.pc-main-menu{}.pc-builder-element.pc-second-menu{}.pc-builder-element.pc-third-menu{}.penci-builder.penci-builder-button.button-1{}.penci-builder.penci-builder-button.button-1:hover{}.penci-builder.penci-builder-button.button-2{}.penci-builder.penci-builder-button.button-2:hover{}.penci-builder.penci-builder-button.button-3{}.penci-builder.penci-builder-button.button-3:hover{}.penci-builder.penci-builder-button.button-mobile-1{}.penci-builder.penci-builder-button.button-mobile-1:hover{}.penci-builder.penci-builder-button.button-mobile-2{}.penci-builder.penci-builder-button.button-mobile-2:hover{}.penci-builder-mobile-sidebar-nav.penci-menu-hbg{border-width:0;}.pc-builder-menu.pc-dropdown-menu{}.pc-builder-element.pc-logo.pb-logo-mobile{}.pc-header-element.penci-topbar-social .pclogin-item a{}.pc-header-element.penci-topbar-social-mobile .pclogin-item a{}body.penci-header-preview-layout .wrapper-boxed{min-height:1500px}.penci_header_overlap .penci-desktop-topblock,.penci-desktop-topblock{border-width:0;}.penci_header_overlap .penci-desktop-topbar,.penci-desktop-topbar{border-width:0;}.penci_header_overlap .penci-desktop-midbar,.penci-desktop-midbar{border-width:0;}.penci_header_overlap .penci-desktop-bottombar,.penci-desktop-bottombar{border-width:0;}.penci_header_overlap .penci-desktop-bottomblock,.penci-desktop-bottomblock{border-width:0;}.penci_header_overlap .penci-sticky-top,.penci-sticky-top{border-width:0;}.penci_header_overlap .penci-sticky-mid,.penci-sticky-mid{border-width:0;}.penci_header_overlap .penci-sticky-bottom,.penci-sticky-bottom{border-width:0;}.penci_header_overlap .penci-mobile-topbar,.penci-mobile-topbar{border-width:0;}.penci_header_overlap .penci-mobile-midbar,.penci-mobile-midbar{border-width:0;}.penci_header_overlap .penci-mobile-bottombar,.penci-mobile-bottombar{border-width:0;} body { --pcdm_btnbg: rgba(0, 0, 0, .1); --pcdm_btnd: #666; --pcdm_btndbg: #fff; --pcdm_btnn: var(--pctext-cl); --pcdm_btnnbg: var(--pcbg-cl); } body.pcdm-enable { --pcbg-cl: #000000; --pcbg-l-cl: #1a1a1a; --pcbg-d-cl: #000000; --pctext-cl: #fff; --pcborder-cl: #313131; --pcborders-cl: #3c3c3c; --pcheading-cl: rgba(255,255,255,0.9); --pcmeta-cl: #999999; --pcl-cl: #fff; --pclh-cl: #6eb48c; --pcaccent-cl: #6eb48c; background-color: var(--pcbg-cl); color: var(--pctext-cl); } body.pcdark-df.pcdm-enable.pclight-mode { --pcbg-cl: #fff; --pctext-cl: #313131; --pcborder-cl: #dedede; --pcheading-cl: #313131; --pcmeta-cl: #888888; --pcaccent-cl: #6eb48c; }</style><script>
+var penciBlocksArray=[];
+var portfolioDataJs = portfolioDataJs || [];var PENCILOCALCACHE = {};
+		(function () {
+				"use strict";
+		
+				PENCILOCALCACHE = {
+					data: {},
+					remove: function ( ajaxFilterItem ) {
+						delete PENCILOCALCACHE.data[ajaxFilterItem];
+					},
+					exist: function ( ajaxFilterItem ) {
+						return PENCILOCALCACHE.data.hasOwnProperty( ajaxFilterItem ) && PENCILOCALCACHE.data[ajaxFilterItem] !== null;
+					},
+					get: function ( ajaxFilterItem ) {
+						return PENCILOCALCACHE.data[ajaxFilterItem];
+					},
+					set: function ( ajaxFilterItem, cachedData ) {
+						PENCILOCALCACHE.remove( ajaxFilterItem );
+						PENCILOCALCACHE.data[ajaxFilterItem] = cachedData;
+					}
+				};
+			}
+		)();function penciBlock() {
+		    this.atts_json = '';
+		    this.content = '';
+		}</script>
+<script type="application/ld+json">{
+    "@context": "https:\/\/schema.org\/",
+    "@type": "organization",
+    "@id": "#organization",
+    "logo": {
+        "@type": "ImageObject",
+        "url": "https:\/\/arduinolearning.b-cdn.net\/wp-content\/uploads\/2020\/06\/logo-1.png"
+    },
+    "url": "https:\/\/www.arduinolearning.com\/",
+    "name": "Arduino Learning",
+    "description": ""
+}</script><script type="application/ld+json">{
+    "@context": "https:\/\/schema.org\/",
+    "@type": "WebSite",
+    "name": "Arduino Learning",
+    "alternateName": "",
+    "url": "https:\/\/www.arduinolearning.com\/"
+}</script><script type="application/ld+json">{
+    "@context": "https:\/\/schema.org\/",
+    "@type": "BlogPosting",
+    "headline": "Arduino Uno and VCNL4040 Proximity and Ambient Light Sensor",
+    "description": "In this example we connect a VCNL4040 Proximity and Ambient Light Sensor from Vishay to an Arduino Uno First lets look at some information about the sensor from the manufacturer VCNL4040 integrates a proximity sensor (PS), ambientlight sensor (ALS), and&hellip;",
+    "datePublished": "2021-06-22T18:17:56+01:00",
+    "datemodified": "2021-05-22T19:25:53+01:00",
+    "mainEntityOfPage": "https:\/\/www.arduinolearning.com\/code\/arduino-uno-and-vcnl4040-proximity-and-ambient-light-sensor.php",
+    "image": {
+        "@type": "ImageObject",
+        "url": "https:\/\/www.arduinolearning.com\/wp-content\/uploads\/2021\/05\/arduino-and-VCNL4040_bb.png",
+        "width": 1143,
+        "height": 870
+    },
+    "publisher": {
+        "@type": "Organization",
+        "name": "Arduino Learning",
+        "logo": {
+            "@type": "ImageObject",
+            "url": "https:\/\/arduinolearning.b-cdn.net\/wp-content\/uploads\/2020\/06\/logo-1.png"
+        }
+    },
+    "author": {
+        "@type": "Person",
+        "@id": "#person-shedboy71",
+        "name": "shedboy71",
+        "url": "https:\/\/www.arduinolearning.com\/author\/shedboy71"
+    }
+}</script><script type="application/ld+json">{
+    "@context": "https:\/\/schema.org\/",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+        {
+            "@type": "ListItem",
+            "position": 1,
+            "item": {
+                "@id": "https:\/\/www.arduinolearning.com",
+                "name": "Home"
+            }
+        },
+        {
+            "@type": "ListItem",
+            "position": 2,
+            "item": {
+                "@id": "https:\/\/www.arduinolearning.com\/category\/code",
+                "name": "Code"
+            }
+        },
+        {
+            "@type": "ListItem",
+            "position": 3,
+            "item": {
+                "@id": "https:\/\/www.arduinolearning.com\/code\/arduino-uno-and-vcnl4040-proximity-and-ambient-light-sensor.php",
+                "name": "Arduino Uno and VCNL4040 Proximity and Ambient Light Sensor"
+            }
+        }
+    ]
+}</script><link rel="icon" href="https://arduinolearning.b-cdn.net/wp-content/uploads/2020/06/alfav.png" sizes="32x32" />
+<link rel="icon" href="https://arduinolearning.b-cdn.net/wp-content/uploads/2020/06/alfav.png" sizes="192x192" />
+<link rel="apple-touch-icon" href="https://arduinolearning.b-cdn.net/wp-content/uploads/2020/06/alfav.png" />
+<meta name="msapplication-TileImage" content="https://arduinolearning.b-cdn.net/wp-content/uploads/2020/06/alfav.png" />
+</head>
+
+<body class="post-template-default single single-post postid-1366 single-format-standard penci-disable-desc-collapse soledad-ver-8-5-4 pclight-mode pcmn-drdw-style-slide_down penci-two-sidebar pchds-default">
+<div id="soledad_wrapper" class="wrapper-boxed header-style-header-3 header-search-style-default">
+	<div class="penci-header-wrap"><div class="penci-top-bar topbar-menu topbar-fullwidth">
+    <div class="container">
+        <div class="penci-headline" role="navigation"
+		     itemscope
+             itemtype="https://schema.org/SiteNavigationElement">
+	                    <div class="pctopbar-item penci-topbar-trending">
+	        <span class="headline-title nticker-style-1">Top Posts</span>
+		        <span class="penci-trending-nav">
+			<a class="penci-slider-prev" href="#"
+               aria-label="Previous"><i class="penci-faicon fa fa-angle-left" ></i></a>
+			<a class="penci-slider-next" href="#"
+               aria-label="Next"><i class="penci-faicon fa fa-angle-right" ></i></a>
+		</span>
+        <div class="swiper penci-owl-carousel penci-owl-carousel-slider penci-headline-posts"
+             data-auto="true" data-nav="false" data-autotime="3000"
+             data-speed="200" data-anim="slideInUp">
+            <div class="swiper-wrapper">
+				                    <div class="swiper-slide">
+                        <a class="penci-topbar-post-title"
+                           href="https://www.arduinolearning.com/hardware/arduino-uno-q-explained-a-deep-dive-for-makers-educators-and-edge-ai-builders.php">Arduino UNO Q, Explained: A Deep-Dive for Makers,...</a>
+                    </div>
+				                    <div class="swiper-slide">
+                        <a class="penci-topbar-post-title"
+                           href="https://www.arduinolearning.com/news/qualcomm-to-acquire-arduino-what-it-means-for-developers-edge-ai-and-the-maker-economy.php">Qualcomm to Acquire Arduino: What It Means for...</a>
+                    </div>
+				                    <div class="swiper-slide">
+                        <a class="penci-topbar-post-title"
+                           href="https://www.arduinolearning.com/learning/basics/how-to-graph-live-data-using-the-arduino-serial-plotter.php">How to Graph Live Data Using the Arduino...</a>
+                    </div>
+				                    <div class="swiper-slide">
+                        <a class="penci-topbar-post-title"
+                           href="https://www.arduinolearning.com/learning/how-to-store-settings-in-eeprom-on-an-arduino.php">How to Store Settings in EEPROM on an...</a>
+                    </div>
+				                    <div class="swiper-slide">
+                        <a class="penci-topbar-post-title"
+                           href="https://www.arduinolearning.com/code/sts35-temperature-sensor-and-arduino-example.php">STS35 temperature sensor and Arduino example</a>
+                    </div>
+				                    <div class="swiper-slide">
+                        <a class="penci-topbar-post-title"
+                           href="https://www.arduinolearning.com/code/bma220-triple-axis-accelerometer-and-arduino-example.php">BMA220 Triple Axis Accelerometer and Arduino example</a>
+                    </div>
+				                    <div class="swiper-slide">
+                        <a class="penci-topbar-post-title"
+                           href="https://www.arduinolearning.com/code/is31fl3741-led-matrix-module-and-arduino-example.php">IS31FL3741 LED matrix module and Arduino example</a>
+                    </div>
+				                    <div class="swiper-slide">
+                        <a class="penci-topbar-post-title"
+                           href="https://www.arduinolearning.com/hardware/an-arduino-board-which-is-suitable-for-learners-the-keyestudio-max.php">An Arduino board which is suitable for learners...</a>
+                    </div>
+				                    <div class="swiper-slide">
+                        <a class="penci-topbar-post-title"
+                           href="https://www.arduinolearning.com/code/bmp390-pressure-sensor-and-arduino-example.php">BMP390 pressure sensor and Arduino example</a>
+                    </div>
+				                    <div class="swiper-slide">
+                        <a class="penci-topbar-post-title"
+                           href="https://www.arduinolearning.com/hardware/the-arduino-r4-clones-are-here.php">The Arduino R4 clones are here</a>
+                    </div>
+				            </div>
+        </div>
+	</div><div class="pctopbar-item penci-wtopbar-menu"><ul id="menu-headermenu" class="penci-topbar-menu"><li id="menu-item-1305" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-1305"><a href="https://www.arduinolearning.com/arduino-products">Arduino Products</a></li>
+<li id="menu-item-1303" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-1303"><a href="https://www.arduinolearning.com/support-us">Support Us</a></li>
+</ul></div><div class="pctopbar-item penci-topbar-social penci-social-textcolored">
+	<div class="inner-header-social">
+				<a href="https://twitter.com/micromikemck" aria-label="Twitter"  rel="noreferrer" target="_blank"><i class="penci-faicon penciicon-x-twitter" ></i></a>
+						<a href="https://www.pinterest.co.uk/arduinolearning" aria-label="Pinterest"  rel="noreferrer" target="_blank"><i class="penci-faicon fa fa-pinterest" ></i></a>
+						<a href="https://www.youtube.com/channel/UCYR5UGB3CAuuBQ-X9RLawoA/" aria-label="Youtube"  rel="noreferrer" target="_blank"><i class="penci-faicon fa fa-youtube-play" ></i></a>
+			</div>
+</div>        </div>
+    </div>
+</div>
+<header id="header" class="header-header-3 has-bottom-line" itemscope="itemscope" itemtype="https://schema.org/WPHeader">
+			<div class="inner-header penci-header-second">
+			<div class="container align-left-logo has-banner">
+				<div id="logo">
+					<a href="https://www.arduinolearning.com/"><img
+            class="penci-mainlogo penci-limg"             src="https://arduinolearning.b-cdn.net/wp-content/uploads/2020/06/logo-1.png" alt="Arduino Learning"
+            width="248"
+            height="72"></a>
+									</div>
+
+														<div class="header-banner header-style-3">
+						<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- arduinofixed -->
+<ins class="adsbygoogle"
+     style="display:inline-block;width:728px;height:90px"
+     data-ad-client="ca-pub-3520634452456567"
+     data-ad-slot="2046369486"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>											</div>
+							</div>
+		</div>
+						<nav id="navigation" class="header-layout-bottom header-3 menu-style-1" role="navigation" itemscope itemtype="https://schema.org/SiteNavigationElement">
+			<div class="container">
+				<div class="button-menu-mobile header-3"><svg width=18px height=18px viewBox="0 0 512 384" version=1.1 xmlns=http://www.w3.org/2000/svg xmlns:xlink=http://www.w3.org/1999/xlink><g stroke=none stroke-width=1 fill-rule=evenodd><g transform="translate(0.000000, 0.250080)"><rect x=0 y=0 width=512 height=62></rect><rect x=0 y=161 width=512 height=62></rect><rect x=0 y=321 width=512 height=62></rect></g></g></svg></div>
+				<ul id="menu-mainmenu" class="menu"><li id="menu-item-1298" class="menu-item menu-item-type-taxonomy menu-item-object-category current-post-ancestor current-menu-parent current-post-parent menu-item-1298"><a href="https://www.arduinolearning.com/category/code">Code</a></li>
+<li id="menu-item-1299" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-1299"><a href="https://www.arduinolearning.com/category/hardware">Hardware</a></li>
+<li id="menu-item-1301" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-1301"><a href="https://www.arduinolearning.com/category/learning">Learning</a></li>
+<li id="menu-item-1300" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-1300"><a href="https://www.arduinolearning.com/category/projects">Projects</a></li>
+<li id="menu-item-1302" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-1302"><a href="https://www.arduinolearning.com/category/reference">Reference</a></li>
+</ul><div id="top-search" class="penci-top-search pcheader-icon top-search-classes">
+    <a href="#" class="search-click" aria-label="Search">
+        <i class="penciicon-magnifiying-glass"></i>
+    </a>
+    <div class="show-search pcbds-default">
+		            <form role="search" method="get" class="pc-searchform"
+                  action="https://www.arduinolearning.com/">
+                <div class="pc-searchform-inner">
+                    <input type="text" class="search-input"
+                           placeholder="Type and hit enter..." name="s"/>
+                    <i class="penciicon-magnifiying-glass"></i>
+                    <button type="submit"
+                            class="searchsubmit">Search</button>
+                </div>
+            </form>
+			        <a href="#" aria-label="Search" class="search-click close-search"><i class="penciicon-close-button"></i></a>
+    </div>
+</div>
+				
+            </div>
+        </nav><!-- End Navigation -->
+			
+</header>
+<!-- end #header -->
+</div>
+<div class="penci-single-wrapper">
+    <div class="penci-single-block">
+					                <div class="container penci-breadcrumb single-breadcrumb">
+                    <span><a class="crumb"
+                             href="https://www.arduinolearning.com/">Home</a></span><i class="penci-faicon fa fa-angle-right" ></i>					<span><a class="crumb" href="https://www.arduinolearning.com/category/code">Code</a></span><i class="penci-faicon fa fa-angle-right" ></i></i>                    <span>Arduino Uno and VCNL4040 Proximity and Ambient Light Sensor</span>
+                </div>
+					
+		
+        <div class="container container-single container-single-magazine penci_sidebar two-sidebar penci-enable-lightbox">
+            <div id="main">
+                <div class="theiaStickySidebar">
+
+					
+																	<article id="post-1366" class="post type-post status-publish">
+
+	
+		
+            <div class="header-standard header-classic single-header">
+								                    <div class="penci-standard-cat"><span class="cat"><a style="" class="penci-cat-name penci-cat-3" href="https://www.arduinolearning.com/category/code"  rel="category tag"><span style="">Code</span></a></span></div>
+				
+
+                <h1 class="post-title single-post-title entry-title">Arduino Uno and VCNL4040 Proximity and Ambient Light Sensor</h1>
+
+										<div class="penci-hide-tagupdated">
+			<span class="author-italic author vcard">by 										<a class="author-url url fn n"
+											href="https://www.arduinolearning.com/author/shedboy71">shedboy71</a>
+									</span>
+			<time class="entry-date published" datetime="2021-06-22T18:17:56+01:00">22nd June 2021</time>		</div>
+															            </div>
+
+			
+			                <div class="penci-google-adsense-1">
+					[lebox id="1"]                </div>
+			
+			
+		
+		
+										
+		
+	
+	
+	
+	    <div class="post-entry blockquote-style-1 ">
+        <div class="inner-post-entry entry-content" id="penci-post-entry-inner">
+
+			<i class="penci-post-countview-number-check" style="display:none">3.3K</i>
+			<p>In this example we connect a VCNL4040 Proximity and Ambient Light Sensor from Vishay to an Arduino Uno</p>
+<p><strong>First lets look at some information about the sensor from the manufacturer</strong></p>
+<p>VCNL4040 integrates a proximity sensor (PS), ambientlight sensor (ALS), and a high power IRED into one small package. It incorporates photodiodes, amplifiers, and analog to digital converting circuits into a single chip byCMOS process.</p>
+<p>The 16-bit high resolution ALS offersexcellent sensing capabilities with sufficient selections to fulfill most applications whether dark or high transparencylens design.</p>
+<p>High and low interrupt thresholds can beprogrammed for both ALS and PS, allowing the component to use a minimal amount of the microcontrollers resources.</p>
+<p>The proximity sensor features an intelligent cancellation scheme, so that cross talk phenomenon is eliminated effectively. To accelerate the PS response time, smart persistence prevents the misjudgment of proximity sensing but also keeps a fast response time.</p>
+<p>In active force mode, a single measurement can be requested, allowing another good approach for more design flexibility to fulfill different kinds of applications with more power saving.</p>
+<p>The patented Filtron technology achieves ambient lightspectral sensitivity closest to real human eye response andoffers the best background light cancellation capability(including sunlight) without utilizing the microcontrollers’resources.</p>
+<p>VCNL4040 provides an excellent temperature compensation capability for keeping output stable undervarious temperature configurations. ALS and PS functions are easily set via the simple command format of I2C(SMBus compatible) interface protocol.</p>
+<p>Operating voltage ranges from 2.5 V to 3.6 V.</p>
+<p>Here is the sensor I purchased from the good folks at Adafruit (via Pimoroni in the UK)</p>
+<div id="attachment_1370" style="width: 345px" class="wp-caption alignnone"><a href="https://arduinolearning.b-cdn.net/wp-content/uploads/2021/06/vcnl4040-board.jpg" data-rel="penci-gallery-image-content" ><img decoding="async" aria-describedby="caption-attachment-1370" class=" wp-image-1370" src="https://arduinolearning.b-cdn.net/wp-content/uploads/2021/06/vcnl4040-board.jpg" alt="vcnl4040 board" width="335" height="251" srcset="https://www.arduinolearning.com/wp-content/uploads/2021/06/vcnl4040-board.jpg 1200w, https://www.arduinolearning.com/wp-content/uploads/2021/06/vcnl4040-board-1024x768.jpg 1024w, https://www.arduinolearning.com/wp-content/uploads/2021/06/vcnl4040-board-768x576.jpg 768w" sizes="(max-width: 335px) 100vw, 335px" /></a><p id="caption-attachment-1370" class="wp-caption-text">vcnl4040 board</p></div>
+<h3>Parts Required</h3>
+<p><strong>Here are the parts I used</strong></p>
+<p>The sensor you can pick up in the $6 price range &#8211; you can connect to the sensor using a standard header the classic dupont style jumper wire.</p>
+<p>I used a Qwiic cable &#8211; since a few sensors seem to use these but this is optional</p>
+<div class="pcrstb-wrap"><table>
+<tbody>
+<tr>
+<td><strong>Name</strong></td>
+<td><strong>Link</strong></td>
+</tr>
+<tr>
+<td>Arduino Uno</td>
+<td><a href="http://s.click.aliexpress.com/e/Mnzr2m8" target="_parent" rel="noopener noreferrer">UNO R3 CH340G/ATmega328P, compatible for Arduino UNO</a></td>
+</tr>
+<tr>
+<td>VCNL4040</td>
+<td><a href="https://s.click.aliexpress.com/e/_9fUbqn" target="_parent" rel="noopener">SEN-15177 Optical Sensor Development Tools xx Proximity Sensor Breakout &#8211; 20cm, VCNL4040 (Qwiic)</a></td>
+</tr>
+<tr>
+<td>Connecting wire</td>
+<td><a href="http://s.click.aliexpress.com/e/ctg3K2fe" target="_parent" rel="noopener noreferrer">Free shipping Dupont line 120pcs 20cm male to male + male to female and female to female jumper wire</a></td>
+</tr>
+<tr>
+<td>sensor shield</td>
+<td><a href="http://s.click.aliexpress.com/e/R82RMbA" target="_parent" rel="noopener noreferrer">Expansion IO Board Sensor Shield</a></td>
+</tr>
+</tbody>
+</table></div>
+<p>&nbsp;</p>
+<h3>Schematic/Connection</h3>
+<p>I used the Adafruit VCNL4040 sensor and in this case used the Stemma connection</p>
+<p>For the STEMMA QT cables, it uses the Qwiic convention:</p>
+<p>Black for GND<br />
+Red for V+<br />
+Blue for SDA<br />
+Yellow for SCL</p>
+<p>So color coded for ease of use</p>
+<div id="attachment_1367" style="width: 1153px" class="wp-caption alignnone"><a href="https://arduinolearning.b-cdn.net/wp-content/uploads/2021/05/arduino-and-VCNL4040_bb.png" data-rel="penci-gallery-image-content" ><img loading="lazy" decoding="async" aria-describedby="caption-attachment-1367" class="size-full wp-image-1367" src="https://arduinolearning.b-cdn.net/wp-content/uploads/2021/05/arduino-and-VCNL4040_bb.png" alt="arduino and VCNL4040" width="1143" height="870" srcset="https://www.arduinolearning.com/wp-content/uploads/2021/05/arduino-and-VCNL4040_bb.png 1143w, https://www.arduinolearning.com/wp-content/uploads/2021/05/arduino-and-VCNL4040_bb-1024x779.png 1024w, https://www.arduinolearning.com/wp-content/uploads/2021/05/arduino-and-VCNL4040_bb-768x585.png 768w" sizes="auto, (max-width: 1143px) 100vw, 1143px" /></a><p id="caption-attachment-1367" class="wp-caption-text">arduino and VCNL4040</p></div>
+<h3>Code Example</h3>
+<p>This example uses a couple of libraries, both of which can be installed using the library manager</p>
+<p>You need the Adafruit library for the VCNL4040 &#8211;<a href="https://github.com/adafruit/Adafruit_VCNL4040" target="_blank" rel="noopener">https://github.com/adafruit/Adafruit_VCNL4040</a></p>
+<p>You also need an I2C support library from the same folks for the library above to work and that is available from &#8211; https://github.com/adafruit/Adafruit_BusIO</p>
+<p>This is mainly the default example &#8211; with a couple of sections of code that were not required removed. I just used the defaults</p>
+<p>[codesyntax lang=&#8221;cpp&#8221;]</p>
+<pre>#include &lt;Adafruit_VCNL4040.h&gt;
+
+Adafruit_VCNL4040 vcnl4040 = Adafruit_VCNL4040();
+
+void setup() {
+  Serial.begin(115200);
+  // Wait until serial port is opened
+  while (!Serial) { delay(1); }
+
+  Serial.println("Adafruit VCNL4040 Config demo");
+
+  if (!vcnl4040.begin()) {
+    Serial.println("Couldn't find VCNL4040 chip");
+    while (1);
+  }
+  Serial.println("Found VCNL4040 chip");
+
+  //vcnl4040.setProximityLEDCurrent(VCNL4040_LED_CURRENT_200MA);
+  Serial.print("Proximity LED current set to: ");
+  switch(vcnl4040.getProximityLEDCurrent()) {
+    case VCNL4040_LED_CURRENT_50MA: Serial.println("50 mA"); break;
+    case VCNL4040_LED_CURRENT_75MA: Serial.println("75 mA"); break;
+    case VCNL4040_LED_CURRENT_100MA: Serial.println("100 mA"); break;
+    case VCNL4040_LED_CURRENT_120MA: Serial.println("120 mA"); break;
+    case VCNL4040_LED_CURRENT_140MA: Serial.println("140 mA"); break;
+    case VCNL4040_LED_CURRENT_160MA: Serial.println("160 mA"); break;
+    case VCNL4040_LED_CURRENT_180MA: Serial.println("180 mA"); break;
+    case VCNL4040_LED_CURRENT_200MA: Serial.println("200 mA"); break;
+  }
+  
+  //vcnl4040.setProximityLEDDutyCycle(VCNL4040_LED_DUTY_1_40);
+  Serial.print("Proximity LED duty cycle set to: ");
+  switch(vcnl4040.getProximityLEDDutyCycle()) {
+    case VCNL4040_LED_DUTY_1_40: Serial.println("1/40"); break;
+    case VCNL4040_LED_DUTY_1_80: Serial.println("1/80"); break;
+    case VCNL4040_LED_DUTY_1_160: Serial.println("1/160"); break;
+    case VCNL4040_LED_DUTY_1_320: Serial.println("1/320"); break;
+  }
+
+  //vcnl4040.setAmbientIntegrationTime(VCNL4040_AMBIENT_INTEGRATION_TIME_80MS);
+  Serial.print("Ambient light integration time set to: ");
+  switch(vcnl4040.getAmbientIntegrationTime()) {
+    case VCNL4040_AMBIENT_INTEGRATION_TIME_80MS: Serial.println("80 ms"); break;
+    case VCNL4040_AMBIENT_INTEGRATION_TIME_160MS: Serial.println("160 ms"); break;
+    case VCNL4040_AMBIENT_INTEGRATION_TIME_320MS: Serial.println("320 ms"); break;
+    case VCNL4040_AMBIENT_INTEGRATION_TIME_640MS: Serial.println("640 ms"); break;
+  }
+
+
+  //vcnl4040.setProximityIntegrationTime(VCNL4040_PROXIMITY_INTEGRATION_TIME_8T);
+  Serial.print("Proximity integration time set to: ");
+  switch(vcnl4040.getProximityIntegrationTime()) {
+    case VCNL4040_PROXIMITY_INTEGRATION_TIME_1T: Serial.println("1T"); break;
+    case VCNL4040_PROXIMITY_INTEGRATION_TIME_1_5T: Serial.println("1.5T"); break;
+    case VCNL4040_PROXIMITY_INTEGRATION_TIME_2T: Serial.println("2T"); break;
+    case VCNL4040_PROXIMITY_INTEGRATION_TIME_2_5T: Serial.println("2.5T"); break;
+    case VCNL4040_PROXIMITY_INTEGRATION_TIME_3T: Serial.println("3T"); break;
+    case VCNL4040_PROXIMITY_INTEGRATION_TIME_3_5T: Serial.println("3.5T"); break;
+    case VCNL4040_PROXIMITY_INTEGRATION_TIME_4T: Serial.println("4T"); break;
+    case VCNL4040_PROXIMITY_INTEGRATION_TIME_8T: Serial.println("8T"); break;
+  }
+
+  //vcnl4040.setProximityHighResolution(false);
+  Serial.print("Proximity measurement high resolution? ");
+  Serial.println(vcnl4040.getProximityHighResolution() ? "True" : "False");
+
+  Serial.println("");
+
+}
+
+void loop() {
+  
+  Serial.print("Proximity:"); Serial.println(vcnl4040.getProximity());
+  Serial.print("Ambient light:"); Serial.println(vcnl4040.getLux());
+  Serial.print("Raw white light:"); Serial.println(vcnl4040.getWhiteLight());
+  Serial.println("");
+ 
+  delay(500);
+}</pre>
+<p>[/codesyntax]</p>
+<h3>Output</h3>
+<p>Here is what I saw in Serial monitor</p>
+<p>Adafruit VCNL4040 Config demo<br />
+Found VCNL4040 chip<br />
+Proximity LED current set to: 50 mA<br />
+Proximity LED duty cycle set to: 1/40<br />
+Ambient light integration time set to: 80 ms<br />
+Proximity integration time set to: 1T<br />
+Proximity measurement high resolution? True</p>
+<p>Proximity:0<br />
+Ambient light:5<br />
+Raw white light:10</p>
+<p>Proximity:1<br />
+Ambient light:4<br />
+Raw white light:10</p>
+<p>Proximity:1<br />
+Ambient light:4<br />
+Raw white light:10</p>
+<h3>Links</h3>
+<p><a href="https://www.vishay.com/docs/84274/vcnl4040.pdf" target="_blank" rel="noopener">https://www.vishay.com/docs/84274/vcnl4040.pdf</a></p>
+<div class="addtoany_share_save_container addtoany_content addtoany_content_bottom"><div class="a2a_kit a2a_kit_size_16 addtoany_list" data-a2a-url="https://www.arduinolearning.com/code/arduino-uno-and-vcnl4040-proximity-and-ambient-light-sensor.php" data-a2a-title="Arduino Uno and VCNL4040 Proximity and Ambient Light Sensor"><a class="a2a_button_facebook" href="https://www.addtoany.com/add_to/facebook?linkurl=https%3A%2F%2Fwww.arduinolearning.com%2Fcode%2Farduino-uno-and-vcnl4040-proximity-and-ambient-light-sensor.php&amp;linkname=Arduino%20Uno%20and%20VCNL4040%20Proximity%20and%20Ambient%20Light%20Sensor" title="Facebook" rel="nofollow noopener" target="_blank"></a><a class="a2a_button_twitter" href="https://www.addtoany.com/add_to/twitter?linkurl=https%3A%2F%2Fwww.arduinolearning.com%2Fcode%2Farduino-uno-and-vcnl4040-proximity-and-ambient-light-sensor.php&amp;linkname=Arduino%20Uno%20and%20VCNL4040%20Proximity%20and%20Ambient%20Light%20Sensor" title="Twitter" rel="nofollow noopener" target="_blank"></a><a class="a2a_button_tumblr" href="https://www.addtoany.com/add_to/tumblr?linkurl=https%3A%2F%2Fwww.arduinolearning.com%2Fcode%2Farduino-uno-and-vcnl4040-proximity-and-ambient-light-sensor.php&amp;linkname=Arduino%20Uno%20and%20VCNL4040%20Proximity%20and%20Ambient%20Light%20Sensor" title="Tumblr" rel="nofollow noopener" target="_blank"></a><a class="a2a_button_reddit" href="https://www.addtoany.com/add_to/reddit?linkurl=https%3A%2F%2Fwww.arduinolearning.com%2Fcode%2Farduino-uno-and-vcnl4040-proximity-and-ambient-light-sensor.php&amp;linkname=Arduino%20Uno%20and%20VCNL4040%20Proximity%20and%20Ambient%20Light%20Sensor" title="Reddit" rel="nofollow noopener" target="_blank"></a><a class="a2a_button_linkedin" href="https://www.addtoany.com/add_to/linkedin?linkurl=https%3A%2F%2Fwww.arduinolearning.com%2Fcode%2Farduino-uno-and-vcnl4040-proximity-and-ambient-light-sensor.php&amp;linkname=Arduino%20Uno%20and%20VCNL4040%20Proximity%20and%20Ambient%20Light%20Sensor" title="LinkedIn" rel="nofollow noopener" target="_blank"></a><a class="a2a_button_whatsapp" href="https://www.addtoany.com/add_to/whatsapp?linkurl=https%3A%2F%2Fwww.arduinolearning.com%2Fcode%2Farduino-uno-and-vcnl4040-proximity-and-ambient-light-sensor.php&amp;linkname=Arduino%20Uno%20and%20VCNL4040%20Proximity%20and%20Ambient%20Light%20Sensor" title="WhatsApp" rel="nofollow noopener" target="_blank"></a><a class="a2a_button_pinterest" href="https://www.addtoany.com/add_to/pinterest?linkurl=https%3A%2F%2Fwww.arduinolearning.com%2Fcode%2Farduino-uno-and-vcnl4040-proximity-and-ambient-light-sensor.php&amp;linkname=Arduino%20Uno%20and%20VCNL4040%20Proximity%20and%20Ambient%20Light%20Sensor" title="Pinterest" rel="nofollow noopener" target="_blank"></a><a class="a2a_button_buffer" href="https://www.addtoany.com/add_to/buffer?linkurl=https%3A%2F%2Fwww.arduinolearning.com%2Fcode%2Farduino-uno-and-vcnl4040-proximity-and-ambient-light-sensor.php&amp;linkname=Arduino%20Uno%20and%20VCNL4040%20Proximity%20and%20Ambient%20Light%20Sensor" title="Buffer" rel="nofollow noopener" target="_blank"></a><a class="a2a_button_diigo" href="https://www.addtoany.com/add_to/diigo?linkurl=https%3A%2F%2Fwww.arduinolearning.com%2Fcode%2Farduino-uno-and-vcnl4040-proximity-and-ambient-light-sensor.php&amp;linkname=Arduino%20Uno%20and%20VCNL4040%20Proximity%20and%20Ambient%20Light%20Sensor" title="Diigo" rel="nofollow noopener" target="_blank"></a><a class="a2a_button_digg" href="https://www.addtoany.com/add_to/digg?linkurl=https%3A%2F%2Fwww.arduinolearning.com%2Fcode%2Farduino-uno-and-vcnl4040-proximity-and-ambient-light-sensor.php&amp;linkname=Arduino%20Uno%20and%20VCNL4040%20Proximity%20and%20Ambient%20Light%20Sensor" title="Digg" rel="nofollow noopener" target="_blank"></a><a class="a2a_button_odnoklassniki" href="https://www.addtoany.com/add_to/odnoklassniki?linkurl=https%3A%2F%2Fwww.arduinolearning.com%2Fcode%2Farduino-uno-and-vcnl4040-proximity-and-ambient-light-sensor.php&amp;linkname=Arduino%20Uno%20and%20VCNL4040%20Proximity%20and%20Ambient%20Light%20Sensor" title="Odnoklassniki" rel="nofollow noopener" target="_blank"></a><a class="a2a_button_sina_weibo" href="https://www.addtoany.com/add_to/sina_weibo?linkurl=https%3A%2F%2Fwww.arduinolearning.com%2Fcode%2Farduino-uno-and-vcnl4040-proximity-and-ambient-light-sensor.php&amp;linkname=Arduino%20Uno%20and%20VCNL4040%20Proximity%20and%20Ambient%20Light%20Sensor" title="Sina Weibo" rel="nofollow noopener" target="_blank"></a><a class="a2a_button_wordpress" href="https://www.addtoany.com/add_to/wordpress?linkurl=https%3A%2F%2Fwww.arduinolearning.com%2Fcode%2Farduino-uno-and-vcnl4040-proximity-and-ambient-light-sensor.php&amp;linkname=Arduino%20Uno%20and%20VCNL4040%20Proximity%20and%20Ambient%20Light%20Sensor" title="WordPress" rel="nofollow noopener" target="_blank"></a><a class="a2a_button_email" href="https://www.addtoany.com/add_to/email?linkurl=https%3A%2F%2Fwww.arduinolearning.com%2Fcode%2Farduino-uno-and-vcnl4040-proximity-and-ambient-light-sensor.php&amp;linkname=Arduino%20Uno%20and%20VCNL4040%20Proximity%20and%20Ambient%20Light%20Sensor" title="Email" rel="nofollow noopener" target="_blank"></a><a class="a2a_dd addtoany_share_save addtoany_share" href="https://www.addtoany.com/share"><img src="https://static.addtoany.com/buttons/share_save_256_24.png" alt="Share"></a></div></div>
+			
+            <div class="penci-single-link-pages">
+				            </div>
+
+							                    <div class="post-tags">
+						<a href="https://www.arduinolearning.com/tag/vcnl4040" rel="tag">VCNL4040</a>                    </div>
+							        </div>
+    </div>
+
+	        <div class="penci-google-adsense-2">
+			[lebox id="2"]        </div>
+	
+	    <div class="tags-share-box single-post-share tags-share-box-s1  center-box  social-align-default disable-btnplus post-share">
+				
+					                <span class="post-share-item post-share-plike">
+					<span class="count-number-like">0</span><a href="#" aria-label="Like this post" class="penci-post-like single-like-button" data-post_id="1366" title="Like" data-like="Like" data-unlike="Unlike"><i class="penci-faicon fa fa-heart-o" ></i></a>					</span>
+						<a class="new-ver-share post-share-item post-share-facebook" aria-label="Share on Facebook" target="_blank"  rel="noreferrer" href="https://www.facebook.com/sharer/sharer.php?u=https://www.arduinolearning.com/code/arduino-uno-and-vcnl4040-proximity-and-ambient-light-sensor.php"><i class="penci-faicon fa fa-facebook" ></i><span class="dt-share">Facebook</span></a><a class="new-ver-share post-share-item post-share-twitter" aria-label="Share on Twitter" target="_blank"  rel="noreferrer" href="https://twitter.com/intent/tweet?text=Check%20out%20this%20article:%20Arduino%20Uno%20and%20VCNL4040%20Proximity%20and%20Ambient%20Light%20Sensor%20-%20https://www.arduinolearning.com/code/arduino-uno-and-vcnl4040-proximity-and-ambient-light-sensor.php"><i class="penci-faicon penciicon-x-twitter" ></i><span class="dt-share">Twitter</span></a><a class="new-ver-share post-share-item post-share-pinterest" aria-label="Pin to Pinterest" data-pin-do="none"  rel="noreferrer" target="_blank" href="https://www.pinterest.com/pin/create/button/?url=https%3A%2F%2Fwww.arduinolearning.com%2Fcode%2Farduino-uno-and-vcnl4040-proximity-and-ambient-light-sensor.php&media=https%3A%2F%2Fwww.arduinolearning.com%2Fwp-content%2Fuploads%2F2021%2F05%2Farduino-and-VCNL4040_bb.png&description=Arduino+Uno+and+VCNL4040+Proximity+and+Ambient+Light+Sensor"><i class="penci-faicon fa fa-pinterest" ></i><span class="dt-share">Pinterest</span></a><a class="new-ver-share post-share-item post-share-email" target="_blank" aria-label="Share via Email"  rel="noreferrer" href="mailto:?subject=Arduino%20Uno%20and%20VCNL4040%20Proximity%20and%20Ambient%20Light%20Sensor&#038;BODY=https://www.arduinolearning.com/code/arduino-uno-and-vcnl4040-proximity-and-ambient-light-sensor.php"><i class="penci-faicon fa fa-envelope" ></i><span class="dt-share">Email</span></a><a class="post-share-item post-share-expand" href="#" aria-label="Share Expand"><i class="penci-faicon penciicon-add" ></i></a>		    </div>
+	
+	
+			
+			
+			
+			
+			
+			
+							<div class="post-pagination pcpagp-style-1">
+		        <div class="prev-post">
+			            <div class="prev-post-inner">
+				                    <div class="prev-post-title">
+                        <span>previous post</span>
+                    </div>
+                    <a href="https://www.arduinolearning.com/code/arduino-uno-and-sht40-digital-humidity-sensor.php">
+                        <div class="pagi-text">
+                            <h5 class="prev-title">Arduino Uno and SHT40 Digital Humidity Sensor</h5>
+                        </div>
+                    </a>
+					            </div>
+        </div>
+	
+	        <div class="next-post">
+			            <div class="next-post-inner">
+				                    <div class="prev-post-title next-post-title">
+                        <span>next post</span>
+                    </div>
+                    <a href="https://www.arduinolearning.com/code/arduino-uno-and-dps310-barometric-pressure-sensor.php">
+                        <div class="pagi-text">
+                            <h5 class="next-title">Arduino Uno and DPS310 barometric pressure sensor</h5>
+                        </div>
+                    </a>
+					            </div>
+        </div>
+	</div>
+			
+			
+			
+			
+			
+			
+							<div class="pcrlt-style-1 post-related">
+	        <div class="post-title-box"><h4
+                    class="post-box-title">You may also like</h4></div>
+		    <div class="swiper penci-owl-carousel penci-owl-carousel-slider penci-related-carousel"
+         data-lazy="true" data-item="3"
+         data-desktop="3" data-tablet="2"
+         data-tabsmall="2"
+         data-auto="false"
+         data-speed="300" data-dots="true">
+        <div class="swiper-wrapper">
+							                    <div class="item-related swiper-slide">
+                        <div class="item-related-inner">
+
+
+															
+                                <a  data-bgset="https://www.arduinolearning.com/wp-content/uploads/2023/12/r4-and-sts35_bb.jpg" class="penci-lazy related-thumb penci-image-holder"
+                                   href="https://www.arduinolearning.com/code/sts35-temperature-sensor-and-arduino-example.php"
+                                   title="STS35 temperature sensor and Arduino example">
+									
+									                                </a>
+							                            <div class="related-content">
+
+                                <h3>
+                                    <a href="https://www.arduinolearning.com/code/sts35-temperature-sensor-and-arduino-example.php">STS35 temperature sensor and Arduino example</a>
+                                </h3>
+								                                    <span class="date"><time class="entry-date published" datetime="2024-03-09T12:17:05+00:00">9th March 2024</time></span>
+								                            </div>
+                        </div>
+                    </div>
+				                    <div class="item-related swiper-slide">
+                        <div class="item-related-inner">
+
+
+															
+                                <a  data-bgset="https://www.arduinolearning.com/wp-content/uploads/2023/12/r4-and-bma220_bb.jpg" class="penci-lazy related-thumb penci-image-holder"
+                                   href="https://www.arduinolearning.com/code/bma220-triple-axis-accelerometer-and-arduino-example.php"
+                                   title="BMA220 Triple Axis Accelerometer and Arduino example">
+									
+									                                </a>
+							                            <div class="related-content">
+
+                                <h3>
+                                    <a href="https://www.arduinolearning.com/code/bma220-triple-axis-accelerometer-and-arduino-example.php">BMA220 Triple Axis Accelerometer and Arduino example</a>
+                                </h3>
+								                                    <span class="date"><time class="entry-date published" datetime="2024-02-09T11:09:04+00:00">9th February 2024</time></span>
+								                            </div>
+                        </div>
+                    </div>
+				                    <div class="item-related swiper-slide">
+                        <div class="item-related-inner">
+
+
+															
+                                <a  data-bgset="https://www.arduinolearning.com/wp-content/uploads/2023/12/r4-and-IS31FL3741_bb.jpg" class="penci-lazy related-thumb penci-image-holder"
+                                   href="https://www.arduinolearning.com/code/is31fl3741-led-matrix-module-and-arduino-example.php"
+                                   title="IS31FL3741 LED matrix module and Arduino example">
+									
+									                                </a>
+							                            <div class="related-content">
+
+                                <h3>
+                                    <a href="https://www.arduinolearning.com/code/is31fl3741-led-matrix-module-and-arduino-example.php">IS31FL3741 LED matrix module and Arduino example</a>
+                                </h3>
+								                                    <span class="date"><time class="entry-date published" datetime="2024-01-09T09:41:24+00:00">9th January 2024</time></span>
+								                            </div>
+                        </div>
+                    </div>
+				                    <div class="item-related swiper-slide">
+                        <div class="item-related-inner">
+
+
+															
+                                <a  data-bgset="https://www.arduinolearning.com/wp-content/uploads/2023/06/arduinor4.jpg" class="penci-lazy related-thumb penci-image-holder"
+                                   href="https://www.arduinolearning.com/code/bmp390-pressure-sensor-and-arduino-example.php"
+                                   title="BMP390 pressure sensor and Arduino example">
+									
+									                                </a>
+							                            <div class="related-content">
+
+                                <h3>
+                                    <a href="https://www.arduinolearning.com/code/bmp390-pressure-sensor-and-arduino-example.php">BMP390 pressure sensor and Arduino example</a>
+                                </h3>
+								                                    <span class="date"><time class="entry-date published" datetime="2023-12-08T22:53:55+00:00">8th December 2023</time></span>
+								                            </div>
+                        </div>
+                    </div>
+				                    <div class="item-related swiper-slide">
+                        <div class="item-related-inner">
+
+
+															
+                                <a  data-bgset="https://www.arduinolearning.com/wp-content/uploads/2023/07/arduino-and-STTS22H_bb.png" class="penci-lazy related-thumb penci-image-holder"
+                                   href="https://www.arduinolearning.com/code/stts22h-temperature-sensor-and-arduino-example.php"
+                                   title="STTS22H temperature sensor and Arduino example">
+									
+									                                </a>
+							                            <div class="related-content">
+
+                                <h3>
+                                    <a href="https://www.arduinolearning.com/code/stts22h-temperature-sensor-and-arduino-example.php">STTS22H temperature sensor and Arduino example</a>
+                                </h3>
+								                                    <span class="date"><time class="entry-date published" datetime="2023-11-07T20:11:34+00:00">7th November 2023</time></span>
+								                            </div>
+                        </div>
+                    </div>
+				                    <div class="item-related swiper-slide">
+                        <div class="item-related-inner">
+
+
+															
+                                <a  data-bgset="https://www.arduinolearning.com/wp-content/uploads/2023/07/arduino-and-bmp384_bb.png" class="penci-lazy related-thumb penci-image-holder"
+                                   href="https://www.arduinolearning.com/code/bmp384-pressure-sensor-and-arduino-example.php"
+                                   title="BMP384 pressure sensor and Arduino example">
+									
+									                                </a>
+							                            <div class="related-content">
+
+                                <h3>
+                                    <a href="https://www.arduinolearning.com/code/bmp384-pressure-sensor-and-arduino-example.php">BMP384 pressure sensor and Arduino example</a>
+                                </h3>
+								                                    <span class="date"><time class="entry-date published" datetime="2023-10-07T12:25:43+01:00">7th October 2023</time></span>
+								                            </div>
+                        </div>
+                    </div>
+				                    <div class="item-related swiper-slide">
+                        <div class="item-related-inner">
+
+
+															
+                                <a  data-bgset="https://www.arduinolearning.com/wp-content/uploads/2023/07/arduino-and-KX13x_bb.png" class="penci-lazy related-thumb penci-image-holder"
+                                   href="https://www.arduinolearning.com/code/kx134-triple-axis-accelerometer-and-arduino-example.php"
+                                   title="KX134 Triple Axis Accelerometer and Arduino example">
+									
+									                                </a>
+							                            <div class="related-content">
+
+                                <h3>
+                                    <a href="https://www.arduinolearning.com/code/kx134-triple-axis-accelerometer-and-arduino-example.php">KX134 Triple Axis Accelerometer and Arduino example</a>
+                                </h3>
+								                                    <span class="date"><time class="entry-date published" datetime="2023-09-07T12:06:30+01:00">7th September 2023</time></span>
+								                            </div>
+                        </div>
+                    </div>
+				                    <div class="item-related swiper-slide">
+                        <div class="item-related-inner">
+
+
+															
+                                <a  data-bgset="https://www.arduinolearning.com/wp-content/uploads/2023/07/arduino-and-KX13x_bb.png" class="penci-lazy related-thumb penci-image-holder"
+                                   href="https://www.arduinolearning.com/code/kx132-triple-axis-accelerometer-and-arduino-example.php"
+                                   title="KX132 Triple Axis Accelerometer and Arduino example">
+									
+									                                </a>
+							                            <div class="related-content">
+
+                                <h3>
+                                    <a href="https://www.arduinolearning.com/code/kx132-triple-axis-accelerometer-and-arduino-example.php">KX132 Triple Axis Accelerometer and Arduino example</a>
+                                </h3>
+								                                    <span class="date"><time class="entry-date published" datetime="2023-08-07T11:26:50+01:00">7th August 2023</time></span>
+								                            </div>
+                        </div>
+                    </div>
+				                    <div class="item-related swiper-slide">
+                        <div class="item-related-inner">
+
+
+															
+                                <a  data-bgset="https://www.arduinolearning.com/wp-content/uploads/2023/06/arduinor4.jpg" class="penci-lazy related-thumb penci-image-holder"
+                                   href="https://www.arduinolearning.com/code/arduino-uno-r4-led-matrix-examples.php"
+                                   title="Arduino Uno R4 Led Matrix examples">
+									
+									                                </a>
+							                            <div class="related-content">
+
+                                <h3>
+                                    <a href="https://www.arduinolearning.com/code/arduino-uno-r4-led-matrix-examples.php">Arduino Uno R4 Led Matrix examples</a>
+                                </h3>
+								                                    <span class="date"><time class="entry-date published" datetime="2023-07-02T18:02:29+01:00">2nd July 2023</time></span>
+								                            </div>
+                        </div>
+                    </div>
+				                    <div class="item-related swiper-slide">
+                        <div class="item-related-inner">
+
+
+															
+                                <a  data-bgset="https://www.arduinolearning.com/wp-content/uploads/2023/06/arduinor4.jpg" class="penci-lazy related-thumb penci-image-holder"
+                                   href="https://www.arduinolearning.com/code/display-the-rtc-time-on-in-a-web-page-using-an-arduino-uno-r4-wifi.php"
+                                   title="Display the RTC Time on a web page using an Arduino Uno R4 WiFi">
+									
+									                                </a>
+							                            <div class="related-content">
+
+                                <h3>
+                                    <a href="https://www.arduinolearning.com/code/display-the-rtc-time-on-in-a-web-page-using-an-arduino-uno-r4-wifi.php">Display the RTC Time on a web page...</a>
+                                </h3>
+								                                    <span class="date"><time class="entry-date published" datetime="2023-07-02T16:08:25+01:00">2nd July 2023</time></span>
+								                            </div>
+                        </div>
+                    </div>
+				</div><div class="penci-owl-dots"></div></div></div>			
+			
+			
+			
+			
+			
+			
+			
+	
+</article>
+					                </div>
+            </div>
+			
+<div id="sidebar"
+     class="penci-sidebar-right penci-sidebar-content style-1 pcalign-center  pciconp-right pcicon-right">
+    <div class="theiaStickySidebar">
+		<aside id="text-2" class="widget widget_text"><h3 class="widget-title penci-border-arrow"><span class="inner-arrow">Disclaimer</span></h3>			<div class="textwidget"><p>When you purchase through links on our site, we may earn an affiliate commission</p>
+</div>
+		</aside><aside id="custom_html-8" class="widget_text widget widget_custom_html"><h3 class="widget-title penci-border-arrow"><span class="inner-arrow">Search</span></h3><div class="textwidget custom-html-widget"><form action="http://www.arduinolearning.com/searchresults" id="cse-search-box">
+  <div>
+    <input type="hidden" name="cx" value="partner-pub-3520634452456567:9057481621" />
+    <input type="hidden" name="cof" value="FORID:10" />
+    <input type="hidden" name="ie" value="UTF-8" />
+    <input type="text" name="q" size="20" />
+    <input type="submit" name="sa" value="Search" />
+  </div>
+</form>
+
+<script type="text/javascript" src="http://www.google.com/coop/cse/brand?form=cse-search-box&amp;lang=en"></script>
+</div></aside><aside id="custom_html-5" class="widget_text widget widget_custom_html"><div class="textwidget custom-html-widget"><!-- Revive Adserver iFrame Tag - Generated with Revive Adserver v5.4.1 -->
+<iframe id='ae44145d' name='ae44145d' src='https://onlymyads.website/ads/www/delivery/afr.php?refresh=12&amp;zoneid=16&amp;target=_blank&amp;cb=INSERT_RANDOM_NUMBER_HERE' frameborder='0' scrolling='no' width='300' height='250' allow='autoplay'><a href='https://onlymyads.website/ads/www/delivery/ck.php?n=a6b4c461&amp;cb=INSERT_RANDOM_NUMBER_HERE' target='_blank'><img src='https://onlymyads.website/ads/www/delivery/avw.php?zoneid=16&amp;cb=INSERT_RANDOM_NUMBER_HERE&amp;n=a6b4c461' border='0' alt='' /></a></iframe>
+</div></aside><aside id="adrotate_widgets-5" class="widget adrotate_widgets"><h3 class="widget-title penci-border-arrow"><span class="inner-arrow">Arduino Kits</span></h3><div class="g g-5"><div class="g-col b-5 a-69"><a href="http://www.arduinolearning.com/electronics-fun-kit">electronics fun kit</a></div></div><div class="g g-5"><div class="g-col b-5 a-70"><a href="hhttp://www.arduinolearning.com/mega2560starterkit">mega2560 starter kit for arduino</a></div></div><div class="g g-5"><div class="g-col b-5 a-67"><a href="http://www.arduinolearning.com/ultimate-sensor-kit">Arduino ultimate sensor kit</a></div></div><div class="g g-5"><div class="g-col b-5 a-72"><a href="http://www.arduinolearning.com/mega2560">mega2560 project starter kit</a></div></div><div class="g g-5"><div class="g-col b-5 a-71"><a href="http://www.arduinolearning.com/iotsmartcar">3-in-1 iot smart car learning ultimate starter kit</a></div></div><div class="g g-5"><div class="g-col b-5 a-68"><a href="http://www.arduinolearning.com/sensor-kit-v2-for-arduino">sensor kit v2 for arduino</a></div></div></aside><aside id="custom_html-9" class="widget_text widget widget_custom_html"><h3 class="widget-title penci-border-arrow"><span class="inner-arrow">Donations</span></h3><div class="textwidget custom-html-widget"><h3>
+<a href="http://www.getelectronics.net/donations" target="new">What its all for</a>
+</h3>
+
+<h3>
+PayPal
+</h3>
+
+<form action="https://www.paypal.com/donate" method="post" target="_top">
+<input type="hidden" name="hosted_button_id" value="T29AP3W6F7AU4" />
+<input type="image" src="https://www.paypalobjects.com/en_GB/i/btn/btn_donate_SM.gif" border="0" name="submit" title="PayPal - The safer, easier way to pay online!" alt="Donate with PayPal button" />
+<img alt="" border="0" src="https://www.paypal.com/en_GB/i/scr/pixel.gif" width="1" height="1" />
+</form>
+<br>
+
+<h3>
+	Kofi
+</h3>
+
+<script src='https://storage.ko-fi.com/cdn/scripts/overlay-widget.js'></script>
+
+<script type='text/javascript' src='https://storage.ko-fi.com/cdn/widget/Widget_2.js'></script><script type='text/javascript'>kofiwidget2.init('Support us on Ko-fi', '#72a4f2', 'D1D55GNME');kofiwidget2.draw();</script> 
+<br><br>
+<h3>
+	Librepay
+</h3>
+
+<script src="https://liberapay.com/maxprogramming/widgets/button.js"></script>
+<noscript><a href="https://liberapay.com/maxprogramming/donate"><img alt="Donate using Liberapay" src="https://liberapay.com/assets/widgets/donate.svg"></a></noscript>
+<br><br>
+<h3>
+	Patreon
+</h3>
+<a href="https://www.patreon.com/bePatron?u=4946981" data-patreon-widget-type="become-patron-button">Become a Patron!</a><script async src="https://c6.patreon.com/becomePatronButton.bundle.js"></script>
+<br><br>
+<h3>
+	Buy me a coffee
+</h3>
+
+<script type="text/javascript" src="https://cdnjs.buymeacoffee.com/1.0.0/button.prod.min.js" data-name="bmc-button" data-slug="getelectronics" data-color="#FFDD00" data-emoji="☕"  data-font="Cookie" data-text="Buy me an arduino" data-outline-color="#000000" data-font-color="#000000" data-coffee-color="#ffffff" ></script></div></aside><aside id="pages-2" class="widget widget_pages"><h3 class="widget-title penci-border-arrow"><span class="inner-arrow">Pages</span></h3>
+			<ul>
+				<li class="page_item page-item-1539"><a href="https://www.arduinolearning.com/advertise">Advertise here</a></li>
+<li class="page_item page-item-219"><a href="https://www.arduinolearning.com/arduino-products">Arduino Products</a></li>
+<li class="page_item page-item-1416"><a href="https://www.arduinolearning.com/privacy-policy">Privacy Policy</a></li>
+<li class="page_item page-item-259"><a href="https://www.arduinolearning.com/searchresults">searchresults</a></li>
+<li class="page_item page-item-1218"><a href="https://www.arduinolearning.com/support-us">Support Us</a></li>
+			</ul>
+
+			</aside>
+		<aside id="recent-posts-2" class="widget widget_recent_entries">
+		<h3 class="widget-title penci-border-arrow"><span class="inner-arrow">Latest</span></h3>
+		<ul>
+											<li>
+					<a href="https://www.arduinolearning.com/hardware/arduino-uno-q-explained-a-deep-dive-for-makers-educators-and-edge-ai-builders.php">Arduino UNO Q, Explained: A Deep-Dive for Makers, Educators, and Edge-AI Builders</a>
+									</li>
+											<li>
+					<a href="https://www.arduinolearning.com/news/qualcomm-to-acquire-arduino-what-it-means-for-developers-edge-ai-and-the-maker-economy.php">Qualcomm to Acquire Arduino: What It Means for Developers, Edge AI, and the Maker Economy</a>
+									</li>
+											<li>
+					<a href="https://www.arduinolearning.com/learning/basics/how-to-graph-live-data-using-the-arduino-serial-plotter.php">How to Graph Live Data Using the Arduino Serial Plotter</a>
+									</li>
+											<li>
+					<a href="https://www.arduinolearning.com/learning/how-to-store-settings-in-eeprom-on-an-arduino.php">How to  Store Settings in EEPROM on an Arduino</a>
+									</li>
+											<li>
+					<a href="https://www.arduinolearning.com/code/sts35-temperature-sensor-and-arduino-example.php">STS35 temperature sensor and Arduino example</a>
+									</li>
+											<li>
+					<a href="https://www.arduinolearning.com/code/bma220-triple-axis-accelerometer-and-arduino-example.php">BMA220 Triple Axis Accelerometer and Arduino example</a>
+									</li>
+											<li>
+					<a href="https://www.arduinolearning.com/code/is31fl3741-led-matrix-module-and-arduino-example.php">IS31FL3741 LED matrix module and Arduino example</a>
+									</li>
+											<li>
+					<a href="https://www.arduinolearning.com/hardware/an-arduino-board-which-is-suitable-for-learners-the-keyestudio-max.php">An Arduino board which is suitable for learners the keyestudio max</a>
+									</li>
+					</ul>
+
+		</aside>    </div>
+</div>
+
+<div id="sidebar"
+     class="penci-sidebar-left penci-sidebar-content style-1 pcalign-center  pciconp-right pcicon-right">
+    <div class="theiaStickySidebar">
+		<aside id="adrotate_widgets-2" class="widget adrotate_widgets"><h3 class="widget-title penci-border-arrow"><span class="inner-arrow">Products</span></h3><div class="g g-1"><div class="g-col b-1 a-3"><a href="https://s.click.aliexpress.com/e/_oCERLGU" target="_parent">830Pcs/Box DIY Project Starter Kit For Arduino UNO R3</a></div></div><div class="g g-1"><div class="g-col b-1 a-10"><a href="https://s.click.aliexpress.com/e/_oEGK3dQ" target="_parent">Compatible with R4 Arduino UNO Minima / WIFI Improved Version</a></div></div><div class="g g-1"><div class="g-col b-1 a-33"><a href="https://s.click.aliexpress.com/e/_oBZD6yC" target="_parent">Kidsbits 4DOF Metal Arm Robot Car Kit W/PS2 Contoller+20 Projects Bluetooth-compatible Smart Car for Arduino</a></div></div><div class="g g-1"><div class="g-col b-1 a-8"><a href="https://s.click.aliexpress.com/e/_ooiaQEk" target="_parent">Keyestudio IOT ESP32 Learning Kit For Arduino ESP32 All-in-One Learning +134 Projects</a></div></div><div class="g g-1"><div class="g-col b-1 a-61"><a href="https://s.click.aliexpress.com/e/_oFAnNF6" target="_parent">Kidsbits 4WD Multi BT Smart Car Diy Kit for Arduino Robot Upgraded V2.0 W/LED Display Stem EDU /Scratch Programming Robot Kit</a></div></div><div class="g g-1"><div class="g-col b-1 a-42"><a href="https://s.click.aliexpress.com/e/_okIv7wo" target="_parent">Kdisbits 2WD Self-Balancing Robot Car Kit For Arduino Robot DIY Electronic Kit/STEM Kits Toys Kids</a></div></div><div class="g g-1"><div class="g-col b-1 a-32"><a href="https://s.click.aliexpress.com/e/_onghePQ" target="_parent">Kidsbits 4DOF Nano Control Frog Robot Car Kit For Arduino Robot Supporting Mixly Blocks Coding Kids Fun STEM Educational Tool</a></div></div></aside><aside id="categories-2" class="widget widget_categories"><h3 class="widget-title penci-border-arrow"><span class="inner-arrow">Categories</span></h3>
+			<ul>
+					<li class="cat-item cat-item-88"><a href="https://www.arduinolearning.com/category/android-apps">Android Apps</a>
+</li>
+	<li class="cat-item cat-item-5"><a href="https://www.arduinolearning.com/category/books">Books</a>
+</li>
+	<li class="cat-item cat-item-3"><a href="https://www.arduinolearning.com/category/code">Code</a>
+</li>
+	<li class="cat-item cat-item-174"><a href="https://www.arduinolearning.com/category/digispark">Digispark</a>
+</li>
+	<li class="cat-item cat-item-149"><a href="https://www.arduinolearning.com/category/gas-sensors">Gas Sensors</a>
+</li>
+	<li class="cat-item cat-item-62"><a href="https://www.arduinolearning.com/category/hardware">Hardware</a>
+</li>
+	<li class="cat-item cat-item-244"><a href="https://www.arduinolearning.com/category/ipad-apps">iPad apps</a>
+</li>
+	<li class="cat-item cat-item-2"><a href="https://www.arduinolearning.com/category/learning">Learning</a>
+<ul class='children'>
+	<li class="cat-item cat-item-9"><a href="https://www.arduinolearning.com/category/learning/basics">Basics</a>
+</li>
+</ul>
+</li>
+	<li class="cat-item cat-item-411"><a href="https://www.arduinolearning.com/category/news">News</a>
+</li>
+	<li class="cat-item cat-item-4"><a href="https://www.arduinolearning.com/category/projects">Projects</a>
+</li>
+	<li class="cat-item cat-item-8"><a href="https://www.arduinolearning.com/category/reference">Reference</a>
+</li>
+	<li class="cat-item cat-item-226"><a href="https://www.arduinolearning.com/category/robots">Robots</a>
+</li>
+	<li class="cat-item cat-item-6"><a href="https://www.arduinolearning.com/category/shields">Shields</a>
+</li>
+	<li class="cat-item cat-item-7"><a href="https://www.arduinolearning.com/category/software">Software</a>
+</li>
+			</ul>
+
+			</aside><aside id="custom_html-6" class="widget_text widget widget_custom_html"><div class="textwidget custom-html-widget"><!-- Revive Adserver iFrame Tag - Generated with Revive Adserver v5.4.1 -->
+<iframe id='a4495190' name='a4495190' src='https://onlymyads.website/ads/www/delivery/afr.php?refresh=12&amp;zoneid=7&amp;cb=INSERT_RANDOM_NUMBER_HERE' frameborder='0' scrolling='no' width='160' height='600' allow='autoplay'><a href='https://onlymyads.website/ads/www/delivery/ck.php?n=ab0ddd42&amp;cb=INSERT_RANDOM_NUMBER_HERE' target='_blank'><img src='https://onlymyads.website/ads/www/delivery/avw.php?zoneid=7&amp;cb=INSERT_RANDOM_NUMBER_HERE&amp;n=ab0ddd42' border='0' alt='' /></a></iframe>
+</div></aside><aside id="custom_html-2" class="widget_text widget widget_custom_html"><h3 class="widget-title penci-border-arrow"><span class="inner-arrow">Ebooks and Courses</span></h3><div class="textwidget custom-html-widget">34 Arduino Sensor Projects - <a href="https://www.amazon.com/dp/B07QMF3X8G"> Get it here</a>
+<br>
+</div></aside><aside id="adrotate_widgets-4" class="widget adrotate_widgets"><h3 class="widget-title penci-border-arrow"><span class="inner-arrow">Arduino Products</span></h3><div class="g g-4"><div class="g-col b-4 a-51"><a href="https://s.click.aliexpress.com/e/_oCERLGU" target="_blank"><img src="//ae01.alicdn.com/kf/S07d474d462b94a188f5319af3ab8871aP.jpg_350x350.jpg" /></a></div></div><div class="g g-4"><div class="g-col b-4 a-60"><a href="https://s.click.aliexpress.com/e/_ooS5li0" target="_blank"><img src="//ae01.alicdn.com/kf/Sf2573bb6688b487986ae1d8b3227eee3Q.jpg_350x350.jpg" /></a></div></div><div class="g g-4"><div class="g-col b-4 a-63"><a href="https://s.click.aliexpress.com/e/_oFAnNF6" target="_blank"><img src="//ae01.alicdn.com/kf/S1df44f6cdfef43f2b479c9f7da46d047R.jpg_350x350.jpg" /></a></div></div></aside><aside id="adrotate_widgets-3" class="widget adrotate_widgets"><h3 class="widget-title penci-border-arrow"><span class="inner-arrow">Ads</span></h3><!-- Either there are no banners, they are disabled or none qualified for this location! --></aside>    </div>
+</div>
+        </div>
+
+		    </div>
+</div>
+
+
+    <div class="clear-footer"></div>
+
+							                        <div id="widget-area"
+							                        >
+                            <div class="container">
+								                                    <div class="footer-widget-wrapper footer-widget-style-1">
+										<aside id="a2a_share_save_widget-2" class="widget widget_a2a_share_save_widget"><div class="a2a_kit a2a_kit_size_16 addtoany_list"><a class="a2a_button_facebook" href="https://www.addtoany.com/add_to/facebook?linkurl=https%3A%2F%2Fwww.arduinolearning.com%2Fcode%2Farduino-uno-and-vcnl4040-proximity-and-ambient-light-sensor.php&amp;linkname=Arduino%20Uno%20and%20VCNL4040%20Proximity%20and%20Ambient%20Light%20Sensor" title="Facebook" rel="nofollow noopener" target="_blank"></a><a class="a2a_button_twitter" href="https://www.addtoany.com/add_to/twitter?linkurl=https%3A%2F%2Fwww.arduinolearning.com%2Fcode%2Farduino-uno-and-vcnl4040-proximity-and-ambient-light-sensor.php&amp;linkname=Arduino%20Uno%20and%20VCNL4040%20Proximity%20and%20Ambient%20Light%20Sensor" title="Twitter" rel="nofollow noopener" target="_blank"></a><a class="a2a_button_tumblr" href="https://www.addtoany.com/add_to/tumblr?linkurl=https%3A%2F%2Fwww.arduinolearning.com%2Fcode%2Farduino-uno-and-vcnl4040-proximity-and-ambient-light-sensor.php&amp;linkname=Arduino%20Uno%20and%20VCNL4040%20Proximity%20and%20Ambient%20Light%20Sensor" title="Tumblr" rel="nofollow noopener" target="_blank"></a><a class="a2a_button_reddit" href="https://www.addtoany.com/add_to/reddit?linkurl=https%3A%2F%2Fwww.arduinolearning.com%2Fcode%2Farduino-uno-and-vcnl4040-proximity-and-ambient-light-sensor.php&amp;linkname=Arduino%20Uno%20and%20VCNL4040%20Proximity%20and%20Ambient%20Light%20Sensor" title="Reddit" rel="nofollow noopener" target="_blank"></a><a class="a2a_button_linkedin" href="https://www.addtoany.com/add_to/linkedin?linkurl=https%3A%2F%2Fwww.arduinolearning.com%2Fcode%2Farduino-uno-and-vcnl4040-proximity-and-ambient-light-sensor.php&amp;linkname=Arduino%20Uno%20and%20VCNL4040%20Proximity%20and%20Ambient%20Light%20Sensor" title="LinkedIn" rel="nofollow noopener" target="_blank"></a><a class="a2a_button_whatsapp" href="https://www.addtoany.com/add_to/whatsapp?linkurl=https%3A%2F%2Fwww.arduinolearning.com%2Fcode%2Farduino-uno-and-vcnl4040-proximity-and-ambient-light-sensor.php&amp;linkname=Arduino%20Uno%20and%20VCNL4040%20Proximity%20and%20Ambient%20Light%20Sensor" title="WhatsApp" rel="nofollow noopener" target="_blank"></a><a class="a2a_button_pinterest" href="https://www.addtoany.com/add_to/pinterest?linkurl=https%3A%2F%2Fwww.arduinolearning.com%2Fcode%2Farduino-uno-and-vcnl4040-proximity-and-ambient-light-sensor.php&amp;linkname=Arduino%20Uno%20and%20VCNL4040%20Proximity%20and%20Ambient%20Light%20Sensor" title="Pinterest" rel="nofollow noopener" target="_blank"></a><a class="a2a_button_buffer" href="https://www.addtoany.com/add_to/buffer?linkurl=https%3A%2F%2Fwww.arduinolearning.com%2Fcode%2Farduino-uno-and-vcnl4040-proximity-and-ambient-light-sensor.php&amp;linkname=Arduino%20Uno%20and%20VCNL4040%20Proximity%20and%20Ambient%20Light%20Sensor" title="Buffer" rel="nofollow noopener" target="_blank"></a><a class="a2a_button_diigo" href="https://www.addtoany.com/add_to/diigo?linkurl=https%3A%2F%2Fwww.arduinolearning.com%2Fcode%2Farduino-uno-and-vcnl4040-proximity-and-ambient-light-sensor.php&amp;linkname=Arduino%20Uno%20and%20VCNL4040%20Proximity%20and%20Ambient%20Light%20Sensor" title="Diigo" rel="nofollow noopener" target="_blank"></a><a class="a2a_button_digg" href="https://www.addtoany.com/add_to/digg?linkurl=https%3A%2F%2Fwww.arduinolearning.com%2Fcode%2Farduino-uno-and-vcnl4040-proximity-and-ambient-light-sensor.php&amp;linkname=Arduino%20Uno%20and%20VCNL4040%20Proximity%20and%20Ambient%20Light%20Sensor" title="Digg" rel="nofollow noopener" target="_blank"></a><a class="a2a_button_odnoklassniki" href="https://www.addtoany.com/add_to/odnoklassniki?linkurl=https%3A%2F%2Fwww.arduinolearning.com%2Fcode%2Farduino-uno-and-vcnl4040-proximity-and-ambient-light-sensor.php&amp;linkname=Arduino%20Uno%20and%20VCNL4040%20Proximity%20and%20Ambient%20Light%20Sensor" title="Odnoklassniki" rel="nofollow noopener" target="_blank"></a><a class="a2a_button_sina_weibo" href="https://www.addtoany.com/add_to/sina_weibo?linkurl=https%3A%2F%2Fwww.arduinolearning.com%2Fcode%2Farduino-uno-and-vcnl4040-proximity-and-ambient-light-sensor.php&amp;linkname=Arduino%20Uno%20and%20VCNL4040%20Proximity%20and%20Ambient%20Light%20Sensor" title="Sina Weibo" rel="nofollow noopener" target="_blank"></a><a class="a2a_button_wordpress" href="https://www.addtoany.com/add_to/wordpress?linkurl=https%3A%2F%2Fwww.arduinolearning.com%2Fcode%2Farduino-uno-and-vcnl4040-proximity-and-ambient-light-sensor.php&amp;linkname=Arduino%20Uno%20and%20VCNL4040%20Proximity%20and%20Ambient%20Light%20Sensor" title="WordPress" rel="nofollow noopener" target="_blank"></a><a class="a2a_button_email" href="https://www.addtoany.com/add_to/email?linkurl=https%3A%2F%2Fwww.arduinolearning.com%2Fcode%2Farduino-uno-and-vcnl4040-proximity-and-ambient-light-sensor.php&amp;linkname=Arduino%20Uno%20and%20VCNL4040%20Proximity%20and%20Ambient%20Light%20Sensor" title="Email" rel="nofollow noopener" target="_blank"></a><a class="a2a_dd addtoany_share_save addtoany_share" href="https://www.addtoany.com/share"><img src="https://static.addtoany.com/buttons/share_save_256_24.png" alt="Share"></a></div></aside>                                    </div>
+                                    <div class="footer-widget-wrapper footer-widget-style-1">
+										                                    </div>
+                                    <div class="footer-widget-wrapper footer-widget-style-1 last">
+										                                    </div>
+									                            </div>
+                        </div>
+									        <footer id="footer-section"
+                class="penci-footer-social-media penci-lazy
+								"
+						                itemscope itemtype="https://schema.org/WPFooter">
+            <div class="container">
+				                    <div class="footer-socials-section
+										">
+                        <ul class="footer-socials">
+							                                    <li><a href="https://twitter.com/micromikemck"
+                                           aria-label="Twitter"  rel="noreferrer"                                           target="_blank"><i class="penci-faicon penciicon-x-twitter" ></i>                                            <span>Twitter</span></a>
+                                    </li>
+									                                    <li><a href="https://www.pinterest.co.uk/arduinolearning"
+                                           aria-label="Pinterest"  rel="noreferrer"                                           target="_blank"><i class="penci-faicon fa fa-pinterest" ></i>                                            <span>Pinterest</span></a>
+                                    </li>
+									                                    <li><a href="https://www.youtube.com/channel/UCYR5UGB3CAuuBQ-X9RLawoA/"
+                                           aria-label="Youtube"  rel="noreferrer"                                           target="_blank"><i class="penci-faicon fa fa-youtube-play" ></i>                                            <span>Youtube</span></a>
+                                    </li>
+									                        </ul>
+                    </div>
+												                    <div class="footer-logo-copyright
+					 footer-not-logo					">
+						
+						
+						                            <div id="footer-copyright">
+                                <p>@2020 onwards - All Right Reserved. Designed and Developed by Get Electronics</p>
+                            </div>
+												                            <div class="go-to-top-parent"><a aria-label="Go to top" href="#" class="go-to-top"><span><i
+                                                class="penciicon-up-chevron"></i> <br>Back To Top</span></a>
+                            </div>
+						                    </div>
+				            </div>
+        </footer>
+	    </div><!-- End .wrapper-boxed -->
+
+    <div class="penci-go-to-top-floating"><i class="penciicon-up-chevron"></i></div>
+    <a href="#" id="close-sidebar-nav"
+       class="header-3 mstyle-default"><i class="penci-faicon fa fa-close" ></i></a>
+    <nav id="sidebar-nav" class="header-3 mstyle-default" role="navigation"
+	     itemscope
+         itemtype="https://schema.org/SiteNavigationElement">
+
+		                <div id="sidebar-nav-logo">
+											                            <a href="https://www.arduinolearning.com/"><img
+                                        class="penci-lazy penci-limg"                                         src="data:image/svg+xml,%3Csvg%20xmlns=&#039;http://www.w3.org/2000/svg&#039;%20viewBox=&#039;0%200%20248%2072&#039;%3E%3C/svg%3E"
+                                        width="248"
+                                        height="72"
+                                        data-src="https://arduinolearning.b-cdn.net/wp-content/uploads/2020/06/logo-1.png"
+                                        data-lightlogo="https://arduinolearning.b-cdn.net/wp-content/uploads/2020/06/logo-1.png"
+                                        alt="Arduino Learning"/></a>
+											                </div>
+			
+			                <div class="header-social sidebar-nav-social">
+					<div class="inner-header-social">
+				<a href="https://twitter.com/micromikemck" aria-label="Twitter"  rel="noreferrer" target="_blank"><i class="penci-faicon penciicon-x-twitter" ></i></a>
+						<a href="https://www.pinterest.co.uk/arduinolearning" aria-label="Pinterest"  rel="noreferrer" target="_blank"><i class="penci-faicon fa fa-pinterest" ></i></a>
+						<a href="https://www.youtube.com/channel/UCYR5UGB3CAuuBQ-X9RLawoA/" aria-label="Youtube"  rel="noreferrer" target="_blank"><i class="penci-faicon fa fa-youtube-play" ></i></a>
+			</div>
+                </div>
+			
+			
+			<ul id="menu-mainmenu-1" class="menu"><li class="menu-item menu-item-type-taxonomy menu-item-object-category current-post-ancestor current-menu-parent current-post-parent menu-item-1298"><a href="https://www.arduinolearning.com/category/code">Code</a></li>
+<li class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-1299"><a href="https://www.arduinolearning.com/category/hardware">Hardware</a></li>
+<li class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-1301"><a href="https://www.arduinolearning.com/category/learning">Learning</a></li>
+<li class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-1300"><a href="https://www.arduinolearning.com/category/projects">Projects</a></li>
+<li class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-1302"><a href="https://www.arduinolearning.com/category/reference">Reference</a></li>
+</ul>    </nav>
+
+
+
+<script type="text/javascript" src="https://www.arduinolearning.com/wp-content/plugins/adrotate/library/jquery.groups.js" id="adrotate-groups-js"></script>
+<script type="text/javascript" src="https://www.arduinolearning.com/wp-content/themes/soledad/js/js-cookies.js?ver=8.5.4" id="js-cookies-js"></script>
+<script type="text/javascript" src="https://www.arduinolearning.com/wp-content/themes/soledad/js/penci-lazy.js?ver=8.5.4" id="pc-lazy-js"></script>
+<script type="text/javascript" src="https://www.arduinolearning.com/wp-content/themes/soledad/js/libs-script.min.js?ver=8.5.4" id="penci-libs-js-js"></script>
+<script type="text/javascript" id="main-scripts-js-extra">
+/* <![CDATA[ */
+var ajax_var_more = {"url":"https:\/\/www.arduinolearning.com\/wp-admin\/admin-ajax.php","nonce":"051329b72c","errorPass":"<p class=\"message message-error\">Password does not match the confirm password<\/p>","login":"Email Address","password":"Password","headerstyle":"default","reading_bar_pos":"footer","reading_bar_h":"5","carousel_e":"swing","slider_e":"creative","fcarousel_e":"swing","fslider_e":"creative","vfloat":"","vfloatp":"bottom-right","redirect_url":""};
+/* ]]> */
+</script>
+<script type="text/javascript" src="https://www.arduinolearning.com/wp-content/themes/soledad/js/main.js?ver=8.5.4" id="main-scripts-js"></script>
+<script type="text/javascript" id="penci_ajax_like_post-js-extra">
+/* <![CDATA[ */
+var ajax_var = {"url":"https:\/\/www.arduinolearning.com\/wp-admin\/admin-ajax.php","nonce":"051329b72c","errorPass":"<p class=\"message message-error\">Password does not match the confirm password<\/p>","login":"Email Address","password":"Password","headerstyle":"default","reading_bar_pos":"footer","reading_bar_h":"5","carousel_e":"swing","slider_e":"creative","fcarousel_e":"swing","fslider_e":"creative","vfloat":"","vfloatp":"bottom-right","redirect_url":""};
+/* ]]> */
+</script>
+<script type="text/javascript" src="https://www.arduinolearning.com/wp-content/themes/soledad/js/post-like.js?ver=8.5.4" id="penci_ajax_like_post-js"></script>
+<script type="text/javascript" src="https://www.arduinolearning.com/wp-includes/js/comment-reply.min.js?ver=6.7.4" id="comment-reply-js" async="async" data-wp-strategy="async"></script>
+<script type="text/javascript" src="https://www.arduinolearning.com/wp-content/themes/soledad/js/inview.js?ver=8.5.4" id="jquery.inview-js"></script>
+<script type="text/javascript" src="https://www.arduinolearning.com/wp-content/themes/soledad/js/sticky_share.js?ver=8.5.4" id="penci-sticky-share-js"></script>
+<script type="text/javascript" src="https://www.arduinolearning.com/wp-content/plugins/enlighter/cache/enlighterjs.min.js?ver=0A0B0C" id="enlighterjs-js"></script>
+<script type="text/javascript" id="enlighterjs-js-after">
+/* <![CDATA[ */
+!function(e,n){if("undefined"!=typeof EnlighterJS){var o={"selectors":{"block":"pre.EnlighterJSRAW","inline":"code.EnlighterJSRAW"},"options":{"indent":4,"ampersandCleanup":true,"linehover":true,"rawcodeDbclick":false,"textOverflow":"break","linenumbers":true,"theme":"enlighter","language":"generic","retainCssClasses":false,"collapse":false,"toolbarOuter":"","toolbarTop":"{BTN_RAW}{BTN_COPY}{BTN_WINDOW}{BTN_WEBSITE}","toolbarBottom":""}};(e.EnlighterJSINIT=function(){EnlighterJS.init(o.selectors.block,o.selectors.inline,o.options)})()}else{(n&&(n.error||n.log)||function(){})("Error: EnlighterJS resources not loaded yet!")}}(window,console);
+/* ]]> */
+</script>
+<!-- AdRotate JS -->
+<script type="text/javascript">
+jQuery(document).ready(function(){
+if(jQuery.fn.gslider) {
+	jQuery('.g-3').gslider({ groupid: 3, speed: 15000 });
+}
+});
+</script>
+<!-- /AdRotate JS -->
+
+</body>
+</html>

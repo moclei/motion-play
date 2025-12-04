@@ -22,6 +22,10 @@ function sanitizeConfig(config) {
         throw new Error('sensor_config is required');
     }
     
+    // Validate multi_pulse is a valid value
+    const validMultiPulse = ["1", "2", "4", "8"];
+    const multiPulse = validMultiPulse.includes(config.multi_pulse) ? config.multi_pulse : "1";
+    
     return {
         sample_rate_hz: Number.isFinite(config.sample_rate_hz) ? config.sample_rate_hz : 1000,
         led_current: config.led_current || "200mA",
@@ -29,7 +33,8 @@ function sanitizeConfig(config) {
         duty_cycle: config.duty_cycle || "1/40",
         high_resolution: typeof config.high_resolution === 'boolean' ? config.high_resolution : true,
         read_ambient: typeof config.read_ambient === 'boolean' ? config.read_ambient : true,
-        i2c_clock_khz: Number.isFinite(config.i2c_clock_khz) ? config.i2c_clock_khz : 400
+        i2c_clock_khz: Number.isFinite(config.i2c_clock_khz) ? config.i2c_clock_khz : 400,
+        multi_pulse: multiPulse
     };
 }
 
@@ -82,7 +87,8 @@ exports.handler = async (event) => {
                 integration_time: sensorConfig.integration_time,
                 duty_cycle: sensorConfig.duty_cycle,
                 high_resolution: sensorConfig.high_resolution,
-                read_ambient: sensorConfig.read_ambient
+                read_ambient: sensorConfig.read_ambient,
+                multi_pulse: sensorConfig.multi_pulse
             },
             timestamp: new Date().toISOString()
         };

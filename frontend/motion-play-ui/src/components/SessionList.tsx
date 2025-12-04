@@ -390,6 +390,11 @@ export const SessionList = forwardRef<SessionListRef, SessionListProps>(({
                                                         {session.vcnl4040_config.i2c_clock_khz}kHz
                                                     </span>
                                                 )}
+                                                {session.vcnl4040_config.multi_pulse && session.vcnl4040_config.multi_pulse !== '1' && (
+                                                    <span className="px-1.5 py-0.5 bg-pink-100 text-pink-800 rounded text-xs font-mono">
+                                                        {session.vcnl4040_config.multi_pulse}P
+                                                    </span>
+                                                )}
                                             </div>
                                         )}
                                     </div>

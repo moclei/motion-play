@@ -43,6 +43,7 @@ public:
     SessionState getState();
     String getSessionId();
     unsigned long getDuration();
+    unsigned long getStartTime();  // Actual session start time (millis at start)
     std::vector<SensorReading, PSRAMAllocator<SensorReading>> &getDataBuffer();
     void setSensorMetadata(const std::vector<SensorMetadata> &metadata);
     const std::vector<SensorMetadata> &getSensorMetadata();
