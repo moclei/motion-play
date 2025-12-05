@@ -372,12 +372,11 @@ Most components log to Serial at 115200 baud. Look for:
 
 ## Further Reading
 
-- **Implementation Guide:** `docs/data collection/phase2-data-pipeline-guide.md`
+- **Project Context:** [.context/PROJECT.md](../.context/PROJECT.md)
 - **AWS Setup:** `infrastructure/aws-setup-guide.md`
-- **Project Status:** `docs/data collection/PROJECT_STATUS.md`
+- **Sensor Datasheets:** `docs/references/vcnl4040/`
 
 ---
 
-*Last Updated: November 14, 2025*
-*For questions: Consult main project README.md*
+*Last Updated: December 5, 2025*
 

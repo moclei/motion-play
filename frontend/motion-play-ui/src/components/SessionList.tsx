@@ -3,7 +3,7 @@ import { useEffect, useState, useImperativeHandle, forwardRef, useCallback } fro
 import { api } from '../services/api';
 import type { Session } from '../services/api';
 import { formatDistance } from 'date-fns';
-import { Trash2, RefreshCw } from 'lucide-react';
+import { Trash2, RefreshCw, ChevronLeft, ChevronRight } from 'lucide-react';
 import toast from 'react-hot-toast';
 
 export interface SessionListRef {
@@ -31,6 +31,14 @@ export const SessionList = forwardRef<SessionListRef, SessionListProps>(({
     const [searchTerm, setSearchTerm] = useState('');
     const [selectedForDeletion, setSelectedForDeletion] = useState<Set<string>>(new Set());
     const [deleting, setDeleting] = useState(false);
+    const [currentPage, setCurrentPage] = useState(1);
+    const itemsPerPage = 10;
+    
+    // Track sessions that are still uploading (sample_count is changing)
+    const [previousSampleCounts, setPreviousSampleCounts] = useState<Map<string, number>>(new Map());
+    const [previousSessionIds, setPreviousSessionIds] = useState<Set<string>>(new Set());
+    const [uploadingSessions, setUploadingSessions] = useState<Set<string>>(new Set());
+    const [justCompletedSession, setJustCompletedSession] = useState<string | null>(null);
 
     const loadSessions = useCallback(async (showLoading = true) => {
         try {
@@ -78,6 +86,51 @@ export const SessionList = forwardRef<SessionListRef, SessionListProps>(({
 
         return () => clearInterval(interval);
     }, [loadSessions]);
+
+    // Track uploading sessions (sample_count is changing OR newly appeared)
+    useEffect(() => {
+        const newUploadingSessions = new Set<string>();
+        const newCounts = new Map<string, number>();
+        const currentSessionIds = new Set(sessions.map(s => s.session_id));
+        
+        sessions.forEach(session => {
+            const prevCount = previousSampleCounts.get(session.session_id);
+            const currentCount = session.sample_count;
+            const wasKnownBefore = previousSessionIds.has(session.session_id);
+            newCounts.set(session.session_id, currentCount);
+            
+            // If sample count increased, it's still uploading
+            if (prevCount !== undefined && currentCount > prevCount) {
+                newUploadingSessions.add(session.session_id);
+            }
+            // If session is truly NEW (wasn't in the previous poll at all), mark as uploading
+            else if (!wasKnownBefore && previousSessionIds.size > 0) {
+                // Only mark as new/uploading if we've already done at least one poll
+                // (previousSessionIds.size > 0 means this isn't the initial load)
+                newUploadingSessions.add(session.session_id);
+            }
+            // If session was uploading but count is now stable, it just completed
+            else if (uploadingSessions.has(session.session_id) && prevCount !== undefined && currentCount === prevCount) {
+                setJustCompletedSession(session.session_id);
+            }
+        });
+        
+        setPreviousSampleCounts(newCounts);
+        setPreviousSessionIds(currentSessionIds);
+        setUploadingSessions(newUploadingSessions);
+    }, [sessions]);
+
+    // Auto-select just completed session
+    useEffect(() => {
+        if (justCompletedSession) {
+            const session = sessions.find(s => s.session_id === justCompletedSession);
+            if (session) {
+                setSelectedId(justCompletedSession);
+                onSelectSession(session);
+            }
+            setJustCompletedSession(null);
+        }
+    }, [justCompletedSession, sessions, onSelectSession]);
 
     // Handle batch deletion with rate limiting
     const handleBatchDelete = async () => {
@@ -151,9 +204,9 @@ export const SessionList = forwardRef<SessionListRef, SessionListProps>(({
         setSelectedForDeletion(newSelection);
     };
 
-    // Select all filtered sessions
+    // Select all sessions on current page
     const selectAll = () => {
-        const allIds = filteredSessions.map(s => s.session_id);
+        const allIds = paginatedSessions.map(s => s.session_id);
         setSelectedForDeletion(new Set(allIds));
     };
 
@@ -183,6 +236,16 @@ export const SessionList = forwardRef<SessionListRef, SessionListProps>(({
             return true;
         })
         .sort((a, b) => b.created_at - a.created_at); // Sort by created_at descending (newest first)
+
+    // Pagination logic
+    const totalPages = Math.ceil(filteredSessions.length / itemsPerPage);
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const paginatedSessions = filteredSessions.slice(startIndex, startIndex + itemsPerPage);
+
+    // Reset to page 1 when filters change
+    useEffect(() => {
+        setCurrentPage(1);
+    }, [filterMode, searchTerm]);
 
     if (loading) {
         return (
@@ -257,13 +320,13 @@ export const SessionList = forwardRef<SessionListRef, SessionListProps>(({
                     </div>
 
                     {/* Batch selection controls */}
-                    {filteredSessions.length > 0 && (
+                    {paginatedSessions.length > 0 && (
                         <div className="flex gap-2">
                             <button
                                 onClick={selectAll}
                                 className="flex-1 px-3 py-1.5 text-xs border border-gray-300 rounded hover:bg-gray-50 transition-colors"
                             >
-                                Select All
+                                Select Page
                             </button>
                             {selectedForDeletion.size > 0 && (
                                 <>
@@ -285,29 +348,67 @@ export const SessionList = forwardRef<SessionListRef, SessionListProps>(({
                             )}
                         </div>
                     )}
+
+                    {/* Pagination Controls */}
+                    {totalPages > 1 && (
+                        <div className="flex items-center justify-between pt-2 bg-gray-100 rounded px-2 py-1.5">
+                            <button
+                                onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                                disabled={currentPage === 1}
+                                className="flex items-center gap-1 px-2 py-1 text-xs font-medium text-gray-700 hover:text-blue-600 hover:bg-white rounded disabled:text-gray-400 disabled:hover:bg-transparent disabled:cursor-not-allowed transition-colors"
+                            >
+                                <ChevronLeft size={14} />
+                                Prev
+                            </button>
+                            <span className="text-xs font-medium text-gray-700">
+                                Page {currentPage} of {totalPages}
+                            </span>
+                            <button
+                                onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+                                disabled={currentPage === totalPages}
+                                className="flex items-center gap-1 px-2 py-1 text-xs font-medium text-gray-700 hover:text-blue-600 hover:bg-white rounded disabled:text-gray-400 disabled:hover:bg-transparent disabled:cursor-not-allowed transition-colors"
+                            >
+                                Next
+                                <ChevronRight size={14} />
+                            </button>
+                        </div>
+                    )}
                 </div>
             </div>
 
             {/* Scrollable session list */}
             <div className="flex-1 overflow-y-auto px-4 pb-4">
                 <div className="space-y-2">
-                    {filteredSessions.length === 0 ? (
+                    {paginatedSessions.length === 0 ? (
                         <div className="text-center py-8">
                             <p className="text-gray-500">
                                 {sessions.length === 0 ? 'No sessions found' : 'No sessions match your filters'}
                             </p>
                         </div>
                     ) : (
-                        filteredSessions.map((session) => (
+                        paginatedSessions.map((session) => {
+                            const isUploading = uploadingSessions.has(session.session_id);
+                            
+                            return (
                             <div
                                 key={session.session_id}
-                                className={`p-3 border rounded transition-colors relative ${selectedId === session.session_id
-                                    ? 'bg-blue-50 border-blue-300'
-                                    : selectedForDeletion.has(session.session_id)
+                                className={`p-3 border rounded transition-colors relative ${
+                                    isUploading
+                                        ? 'bg-amber-50 border-amber-300'
+                                        : selectedId === session.session_id
+                                        ? 'bg-blue-50 border-blue-300'
+                                        : selectedForDeletion.has(session.session_id)
                                         ? 'bg-red-50 border-red-300'
                                         : 'hover:bg-gray-50 border-gray-200'
                                     } ${loadingSessionId === session.session_id ? 'opacity-50' : ''}`}
                             >
+                                {/* Uploading progress indicator */}
+                                {isUploading && (
+                                    <div className="absolute top-0 left-0 right-0 h-1 bg-amber-200 rounded-t overflow-hidden">
+                                        <div className="h-full bg-amber-500 animate-pulse" style={{ width: '100%' }} />
+                                    </div>
+                                )}
+                                
                                 {/* Loading overlay */}
                                 {loadingSessionId === session.session_id && (
                                     <div className="absolute inset-0 flex items-center justify-center bg-white bg-opacity-75 rounded">
@@ -323,12 +424,14 @@ export const SessionList = forwardRef<SessionListRef, SessionListProps>(({
                                         onChange={() => toggleSelection(session.session_id)}
                                         onClick={(e) => e.stopPropagation()}
                                         className="mt-1 w-4 h-4 flex-shrink-0"
+                                        disabled={isUploading}
                                     />
 
                                     {/* Session content */}
                                     <div
-                                        className="flex-1 cursor-pointer"
+                                        className={`flex-1 ${isUploading ? 'cursor-wait' : 'cursor-pointer'}`}
                                         onClick={() => {
+                                            if (isUploading) return; // Prevent selection while uploading
                                             setSelectedId(session.session_id);
                                             onSelectSession(session);
                                         }}
@@ -348,7 +451,14 @@ export const SessionList = forwardRef<SessionListRef, SessionListProps>(({
                                         </div>
                                         <div className="flex gap-3 text-xs text-gray-600 mb-1">
                                             <span>{(session.duration_ms / 1000).toFixed(1)}s</span>
-                                            <span>{session.sample_count} samples</span>
+                                            <span className={isUploading ? 'text-amber-600 font-medium' : ''}>
+                                                {session.sample_count} samples
+                                                {isUploading && (
+                                                    <span className="ml-1 inline-flex items-center">
+                                                        <RefreshCw size={10} className="animate-spin" />
+                                                    </span>
+                                                )}
+                                            </span>
                                             <span>{session.sample_rate} Hz</span>
                                         </div>
                                         {session.labels && session.labels.length > 0 && (
@@ -400,7 +510,7 @@ export const SessionList = forwardRef<SessionListRef, SessionListProps>(({
                                     </div>
                                 </div>
                             </div>
-                        ))
+                        );})
                     )}
                 </div>
             </div>

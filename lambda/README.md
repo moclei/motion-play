@@ -2,6 +2,8 @@
 
 AWS Lambda functions for the Motion Play data collection system.
 
+> **Project Context:** See [.context/PROJECT.md](../.context/PROJECT.md) for architecture overview.
+
 ## Functions Overview
 
 1. **processData** - Process sensor data from ESP32 and store in DynamoDB
@@ -11,6 +13,8 @@ AWS Lambda functions for the Motion Play data collection system.
 5. **getSessionData** - Get detailed session data
 6. **updateSession** - Update session metadata (labels, notes)
 7. **deleteSession** - Delete sessions and associated data
+8. **getDeviceConfig** - Get device sensor configuration
+9. **updateDeviceConfig** - Update device sensor configuration
 
 ## Deployment
 
