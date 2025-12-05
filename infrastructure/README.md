@@ -1,6 +1,8 @@
 # Infrastructure Directory
 
-This directory contains AWS infrastructure configuration and setup files.
+AWS infrastructure configuration and setup files.
+
+> **Project Context:** See [.context/PROJECT.md](../.context/PROJECT.md) for architecture overview.
 
 ## Files
 

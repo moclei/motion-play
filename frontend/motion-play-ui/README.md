@@ -625,23 +625,11 @@ Currently no automated tests. For manual testing:
 
 ## Further Reading
 
-- **Implementation Guide:** `docs/data collection/phase3-web-interface-guide.md`
-- **Enhancement Guide:** `docs/data collection/phase3-b-enhancements-guide.md`
-- **Project Status:** `docs/data collection/PROJECT_STATUS.md`
+- **Project Context:** [.context/PROJECT.md](../../../.context/PROJECT.md)
 - **Vite Docs:** https://vitejs.dev/
 - **React Docs:** https://react.dev/
 - **Tailwind Docs:** https://tailwindcss.com/
 
-## Recent Updates
-
-### November 28, 2025
-- **Enhanced SessionChart with data analysis tools:**
-  - Added interactive Brush component for time window zooming
-  - Added data processing filters: moving average smoothing, baseline removal, peak threshold
-  - Increased chart height to 500px to accommodate brush timeline
-  - Added visual indicators for processed data
-
 ---
 
-*Last Updated: November 28, 2025*
-*For questions: Consult main project README.md*
+*Last Updated: December 5, 2025*
