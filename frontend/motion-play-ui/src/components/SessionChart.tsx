@@ -1,6 +1,7 @@
-import { useState, useRef, useCallback, memo } from 'react';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Brush } from 'recharts';
+import { useState, useRef, useCallback, useMemo, memo } from 'react';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Brush, ReferenceArea } from 'recharts';
 import type { SensorReading } from '../services/api';
+import { detectEvents, formatDirection, summarizeEvents, DEFAULT_CONFIG, type DetectionEvent, type DetectorConfig } from '../lib/directionDetector';
 
 // Time range selection for export (decoupled from chart behavior)
 export interface BrushTimeRange {
@@ -30,6 +31,36 @@ const applyThreshold = (data: number[], threshold: number): (number | null)[] =>
     return data.map(val => val >= threshold ? val : null);
 };
 
+// Custom tooltip component for the chart
+interface CustomTooltipProps {
+    active?: boolean;
+    payload?: Array<{ name: string; value: number; color: string }>;
+    label?: number;
+}
+
+const CustomTooltip = ({ active, payload, label }: CustomTooltipProps) => {
+    if (!active || !payload || payload.length === 0) {
+        return null;
+    }
+
+    return (
+        <div className="bg-white border border-gray-300 rounded shadow-lg p-2 text-sm">
+            <p className="font-semibold text-gray-800 mb-1 border-b pb-1">
+                Time: {label}ms
+            </p>
+            <div className="space-y-0.5">
+                {payload.map((entry, index) => (
+                    entry.value !== null && entry.value !== undefined && (
+                        <p key={index} style={{ color: entry.color }}>
+                            {entry.name}: {Math.round(entry.value)}
+                        </p>
+                    )
+                ))}
+            </div>
+        </div>
+    );
+};
+
 export const SessionChart = memo(({ readings, onBrushChange }: Props) => {
     const [selectedSide, setSelectedSide] = useState<number | null>(null);
     const [selectedPcb, setSelectedPcb] = useState<number | null>(null);
@@ -45,6 +76,18 @@ export const SessionChart = memo(({ readings, onBrushChange }: Props) => {
     const [enableBaselineRemoval, setEnableBaselineRemoval] = useState(false);
     const [enableThreshold, setEnableThreshold] = useState(false);
     const [thresholdValue, setThresholdValue] = useState(10);
+
+    // Direction detection
+    const [enableDetection, setEnableDetection] = useState(true);
+    const [detectorConfig, setDetectorConfig] = useState<DetectorConfig>(DEFAULT_CONFIG);
+
+    // Run direction detection on readings
+    const detectionResults = useMemo(() => {
+        if (!enableDetection || readings.length === 0) {
+            return [];
+        }
+        return detectEvents(readings, detectorConfig);
+    }, [readings, enableDetection, detectorConfig]);
 
     // Apply both PCB and Side filters
     const filteredReadings = readings.filter(r => {
@@ -72,9 +115,10 @@ export const SessionChart = memo(({ readings, onBrushChange }: Props) => {
         readings.sort((a, b) => a.timestamp_offset - b.timestamp_offset);
     });
 
-    // Find the time range - use 0 as minimum to avoid negative timestamps
+    // Find the time range - always start from 0 for consistent x-axis intervals
+    // This ensures the chart x-axis is always 0, 10, 20, 30... regardless of where actual data starts
     const allTimestamps = filteredReadings.map(r => r.timestamp_offset);
-    const minTime = Math.max(0, Math.min(...allTimestamps));
+    const minTime = 0;
     const maxTime = Math.max(...allTimestamps);
 
     // Sample data at regular time intervals (every 10ms) for consistent spacing
@@ -307,6 +351,182 @@ export const SessionChart = memo(({ readings, onBrushChange }: Props) => {
                 </div>
             </div>
 
+            {/* Direction Detection Results */}
+            <div className="p-4 bg-amber-50 border border-amber-200 rounded">
+                <div className="flex items-center justify-between mb-3">
+                    <div className="font-semibold text-gray-800 flex items-center gap-2">
+                        <span>🎯 Direction Detection</span>
+                        <span className="text-xs font-normal text-gray-600">(algorithm testing)</span>
+                    </div>
+                    <label className="flex items-center gap-2 text-sm">
+                        <input
+                            type="checkbox"
+                            checked={enableDetection}
+                            onChange={(e) => setEnableDetection(e.target.checked)}
+                            className="rounded"
+                        />
+                        <span className="text-gray-700">Enable</span>
+                    </label>
+                </div>
+
+                {enableDetection && (
+                    <>
+                        {/* Detection Config (collapsible) */}
+                        <details className="mb-3">
+                            <summary className="text-xs text-gray-600 cursor-pointer hover:text-gray-800">
+                                ⚙️ Algorithm Parameters
+                            </summary>
+                            <div className="mt-2 grid grid-cols-2 md:grid-cols-4 gap-3 p-2 bg-white rounded border">
+                                <div>
+                                    <label className="text-xs text-gray-600 block">Smoothing Window</label>
+                                    <input
+                                        type="number"
+                                        min="1"
+                                        max="10"
+                                        value={detectorConfig.smoothingWindow}
+                                        onChange={(e) => setDetectorConfig(c => ({ ...c, smoothingWindow: parseInt(e.target.value) || 3 }))}
+                                        className="w-full px-2 py-1 text-sm border rounded"
+                                    />
+                                </div>
+                                <div>
+                                    <label className="text-xs text-gray-600 block">Min Rise</label>
+                                    <input
+                                        type="number"
+                                        min="1"
+                                        max="50"
+                                        value={detectorConfig.minRise}
+                                        onChange={(e) => setDetectorConfig(c => ({ ...c, minRise: parseInt(e.target.value) || 10 }))}
+                                        className="w-full px-2 py-1 text-sm border rounded"
+                                    />
+                                </div>
+                                <div>
+                                    <label className="text-xs text-gray-600 block">Max Peak Gap (ms)</label>
+                                    <input
+                                        type="number"
+                                        min="10"
+                                        max="500"
+                                        value={detectorConfig.maxPeakGapMs}
+                                        onChange={(e) => setDetectorConfig(c => ({ ...c, maxPeakGapMs: parseInt(e.target.value) || 100 }))}
+                                        className="w-full px-2 py-1 text-sm border rounded"
+                                    />
+                                </div>
+                                <div>
+                                    <label className="text-xs text-gray-600 block">Wave Threshold (%)</label>
+                                    <input
+                                        type="number"
+                                        min="0.05"
+                                        max="0.5"
+                                        step="0.05"
+                                        value={detectorConfig.waveThresholdPct}
+                                        onChange={(e) => setDetectorConfig(c => ({ ...c, waveThresholdPct: parseFloat(e.target.value) || 0.2 }))}
+                                        className="w-full px-2 py-1 text-sm border rounded"
+                                    />
+                                </div>
+                                <div>
+                                    <label className="text-xs text-gray-600 block">Window Size (ms)</label>
+                                    <input
+                                        type="number"
+                                        min="50"
+                                        max="500"
+                                        step="10"
+                                        value={detectorConfig.windowSizeMs}
+                                        onChange={(e) => setDetectorConfig(c => ({ ...c, windowSizeMs: parseInt(e.target.value) || 200 }))}
+                                        className="w-full px-2 py-1 text-sm border rounded"
+                                    />
+                                </div>
+                                <div>
+                                    <label className="text-xs text-gray-600 block">Window Step (ms)</label>
+                                    <input
+                                        type="number"
+                                        min="10"
+                                        max="100"
+                                        step="5"
+                                        value={detectorConfig.windowStepMs}
+                                        onChange={(e) => setDetectorConfig(c => ({ ...c, windowStepMs: parseInt(e.target.value) || 50 }))}
+                                        className="w-full px-2 py-1 text-sm border rounded"
+                                    />
+                                </div>
+                                <div className="col-span-2 flex items-end">
+                                    <button
+                                        onClick={() => setDetectorConfig(DEFAULT_CONFIG)}
+                                        className="px-3 py-1 text-xs bg-gray-200 hover:bg-gray-300 rounded"
+                                    >
+                                        Reset to Defaults
+                                    </button>
+                                </div>
+                            </div>
+                        </details>
+
+                        {/* Results Summary */}
+                        <div className="text-sm font-medium text-gray-800 mb-2">
+                            {summarizeEvents(detectionResults)}
+                        </div>
+
+                        {/* Individual Events */}
+                        {detectionResults.length > 0 ? (
+                            <div className="space-y-2">
+                                {detectionResults.map((event, idx) => (
+                                    <div
+                                        key={idx}
+                                        className={`p-3 rounded border ${event.direction === 'A_TO_B'
+                                            ? 'bg-green-50 border-green-300'
+                                            : event.direction === 'B_TO_A'
+                                                ? 'bg-blue-50 border-blue-300'
+                                                : 'bg-gray-50 border-gray-300'
+                                            }`}
+                                    >
+                                        <div className="flex items-center justify-between">
+                                            <div className="flex items-center gap-3">
+                                                <span className={`text-lg font-bold ${event.direction === 'A_TO_B' ? 'text-green-700' : 'text-blue-700'
+                                                    }`}>
+                                                    {formatDirection(event.direction)}
+                                                </span>
+                                                <span className="text-sm text-gray-600">
+                                                    {Math.round(event.confidence * 100)}% confidence
+                                                </span>
+                                            </div>
+                                            <span className="text-xs text-gray-500">
+                                                Event #{idx + 1}
+                                            </span>
+                                        </div>
+                                        <div className="mt-1 grid grid-cols-2 md:grid-cols-4 gap-2 text-xs text-gray-600">
+                                            <div>
+                                                <span className="font-medium">CoM A:</span> {Math.round(event.centerOfMassA)}ms
+                                            </div>
+                                            <div>
+                                                <span className="font-medium">CoM B:</span> {Math.round(event.centerOfMassB)}ms
+                                            </div>
+                                            <div>
+                                                <span className="font-medium">CoM Gap:</span> {Math.round(event.comGapMs)}ms
+                                            </div>
+                                            <div>
+                                                <span className="font-medium">Window:</span> {event.windowStart}-{event.windowEnd}ms
+                                            </div>
+                                            <div>
+                                                <span className="font-medium">Wave A:</span> {event.waveStartA}-{event.waveEndA}ms
+                                            </div>
+                                            <div>
+                                                <span className="font-medium">Wave B:</span> {event.waveStartB}-{event.waveEndB}ms
+                                            </div>
+                                            <div>
+                                                <span className="font-medium">Peak A:</span> {event.peakTimeA}ms ({Math.round(event.maxSignalA)})
+                                            </div>
+                                            <div>
+                                                <span className="font-medium">Peak B:</span> {event.peakTimeB}ms ({Math.round(event.maxSignalB)})
+                                            </div>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        ) : (
+                            <div className="text-sm text-gray-500 italic">
+                                No events detected in this session. Try adjusting the algorithm parameters.
+                            </div>
+                        )}
+                    </>
+                )}
+            </div>
+
             {/* Filter Controls */}
             <div className="flex gap-4 items-center p-4 bg-gray-50 rounded border">
                 <span className="font-semibold text-gray-700">Sensor Filter:</span>
@@ -431,6 +651,65 @@ export const SessionChart = memo(({ readings, onBrushChange }: Props) => {
                         </span>
                     )}
                 </h3>
+
+                {/* Detection event wave markers - rendered above the chart */}
+                {enableDetection && detectionResults.length > 0 && chartData.length > 0 && (
+                    <div className="mb-2 space-y-1">
+                        {detectionResults.map((event, idx) => {
+                            // Calculate positions as percentages of the time range
+                            const minTime = chartData[0]?.time ?? 0;
+                            const maxTime = chartData[chartData.length - 1]?.time ?? 1;
+                            const timeRange = maxTime - minTime;
+
+                            if (timeRange <= 0) return null;
+
+                            // Convert wave boundaries to percentages
+                            const waveAStartPct = ((event.waveStartA - minTime) / timeRange) * 100;
+                            const waveAEndPct = ((event.waveEndA - minTime) / timeRange) * 100;
+                            const waveBStartPct = ((event.waveStartB - minTime) / timeRange) * 100;
+                            const waveBEndPct = ((event.waveEndB - minTime) / timeRange) * 100;
+
+                            // Clamp to valid range
+                            const clamp = (val: number) => Math.max(0, Math.min(100, val));
+
+                            return (
+                                <div key={`wave-markers-${idx}`} className="relative h-8 bg-gray-50 rounded border">
+                                    {/* Wave A bar (green) */}
+                                    <div
+                                        className="absolute h-2 top-1 rounded"
+                                        style={{
+                                            left: `${clamp(waveAStartPct)}%`,
+                                            width: `${clamp(waveAEndPct - waveAStartPct)}%`,
+                                            backgroundColor: '#22c55e',
+                                        }}
+                                    >
+                                        <span className="absolute -top-0.5 left-1/2 -translate-x-1/2 text-[10px] font-bold text-green-700">A</span>
+                                    </div>
+
+                                    {/* Wave B bar (blue) */}
+                                    <div
+                                        className="absolute h-2 bottom-1 rounded"
+                                        style={{
+                                            left: `${clamp(waveBStartPct)}%`,
+                                            width: `${clamp(waveBEndPct - waveBStartPct)}%`,
+                                            backgroundColor: '#3b82f6',
+                                        }}
+                                    >
+                                        <span className="absolute -bottom-0.5 left-1/2 -translate-x-1/2 text-[10px] font-bold text-blue-700">B</span>
+                                    </div>
+
+                                    {/* Direction indicator */}
+                                    <div className="absolute right-2 top-1/2 -translate-y-1/2 text-xs font-bold">
+                                        <span className={event.direction === 'A_TO_B' ? 'text-green-600' : 'text-blue-600'}>
+                                            {event.direction === 'A_TO_B' ? 'A → B' : 'B → A'}
+                                        </span>
+                                    </div>
+                                </div>
+                            );
+                        })}
+                    </div>
+                )}
+
                 <ResponsiveContainer width="100%" height={500}>
                     <LineChart data={chartData}>
                         <CartesianGrid strokeDasharray="3 3" />
@@ -439,8 +718,63 @@ export const SessionChart = memo(({ readings, onBrushChange }: Props) => {
                             label={{ value: 'Time (ms)', position: 'insideBottom', offset: -5 }}
                         />
                         <YAxis label={{ value: 'Proximity', angle: -90, position: 'insideLeft' }} />
-                        <Tooltip />
+                        <Tooltip content={<CustomTooltip />} />
                         <Legend />
+
+                        {/* Detection event reference areas - highlight the full wave span */}
+                        {enableDetection && detectionResults.map((event, idx) => {
+                            // Determine the full span based on direction
+                            // A→B: A starts first, B ends last
+                            // B→A: B starts first, A ends last
+                            const rawX1 = event.direction === 'A_TO_B' ? event.waveStartA : event.waveStartB;
+                            const rawX2 = event.direction === 'A_TO_B' ? event.waveEndB : event.waveEndA;
+
+                            // Round to nearest 10 to match chart data points (sampled at 10ms intervals, starting from 0)
+                            const x1 = Math.round(rawX1 / 10) * 10;
+                            const x2 = Math.round(rawX2 / 10) * 10;
+
+                            // Find max individual sensor reading within the detection window from actual chart data
+                            const windowData = chartData.filter(d => d.time >= x1 && d.time <= x2);
+                            let maxY = 0;
+                            windowData.forEach(dataPoint => {
+                                Array.from(sensorGroups.keys()).forEach(sensorKey => {
+                                    const val = dataPoint[sensorKey];
+                                    if (typeof val === 'number' && val > maxY) {
+                                        maxY = val;
+                                    }
+                                });
+                            });
+
+                            // Y bounds: peak from chart data as top, threshold as bottom
+                            // Clamp y2 to be within chart range (0 to maxY)
+                            const y1 = maxY;
+                            const threshold = detectorConfig.minRise;
+                            const y2 = Math.min(threshold, maxY); // Don't go above the peak
+
+                            const fill = event.direction === 'A_TO_B' ? '#22c55e' : '#3b82f6'; // green / blue
+
+                            // DEBUG: Log the values
+                            console.log(`ReferenceArea ${idx}:`, {
+                                x1, x2, y1, y2,
+                                threshold,
+                                windowDataPoints: windowData.length
+                            });
+
+                            return (
+                                <ReferenceArea
+                                    key={`ref-area-${idx}`}
+                                    x1={x1}
+                                    x2={x2}
+                                    y1={y1}
+                                    y2={y2}
+                                    fill={fill}
+                                    fillOpacity={0.2}
+                                    stroke={fill}
+                                    strokeOpacity={0.6}
+                                    strokeWidth={1}
+                                />
+                            );
+                        })}
 
                         {/* Brush component for time window selection */}
                         <Brush
