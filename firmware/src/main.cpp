@@ -18,10 +18,11 @@
 #define BUTTON_2 14 // Right button
 
 // Device modes
-enum class DeviceMode {
-    IDLE,   // Standby mode
-    DEBUG,  // Data collection for algorithm development
-    PLAY    // Active game mode with direction detection
+enum class DeviceMode
+{
+    IDLE,  // Standby mode
+    DEBUG, // Data collection for algorithm development
+    PLAY   // Active game mode with direction detection
 };
 
 // Managers
@@ -35,7 +36,7 @@ DirectionDetector directionDetector;
 LEDController ledController;
 
 // Current device mode
-DeviceMode currentMode = DeviceMode::DEBUG;  // Default to debug for backwards compatibility
+DeviceMode currentMode = DeviceMode::DEBUG; // Default to debug for backwards compatibility
 
 // Play mode state
 bool playModeActive = false;
@@ -166,7 +167,7 @@ bool fetchConfigFromCloud()
             }
             else
             {
-                currentConfig.multi_pulse = "1";  // Default: 1 pulse
+                currentConfig.multi_pulse = "1"; // Default: 1 pulse
             }
 
             Serial.println("\nConfig loaded from cloud:");
@@ -344,27 +345,27 @@ void handleCommand(const String &command, JsonDocument *doc)
         {
             // PLAY MODE: Start direction detection
             Serial.println("Starting PLAY mode - Direction detection active");
-            
+
             // Initialize LED controller if not already done
             if (!ledController.init())
             {
                 Serial.println("WARNING: LED controller init failed");
             }
-            
+
             // Reset the detector
             directionDetector.reset();
-            
+
             // Start sensor collection with internal queue for detection
             if (sessionManager.startSession())
             {
                 sensorManager.startCollection(sessionManager.getQueue());
                 playModeActive = true;
                 lastDetectionTime = 0;
-                
+
                 mqttManager->publishStatus("play_started");
                 display.showMessage("PLAY MODE ACTIVE", TFT_GREEN);
                 display.setDisplayState(DISPLAY_RECORDING);
-                
+
                 // Show ready state on LEDs
                 ledController.showReady();
             }
@@ -416,15 +417,15 @@ void handleCommand(const String &command, JsonDocument *doc)
         {
             // PLAY MODE: Just stop detection, no upload needed
             Serial.println("Stopping PLAY mode...");
-            
+
             sensorManager.stopCollection();
             sessionManager.stopSession();
             sessionManager.clearBuffer();
-            
+
             playModeActive = false;
             directionDetector.reset();
             ledController.off();
-            
+
             mqttManager->publishStatus("play_stopped");
             display.showMessage("Play mode stopped", TFT_YELLOW);
             delay(1500);
@@ -499,7 +500,7 @@ void handleCommand(const String &command, JsonDocument *doc)
 
             currentConfig.led_current = config["led_current"] | "200mA";
             currentConfig.integration_time = config["integration_time"] | "1T";
-            currentConfig.duty_cycle = config["duty_cycle"] | "1/40";  // CRITICAL: Was missing!
+            currentConfig.duty_cycle = config["duty_cycle"] | "1/40"; // CRITICAL: Was missing!
             currentConfig.high_resolution = config["high_resolution"] | true;
             currentConfig.read_ambient = config["read_ambient"] | true;
 
@@ -516,7 +517,7 @@ void handleCommand(const String &command, JsonDocument *doc)
             }
             else
             {
-                currentConfig.multi_pulse = "1";  // Default: 1 pulse
+                currentConfig.multi_pulse = "1"; // Default: 1 pulse
             }
 
             Serial.println("Configuration updated:");
@@ -557,7 +558,7 @@ void handleCommand(const String &command, JsonDocument *doc)
         if (doc != nullptr && doc->containsKey("mode"))
         {
             String modeStr = (*doc)["mode"].as<String>();
-            
+
             if (modeStr == "idle")
             {
                 currentMode = DeviceMode::IDLE;
@@ -582,14 +583,18 @@ void handleCommand(const String &command, JsonDocument *doc)
                 display.setMode(MODE_PLAY);
                 display.showMessage("Mode: PLAY", TFT_GREEN);
                 mqttManager->publishStatus("mode_play");
-                // LED controller will be initialized when play starts
+                // Reset detector to establish fresh baseline for this session
+                directionDetector.fullReset();
+                // Turn off LEDs until baseline is established
+                ledController.off();
+                Serial.println("Direction detector reset for new play session");
             }
             else
             {
                 display.showMessage("Unknown mode", TFT_RED);
                 mqttManager->publishStatus("mode_invalid");
             }
-            
+
             Serial.printf("Device mode set to: %s\n", modeStr.c_str());
             delay(1500);
             display.setDisplayState(DISPLAY_IDLE);
@@ -636,74 +641,76 @@ void loop()
         {
             // Update LED animation (handles fade-out after detection)
             bool animating = ledController.update();
-            
+
             // Debug: log buffer status periodically
             static unsigned long lastPlayDebug = 0;
             if (millis() - lastPlayDebug > 2000)
             {
                 lastPlayDebug = millis();
-                Serial.printf("[PLAY] Buffer: %d samples, Detector ready: %s\n", 
-                    sessionManager.getDataCount(),
-                    directionDetector.hasEnoughData() ? "YES" : "no");
+                Serial.printf("[PLAY] Buffer: %d samples, Detector: %s\n",
+                              sessionManager.getDataCount(),
+                              directionDetector.isReady() ? "READY" : "establishing baseline...");
             }
-            
+
             // Check cooldown between detections
             unsigned long now = millis();
             bool inCooldown = (lastDetectionTime > 0) && (now - lastDetectionTime < DETECTION_COOLDOWN);
-            
+
             if (!inCooldown)
             {
                 // Feed new readings to the detector
-                auto& buffer = sessionManager.getDataBuffer();
+                auto &buffer = sessionManager.getDataBuffer();
                 static size_t lastProcessedIndex = 0;
-                
+
                 // Add new readings since last check
                 size_t bufferSize = buffer.size();
                 for (size_t i = lastProcessedIndex; i < bufferSize; i++)
                 {
                     directionDetector.addReading(buffer[i]);
                 }
+                // Flush the last reading to ensure it's processed
+                directionDetector.flushReading();
                 lastProcessedIndex = bufferSize;
-                
-                // Try to detect direction
-                if (directionDetector.hasEnoughData())
+
+                // Check for detection (V3: adaptive threshold + wave envelope)
+                if (directionDetector.hasDetection())
                 {
-                    DetectionResult result = directionDetector.analyze();
-                    
-                    if (result.direction != Direction::UNKNOWN)
+                    DetectionResult result = directionDetector.getResult();
+
+                    // Detection successful!
+                    Serial.printf("DETECTION: %s (confidence: %.2f, CoM gap: %dms)\n",
+                                  DirectionDetector::directionToString(result.direction),
+                                  result.confidence,
+                                  result.comGapMs);
+                    Serial.printf("  Thresholds: A=%.1f, B=%.1f | Peaks: A=%d, B=%d\n",
+                                  result.thresholdA, result.thresholdB,
+                                  result.maxSignalA, result.maxSignalB);
+
+                    // Show on LEDs
+                    ledController.showDirection(result.direction, 3000);
+
+                    // Show on display
+                    if (result.direction == Direction::A_TO_B)
                     {
-                        // Detection successful!
-                        Serial.printf("DETECTION: %s (confidence: %.2f, gap: %dms)\n",
-                            DirectionDetector::directionToString(result.direction),
-                            result.confidence,
-                            result.gapMs);
-                        
-                        // Show on LEDs
-                        ledController.showDirection(result.direction, 3000);
-                        
-                        // Show on display
-                        if (result.direction == Direction::A_TO_B)
-                        {
-                            display.showMessage("A -> B", TFT_BLUE);
-                        }
-                        else
-                        {
-                            display.showMessage("B -> A", TFT_ORANGE);
-                        }
-                        
-                        // Publish detection result
-                        String statusMsg = "detection_" + String(DirectionDetector::directionToString(result.direction));
-                        mqttManager->publishStatus(statusMsg.c_str());
-                        
-                        // Reset for next detection (clear buffer without changing state)
-                        lastDetectionTime = now;
-                        directionDetector.reset();
-                        lastProcessedIndex = 0;
-                        buffer.clear();  // Clear buffer directly, don't reset session state
-                        Serial.println("Detection complete, buffer cleared for next event");
+                        display.showMessage("A -> B", TFT_BLUE);
                     }
+                    else
+                    {
+                        display.showMessage("B -> A", TFT_ORANGE);
+                    }
+
+                    // Publish detection result
+                    String statusMsg = "detection_" + String(DirectionDetector::directionToString(result.direction));
+                    mqttManager->publishStatus(statusMsg.c_str());
+
+                    // Reset for next detection (clear buffer without changing state)
+                    lastDetectionTime = now;
+                    directionDetector.reset();
+                    lastProcessedIndex = 0;
+                    buffer.clear(); // Clear buffer directly, don't reset session state
+                    Serial.println("Detection complete, buffer cleared for next event");
                 }
-                
+
                 // Limit buffer size to prevent memory issues in play mode
                 if (bufferSize > 500)
                 {
@@ -711,21 +718,22 @@ void loop()
                     Serial.printf("Buffer overflow prevention: clearing %d samples\n", bufferSize);
                     directionDetector.reset();
                     lastProcessedIndex = 0;
-                    buffer.clear();  // Clear buffer directly, don't reset session state
+                    buffer.clear(); // Clear buffer directly, don't reset session state
                 }
             }
-            else if (!ledController.isAnimating())
+            else if (!ledController.isAnimating() && directionDetector.isReady())
             {
                 // Show ready pulse while in cooldown (but not animating a detection)
+                // Only show after baseline is established
                 ledController.showReady();
             }
-            
+
             // No timeout in play mode - it runs until stopped
         }
         else
         {
             // DEBUG MODE: Standard collection behavior
-            
+
             // Check for maximum session duration (30 seconds safety limit)
             if (sessionManager.getDuration() >= 30000) // 30 seconds in milliseconds
             {

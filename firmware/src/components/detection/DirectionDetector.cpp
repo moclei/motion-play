@@ -2,203 +2,363 @@
 
 DirectionDetector::DirectionDetector() : config() {}
 
-DirectionDetector::DirectionDetector(const DetectorConfig& cfg) : config(cfg) {}
+DirectionDetector::DirectionDetector(const DetectorConfig &cfg) : config(cfg) {}
 
-void DirectionDetector::addReading(const SensorReading& reading) {
-    // Find or create aggregated reading for this timestamp
-    size_t windowSize = window.size();
-    
-    // Check if we already have an entry for this timestamp
-    if (windowSize > 0 && window[windowSize - 1].timestamp == reading.timestamp_ms) {
-        // Add to existing entry
-        AggregatedReading& agg = window[windowSize - 1];
-        if (reading.side == 2) {
-            agg.sideA += reading.proximity;
-        } else {
-            agg.sideB += reading.proximity;
+void DirectionDetector::addReading(const SensorReading &reading)
+{
+    // Check if this is a new timestamp (need to flush previous)
+    if (hasCurrentReading && reading.timestamp_ms != currentTimestamp)
+    {
+        flushReading();
+    }
+
+    // Aggregate by side
+    currentTimestamp = reading.timestamp_ms;
+    if (reading.side == 2)
+    {
+        currentSideA += reading.proximity;
+    }
+    else
+    {
+        currentSideB += reading.proximity;
+    }
+    hasCurrentReading = true;
+}
+
+void DirectionDetector::flushReading()
+{
+    if (!hasCurrentReading)
+        return;
+
+    // Add to smoothing buffers
+    smoothBufferA.push((float)currentSideA);
+    smoothBufferB.push((float)currentSideB);
+
+    // Get smoothed values
+    float smoothedA = smoothBufferA.getSmoothedAverage(config.smoothingWindow);
+    float smoothedB = smoothBufferB.getSmoothedAverage(config.smoothingWindow);
+
+    // Process based on current state
+    switch (state)
+    {
+    case DetectorState::ESTABLISHING_BASELINE:
+        updateBaseline(smoothedA, smoothedB);
+        break;
+
+    case DetectorState::READY:
+    case DetectorState::DETECTING:
+        processReading(currentTimestamp, smoothedA, smoothedB);
+        break;
+    }
+
+    // Reset current reading
+    currentSideA = 0;
+    currentSideB = 0;
+    hasCurrentReading = false;
+}
+
+void DirectionDetector::updateBaseline(float valueA, float valueB)
+{
+    // Accumulate statistics
+    baselineA.sum += valueA;
+    baselineA.count++;
+    if (valueA > baselineA.max)
+        baselineA.max = valueA;
+
+    baselineB.sum += valueB;
+    baselineB.count++;
+    if (valueB > baselineB.max)
+        baselineB.max = valueB;
+
+    baselineReadingCount++;
+
+    // Check if we have enough readings
+    if (baselineReadingCount >= config.baselineReadings)
+    {
+        calculateThresholds();
+        state = DetectorState::READY;
+
+        Serial.println("=== BASELINE ESTABLISHED ===");
+        Serial.printf("  Side A: mean=%.1f, max=%.1f, threshold=%.1f\n",
+                      baselineA.getMean(), baselineA.max, waveA.threshold);
+        Serial.printf("  Side B: mean=%.1f, max=%.1f, threshold=%.1f\n",
+                      baselineB.getMean(), baselineB.max, waveB.threshold);
+    }
+}
+
+void DirectionDetector::calculateThresholds()
+{
+    // Use max value as baseline (captures noise ceiling)
+    float baseA = baselineA.max;
+    float baseB = baselineB.max;
+
+    // Threshold = baseline + max(baseline × (multiplier-1), minRise)
+    // This ensures minimum absolute rise while scaling for high-noise sessions
+    float riseA = max(baseA * (config.peakMultiplier - 1.0f), (float)config.minRise);
+    float riseB = max(baseB * (config.peakMultiplier - 1.0f), (float)config.minRise);
+
+    waveA.threshold = baseA + riseA;
+    waveB.threshold = baseB + riseB;
+}
+
+void DirectionDetector::processReading(uint32_t timestamp, float smoothedA, float smoothedB)
+{
+    // Update wave trackers
+    updateWaveTracker(waveA, smoothedA, timestamp);
+    updateWaveTracker(waveB, smoothedB, timestamp);
+
+    // Check for state transitions
+    if (state == DetectorState::READY)
+    {
+        // Check if either side entered a wave
+        if (waveA.state == WaveState::IN_WAVE || waveB.state == WaveState::IN_WAVE)
+        {
+            state = DetectorState::DETECTING;
+            detectionStartTime = timestamp;
+            Serial.printf("WAVE DETECTED at %lu (A=%s, B=%s)\n",
+                          timestamp,
+                          waveA.state == WaveState::IN_WAVE ? "IN_WAVE" : "IDLE",
+                          waveB.state == WaveState::IN_WAVE ? "IN_WAVE" : "IDLE");
         }
-    } else {
-        // Create new entry
-        AggregatedReading agg;
-        agg.timestamp = reading.timestamp_ms;
-        agg.sideA = (reading.side == 2) ? reading.proximity : 0;
-        agg.sideB = (reading.side == 1) ? reading.proximity : 0;
-        window.push(agg);
     }
-}
 
-void DirectionDetector::addReadings(const SensorReading* readings, size_t count) {
-    for (size_t i = 0; i < count; i++) {
-        addReading(readings[i]);
-    }
-}
-
-void DirectionDetector::computeSmoothedSignals() {
-    size_t count = window.size();
-    
-    for (size_t i = 0; i < count; i++) {
-        // Simple moving average
-        float sumA = 0, sumB = 0;
-        int samples = 0;
-        
-        int start = max(0, (int)i - (int)config.smoothingWindow + 1);
-        for (int j = start; j <= (int)i; j++) {
-            sumA += window[j].sideA;
-            sumB += window[j].sideB;
-            samples++;
+    // Check for timeout in detecting state
+    if (state == DetectorState::DETECTING)
+    {
+        uint32_t elapsed = timestamp - detectionStartTime;
+        if (elapsed > config.maxWaveDurationMs + config.maxPeakGapMs)
+        {
+            Serial.println("Detection timeout - resetting waves");
+            waveA.reset();
+            waveB.reset();
+            state = DetectorState::READY;
         }
-        
-        smoothedA[i] = sumA / samples;
-        smoothedB[i] = sumB / samples;
     }
 }
 
-void DirectionDetector::computeDerivatives() {
-    size_t count = window.size();
-    
-    derivA[0] = 0;
-    derivB[0] = 0;
-    
-    for (size_t i = 1; i < count; i++) {
-        derivA[i] = smoothedA[i] - smoothedA[i - 1];
-        derivB[i] = smoothedB[i] - smoothedB[i - 1];
-    }
-}
+void DirectionDetector::updateWaveTracker(WaveTracker &tracker, float value, uint32_t timestamp)
+{
+    switch (tracker.state)
+    {
+    case WaveState::IDLE:
+        // Check if signal exceeds threshold
+        if (value > tracker.threshold)
+        {
+            tracker.state = WaveState::IN_WAVE;
+            tracker.waveStartTime = timestamp;
+            tracker.peakValue = value;
+            tracker.peakTime = timestamp;
+            tracker.weightedSum = value * timestamp;
+            tracker.totalWeight = value;
+        }
+        break;
 
-DirectionDetector::RiseInfo DirectionDetector::findMainRise(
-    const float* signal, const float* deriv, size_t count) {
-    
-    RiseInfo bestRise = {0, 0, 0, false};
-    RiseInfo currentRise = {0, 0, 0, false};
-    
-    bool inRise = false;
-    float riseStartValue = 0;
-    int consecutivePositive = 0;
-    
-    for (size_t i = 1; i < count; i++) {
-        float prevDeriv = deriv[i - 1];
-        float currDeriv = deriv[i];
-        
-        // Count consecutive positive derivatives
-        if (currDeriv > config.derivativeThreshold) {
-            consecutivePositive++;
-            if (consecutivePositive >= 2 && !inRise) {
-                // Start of significant rise
-                size_t startIdx = i - consecutivePositive;
-                currentRise.startTime = window[startIdx].timestamp;
-                riseStartValue = signal[startIdx];
-                inRise = true;
+    case WaveState::IN_WAVE:
+    {
+        // Update peak if this is higher
+        if (value > tracker.peakValue)
+        {
+            tracker.peakValue = value;
+            tracker.peakTime = timestamp;
+        }
+
+        // Accumulate for center of mass
+        tracker.weightedSum += value * timestamp;
+        tracker.totalWeight += value;
+
+        // Check for wave exit (drops below threshold or fraction of peak)
+        float exitThreshold = max(tracker.threshold,
+                                  tracker.peakValue * config.waveExitThreshold);
+        if (value < exitThreshold)
+        {
+            // Wave complete
+            tracker.state = WaveState::COMPLETE;
+            tracker.waveEndTime = timestamp;
+
+            // Calculate center of mass
+            if (tracker.totalWeight > 0)
+            {
+                tracker.centerOfMass = (uint32_t)(tracker.weightedSum / tracker.totalWeight);
             }
-        } else {
-            consecutivePositive = 0;
-        }
-        
-        // Detect peak (end of rise)
-        if (prevDeriv > 0 && currDeriv <= 0 && inRise) {
-            currentRise.peakTime = window[i - 1].timestamp;
-            currentRise.riseAmount = signal[i - 1] - riseStartValue;
-            
-            if (currentRise.riseAmount >= config.minRise) {
-                currentRise.valid = true;
-                
-                // Keep the rise with the largest amount
-                if (currentRise.riseAmount > bestRise.riseAmount) {
-                    bestRise = currentRise;
-                }
+            else
+            {
+                tracker.centerOfMass = tracker.peakTime;
             }
-            
-            inRise = false;
+
+            Serial.printf("  Wave complete: start=%lu, peak=%lu (%.1f), end=%lu, CoM=%lu\n",
+                          tracker.waveStartTime, tracker.peakTime, tracker.peakValue,
+                          tracker.waveEndTime, tracker.centerOfMass);
         }
+
+        // Check for wave timeout
+        if (timestamp - tracker.waveStartTime > config.maxWaveDurationMs)
+        {
+            // Force wave completion
+            tracker.state = WaveState::COMPLETE;
+            tracker.waveEndTime = timestamp;
+            if (tracker.totalWeight > 0)
+            {
+                tracker.centerOfMass = (uint32_t)(tracker.weightedSum / tracker.totalWeight);
+            }
+            else
+            {
+                tracker.centerOfMass = tracker.peakTime;
+            }
+            Serial.println("  Wave timeout - forced completion");
+        }
+        break;
     }
-    
-    return bestRise;
+
+    case WaveState::COMPLETE:
+        // Already complete, waiting for detection check
+        break;
+    }
 }
 
-DetectionResult DirectionDetector::analyze() {
+bool DirectionDetector::hasDetection() const
+{
+    if (state != DetectorState::DETECTING)
+        return false;
+
+    // Need both waves to be complete
+    if (waveA.state != WaveState::COMPLETE || waveB.state != WaveState::COMPLETE)
+    {
+        return false;
+    }
+
+    // Check if waves are close enough in time (same event)
+    uint32_t peakGap = abs((int32_t)waveA.peakTime - (int32_t)waveB.peakTime);
+    return peakGap <= config.maxPeakGapMs;
+}
+
+DetectionResult DirectionDetector::getResult()
+{
     DetectionResult result;
     result.direction = Direction::UNKNOWN;
     result.confidence = 0;
-    result.riseTimeA = 0;
-    result.riseTimeB = 0;
-    result.gapMs = 0;
+    result.centerOfMassA = 0;
+    result.centerOfMassB = 0;
+    result.comGapMs = 0;
     result.maxSignalA = 0;
     result.maxSignalB = 0;
-    
-    size_t count = window.size();
-    if (count < 10) {
-        return result;  // Not enough data
+    result.baselineA = baselineA.max;
+    result.baselineB = baselineB.max;
+    result.thresholdA = waveA.threshold;
+    result.thresholdB = waveB.threshold;
+
+    if (!hasDetection())
+    {
+        return result;
     }
-    
-    // Step 1: Compute smoothed signals
-    computeSmoothedSignals();
-    
-    // Step 2: Compute derivatives
-    computeDerivatives();
-    
-    // Step 3: Find max signals
-    for (size_t i = 0; i < count; i++) {
-        if (window[i].sideA > result.maxSignalA) result.maxSignalA = window[i].sideA;
-        if (window[i].sideB > result.maxSignalB) result.maxSignalB = window[i].sideB;
-    }
-    
-    // Step 4: Find main rises on each side
-    RiseInfo riseA = findMainRise(smoothedA, derivA, count);
-    RiseInfo riseB = findMainRise(smoothedB, derivB, count);
-    
-    // Step 5: Check if we have valid rises on both sides
-    if (!riseA.valid || !riseB.valid) {
-        return result;  // No valid event detected
-    }
-    
-    // Step 6: Check if peaks are close enough (same event)
-    uint32_t peakGap = abs((int32_t)riseA.peakTime - (int32_t)riseB.peakTime);
-    if (peakGap > config.maxPeakGapMs) {
-        return result;  // Not the same event
-    }
-    
-    // Step 7: Determine direction based on rise start time
-    result.riseTimeA = riseA.startTime;
-    result.riseTimeB = riseB.startTime;
-    result.gapMs = abs((int32_t)riseA.startTime - (int32_t)riseB.startTime);
-    
-    if (riseA.startTime < riseB.startTime) {
+
+    // Fill in result
+    result.centerOfMassA = waveA.centerOfMass;
+    result.centerOfMassB = waveB.centerOfMass;
+    result.comGapMs = abs((int32_t)waveA.centerOfMass - (int32_t)waveB.centerOfMass);
+    result.maxSignalA = (uint16_t)waveA.peakValue;
+    result.maxSignalB = (uint16_t)waveB.peakValue;
+
+    // Determine direction from center of mass comparison
+    if (waveA.centerOfMass < waveB.centerOfMass)
+    {
         result.direction = Direction::A_TO_B;
-    } else if (riseB.startTime < riseA.startTime) {
+    }
+    else if (waveB.centerOfMass < waveA.centerOfMass)
+    {
         result.direction = Direction::B_TO_A;
-    } else {
-        // Tie - use peak timing as fallback
-        if (riseA.peakTime < riseB.peakTime) {
+    }
+    else
+    {
+        // Tie - use peak time as fallback
+        if (waveA.peakTime < waveB.peakTime)
+        {
             result.direction = Direction::A_TO_B;
-        } else {
+        }
+        else
+        {
             result.direction = Direction::B_TO_A;
         }
     }
-    
-    // Step 8: Calculate confidence
-    float gapConfidence = min(1.0f, result.gapMs / 50.0f);
-    float signalConfidence = min(1.0f, (riseA.riseAmount + riseB.riseAmount) / 100.0f);
-    result.confidence = (gapConfidence + signalConfidence) / 2.0f;
-    
+
+    // Calculate confidence
+    // Higher gap = more confident (up to a point)
+    float gapConfidence = min(1.0f, (float)result.comGapMs / 50.0f);
+
+    // Stronger signals = more confident
+    float signalStrength = (waveA.peakValue + waveB.peakValue) / 2.0f;
+    float signalConfidence = min(1.0f, signalStrength / 100.0f);
+
+    result.confidence = (gapConfidence * 0.6f) + (signalConfidence * 0.4f);
+
     return result;
 }
 
-void DirectionDetector::reset() {
-    window.clear();
-}
+void DirectionDetector::reset()
+{
+    // Reset wave trackers but keep baseline
+    waveA.reset();
+    waveB.reset();
+    smoothBufferA.clear();
+    smoothBufferB.clear();
+    currentSideA = 0;
+    currentSideB = 0;
+    hasCurrentReading = false;
+    detectionStartTime = 0;
 
-bool DirectionDetector::hasEnoughData() const {
-    return window.size() >= 20;  // At least 20 aggregated readings
-}
-
-void DirectionDetector::setConfig(const DetectorConfig& cfg) {
-    config = cfg;
-}
-
-const char* DirectionDetector::directionToString(Direction dir) {
-    switch (dir) {
-        case Direction::A_TO_B: return "A_TO_B";
-        case Direction::B_TO_A: return "B_TO_A";
-        default: return "UNKNOWN";
+    if (state != DetectorState::ESTABLISHING_BASELINE)
+    {
+        state = DetectorState::READY;
     }
 }
 
+void DirectionDetector::fullReset()
+{
+    reset();
+    baselineA.reset();
+    baselineB.reset();
+    baselineReadingCount = 0;
+    waveA.threshold = 0;
+    waveB.threshold = 0;
+    state = DetectorState::ESTABLISHING_BASELINE;
+}
+
+void DirectionDetector::setConfig(const DetectorConfig &cfg)
+{
+    config = cfg;
+    // Recalculate thresholds if baseline is established
+    if (state != DetectorState::ESTABLISHING_BASELINE)
+    {
+        calculateThresholds();
+    }
+}
+
+const char *DirectionDetector::directionToString(Direction dir)
+{
+    switch (dir)
+    {
+    case Direction::A_TO_B:
+        return "A_TO_B";
+    case Direction::B_TO_A:
+        return "B_TO_A";
+    default:
+        return "UNKNOWN";
+    }
+}
+
+void DirectionDetector::debugPrint() const
+{
+    Serial.println("=== DirectionDetector State ===");
+    Serial.printf("State: %s\n",
+                  state == DetectorState::ESTABLISHING_BASELINE ? "ESTABLISHING_BASELINE" : state == DetectorState::READY ? "READY"
+                                                                                                                          : "DETECTING");
+    Serial.printf("Baseline readings: %lu / %u\n", baselineReadingCount, config.baselineReadings);
+    Serial.printf("Baseline A: mean=%.1f, max=%.1f\n", baselineA.getMean(), baselineA.max);
+    Serial.printf("Baseline B: mean=%.1f, max=%.1f\n", baselineB.getMean(), baselineB.max);
+    Serial.printf("Threshold A: %.1f, B: %.1f\n", waveA.threshold, waveB.threshold);
+    Serial.printf("Wave A state: %s\n",
+                  waveA.state == WaveState::IDLE ? "IDLE" : waveA.state == WaveState::IN_WAVE ? "IN_WAVE"
+                                                                                              : "COMPLETE");
+    Serial.printf("Wave B state: %s\n",
+                  waveB.state == WaveState::IDLE ? "IDLE" : waveB.state == WaveState::IN_WAVE ? "IN_WAVE"
+                                                                                              : "COMPLETE");
+}
