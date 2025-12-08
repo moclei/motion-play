@@ -1,21 +1,26 @@
 /**
- * Direction Detection Algorithm - Version 2: Wave Envelope / Center of Mass
+ * Direction Detection Algorithm - Version 3: Adaptive Threshold + Wave Envelope
  * 
  * This module detects the direction of objects passing through the sensor hoop
  * by analyzing the complete "wave envelope" of each side's signal and comparing
  * their centers of mass (weighted average timestamps).
  * 
  * Algorithm Overview:
- * 1. Aggregate sensor readings by side (A vs B)
- * 2. Smooth signals to reduce noise
- * 3. Find wave boundaries (where signal crosses threshold on each side of peak)
- * 4. Calculate center of mass within wave boundaries for each side
- * 5. Compare centers of mass → earlier one determines direction
+ * 1. Calculate adaptive baseline from initial readings (noise floor)
+ * 2. Aggregate sensor readings by side (A vs B)
+ * 3. Smooth signals to reduce noise
+ * 4. Find wave boundaries - peaks must exceed baseline × multiplier
+ * 5. Calculate center of mass within wave boundaries for each side
+ * 6. Compare centers of mass → earlier one determines direction
  * 
- * Previous Version: See archive/directionDetector_v1_rise_timing.ts
- * - Used derivative-based rise detection as primary method
- * - Center of mass was only used as tiebreaker
- * - Issue: Rise start times were often very close, making direction unclear
+ * Version 3 Changes:
+ * - Adaptive thresholding: baseline calculated from first N ms of session
+ * - Peak validation: requires peak > baseline × multiplier (e.g., 2x)
+ * - Filters out noise fluctuations that don't represent real events
+ * 
+ * Previous Versions:
+ * - V2: Static minRise threshold - failed with varying noise floors
+ * - V1: Derivative-based rise detection - timing too close for direction
  * 
  * IMPORTANT: When porting to firmware, update DirectionDetector.cpp accordingly!
  */
@@ -30,12 +35,16 @@ export type Direction = 'A_TO_B' | 'B_TO_A' | 'UNKNOWN';
 
 export interface DetectorConfig {
   smoothingWindow: number;      // Moving average window size (default: 3)
-  minRise: number;              // Minimum peak height above baseline (default: 10)
+  minRise: number;              // Minimum peak height above baseline - used as fallback (default: 10)
   maxPeakGapMs: number;         // Maximum time between paired peaks (default: 100)
   waveThresholdPct: number;     // Percentage of peak to define wave boundaries (default: 0.2 = 20%)
   // Sliding window parameters
   windowSizeMs: number;         // Size of analysis window in ms (default: 200)
   windowStepMs: number;         // Step size for sliding window (default: 50)
+  // Adaptive threshold parameters
+  useAdaptiveThreshold: boolean; // Enable adaptive baseline calculation (default: true)
+  baselineWindowMs: number;     // How many ms at start to use for baseline (default: 200)
+  peakMultiplier: number;       // Peak must be >= baseline × this value (default: 2.0)
 }
 
 export interface DetectionEvent {
@@ -54,6 +63,11 @@ export interface DetectionEvent {
   maxSignalB: number;           // Maximum signal value on side B
   windowStart: number;          // Start timestamp of detection window
   windowEnd: number;            // End timestamp of detection window
+  // Adaptive threshold debug info
+  baselineA?: number;           // Calculated baseline for side A
+  baselineB?: number;           // Calculated baseline for side B
+  thresholdA?: number;          // Effective threshold for side A
+  thresholdB?: number;          // Effective threshold for side B
 }
 
 interface WaveEnvelope {
@@ -76,6 +90,10 @@ export const DEFAULT_CONFIG: DetectorConfig = {
   waveThresholdPct: 0.2,  // 20% of peak height defines wave boundaries
   windowSizeMs: 200,
   windowStepMs: 50,
+  // Adaptive threshold defaults
+  useAdaptiveThreshold: true,
+  baselineWindowMs: 200,  // Use first 200ms to calculate baseline
+  peakMultiplier: 1.5,     // Rise = max(baseline × (multiplier-1), minRise)
 };
 
 // ============================================================================
@@ -127,17 +145,90 @@ function smoothSignal(
 }
 
 /**
+ * Calculate baseline statistics from a signal.
+ * Returns the mean and standard deviation of the signal values.
+ */
+function calculateBaseline(signal: Map<number, number>): { mean: number; stdDev: number; max: number } {
+  const values = Array.from(signal.values());
+
+  if (values.length === 0) {
+    return { mean: 0, stdDev: 0, max: 0 };
+  }
+
+  const mean = values.reduce((sum, v) => sum + v, 0) / values.length;
+  const max = Math.max(...values);
+
+  // Calculate standard deviation
+  const squaredDiffs = values.map(v => Math.pow(v - mean, 2));
+  const avgSquaredDiff = squaredDiffs.reduce((sum, v) => sum + v, 0) / values.length;
+  const stdDev = Math.sqrt(avgSquaredDiff);
+
+  return { mean, stdDev, max };
+}
+
+/**
+ * Calculate adaptive baseline from the first N milliseconds of readings.
+ * Uses the mean + 1 stddev as the "noise ceiling" for each side.
+ */
+function calculateAdaptiveBaselines(
+  readings: SensorReading[],
+  baselineWindowMs: number
+): { baselineA: number; baselineB: number } {
+  // Get minimum timestamp
+  const minTime = Math.min(...readings.map(r => r.timestamp_offset));
+  const baselineEndTime = minTime + baselineWindowMs;
+
+  // Filter readings within baseline window
+  const baselineReadings = readings.filter(r => r.timestamp_offset <= baselineEndTime);
+
+  if (baselineReadings.length === 0) {
+    return { baselineA: 0, baselineB: 0 };
+  }
+
+  // Aggregate by side for baseline window
+  const { sideA, sideB } = aggregateBySide(baselineReadings);
+
+  // Calculate baseline stats for each side
+  const statsA = calculateBaseline(sideA);
+  const statsB = calculateBaseline(sideB);
+
+  // Use max value in baseline window as the noise ceiling
+  // This captures the highest noise spike, ensuring real events must exceed it
+  // Alternative: mean + 2*stdDev for statistical approach
+  const baselineA = statsA.max;
+  const baselineB = statsB.max;
+
+  console.log('Adaptive Baseline Calculated:', {
+    baselineA,
+    baselineB,
+    statsA,
+    statsB,
+    baselineReadingsCount: baselineReadings.length,
+    baselineWindowMs
+  });
+
+  return { baselineA, baselineB };
+}
+
+/**
  * Find the wave envelope for a signal.
  * 
  * A wave envelope is defined by:
  * 1. Finding the peak (maximum value)
- * 2. Finding where the signal crosses the threshold (% of peak) on each side
- * 3. Calculating center of mass within those boundaries
+ * 2. Validating peak exceeds the required threshold
+ * 3. Finding where the signal crosses the threshold (% of peak) on each side
+ * 4. Calculating center of mass within those boundaries
+ * 
+ * @param signal - The smoothed signal values
+ * @param thresholdPct - Percentage of peak height for wave boundaries
+ * @param minPeakHeight - Fallback static threshold (used if adaptive is disabled)
+ * @param adaptiveThreshold - If provided, peak must exceed this value
  */
 function findWaveEnvelope(
   signal: Map<number, number>,
   thresholdPct: number,
-  minPeakHeight: number
+  minPeakHeight: number,
+  adaptiveThreshold?: number
 ): WaveEnvelope | null {
   if (signal.size === 0) {
     return null;
@@ -157,19 +248,29 @@ function findWaveEnvelope(
   }
 
   // Check if peak is significant
-  const baseline = Math.min(...values);
-  const peakHeight = peakValue - baseline;
-  if (peakHeight < minPeakHeight) {
-    return null;
+  const windowBaseline = Math.min(...values);
+  const peakHeight = peakValue - windowBaseline;
+
+  // Determine which threshold to use
+  if (adaptiveThreshold !== undefined) {
+    // Adaptive mode: peak must exceed the adaptive threshold
+    if (peakValue < adaptiveThreshold) {
+      return null;
+    }
+  } else {
+    // Static mode: peak height must exceed minPeakHeight
+    if (peakHeight < minPeakHeight) {
+      return null;
+    }
   }
 
-  // Calculate threshold
-  const threshold = baseline + (peakHeight * thresholdPct);
+  // Calculate wave boundary threshold (% of peak height above baseline)
+  const waveThreshold = windowBaseline + (peakHeight * thresholdPct);
 
   // Find wave start (search backwards from peak)
   let startIdx = peakIdx;
   for (let i = peakIdx; i >= 0; i--) {
-    if (values[i] < threshold) {
+    if (values[i] < waveThreshold) {
       startIdx = i + 1;
       break;
     }
@@ -181,7 +282,7 @@ function findWaveEnvelope(
   // Find wave end (search forwards from peak)
   let endIdx = peakIdx;
   for (let i = peakIdx; i < values.length; i++) {
-    if (values[i] < threshold) {
+    if (values[i] < waveThreshold) {
       endIdx = i - 1;
       break;
     }
@@ -204,7 +305,7 @@ function findWaveEnvelope(
     const ts = timestamps[i];
     const value = values[i];
     // Weight is signal value minus baseline
-    const weight = Math.max(0, value - baseline);
+    const weight = Math.max(0, value - windowBaseline);
     weightedSum += ts * weight;
     totalWeight += weight;
   }
@@ -226,12 +327,27 @@ function findWaveEnvelope(
 }
 
 /**
+ * Adaptive thresholds calculated from baseline readings.
+ */
+interface AdaptiveThresholds {
+  thresholdA: number;
+  thresholdB: number;
+  baselineA: number;
+  baselineB: number;
+}
+
+/**
  * Analyze a window of sensor readings to detect direction.
  * Uses wave envelope / center-of-mass as the primary detection method.
+ * 
+ * @param readings - Sensor readings within the analysis window
+ * @param config - Detection configuration
+ * @param adaptiveThresholds - Optional adaptive thresholds (if enabled)
  */
 function analyzeWindow(
   readings: SensorReading[],
-  config: DetectorConfig
+  config: DetectorConfig,
+  adaptiveThresholds?: AdaptiveThresholds
 ): DetectionEvent | null {
   if (readings.length === 0) {
     return null;
@@ -252,9 +368,19 @@ function analyzeWindow(
   const sideASmooth = smoothSignal(sideA, config.smoothingWindow);
   const sideBSmooth = smoothSignal(sideB, config.smoothingWindow);
 
-  // Step 3: Find wave envelopes
-  const waveA = findWaveEnvelope(sideASmooth, config.waveThresholdPct, config.minRise);
-  const waveB = findWaveEnvelope(sideBSmooth, config.waveThresholdPct, config.minRise);
+  // Step 3: Find wave envelopes (with adaptive thresholds if provided)
+  const waveA = findWaveEnvelope(
+    sideASmooth,
+    config.waveThresholdPct,
+    config.minRise,
+    adaptiveThresholds?.thresholdA
+  );
+  const waveB = findWaveEnvelope(
+    sideBSmooth,
+    config.waveThresholdPct,
+    config.minRise,
+    adaptiveThresholds?.thresholdB
+  );
 
   // Need valid waves on both sides
   if (!waveA || !waveB) {
@@ -302,6 +428,11 @@ function analyzeWindow(
     maxSignalB: waveB.peakValue,
     windowStart,
     windowEnd,
+    // Include adaptive threshold debug info
+    baselineA: adaptiveThresholds?.baselineA,
+    baselineB: adaptiveThresholds?.baselineB,
+    thresholdA: adaptiveThresholds?.thresholdA,
+    thresholdB: adaptiveThresholds?.thresholdB,
   };
 }
 
@@ -372,6 +503,30 @@ export function detectEvents(
   const minTime = sorted[0].timestamp_offset;
   const maxTime = sorted[sorted.length - 1].timestamp_offset;
 
+  // Calculate adaptive thresholds if enabled
+  let adaptiveThresholds: AdaptiveThresholds | undefined;
+
+  if (cfg.useAdaptiveThreshold) {
+    const { baselineA, baselineB } = calculateAdaptiveBaselines(sorted, cfg.baselineWindowMs);
+
+    // Threshold = baseline + max(baseline × (multiplier-1), minRise)
+    // This ensures a minimum absolute rise is always required, preventing
+    // false detections in low-noise sessions where baseline is very low.
+    const riseA = Math.max(baselineA * (cfg.peakMultiplier - 1), cfg.minRise);
+    const riseB = Math.max(baselineB * (cfg.peakMultiplier - 1), cfg.minRise);
+    const thresholdA = baselineA + riseA;
+    const thresholdB = baselineB + riseB;
+
+    adaptiveThresholds = {
+      baselineA,
+      baselineB,
+      thresholdA,
+      thresholdB,
+    };
+
+    console.log('Adaptive Thresholds:', adaptiveThresholds);
+  }
+
   // Collect all detected events
   const allEvents: DetectionEvent[] = [];
 
@@ -388,8 +543,8 @@ export function detectEvents(
       continue; // Not enough data in window
     }
 
-    // Analyze this window
-    const event = analyzeWindow(windowReadings, cfg);
+    // Analyze this window (with adaptive thresholds if enabled)
+    const event = analyzeWindow(windowReadings, cfg, adaptiveThresholds);
     if (event !== null) {
       allEvents.push(event);
     }

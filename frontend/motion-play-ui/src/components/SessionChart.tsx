@@ -446,6 +446,49 @@ export const SessionChart = memo(({ readings, onBrushChange }: Props) => {
                                         className="w-full px-2 py-1 text-sm border rounded"
                                     />
                                 </div>
+
+                                {/* Adaptive Threshold Section */}
+                                <div className="col-span-4 border-t pt-2 mt-2">
+                                    <label className="flex items-center gap-2 text-xs font-medium text-gray-700 mb-2">
+                                        <input
+                                            type="checkbox"
+                                            checked={detectorConfig.useAdaptiveThreshold}
+                                            onChange={(e) => setDetectorConfig(c => ({ ...c, useAdaptiveThreshold: e.target.checked }))}
+                                            className="rounded"
+                                        />
+                                        Adaptive Threshold (calculates noise floor from first N ms)
+                                    </label>
+                                </div>
+
+                                {detectorConfig.useAdaptiveThreshold && (
+                                    <>
+                                        <div>
+                                            <label className="text-xs text-gray-600 block">Baseline Window (ms)</label>
+                                            <input
+                                                type="number"
+                                                min="50"
+                                                max="500"
+                                                step="50"
+                                                value={detectorConfig.baselineWindowMs}
+                                                onChange={(e) => setDetectorConfig(c => ({ ...c, baselineWindowMs: parseInt(e.target.value) || 200 }))}
+                                                className="w-full px-2 py-1 text-sm border rounded"
+                                            />
+                                        </div>
+                                        <div>
+                                            <label className="text-xs text-gray-600 block">Peak Multiplier (×baseline)</label>
+                                            <input
+                                                type="number"
+                                                min="1.05"
+                                                max="2"
+                                                step="0.05"
+                                                value={detectorConfig.peakMultiplier}
+                                                onChange={(e) => setDetectorConfig(c => ({ ...c, peakMultiplier: parseFloat(e.target.value) || 2.0 }))}
+                                                className="w-full px-2 py-1 text-sm border rounded"
+                                            />
+                                        </div>
+                                    </>
+                                )}
+
                                 <div className="col-span-2 flex items-end">
                                     <button
                                         onClick={() => setDetectorConfig(DEFAULT_CONFIG)}
