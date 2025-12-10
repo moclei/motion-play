@@ -96,12 +96,18 @@ private:
     QueueHandle_t dataQueue = NULL;
     SensorConfiguration* activeConfig = nullptr;  // Reference to active configuration
     
+    // Baseline cancellation values per sensor (for PS_CANC register)
+    // These values are subtracted by the sensor hardware to compensate for
+    // cover window reflections and other constant offsets
+    uint16_t baselineValues[NUM_SENSORS] = {0};
+    
     // Graceful shutdown flag - volatile because accessed from multiple cores
     volatile bool stopRequested = false;
     
     bool initializePCA();
     void cleanupI2CBus();  // Clean up I2C bus state
     static void sensorTaskFunction(void *parameter);
+    bool calibrateSensorBaseline(uint8_t sensorIndex);  // Calibrate single sensor PS_CANC
     
     // Configuration helpers
     VCNL4040_LEDCurrent parseLEDCurrent(const String& current);
@@ -120,6 +126,8 @@ public:
     std::vector<SensorMetadata> getSensorMetadata();
     bool reinitialize(SensorConfiguration* config);
     void dumpSensorConfiguration();  // Diagnostic: print all sensor configs to serial
+    bool calibrateProximityCancellation();  // Calibrate PS_CANC for all sensors (cover offset)
+    uint16_t getBaselineValue(uint8_t sensorIndex);  // Get stored baseline for a sensor
 };
 
 #endif
