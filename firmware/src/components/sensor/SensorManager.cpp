@@ -21,6 +21,180 @@ void SensorManager::cleanupI2CBus()
     delayMicroseconds(100);
 }
 
+// ============================================================================
+// PS_CANC Baseline Calibration
+// The VCNL4040 has a built-in cancellation register (PS_CANC at 0x05) that
+// automatically subtracts an offset from all proximity readings. This is
+// designed to compensate for cover window reflections and other constant
+// sources of IR reflection that would otherwise cause elevated baselines.
+//
+// See: Vishay Application Note "Designing the VCNL4040 Into an Application"
+// and SENSOR_SPACING_AND_COVERS.md in docs/references/vcnl4040/
+// ============================================================================
+
+bool SensorManager::calibrateSensorBaseline(uint8_t sensorIndex)
+{
+    if (sensorIndex >= NUM_SENSORS || !sensorsActive[sensorIndex])
+        return false;
+
+    uint8_t tca_ch = sensorMapping[sensorIndex].tca_channel;
+    uint8_t pca_ch = sensorMapping[sensorIndex].pca_channel;
+
+    // Select TCA channel for this sensor board
+    if (!mux.selectChannel(tca_ch))
+    {
+        Serial.printf("  Calibration: Failed to select TCA channel %d\n", tca_ch);
+        return false;
+    }
+    delay(5);
+
+    // Select PCA channel on the sensor board
+    if (!pca_instances[tca_ch].selectChannel(pca_ch))
+    {
+        Serial.printf("  Calibration: Failed to select PCA channel %d\n", pca_ch);
+        return false;
+    }
+    delay(5);
+
+    // Take multiple readings to calculate average baseline
+    const int NUM_SAMPLES = 50;
+    const int SAMPLE_DELAY_MS = 10; // 10ms between samples
+    uint32_t sum = 0;
+    int validSamples = 0;
+
+    for (int i = 0; i < NUM_SAMPLES; i++)
+    {
+        // Read proximity directly via I2C
+        Wire.beginTransmission(0x60);
+        Wire.write(0x08); // PS_DATA register
+        if (Wire.endTransmission(false) != 0)
+            continue;
+
+        Wire.requestFrom((uint8_t)0x60, (uint8_t)2);
+        if (Wire.available() >= 2)
+        {
+            uint8_t prox_low = Wire.read();
+            uint8_t prox_high = Wire.read();
+            uint16_t proximity = (prox_high << 8) | prox_low;
+            sum += proximity;
+            validSamples++;
+        }
+        delay(SAMPLE_DELAY_MS);
+    }
+
+    if (validSamples < NUM_SAMPLES / 2)
+    {
+        Serial.printf("  Calibration: Too few valid samples (%d/%d)\n", validSamples, NUM_SAMPLES);
+        return false;
+    }
+
+    // Calculate average baseline
+    uint16_t baseline = sum / validSamples;
+    baselineValues[sensorIndex] = baseline;
+
+    // Write to PS_CANC register (0x05) - this value is subtracted from all readings
+    Wire.beginTransmission(0x60);
+    Wire.write(0x05);                   // PS_CANC register
+    Wire.write(baseline & 0xFF);        // Low byte
+    Wire.write((baseline >> 8) & 0xFF); // High byte
+    uint8_t err = Wire.endTransmission();
+
+    if (err != 0)
+    {
+        Serial.printf("  Calibration: Failed to write PS_CANC (I2C error %d)\n", err);
+        return false;
+    }
+
+    // Verify by reading back
+    delay(5);
+    Wire.beginTransmission(0x60);
+    Wire.write(0x05);
+    Wire.endTransmission(false);
+    Wire.requestFrom((uint8_t)0x60, (uint8_t)2);
+    uint8_t verify_low = Wire.available() ? Wire.read() : 0xFF;
+    uint8_t verify_high = Wire.available() ? Wire.read() : 0xFF;
+    uint16_t verify_value = (verify_high << 8) | verify_low;
+
+    if (verify_value != baseline)
+    {
+        Serial.printf("  Calibration: PS_CANC verify failed (wrote %d, read %d)\n", baseline, verify_value);
+        return false;
+    }
+
+    return true;
+}
+
+bool SensorManager::calibrateProximityCancellation()
+{
+    Serial.println("\n");
+    Serial.println("╔══════════════════════════════════════════════════════════════════════════════╗");
+    Serial.println("║              PS_CANC BASELINE CALIBRATION (Cover Offset Removal)             ║");
+    Serial.println("╠══════════════════════════════════════════════════════════════════════════════╣");
+    Serial.println("║ This calibrates each sensor to cancel the constant offset caused by the      ║");
+    Serial.println("║ acrylic cover windows. Ensure NO objects are near the sensors during this!   ║");
+    Serial.println("╠══════════════════════════════════════════════════════════════════════════════╣");
+
+    int calibratedCount = 0;
+    int failedCount = 0;
+
+    for (int i = 0; i < NUM_SENSORS; i++)
+    {
+        if (!sensorsActive[i])
+        {
+            Serial.printf("║ Sensor %d (P%dS%d): SKIPPED (not active)                                       ║\n",
+                          i, sensorMapping[i].tca_channel + 1, sensorMapping[i].pca_channel + 1);
+            continue;
+        }
+
+        char sensorName[8];
+        snprintf(sensorName, sizeof(sensorName), "P%dS%d",
+                 sensorMapping[i].tca_channel + 1, sensorMapping[i].pca_channel + 1);
+
+        Serial.printf("║ Sensor %d (%-4s): Calibrating...                                              ║\n", i, sensorName);
+
+        if (calibrateSensorBaseline(i))
+        {
+            Serial.printf("║ Sensor %d (%-4s): ✓ Baseline = %5d (written to PS_CANC)                     ║\n",
+                          i, sensorName, baselineValues[i]);
+            calibratedCount++;
+        }
+        else
+        {
+            Serial.printf("║ Sensor %d (%-4s): ✗ CALIBRATION FAILED                                        ║\n",
+                          i, sensorName);
+            failedCount++;
+        }
+
+        // Feed watchdog between sensors
+        taskYIELD();
+    }
+
+    // Clean up multiplexer channels
+    for (int i = 0; i < 3; i++)
+    {
+        mux.selectChannel(i);
+        delay(2);
+        pca_instances[i].disableAllChannels();
+    }
+    mux.disableAllChannels();
+
+    Serial.println("╠══════════════════════════════════════════════════════════════════════════════╣");
+    Serial.printf("║ RESULT: %d sensors calibrated, %d failed                                       ║\n",
+                  calibratedCount, failedCount);
+    Serial.println("║ Proximity readings will now have cover reflection offset subtracted.         ║");
+    Serial.println("╚══════════════════════════════════════════════════════════════════════════════╝");
+    Serial.println();
+
+    return (failedCount == 0 && calibratedCount > 0);
+}
+
+uint16_t SensorManager::getBaselineValue(uint8_t sensorIndex)
+{
+    if (sensorIndex >= NUM_SENSORS)
+        return 0;
+    return baselineValues[sensorIndex];
+}
+
 VCNL4040_LEDCurrent SensorManager::parseLEDCurrent(const String &current)
 {
     if (current == "50mA")
@@ -451,6 +625,12 @@ bool SensorManager::init(SensorConfiguration *config)
     // Dump configuration for all sensors to verify they were configured correctly
     dumpSensorConfiguration();
 
+    // Calibrate PS_CANC for all sensors to remove cover window reflection offset
+    // This should be done with covers installed but NO objects near the sensors
+    Serial.println("Starting baseline calibration for cover offset compensation...");
+    delay(500); // Brief delay to ensure stable readings
+    calibrateProximityCancellation();
+
     return true;
 }
 
@@ -849,6 +1029,12 @@ bool SensorManager::reinitialize(SensorConfiguration *config)
 
     // Dump configuration to verify all sensors got the new settings
     dumpSensorConfiguration();
+
+    // Re-calibrate PS_CANC after configuration change
+    // Configuration changes (especially LED current, integration time) can affect baseline
+    Serial.println("  Re-calibrating baseline after configuration change...");
+    delay(200);
+    calibrateProximityCancellation();
 
     return true;
 }
