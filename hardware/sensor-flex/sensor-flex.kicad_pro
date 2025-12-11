@@ -470,7 +470,7 @@
     "pinned_symbol_libs": []
   },
   "meta": {
-    "filename": "sensor_flex.kicad_pro",
+    "filename": "sensor-flex.kicad_pro",
     "version": 3
   },
   "net_settings": {

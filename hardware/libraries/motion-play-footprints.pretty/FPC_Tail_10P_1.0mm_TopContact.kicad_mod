@@ -1,0 +1,243 @@
+(footprint "FPC_Tail_10P_1.0mm_TopContact"
+	(version 20240108)
+	(generator "custom")
+	(generator_version "1.0")
+	(layer "F.Cu")
+	(descr "FPC connector tail for C132510 ZIF connector, 8 signal pins + 2 mechanical, 1.0mm pitch, top contact, 0.3mm FPC thickness")
+	(tags "FPC tail connector flex ZIF C132510")
+	(property "Reference" "FPC1"
+		(at 0 3 0)
+		(layer "F.SilkS")
+		(effects
+			(font
+				(size 1 1)
+				(thickness 0.15)
+			)
+		)
+	)
+	(property "Value" "FPC_Tail_10P_1.0mm"
+		(at 0 -3.5 0)
+		(layer "F.Fab")
+		(effects
+			(font
+				(size 1 1)
+				(thickness 0.15)
+			)
+		)
+	)
+	(property "Footprint" ""
+		(at 0 0 0)
+		(layer "F.Fab")
+		(hide yes)
+		(effects
+			(font
+				(size 1 1)
+				(thickness 0.15)
+			)
+		)
+	)
+	(property "Datasheet" ""
+		(at 0 0 0)
+		(layer "F.Fab")
+		(hide yes)
+		(effects
+			(font
+				(size 1 1)
+				(thickness 0.15)
+			)
+		)
+	)
+	(property "Description" "FPC connector tail pads for mating with C132510 8-pin ZIF connector"
+		(at 0 0 0)
+		(layer "F.Fab")
+		(hide yes)
+		(effects
+			(font
+				(size 1 1)
+				(thickness 0.15)
+			)
+		)
+	)
+	(attr exclude_from_pos_files exclude_from_bom)
+	
+	; Board edge indicator (place edge at Y=0)
+	(fp_line
+		(start -6.5 0)
+		(end 6.5 0)
+		(stroke
+			(width 0.1)
+			(type solid)
+		)
+		(layer "Edge.Cuts")
+	)
+	
+	; Fab layer outline showing tail area
+	(fp_rect
+		(start -6.5 0)
+		(end 6.5 -3)
+		(stroke
+			(width 0.1)
+			(type default)
+		)
+		(fill none)
+		(layer "F.Fab")
+	)
+	
+	; Pin 1 indicator
+	(fp_circle
+		(center 3.5 -3.5)
+		(end 3.65 -3.5)
+		(stroke
+			(width 0.1)
+			(type solid)
+		)
+		(fill solid)
+		(layer "F.SilkS")
+	)
+	
+	; Signal pads 1-8 at 1.0mm pitch
+	; Pad dimensions: 0.5mm wide x 2.5mm long (extends to edge)
+	; No solder mask (for connector contact)
+	; Pin 1 at X=3.5, Pin 8 at X=-3.5
+	
+	; Pin 1 - 3.3V
+	(pad "1" smd rect
+		(at 3.5 -1.25)
+		(size 0.5 2.5)
+		(layers "F.Cu")
+		(solder_mask_margin 0)
+		(clearance 0.15)
+	)
+	
+	; Pin 2 - INT1
+	(pad "2" smd rect
+		(at 2.5 -1.25)
+		(size 0.5 2.5)
+		(layers "F.Cu")
+		(solder_mask_margin 0)
+		(clearance 0.15)
+	)
+	
+	; Pin 3 - SDA1
+	(pad "3" smd rect
+		(at 1.5 -1.25)
+		(size 0.5 2.5)
+		(layers "F.Cu")
+		(solder_mask_margin 0)
+		(clearance 0.15)
+	)
+	
+	; Pin 4 - SCL1
+	(pad "4" smd rect
+		(at 0.5 -1.25)
+		(size 0.5 2.5)
+		(layers "F.Cu")
+		(solder_mask_margin 0)
+		(clearance 0.15)
+	)
+	
+	; Pin 5 - GND (center shield)
+	(pad "5" smd rect
+		(at -0.5 -1.25)
+		(size 0.5 2.5)
+		(layers "F.Cu")
+		(solder_mask_margin 0)
+		(clearance 0.15)
+	)
+	
+	; Pin 6 - INT2
+	(pad "6" smd rect
+		(at -1.5 -1.25)
+		(size 0.5 2.5)
+		(layers "F.Cu")
+		(solder_mask_margin 0)
+		(clearance 0.15)
+	)
+	
+	; Pin 7 - SDA2
+	(pad "7" smd rect
+		(at -2.5 -1.25)
+		(size 0.5 2.5)
+		(layers "F.Cu")
+		(solder_mask_margin 0)
+		(clearance 0.15)
+	)
+	
+	; Pin 8 - SCL2
+	(pad "8" smd rect
+		(at -3.5 -1.25)
+		(size 0.5 2.5)
+		(layers "F.Cu")
+		(solder_mask_margin 0)
+		(clearance 0.15)
+	)
+	
+	; Mechanical/GND pads (9 and 10)
+	; These are larger pads at the outer edges for mechanical support and ground
+	; Position to match connector mechanical pads at X=±6.04
+	
+	; Pin 9 - GND (mechanical right)
+	(pad "9" smd rect
+		(at 5.5 -1.25)
+		(size 1.5 2.5)
+		(layers "F.Cu")
+		(solder_mask_margin 0)
+		(clearance 0.15)
+	)
+	
+	; Pin 10 - GND (mechanical left)
+	(pad "10" smd rect
+		(at -5.5 -1.25)
+		(size 1.5 2.5)
+		(layers "F.Cu")
+		(solder_mask_margin 0)
+		(clearance 0.15)
+	)
+	
+	; Stiffener zone indicator (User.1 layer)
+	; The connector tail area needs a stiffener to achieve 0.3mm total thickness
+	(fp_rect
+		(start -6.5 0)
+		(end 6.5 -4)
+		(stroke
+			(width 0.2)
+			(type default)
+		)
+		(fill none)
+		(layer "User.1")
+	)
+	
+	; Silkscreen labels for debugging
+	(fp_text user "EDGE"
+		(at 0 0.8 0)
+		(layer "F.SilkS")
+		(effects
+			(font
+				(size 0.6 0.6)
+				(thickness 0.1)
+			)
+		)
+	)
+	
+	(fp_text user "1"
+		(at 3.5 -3.2 0)
+		(layer "F.Fab")
+		(effects
+			(font
+				(size 0.4 0.4)
+				(thickness 0.08)
+			)
+		)
+	)
+	
+	(fp_text user "8"
+		(at -3.5 -3.2 0)
+		(layer "F.Fab")
+		(effects
+			(font
+				(size 0.4 0.4)
+				(thickness 0.08)
+			)
+		)
+	)
+)
