@@ -1,0 +1,56 @@
+=== KiCad Netlist to JSON Export Log ===
+[2025-12-09 20:34:47] Script started
+[2025-12-09 20:34:47] Python version: 3.9.6 (default, Oct 17 2025, 17:15:54) 
+[Clang 17.0.0 (clang-1700.4.4.1)]
+[2025-12-09 20:34:47] Command line args: ['/Applications/KiCad/KiCad.app/Contents/SharedSupport/plugins/convert_netlist_to_json.py', '/Users/marcocleirigh/Workspace/motion-play/hardware/sensor-rigid/sensor-rigid.xml', '/Users/marcocleirigh/Workspace/motion-play/hardware/sensor-rigid/sensor-rigid']
+[2025-12-09 20:34:47] Current working directory: /Users/marcocleirigh/Workspace/motion-play/hardware/sensor-rigid
+[2025-12-09 20:34:47] Script location: /Applications/KiCad/KiCad.app/Contents/SharedSupport/plugins/convert_netlist_to_json.py
+[2025-12-09 20:34:47] Input file: /Users/marcocleirigh/Workspace/motion-play/hardware/sensor-rigid/sensor-rigid.xml
+[2025-12-09 20:34:47] Output file: /Users/marcocleirigh/Workspace/motion-play/hardware/sensor-rigid/sensor-rigid.json
+[2025-12-09 20:34:47] Input file exists, size: 49619 bytes
+[2025-12-09 20:34:47] Setting up import paths...
+[2025-12-09 20:34:47] Added to sys.path: /Applications/KiCad/KiCad.app/Contents/SharedSupport/plugins/
+[2025-12-09 20:34:47] Added to sys.path: /Users/marcocleirigh/Workspace/motion-play/hardware/sensor-rigid
+[2025-12-09 20:34:47] Full sys.path: ['/Users/marcocleirigh/Workspace/motion-play/hardware/sensor-rigid', '/Applications/KiCad/KiCad.app/Contents/SharedSupport/plugins/', '/Applications/KiCad/KiCad.app/Contents/SharedSupport/plugins', '/Applications/KiCad/KiCad.app/Contents/SharedSupport/scripting', '/Applications/KiCad/KiCad.app/Contents/Frameworks/Python.framework/Versions/3.9/lib/python3.9/site-packages', '/Applications/KiCad/KiCad.app/Contents/Frameworks/Python.framework/Versions/Current/lib/python39.zip', '/Applications/KiCad/KiCad.app/Contents/Frameworks/Python.framework/Versions/Current/lib/python3.9', '/Applications/KiCad/KiCad.app/Contents/Frameworks/Python.framework/Versions/Current/lib/python3.9/lib-dynload', '/Applications/KiCad/KiCad.app/Contents/Frameworks/Python.framework/Versions/Current/lib/python3.9/site-packages']
+[2025-12-09 20:34:47] Attempting to import kicad_netlist_reader...
+[2025-12-09 20:34:47] Successfully imported kicad_netlist_reader
+[2025-12-09 20:34:47] Module location: /Applications/KiCad/KiCad.app/Contents/SharedSupport/plugins/kicad_netlist_reader.py
+[2025-12-09 20:34:47] Loading netlist...
+[2025-12-09 20:34:48] Successfully created netlist object
+[2025-12-09 20:34:48] Building JSON structure...
+[2025-12-09 20:34:48] Got components using .components
+[2025-12-09 20:34:48] Processed 34 components
+[2025-12-09 20:34:48] Got 26 nets using getNets()
+[2025-12-09 20:34:48] First net object type: <class 'kicad_netlist_reader.xmlElement'>
+[2025-12-09 20:34:48] First net dir (first 30): ['__class__', '__delattr__', '__dict__', '__dir__', '__doc__', '__eq__', '__format__', '__ge__', '__getattribute__', '__gt__', '__hash__', '__init__', '__init_subclass__', '__le__', '__lt__', '__module__', '__ne__', '__new__', '__reduce__', '__reduce_ex__', '__repr__', '__setattr__', '__sizeof__', '__str__', '__subclasshook__', '__weakref__', 'addAttribute', 'addChars', 'addChild', 'attributes']
+[2025-12-09 20:34:48] net.name = net (type: str)
+[2025-12-09 20:34:48] net.children = [<kicad_netlist_reader.xmlElement object at 0x10896c820>, <kicad_netlist_reader.xmlElement object at 0x10896c880>, <kicad_netlist_reader.xmlElement object at 0x10896c8e0>, <kicad_netlist_reader.xmlElement object at 0x108c7ce20>, <kicad_netlist_reader.xmlElement object at 0x108c7ce80>, <kicad_netlist_reader.xmlElement object at 0x108c7cee0>, <kicad_netlist_reader.xmlElement object at 0x108c7cf40>, <kicad_netlist_reader.xmlElement object at 0x108c7cfa0>, <kicad_netlist_reader.xmlElement object at 0x109190040>, <kicad_netlist_reader.xmlElement object at 0x109190b50>, <kicad_netlist_reader.xmlElement object at 0x109190bb0>, <kicad_netlist_reader.xmlElement object at 0x109190c10>, <kicad_netlist_reader.xmlElement object at 0x109190c70>, <kicad_netlist_reader.xmlElement object at 0x109190cd0>, <kicad_netlist_reader.xmlElement object at 0x109190d30>, <kicad_netlist_reader.xmlElement object at 0x109190d90>, <kicad_netlist_reader.xmlElement object at 0x109190df0>, <kicad_netlist_reader.xmlElement object at 0x109190af0>, <kicad_netlist_reader.xmlElement object at 0x109190a90>, <kicad_netlist_reader.xmlElement object at 0x109190a30>, <kicad_netlist_reader.xmlElement object at 0x1091909d0>, <kicad_netlist_reader.xmlElement object at 0x109190970>, <kicad_netlist_reader.xmlElement object at 0x109190910>] (type: list)
+[2025-12-09 20:34:48] net.attributes = {'code': '1', 'name': '+3.3V', 'class': 'Power,Default'} (type: dict)
+[2025-12-09 20:34:48] Processing net '+3.3V' (code: 1) with 23 nodes
+[2025-12-09 20:34:48] First node type: <class 'kicad_netlist_reader.xmlElement'>
+[2025-12-09 20:34:48] First node dir (first 30): ['__class__', '__delattr__', '__dict__', '__dir__', '__doc__', '__eq__', '__format__', '__ge__', '__getattribute__', '__gt__', '__hash__', '__init__', '__init_subclass__', '__le__', '__lt__', '__module__', '__ne__', '__new__', '__reduce__', '__reduce_ex__', '__repr__', '__setattr__', '__sizeof__', '__str__', '__subclasshook__', '__weakref__', 'addAttribute', 'addChars', 'addChild', 'attributes']
+[2025-12-09 20:34:48] node.name = node (type: str)
+[2025-12-09 20:34:48] node.attributes = {'ref': 'C1', 'pin': '2', 'pintype': 'passive'} (type: dict)
+[2025-12-09 20:34:48] node.children = [] (type: list)
+[2025-12-09 20:34:48] Node 1 attributes dict: {'ref': 'C1', 'pin': '2', 'pintype': 'passive'}
+[2025-12-09 20:34:48] Node 1 extracted: ref=C1, pin=2, pinfunction=, pintype=passive, net=+3.3V
+[2025-12-09 20:34:48] Node 2 attributes dict: {'ref': 'C2', 'pin': '2', 'pintype': 'passive'}
+[2025-12-09 20:34:48] Node 2 extracted: ref=C2, pin=2, pinfunction=, pintype=passive, net=+3.3V
+[2025-12-09 20:34:48] Node 3 attributes dict: {'ref': 'C4', 'pin': '2', 'pintype': 'passive'}
+[2025-12-09 20:34:48] Node 3 extracted: ref=C4, pin=2, pinfunction=, pintype=passive, net=+3.3V
+[2025-12-09 20:34:48] Node 4 attributes dict: {'ref': 'C8', 'pin': '2', 'pintype': 'passive'}
+[2025-12-09 20:34:48] Node 4 extracted: ref=C8, pin=2, pinfunction=, pintype=passive, net=+3.3V
+[2025-12-09 20:34:48] Node 5 attributes dict: {'ref': 'IC1', 'pin': '4', 'pinfunction': 'A', 'pintype': 'passive'}
+[2025-12-09 20:34:48] Node 5 extracted: ref=IC1, pin=4, pinfunction=A, pintype=passive, net=+3.3V
+[2025-12-09 20:34:48] Processing net 'GND' (code: 2) with 14 nodes
+[2025-12-09 20:34:48] Processed 26 nets with 94 total nodes
+[2025-12-09 20:34:48] Built JSON structure with 34 components and 26 nets
+[2025-12-09 20:34:48] Writing output to: /Users/marcocleirigh/Workspace/motion-play/hardware/sensor-rigid/sensor-rigid.json
+[2025-12-09 20:34:48] Successfully wrote 31853 bytes to /Users/marcocleirigh/Workspace/motion-play/hardware/sensor-rigid/sensor-rigid.json
+[2025-12-09 20:34:48] Output file verified to exist
+[2025-12-09 20:34:48] Generating BOM JSON (LCSC-focused)...
+[2025-12-09 20:34:48] Successfully wrote LCSC BOM to /Users/marcocleirigh/Workspace/motion-play/hardware/sensor-rigid/sensor-rigid_bom_lcsc.json
+[2025-12-09 20:34:48] BOM contains 12 unique LCSC parts
+[2025-12-09 20:34:48] Found 2 component groups without LCSC parts
+[2025-12-09 20:34:48] BOM generation complete: /Users/marcocleirigh/Workspace/motion-play/hardware/sensor-rigid/sensor-rigid_bom_lcsc.json
+[2025-12-09 20:34:48] Script completed successfully

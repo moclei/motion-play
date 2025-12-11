@@ -21,9 +21,12 @@ Split the sensor board into:
                     │  (PCA9546A, J1,     │
                     │   diodes, LED,      │
                     │   caps, resistors)  │
+                    │                     │
+                    │  [ZIF FPC Connector]│  ← C132510 (8-pin, 1.0mm pitch)
                     └──────────┬──────────┘
-                               │ Solder Fingers
+                               │ Flex tail inserts here
                     ┌──────────┴──────────┐
+                    │   [Connector Tail]  │  ← Exposed pads (top layer)
                     │                     │
                ↙ 2° │   FLEX SENSOR STRIP │ 2° ↘
                     │                     │
@@ -43,11 +46,15 @@ The flex strip bends at the center, creating a shallow V-shape. Each sensor face
 | Component | Function | Why Rigid |
 |-----------|----------|-----------|
 | J1 | JST-SH 5-pin connector | Needs mechanical strength for plug/unplug |
+| **FPC1** | **FPC ZIF connector (C132510)** | **Connection to flex sensor strip** |
 | U1 | PCA9546A I2C mux | Central to both sensors, heat dissipation |
 | JP3, JP4 | Address jumpers | Manual configuration access |
 | R1, R2 | Main I2C pull-ups (4.7kΩ) | Shared between sensors |
 | R3 | Reset pull-up (10kΩ) | Connected to mux |
-| R5 | INT pull-up (10kΩ) | Shared interrupt line |
+| R5 | INT pull-up (8.2kΩ) | Shared interrupt line |
+| **R6-R9** | **Per-sensor I2C pull-ups (4.7kΩ)** | **Shorter path to mux** |
+| R10, R11 | 22Ω series resistors | I2C line conditioning |
+| R12-R14 | 10kΩ pull-ups | Additional control signals |
 | D2, D3 | BAT54S Schottky diodes | Interrupt combining |
 | D1, R4 | Power LED + resistor | Visual indicator |
 | C1, C2 | Main bypass caps | Bulk power filtering |
@@ -73,31 +80,53 @@ The per-sensor I2C pull-ups (R6-R9, 4.7kΩ each) can go on either:
 
 ## Connection: Rigid to Flex
 
-### Option A: Solder Fingers (Recommended)
-- Exposed copper pads on flex edge, soldered to matching pads on rigid
-- User has experience with solder wicking
-- No connector overhead
-- Permanent but reliable connection
+### Chosen: ZIF FPC Connector
 
-**Finger pitch**: 1.0mm (matches JST-SH, familiar)
-**Finger count**: 8 signals needed:
-  - 3.3V, GND (shared power)
-  - SDA1, SCL1, INT1 (sensor 1 via mux channel 0)
-  - SDA2, SCL2, INT2 (sensor 2 via mux channel 1)
-**Finger width**: 0.5mm
-**Finger length**: 2-3mm for solder overlap
+**Rigid side**: FPC ZIF connector (physical component)
+- **LCSC Part**: C132510
+- **Manufacturer**: Ckmtw F-FPC1M08P-A310
+- **Specs**: 8-pin + 2 mechanical, 1.0mm pitch, top contact, slide lock
+- **FPC thickness**: 0.3mm
+- **Height above board**: 2.5mm
 
-*Note: Could reduce to 6 fingers if interrupt lines are combined on the flex strip before connecting to rigid base.*
+**Flex side**: Exposed copper pads (connector tail)
+- Just copper pads at board edge, no physical component
+- Pads must be on **TOP layer** (top-contact connector)
+- Pad pitch: 1.0mm to match connector
+- Requires stiffener on connector tail area
 
-### Option B: Castellated Holes
-- Half-holes on flex edge that wrap around
-- Allows soldering from the side
-- More mechanically robust than flat fingers
+### Pin Order (Optimized for Signal Integrity)
 
-### Option C: FPC Connector
-- ZIF connector on rigid, mates with flex
-- Adds cost, height, potential failure point
-- Not recommended for this application
+INT lines used as buffers between power/ground and I2C signals:
+
+| Pin | Signal | Purpose |
+|-----|--------|---------|
+| 1 | 3.3V | Power |
+| 2 | INT1 | Interrupt sensor 1 (buffer between power and I2C) |
+| 3 | SDA1 | I2C data sensor 1 |
+| 4 | SCL1 | I2C clock sensor 1 |
+| 5 | GND | Ground (shield between sensor groups) |
+| 6 | INT2 | Interrupt sensor 2 (buffer after GND) |
+| 7 | SDA2 | I2C data sensor 2 |
+| 8 | SCL2 | I2C clock sensor 2 |
+| 9 | GND | Mechanical mounting (connect to GND) |
+| 10 | GND | Mechanical mounting (connect to GND) |
+
+```
+Pin Layout:
+┌─────────────────────────────────────────────────────────────┐
+│ 3.3V │ INT1 │ SDA1 │ SCL1 │ GND │ INT2 │ SDA2 │ SCL2 │ GND │ GND │
+│  1   │  2   │  3   │  4   │  5  │  6   │  7   │  8   │  9  │ 10  │
+└─────────────────────────────────────────────────────────────┘
+  Power  Buffer  ──I2C 1──  Shield  Buffer  ──I2C 2──   Mechanical
+```
+
+**Why this order:**
+- INT1 shields 3.3V ripple from SDA1
+- GND in middle separates sensor 1 from sensor 2
+- INT2 provides additional shielding after GND
+- I2C pairs (SDA+SCL) kept adjacent for matched routing
+- INT lines are mostly quiet (good passive shields)
 
 ---
 
@@ -159,26 +188,28 @@ The per-sensor I2C pull-ups (R6-R9, 4.7kΩ each) can go on either:
    - Curve traces perpendicular to bend axis
    - No vias in bend zone
 
-### 🟠 Rigid-to-Flex Connection Pitfalls
+### 🟠 FPC Connector Pitfalls
 
-1. **Solder Joint Stress**:
-   - The finger connection is a stress concentration point
-   - Add strain relief: small curve in flex before rigid
-   - Don't mount flex at 90° to rigid
+1. **Connector Tail Design**:
+   - Flex tail must match connector specs exactly
+   - Pad pitch: 1.0mm (must be precise)
+   - FPC thickness: 0.3mm (order flex with correct stackup)
+   - Pads on TOP layer (C132510 is top-contact)
 
-2. **Thermal Mismatch**:
-   - Flex and rigid expand at different rates
-   - For your small board, this is negligible
-   - Would matter more in automotive/industrial
+2. **Stiffener on Tail**:
+   - Connector tail area MUST have stiffener
+   - Without stiffener, flex is too floppy to insert
+   - Stiffener provides rigidity for insertion/removal
 
-3. **Alignment During Soldering**:
-   - Create a soldering jig (3D printed)
-   - Align flex fingers to rigid pads before applying heat
-   - Use low-temp solder paste if hand soldering
+3. **Insertion Depth**:
+   - Ensure flex tail is long enough to fully engage connector
+   - Typical insertion depth: 2-3mm
+   - Add alignment marks on flex for consistent insertion
 
-4. **Inspection**:
-   - Solder joints are hidden under flex
-   - Consider adding a test point on each wing to verify connectivity
+4. **Latch Mechanism**:
+   - C132510 uses slide lock (ZIF)
+   - Open latch → insert flex → close latch
+   - Don't force flex in with latch closed
 
 ### 🟢 Mechanical Pitfalls
 
@@ -208,16 +239,16 @@ The per-sensor I2C pull-ups (R6-R9, 4.7kΩ each) can go on either:
 ## Implementation Phases
 
 ### Phase 1: Design (1-2 weeks)
-- [ ] Design rigid base PCB in KiCad
-  - Reuse existing schematic
-  - Add 8-pin solder finger footprint on one edge
-  - Remove VCNL4040s and their local caps (C4, C6, C7, C8)
-- [ ] Design flex sensor strip PCB in KiCad
-  - New project (simpler)
-  - 2× VCNL4040 + 4 caps + solder fingers
-  - 2-layer, polyimide
-  - Add stiffener on sensor areas, leave center bendable
-  - Keep traces wide at bend zone
+- [x] Design rigid base PCB in KiCad (`hardware/sensor-rigid/`)
+  - Reused existing schematic, removed IC1, IC2, C4, C6, C7, C8
+  - Added FPC ZIF connector (C132510) with optimized pin order
+  - Kept R6-R9 (I2C pull-ups) on rigid
+- [ ] Design flex sensor strip PCB in KiCad (`hardware/sensor-flex/`)
+  - 2× VCNL4040 + 4 caps + connector tail pads
+  - 2-layer, polyimide, 0.3mm thickness
+  - Stiffener on: sensor areas + connector tail
+  - Bend zone in center (~5mm unstiffened)
+  - All pads/traces on TOP layer (top-contact connector)
 - [ ] Design 3D-printed mounting jig
   - Flat pocket for rigid base
   - V-groove for flex strip (adjustable angle)
@@ -226,13 +257,14 @@ The per-sensor I2C pull-ups (R6-R9, 4.7kΩ each) can go on either:
 ### Phase 2: Prototype Order (2-3 weeks)
 - [ ] Order rigid base from JLCPCB (standard FR4 service)
 - [ ] Order flex sensor strip from JLCPCB (flex PCB service)
-  - Request stiffener on both sensor areas
-  - Request gold fingers on connection edge
-  - Leave center 5mm unstiffened for bend
+  - Thickness: 0.3mm total (to match connector C132510)
+  - Stiffener: polyimide on sensor areas + connector tail
+  - Surface finish: ENIG on connector pads
+  - Leave center ~5mm unstiffened for bend
 - [ ] 3D print mounting jig (try multiple angles: 2°, 5°, 10°)
 
 ### Phase 3: Assembly & Test (1 week)
-- [ ] Solder flex strip to rigid base using alignment jig
+- [ ] Insert flex tail into ZIF connector on rigid base
 - [ ] Mount assembled unit in V-groove jig
 - [ ] Verify I2C communication to both sensors
 - [ ] Test with existing firmware (no changes needed)
@@ -270,29 +302,47 @@ This would be Phase 5 if Phase 3-4 validate the angled sensor concept.
 
 ---
 
-## Files to Create
+## Files Created / To Create
 
 ```
 hardware/
-├── pcb-sensor-rigid-base/     # New rigid base PCB project
-│   └── kicad/
-├── pcb-sensor-flex-strip/     # New flex sensor strip PCB project  
-│   └── kicad/
+├── sensor-rigid/              # ✅ Rigid base PCB project (DONE)
+│   ├── sensor-rigid.kicad_sch
+│   ├── sensor-rigid.kicad_pcb
+│   └── ...
+├── sensor-flex/               # 🔄 Flex sensor strip PCB project (IN PROGRESS)
+│   ├── sensor-flex.kicad_sch
+│   ├── sensor-flex.kicad_pcb
+│   └── ...
+├── libraries/
+│   └── easyeda2kicad/         # ✅ FPC connector imported from LCSC
+│       ├── easyeda2kicad.kicad_sym
+│       ├── easyeda2kicad.pretty/
+│       └── 3dshapes/
 └── mounts/
-    └── sensor-mount-v-groove.stl  # 3D-printed mounting jig with V-groove
+    └── sensor-mount-v-groove.stl  # 📋 TODO: 3D-printed mounting jig
 ```
 
 ---
 
-## Questions to Resolve
+## Questions Resolved
 
-1. **Exact angle**: Start with 2°, but may need tuning (5°, 10°?)
-2. **Flex wing dimensions**: How much space for routing + sensor + caps?
-3. **Stiffener material**: Polyimide vs FR4 stiffener on flex?
-4. **Connector orientation**: JST-SH pointing which direction relative to hoop?
+1. ~~**Exact angle**: Start with 2°, but may need tuning (5°, 10°?)~~ → Determined by 3D-printed jig, can experiment
+2. ~~**Flex wing dimensions**: How much space for routing + sensor + caps?~~ → ~25mm × 8mm
+3. ~~**Stiffener material**: Polyimide vs FR4 stiffener on flex?~~ → Polyimide (standard for JLCPCB flex)
+4. ~~**Connector orientation**: JST-SH pointing which direction relative to hoop?~~ → TBD during enclosure design
+5. ~~**Connection method**: Solder fingers vs FPC connector~~ → **FPC ZIF connector (C132510)**
+6. ~~**Pin order**: Power/signal arrangement~~ → **3.3V-INT1-SDA1-SCL1-GND-INT2-SDA2-SCL2-GND-GND**
+
+## Remaining Questions
+
+1. **Flex PCB stackup**: Exact layer configuration for 0.3mm total thickness
+2. **Connector tail dimensions**: Exact pad size and spacing for C132510 compatibility
+3. **Stiffener zones**: Precise dimensions for sensor areas vs bend zone
 
 ---
 
 *Created: December 9, 2025*
-*Status: Planning*
+*Updated: December 10, 2025*
+*Status: Phase 1 - sensor-rigid complete, sensor-flex in progress*
 
