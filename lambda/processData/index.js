@@ -3,6 +3,10 @@
  * 
  * Triggered by IoT Rule when device publishes sensor data.
  * Processes and stores data in DynamoDB.
+ * 
+ * Supports two session types:
+ * - "proximity" (default): Traditional polling-based sensor readings
+ * - "interrupt": Interrupt-based detection events
  */
 
 const { DynamoDBClient } = require('@aws-sdk/client-dynamodb');
@@ -13,6 +17,7 @@ const docClient = DynamoDBDocumentClient.from(client);
 
 const SESSIONS_TABLE = process.env.SESSIONS_TABLE || 'MotionPlaySessions';
 const SENSOR_DATA_TABLE = process.env.SENSOR_DATA_TABLE || 'MotionPlaySensorData';
+const INTERRUPT_EVENTS_TABLE = process.env.INTERRUPT_EVENTS_TABLE || 'MotionPlayInterruptEvents';
 
 // Sanitize config object to prevent NaN values
 function sanitizeConfig(config) {
@@ -35,11 +40,26 @@ function sanitizeConfig(config) {
     };
 }
 
+// Sanitize interrupt config (calibration-based approach)
+function sanitizeInterruptConfig(config) {
+    if (!config) return null;
+    
+    return {
+        threshold_margin: Number.isFinite(config.threshold_margin) ? config.threshold_margin : 10,
+        hysteresis: Number.isFinite(config.hysteresis) ? config.hysteresis : 5,
+        integration_time: Number.isFinite(config.integration_time) ? config.integration_time : 8,
+        multi_pulse: Number.isFinite(config.multi_pulse) ? config.multi_pulse : 8,
+        persistence: Number.isFinite(config.persistence) ? config.persistence : 1,
+        smart_persistence: typeof config.smart_persistence === 'boolean' ? config.smart_persistence : true,
+        mode: config.mode || "normal",
+        led_current: config.led_current || "200mA"
+    };
+}
+
 exports.handler = async (event) => {
     console.log('Received event:', JSON.stringify(event, null, 2));
     
     try {
-        // Parse incoming data from IoT Rule
         const data = event;
         
         // Validate required fields
@@ -47,49 +67,228 @@ exports.handler = async (event) => {
             throw new Error('Missing required fields');
         }
         
-        // Safety limits to prevent runaway costs
-        const MAX_SESSION_DURATION_MS = 35000; // 35 seconds (give 5s buffer beyond device limit)
-        const MAX_BATCH_SIZE = 1000; // No batch should have more than 1000 readings
-        const MAX_TOTAL_SAMPLES = 200000; // Absolute max samples per session
+        // Determine session type (default to 'proximity' for backwards compatibility)
+        const sessionType = data.session_type || 'proximity';
+        console.log(`Processing ${sessionType} session: ${data.session_id}`);
         
-        // Validate session duration
-        if (data.duration_ms && data.duration_ms > MAX_SESSION_DURATION_MS) {
-            console.error(`Session duration ${data.duration_ms}ms exceeds maximum ${MAX_SESSION_DURATION_MS}ms`);
+        if (sessionType === 'interrupt') {
+            return await processInterruptSession(data);
+        } else {
+            return await processProximitySession(data);
+        }
+        
+    } catch (error) {
+        console.error('Error processing data:', error);
+        throw error;
+    }
+};
+
+// ============================================================================
+// Interrupt Session Processing
+// ============================================================================
+
+async function processInterruptSession(data) {
+    const eventsCount = data.events ? data.events.length : 0;
+    
+    // Safety limits
+    const MAX_SESSION_DURATION_MS = 35000;
+    const MAX_BATCH_SIZE = 500;
+    
+    if (data.duration_ms && data.duration_ms > MAX_SESSION_DURATION_MS) {
             throw new Error(`Session duration exceeds maximum allowed (${MAX_SESSION_DURATION_MS}ms)`);
         }
         
-        // Validate batch size
-        const readingsCount = data.readings ? data.readings.length : 0;
-        if (readingsCount > MAX_BATCH_SIZE) {
-            console.error(`Batch size ${readingsCount} exceeds maximum ${MAX_BATCH_SIZE}`);
+    if (eventsCount > MAX_BATCH_SIZE) {
             throw new Error(`Batch size exceeds maximum allowed (${MAX_BATCH_SIZE})`);
         }
         
         // Store or update session metadata
-        // CRITICAL FIX: Check if session exists first to avoid overwriting user data (labels, notes)
+    if (data.batch_offset === 0 || data.batch_offset === undefined) {
+        // First batch: Check if session exists
+        const existingSession = await docClient.send(new GetCommand({
+            TableName: SESSIONS_TABLE,
+            Key: { session_id: data.session_id }
+        }));
         
-        if (data.batch_offset === 0 || data.batch_offset === undefined) {
-            // First batch: Check if session already exists
-            const existingSessionResult = await docClient.send(new GetCommand({
+        if (existingSession.Item) {
+            // Update existing session
+            console.log('Updating existing interrupt session:', data.session_id);
+            
+            await docClient.send(new UpdateCommand({
                 TableName: SESSIONS_TABLE,
+                Key: { session_id: data.session_id },
+                UpdateExpression: `SET 
+                    #session_type = :session_type,
+                    #end_timestamp = :end_timestamp,
+                    #duration_ms = :duration_ms,
+                    #event_count = :event_count,
+                    #interrupt_config = :interrupt_config`,
+                ExpressionAttributeNames: {
+                    '#session_type': 'session_type',
+                    '#end_timestamp': 'end_timestamp',
+                    '#duration_ms': 'duration_ms',
+                    '#event_count': 'event_count',
+                    '#interrupt_config': 'interrupt_config'
+                },
+                ExpressionAttributeValues: {
+                    ':session_type': 'interrupt',
+                    ':end_timestamp': new Date().toISOString(),
+                    ':duration_ms': data.duration_ms || 0,
+                    ':event_count': eventsCount,
+                    ':interrupt_config': sanitizeInterruptConfig(data.interrupt_config)
+                }
+            }));
+        } else {
+            // Create new interrupt session
+            console.log('Creating new interrupt session:', data.session_id);
+            
+            const sessionItem = {
+                session_id: data.session_id,
+                device_id: data.device_id,
+                session_type: 'interrupt',
+                start_timestamp: String(data.start_timestamp),
+                end_timestamp: new Date().toISOString(),
+                duration_ms: data.duration_ms || 0,
+                mode: 'interrupt_debug',
+                event_count: eventsCount,
+                labels: [],
+                notes: '',
+                created_at: Date.now(),
+                interrupt_config: sanitizeInterruptConfig(data.interrupt_config)
+            };
+            
+            await docClient.send(new PutCommand({
+                TableName: SESSIONS_TABLE,
+                Item: sessionItem
+            }));
+        }
+        
+        console.log('Interrupt session metadata stored');
+    } else {
+        // Subsequent batches: Increment event count
+        await docClient.send(new UpdateCommand({
+            TableName: SESSIONS_TABLE,
+            Key: { session_id: data.session_id },
+            UpdateExpression: 'ADD event_count :count',
+            ExpressionAttributeValues: {
+                ':count': eventsCount
+            }
+        }));
+        
+        console.log(`Updated event count for batch ${data.batch_offset} (+${eventsCount} events)`);
+    }
+    
+    // Store interrupt events
+    if (data.events && data.events.length > 0) {
+        console.log(`Processing ${data.events.length} interrupt events for session ${data.session_id}`);
+        
+        const batchSize = 25;
+        const events = data.events;
+        const batchOffset = data.batch_offset || 0;
+        
+        for (let i = 0; i < events.length; i += batchSize) {
+            const batch = events.slice(i, i + batchSize);
+            const putRequests = batch.map((evt, idx) => {
+                // Create unique sort key: combine batch offset, batch index, and event index
+                // This ensures uniqueness even with multiple batches
+                const eventIndex = batchOffset + i + idx;
+                const compositeKey = eventIndex;  // Simple incrementing index
+                
+                return {
+                    PutRequest: {
+                        Item: {
+                            session_id: data.session_id,
+                            event_index: compositeKey,
+                            timestamp_us: evt.ts,
+                            board_id: evt.board,
+                            sensor_position: evt.sensor,
+                            event_type: evt.type,  // "close" or "away"
+                            raw_flags: evt.flags || 0
+                        }
+                    }
+                };
+            });
+            
+            // Write batch with retry
+            let requestItems = { [INTERRUPT_EVENTS_TABLE]: putRequests };
+            let retryCount = 0;
+            const maxRetries = 3;
+            
+            while (requestItems && Object.keys(requestItems).length > 0 && retryCount <= maxRetries) {
+                if (retryCount > 0) {
+                    const delay = 100 * Math.pow(2, retryCount - 1);
+                    await new Promise(resolve => setTimeout(resolve, delay));
+                }
+                
+                try {
+                    const result = await docClient.send(new BatchWriteCommand({
+                        RequestItems: requestItems
+                    }));
+                    
+                    if (result.UnprocessedItems && 
+                        result.UnprocessedItems[INTERRUPT_EVENTS_TABLE]?.length > 0) {
+                        requestItems = result.UnprocessedItems;
+                        retryCount++;
+                    } else {
+                        requestItems = null;
+                        console.log(`Stored interrupt batch ${Math.floor(i / batchSize) + 1}`);
+                    }
+                } catch (err) {
+                    console.error(`Batch write error:`, err);
+                    retryCount++;
+                    if (retryCount > maxRetries) throw err;
+                }
+            }
+        }
+    }
+    
+    return {
+        statusCode: 200,
+        body: JSON.stringify({
+            message: 'Interrupt session processed successfully',
+            session_id: data.session_id,
+            events_count: eventsCount
+        })
+    };
+}
+
+// ============================================================================
+// Proximity Session Processing (existing logic)
+// ============================================================================
+
+async function processProximitySession(data) {
+    // Safety limits to prevent runaway costs
+    const MAX_SESSION_DURATION_MS = 35000;
+    const MAX_BATCH_SIZE = 1000;
+    
+    const readingsCount = data.readings ? data.readings.length : 0;
+    
+    if (data.duration_ms && data.duration_ms > MAX_SESSION_DURATION_MS) {
+        throw new Error(`Session duration exceeds maximum allowed (${MAX_SESSION_DURATION_MS}ms)`);
+    }
+    
+    if (readingsCount > MAX_BATCH_SIZE) {
+        throw new Error(`Batch size exceeds maximum allowed (${MAX_BATCH_SIZE})`);
+    }
+    
+    // Store or update session metadata
+    if (data.batch_offset === 0 || data.batch_offset === undefined) {
+        const existingSessionResult = await docClient.send(new GetCommand({
+            TableName: SESSIONS_TABLE,
                 Key: { session_id: data.session_id }
             }));
             
             if (existingSessionResult.Item) {
-                // Session exists - UPDATE, preserving user-editable fields if they exist
-                // RACE CONDITION FIX: A subsequent batch may have created a skeleton session
-                // with only session_id and sample_count. We need to fill in missing essential fields.
+            // Session exists - UPDATE
                 const existingSession = existingSessionResult.Item;
                 const isSkeletonSession = !existingSession.device_id || !existingSession.created_at;
                 
-                console.log('Session already exists, updating:', data.session_id, 
-                    isSkeletonSession ? '(skeleton session - will fill missing fields)' : '(preserving labels/notes)');
+            console.log('Session already exists, updating:', data.session_id);
                 
                 const updateExpressions = [];
                 const expressionAttributeNames = {};
                 const expressionAttributeValues = {};
                 
-                // Always update these system fields
                 updateExpressions.push('#end_timestamp = :end_timestamp');
                 expressionAttributeNames['#end_timestamp'] = 'end_timestamp';
                 expressionAttributeValues[':end_timestamp'] = new Date().toISOString();
@@ -108,7 +307,11 @@ exports.handler = async (event) => {
                 expressionAttributeNames['#sample_count'] = 'sample_count';
                 expressionAttributeValues[':sample_count'] = readingsCount;
                 
-                // If skeleton session (created by race condition), fill in ALL essential fields
+            // Ensure session_type is set
+            updateExpressions.push('#session_type = :session_type');
+            expressionAttributeNames['#session_type'] = 'session_type';
+            expressionAttributeValues[':session_type'] = 'proximity';
+            
                 if (isSkeletonSession) {
                     updateExpressions.push('#device_id = :device_id');
                     expressionAttributeNames['#device_id'] = 'device_id';
@@ -135,7 +338,6 @@ exports.handler = async (event) => {
                     expressionAttributeValues[':notes'] = data.notes || '';
                 }
                 
-                // Update sensor config if provided
                 if (data.active_sensors || data.sensor_config) {
                     updateExpressions.push('#active_sensors = :active_sensors');
                     expressionAttributeNames['#active_sensors'] = 'active_sensors';
@@ -156,15 +358,16 @@ exports.handler = async (event) => {
                     ExpressionAttributeValues: expressionAttributeValues
                 }));
                 
-                console.log('Session metadata updated', isSkeletonSession ? '(skeleton filled)' : '(labels/notes preserved)');
+            console.log('Session metadata updated');
             } else {
-                // Session does NOT exist - create new one
-                console.log('Creating new session:', data.session_id);
+            // Create new session
+            console.log('Creating new proximity session:', data.session_id);
                 
                 const sessionItem = {
                     session_id: data.session_id,
                     device_id: data.device_id,
-                    start_timestamp: String(data.start_timestamp), // Convert to string for GSI
+                session_type: 'proximity',
+                start_timestamp: String(data.start_timestamp),
                     end_timestamp: new Date().toISOString(),
                     duration_ms: data.duration_ms || 0,
                     mode: data.mode || 'debug',
@@ -173,8 +376,7 @@ exports.handler = async (event) => {
                     labels: data.labels || [],
                     notes: data.notes || '',
                     created_at: Date.now(),
-                    // Store both sensor status and VCNL4040 configuration
-                    active_sensors: data.active_sensors || data.sensor_config || [],  // Backward compatible
+                active_sensors: data.active_sensors || data.sensor_config || [],
                     vcnl4040_config: sanitizeConfig(data.vcnl4040_config) || {
                         sample_rate_hz: data.sample_rate || 1000,
                         led_current: "200mA",
@@ -205,69 +407,48 @@ exports.handler = async (event) => {
                 }
             }));
             
-            console.log('Updated sample count for batch ' + data.batch_offset + ' (+' + readingsCount + ' readings)');
+        console.log(`Updated sample count for batch ${data.batch_offset} (+${readingsCount} readings)`);
         }
         
-        // Store sensor readings in batches (DynamoDB batch write limit: 25 items)
+    // Store sensor readings
         if (data.readings && data.readings.length > 0) {
             console.log(`Processing ${data.readings.length} readings for session ${data.session_id}`);
-            console.log(`First reading sample:`, JSON.stringify(data.readings[0]));
             
             const batchSize = 25;
             const readings = data.readings;
-            const startTimestamp = Number(data.start_timestamp); // Session start time in ms
-            
-            console.log(`Start timestamp: ${startTimestamp}, type: ${typeof startTimestamp}`);
+        const startTimestamp = Number(data.start_timestamp);
             
             for (let i = 0; i < readings.length; i += batchSize) {
                 const batch = readings.slice(i, i + batchSize);
                 const putRequests = batch.map(reading => {
                     const absoluteTimestamp = reading.ts || reading.t;
-                    // Calculate relative timestamp from session start
                     const relativeTimestamp = absoluteTimestamp - startTimestamp;
                     const position = reading.pos !== undefined ? reading.pos : reading.p;
-                    
-                    // Create composite numeric sort key: (timestamp * 10) + position
-                    // This ensures uniqueness even when sensors share timestamps
-                    // Example: timestamp=100, position=0 -> 1000
-                    //          timestamp=100, position=1 -> 1001
                     const compositeKey = (relativeTimestamp * 10) + position;
                     
-                    const item = {
+                return {
+                    PutRequest: {
+                        Item: {
                         session_id: data.session_id,
-                        timestamp_offset: compositeKey, // Numeric composite key: 1000, 1001, etc.
-                        timestamp_ms: relativeTimestamp, // Store base timestamp for queries
-                        position: position, // Sensor array index (0-5)
-                        pcb_id: reading.pcb || 0, // PCB board number (1-3)
-                        side: reading.side || 0, // Sensor side (1=S1, 2=S2)
+                            timestamp_offset: compositeKey,
+                            timestamp_ms: relativeTimestamp,
+                            position: position,
+                            pcb_id: reading.pcb || 0,
+                            side: reading.side || 0,
                         proximity: reading.prox || 0,
                         ambient: reading.amb || 0
-                    };
-                    
-                    // Log first item for debugging
-                    if (i === 0 && batch.indexOf(reading) === 0) {
-                        console.log(`First item to store:`, JSON.stringify(item));
-                    }
-                    
-                    return {
-                        PutRequest: {
-                            Item: item
+                        }
                         }
                     };
                 });
                 
-                // Write batch with automatic retry for unprocessed items
-                let requestItems = {
-                    [SENSOR_DATA_TABLE]: putRequests
-                };
+            let requestItems = { [SENSOR_DATA_TABLE]: putRequests };
                 let retryCount = 0;
                 const maxRetries = 3;
                 
                 while (requestItems && Object.keys(requestItems).length > 0 && retryCount <= maxRetries) {
                     if (retryCount > 0) {
-                        // Exponential backoff: 100ms, 200ms, 400ms
                         const delay = 100 * Math.pow(2, retryCount - 1);
-                        console.log(`Retry ${retryCount} after ${delay}ms delay for batch ${i / batchSize + 1}`);
                         await new Promise(resolve => setTimeout(resolve, delay));
                     }
                     
@@ -275,47 +456,29 @@ exports.handler = async (event) => {
                         RequestItems: requestItems
                     }));
                     
-                    // Check for unprocessed items
                     if (batchWriteResult.UnprocessedItems && 
-                        batchWriteResult.UnprocessedItems[SENSOR_DATA_TABLE] && 
-                        batchWriteResult.UnprocessedItems[SENSOR_DATA_TABLE].length > 0) {
-                        
-                        const unprocessedCount = batchWriteResult.UnprocessedItems[SENSOR_DATA_TABLE].length;
-                        console.warn(`Batch ${i / batchSize + 1}: ${unprocessedCount} unprocessed items (attempt ${retryCount + 1})`);
-                        
-                        // Prepare for retry with only unprocessed items
+                    batchWriteResult.UnprocessedItems[SENSOR_DATA_TABLE]?.length > 0) {
                         requestItems = batchWriteResult.UnprocessedItems;
                         retryCount++;
                     } else {
-                        // All items processed successfully
                         requestItems = null;
-                        console.log(`Stored batch ${i / batchSize + 1} (${batch.length} readings) to table ${SENSOR_DATA_TABLE}`);
+                    console.log(`Stored batch ${Math.floor(i / batchSize) + 1}`);
                     }
                 }
                 
-                // Check if we exhausted retries
                 if (requestItems && Object.keys(requestItems).length > 0) {
                     const failedCount = requestItems[SENSOR_DATA_TABLE]?.length || 0;
-                    console.error(`FAILED: Batch ${i / batchSize + 1} still has ${failedCount} unprocessed items after ${maxRetries} retries`);
                     throw new Error(`Failed to write ${failedCount} items after ${maxRetries} retries`);
-                }
             }
-        } else {
-            console.log(`No readings to store. data.readings exists: ${!!data.readings}, length: ${data.readings?.length || 0}`);
+        }
         }
         
         return {
             statusCode: 200,
             body: JSON.stringify({
-                message: 'Data processed successfully',
+            message: 'Proximity session processed successfully',
                 session_id: data.session_id,
-                readings_count: data.readings ? data.readings.length : 0
+            readings_count: readingsCount
             })
         };
-        
-    } catch (error) {
-        console.error('Error processing data:', error);
-        throw error;
     }
-};
-

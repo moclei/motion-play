@@ -15,6 +15,9 @@ const DEVICES_TABLE = process.env.DEVICES_TABLE || 'MotionPlayDevices';
 
 // Default sensor configuration
 const DEFAULT_CONFIG = {
+    // Primary sensor mode
+    sensor_mode: "polling",  // "polling" or "interrupt"
+    // Polling mode settings
     sample_rate_hz: 1000,
     led_current: "200mA",
     integration_time: "2T",
@@ -22,7 +25,15 @@ const DEFAULT_CONFIG = {
     high_resolution: true,
     read_ambient: true,
     i2c_clock_khz: 400,
-    multi_pulse: "1"  // Multi-pulse mode: "1", "2", "4", or "8" pulses per measurement
+    multi_pulse: "1",
+    // Interrupt mode settings (calibration-based)
+    interrupt_threshold_margin: 10,    // Trigger at 10+ counts above baseline
+    interrupt_hysteresis: 5,           // Gap between high and low thresholds
+    interrupt_integration_time: 8,     // 8T for maximum range
+    interrupt_multi_pulse: 8,          // 8 pulses for maximum signal
+    interrupt_persistence: 1,
+    interrupt_smart_persistence: true,
+    interrupt_mode: "normal"
 };
 
 exports.handler = async (event) => {

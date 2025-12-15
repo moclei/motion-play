@@ -6,9 +6,10 @@ This document describes the DynamoDB table schemas and important implementation 
 
 ## Tables Overview
 
-1. **MotionPlaySessions** - Session metadata
-2. **MotionPlaySensorData** - Individual sensor readings
-3. **MotionPlayDevices** - Device status and configuration
+1. **MotionPlaySessions** - Session metadata (both proximity and interrupt sessions)
+2. **MotionPlaySensorData** - Individual sensor readings (proximity mode)
+3. **MotionPlayInterruptEvents** - Interrupt detection events (interrupt mode)
+4. **MotionPlayDevices** - Device status and configuration
 
 ---
 
@@ -28,17 +29,42 @@ Partition Key: session_id (String)
 |-----------|------|-------------|
 | session_id | String | Unique session identifier (e.g., "device-001_123456") |
 | device_id | String | Device that recorded the session |
+| **session_type** | **String** | **"proximity" or "interrupt" (added Dec 2025)** |
 | start_timestamp | String | Session start time (ISO 8601 or epoch ms) |
 | end_timestamp | String | Session end time (ISO 8601) |
 | duration_ms | Number | Session duration in milliseconds |
-| mode | String | Recording mode (debug, play, idle) |
-| sample_count | Number | Total number of sensor readings |
+| mode | String | Recording mode (debug, play, idle, interrupt_debug) |
+| sample_count | Number | Total number of sensor readings (proximity sessions) |
+| **event_count** | **Number** | **Total number of interrupt events (interrupt sessions)** |
 | sample_rate | Number | Sampling rate in Hz |
 | labels | List[String] | User-added labels for categorization |
 | notes | String | User notes about the session |
 | created_at | Number | Timestamp when session was created (epoch ms) |
 | active_sensors | List[Object] | Which sensors were active during recording |
-| vcnl4040_config | Object | Sensor hardware configuration |
+| vcnl4040_config | Object | Sensor hardware configuration (proximity mode) |
+| **interrupt_config** | **Object** | **Interrupt detection configuration (interrupt mode)** |
+
+### Session Type Field
+
+The `session_type` field determines which data table to query:
+- `"proximity"` (default) → Query `MotionPlaySensorData` for continuous readings
+- `"interrupt"` → Query `MotionPlayInterruptEvents` for discrete events
+
+### Interrupt Configuration Object
+
+For interrupt sessions, the `interrupt_config` field stores detection settings:
+
+```json
+{
+  "high_threshold": 500,
+  "low_threshold": 100,
+  "persistence": 1,
+  "smart_persistence": true,
+  "mode": "normal",
+  "led_current": "200mA",
+  "integration_time": "1T"
+}
+```
 
 ### Global Secondary Index (GSI)
 
@@ -143,7 +169,77 @@ query({
 
 ---
 
-## 3. MotionPlayDevices Table
+## 3. MotionPlayInterruptEvents Table
+
+**Purpose**: Store interrupt detection events for interrupt-mode sessions.
+
+### Schema
+
+```
+Partition Key: session_id (String)
+Sort Key: event_index (Number) - Sequential index within session
+```
+
+### Table Settings
+
+```
+Table Name: MotionPlayInterruptEvents
+Billing Mode: PAY_PER_REQUEST (On-Demand)
+```
+
+### Attributes
+
+| Attribute | Type | Description |
+|-----------|------|-------------|
+| session_id | String | Session this event belongs to |
+| event_index | Number | Sequential event index (sort key) |
+| timestamp_us | Number | Timestamp in microseconds since boot |
+| board_id | Number | Which sensor board (1-3) |
+| sensor_position | Number | Global sensor position (0-5) |
+| event_type | String | "close" or "away" |
+| raw_flags | Number | Raw INT_FLAG register value |
+
+### Event Types
+
+- `"close"`: Object detected (proximity value exceeded high threshold)
+- `"away"`: Object removed (proximity value dropped below low threshold)
+
+### Example Event
+
+```json
+{
+  "session_id": "device-001_1702500000",
+  "event_index": 0,
+  "timestamp_us": 150000,
+  "board_id": 1,
+  "sensor_position": 0,
+  "event_type": "close",
+  "raw_flags": 2
+}
+```
+
+### Usage Notes
+
+1. **Event index** is a simple incrementing counter for uniqueness
+2. **Timestamp is in microseconds** (not milliseconds like proximity data)
+3. **Typical session size**: <1000 events (much smaller than proximity sessions)
+4. **Use sort key** to retrieve events in chronological order
+
+### Query Patterns
+
+**Get all events for a session**:
+```javascript
+query({
+  TableName: 'MotionPlayInterruptEvents',
+  KeyConditionExpression: 'session_id = :sid',
+  ExpressionAttributeValues: { ':sid': 'device-001_123456' }
+})
+// Returns events sorted by event_index (chronological order)
+```
+
+---
+
+## 4. MotionPlayDevices Table
 
 **Purpose**: Track device status and configuration.
 
@@ -262,7 +358,7 @@ If you ever need to change the composite key scheme:
 
 ---
 
-**Last Updated**: November 25, 2025  
+**Last Updated**: December 13, 2025  
 **Author**: Marc  
-**Version**: 1.2 (Added sensor_config field to MotionPlayDevices table)
+**Version**: 1.3 (Added MotionPlayInterruptEvents table and session_type field for interrupt detection)
 

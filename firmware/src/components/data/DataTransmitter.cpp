@@ -6,6 +6,26 @@ DataTransmitter::DataTransmitter(MQTTManager *mqtt) : mqttManager(mqtt)
     // Constructor
 }
 
+// ============================================================================
+// Main entry point - routes to correct transmission method
+// ============================================================================
+
+bool DataTransmitter::transmitSession(SessionManager &session, const SensorConfiguration *config)
+{
+    if (session.getSessionType() == SessionType::INTERRUPT_BASED)
+    {
+        return transmitInterruptSession(session, config);
+    }
+    else
+    {
+        return transmitProximitySession(session, config);
+    }
+}
+
+// ============================================================================
+// Proximity Mode Transmission (existing implementation)
+// ============================================================================
+
 bool DataTransmitter::transmitBatch(const String &sessionId,
                                     const String &deviceId,
                                     unsigned long startTime,
@@ -21,6 +41,7 @@ bool DataTransmitter::transmitBatch(const String &sessionId,
 
     doc["session_id"] = sessionId;
     doc["device_id"] = deviceId;
+    doc["session_type"] = "proximity"; // Explicit session type
     doc["start_timestamp"] = startTime;
     doc["duration_ms"] = duration;
     doc["sample_rate"] = SAMPLE_RATE_HZ;
@@ -93,7 +114,7 @@ bool DataTransmitter::transmitBatch(const String &sessionId,
     return success;
 }
 
-bool DataTransmitter::transmitSession(SessionManager &session, const SensorConfiguration *config)
+bool DataTransmitter::transmitProximitySession(SessionManager &session, const SensorConfiguration *config)
 {
     if (!session.hasData())
     {
@@ -103,8 +124,6 @@ bool DataTransmitter::transmitSession(SessionManager &session, const SensorConfi
 
     String sessionId = session.getSessionId();
     String deviceId = "motionplay-device-001"; // TODO: Get from config
-    // Use actual session start time, not calculated from current millis()
-    // This ensures timestamps are relative to when recording actually started
     unsigned long startTime = session.getStartTime();
     unsigned long duration = session.getDuration();
 
@@ -112,7 +131,7 @@ bool DataTransmitter::transmitSession(SessionManager &session, const SensorConfi
     const std::vector<SensorMetadata> &sensorMetadata = session.getSensorMetadata();
     size_t totalReadings = readings.size();
 
-    Serial.print("Transmitting session ");
+    Serial.print("Transmitting proximity session ");
     Serial.print(sessionId);
     Serial.print(" (");
     Serial.print(totalReadings);
@@ -142,6 +161,145 @@ bool DataTransmitter::transmitSession(SessionManager &session, const SensorConfi
         delay(100);
     }
 
-    Serial.println("Session transmission complete!");
+    Serial.println("Proximity session transmission complete!");
+    return true;
+}
+
+// ============================================================================
+// Interrupt Mode Transmission (new implementation)
+// ============================================================================
+
+bool DataTransmitter::transmitInterruptBatch(const String &sessionId,
+                                             const String &deviceId,
+                                             unsigned long startTime,
+                                             unsigned long duration,
+                                             const std::vector<InterruptEvent> &events,
+                                             size_t offset,
+                                             size_t count,
+                                             bool isFirstBatch,
+                                             const SensorConfiguration *config)
+{
+    // Create JSON document
+    DynamicJsonDocument doc(8192);
+
+    doc["session_id"] = sessionId;
+    doc["device_id"] = deviceId;
+    doc["session_type"] = "interrupt"; // Explicit session type
+    doc["start_timestamp"] = startTime;
+    doc["duration_ms"] = duration;
+    doc["batch_offset"] = offset;
+    doc["batch_size"] = count;
+
+    // Add interrupt configuration (only in first batch)
+    // Uses calibration-based approach - thresholds are relative to auto-calibrated baseline
+    if (isFirstBatch && config != nullptr)
+    {
+        JsonObject intConfig = doc.createNestedObject("interrupt_config");
+        intConfig["threshold_margin"] = config->interrupt_threshold_margin;
+        intConfig["hysteresis"] = config->interrupt_hysteresis;
+        intConfig["integration_time"] = config->interrupt_integration_time;
+        intConfig["multi_pulse"] = config->interrupt_multi_pulse;
+        intConfig["persistence"] = config->interrupt_persistence;
+        intConfig["smart_persistence"] = config->interrupt_smart_persistence;
+        intConfig["mode"] = config->interrupt_mode;
+        intConfig["led_current"] = config->led_current;
+    }
+
+    // Add events array
+    JsonArray eventsArray = doc.createNestedArray("events");
+
+    for (size_t i = 0; i < count; i++)
+    {
+        const InterruptEvent &evt = events[offset + i];
+
+        JsonObject evtObj = eventsArray.createNestedObject();
+        evtObj["ts"] = evt.timestamp_us;
+        evtObj["board"] = evt.boardId;
+        evtObj["sensor"] = evt.sensorId;
+
+        // Convert event type to string
+        switch (evt.type)
+        {
+        case InterruptEventType::CLOSE:
+            evtObj["type"] = "close";
+            break;
+        case InterruptEventType::AWAY:
+            evtObj["type"] = "away";
+            break;
+        default:
+            evtObj["type"] = "unknown";
+            break;
+        }
+
+        evtObj["flags"] = evt.rawFlags;
+    }
+
+    // Serialize to string for debugging
+    String payload;
+    size_t payloadSize = serializeJson(doc, payload);
+
+    // Publish via MQTT
+    bool success = mqttManager->publishData(doc);
+
+    if (!success)
+    {
+        Serial.println("ERROR: MQTT publish failed for interrupt batch!");
+        Serial.print("  Payload size: ");
+        Serial.print(payloadSize);
+        Serial.println(" bytes");
+    }
+    else
+    {
+        Serial.printf("  Sent interrupt batch: offset=%d, count=%d\n", offset, count);
+    }
+
+    return success;
+}
+
+bool DataTransmitter::transmitInterruptSession(SessionManager &session, const SensorConfiguration *config)
+{
+    if (!session.hasData())
+    {
+        Serial.println("No interrupt events to transmit");
+        return false;
+    }
+
+    String sessionId = session.getSessionId();
+    String deviceId = "motionplay-device-001"; // TODO: Get from config
+    unsigned long startTime = session.getStartTime();
+    unsigned long duration = session.getDuration();
+
+    const std::vector<InterruptEvent> &events = session.getInterruptBuffer();
+    size_t totalEvents = events.size();
+
+    Serial.print("Transmitting interrupt session ");
+    Serial.print(sessionId);
+    Serial.print(" (");
+    Serial.print(totalEvents);
+    Serial.println(" events)");
+
+    // Send in batches (interrupt events are smaller, can send more per batch)
+    size_t offset = 0;
+    while (offset < totalEvents)
+    {
+        size_t remaining = totalEvents - offset;
+        size_t batchCount = (remaining > INT_BATCH_SIZE) ? INT_BATCH_SIZE : remaining;
+
+        bool isFirstBatch = (offset == 0);
+
+        if (!transmitInterruptBatch(sessionId, deviceId, startTime, duration,
+                                    events, offset, batchCount, isFirstBatch, config))
+        {
+            Serial.println("ERROR: Failed to transmit interrupt batch");
+            return false;
+        }
+
+        offset += batchCount;
+
+        // Small delay between batches
+        delay(50);
+    }
+
+    Serial.println("Interrupt session transmission complete!");
     return true;
 }

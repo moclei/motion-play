@@ -3,12 +3,13 @@ import { Toaster } from 'react-hot-toast';
 import toast from 'react-hot-toast';
 import { SessionList, type SessionListRef } from './components/SessionList';
 import { SessionChart, type BrushTimeRange } from './components/SessionChart';
+import { InterruptSessionView } from './components/InterruptSessionView';
 import { LabelEditor } from './components/LabelEditor';
 import { ExportButton } from './components/ExportButton';
 import { SessionConfig } from './components/SessionConfig';
 import { Header } from './components/Header';
 import { SettingsModal } from './components/SettingsModal';
-import { api } from './services/api';
+import { api, isInterruptSession, isProximitySession } from './services/api';
 import type { Session, SessionData } from './services/api';
 import { Trash2, RefreshCw } from 'lucide-react';
 
@@ -157,12 +158,21 @@ function App() {
                   </button>
                 </div>
 
-                {/* Chart - Most important, show first */}
+                {/* Chart/Visualization - Most important, show first */}
                 <div className="mb-6">
-                  <SessionChart
-                    readings={sessionData.readings}
-                    onBrushChange={handleBrushChange}
-                  />
+                  {isInterruptSession(sessionData) ? (
+                    <InterruptSessionView
+                      events={sessionData.events}
+                      config={sessionData.session.interrupt_config}
+                      durationMs={sessionData.session.duration_ms}
+                      sessionId={sessionData.session.session_id}
+                    />
+                  ) : isProximitySession(sessionData) ? (
+                    <SessionChart
+                      readings={sessionData.readings}
+                      onBrushChange={handleBrushChange}
+                    />
+                  ) : null}
                 </div>
 
                 {/* Session Config - Context about data collection */}
@@ -180,14 +190,16 @@ function App() {
                   />
                 </div>
 
-                {/* Export - Utility function */}
-                <div className="p-4 border rounded bg-gray-50">
-                  <h3 className="font-semibold text-gray-800 mb-3">Export Data</h3>
-                  <ExportButton
-                    sessionData={sessionData}
-                    brushTimeRange={brushTimeRange}
-                  />
-                </div>
+                {/* Export - Utility function (only for proximity sessions for now) */}
+                {isProximitySession(sessionData) && (
+                  <div className="p-4 border rounded bg-gray-50">
+                    <h3 className="font-semibold text-gray-800 mb-3">Export Data</h3>
+                    <ExportButton
+                      sessionData={sessionData}
+                      brushTimeRange={brushTimeRange}
+                    />
+                  </div>
+                )}
               </div>
             ) : (
               <div className="flex items-center justify-center h-full">

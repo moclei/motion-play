@@ -334,15 +334,28 @@ hardware/
 5. ~~**Connection method**: Solder fingers vs FPC connector~~ → **FPC ZIF connector (C132510)**
 6. ~~**Pin order**: Power/signal arrangement~~ → **3.3V-INT1-SDA1-SCL1-GND-INT2-SDA2-SCL2-GND-GND**
 
-## Remaining Questions
+## Remaining Questions - RESOLVED ✅
 
-1. **Flex PCB stackup**: Exact layer configuration for 0.3mm total thickness
-2. **Connector tail dimensions**: Exact pad size and spacing for C132510 compatibility
-3. **Stiffener zones**: Precise dimensions for sensor areas vs bend zone
+1. **Flex PCB stackup**: ✅ JLCPCB 2-layer flex is ~0.11mm. Add 0.2mm PI stiffener for 0.3mm total.
+2. **Connector tail dimensions**: ✅ Custom footprint created: `FPC_Tail_10P_1.0mm_TopContact`
+   - Signal pads: 0.5mm × 2.5mm at 1.0mm pitch
+   - Mechanical pads: 1.5mm × 2.5mm at ±5.5mm from center
+   - Pads on TOP layer for top-contact connector
+3. **Stiffener zones**: ✅ Three zones defined:
+   - Connector tail: 13mm × 4mm (0.2mm PI stiffener)
+   - Sensor area 1: 8mm × 8mm (0.1mm PI stiffener)
+   - Sensor area 2: 8mm × 8mm (0.1mm PI stiffener)
+   - Bend zone: ~5mm center section (NO stiffener)
+
+## Files Created
+
+- **Footprint**: `hardware/libraries/motion-play-footprints.pretty/FPC_Tail_10P_1.0mm_TopContact.kicad_mod`
+- **Symbol**: `FPC_Tail_10P` in `hardware/libraries/motion-play-symbols.kicad_sym`
+- **Setup Guide**: `hardware/sensor-flex/FLEX_PCB_SETUP.md`
 
 ---
 
 *Created: December 9, 2025*
-*Updated: December 10, 2025*
-*Status: Phase 1 - sensor-rigid complete, sensor-flex in progress*
+*Updated: December 11, 2025*
+*Status: Phase 1 - sensor-rigid complete, sensor-flex setup complete, ready for schematic/layout*
 

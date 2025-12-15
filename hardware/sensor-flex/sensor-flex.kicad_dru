@@ -1,0 +1,5 @@
+(version 1)
+(rule "FPC_fingers_at_edge"
+    (constraint edge_clearance)
+    (severity ignore)
+    (condition "A.memberOfFootprint('FPC1')"))

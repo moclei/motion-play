@@ -26,10 +26,20 @@ bool SessionManager::startSession()
     }
 
     Serial.println("Starting new session...");
+    Serial.printf("  Session type: %s\n", 
+                  sessionType == SessionType::INTERRUPT_BASED ? "INTERRUPT" : "PROXIMITY");
 
-    // Clear any old data
+    // Clear any old data based on session type
+    if (sessionType == SessionType::INTERRUPT_BASED)
+    {
+        interruptBuffer.clear();
+        interruptBuffer.reserve(MAX_INTERRUPT_BUFFER);
+    }
+    else
+    {
     dataBuffer.clear();
     dataBuffer.reserve(MAX_BUFFER_SIZE);
+    }
 
     // Generate new session ID
     generateSessionId();
@@ -56,13 +66,26 @@ bool SessionManager::stopSession()
     sessionDuration = millis() - sessionStartTime;
     state = UPLOADING;
 
-    // Process any remaining items in queue
+    // Process any remaining items in queue (only for proximity mode)
+    if (sessionType == SessionType::PROXIMITY)
+    {
     processQueue();
+    }
 
     Serial.print("Session stopped. Duration: ");
     Serial.print(sessionDuration);
-    Serial.print("ms, Samples: ");
+    Serial.print("ms, ");
+    
+    if (sessionType == SessionType::INTERRUPT_BASED)
+    {
+        Serial.print("Events: ");
+        Serial.println(interruptBuffer.size());
+    }
+    else
+    {
+        Serial.print("Samples: ");
     Serial.println(dataBuffer.size());
+    }
 
     return true;
 }
@@ -70,6 +93,10 @@ bool SessionManager::stopSession()
 void SessionManager::processQueue()
 {
     if (state != COLLECTING)
+        return;
+
+    // Only process queue for proximity mode
+    if (sessionType != SessionType::PROXIMITY)
         return;
 
     SensorReading reading;
@@ -104,11 +131,19 @@ void SessionManager::processQueue()
 
 bool SessionManager::hasData()
 {
+    if (sessionType == SessionType::INTERRUPT_BASED)
+    {
+        return !interruptBuffer.empty();
+    }
     return !dataBuffer.empty();
 }
 
 size_t SessionManager::getDataCount()
 {
+    if (sessionType == SessionType::INTERRUPT_BASED)
+    {
+        return interruptBuffer.size();
+    }
     return dataBuffer.size();
 }
 
@@ -144,7 +179,9 @@ std::vector<SensorReading, PSRAMAllocator<SensorReading>> &SessionManager::getDa
 void SessionManager::clearBuffer()
 {
     dataBuffer.clear();
+    interruptBuffer.clear();
     state = IDLE;
+    sessionType = SessionType::PROXIMITY;  // Reset to default
     Serial.println("Buffer cleared, session reset to IDLE");
 }
 
@@ -161,4 +198,21 @@ const std::vector<SensorMetadata> &SessionManager::getSensorMetadata()
 QueueHandle_t SessionManager::getQueue()
 {
     return dataQueue;
+}
+
+bool SessionManager::addInterruptEvent(const InterruptEvent& event)
+{
+    if (state != COLLECTING || sessionType != SessionType::INTERRUPT_BASED)
+    {
+        return false;
+    }
+    
+    if (interruptBuffer.size() >= MAX_INTERRUPT_BUFFER)
+    {
+        Serial.println("WARNING: Interrupt buffer full, dropping event");
+        return false;
+    }
+    
+    interruptBuffer.push_back(event);
+    return true;
 }

@@ -12,11 +12,17 @@ class DataTransmitter
 {
 private:
     MQTTManager *mqttManager;
-    static const size_t BATCH_SIZE = 25; // Send 25 samples (100 sensor readings) at a time
+    static const size_t BATCH_SIZE = 25;          // Proximity: 25 samples per batch
+    static const size_t INT_BATCH_SIZE = 100;     // Interrupt: 100 events per batch
 
 public:
     DataTransmitter(MQTTManager *mqtt);
+    
+    // Transmit session based on its type
     bool transmitSession(SessionManager &session, const SensorConfiguration *config = nullptr);
+    
+    // Proximity mode transmission (existing)
+    bool transmitProximitySession(SessionManager &session, const SensorConfiguration *config = nullptr);
     bool transmitBatch(const String &sessionId,
                        const String &deviceId,
                        unsigned long startTime,
@@ -25,6 +31,18 @@ public:
                        size_t offset,
                        size_t count,
                        const std::vector<SensorMetadata> *sensorMetadata,
+                       const SensorConfiguration *config = nullptr);
+    
+    // Interrupt mode transmission (new)
+    bool transmitInterruptSession(SessionManager &session, const SensorConfiguration *config = nullptr);
+    bool transmitInterruptBatch(const String &sessionId,
+                                const String &deviceId,
+                                unsigned long startTime,
+                                unsigned long duration,
+                                const std::vector<InterruptEvent> &events,
+                                size_t offset,
+                                size_t count,
+                                bool isFirstBatch,
                        const SensorConfiguration *config = nullptr);
 };
 

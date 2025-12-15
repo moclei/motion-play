@@ -2,14 +2,18 @@ import axios from 'axios';
 
 const API_BASE_URL = import.meta.env.VITE_API_ENDPOINT;
 
+export type SessionType = 'proximity' | 'interrupt';
+
 export interface Session {
     session_id: string;
     device_id: string;
+    session_type?: SessionType;  // 'proximity' (default) or 'interrupt'
     start_timestamp: string;
     end_timestamp?: string;
     duration_ms: number;
     mode: string;
     sample_count: number;
+    event_count?: number;  // For interrupt sessions
     sample_rate: number;
     labels?: string[];
     notes?: string;
@@ -18,6 +22,7 @@ export interface Session {
     // Config fields
     active_sensors?: ActiveSensor[];
     vcnl4040_config?: VCNL4040Config;
+    interrupt_config?: InterruptConfig;
 }
 
 export interface SensorReading {
@@ -29,9 +34,27 @@ export interface SensorReading {
     ambient: number;
 }
 
-export interface SessionData {
+export interface ProximitySessionData {
     session: Session;
+    session_type: 'proximity';
     readings: SensorReading[];
+}
+
+export interface InterruptSessionData {
+    session: Session;
+    session_type: 'interrupt';
+    events: InterruptEvent[];
+}
+
+export type SessionData = ProximitySessionData | InterruptSessionData;
+
+// Type guards for session data
+export function isInterruptSession(data: SessionData): data is InterruptSessionData {
+    return data.session_type === 'interrupt' || data.session.session_type === 'interrupt';
+}
+
+export function isProximitySession(data: SessionData): data is ProximitySessionData {
+    return !isInterruptSession(data);
 }
 
 export interface VCNL4040Config {
@@ -43,6 +66,26 @@ export interface VCNL4040Config {
     read_ambient: boolean;
     i2c_clock_khz?: number; // Optional for backward compatibility with old sessions
     multi_pulse?: string;   // Multi-pulse mode: "1", "2", "4", or "8" pulses per measurement
+}
+
+export interface InterruptConfig {
+    // Calibration-based thresholds (relative to auto-calibrated baseline)
+    threshold_margin: number;    // Trigger when prox exceeds baseline + margin
+    hysteresis: number;          // Gap between high and low thresholds
+    integration_time: number;    // 1-8 for 1T-8T
+    multi_pulse: number;         // 1, 2, 4, or 8 pulses
+    persistence: number;         // Consecutive hits before interrupt (1-4)
+    smart_persistence: boolean;  // Enable fast response mode
+    mode: 'normal' | 'logic';    // normal or logic output mode
+    led_current: string;         // LED current (e.g., "200mA")
+}
+
+export interface InterruptEvent {
+    timestamp_us: number;
+    board_id: number;
+    sensor_position: number;
+    event_type: 'close' | 'away' | 'unknown';
+    raw_flags?: number;
 }
 
 export interface ActiveSensor {
