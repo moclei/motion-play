@@ -12,12 +12,14 @@
 #include "components/diagnostics/MemoryMonitor.h"
 #include "components/detection/DirectionDetector.h"
 #include "components/led/LEDController.h"
+#include "components/interrupt/InterruptManager.h"
 
 // Button pins for T-Display-S3
 #define BUTTON_1 0  // Left button (BOOT)
 #define BUTTON_2 14 // Right button
 
-// Device modes
+// Device modes (what the device is doing)
+// Note: HOW we sense (polling vs interrupt) is determined by currentConfig.sensor_mode
 enum class DeviceMode
 {
     IDLE,  // Standby mode
@@ -34,6 +36,7 @@ SessionManager sessionManager;
 DataTransmitter *dataTransmitter;
 DirectionDetector directionDetector;
 LEDController ledController;
+InterruptManager interruptManager;
 
 // Current device mode
 DeviceMode currentMode = DeviceMode::DEBUG; // Default to debug for backwards compatibility
@@ -170,7 +173,47 @@ bool fetchConfigFromCloud()
                 currentConfig.multi_pulse = "1"; // Default: 1 pulse
             }
 
+            // Sensor mode (polling vs interrupt)
+            if (config.containsKey("sensor_mode"))
+            {
+                String modeStr = config["sensor_mode"].as<String>();
+                currentConfig.sensor_mode = (modeStr == "interrupt")
+                                                ? SensorMode::INTERRUPT_MODE
+                                                : SensorMode::POLLING_MODE;
+            }
+
+            // Interrupt settings (calibration-based approach)
+            if (config.containsKey("interrupt_threshold_margin"))
+            {
+                currentConfig.interrupt_threshold_margin = config["interrupt_threshold_margin"];
+            }
+            if (config.containsKey("interrupt_hysteresis"))
+            {
+                currentConfig.interrupt_hysteresis = config["interrupt_hysteresis"];
+            }
+            if (config.containsKey("interrupt_integration_time"))
+            {
+                currentConfig.interrupt_integration_time = config["interrupt_integration_time"];
+            }
+            if (config.containsKey("interrupt_multi_pulse"))
+            {
+                currentConfig.interrupt_multi_pulse = config["interrupt_multi_pulse"];
+            }
+            if (config.containsKey("interrupt_persistence"))
+            {
+                currentConfig.interrupt_persistence = config["interrupt_persistence"];
+            }
+            if (config.containsKey("interrupt_smart_persistence"))
+            {
+                currentConfig.interrupt_smart_persistence = config["interrupt_smart_persistence"];
+            }
+            if (config.containsKey("interrupt_mode"))
+            {
+                currentConfig.interrupt_mode = config["interrupt_mode"].as<String>();
+            }
+
             Serial.println("\nConfig loaded from cloud:");
+            Serial.printf("  Sensor Mode: %s\n", currentConfig.sensor_mode == SensorMode::INTERRUPT_MODE ? "INTERRUPT" : "POLLING");
             Serial.printf("  Sample Rate: %d Hz\n", currentConfig.sample_rate_hz);
             Serial.printf("  LED Current: %s\n", currentConfig.led_current.c_str());
             Serial.printf("  Integration Time: %s\n", currentConfig.integration_time.c_str());
@@ -178,6 +221,13 @@ bool fetchConfigFromCloud()
             Serial.printf("  High Resolution: %s\n", currentConfig.high_resolution ? "enabled" : "disabled");
             Serial.printf("  Read Ambient: %s\n", currentConfig.read_ambient ? "enabled" : "disabled");
             Serial.printf("  I2C Clock: %d kHz\n", currentConfig.i2c_clock_khz);
+            if (currentConfig.sensor_mode == SensorMode::INTERRUPT_MODE)
+            {
+                Serial.printf("  INT Threshold Margin: %d\n", currentConfig.interrupt_threshold_margin);
+                Serial.printf("  INT Hysteresis: %d\n", currentConfig.interrupt_hysteresis);
+                Serial.printf("  INT Integration Time: %dT\n", currentConfig.interrupt_integration_time);
+                Serial.printf("  INT Multi-Pulse: %d\n", currentConfig.interrupt_multi_pulse);
+            }
 
             http.end();
             return true;
@@ -341,67 +391,142 @@ void handleCommand(const String &command, JsonDocument *doc)
     }
     else if (command == "start_collection")
     {
-        if (currentMode == DeviceMode::PLAY)
+        // Check memory health before starting any collection
+        MemoryMonitor::printMemoryStats();
+        if (!MemoryMonitor::isMemoryHealthy())
         {
-            // PLAY MODE: Start direction detection
-            Serial.println("Starting PLAY mode - Direction detection active");
+            Serial.println("ERROR: Insufficient memory to start collection!");
+            mqttManager->publishStatus("collection_failed_low_memory");
+            display.showMessage("Low memory!", TFT_RED);
+            delay(2000);
+            display.setDisplayState(DISPLAY_ERROR);
+            return;
+        }
 
-            // Initialize LED controller if not already done
-            if (!ledController.init())
+        // Determine sensor mode from config (how we sense)
+        bool useInterruptMode = (currentConfig.sensor_mode == SensorMode::INTERRUPT_MODE);
+
+        Serial.printf("Starting collection - Mode: %s, Sensor: %s\n",
+                      currentMode == DeviceMode::PLAY ? "PLAY" : "DEBUG",
+                      useInterruptMode ? "INTERRUPT" : "POLLING");
+
+        if (useInterruptMode)
+        {
+            // === INTERRUPT-BASED SENSING ===
+            // Initialize InterruptManager if not already done
+            if (!interruptManager.isMonitoring())
             {
-                Serial.println("WARNING: LED controller init failed");
+                Serial.println("Initializing InterruptManager...");
+                if (!interruptManager.begin())
+                {
+                    Serial.println("ERROR: InterruptManager initialization failed!");
+                    mqttManager->publishStatus("interrupt_init_failed");
+                    display.showMessage("INT init failed!", TFT_RED);
+                    delay(2000);
+                    display.setDisplayState(DISPLAY_ERROR);
+                    return;
+                }
+
+                // Configure for detection using current config
+                // Uses calibration-based approach: baseline measured at startup, thresholds relative to 0
+                InterruptConfig intConfig;
+                intConfig.thresholdMargin = currentConfig.interrupt_threshold_margin;
+                intConfig.hysteresis = currentConfig.interrupt_hysteresis;
+                intConfig.persistence = currentConfig.interrupt_persistence;
+                intConfig.smartPersistence = currentConfig.interrupt_smart_persistence;
+                intConfig.mode = (currentConfig.interrupt_mode == "logic")
+                                     ? InterruptMode::LOGIC_OUTPUT
+                                     : InterruptMode::NORMAL;
+                intConfig.ledCurrent = currentConfig.led_current.toInt();
+                if (intConfig.ledCurrent == 0)
+                    intConfig.ledCurrent = 200;
+                intConfig.integrationTime = currentConfig.interrupt_integration_time;
+                intConfig.multiPulse = currentConfig.interrupt_multi_pulse;
+                intConfig.autoCalibrate = true; // Enable auto-calibration
+
+                Serial.printf("Interrupt config: margin=%d, hysteresis=%d, pers=%d, IT=%dT, mode=%s\n",
+                              intConfig.thresholdMargin, intConfig.hysteresis,
+                              intConfig.persistence, intConfig.integrationTime,
+                              intConfig.mode == InterruptMode::LOGIC_OUTPUT ? "logic" : "normal");
+
+                if (!interruptManager.configure(intConfig))
+                {
+                    Serial.println("WARNING: Some sensors failed to configure for interrupt mode");
+                }
             }
 
-            // Reset the detector
-            directionDetector.reset();
-
-            // Start sensor collection with internal queue for detection
+            // Start interrupt session
+            sessionManager.setSessionType(SessionType::INTERRUPT_BASED);
             if (sessionManager.startSession())
             {
-                sensorManager.startCollection(sessionManager.getQueue());
-                playModeActive = true;
-                lastDetectionTime = 0;
+                if (!interruptManager.startMonitoring())
+                {
+                    Serial.println("ERROR: Failed to start interrupt monitoring!");
+                    sessionManager.clearBuffer();
+                    mqttManager->publishStatus("interrupt_start_failed");
+                    display.setDisplayState(DISPLAY_ERROR);
+                    return;
+                }
 
-                mqttManager->publishStatus("play_started");
-                display.showMessage("PLAY MODE ACTIVE", TFT_GREEN);
+                if (currentMode == DeviceMode::PLAY)
+                {
+                    // Initialize LED controller for play mode
+                    if (!ledController.init())
+                    {
+                        Serial.println("WARNING: LED controller init failed");
+                    }
+                    directionDetector.reset();
+                    playModeActive = true;
+                    lastDetectionTime = 0;
+                    ledController.showReady();
+
+                    mqttManager->publishStatus("play_started_interrupt");
+                    display.showMessage("PLAY [INT]", TFT_GREEN);
+                }
+                else
+                {
+                    mqttManager->publishStatus("collection_started_interrupt");
+                    display.showMessage("DEBUG [INT]", TFT_CYAN);
+                }
                 display.setDisplayState(DISPLAY_RECORDING);
-
-                // Show ready state on LEDs
-                ledController.showReady();
             }
             else
             {
-                mqttManager->publishStatus("play_failed");
+                mqttManager->publishStatus("collection_failed");
                 display.setDisplayState(DISPLAY_ERROR);
             }
         }
         else
         {
-            // DEBUG MODE: Standard data collection
-            Serial.println("Starting data collection (DEBUG mode)...");
-
-            // Check memory health before starting collection
-            MemoryMonitor::printMemoryStats();
-            if (!MemoryMonitor::isMemoryHealthy())
-            {
-                Serial.println("ERROR: Insufficient memory to start collection!");
-                mqttManager->publishStatus("collection_failed_low_memory");
-                display.showMessage("Low memory!", TFT_RED);
-                delay(2000);
-                display.setDisplayState(DISPLAY_ERROR);
-                return;
-            }
-
+            // === POLLING-BASED SENSING ===
+            sessionManager.setSessionType(SessionType::PROXIMITY);
             if (sessionManager.startSession())
             {
-                // Set sensor metadata for this session
                 std::vector<SensorMetadata> metadata = sensorManager.getSensorMetadata();
                 sessionManager.setSensorMetadata(metadata);
 
                 sensorManager.startCollection(sessionManager.getQueue());
-                mqttManager->publishStatus("collection_started");
 
-                // Update display to recording state (config panel already shows settings)
+                if (currentMode == DeviceMode::PLAY)
+                {
+                    // Initialize LED controller for play mode
+                    if (!ledController.init())
+                    {
+                        Serial.println("WARNING: LED controller init failed");
+                    }
+                    directionDetector.reset();
+                    playModeActive = true;
+                    lastDetectionTime = 0;
+                    ledController.showReady();
+
+                    mqttManager->publishStatus("play_started");
+                    display.showMessage("PLAY MODE", TFT_GREEN);
+                }
+                else
+                {
+                    mqttManager->publishStatus("collection_started");
+                    display.showMessage("DEBUG MODE", TFT_BLUE);
+                }
                 display.setDisplayState(DISPLAY_RECORDING);
             }
             else
@@ -413,15 +538,35 @@ void handleCommand(const String &command, JsonDocument *doc)
     }
     else if (command == "stop_collection")
     {
-        if (playModeActive && currentMode == DeviceMode::PLAY)
+        // Check session type to determine how to stop
+        bool wasInterruptSession = (sessionManager.getSessionType() == SessionType::INTERRUPT_BASED);
+        bool isPlayMode = (currentMode == DeviceMode::PLAY);
+
+        Serial.printf("Stopping collection - Mode: %s, Session: %s\n",
+                      isPlayMode ? "PLAY" : "DEBUG",
+                      wasInterruptSession ? "INTERRUPT" : "POLLING");
+
+        // Stop the appropriate sensor system
+        if (wasInterruptSession)
+        {
+            interruptManager.stopMonitoring();
+            Serial.printf("Collected %d interrupt events\n", sessionManager.getInterruptEventCount());
+            InterruptSessionStats stats = interruptManager.getStats();
+            Serial.printf("  ISR count: %lu, dropped: %lu\n", stats.isrCount, stats.droppedEvents);
+        }
+        else
+        {
+            sensorManager.stopCollection();
+            Serial.printf("Collected %d samples\n", sessionManager.getDataCount());
+        }
+
+        sessionManager.stopSession();
+        MemoryMonitor::printMemoryStats();
+
+        if (isPlayMode && playModeActive)
         {
             // PLAY MODE: Just stop detection, no upload needed
-            Serial.println("Stopping PLAY mode...");
-
-            sensorManager.stopCollection();
-            sessionManager.stopSession();
             sessionManager.clearBuffer();
-
             playModeActive = false;
             directionDetector.reset();
             ledController.off();
@@ -433,26 +578,13 @@ void handleCommand(const String &command, JsonDocument *doc)
         }
         else
         {
-            // DEBUG MODE: Stop collection and upload data
-            Serial.println("Stopping data collection...");
-
-            sensorManager.stopCollection();
-            sessionManager.stopSession();
-
-            // Print memory stats after collection
-            Serial.printf("Collected %d samples\n", sessionManager.getDataCount());
-            MemoryMonitor::printMemoryStats();
-
-            // Update display to uploading state
+            // DEBUG MODE: Upload data
             display.setDisplayState(DISPLAY_UPLOADING);
 
-            // Transmit data (include current sensor configuration)
             if (dataTransmitter->transmitSession(sessionManager, &currentConfig))
             {
                 mqttManager->publishStatus("upload_complete");
                 display.setDisplayState(DISPLAY_SUCCESS);
-
-                // Return to idle after showing success
                 delay(3000);
                 sessionManager.clearBuffer();
                 display.setDisplayState(DISPLAY_IDLE);
@@ -462,15 +594,10 @@ void handleCommand(const String &command, JsonDocument *doc)
                 Serial.println("ERROR: Session transmission failed!");
                 mqttManager->publishStatus("upload_failed");
                 display.setDisplayState(DISPLAY_ERROR);
-                display.showMessage("Upload failed - Restarting...", TFT_RED);
-
-                // Return to idle after showing error
+                display.showMessage("Upload failed!", TFT_RED);
                 delay(3000);
                 sessionManager.clearBuffer();
-
-                // Restart device to recover from potential I2C/sensor issues
-                Serial.println("Restarting device to recover from upload failure...");
-                ESP.restart();
+                display.setDisplayState(DISPLAY_IDLE);
             }
         }
     }
@@ -520,6 +647,52 @@ void handleCommand(const String &command, JsonDocument *doc)
                 currentConfig.multi_pulse = "1"; // Default: 1 pulse
             }
 
+            // Handle sensor_mode (polling vs interrupt)
+            if (config.containsKey("sensor_mode"))
+            {
+                String modeStr = config["sensor_mode"].as<String>();
+                if (modeStr == "interrupt")
+                {
+                    currentConfig.sensor_mode = SensorMode::INTERRUPT_MODE;
+                    Serial.println("  Sensor mode: INTERRUPT");
+                }
+                else
+                {
+                    currentConfig.sensor_mode = SensorMode::POLLING_MODE;
+                    Serial.println("  Sensor mode: POLLING");
+                }
+            }
+
+            // Handle interrupt configuration if provided (calibration-based)
+            if (config.containsKey("interrupt_threshold_margin"))
+            {
+                currentConfig.interrupt_threshold_margin = config["interrupt_threshold_margin"];
+            }
+            if (config.containsKey("interrupt_hysteresis"))
+            {
+                currentConfig.interrupt_hysteresis = config["interrupt_hysteresis"];
+            }
+            if (config.containsKey("interrupt_integration_time"))
+            {
+                currentConfig.interrupt_integration_time = config["interrupt_integration_time"];
+            }
+            if (config.containsKey("interrupt_multi_pulse"))
+            {
+                currentConfig.interrupt_multi_pulse = config["interrupt_multi_pulse"];
+            }
+            if (config.containsKey("interrupt_persistence"))
+            {
+                currentConfig.interrupt_persistence = config["interrupt_persistence"];
+            }
+            if (config.containsKey("interrupt_smart_persistence"))
+            {
+                currentConfig.interrupt_smart_persistence = config["interrupt_smart_persistence"];
+            }
+            if (config.containsKey("interrupt_mode"))
+            {
+                currentConfig.interrupt_mode = config["interrupt_mode"].as<String>();
+            }
+
             Serial.println("Configuration updated:");
             Serial.printf("  Sample Rate: %d Hz\n", currentConfig.sample_rate_hz);
             Serial.printf("  LED Current: %s\n", currentConfig.led_current.c_str());
@@ -564,6 +737,11 @@ void handleCommand(const String &command, JsonDocument *doc)
                 currentMode = DeviceMode::IDLE;
                 playModeActive = false;
                 ledController.off();
+                // Stop interrupt monitoring if it was running
+                if (interruptManager.isMonitoring())
+                {
+                    interruptManager.stopMonitoring();
+                }
                 display.setMode(MODE_IDLE);
                 display.showMessage("Mode: IDLE", TFT_DARKGREY);
                 mqttManager->publishStatus("mode_idle");
@@ -573,6 +751,11 @@ void handleCommand(const String &command, JsonDocument *doc)
                 currentMode = DeviceMode::DEBUG;
                 playModeActive = false;
                 ledController.off();
+                // Stop interrupt monitoring if it was running
+                if (interruptManager.isMonitoring())
+                {
+                    interruptManager.stopMonitoring();
+                }
                 display.setMode(MODE_DEBUG);
                 display.showMessage("Mode: DEBUG", TFT_BLUE);
                 mqttManager->publishStatus("mode_debug");
@@ -580,6 +763,11 @@ void handleCommand(const String &command, JsonDocument *doc)
             else if (modeStr == "play")
             {
                 currentMode = DeviceMode::PLAY;
+                // Stop interrupt monitoring if it was running
+                if (interruptManager.isMonitoring())
+                {
+                    interruptManager.stopMonitoring();
+                }
                 display.setMode(MODE_PLAY);
                 display.showMessage("Mode: PLAY", TFT_GREEN);
                 mqttManager->publishStatus("mode_play");
@@ -634,7 +822,67 @@ void loop()
     // Process sensor data queue if collecting
     if (sessionManager.getState() == COLLECTING)
     {
-        sessionManager.processQueue();
+        // Check session type to determine processing method
+        bool isInterruptSession = (sessionManager.getSessionType() == SessionType::INTERRUPT_BASED);
+
+        if (isInterruptSession)
+        {
+            // INTERRUPT MODE: Drain events from InterruptManager
+            while (interruptManager.hasEvents())
+            {
+                InterruptEvent evt;
+                if (interruptManager.getNextEvent(evt))
+                {
+                    sessionManager.addInterruptEvent(evt);
+                }
+            }
+
+            // Update display periodically
+            static unsigned long lastIntUpdate = 0;
+            if (millis() - lastIntUpdate > 500)
+            {
+                lastIntUpdate = millis();
+                size_t eventCount = sessionManager.getInterruptEventCount();
+
+                // Log event count
+                Serial.printf("[INT] Events: %d\n", eventCount);
+            }
+
+            // Check for maximum session duration (30 seconds for interrupt too)
+            if (sessionManager.getDuration() >= 30000)
+            {
+                Serial.println("WARNING: Maximum interrupt session duration reached (30s), auto-stopping...");
+                display.showMessage("Max duration!", TFT_ORANGE);
+                delay(1000);
+
+                // Auto-stop
+                interruptManager.stopMonitoring();
+                sessionManager.stopSession();
+                display.setDisplayState(DISPLAY_UPLOADING);
+
+                if (dataTransmitter->transmitSession(sessionManager, &currentConfig))
+                {
+                    mqttManager->publishStatus("upload_complete_auto_stopped");
+                    display.setDisplayState(DISPLAY_SUCCESS);
+                    delay(2000);
+                    sessionManager.clearBuffer();
+                    display.setDisplayState(DISPLAY_IDLE);
+                }
+                else
+                {
+                    mqttManager->publishStatus("upload_failed");
+                    display.setDisplayState(DISPLAY_ERROR);
+                    delay(2000);
+                    sessionManager.clearBuffer();
+                    display.setDisplayState(DISPLAY_IDLE);
+                }
+            }
+        }
+        else
+        {
+            // POLLING MODE: Regular proximity processing
+            sessionManager.processQueue();
+        }
 
         // PLAY MODE: Run direction detection on collected data
         if (playModeActive && currentMode == DeviceMode::PLAY)

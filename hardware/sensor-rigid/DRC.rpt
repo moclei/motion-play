@@ -1,0 +1,54 @@
+** Drc report for sensor-rigid.kicad_pcb **
+** Created on 2025-12-12T18:29:17-0800 **
+
+** Found 6 DRC violations **
+[silk_edge_clearance]: Silkscreen clipped by board edge
+    Rule: board setup constraints silk; warning
+    @(136.8625 mm, 43.1500 mm): Rectangle on Edge.Cuts
+    @(165.1050 mm, 43.1325 mm): Segment of FPC1 on F.Silkscreen
+[silk_edge_clearance]: Silkscreen clipped by board edge
+    Rule: board setup constraints silk; warning
+    @(136.8625 mm, 43.1500 mm): Rectangle on Edge.Cuts
+    @(149.6950 mm, 43.1325 mm): Segment of FPC1 on F.Silkscreen
+[silk_edge_clearance]: Silkscreen clipped by board edge
+    Rule: board setup constraints silk; warning
+    @(136.8625 mm, 43.1500 mm): Rectangle on Edge.Cuts
+    @(149.6950 mm, 43.1325 mm): Segment of FPC1 on F.Silkscreen
+[silk_edge_clearance]: Silkscreen clipped by board edge
+    Rule: board setup constraints silk; warning
+    @(136.8625 mm, 43.1500 mm): Rectangle on Edge.Cuts
+    @(165.1050 mm, 43.1325 mm): Segment of FPC1 on F.Silkscreen
+[copper_edge_clearance]: Board edge clearance violation (board setup constraints edge clearance 0.5000 mm; actual 0.0500 mm)
+    Rule: board setup constraints edge; error
+    @(136.8625 mm, 43.1500 mm): Rectangle on Edge.Cuts
+    @(137.8125 mm, 55.4000 mm): Pad MP [<no net>] of J1 on F.Cu
+[copper_edge_clearance]: Board edge clearance violation (board setup constraints edge clearance 0.5000 mm; actual 0.0500 mm)
+    Rule: board setup constraints edge; error
+    @(136.8625 mm, 43.1500 mm): Rectangle on Edge.Cuts
+    @(137.8125 mm, 62.0000 mm): Pad MP [<no net>] of J1 on F.Cu
+
+** Found 5 unconnected pads **
+[unconnected_items]: Missing connection between items
+    Local override; error
+    @(152.7500 mm, 51.8000 mm): Pad 1 [+3.3V] of R6 on F.Cu
+    @(153.1500 mm, 54.2000 mm): Track [+3.3V] on F.Cu, length 0.5500 mm
+[unconnected_items]: Missing connection between items
+    Local override; error
+    @(157.1500 mm, 53.4000 mm): Pad 2 [+3.3V] of R8 on F.Cu
+    @(157.6000 mm, 51.8000 mm): Pad 1 [+3.3V] of R7 on F.Cu
+[unconnected_items]: Missing connection between items
+    Local override; error
+    @(160.8950 mm, 49.4925 mm): Pad 1 [+3.3V] of FPC1 on F.Cu
+    @(157.6000 mm, 51.8000 mm): Pad 1 [+3.3V] of R7 on F.Cu
+[unconnected_items]: Missing connection between items
+    Local override; error
+    @(161.8000 mm, 50.0000 mm): Via [+3.3V] on F.Cu - B.Cu
+    @(161.6500 mm, 51.6000 mm): Pad 2 [+3.3V] of R9 on F.Cu
+[unconnected_items]: Missing connection between items
+    Local override; error
+    @(151.6000 mm, 56.0000 mm): Pad 8 [GND] of U1 on F.Cu
+    @(156.8950 mm, 49.4925 mm): Track [GND] on F.Cu, length 1.3975 mm
+
+** Found 0 Footprint errors **
+
+** End of Report **

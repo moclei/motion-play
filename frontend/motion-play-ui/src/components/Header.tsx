@@ -48,7 +48,7 @@ export const Header = ({ onCollectionStopped, onSettingsClick }: HeaderProps) =>
             setChangingMode(true);
             await api.sendCommand('set_mode', { mode: newMode });
             setMode(newMode);
-            toast.success(`Mode changed to ${newMode}`);
+            toast.success(`Mode changed to ${getModeLabel(newMode)}`);
         } catch (err) {
             toast.error('Failed to change mode');
             console.error(err);
@@ -62,6 +62,14 @@ export const Header = ({ onCollectionStopped, onSettingsClick }: HeaderProps) =>
             case 'debug': return 'border-blue-600';
             case 'play': return 'border-green-600';
             case 'idle': return 'border-gray-600';
+        }
+    };
+
+    const getModeLabel = (m: DeviceMode) => {
+        switch (m) {
+            case 'debug': return 'Debug';
+            case 'play': return 'Play';
+            case 'idle': return 'Idle';
         }
     };
 
@@ -118,13 +126,13 @@ export const Header = ({ onCollectionStopped, onSettingsClick }: HeaderProps) =>
                                     key={m}
                                     onClick={() => handleModeChange(m)}
                                     disabled={changingMode}
-                                    className={`px-4 py-2 rounded border-2 transition-all capitalize text-sm font-medium ${
+                                    className={`px-4 py-2 rounded border-2 transition-all text-sm font-medium capitalize ${
                                         mode === m
                                             ? `${getModeColor(m)} bg-gray-100 text-gray-800`
                                             : 'border-gray-300 bg-white text-gray-700 hover:bg-gray-50'
                                     } ${changingMode ? 'opacity-50 cursor-not-allowed' : ''}`}
                                 >
-                                    {m}
+                                    {getModeLabel(m)}
                                 </button>
                             ))}
                         </div>
@@ -143,4 +151,3 @@ export const Header = ({ onCollectionStopped, onSettingsClick }: HeaderProps) =>
         </div>
     );
 };
-

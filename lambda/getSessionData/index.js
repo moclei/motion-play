@@ -1,8 +1,12 @@
 /**
  * Lambda Function: getSessionData
  * 
- * Retrieves detailed session data including all sensor readings.
+ * Retrieves detailed session data including all sensor readings or interrupt events.
  * Triggered by API Gateway GET /sessions/{session_id}
+ * 
+ * Supports two session types:
+ * - "proximity" (default): Returns sensor readings from MotionPlaySensorData
+ * - "interrupt": Returns interrupt events from MotionPlayInterruptEvents
  */
 
 const { DynamoDBClient } = require('@aws-sdk/client-dynamodb');
@@ -13,6 +17,7 @@ const docClient = DynamoDBDocumentClient.from(client);
 
 const SESSIONS_TABLE = process.env.SESSIONS_TABLE || 'MotionPlaySessions';
 const SENSOR_DATA_TABLE = process.env.SENSOR_DATA_TABLE || 'MotionPlaySensorData';
+const INTERRUPT_EVENTS_TABLE = process.env.INTERRUPT_EVENTS_TABLE || 'MotionPlayInterruptEvents';
 
 exports.handler = async (event) => {
     console.log('Received event:', JSON.stringify(event, null, 2));
@@ -48,66 +53,16 @@ exports.handler = async (event) => {
             };
         }
         
-        // Get sensor data with pagination support
-        let allReadings = [];
-        let lastEvaluatedKey = undefined;
-        let pageCount = 0;
+        const session = sessionResult.Item;
+        const sessionType = session.session_type || 'proximity';
         
-        do {
-            const queryParams = {
-                TableName: SENSOR_DATA_TABLE,
-                KeyConditionExpression: 'session_id = :sessionId',
-                ExpressionAttributeValues: {
-                    ':sessionId': sessionId
-                }
-            };
-            
-            // Add pagination token if we have one
-            if (lastEvaluatedKey) {
-                queryParams.ExclusiveStartKey = lastEvaluatedKey;
-            }
-            
-            const dataResult = await docClient.send(new QueryCommand(queryParams));
-            
-            allReadings = allReadings.concat(dataResult.Items || []);
-            lastEvaluatedKey = dataResult.LastEvaluatedKey;
-            pageCount++;
-            
-            console.log(`Page ${pageCount}: Retrieved ${dataResult.Items?.length || 0} readings (Total: ${allReadings.length})`);
-            
-        } while (lastEvaluatedKey); // Keep fetching until no more pages
+        console.log(`Retrieving ${sessionType} session: ${sessionId}`);
         
-        console.log(`Retrieved session ${sessionId} with ${allReadings.length} readings across ${pageCount} page(s)`);
-        
-        // Transform readings to use actual timestamp for frontend compatibility
-        const readings = allReadings.map(item => {
-            // Use timestamp_ms if available (new format)
-            let numericTimestamp = item.timestamp_ms;
-            
-            // If timestamp_ms not available, decode from composite timestamp_offset
-            if (numericTimestamp === undefined && item.timestamp_offset) {
-                // New format: composite key (timestamp * 10 + position)
-                // Decode: timestamp = Math.floor(composite / 10)
-                numericTimestamp = Math.floor(item.timestamp_offset / 10);
-            }
-            
-            return {
-                ...item,
-                timestamp_offset: numericTimestamp  // Frontend expects base timestamp
-            };
-        });
-        
-        return {
-            statusCode: 200,
-            headers: {
-                'Content-Type': 'application/json',
-                'Access-Control-Allow-Origin': '*'
-            },
-            body: JSON.stringify({
-                session: sessionResult.Item,
-                readings: readings
-            })
-        };
+        if (sessionType === 'interrupt') {
+            return await getInterruptSessionData(session);
+        } else {
+            return await getProximitySessionData(session);
+        }
         
     } catch (error) {
         console.error('Error retrieving session data:', error);
@@ -122,3 +77,130 @@ exports.handler = async (event) => {
     }
 };
 
+// ============================================================================
+// Interrupt Session Data Retrieval
+// ============================================================================
+
+async function getInterruptSessionData(session) {
+    const sessionId = session.session_id;
+    
+    // Query interrupt events with pagination
+    let allEvents = [];
+    let lastEvaluatedKey = undefined;
+    let pageCount = 0;
+    
+    do {
+        const queryParams = {
+            TableName: INTERRUPT_EVENTS_TABLE,
+            KeyConditionExpression: 'session_id = :sessionId',
+            ExpressionAttributeValues: {
+                ':sessionId': sessionId
+            }
+        };
+        
+        if (lastEvaluatedKey) {
+            queryParams.ExclusiveStartKey = lastEvaluatedKey;
+        }
+        
+        const result = await docClient.send(new QueryCommand(queryParams));
+        
+        allEvents = allEvents.concat(result.Items || []);
+        lastEvaluatedKey = result.LastEvaluatedKey;
+        pageCount++;
+        
+        console.log(`Page ${pageCount}: Retrieved ${result.Items?.length || 0} events (Total: ${allEvents.length})`);
+        
+    } while (lastEvaluatedKey);
+    
+    console.log(`Retrieved interrupt session ${sessionId} with ${allEvents.length} events across ${pageCount} page(s)`);
+    
+    // Transform events for frontend
+    const events = allEvents.map(item => ({
+        timestamp_us: item.timestamp_us,
+        board_id: item.board_id,
+        sensor_position: item.sensor_position,
+        event_type: item.event_type,
+        raw_flags: item.raw_flags
+    }));
+    
+    // Sort by timestamp
+    events.sort((a, b) => a.timestamp_us - b.timestamp_us);
+    
+    return {
+        statusCode: 200,
+        headers: {
+            'Content-Type': 'application/json',
+            'Access-Control-Allow-Origin': '*'
+        },
+        body: JSON.stringify({
+            session: session,
+            session_type: 'interrupt',
+            events: events
+        })
+    };
+}
+
+// ============================================================================
+// Proximity Session Data Retrieval (existing logic)
+// ============================================================================
+
+async function getProximitySessionData(session) {
+    const sessionId = session.session_id;
+        
+        // Get sensor data with pagination support
+        let allReadings = [];
+        let lastEvaluatedKey = undefined;
+        let pageCount = 0;
+        
+        do {
+            const queryParams = {
+                TableName: SENSOR_DATA_TABLE,
+                KeyConditionExpression: 'session_id = :sessionId',
+                ExpressionAttributeValues: {
+                    ':sessionId': sessionId
+                }
+            };
+            
+            if (lastEvaluatedKey) {
+                queryParams.ExclusiveStartKey = lastEvaluatedKey;
+            }
+            
+            const dataResult = await docClient.send(new QueryCommand(queryParams));
+            
+            allReadings = allReadings.concat(dataResult.Items || []);
+            lastEvaluatedKey = dataResult.LastEvaluatedKey;
+            pageCount++;
+            
+            console.log(`Page ${pageCount}: Retrieved ${dataResult.Items?.length || 0} readings (Total: ${allReadings.length})`);
+            
+    } while (lastEvaluatedKey);
+        
+    console.log(`Retrieved proximity session ${sessionId} with ${allReadings.length} readings across ${pageCount} page(s)`);
+        
+        // Transform readings to use actual timestamp for frontend compatibility
+        const readings = allReadings.map(item => {
+            let numericTimestamp = item.timestamp_ms;
+            
+            if (numericTimestamp === undefined && item.timestamp_offset) {
+                numericTimestamp = Math.floor(item.timestamp_offset / 10);
+            }
+            
+            return {
+                ...item,
+            timestamp_offset: numericTimestamp
+            };
+        });
+        
+        return {
+            statusCode: 200,
+            headers: {
+                'Content-Type': 'application/json',
+                'Access-Control-Allow-Origin': '*'
+            },
+            body: JSON.stringify({
+            session: session,
+            session_type: 'proximity',
+                readings: readings
+            })
+        };
+}

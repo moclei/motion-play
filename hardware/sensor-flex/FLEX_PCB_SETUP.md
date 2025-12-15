@@ -6,29 +6,21 @@ This guide covers setting up the sensor-flex PCB in KiCad for JLCPCB flex manufa
 
 ### JLCPCB 2-Layer Flex PCB Standard Stackup
 
-| Layer | Material | Thickness |
-|-------|----------|-----------|
-| Top Coverlay | Polyimide + Adhesive | 0.0275mm (12.5µm PI + 15µm adhesive) |
-| F.Cu (Top Copper) | Copper | 0.012mm (12µm = 1/3 oz) |
-| Adhesive | Acrylic | 0.015mm |
-| Core | Polyimide | 0.025mm (25µm PI) |
-| Adhesive | Acrylic | 0.015mm |
-| B.Cu (Bottom Copper) | Copper | 0.012mm (12µm = 1/3 oz) |
-| Bottom Coverlay | Polyimide + Adhesive | 0.0275mm |
-| **Total Flex Thickness** | | **~0.11mm** |
-
 ### With Stiffener (for 0.3mm FPC connector)
 
 The C132510 ZIF connector requires 0.3mm FPC thickness. JLCPCB adds polyimide stiffener to achieve this:
 
 - Flex core: ~0.11mm
+
 - PI Stiffener: ~0.19mm
+
 - **Total with stiffener: 0.3mm**
 
 ### KiCad Board Setup (File → Board Setup → Board Stackup)
 
-1. **Set Layer Count**: Click "Layer" on the left, set to **2 layers**
-2. **Edit Stackup**: Click "Physical Stackup" and configure:
+- **Set Layer Count**: Click "Layer" on the left, set to **2 layers**
+
+- **Edit Stackup**: Click "Physical Stackup" and configure:
 
 ```
 Layers:
@@ -58,23 +50,17 @@ Copper finish: ENIG (recommended for connector pads)
 
 ### Minimum Specifications (JLCPCB Flex Capabilities)
 
-| Parameter | Minimum | Recommended |
-|-----------|---------|-------------|
-| Trace width | 0.1mm | **0.15mm** (0.2mm in bend zone) |
-| Trace spacing | 0.1mm | **0.15mm** |
-| Via diameter | 0.3mm | **Avoid vias** (stress points) |
-| Via drill | 0.15mm | **Avoid vias** |
-| Annular ring | 0.1mm | 0.15mm |
-| Pad size | 0.3mm min | Per component spec |
-| SMD clearance | 0.1mm | 0.15mm |
-
 ### Bend Zone Rules (Critical!)
 
-1. **Trace width in bend zone**: Increase to **0.2-0.3mm** (wider = more durable)
-2. **Trace angles**: Use **curved traces** (no 90° angles in bend area)
-3. **No vias in bend zone**: Vias are stress concentration points
-4. **Trace orientation**: Route traces **perpendicular** to bend axis
-5. **Component clearance**: Keep components **1.5mm minimum** from bend line
+- **Trace width in bend zone**: Increase to **0.2-0.3mm** (wider = more durable)
+
+- **Trace angles**: Use **curved traces** (no 90° angles in bend area)
+
+- **No vias in bend zone**: Vias are stress concentration points
+
+- **Trace orientation**: Route traces **perpendicular** to bend axis
+
+- **Component clearance**: Keep components **1.5mm minimum** from bend line
 
 ### KiCad Design Rules Setup
 
@@ -105,9 +91,11 @@ Net Classes:
 
 ### Purpose of Stiffeners
 
-1. **Connector tail**: Makes flex rigid enough to insert into ZIF connector (required for 0.3mm thickness)
-2. **Sensor areas**: Keeps VCNL4040 sensors flat and stable (component mounting)
-3. **Leave center flexible**: The bend zone (~5mm) remains unstiffened
+- **Connector tail**: Makes flex rigid enough to insert into ZIF connector (required for 0.3mm thickness)
+
+- **Sensor areas**: Keeps VCNL4040 sensors flat and stable (component mounting)
+
+- **Leave center flexible**: The bend zone (~5mm) remains unstiffened
 
 ### Stiffener Layout
 
@@ -135,21 +123,19 @@ Net Classes:
 
 ### Drawing Stiffener Zones in KiCad
 
-1. Select the **"Stiffener" (User.1)** layer
-2. Use **Draw Rectangle** or **Draw Polygon** tools
-3. Draw closed shapes around:
-   - **Sensor area 1**: Around IC1 and its capacitors (C4, C6)
-   - **Sensor area 2**: Around IC2 and its capacitors (C8, C7)
-   - **Connector tail**: The entire FPC tail section (~4mm deep)
+- Select the **"Stiffener" (User.1)** layer
+
+- Use **Draw Rectangle** or **Draw Polygon** tools
+
+- Draw closed shapes around:
+
+- **Sensor area 1**: Around IC1 and its capacitors (C4, C6)
+
+- **Sensor area 2**: Around IC2 and its capacitors (C8, C7)
+
+- **Connector tail**: The entire FPC tail section (~4mm deep)
 
 ### Stiffener Dimensions
-
-| Zone | Size | Thickness (JLCPCB) |
-|------|------|-------------------|
-| Connector tail | 13mm × 4mm | 0.2mm PI (total 0.3mm with flex) |
-| Sensor area 1 | 8mm × 8mm | 0.1-0.2mm PI |
-| Sensor area 2 | 8mm × 8mm | 0.1-0.2mm PI |
-| Bend zone (center) | ~5mm wide | **NO STIFFENER** |
 
 **Note**: When ordering, specify stiffener zones in the order notes or use a separate gerber layer.
 
@@ -158,6 +144,7 @@ Net Classes:
 ## 4. Connector Tail Footprint
 
 The custom footprint `FPC_Tail_10P_1.0mm_TopContact` is located at:
+
 ```
 hardware/libraries/motion-play-footprints.pretty/FPC_Tail_10P_1.0mm_TopContact.kicad_mod
 ```
@@ -165,27 +152,20 @@ hardware/libraries/motion-play-footprints.pretty/FPC_Tail_10P_1.0mm_TopContact.k
 ### Footprint Details
 
 - **10 pads** (8 signal + 2 mechanical)
+
 - **1.0mm pitch** for signal pads
+
 - **Pads on TOP copper layer** (top-contact connector)
+
 - **Signal pads**: 0.5mm × 2.5mm
+
 - **Mechanical pads**: 1.5mm × 2.5mm
+
 - **Board edge**: At Y=0 (pads extend from edge into board)
+
 - **Stiffener zone indicator** on User.1 layer
 
 ### Pin Assignment
-
-| Pin | Signal | Net Name |
-|-----|--------|----------|
-| 1 | 3.3V | +3.3V |
-| 2 | INT1 | Net-(IC1-INT) |
-| 3 | SDA1 | Net-(IC1-SDAT) |
-| 4 | SCL1 | Net-(IC1-SCLK) |
-| 5 | GND (shield) | GND |
-| 6 | INT2 | Net-(IC2-INT) |
-| 7 | SDA2 | Net-(IC2-SDAT) |
-| 8 | SCL2 | Net-(IC2-SCLK) |
-| 9 | GND (mechanical) | GND |
-| 10 | GND (mechanical) | GND |
 
 ---
 
@@ -193,10 +173,13 @@ hardware/libraries/motion-play-footprints.pretty/FPC_Tail_10P_1.0mm_TopContact.k
 
 ### General Flex Routing
 
-1. **Minimize layer changes**: Use single-layer routing where possible
-2. **Curve all corners**: Use 45° or arc traces, never 90° angles
-3. **Match I2C lengths**: Keep SDA and SCL traces within 2mm of each other
-4. **Ground pour**: Add copper pour on unused areas (helps EMI and mechanical strength)
+- **Minimize layer changes**: Use single-layer routing where possible
+
+- **Curve all corners**: Use 45° or arc traces, never 90° angles
+
+- **Match I2C lengths**: Keep SDA and SCL traces within 2mm of each other
+
+- **Ground pour**: Add copper pour on unused areas (helps EMI and mechanical strength)
 
 ### Bend Zone Routing
 
@@ -213,7 +196,9 @@ GOOD (perpendicular to bend):        BAD (parallel to bend):
 ### Trace Width Transitions
 
 When transitioning from normal area to bend zone:
+
 - Use **gradual taper** (45° angle)
+
 - Don't create stress concentration points
 
 ```
@@ -226,19 +211,6 @@ Normal area → [taper] → Bend zone → [taper] → Normal area
 ## 6. JLCPCB Ordering Specifications
 
 ### Flex PCB Order Parameters
-
-| Parameter | Value | Notes |
-|-----------|-------|-------|
-| **Base Material** | Polyimide (PI) | Yellow flex material |
-| **Layers** | 2 | Single-sided also available |
-| **Flex Thickness** | 0.11mm | Standard JLCPCB flex |
-| **Copper Weight** | 1/3 oz (12µm) | Standard for flex |
-| **Surface Finish** | ENIG | Required for connector pads (hard gold better but more expensive) |
-| **Coverlay Color** | Yellow | Standard PI coverlay |
-| **Silkscreen** | White | Optional for flex |
-| **Stiffener** | PI (Polyimide) | Specify thickness per zone |
-| **Stiffener Thickness** | 0.1-0.2mm | Match connector requirements |
-| **Minimum Trace/Space** | 0.1/0.1mm | 0.15/0.15mm recommended |
 
 ### Order Notes to Include
 
@@ -258,20 +230,31 @@ FLEX PCB ORDER NOTES:
 ### Gerber Files to Export
 
 - F.Cu (Top copper)
+
 - B.Cu (Bottom copper) - if used
+
 - F.Mask (Top solder mask openings)
+
 - B.Mask (Bottom solder mask openings)
+
 - F.Paste (Top paste stencil)
+
 - Edge.Cuts (Board outline)
+
 - **User.1 / Stiffener** (Stiffener zones - export as separate layer)
+
 - F.SilkS (Optional silkscreen)
 
 ### Cost Estimate
 
 For a small flex PCB (~25mm × 15mm), qty 5:
+
 - Base flex PCB: $15-25
+
 - Stiffener: +$5-10
+
 - ENIG: Included in flex pricing
+
 - Setup fee (first order): ~$20
 
 Total first prototype run: ~$40-60 for 5 pcs
@@ -282,50 +265,77 @@ Total first prototype run: ~$40-60 for 5 pcs
 
 ### Component Placement
 
-1. **VCNL4040 sensors** (IC1, IC2):
-   - Place on stiffened areas only
-   - Position at least 1.5mm from bend line
-   - Ensure IR LED/sensor window faces outward (away from PCB center)
+- **VCNL4040 sensors** (IC1, IC2):
 
-2. **Bypass capacitors** (C4, C6, C7, C8):
-   - Place as close to sensor VDD pins as possible
-   - All on stiffened areas
-   - C4, C8: 2.2µF (LED anode capacitors)
-   - C6, C7: 0.1µF (VDD bypass)
+- Place on stiffened areas only
+
+- Position at least 1.5mm from bend line
+
+- Ensure IR LED/sensor window faces outward (away from PCB center)
+
+- **Bypass capacitors** (C4, C6, C7, C8):
+
+- Place as close to sensor VDD pins as possible
+
+- All on stiffened areas
+
+- C4, C8: 2.2µF (LED anode capacitors)
+
+- C6, C7: 0.1µF (VDD bypass)
 
 ### Hand Assembly
 
 Flex PCBs require careful handling:
-1. Support the flex during soldering (use a flat surface)
-2. Lower soldering iron temperature if possible (~300°C)
-3. Avoid excessive force on components
-4. Don't bend the PCB until fully assembled and inspected
+
+- Support the flex during soldering (use a flat surface)
+
+- Lower soldering iron temperature if possible (~300°C)
+
+- Avoid excessive force on components
+
+- Don't bend the PCB until fully assembled and inspected
 
 ### Testing Before Bending
 
-1. Check continuity of all traces
-2. Verify I2C communication with both sensors (flat configuration)
-3. Check for shorts (especially on FPC connector pads)
-4. Then carefully bend to final angle
+- Check continuity of all traces
+
+- Verify I2C communication with both sensors (flat configuration)
+
+- Check for shorts (especially on FPC connector pads)
+
+- Then carefully bend to final angle
 
 ---
 
 ## 8. Checklist Before Manufacturing
 
-- [ ] Layer count set to 2
-- [ ] Stackup configured for polyimide
-- [ ] Board thickness ~0.11mm
-- [ ] Design rules set for flex (0.15mm min trace/space)
-- [ ] No vias in bend zone
-- [ ] Wider traces (0.25mm) in bend zone
-- [ ] Curved traces only (no 90° angles)
-- [ ] Components placed on stiffened areas only
-- [ ] Stiffener zones drawn on User.1 layer
-- [ ] FPC tail footprint at board edge
-- [ ] Pads on correct layer (TOP for top-contact connector)
-- [ ] ENIG surface finish specified
-- [ ] Ground pour added (optional but recommended)
-- [ ] DRC passes with no errors
+- Layer count set to 2
+
+- Stackup configured for polyimide
+
+- Board thickness ~0.11mm
+
+- Design rules set for flex (0.15mm min trace/space)
+
+- No vias in bend zone
+
+- Wider traces (0.25mm) in bend zone
+
+- Curved traces only (no 90° angles)
+
+- Components placed on stiffened areas only
+
+- Stiffener zones drawn on User.1 layer
+
+- FPC tail footprint at board edge
+
+- Pads on correct layer (TOP for top-contact connector)
+
+- ENIG surface finish specified
+
+- Ground pour added (optional but recommended)
+
+- DRC passes with no errors
 
 ---
 
