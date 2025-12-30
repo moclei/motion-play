@@ -4,6 +4,7 @@
 #include <Arduino.h>
 #include <vector>
 #include "../sensor/SensorManager.h"
+#include "../calibration/CalibrationData.h"
 
 /**
  * Direction Detection - Version 3: Adaptive Threshold + Wave Envelope (Real-Time)
@@ -223,6 +224,10 @@ private:
     // Detection state
     uint32_t detectionStartTime = 0;
 
+    // Calibration state
+    const DeviceCalibration *_calibration = nullptr;
+    bool _useCalibration = false;
+
     // Helper methods
     void updateBaseline(float valueA, float valueB);
     void calculateThresholds();
@@ -278,6 +283,19 @@ public:
      * Update configuration
      */
     void setConfig(const DetectorConfig &cfg);
+
+    /**
+     * Set calibration data for threshold calculation
+     * When valid calibration is set, thresholds are derived from it
+     * instead of being calculated from baseline readings.
+     * @param cal Pointer to calibration data (can be nullptr to clear)
+     */
+    void setCalibration(const DeviceCalibration *cal);
+
+    /**
+     * Check if using calibrated thresholds
+     */
+    bool isUsingCalibration() const { return _useCalibration; }
 
     /**
      * Get string representation of direction

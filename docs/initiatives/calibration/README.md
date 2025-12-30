@@ -1,6 +1,6 @@
 # Calibration System Initiative
 
-> **Status:** Phase 1 & 2 Complete ✅  
+> **Status:** Phase 1, 2 & 3 Complete ✅  
 > **Created:** 2025-12-29  
 > **Last Updated:** 2025-12-30
 
@@ -10,7 +10,7 @@
 |-------|--------|-------|
 | Phase 1: Core Infrastructure | ✅ Complete | Firmware compiles and works |
 | Phase 2: Frontend Integration | ✅ Complete | Calibration button added to ModeSelector |
-| Phase 3: Detection Integration | 🔲 Not Started | Thresholds not yet used by DirectionDetector |
+| Phase 3: Detection Integration | ✅ Complete | DirectionDetector & InterruptManager use calibrated thresholds |
 | Phase 4: Persistence | 🔲 Not Started | Data only in RAM currently |
 
 ## Overview
@@ -441,22 +441,33 @@ void calculateThresholds() {
 **Files modified:**
 - `frontend/motion-play-ui/src/components/ModeSelector.tsx` - Added calibration section with button
 
-### Phase 3: Detection Integration
+### Phase 3: Detection Integration ✅ COMPLETE
 
-- [ ] **3.1** Integrate calibration data into DirectionDetector
-  - [ ] 3.1.1 Add `setCalibration(DeviceCalibration&)` method
-  - [ ] 3.1.2 Use calibrated thresholds in `calculateThresholds()`
-  - [ ] 3.1.3 Fallback to current behavior when uncalibrated
+- [x] **3.1** Integrate calibration data into DirectionDetector
+  - [x] 3.1.1 Add `setCalibration(const DeviceCalibration*)` method
+  - [x] 3.1.2 Use calibrated thresholds in `calculateThresholds()`
+  - [x] 3.1.3 Fallback to current behavior when uncalibrated
+  - [x] 3.1.4 Added `isUsingCalibration()` method for status checking
 
-- [ ] **3.2** Update InterruptManager thresholds
-  - [ ] 3.2.1 Apply per-PCB thresholds from calibration
-  - [ ] 3.2.2 Reconfigure sensor registers after calibration
-  - [ ] 3.2.3 Log threshold source (calibrated vs fallback)
+- [x] **3.2** Update InterruptManager thresholds
+  - [x] 3.2.1 Add `setCalibration(const DeviceCalibration*)` method
+  - [x] 3.2.2 Apply per-PCB thresholds (halved for per-sensor) from calibration
+  - [x] 3.2.3 Log threshold source (CALIBRATED vs FALLBACK)
+  - [x] 3.2.4 Added `isUsingCalibration()` method
 
-- [ ] **3.3** Add calibration metadata to sessions
-  - [ ] 3.3.1 Include `calibration_valid` flag in session data
-  - [ ] 3.3.2 Include threshold values in session metadata
-  - [ ] 3.3.3 Include calibration timestamp if available
+- [x] **3.3** Add calibration metadata to sessions
+  - [x] 3.3.1 Include `calibration.valid` flag in session data
+  - [x] 3.3.2 Include per-PCB threshold values in session metadata
+  - [x] 3.3.3 Include calibration timestamp, multi_pulse, and integration_time
+  - [x] 3.3.4 Works for both proximity and interrupt session types
+
+**Files modified:**
+- `firmware/src/components/detection/DirectionDetector.h` - Added calibration fields and methods
+- `firmware/src/components/detection/DirectionDetector.cpp` - Integrated calibrated thresholds
+- `firmware/src/components/interrupt/InterruptManager.h` - Added calibration fields and methods
+- `firmware/src/components/interrupt/InterruptManager.cpp` - Integrated calibrated thresholds
+- `firmware/src/components/data/DataTransmitter.cpp` - Added calibration metadata to sessions
+- `firmware/src/main.cpp` - Pass calibration to detectors when entering play/interrupt mode
 
 ### Phase 4: Persistence (Post-MVP)
 
@@ -481,7 +492,7 @@ void calculateThresholds() {
 2. ✅ Wizard guides through all 3 PCBs
 3. ✅ Approach detection works reliably (sustained elevated readings)
 4. ✅ Thresholds are calculated and stored in RAM (`deviceCalibration`)
-5. 🔲 DirectionDetector uses calibrated thresholds (Phase 3)
+5. ✅ DirectionDetector uses calibrated thresholds
 
 ### Full Feature Complete When:
 1. ✅ Frontend can trigger calibration
@@ -522,6 +533,7 @@ void calculateThresholds() {
 
 | Date | Change |
 |------|--------|
+| 2025-12-30 | Phase 3 implemented - DirectionDetector, InterruptManager, session metadata |
 | 2025-12-30 | Phase 1 & 2 implemented - firmware and frontend complete |
 | 2025-12-29 | Initial planning document created |
 

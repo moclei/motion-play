@@ -477,6 +477,18 @@ void handleCommand(const String &command, JsonDocument *doc)
                               intConfig.persistence, intConfig.integrationTime,
                               intConfig.mode == InterruptMode::LOGIC_OUTPUT ? "logic" : "normal");
 
+                // Apply calibration data if available
+                if (deviceCalibration.isValid())
+                {
+                    interruptManager.setCalibration(&deviceCalibration);
+                    Serial.println("Calibration data applied to InterruptManager");
+                }
+                else
+                {
+                    interruptManager.setCalibration(nullptr);
+                    Serial.println("No calibration - InterruptManager using fallback thresholds");
+                }
+
                 if (!interruptManager.configure(intConfig))
                 {
                     Serial.println("WARNING: Some sensors failed to configure for interrupt mode");
@@ -801,6 +813,19 @@ void handleCommand(const String &command, JsonDocument *doc)
                 mqttManager->publishStatus("mode_play");
                 // Reset detector to establish fresh baseline for this session
                 directionDetector.fullReset();
+                
+                // Apply calibration data if available
+                if (deviceCalibration.isValid())
+                {
+                    directionDetector.setCalibration(&deviceCalibration);
+                    Serial.println("Calibration data applied to DirectionDetector");
+                }
+                else
+                {
+                    directionDetector.setCalibration(nullptr);
+                    Serial.println("No calibration - using fallback thresholds");
+                }
+                
                 // Turn off LEDs until baseline is established
                 ledController.off();
                 Serial.println("Direction detector reset for new play session");

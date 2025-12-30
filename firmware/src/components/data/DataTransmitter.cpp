@@ -1,5 +1,6 @@
 #include "DataTransmitter.h"
 #include "../memory/PSRAMAllocator.h"
+#include "../calibration/CalibrationData.h"
 
 DataTransmitter::DataTransmitter(MQTTManager *mqtt) : mqttManager(mqtt)
 {
@@ -75,6 +76,32 @@ bool DataTransmitter::transmitBatch(const String &sessionId,
             configObj["read_ambient"] = config->read_ambient;
             configObj["i2c_clock_khz"] = config->i2c_clock_khz;
             configObj["actual_sample_rate_hz"] = config->actual_sample_rate_hz;
+        }
+        
+        // Add calibration metadata if available
+        if (deviceCalibration.isValid())
+        {
+            JsonObject calObj = doc.createNestedObject("calibration");
+            calObj["valid"] = true;
+            calObj["timestamp"] = deviceCalibration.timestamp;
+            calObj["multi_pulse"] = deviceCalibration.multi_pulse;
+            calObj["integration_time"] = deviceCalibration.integration_time;
+            
+            JsonArray thresholds = calObj.createNestedArray("thresholds");
+            for (int i = 0; i < CALIBRATION_NUM_PCBS; i++)
+            {
+                JsonObject pcbCal = thresholds.createNestedObject();
+                pcbCal["pcb"] = i + 1;
+                pcbCal["baseline_max"] = deviceCalibration.pcbs[i].baseline_max;
+                pcbCal["signal_min"] = deviceCalibration.pcbs[i].signal_min;
+                pcbCal["signal_max"] = deviceCalibration.pcbs[i].signal_max;
+                pcbCal["threshold"] = deviceCalibration.pcbs[i].threshold;
+            }
+        }
+        else
+        {
+            JsonObject calObj = doc.createNestedObject("calibration");
+            calObj["valid"] = false;
         }
     }
 
@@ -203,6 +230,32 @@ bool DataTransmitter::transmitInterruptBatch(const String &sessionId,
         intConfig["smart_persistence"] = config->interrupt_smart_persistence;
         intConfig["mode"] = config->interrupt_mode;
         intConfig["led_current"] = config->led_current;
+        
+        // Add calibration metadata if available
+        if (deviceCalibration.isValid())
+        {
+            JsonObject calObj = doc.createNestedObject("calibration");
+            calObj["valid"] = true;
+            calObj["timestamp"] = deviceCalibration.timestamp;
+            calObj["multi_pulse"] = deviceCalibration.multi_pulse;
+            calObj["integration_time"] = deviceCalibration.integration_time;
+            
+            JsonArray thresholds = calObj.createNestedArray("thresholds");
+            for (int i = 0; i < CALIBRATION_NUM_PCBS; i++)
+            {
+                JsonObject pcbCal = thresholds.createNestedObject();
+                pcbCal["pcb"] = i + 1;
+                pcbCal["baseline_max"] = deviceCalibration.pcbs[i].baseline_max;
+                pcbCal["signal_min"] = deviceCalibration.pcbs[i].signal_min;
+                pcbCal["signal_max"] = deviceCalibration.pcbs[i].signal_max;
+                pcbCal["threshold"] = deviceCalibration.pcbs[i].threshold;
+            }
+        }
+        else
+        {
+            JsonObject calObj = doc.createNestedObject("calibration");
+            calObj["valid"] = false;
+        }
     }
 
     // Add events array
