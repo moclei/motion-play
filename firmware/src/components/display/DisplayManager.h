@@ -3,8 +3,9 @@
 
 #include <TFT_eSPI.h>
 
-// Forward declaration
+// Forward declarations
 struct SensorConfiguration;
+enum class CalibrationState : uint8_t;
 
 // Initialization stages
 enum InitStage
@@ -107,6 +108,16 @@ public:
     void showNetworkInfo(const String &ip, int rssi);
     void showMQTTStatus(bool connected);
     void clear();
+    
+    // Calibration display
+    void showCalibrationIntro();
+    void showCalibrationBaseline(uint8_t pcbId, uint8_t progress);
+    void showCalibrationApproach(uint8_t pcbId, uint16_t currentReading, uint8_t progress, uint32_t timeRemaining);
+    void showCalibrationSuccess(uint8_t pcbId);
+    void showCalibrationFailed(uint8_t pcbId, const String &reason = "Timeout");
+    void showCalibrationSummary(uint16_t threshold1, uint16_t threshold2, uint16_t threshold3);
+    void showCalibrationComplete();
+    void showCalibrationCancelled();
 };
 
 #endif

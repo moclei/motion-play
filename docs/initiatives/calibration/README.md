@@ -1,8 +1,17 @@
 # Calibration System Initiative
 
-> **Status:** Planning  
+> **Status:** Phase 1 & 2 Complete ✅  
 > **Created:** 2025-12-29  
-> **Last Updated:** 2025-12-29
+> **Last Updated:** 2025-12-30
+
+## Implementation Status
+
+| Phase | Status | Notes |
+|-------|--------|-------|
+| Phase 1: Core Infrastructure | ✅ Complete | Firmware compiles and works |
+| Phase 2: Frontend Integration | ✅ Complete | Calibration button added to ModeSelector |
+| Phase 3: Detection Integration | 🔲 Not Started | Thresholds not yet used by DirectionDetector |
+| Phase 4: Persistence | 🔲 Not Started | Data only in RAM currently |
 
 ## Overview
 
@@ -315,7 +324,7 @@ struct PCBCalibration {
 
 // Complete device calibration
 struct DeviceCalibration {
-    uint32_t magic;               // 0xCAL1B123 - validity marker
+    uint32_t magic;               // 0xCA11B123 - validity marker
     uint32_t version;             // Schema version
     uint32_t timestamp;           // When calibration was performed
     
@@ -329,7 +338,7 @@ struct DeviceCalibration {
     
     // Overall validity
     bool isValid() const { 
-        return magic == 0xCAL1B123 && 
+        return magic == 0xCA11B123 && 
                pcbs[0].valid && pcbs[1].valid && pcbs[2].valid; 
     }
 };
@@ -364,59 +373,73 @@ void calculateThresholds() {
 
 ## Implementation Plan
 
-### Phase 1: Core Infrastructure (MVP)
+### Phase 1: Core Infrastructure (MVP) ✅ COMPLETE
 
-- [ ] **1.1** Create `CalibrationManager` component
-  - [ ] 1.1.1 Define `CalibrationState` enum (IDLE, INTRO, BASELINE_PCB1, APPROACH_PCB1, etc.)
-  - [ ] 1.1.2 Create `CalibrationManager` class with state machine
-  - [ ] 1.1.3 Implement `begin()`, `update()`, `isActive()` methods
-  - [ ] 1.1.4 Timer management for phase transitions
-  - [ ] 1.1.5 Sensor reading aggregation per PCB
+- [x] **1.1** Create `CalibrationManager` component
+  - [x] 1.1.1 Define `CalibrationState` enum (IDLE, INTRO, BASELINE_PCB1, APPROACH_PCB1, etc.)
+  - [x] 1.1.2 Create `CalibrationManager` class with state machine
+  - [x] 1.1.3 Implement `begin()`, `update()`, `isActive()` methods
+  - [x] 1.1.4 Timer management for phase transitions
+  - [x] 1.1.5 Sensor reading aggregation per PCB
 
-- [ ] **1.2** Create `CalibrationData` structures
-  - [ ] 1.2.1 Define `PCBCalibration` struct
-  - [ ] 1.2.2 Define `DeviceCalibration` struct with validity checking
-  - [ ] 1.2.3 Create global/singleton storage instance
-  - [ ] 1.2.4 Implement threshold calculation method
+- [x] **1.2** Create `CalibrationData` structures
+  - [x] 1.2.1 Define `PCBCalibration` struct
+  - [x] 1.2.2 Define `DeviceCalibration` struct with validity checking
+  - [x] 1.2.3 Create global/singleton storage instance (`deviceCalibration`)
+  - [x] 1.2.4 Implement threshold calculation method
 
-- [ ] **1.3** Implement approach detection for calibration
-  - [ ] 1.3.1 Detect when readings exceed 2× baseline (elevated)
-  - [ ] 1.3.2 Track sustained elevated readings (target: 500ms)
-  - [ ] 1.3.3 Early completion when sufficient data captured
-  - [ ] 1.3.4 Timeout handling (10 seconds max)
-  - [ ] 1.3.5 Calculate min/max/mean of signal readings
+- [x] **1.3** Implement approach detection for calibration
+  - [x] 1.3.1 Detect when readings exceed 2× baseline (elevated)
+  - [x] 1.3.2 Track sustained elevated readings (target: 500ms)
+  - [x] 1.3.3 Early completion when sufficient data captured
+  - [x] 1.3.4 Timeout handling (10 seconds max)
+  - [x] 1.3.5 Calculate min/max/mean of signal readings (via `StatsAccumulator`)
 
-- [ ] **1.4** Add T-Display UI screens
-  - [ ] 1.4.1 Intro screen (2 second countdown)
-  - [ ] 1.4.2 Baseline measurement screen (with progress bar)
-  - [ ] 1.4.3 Approach prompt screen
-  - [ ] 1.4.4 "Detecting" screen (shows live readings)
-  - [ ] 1.4.5 Success screen (shows captured values)
-  - [ ] 1.4.6 Failure screen (abort message)
-  - [ ] 1.4.7 Summary screen (all PCB results)
+- [x] **1.4** Add T-Display UI screens
+  - [x] 1.4.1 Intro screen (3 second countdown)
+  - [x] 1.4.2 Baseline measurement screen (with progress bar)
+  - [x] 1.4.3 Approach prompt screen
+  - [x] 1.4.4 "Detecting" screen (shows live readings + hold progress)
+  - [x] 1.4.5 Success screen (shows green checkmark)
+  - [x] 1.4.6 Failure screen (abort message with reason)
+  - [x] 1.4.7 Summary screen (all PCB thresholds)
 
-- [ ] **1.5** Add physical button trigger
-  - [ ] 1.5.1 Detect Button 1 hold for 3 seconds
-  - [ ] 1.5.2 Enter calibration mode on trigger
-  - [ ] 1.5.3 Button 2 to cancel during calibration
-  - [ ] 1.5.4 Any button to dismiss summary screen
+- [x] **1.5** Add physical button trigger
+  - [x] 1.5.1 Detect Button 1 (GPIO 14) hold for 3 seconds
+  - [x] 1.5.2 Enter calibration mode on trigger
+  - [x] 1.5.3 Button 2 (BOOT) to cancel during calibration
+  - [x] 1.5.4 Any button to dismiss summary screen
 
-### Phase 2: Frontend Integration
+**Files created:**
+- `firmware/src/components/calibration/CalibrationData.h`
+- `firmware/src/components/calibration/CalibrationManager.h`
+- `firmware/src/components/calibration/CalibrationManager.cpp`
 
-- [ ] **2.1** Add CALIBRATE mode to device modes
-  - [ ] 2.1.1 Add `CALIBRATE` to `DeviceMode` enum in firmware
-  - [ ] 2.1.2 Handle `SET_MODE` command for CALIBRATE
-  - [ ] 2.1.3 Transition to IDLE after calibration completes
+**Files modified:**
+- `firmware/src/components/display/DisplayManager.h` - Added 8 calibration UI methods
+- `firmware/src/components/display/DisplayManager.cpp` - Implemented calibration screens
+- `firmware/src/main.cpp` - Integrated CalibrationManager, button trigger, MQTT handler
 
-- [ ] **2.2** Update frontend mode selector
-  - [ ] 2.2.1 Add "Calibrate" option to mode dropdown
-  - [ ] 2.2.2 Show calibration-in-progress indicator
-  - [ ] 2.2.3 Disable mode changes during calibration
+### Phase 2: Frontend Integration ✅ COMPLETE
 
-- [ ] **2.3** Display calibration status in frontend
+- [x] **2.1** Add CALIBRATE mode to device modes
+  - [x] 2.1.1 Calibration handled as action (not persistent mode like IDLE/DEBUG/PLAY)
+  - [x] 2.1.2 Handle `SET_MODE` command with `mode: "calibrate"`
+  - [x] 2.1.3 Device returns to previous display after calibration completes
+
+- [x] **2.2** Update frontend mode selector
+  - [x] 2.2.1 Add "Start Calibration" button below mode selector
+  - [x] 2.2.2 Show calibration-in-progress indicator (purple theme)
+  - [x] 2.2.3 Disable calibration when not in IDLE mode (must stop collection first)
+
+- [~] **2.3** Display calibration status in frontend (DEFERRED)
   - [ ] 2.3.1 Show "Calibrated" / "Not Calibrated" badge
   - [ ] 2.3.2 Show calibration timestamp if available
   - [ ] 2.3.3 Show per-PCB threshold values
+  - *Note: Deferred to Phase 3 - requires MQTT status publishing from device*
+
+**Files modified:**
+- `frontend/motion-play-ui/src/components/ModeSelector.tsx` - Added calibration section with button
 
 ### Phase 3: Detection Integration
 
@@ -454,18 +477,18 @@ void calculateThresholds() {
 ## Success Criteria
 
 ### MVP Complete When:
-1. User can trigger calibration from device button
-2. Wizard guides through all 3 PCBs
-3. Wave detection works reliably
-4. Thresholds are calculated and stored in RAM
-5. DirectionDetector uses calibrated thresholds
+1. ✅ User can trigger calibration from device button
+2. ✅ Wizard guides through all 3 PCBs
+3. ✅ Approach detection works reliably (sustained elevated readings)
+4. ✅ Thresholds are calculated and stored in RAM (`deviceCalibration`)
+5. 🔲 DirectionDetector uses calibrated thresholds (Phase 3)
 
 ### Full Feature Complete When:
-1. Frontend can trigger calibration
-2. Calibration survives reboot (LittleFS)
-3. Calibration data viewable in frontend
-4. Cloud sync operational
-5. False trigger rate reduced by >80%
+1. ✅ Frontend can trigger calibration
+2. 🔲 Calibration survives reboot (LittleFS)
+3. 🔲 Calibration data viewable in frontend
+4. 🔲 Cloud sync operational
+5. 🔲 False trigger rate reduced by >80%
 
 ---
 
@@ -495,5 +518,10 @@ void calculateThresholds() {
 
 ---
 
-*Document maintained by AI assistant. Last human review: Pending*
+## Changelog
+
+| Date | Change |
+|------|--------|
+| 2025-12-30 | Phase 1 & 2 implemented - firmware and frontend complete |
+| 2025-12-29 | Initial planning document created |
 
