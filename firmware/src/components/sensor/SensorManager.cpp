@@ -371,6 +371,186 @@ bool SensorManager::applySensorConfig(uint8_t sensorIndex)
     return (err1 == 0 && err2 == 0);
 }
 
+void SensorManager::debugI2CScan()
+{
+    Serial.println("\n");
+    Serial.println("╔══════════════════════════════════════════════════════════════════════════════╗");
+    Serial.println("║                        I2C DEBUG SCAN - TROUBLESHOOTING                      ║");
+    Serial.println("╠══════════════════════════════════════════════════════════════════════════════╣");
+
+    // First, scan the main I2C bus BEFORE any TCA channel selection
+    Serial.println("║ STEP 1: Scanning main I2C bus (no TCA channel selected)                      ║");
+    Serial.println("╠══════════════════════════════════════════════════════════════════════════════╣");
+
+    mux.disableAllChannels();
+    delay(10);
+
+    int mainBusDevices = 0;
+    for (uint8_t addr = 0x08; addr <= 0x77; addr++)
+    {
+        Wire.beginTransmission(addr);
+        uint8_t error = Wire.endTransmission();
+
+        if (error == 0)
+        {
+            mainBusDevices++;
+            const char *deviceName = "Unknown";
+            if (addr == 0x70)
+                deviceName = "TCA9548A (main mux)";
+            else if (addr >= 0x71 && addr <= 0x77)
+                deviceName = "Possible PCA9546A";
+            else if (addr == 0x60)
+                deviceName = "VCNL4040";
+
+            Serial.printf("║   Found device at 0x%02X - %s                            \n", addr, deviceName);
+        }
+    }
+
+    if (mainBusDevices == 0)
+    {
+        Serial.println("║   ⚠️ No devices found on main I2C bus!                                      ║");
+    }
+    else
+    {
+        Serial.printf("║   Total: %d device(s) on main bus                                            \n", mainBusDevices);
+    }
+
+    // Now scan each TCA channel
+    Serial.println("╠══════════════════════════════════════════════════════════════════════════════╣");
+    Serial.println("║ STEP 2: Scanning each TCA9548A channel for connected devices                 ║");
+    Serial.println("╠══════════════════════════════════════════════════════════════════════════════╣");
+
+    for (int tca_ch = 0; tca_ch < 8; tca_ch++)
+    {
+        Serial.printf("║ TCA Channel %d:                                                              \n", tca_ch);
+
+        // Select TCA channel
+        if (!mux.selectChannel(tca_ch))
+        {
+            Serial.println("║   ⚠️ Failed to select this channel!                                         ║");
+            continue;
+        }
+
+        delay(20); // Longer delay for channel settling
+
+        // Scan for devices on this channel
+        int channelDevices = 0;
+        for (uint8_t addr = 0x08; addr <= 0x77; addr++)
+        {
+            // Skip TCA address (it will always respond)
+            if (addr == 0x70)
+                continue;
+
+            Wire.beginTransmission(addr);
+            uint8_t error = Wire.endTransmission();
+
+            if (error == 0)
+            {
+                channelDevices++;
+                const char *deviceName = "Unknown";
+                if (addr >= 0x71 && addr <= 0x77)
+                    deviceName = "PCA9546A?";
+                else if (addr == 0x74)
+                    deviceName = "PCA9546A (expected addr)";
+                else if (addr == 0x60)
+                    deviceName = "VCNL4040";
+
+                Serial.printf("║   ✓ Found: 0x%02X (%s)                                  \n", addr, deviceName);
+            }
+        }
+
+        if (channelDevices == 0)
+        {
+            Serial.println("║   (no devices found)                                                        ║");
+        }
+    }
+
+    mux.disableAllChannels();
+
+    // Additional diagnostics
+    Serial.println("╠══════════════════════════════════════════════════════════════════════════════╣");
+    Serial.println("║ STEP 3: Direct PCA9546A address probe at 0x74 on TCA channel 0               ║");
+    Serial.println("╠══════════════════════════════════════════════════════════════════════════════╣");
+
+    // Try to select TCA channel 0 and probe 0x74 specifically with detailed error codes
+    if (mux.selectChannel(0))
+    {
+        Serial.println("║   TCA channel 0 selected successfully                                       ║");
+        delay(50); // Extra long delay
+
+        // Try multiple times with different delays
+        for (int attempt = 1; attempt <= 3; attempt++)
+        {
+            Wire.beginTransmission(0x74);
+            uint8_t error = Wire.endTransmission();
+
+            const char *errorStr = "Unknown";
+            switch (error)
+            {
+            case 0:
+                errorStr = "SUCCESS";
+                break;
+            case 1:
+                errorStr = "Data too long";
+                break;
+            case 2:
+                errorStr = "NACK on address";
+                break;
+            case 3:
+                errorStr = "NACK on data";
+                break;
+            case 4:
+                errorStr = "Other error";
+                break;
+            case 5:
+                errorStr = "Timeout";
+                break;
+            }
+
+            Serial.printf("║   Attempt %d: Address 0x74 -> Error %d (%s)                    \n",
+                          attempt, error, errorStr);
+
+            if (error == 0)
+                break;
+            delay(50);
+        }
+
+        // Also try reading from 0x74 to see if it responds
+        Serial.println("║   Attempting to read control register from 0x74...                          ║");
+        Wire.beginTransmission(0x74);
+        uint8_t writeErr = Wire.endTransmission(false); // Don't release bus
+
+        if (writeErr == 0)
+        {
+            uint8_t bytesRead = Wire.requestFrom((uint8_t)0x74, (uint8_t)1);
+            if (bytesRead > 0)
+            {
+                uint8_t controlReg = Wire.read();
+                Serial.printf("║   ✓ Read success! Control register value: 0x%02X                          \n", controlReg);
+            }
+            else
+            {
+                Serial.println("║   ⚠️ Write OK but read returned 0 bytes                                    ║");
+            }
+        }
+        else
+        {
+            Serial.printf("║   ⚠️ Write failed with error %d, skipping read                               \n", writeErr);
+        }
+    }
+    else
+    {
+        Serial.println("║   ⚠️ Failed to select TCA channel 0!                                         ║");
+    }
+
+    mux.disableAllChannels();
+
+    Serial.println("╠══════════════════════════════════════════════════════════════════════════════╣");
+    Serial.println("║ DEBUG SCAN COMPLETE - Check results above for clues                          ║");
+    Serial.println("╚══════════════════════════════════════════════════════════════════════════════╝");
+    Serial.println();
+}
+
 bool SensorManager::initializePCA()
 {
     Serial.println("Scanning for PCA9546A multiplexers on TCA channels...");
@@ -471,6 +651,9 @@ bool SensorManager::init(SensorConfiguration *config)
         return false;
     }
     Serial.println("TCA9548A initialized");
+
+    // Run I2C debug scan to help troubleshoot sensor board detection
+    debugI2CScan();
 
     // Initialize PCA9546A multiplexers
     if (!initializePCA())

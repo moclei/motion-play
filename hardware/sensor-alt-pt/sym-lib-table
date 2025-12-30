@@ -1,0 +1,5 @@
+(sym_lib_table
+  (version 7)
+  (lib (name "VEMD2020X01")(type "KiCad")(uri "${KIPRJMOD}/components/sensors-VEMD2000X01/lib/LED-SMD_L2.3-W2.3_VEMD2020X01.kicad_sym")(options "")(descr ""))
+  (lib (name "FPC_8P")(type "KiCad")(uri "${KIPRJMOD}/components/fpc-8p/lib/FPC-SMD_8P-P1.00_FPC1.0-8P-SJ.kicad_sym")(options "")(descr ""))
+)

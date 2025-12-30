@@ -1055,7 +1055,7 @@
 		(property "Reference" "FPC1"
 			(at 0 3 90)
 			(layer "F.SilkS")
-			(uuid "8634d885-b4dc-4177-a864-849f22635dc6")
+			(uuid "ca1369e0-305d-4c3b-b203-5ba0f152ff8a")
 			(effects
 				(font
 					(size 1 1)
@@ -1066,7 +1066,7 @@
 		(property "Value" "FPC_Tail_10P"
 			(at -0.5 1.6875 90)
 			(layer "F.Fab")
-			(uuid "1e9fa4d3-f9c6-48a4-8100-57ea8f787cc1")
+			(uuid "eaf9544e-2546-4dec-ba71-6c447c804cb6")
 			(effects
 				(font
 					(size 1 1)
@@ -1078,7 +1078,7 @@
 			(at 0 0 90)
 			(layer "F.Fab")
 			(hide yes)
-			(uuid "ceb221d4-64e1-43fe-9090-db580d6e244f")
+			(uuid "898ec7cd-9c34-4ff9-bc5b-ca725c7bb9c9")
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -1090,7 +1090,7 @@
 			(at 0 0 90)
 			(layer "F.Fab")
 			(hide yes)
-			(uuid "2db1c0d7-4963-4b64-912c-43dcddfe5a25")
+			(uuid "46db956d-6c21-4c16-b577-1b70c2e010dd")
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2724,137 +2724,29 @@
 			)
 		)
 	)
-	(gr_line
-		(start 119.7375 88.6)
-		(end 126.8 88.6)
-		(stroke
-			(width 0.05)
-			(type default)
+	(gr_poly
+		(pts
+			(xy 126.8 88.6) (xy 119.7375 88.6) (xy 117.6 88.6) (xy 117.6 97.680502) (xy 119.731983 97.680502)
+			(xy 126.8 97.7) (xy 126.8 98.2)
+			(arc
+				(start 172.6625 98.2)
+				(mid 174.076714 97.614214)
+				(end 174.6625 96.2)
+			)
+			(arc
+				(start 174.6625 90)
+				(mid 174.076714 88.585786)
+				(end 172.6625 88)
+			)
+			(xy 126.8 88)
 		)
-		(layer "Edge.Cuts")
-		(uuid "0dd51d2f-21da-4a33-91d3-2979f6251f5e")
-	)
-	(gr_arc
-		(start 172.6625 88)
-		(mid 174.076714 88.585786)
-		(end 174.6625 90)
 		(stroke
-			(width 0.05)
-			(type default)
+			(width 0.1)
+			(type solid)
 		)
+		(fill no)
 		(layer "Edge.Cuts")
-		(uuid "2f56ba76-658d-4679-a33f-040b920b4fb6")
-	)
-	(gr_line
-		(start 117.6 97.680502)
-		(end 119.731983 97.680502)
-		(stroke
-			(width 0.05)
-			(type default)
-		)
-		(layer "Edge.Cuts")
-		(uuid "3a3eba39-2cb6-41a9-bd74-851ab986bec8")
-	)
-	(gr_line
-		(start 126.8 97.7)
-		(end 119.731983 97.680502)
-		(stroke
-			(width 0.05)
-			(type default)
-		)
-		(layer "Edge.Cuts")
-		(uuid "54cdaaf3-4e9d-43d5-a806-dbfa8c665ae6")
-	)
-	(gr_line
-		(start 126.8 88)
-		(end 172.6625 88)
-		(stroke
-			(width 0.05)
-			(type default)
-		)
-		(layer "Edge.Cuts")
-		(uuid "5c3df2d6-e1c4-4698-81c6-31ee0ddf1ee5")
-	)
-	(gr_line
-		(start 119.7375 88.6)
-		(end 117.6 88.6)
-		(stroke
-			(width 0.05)
-			(type default)
-		)
-		(layer "Edge.Cuts")
-		(uuid "6bd06579-bc51-4852-9072-0f977e57652d")
-	)
-	(gr_line
-		(start 117.6 88.6)
-		(end 117.6 97.680502)
-		(stroke
-			(width 0.05)
-			(type default)
-		)
-		(layer "Edge.Cuts")
-		(uuid "73e44af3-cf9e-42b6-af50-94196ca5cfc7")
-	)
-	(gr_line
-		(start 117.7375 95.68051)
-		(end 117.7375 90.6)
-		(stroke
-			(width 0.05)
-			(type default)
-		)
-		(layer "Edge.Cuts")
-		(uuid "86d89fe2-2ab6-4f40-9986-3627025cdbcb")
-	)
-	(gr_arc
-		(start 174.6625 96.2)
-		(mid 174.076714 97.614214)
-		(end 172.6625 98.2)
-		(stroke
-			(width 0.05)
-			(type default)
-		)
-		(layer "Edge.Cuts")
-		(uuid "9b4de245-43e0-468a-b079-6e366fe9999b")
-	)
-	(gr_line
-		(start 172.6625 98.2)
-		(end 126.8 98.2)
-		(stroke
-			(width 0.05)
-			(type default)
-		)
-		(layer "Edge.Cuts")
-		(uuid "ae0dd4f6-255e-4de6-add3-2354012297f5")
-	)
-	(gr_line
-		(start 126.8 98.2)
-		(end 126.8 97.7)
-		(stroke
-			(width 0.05)
-			(type default)
-		)
-		(layer "Edge.Cuts")
-		(uuid "b6a41fbc-2ab3-4932-be58-0ac4db44a9e7")
-	)
-	(gr_line
-		(start 174.6625 90)
-		(end 174.6625 96.2)
-		(stroke
-			(width 0.05)
-			(type default)
-		)
-		(layer "Edge.Cuts")
-		(uuid "c35e1434-e280-47cb-92cd-0c47f732d3dd")
-	)
-	(gr_line
-		(start 126.8 88.6)
-		(end 126.8 88)
-		(stroke
-			(width 0.05)
-			(type default)
-		)
-		(layer "Edge.Cuts")
-		(uuid "e7500fa0-a70c-49fc-a4c5-1a177dbceccb")
+		(uuid "16b1a969-a14a-486c-bb5e-f64decbaf284")
 	)
 	(gr_text "IN2"
 		(at 124.4 90 0)
@@ -2964,7 +2856,7 @@
 			(justify left bottom)
 		)
 	)
-	(gr_text "COMPONENT STIFFENER 1 (IC1 area)\nMaterial: FR4\nThickness: 0.5mm\nSide: Bottom\n\nCOMPONENT STIFFENER 2 (IC2 area)\nMaterial: FR4\nThickness: 0.5mm\nSide: Bottom"
+	(gr_text "COMPONENT STIFFENER 1 (IC1 area)\nMaterial: FR4\nThickness: 0.6mm\nSide: Bottom\n\nCOMPONENT STIFFENER 2 (IC2 area)\nMaterial: FR4\nThickness: 0.6mm\nSide: Bottom"
 		(at 157.8 113.875 0)
 		(layer "Cmts.User")
 		(uuid "33e51938-3eb1-46bb-8172-49f2cddc98db")
@@ -2976,7 +2868,7 @@
 			(justify left bottom)
 		)
 	)
-	(gr_text "FPC TAIL STIFFENER: \nPI (Polyimide), 0.2mm thick, \nBOTTOM side\nTarget total thickness: 0.3mm"
+	(gr_text "FPC TAIL STIFFENER: \nPI (Polyimide)\nBOTTOM side\nTarget total thickness: 0.3mm"
 		(at 116.6 84.8 0)
 		(layer "Cmts.User")
 		(uuid "760ed20d-0340-49d8-abc8-188169b90d97")

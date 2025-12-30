@@ -70,64 +70,66 @@ class SensorManager
 private:
     TCA9548A mux;
     Adafruit_VCNL4040 sensors[NUM_SENSORS];
-    
+
     // PCA9546A multiplexers (one per sensor board, up to 3 boards)
     PCA9546A pca_instances[3] = {PCA9546A(0x74), PCA9546A(0x75), PCA9546A(0x76)};
     uint8_t pca_addresses[3] = {0, 0, 0}; // Detected addresses (0 = not found)
-    
+
     // Sensor mapping structure
-    struct SensorMap {
-        uint8_t tca_channel;  // 0-2 (which sensor board on TCA)
-        uint8_t pca_channel;  // 0-1 (which sensor on board: S1/S2)
+    struct SensorMap
+    {
+        uint8_t tca_channel; // 0-2 (which sensor board on TCA)
+        uint8_t pca_channel; // 0-1 (which sensor on board: S1/S2)
     };
-    
+
     const SensorMap sensorMapping[NUM_SENSORS] = {
-        {0, 0},  // Sensor 0: P1S1 (TCA0, PCA0)
-        {0, 1},  // Sensor 1: P1S2 (TCA0, PCA1)
-        {1, 0},  // Sensor 2: P2S1 (TCA1, PCA0)
-        {1, 1},  // Sensor 3: P2S2 (TCA1, PCA1)
-        {2, 0},  // Sensor 4: P3S1 (TCA2, PCA0)
-        {2, 1}   // Sensor 5: P3S2 (TCA2, PCA1)
+        {0, 0}, // Sensor 0: P1S1 (TCA0, PCA0)
+        {0, 1}, // Sensor 1: P1S2 (TCA0, PCA1)
+        {1, 0}, // Sensor 2: P2S1 (TCA1, PCA0)
+        {1, 1}, // Sensor 3: P2S2 (TCA1, PCA1)
+        {2, 0}, // Sensor 4: P3S1 (TCA2, PCA0)
+        {2, 1}  // Sensor 5: P3S2 (TCA2, PCA1)
     };
 
     bool initialized = false;
-    bool sensorsActive[NUM_SENSORS] = {false};  // Track which sensors initialized
+    bool sensorsActive[NUM_SENSORS] = {false}; // Track which sensors initialized
     TaskHandle_t sensorTask = NULL;
     QueueHandle_t dataQueue = NULL;
-    SensorConfiguration* activeConfig = nullptr;  // Reference to active configuration
-    
+    SensorConfiguration *activeConfig = nullptr; // Reference to active configuration
+
     // Baseline cancellation values per sensor (for PS_CANC register)
     // These values are subtracted by the sensor hardware to compensate for
     // cover window reflections and other constant offsets
     uint16_t baselineValues[NUM_SENSORS] = {0};
-    
+
     // Graceful shutdown flag - volatile because accessed from multiple cores
     volatile bool stopRequested = false;
-    
+
     bool initializePCA();
-    void cleanupI2CBus();  // Clean up I2C bus state
+    void cleanupI2CBus(); // Clean up I2C bus state
+    void debugI2CScan();  // Debug: scan I2C bus on each TCA channel
     static void sensorTaskFunction(void *parameter);
-    bool calibrateSensorBaseline(uint8_t sensorIndex);  // Calibrate single sensor PS_CANC
-    
+    bool calibrateSensorBaseline(uint8_t sensorIndex); // Calibrate single sensor PS_CANC
+
     // Configuration helpers
-    VCNL4040_LEDCurrent parseLEDCurrent(const String& current);
-    VCNL4040_ProximityIntegration parseIntegrationTime(const String& time);
-    VCNL4040_LEDDutyCycle parseDutyCycle(const String& duty);
-    uint8_t parseMultiPulse(const String& mp);  // Multi-pulse mode: 1, 2, 4, or 8 pulses
+    VCNL4040_LEDCurrent parseLEDCurrent(const String &current);
+    VCNL4040_ProximityIntegration parseIntegrationTime(const String &time);
+    VCNL4040_LEDDutyCycle parseDutyCycle(const String &duty);
+    uint8_t parseMultiPulse(const String &mp); // Multi-pulse mode: 1, 2, 4, or 8 pulses
     bool applySensorConfig(uint8_t sensorIndex);
 
 public:
     SensorManager();
-    bool init(SensorConfiguration* config = nullptr);
+    bool init(SensorConfiguration *config = nullptr);
     bool startCollection(QueueHandle_t queue);
     void stopCollection();
     bool isCollecting();
     bool readSensor(uint8_t sensorIndex, SensorReading &reading);
     std::vector<SensorMetadata> getSensorMetadata();
-    bool reinitialize(SensorConfiguration* config);
-    void dumpSensorConfiguration();  // Diagnostic: print all sensor configs to serial
-    bool calibrateProximityCancellation();  // Calibrate PS_CANC for all sensors (cover offset)
-    uint16_t getBaselineValue(uint8_t sensorIndex);  // Get stored baseline for a sensor
+    bool reinitialize(SensorConfiguration *config);
+    void dumpSensorConfiguration();                 // Diagnostic: print all sensor configs to serial
+    bool calibrateProximityCancellation();          // Calibrate PS_CANC for all sensors (cover offset)
+    uint16_t getBaselineValue(uint8_t sensorIndex); // Get stored baseline for a sensor
 };
 
 #endif
