@@ -112,10 +112,10 @@ public:
     // Calibration display
     void showCalibrationIntro();
     void showCalibrationBaseline(uint8_t pcbId, uint8_t progress);
-    void showCalibrationApproach(uint8_t pcbId, uint16_t currentReading, uint8_t progress, uint32_t timeRemaining);
+    void showCalibrationApproach(uint8_t pcbId, uint16_t currentReading, uint16_t threshold, uint8_t progress, uint32_t timeRemaining);
     void showCalibrationSuccess(uint8_t pcbId);
     void showCalibrationFailed(uint8_t pcbId, const String &reason = "Timeout");
-    void showCalibrationSummary(uint16_t threshold1, uint16_t threshold2, uint16_t threshold3);
+    void showCalibrationSummary(uint16_t threshold1, uint16_t threshold2, uint16_t threshold3, bool valid1 = true, bool valid2 = true, bool valid3 = true);
     void showCalibrationComplete();
     void showCalibrationCancelled();
 };

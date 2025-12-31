@@ -9,7 +9,7 @@ CalibrationManager calibrationManager;
 // ============================================================================
 
 CalibrationManager::CalibrationManager()
-    : _mux(nullptr),
+    : _sensorMgr(nullptr),
       _display(nullptr),
       _state(CalibrationState::IDLE),
       _currentPCB(0),
@@ -26,22 +26,22 @@ CalibrationManager::CalibrationManager()
     _calibration.reset();
 }
 
-bool CalibrationManager::begin(MuxController *mux, DisplayManager *display)
+bool CalibrationManager::begin(SensorManager *sensorMgr, DisplayManager *display)
 {
-    if (mux == nullptr)
+    if (sensorMgr == nullptr)
     {
-        Serial.println("[CalibrationManager] ERROR: MuxController is null");
+        Serial.println("[CalibrationManager] ERROR: SensorManager is null");
         return false;
     }
 
-    _mux = mux;
+    _sensorMgr = sensorMgr;
     _display = display;
 
     // Initialize button pins
-    pinMode(CAL_BUTTON_1, INPUT_PULLUP);
-    pinMode(CAL_BUTTON_2, INPUT_PULLUP);
+    pinMode(CAL_BUTTON_TRIGGER, INPUT_PULLUP);
+    pinMode(CAL_BUTTON_CANCEL, INPUT_PULLUP);
 
-    Serial.println("[CalibrationManager] Initialized");
+    Serial.println("[CalibrationManager] Initialized (using SensorManager for readings)");
     return true;
 }
 
@@ -97,10 +97,10 @@ void CalibrationManager::update()
         break;
     }
 
-    // Check for cancel button during calibration
-    if (isInProgress() && digitalRead(CAL_BUTTON_2) == LOW)
+    // Check for cancel button during calibration (RIGHT button = GPIO 14)
+    if (isInProgress() && digitalRead(CAL_BUTTON_CANCEL) == LOW)
     {
-        Serial.println("[CalibrationManager] Cancel button pressed");
+        Serial.println("[CalibrationManager] Cancel button pressed (GPIO 14)");
         cancelCalibration();
     }
 }
@@ -179,7 +179,13 @@ void CalibrationManager::handleApproach()
     uint16_t reading;
     if (!readPCB(_currentPCB, reading))
     {
-        // Read failed
+        // Read failed - log periodically
+        static uint32_t lastReadFailLog = 0;
+        if (millis() - lastReadFailLog > 1000)
+        {
+            lastReadFailLog = millis();
+            Serial.printf("[CalibrationManager] PCB%d: Read failed!\n", _currentPCB);
+        }
         return;
     }
     _currentReading = reading;
@@ -191,6 +197,15 @@ void CalibrationManager::handleApproach()
     // Check if reading is elevated (above threshold)
     float threshold = max((float)baselineMax * CAL_ELEVATED_MULTIPLIER,
                           (float)CAL_MIN_ELEVATED_READING);
+
+    // Log readings periodically for debugging
+    static uint32_t lastReadingLog = 0;
+    if (millis() - lastReadingLog > 500)
+    {
+        lastReadingLog = millis();
+        Serial.printf("[CalibrationManager] PCB%d: reading=%d, baseline_max=%d, threshold=%.0f\n",
+                      _currentPCB, reading, baselineMax, threshold);
+    }
 
     bool isElevated = (reading > threshold);
 
@@ -257,22 +272,36 @@ void CalibrationManager::handleApproach()
         }
     }
 
-    // Update display every 50ms
+    // Update display every 100ms (more stable visually)
     static uint32_t lastDisplayUpdate = 0;
-    if (millis() - lastDisplayUpdate >= 50)
+    if (millis() - lastDisplayUpdate >= 100)
     {
         lastDisplayUpdate = millis();
         if (_display)
         {
-            _display->showCalibrationApproach(_currentPCB, _currentReading, getPhaseProgress(), getTimeRemaining());
+            // Show the threshold the user needs to exceed
+            uint16_t displayThreshold = (uint16_t)threshold;
+            _display->showCalibrationApproach(_currentPCB, _currentReading, displayThreshold, getPhaseProgress(), getTimeRemaining());
         }
     }
 
     // Check for timeout
     if (elapsed >= CAL_APPROACH_TIMEOUT_MS)
     {
-        Serial.printf("[CalibrationManager] PCB%d: Approach timeout - FAILED\n", _currentPCB);
-        transitionTo(CalibrationState::FAILED);
+        Serial.printf("[CalibrationManager] PCB%d: Approach timeout - SKIPPING (continuing to next)\n", _currentPCB);
+        
+        // Mark this PCB as invalid but continue
+        _calibration.pcbs[pcbIndex].valid = false;
+        
+        // Show brief failure message
+        if (_display)
+        {
+            _display->showCalibrationFailed(_currentPCB, "Timeout - skipping");
+        }
+        delay(1500); // Brief pause to show failure
+        
+        // Continue to next state instead of aborting
+        transitionTo(getNextState());
     }
 }
 
@@ -290,7 +319,10 @@ void CalibrationManager::handleSummary()
             _display->showCalibrationSummary(
                 _calibration.pcbs[0].threshold,
                 _calibration.pcbs[1].threshold,
-                _calibration.pcbs[2].threshold);
+                _calibration.pcbs[2].threshold,
+                _calibration.pcbs[0].valid,
+                _calibration.pcbs[1].valid,
+                _calibration.pcbs[2].valid);
         }
     }
 
@@ -298,7 +330,7 @@ void CalibrationManager::handleSummary()
     if (elapsed >= CAL_SUMMARY_MIN_DISPLAY_MS)
     {
         // Check for any button press to continue
-        if (digitalRead(CAL_BUTTON_1) == LOW || digitalRead(CAL_BUTTON_2) == LOW)
+        if (digitalRead(CAL_BUTTON_TRIGGER) == LOW || digitalRead(CAL_BUTTON_CANCEL) == LOW)
         {
             summaryRendered = false; // Reset for next calibration
             transitionTo(CalibrationState::COMPLETE);
@@ -345,7 +377,7 @@ void CalibrationManager::handleFailed()
     // Wait for button press to acknowledge
     if (elapsed >= 1000) // Minimum display time
     {
-        if (digitalRead(CAL_BUTTON_1) == LOW || digitalRead(CAL_BUTTON_2) == LOW)
+        if (digitalRead(CAL_BUTTON_TRIGGER) == LOW || digitalRead(CAL_BUTTON_CANCEL) == LOW)
         {
             failedRendered = false; // Reset for next calibration
             _state = CalibrationState::IDLE;
@@ -373,7 +405,7 @@ void CalibrationManager::handleCancelled()
 
 bool CalibrationManager::startCalibration()
 {
-    if (_mux == nullptr)
+    if (_sensorMgr == nullptr)
     {
         Serial.println("[CalibrationManager] Cannot start: not initialized");
         return false;
@@ -496,7 +528,7 @@ uint32_t CalibrationManager::getTimeRemaining() const
 
 bool CalibrationManager::checkButtonTrigger()
 {
-    bool buttonPressed = (digitalRead(CAL_BUTTON_1) == LOW);
+    bool buttonPressed = (digitalRead(CAL_BUTTON_TRIGGER) == LOW);
 
     if (buttonPressed && !_buttonWasPressed)
     {
@@ -580,7 +612,7 @@ void CalibrationManager::transitionTo(CalibrationState newState)
 
 bool CalibrationManager::readPCB(uint8_t pcbId, uint16_t &reading)
 {
-    if (pcbId < 1 || pcbId > 3)
+    if (pcbId < 1 || pcbId > 3 || _sensorMgr == nullptr)
         return false;
 
     // PCB ID is 1-based, but sensor positions are 0-based
@@ -591,31 +623,25 @@ bool CalibrationManager::readPCB(uint8_t pcbId, uint16_t &reading)
     uint16_t reading1 = 0, reading2 = 0;
     bool success1 = false, success2 = false;
 
-    // Read S1
-    if (_mux->isSensorAvailable(pos1))
+    // Use SensorManager to read sensors (already initialized and configured)
+    SensorReading sr1, sr2;
+    
+    if (_sensorMgr->readSensor(pos1, sr1))
     {
-        if (_mux->selectSensor(pos1))
-        {
-            delayMicroseconds(200); // Brief settle time
-            reading1 = _sensor.readProximity();
-            success1 = true;
-        }
+        reading1 = sr1.proximity;
+        success1 = true;
     }
 
-    // Read S2
-    if (_mux->isSensorAvailable(pos2))
+    if (_sensorMgr->readSensor(pos2, sr2))
     {
-        if (_mux->selectSensor(pos2))
-        {
-            delayMicroseconds(200);
-            reading2 = _sensor.readProximity();
-            success2 = true;
-        }
+        reading2 = sr2.proximity;
+        success2 = true;
     }
 
     if (!success1 && !success2)
     {
-        Serial.printf("[CalibrationManager] Failed to read PCB%d sensors\n", pcbId);
+        Serial.printf("[CalibrationManager] Failed to read PCB%d sensors (S1=%s, S2=%s)\n", 
+                      pcbId, success1 ? "ok" : "fail", success2 ? "ok" : "fail");
         return false;
     }
 
@@ -649,24 +675,8 @@ void CalibrationManager::saveSignalStats()
 
 bool CalibrationManager::configureSensorForCalibration(uint8_t position)
 {
-    if (!_mux->selectSensor(position))
-        return false;
-
-    delay(5);
-
-    if (!_sensor.begin())
-        return false;
-
-    // Configure sensor with current settings
-    _sensor.setLEDCurrent(_ledCurrent);
-    _sensor.setProxIntegrationTime(_integrationTime);
-    _sensor.setIRDutyCycle(40);
-    _sensor.setProxResolution(16);
-    _sensor.setMultiPulse(_multiPulse);
-    _sensor.setProxCancellation(0);
-    _sensor.powerOnProximity(true);
-
-    delay(10);
+    // No configuration needed - SensorManager already has sensors configured
+    // This function is kept for compatibility but does nothing
     return true;
 }
 

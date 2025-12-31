@@ -30,8 +30,7 @@
 
 #include <Arduino.h>
 #include "CalibrationData.h"
-#include "../mux/MuxController.h"
-#include "../vcnl4040/VCNL4040.h"
+#include "../sensor/SensorManager.h"
 #include "../display/DisplayManager.h"
 
 // ============================================================================
@@ -52,8 +51,8 @@
 
 // Button configuration
 #define CAL_BUTTON_HOLD_MS 3000           // Hold time to trigger calibration
-#define CAL_BUTTON_1 14                   // T-Display Button 1 GPIO
-#define CAL_BUTTON_2 0                    // T-Display Button 2 GPIO (BOOT)
+#define CAL_BUTTON_TRIGGER 0              // BOOT button (GPIO 0) - hold to trigger calibration
+#define CAL_BUTTON_CANCEL 14              // Right button (GPIO 14) - press to cancel
 
 // ============================================================================
 // State Machine
@@ -138,11 +137,11 @@ public:
 
     /**
      * Initialize the calibration manager
-     * @param mux Pointer to MuxController for sensor access
+     * @param sensorMgr Pointer to SensorManager for sensor reading
      * @param display Pointer to DisplayManager for UI rendering (optional)
      * @return true if successful
      */
-    bool begin(MuxController *mux, DisplayManager *display = nullptr);
+    bool begin(SensorManager *sensorMgr, DisplayManager *display = nullptr);
 
     /**
      * Update function - call every loop iteration
@@ -226,9 +225,8 @@ public:
     void setSensorConfig(uint8_t multiPulse, uint8_t integrationTime, uint8_t ledCurrent);
 
 private:
-    MuxController *_mux;
+    SensorManager *_sensorMgr;
     DisplayManager *_display;
-    VCNL4040 _sensor; // Temporary sensor instance for readings
 
     CalibrationState _state;
     uint8_t _currentPCB;        // 1-3 during calibration

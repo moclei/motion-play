@@ -14,7 +14,6 @@
 #include "components/led/LEDController.h"
 #include "components/interrupt/InterruptManager.h"
 #include "components/calibration/CalibrationManager.h"
-#include "components/mux/MuxController.h"
 
 // Button pins for T-Display-S3
 #define BUTTON_1 0  // Left button (BOOT)
@@ -39,10 +38,6 @@ DataTransmitter *dataTransmitter;
 DirectionDetector directionDetector;
 LEDController ledController;
 InterruptManager interruptManager;
-MuxController muxController;
-
-// Calibration state
-bool calibrationPending = false;
 
 // Current device mode
 DeviceMode currentMode = DeviceMode::DEBUG; // Default to debug for backwards compatibility
@@ -273,20 +268,9 @@ void initializeSystem()
     Serial.println("Sensors initialized successfully");
     delay(500);
 
-    // Initialize MuxController for calibration
-    Serial.println("Initializing MuxController...");
-    if (!muxController.begin())
-    {
-        Serial.println("WARNING: MuxController init failed (calibration may not work)");
-    }
-    else
-    {
-        Serial.printf("MuxController: %d sensors found\n", muxController.getActiveSensorCount());
-    }
-
-    // Initialize CalibrationManager
+    // Initialize CalibrationManager (uses SensorManager for readings)
     Serial.println("Initializing CalibrationManager...");
-    if (!calibrationManager.begin(&muxController, &display))
+    if (!calibrationManager.begin(&sensorManager, &display))
     {
         Serial.println("WARNING: CalibrationManager init failed");
     }

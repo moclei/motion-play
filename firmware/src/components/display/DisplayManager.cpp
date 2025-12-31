@@ -595,7 +595,7 @@ void DisplayManager::showCalibrationBaseline(uint8_t pcbId, uint8_t progress)
     tft.drawString("Capturing noise floor...", SCREEN_WIDTH / 2 - 69, 150);
 }
 
-void DisplayManager::showCalibrationApproach(uint8_t pcbId, uint16_t currentReading, uint8_t progress, uint32_t timeRemaining)
+void DisplayManager::showCalibrationApproach(uint8_t pcbId, uint16_t currentReading, uint16_t threshold, uint8_t progress, uint32_t timeRemaining)
 {
     clear();
     
@@ -603,76 +603,89 @@ void DisplayManager::showCalibrationApproach(uint8_t pcbId, uint16_t currentRead
     tft.setTextSize(2);
     tft.setTextColor(TFT_CYAN, TFT_BLACK);
     String pcbText = "PCB " + String(pcbId);
-    tft.drawString(pcbText, SCREEN_WIDTH / 2 - 30, 10);
+    tft.drawString(pcbText, SCREEN_WIDTH / 2 - 30, 5);
     
     // Step indicator
     tft.setTextSize(1);
     tft.setTextColor(TFT_LIGHTGREY, TFT_BLACK);
-    tft.drawString("Step 2/2: Approach", SCREEN_WIDTH / 2 - 54, 35);
+    tft.drawString("Step 2/2: Approach & Hold", SCREEN_WIDTH / 2 - 66, 28);
     
-    // Icon area - hand approaching
+    // Large reading display - main focus
+    tft.setTextSize(1);
+    tft.setTextColor(TFT_LIGHTGREY, TFT_BLACK);
+    tft.drawString("Reading:", 20, 50);
+    tft.drawString("Need:", 20, 70);
+    
+    // Current reading - LARGE
+    uint16_t readingColor = TFT_LIGHTGREY;
+    if (currentReading >= threshold)
+        readingColor = TFT_GREEN;
+    else if (currentReading > threshold / 2)
+        readingColor = TFT_YELLOW;
+    else if (currentReading > 0)
+        readingColor = TFT_ORANGE;
+    
     tft.setTextSize(3);
-    if (progress > 0)
+    tft.setTextColor(readingColor, TFT_BLACK);
+    tft.drawString(String(currentReading), 80, 42);
+    
+    // Threshold needed
+    tft.setTextSize(2);
+    tft.setTextColor(TFT_CYAN, TFT_BLACK);
+    tft.drawString("> " + String(threshold), 80, 65);
+    
+    // Status indicator
+    tft.setTextSize(1);
+    if (currentReading >= threshold)
     {
         tft.setTextColor(TFT_GREEN, TFT_BLACK);
-        tft.drawString("[*]", SCREEN_WIDTH / 2 - 27, 50);  // Detected
+        tft.drawString("DETECTED! Hold steady...", SCREEN_WIDTH / 2 - 66, 92);
+    }
+    else if (currentReading > 0)
+    {
+        tft.setTextColor(TFT_YELLOW, TFT_BLACK);
+        tft.drawString("Move CLOSER to sensors", SCREEN_WIDTH / 2 - 63, 92);
     }
     else
     {
-        tft.setTextColor(TFT_YELLOW, TFT_BLACK);
-        tft.drawString("-->", SCREEN_WIDTH / 2 - 27, 50);  // Arrow/approach
+        tft.setTextColor(TFT_RED, TFT_BLACK);
+        tft.drawString("No reading - check sensor connection", SCREEN_WIDTH / 2 - 102, 92);
     }
     
-    // Instruction
-    tft.setTextSize(1);
-    tft.setTextColor(TFT_WHITE, TFT_BLACK);
-    tft.drawString("Move hand toward sensors & hold", SCREEN_WIDTH / 2 - 93, 85);
-    
-    // Current reading display
-    tft.setTextColor(TFT_LIGHTGREY, TFT_BLACK);
-    tft.drawString("Reading:", 20, 105);
-    
-    // Reading value with color coding
-    uint16_t readingColor = TFT_LIGHTGREY;
-    if (currentReading > 50)
-        readingColor = TFT_GREEN;
-    else if (currentReading > 20)
-        readingColor = TFT_YELLOW;
-    
-    tft.setTextSize(2);
-    tft.setTextColor(readingColor, TFT_BLACK);
-    tft.drawString(String(currentReading), 80, 100);
-    
     // Progress bar (fill when holding)
+    const int barX = 20;
+    const int barY = 108;
+    const int barW = SCREEN_WIDTH - 40;
+    const int barH = 16;
+    
+    tft.drawRoundRect(barX, barY, barW, barH, 4, TFT_DARKGREY);
+    
     if (progress > 0)
     {
-        const int barX = 160;
-        const int barY = 100;
-        const int barW = 140;
-        const int barH = 20;
-        
-        tft.setTextSize(1);
-        tft.setTextColor(TFT_LIGHTGREY, TFT_BLACK);
-        tft.drawString("Hold:", 160, 90);
-        
-        tft.drawRoundRect(barX, barY, barW, barH, 4, TFT_DARKGREY);
-        
         int fillW = (barW - 4) * progress / 100;
         if (fillW > 0)
         {
             tft.fillRoundRect(barX + 2, barY + 2, fillW, barH - 4, 2, TFT_GREEN);
         }
+        tft.setTextSize(1);
+        tft.setTextColor(TFT_WHITE, TFT_BLACK);
+        tft.drawString("Hold: " + String(progress) + "%", barX + barW / 2 - 24, barY + 3);
+    }
+    else
+    {
+        tft.setTextSize(1);
+        tft.setTextColor(TFT_DARKGREY, TFT_BLACK);
+        tft.drawString("Waiting for detection...", barX + barW / 2 - 60, barY + 3);
     }
     
     // Time remaining
-    tft.setTextSize(1);
     uint32_t secs = timeRemaining / 1000;
     tft.setTextColor(secs < 3 ? TFT_RED : TFT_YELLOW, TFT_BLACK);
-    tft.drawString("Timeout: " + String(secs) + "s", SCREEN_WIDTH / 2 - 36, 135);
+    tft.drawString("Timeout: " + String(secs) + "s", 20, 130);
     
     // Footer - cancel hint
     tft.setTextColor(TFT_DARKGREY, TFT_BLACK);
-    tft.drawString("Press BOOT button to cancel", SCREEN_WIDTH / 2 - 81, 155);
+    tft.drawString("Press RIGHT button to cancel", 20, 155);
 }
 
 void DisplayManager::showCalibrationSuccess(uint8_t pcbId)
@@ -733,35 +746,66 @@ void DisplayManager::showCalibrationFailed(uint8_t pcbId, const String &reason)
     tft.drawString("Press any button to exit", SCREEN_WIDTH / 2 - 72, 150);
 }
 
-void DisplayManager::showCalibrationSummary(uint16_t threshold1, uint16_t threshold2, uint16_t threshold3)
+void DisplayManager::showCalibrationSummary(uint16_t threshold1, uint16_t threshold2, uint16_t threshold3, bool valid1, bool valid2, bool valid3)
 {
     clear();
     
-    // Title
+    // Count valid PCBs
+    int validCount = (valid1 ? 1 : 0) + (valid2 ? 1 : 0) + (valid3 ? 1 : 0);
+    
+    // Title - color based on success
     tft.setTextSize(2);
-    tft.setTextColor(TFT_GREEN, TFT_BLACK);
-    tft.drawString("CALIBRATION", SCREEN_WIDTH / 2 - 66, 10);
-    tft.drawString("COMPLETE", SCREEN_WIDTH / 2 - 48, 30);
+    if (validCount == 3)
+    {
+        tft.setTextColor(TFT_GREEN, TFT_BLACK);
+        tft.drawString("CALIBRATION", SCREEN_WIDTH / 2 - 66, 10);
+        tft.drawString("COMPLETE", SCREEN_WIDTH / 2 - 48, 30);
+    }
+    else if (validCount > 0)
+    {
+        tft.setTextColor(TFT_YELLOW, TFT_BLACK);
+        tft.drawString("PARTIAL", SCREEN_WIDTH / 2 - 42, 10);
+        tft.drawString("CALIBRATION", SCREEN_WIDTH / 2 - 66, 30);
+    }
+    else
+    {
+        tft.setTextColor(TFT_RED, TFT_BLACK);
+        tft.drawString("CALIBRATION", SCREEN_WIDTH / 2 - 66, 10);
+        tft.drawString("FAILED", SCREEN_WIDTH / 2 - 36, 30);
+    }
     
     // Subtitle
     tft.setTextSize(1);
     tft.setTextColor(TFT_WHITE, TFT_BLACK);
-    tft.drawString("Calculated thresholds:", SCREEN_WIDTH / 2 - 66, 55);
+    tft.drawString("Results (" + String(validCount) + "/3 PCBs):", SCREEN_WIDTH / 2 - 54, 55);
     
     // Thresholds in a nice grid
-    const int colX = SCREEN_WIDTH / 2 - 80;
-    const int col2X = SCREEN_WIDTH / 2 + 20;
+    const int colX = 30;
+    const int col2X = 100;
+    const int col3X = 180;
     
-    tft.setTextColor(TFT_CYAN, TFT_BLACK);
+    // PCB 1
+    tft.setTextColor(valid1 ? TFT_CYAN : TFT_DARKGREY, TFT_BLACK);
     tft.drawString("PCB 1:", colX, 75);
-    tft.drawString("PCB 2:", colX, 95);
-    tft.drawString("PCB 3:", colX, 115);
-    
     tft.setTextSize(2);
-    tft.setTextColor(TFT_WHITE, TFT_BLACK);
-    tft.drawString(String(threshold1), col2X, 70);
-    tft.drawString(String(threshold2), col2X, 90);
-    tft.drawString(String(threshold3), col2X, 110);
+    tft.setTextColor(valid1 ? TFT_GREEN : TFT_RED, TFT_BLACK);
+    tft.drawString(valid1 ? String(threshold1) : "FAIL", col2X, 70);
+    
+    // PCB 2
+    tft.setTextSize(1);
+    tft.setTextColor(valid2 ? TFT_CYAN : TFT_DARKGREY, TFT_BLACK);
+    tft.drawString("PCB 2:", colX, 95);
+    tft.setTextSize(2);
+    tft.setTextColor(valid2 ? TFT_GREEN : TFT_RED, TFT_BLACK);
+    tft.drawString(valid2 ? String(threshold2) : "FAIL", col2X, 90);
+    
+    // PCB 3
+    tft.setTextSize(1);
+    tft.setTextColor(valid3 ? TFT_CYAN : TFT_DARKGREY, TFT_BLACK);
+    tft.drawString("PCB 3:", colX, 115);
+    tft.setTextSize(2);
+    tft.setTextColor(valid3 ? TFT_GREEN : TFT_RED, TFT_BLACK);
+    tft.drawString(valid3 ? String(threshold3) : "FAIL", col2X, 110);
     
     // Footer
     tft.setTextSize(1);
