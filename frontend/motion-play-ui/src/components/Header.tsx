@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { api } from '../services/api';
-import { Play, Square, Activity, Settings } from 'lucide-react';
+import { Play, Square, Activity, Settings, Target } from 'lucide-react';
 import toast from 'react-hot-toast';
 
 type DeviceMode = 'idle' | 'debug' | 'play';
@@ -14,6 +14,7 @@ export const Header = ({ onCollectionStopped, onSettingsClick }: HeaderProps) =>
     const [collecting, setCollecting] = useState(false);
     const [mode, setMode] = useState<DeviceMode>('idle');
     const [changingMode, setChangingMode] = useState(false);
+    const [calibrating, setCalibrating] = useState(false);
 
     const handleStartCollection = async () => {
         try {
@@ -54,6 +55,34 @@ export const Header = ({ onCollectionStopped, onSettingsClick }: HeaderProps) =>
             console.error(err);
         } finally {
             setChangingMode(false);
+        }
+    };
+
+    const handleStartCalibration = async () => {
+        if (mode !== 'idle') {
+            toast.error('Set device to Idle mode first');
+            return;
+        }
+
+        try {
+            setCalibrating(true);
+            toast.loading('Starting calibration...', { id: 'calibration' });
+            
+            await api.sendCommand('set_mode', { mode: 'calibrate' });
+            
+            toast.success('Calibration started! Follow instructions on device display.', { 
+                id: 'calibration',
+                duration: 5000 
+            });
+
+            // Reset state after calibration timeout
+            setTimeout(() => {
+                setCalibrating(false);
+            }, 30000); // 30 seconds max calibration time
+        } catch (err) {
+            toast.error('Failed to start calibration', { id: 'calibration' });
+            setCalibrating(false);
+            console.error(err);
         }
     };
 
@@ -137,6 +166,23 @@ export const Header = ({ onCollectionStopped, onSettingsClick }: HeaderProps) =>
                             ))}
                         </div>
                     </div>
+
+                    {/* Calibration Button */}
+                    <button
+                        onClick={handleStartCalibration}
+                        disabled={calibrating || mode !== 'idle'}
+                        className={`flex items-center gap-2 px-4 py-2 rounded transition-colors font-medium ${
+                            calibrating
+                                ? 'bg-purple-500 text-white animate-pulse'
+                                : mode !== 'idle'
+                                ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                                : 'bg-purple-100 text-purple-700 hover:bg-purple-200'
+                        }`}
+                        title={mode !== 'idle' ? 'Set device to Idle mode first' : 'Calibrate sensor thresholds'}
+                    >
+                        <Target size={18} />
+                        {calibrating ? 'Calibrating...' : 'Calibrate'}
+                    </button>
 
                     {/* Settings Button */}
                     <button

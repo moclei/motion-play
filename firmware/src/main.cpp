@@ -45,7 +45,7 @@ DeviceMode currentMode = DeviceMode::DEBUG; // Default to debug for backwards co
 // Play mode state
 bool playModeActive = false;
 unsigned long lastDetectionTime = 0;
-const unsigned long DETECTION_COOLDOWN = 3000; // 3 seconds between detections
+const unsigned long DETECTION_COOLDOWN = 500; // 500ms - prevents double-trigger, allows quick successive throws
 
 // Timing
 unsigned long lastStatusUpdate = 0;
