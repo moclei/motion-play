@@ -238,12 +238,12 @@ Pin Layout:
 
 ## Implementation Phases
 
-### Phase 1: Design (1-2 weeks)
+### Phase 1: Design ✅ COMPLETE
 - [x] Design rigid base PCB in KiCad (`hardware/sensor-rigid/`)
   - Reused existing schematic, removed IC1, IC2, C4, C6, C7, C8
   - Added FPC ZIF connector (C132510) with optimized pin order
   - Kept R6-R9 (I2C pull-ups) on rigid
-- [ ] Design flex sensor strip PCB in KiCad (`hardware/sensor-flex/`)
+- [x] Design flex sensor strip PCB in KiCad (`hardware/sensor-flex/`)
   - 2× VCNL4040 + 4 caps + connector tail pads
   - 2-layer, polyimide, 0.3mm thickness
   - Stiffener on: sensor areas + connector tail
@@ -254,26 +254,25 @@ Pin Layout:
   - V-groove for flex strip (adjustable angle)
   - Open top for sensor visibility
 
-### Phase 2: Prototype Order (2-3 weeks)
-- [ ] Order rigid base from JLCPCB (standard FR4 service)
-- [ ] Order flex sensor strip from JLCPCB (flex PCB service)
+### Phase 2: Prototype Order ✅ COMPLETE
+- [x] Order rigid base from JLCPCB (standard FR4 service)
+- [x] Order flex sensor strip from JLCPCB (flex PCB service)
   - Thickness: 0.3mm total (to match connector C132510)
   - Stiffener: polyimide on sensor areas + connector tail
   - Surface finish: ENIG on connector pads
   - Leave center ~5mm unstiffened for bend
 - [ ] 3D print mounting jig (try multiple angles: 2°, 5°, 10°)
 
-### Phase 3: Assembly & Test (1 week)
-- [ ] Insert flex tail into ZIF connector on rigid base
-- [ ] Mount assembled unit in V-groove jig
-- [ ] Verify I2C communication to both sensors
-- [ ] Test with existing firmware (no changes needed)
-- [ ] Compare detection performance vs current flat design
-- [ ] Test different V-groove angles with same flex strip
+### Phase 3: Assembly & Test ✅ COMPLETE
+- [x] Insert flex tail into ZIF connector on rigid base
+- [x] Mount assembled unit
+- [x] Verify I2C communication to both sensors
+- [x] Test with existing firmware (no changes needed)
+- [x] Validate detection performance - **working great!**
 
-### Phase 4: Iterate
-- [ ] Adjust angle if needed (reprint jig only)
-- [ ] If successful, consider rigid-flex integrated design for production
+### Phase 4: Iterate / Production
+- [ ] Design 3D-printed mounting jig if needed for final enclosure
+- [ ] Consider rigid-flex integrated design for production (optional optimization)
 
 ---
 
@@ -349,13 +348,23 @@ hardware/
 
 ## Files Created
 
-- **Footprint**: `hardware/libraries/motion-play-footprints.pretty/FPC_Tail_10P_1.0mm_TopContact.kicad_mod`
-- **Symbol**: `FPC_Tail_10P` in `hardware/libraries/motion-play-symbols.kicad_sym`
-- **Setup Guide**: `hardware/sensor-flex/FLEX_PCB_SETUP.md`
+**Rigid Base PCB:**
+- Schematic: `hardware/sensor-rigid/sensor-rigid.kicad_sch`
+- Layout: `hardware/sensor-rigid/sensor-rigid.kicad_pcb`
+- Netlist: `hardware/sensor-rigid/sensor-rigid.json`
+
+**Flex Sensor Strip:**
+- Schematic: `hardware/sensor-flex/sensor-flex.kicad_sch`
+- Layout: `hardware/sensor-flex/sensor-flex.kicad_pcb`
+- Setup Guide: `hardware/sensor-flex/FLEX_PCB_SETUP.md`
+
+**Shared Libraries:**
+- FPC Tail Footprint: `hardware/sensor-flex/sensor-flex.pretty/FPC_Tail_10P_1.0mm_TopContact.kicad_mod`
+- Symbol: `FPC_Tail_10P` in `hardware/libraries/motion-play-symbols.kicad_sym`
 
 ---
 
 *Created: December 9, 2025*
-*Updated: December 11, 2025*
-*Status: Phase 1 - sensor-rigid complete, sensor-flex setup complete, ready for schematic/layout*
+*Updated: January 30, 2026*
+*Status: Phase 3 COMPLETE - Prototypes ordered, received, assembled, and tested successfully. Hybrid rigid+flex design validated and working.*
 

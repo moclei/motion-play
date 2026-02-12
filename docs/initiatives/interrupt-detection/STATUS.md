@@ -68,12 +68,12 @@ The frontend implements a "first-hit" direction detection algorithm:
 
 ### Interrupt Wiring
 
-The INT lines from sensors on each PCB are combined (wired-OR via diodes):
-- PCB1 (TCA Ch0) → GPIO 11
-- PCB2 (TCA Ch1) → GPIO 12  
-- PCB3 (TCA Ch2) → GPIO 13
+The INT lines from sensors on each sensor assembly (rigid+flex pair) are combined (wired-OR via diodes on the rigid base PCB):
+- Assembly 1 (TCA Ch0) → GPIO 11
+- Assembly 2 (TCA Ch1) → GPIO 12  
+- Assembly 3 (TCA Ch2) → GPIO 13
 
-When an ISR fires, we know which PCB triggered but must poll sensors via I2C to identify which specific sensor.
+When an ISR fires, we know which sensor assembly triggered but must poll sensors via I2C to identify which specific sensor. The flex PCB angles the sensors ~2° apart, providing slightly more time between sensor triggers for direction detection.
 
 ---
 

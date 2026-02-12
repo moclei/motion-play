@@ -2,7 +2,7 @@
 
 > **Purpose**: Track investigation and documentation tasks for understanding and improving our interrupt-based direction detection.
 > 
-> **Context**: Our sensor PCBs combine two VCNL4040 INT lines via BAT54S diodes into a single wire. This creates ambiguity when both sensors trigger within milliseconds of each other.
+> **Context**: Our sensor assemblies (rigid+flex hybrid design) combine two VCNL4040 INT lines via BAT54S diodes into a single wire. The flex PCB angles sensors ~2° apart to increase detection window, but ambiguity still exists when both sensors trigger within milliseconds of each other.
 
 ---
 
@@ -127,8 +127,10 @@
 
 | File | Description |
 |------|-------------|
-| `hardware/sensor-rigid/sensor-rigid.json` | Sensor PCB netlist (JSON) |
+| `hardware/sensor-rigid/sensor-rigid.json` | Sensor rigid base PCB netlist (PCA9546A, INT combining) |
+| `hardware/sensor-flex/sensor-flex.kicad_sch` | Sensor flex strip schematic (VCNL4040s) |
 | `hardware/pcb-main/kicad/netlists/motion-play-main_5-1.json` | Main PCB netlist |
+| `docs/initiatives/flex-sensor-pcb/DESIGN_PLAN.md` | Hybrid rigid+flex design rationale |
 | `docs/initiatives/interrupt-detection/DESIGN_PLAN.md` | Original interrupt mode design |
 | `docs/initiatives/interrupt-detection/STATUS.md` | Current implementation status |
 | `firmware/src/components/interrupt/InterruptManager.h` | Firmware interrupt handling |

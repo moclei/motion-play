@@ -150,7 +150,7 @@ Use interrupt as a "wake up" trigger, then briefly poll for detailed data:
 
 ### Current Hardware Status
 
-From the flex sensor PCB design (`DESIGN_PLAN.md`):
+From the flex sensor PCB design (`docs/initiatives/flex-sensor-pcb/DESIGN_PLAN.md`):
 
 | Component | Description |
 |-----------|-------------|
