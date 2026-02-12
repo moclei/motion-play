@@ -37,6 +37,10 @@
 - [x] Event detail: existing SessionChart + LabelEditor already work for live_debug sessions (proximity data with labels)
 
 ## Phase 5: Polish and validation
-- [ ] End-to-end test: detection capture, missed-event capture, labeling, data retrieval
-- [ ] Deploy updated Lambdas (processData, sendCommand)
-- [ ] Remove resolved Open Questions from PLAN.md
+- [x] Verify firmware compiles (15.2% RAM, 17.7% Flash — no new errors)
+- [x] Verify frontend type-checks cleanly
+- [x] Clean up PLAN.md — moved resolved questions to "Resolved Design Decisions"
+- [ ] Deploy updated Lambdas (processData, sendCommand) — commands prepared, awaiting manual deploy
+- [ ] End-to-end test: detection capture round-trip (detect → pause → transmit → resume → detect again)
+- [ ] End-to-end test: missed-event capture round-trip
+- [ ] End-to-end test: labeling and data retrieval in frontend
