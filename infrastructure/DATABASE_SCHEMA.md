@@ -33,7 +33,7 @@ Partition Key: session_id (String)
 | start_timestamp | String | Session start time (ISO 8601 or epoch ms) |
 | end_timestamp | String | Session end time (ISO 8601) |
 | duration_ms | Number | Session duration in milliseconds |
-| mode | String | Recording mode (debug, play, idle, interrupt_debug) |
+| mode | String | Recording mode (debug, play, idle, interrupt_debug, **live_debug**) |
 | sample_count | Number | Total number of sensor readings (proximity sessions) |
 | **event_count** | **Number** | **Total number of interrupt events (interrupt sessions)** |
 | sample_rate | Number | Sampling rate in Hz |
@@ -43,6 +43,9 @@ Partition Key: session_id (String)
 | active_sensors | List[Object] | Which sensors were active during recording |
 | vcnl4040_config | Object | Sensor hardware configuration (proximity mode) |
 | **interrupt_config** | **Object** | **Interrupt detection configuration (interrupt mode)** |
+| capture_reason | String | (Optional) Live Debug: `"detection"` or `"missed_event"` (added Feb 2026) |
+| detection_direction | String | (Optional) Live Debug: `"a_to_b"` or `"b_to_a"` (added Feb 2026) |
+| detection_confidence | Number | (Optional) Live Debug: algorithm confidence score 0.0–1.0 (added Feb 2026) |
 
 ### Session Type Field
 
@@ -65,6 +68,17 @@ For interrupt sessions, the `interrupt_config` field stores detection settings:
   "integration_time": "1T"
 }
 ```
+
+### Live Debug Sessions
+
+Sessions with `mode: "live_debug"` are short event captures from the Live Debug feature (added Feb 2026). They use `session_type: "proximity"` and store readings in `MotionPlaySensorData` like normal proximity sessions, but are much smaller (~0.5s detection windows or ~3s missed-event windows).
+
+Optional fields present on live_debug sessions:
+- `capture_reason`: `"detection"` (algorithm triggered) or `"missed_event"` (user pressed button)
+- `detection_direction`: `"a_to_b"` or `"b_to_a"` (only for detection captures)
+- `detection_confidence`: Float 0.0–1.0 (only for detection captures)
+
+Labels can be added via `updateSession` to categorize captures: `["correct"]`, `["false_positive"]`, `["wrong_direction"]`, `["missed"]`.
 
 ### Global Secondary Index (GSI)
 
@@ -358,7 +372,7 @@ If you ever need to change the composite key scheme:
 
 ---
 
-**Last Updated**: December 13, 2025  
+**Last Updated**: February 12, 2026  
 **Author**: Marc  
-**Version**: 1.3 (Added MotionPlayInterruptEvents table and session_type field for interrupt detection)
+**Version**: 1.4 (Added live_debug mode, capture_reason, detection_direction, detection_confidence fields)
 

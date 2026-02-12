@@ -25,18 +25,18 @@
 - [ ] Test: verify missed-event capture round-trip
 
 ## Phase 3: Backend
-- [ ] Extend processData Lambda to accept and store optional `capture_reason`, `detection_direction`, `detection_confidence` on session
-- [ ] Extend sendCommand Lambda to forward `capture_missed_event` command
-- [ ] Update DATABASE_SCHEMA.md to document `live_debug` mode and new optional session fields
+- [x] Extend processData Lambda to accept and store optional `capture_reason`, `detection_direction`, `detection_confidence` on session — both update and create paths
+- [x] Extend sendCommand Lambda to forward `capture_missed_event` command
+- [x] Update DATABASE_SCHEMA.md to document `live_debug` mode and new optional session fields
 
 ## Phase 4: Frontend — Mode and event feed
-- [ ] Add `live_debug` to ModeSelector (mode option + description)
-- [ ] Add "Missed event" button (visible when Live Debug active and collecting)
-- [ ] API: `sendCommand('capture_missed_event')`
-- [ ] Extend `Session` type in api.ts with optional `capture_reason`, `detection_direction`, `detection_confidence`
-- [ ] Session list: filter or highlight `live_debug` sessions
-- [ ] Event detail view: show session data with chart + detection overlay; labeling controls (correct / false positive / wrong direction / missed)
+- [x] Add `live_debug` to Header mode selector (mode button + color + label)
+- [x] Add "Missed Event" button in Header (visible when Live Debug active and collecting, calls `capture_missed_event`)
+- [x] Extend `Session` type in api.ts with optional `capture_reason`, `detection_direction`, `detection_confidence`
+- [x] SessionList: add `live_debug` filter option, show LIVE/MISSED badge on live_debug sessions
+- [x] Event detail: existing SessionChart + LabelEditor already work for live_debug sessions (proximity data with labels)
 
 ## Phase 5: Polish and validation
 - [ ] End-to-end test: detection capture, missed-event capture, labeling, data retrieval
+- [ ] Deploy updated Lambdas (processData, sendCommand)
 - [ ] Remove resolved Open Questions from PLAN.md
