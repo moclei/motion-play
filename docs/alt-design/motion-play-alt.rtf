@@ -1,0 +1,834 @@
+{\rtf1\ansi\ansicpg1252\cocoartf2822
+\cocoatextscaling0\cocoaplatform0{\fonttbl\f0\fswiss\fcharset0 Arial-BoldMT;\f1\froman\fcharset0 TimesNewRomanPSMT;\f2\froman\fcharset0 TimesNewRomanPS-BoldMT;
+\f3\fswiss\fcharset0 Helvetica;\f4\froman\fcharset0 Times-Roman;\f5\froman\fcharset0 TimesNewRomanPS-ItalicMT;
+}
+{\colortbl;\red255\green255\blue255;\red20\green20\blue20;\red83\green83\blue83;\red117\green117\blue117;
+\red34\green69\blue142;\red0\green0\blue0;\red38\green38\blue38;\red227\green236\blue246;\red193\green193\blue193;
+\red203\green234\blue209;\red255\green241\blue194;\red22\green23\blue26;\red191\green92\blue5;}
+{\*\expandedcolortbl;;\cssrgb\c10196\c10196\c10196;\cssrgb\c40000\c40000\c40000;\cssrgb\c53333\c53333\c53333;
+\cssrgb\c17255\c35294\c62745;\cssrgb\c0\c0\c0;\cssrgb\c20000\c20000\c20000;\cssrgb\c90980\c94118\c97255;\cssrgb\c80000\c80000\c80000;
+\cssrgb\c83137\c92941\c85490;\cssrgb\c100000\c95294\c80392;\cssrgb\c10980\c12157\c13725\c80000;\cssrgb\c80000\c43922\c0;}
+{\*\listtable{\list\listtemplateid1\listhybrid{\listlevel\levelnfc23\levelnfcn23\leveljc0\leveljcn0\levelfollow0\levelstartat1\levelspace360\levelindent0{\*\levelmarker \{disc\}}{\leveltext\leveltemplateid1\'01\uc0\u8226 ;}{\levelnumbers;}\fi-360\li720\lin720 }{\listname ;}\listid1}
+{\list\listtemplateid2\listhybrid{\listlevel\levelnfc23\levelnfcn23\leveljc0\leveljcn0\levelfollow0\levelstartat1\levelspace360\levelindent0{\*\levelmarker \{disc\}}{\leveltext\leveltemplateid101\'01\uc0\u8226 ;}{\levelnumbers;}\fi-360\li720\lin720 }{\listname ;}\listid2}
+{\list\listtemplateid3\listhybrid{\listlevel\levelnfc0\levelnfcn0\leveljc0\leveljcn0\levelfollow0\levelstartat1\levelspace360\levelindent0{\*\levelmarker \{decimal\}.}{\leveltext\leveltemplateid201\'02\'00.;}{\levelnumbers\'01;}\fi-360\li720\lin720 }{\listname ;}\listid3}
+{\list\listtemplateid4\listhybrid{\listlevel\levelnfc0\levelnfcn0\leveljc0\leveljcn0\levelfollow0\levelstartat4\levelspace360\levelindent0{\*\levelmarker \{decimal\}.}{\leveltext\leveltemplateid301\'02\'00.;}{\levelnumbers\'01;}\fi-360\li720\lin720 }{\listname ;}\listid4}
+{\list\listtemplateid5\listhybrid{\listlevel\levelnfc23\levelnfcn23\leveljc0\leveljcn0\levelfollow0\levelstartat1\levelspace360\levelindent0{\*\levelmarker \{disc\}}{\leveltext\leveltemplateid401\'01\uc0\u8226 ;}{\levelnumbers;}\fi-360\li720\lin720 }{\listname ;}\listid5}
+{\list\listtemplateid6\listhybrid{\listlevel\levelnfc23\levelnfcn23\leveljc0\leveljcn0\levelfollow0\levelstartat1\levelspace360\levelindent0{\*\levelmarker \{disc\}}{\leveltext\leveltemplateid501\'01\uc0\u8226 ;}{\levelnumbers;}\fi-360\li720\lin720 }{\listname ;}\listid6}
+{\list\listtemplateid7\listhybrid{\listlevel\levelnfc0\levelnfcn0\leveljc0\leveljcn0\levelfollow0\levelstartat7\levelspace360\levelindent0{\*\levelmarker \{decimal\}.}{\leveltext\leveltemplateid601\'02\'00.;}{\levelnumbers\'01;}\fi-360\li720\lin720 }{\listname ;}\listid7}
+{\list\listtemplateid8\listhybrid{\listlevel\levelnfc23\levelnfcn23\leveljc0\leveljcn0\levelfollow0\levelstartat1\levelspace360\levelindent0{\*\levelmarker \{disc\}}{\leveltext\leveltemplateid701\'01\uc0\u8226 ;}{\levelnumbers;}\fi-360\li720\lin720 }{\listname ;}\listid8}}
+{\*\listoverridetable{\listoverride\listid1\listoverridecount0\ls1}{\listoverride\listid2\listoverridecount0\ls2}{\listoverride\listid3\listoverridecount0\ls3}{\listoverride\listid4\listoverridecount0\ls4}{\listoverride\listid5\listoverridecount0\ls5}{\listoverride\listid6\listoverridecount0\ls6}{\listoverride\listid7\listoverridecount0\ls7}{\listoverride\listid8\listoverridecount0\ls8}}
+\paperw11900\paperh16840\margl1440\margr1440
+\pard\sa200\qc\partightenfactor0
+
+\f0\b\fs48 \cf2 \up0 \nosupersub \ulnone Hoop Ball Detection System\
+\pard\sa200\qc\partightenfactor0
+
+\fs24 \cf3 Project Specification Document
+\fs48 \cf2 \
+\pard\sa360\qc\partightenfactor0
+
+\fs20 \cf4 Version 1.0 \'97 December 2024
+\fs48 \cf2 \
+\pard\sa360\partightenfactor0
+
+\fs32 \cf5 1. Project Overview\
+\pard\sa280\partightenfactor0
+\cf6 This project involves designing and building an electronics system that detects when a soccer ball passes through a suspended hoop, including the direction of travel. The system uses infrared beam-break detection with multiple sensor pairs to ensure reliable detection regardless of where the ball passes through the hoop's cross-section.\cf5 \
+\pard\sa100\partightenfactor0
+
+\fs26 \cf7 1.1 Functional Requirements\
+\pard\tx360\tx720\li720\fi-720\partightenfactor0
+\ls1\ilvl0
+\f1\b0\fs20 \cf6 \up0 \nosupersub \ulnone {\listtext	\uc0\u8226 	}\up0 \nosupersub \ulnone Detect a soccer ball passing through the hoop\
+\ls1\ilvl0\up0 \nosupersub \ulnone {\listtext	\uc0\u8226 	}\up0 \nosupersub \ulnone Determine direction of travel (Side A \uc0\u8594  Side B or Side B \u8594  Side A)\
+\ls1\ilvl0\up0 \nosupersub \ulnone {\listtext	\uc0\u8226 	}\up0 \nosupersub \ulnone Operate reliably in various lighting conditions (indoor and outdoor)\
+\ls1\ilvl0\up0 \nosupersub \ulnone {\listtext	\uc0\u8226 	}\up0 \nosupersub \ulnone Battery-powered with USB-C charging capability\
+\pard\tx360\tx720\li720\fi-720\sa360\partightenfactor0
+\ls1\ilvl0\cf6 \up0 \nosupersub \ulnone {\listtext	\uc0\u8226 	}\up0 \nosupersub \ulnone Visual feedback via integrated display\
+\pard\sa280\partightenfactor0
+
+\f0\b\fs32 \cf5 2. Physical Specifications\
+\pard\sa280\partightenfactor0
+
+\fs26 \cf7 2.1 Hoop Construction\
+
+\itap1\trowd \taflags1 \trgaph108\trleft-108 \trbrdrt\brdrnil \trbrdrl\brdrnil \trbrdrr\brdrnil 
+\clvertalt \clcbpat8 \clwWidth3680\clftsWidth3 \clheight200 \clbrdrt\brdrs\brdrw20\brdrcf9 \clbrdrl\brdrs\brdrw20\brdrcf9 \clbrdrb\brdrs\brdrw20\brdrcf9 \clbrdrr\brdrs\brdrw20\brdrcf9 \clpadt80 \clpadl80 \clpadb80 \clpadr80 \gaph\cellx4320
+\clvertalt \clcbpat8 \clwWidth4980\clftsWidth3 \clheight200 \clbrdrt\brdrs\brdrw20\brdrcf9 \clbrdrl\brdrs\brdrw20\brdrcf9 \clbrdrb\brdrs\brdrw20\brdrcf9 \clbrdrr\brdrs\brdrw20\brdrcf9 \clpadt80 \clpadl80 \clpadb80 \clpadr80 \gaph\cellx8640
+\pard\intbl\itap1\pardeftab720\sl288\slmult1\partightenfactor0
+
+\f2\fs20 \cf6 Parameter
+\f3\b0\fs24 \cf0 \up0 \nosupersub \ulnone \cell 
+\pard\intbl\itap1\pardeftab720\sl288\slmult1\partightenfactor0
+
+\f2\b\fs20 \cf6 \up0 \nosupersub \ulnone Value
+\f3\b0\fs24 \cf0 \up0 \nosupersub \ulnone \cell \row
+
+\itap1\trowd \taflags1 \trgaph108\trleft-108 \trbrdrl\brdrnil \trbrdrr\brdrnil 
+\clvertalt \clshdrawnil \clwWidth3680\clftsWidth3 \clheight180 \clbrdrt\brdrs\brdrw20\brdrcf9 \clbrdrl\brdrs\brdrw20\brdrcf9 \clbrdrb\brdrs\brdrw20\brdrcf9 \clbrdrr\brdrs\brdrw20\brdrcf9 \clpadt80 \clpadl80 \clpadb80 \clpadr80 \gaph\cellx4320
+\clvertalt \clshdrawnil \clwWidth4980\clftsWidth3 \clheight180 \clbrdrt\brdrs\brdrw20\brdrcf9 \clbrdrl\brdrs\brdrw20\brdrcf9 \clbrdrb\brdrs\brdrw20\brdrcf9 \clbrdrr\brdrs\brdrw20\brdrcf9 \clpadt80 \clpadl80 \clpadb80 \clpadr80 \gaph\cellx8640
+\pard\intbl\itap1\pardeftab720\sl288\slmult1\partightenfactor0
+
+\f1\fs20 \cf6 \up0 \nosupersub \ulnone Material
+\f3\fs24 \cf0 \up0 \nosupersub \ulnone \cell 
+\pard\intbl\itap1\pardeftab720\sl288\slmult1\partightenfactor0
+
+\f1\fs20 \cf6 \up0 \nosupersub \ulnone Flat bar steel
+\f3\fs24 \cf0 \up0 \nosupersub \ulnone \cell \row
+
+\itap1\trowd \taflags1 \trgaph108\trleft-108 \trbrdrl\brdrnil \trbrdrr\brdrnil 
+\clvertalt \clshdrawnil \clwWidth3680\clftsWidth3 \clheight200 \clbrdrt\brdrs\brdrw20\brdrcf9 \clbrdrl\brdrs\brdrw20\brdrcf9 \clbrdrb\brdrs\brdrw20\brdrcf9 \clbrdrr\brdrs\brdrw20\brdrcf9 \clpadt80 \clpadl80 \clpadb80 \clpadr80 \gaph\cellx4320
+\clvertalt \clshdrawnil \clwWidth4980\clftsWidth3 \clheight200 \clbrdrt\brdrs\brdrw20\brdrcf9 \clbrdrl\brdrs\brdrw20\brdrcf9 \clbrdrb\brdrs\brdrw20\brdrcf9 \clbrdrr\brdrs\brdrw20\brdrcf9 \clpadt80 \clpadl80 \clpadb80 \clpadr80 \gaph\cellx8640
+\pard\intbl\itap1\pardeftab720\sl288\slmult1\partightenfactor0
+
+\f1\fs20 \cf6 \up0 \nosupersub \ulnone Bar dimensions
+\f3\fs24 \cf0 \up0 \nosupersub \ulnone \cell 
+\pard\intbl\itap1\pardeftab720\sl288\slmult1\partightenfactor0
+
+\f1\fs20 \cf6 \up0 \nosupersub \ulnone 25.4mm wide \'d7 3.4mm thick \'d7 1596mm long
+\f3\fs24 \cf0 \up0 \nosupersub \ulnone \cell \row
+
+\itap1\trowd \taflags1 \trgaph108\trleft-108 \trbrdrl\brdrnil \trbrdrr\brdrnil 
+\clvertalt \clshdrawnil \clwWidth3680\clftsWidth3 \clheight200 \clbrdrt\brdrs\brdrw20\brdrcf9 \clbrdrl\brdrs\brdrw20\brdrcf9 \clbrdrb\brdrs\brdrw20\brdrcf9 \clbrdrr\brdrs\brdrw20\brdrcf9 \clpadt80 \clpadl80 \clpadb80 \clpadr80 \gaph\cellx4320
+\clvertalt \clshdrawnil \clwWidth4980\clftsWidth3 \clheight200 \clbrdrt\brdrs\brdrw20\brdrcf9 \clbrdrl\brdrs\brdrw20\brdrcf9 \clbrdrb\brdrs\brdrw20\brdrcf9 \clbrdrr\brdrs\brdrw20\brdrcf9 \clpadt80 \clpadl80 \clpadb80 \clpadr80 \gaph\cellx8640
+\pard\intbl\itap1\pardeftab720\sl288\slmult1\partightenfactor0
+
+\f1\fs20 \cf6 \up0 \nosupersub \ulnone Inner diameter
+\f3\fs24 \cf0 \up0 \nosupersub \ulnone \cell 
+\pard\intbl\itap1\pardeftab720\sl288\slmult1\partightenfactor0
+
+\f1\fs20 \cf6 \up0 \nosupersub \ulnone 500mm
+\f3\fs24 \cf0 \up0 \nosupersub \ulnone \cell \row
+
+\itap1\trowd \taflags1 \trgaph108\trleft-108 \trbrdrl\brdrnil \trbrdrr\brdrnil 
+\clvertalt \clshdrawnil \clwWidth3680\clftsWidth3 \clheight200 \clbrdrt\brdrs\brdrw20\brdrcf9 \clbrdrl\brdrs\brdrw20\brdrcf9 \clbrdrb\brdrs\brdrw20\brdrcf9 \clbrdrr\brdrs\brdrw20\brdrcf9 \clpadt80 \clpadl80 \clpadb80 \clpadr80 \gaph\cellx4320
+\clvertalt \clshdrawnil \clwWidth4980\clftsWidth3 \clheight200 \clbrdrt\brdrs\brdrw20\brdrcf9 \clbrdrl\brdrs\brdrw20\brdrcf9 \clbrdrb\brdrs\brdrw20\brdrcf9 \clbrdrr\brdrs\brdrw20\brdrcf9 \clpadt80 \clpadl80 \clpadb80 \clpadr80 \gaph\cellx8640
+\pard\intbl\itap1\pardeftab720\sl288\slmult1\partightenfactor0
+
+\f1\fs20 \cf6 \up0 \nosupersub \ulnone Shape
+\f3\fs24 \cf0 \up0 \nosupersub \ulnone \cell 
+\pard\intbl\itap1\pardeftab720\sl288\slmult1\partightenfactor0
+
+\f1\fs20 \cf6 \up0 \nosupersub \ulnone Perfectly round (bent from flat stock)
+\f3\fs24 \cf0 \up0 \nosupersub \ulnone \cell \row
+
+\itap1\trowd \taflags1 \trgaph108\trleft-108 \trbrdrl\brdrnil \trbrdrt\brdrnil \trbrdrr\brdrnil 
+\clvertalt \clshdrawnil \clwWidth3680\clftsWidth3 \clheight180 \clbrdrt\brdrs\brdrw20\brdrcf9 \clbrdrl\brdrs\brdrw20\brdrcf9 \clbrdrb\brdrs\brdrw20\brdrcf9 \clbrdrr\brdrs\brdrw20\brdrcf9 \clpadt80 \clpadl80 \clpadb80 \clpadr80 \gaph\cellx4320
+\clvertalt \clshdrawnil \clwWidth4980\clftsWidth3 \clheight180 \clbrdrt\brdrs\brdrw20\brdrcf9 \clbrdrl\brdrs\brdrw20\brdrcf9 \clbrdrb\brdrs\brdrw20\brdrcf9 \clbrdrr\brdrs\brdrw20\brdrcf9 \clpadt80 \clpadl80 \clpadb80 \clpadr80 \gaph\cellx8640
+\pard\intbl\itap1\pardeftab720\sl288\slmult1\partightenfactor0
+
+\f1\fs20 \cf6 \up0 \nosupersub \ulnone Mounting height
+\f3\fs24 \cf0 \up0 \nosupersub \ulnone \cell 
+\pard\intbl\itap1\pardeftab720\sl288\slmult1\partightenfactor0
+
+\f1\fs20 \cf6 \up0 \nosupersub \ulnone Approximately 1 meter (suspended)
+\f3\fs24 \cf0 \up0 \nosupersub \ulnone 
+\f0\b\fs26 \cf7 \up0 \nosupersub \ulnone \cell \lastrow\row
+\pard\sa300\partightenfactor0
+\cf7 2.2 Ball Specifications\
+
+\itap1\trowd \taflags1 \trgaph108\trleft-108 \trbrdrt\brdrnil \trbrdrl\brdrnil \trbrdrr\brdrnil 
+\clvertalt \clcbpat8 \clwWidth3680\clftsWidth3 \clheight200 \clbrdrt\brdrs\brdrw20\brdrcf9 \clbrdrl\brdrs\brdrw20\brdrcf9 \clbrdrb\brdrs\brdrw20\brdrcf9 \clbrdrr\brdrs\brdrw20\brdrcf9 \clpadt80 \clpadl80 \clpadb80 \clpadr80 \gaph\cellx4320
+\clvertalt \clcbpat8 \clwWidth4980\clftsWidth3 \clheight200 \clbrdrt\brdrs\brdrw20\brdrcf9 \clbrdrl\brdrs\brdrw20\brdrcf9 \clbrdrb\brdrs\brdrw20\brdrcf9 \clbrdrr\brdrs\brdrw20\brdrcf9 \clpadt80 \clpadl80 \clpadb80 \clpadr80 \gaph\cellx8640
+\pard\intbl\itap1\pardeftab720\sl288\slmult1\partightenfactor0
+
+\f2\fs20 \cf6 Parameter
+\f3\b0\fs24 \cf0 \up0 \nosupersub \ulnone \cell 
+\pard\intbl\itap1\pardeftab720\sl288\slmult1\partightenfactor0
+
+\f2\b\fs20 \cf6 \up0 \nosupersub \ulnone Value
+\f3\b0\fs24 \cf0 \up0 \nosupersub \ulnone \cell \row
+
+\itap1\trowd \taflags1 \trgaph108\trleft-108 \trbrdrl\brdrnil \trbrdrr\brdrnil 
+\clvertalt \clshdrawnil \clwWidth3680\clftsWidth3 \clheight180 \clbrdrt\brdrs\brdrw20\brdrcf9 \clbrdrl\brdrs\brdrw20\brdrcf9 \clbrdrb\brdrs\brdrw20\brdrcf9 \clbrdrr\brdrs\brdrw20\brdrcf9 \clpadt80 \clpadl80 \clpadb80 \clpadr80 \gaph\cellx4320
+\clvertalt \clshdrawnil \clwWidth4980\clftsWidth3 \clheight180 \clbrdrt\brdrs\brdrw20\brdrcf9 \clbrdrl\brdrs\brdrw20\brdrcf9 \clbrdrb\brdrs\brdrw20\brdrcf9 \clbrdrr\brdrs\brdrw20\brdrcf9 \clpadt80 \clpadl80 \clpadb80 \clpadr80 \gaph\cellx8640
+\pard\intbl\itap1\pardeftab720\sl288\slmult1\partightenfactor0
+
+\f1\fs20 \cf6 \up0 \nosupersub \ulnone Type
+\f3\fs24 \cf0 \up0 \nosupersub \ulnone \cell 
+\pard\intbl\itap1\pardeftab720\sl288\slmult1\partightenfactor0
+
+\f1\fs20 \cf6 \up0 \nosupersub \ulnone Size 4 soccer ball
+\f3\fs24 \cf0 \up0 \nosupersub \ulnone \cell \row
+
+\itap1\trowd \taflags1 \trgaph108\trleft-108 \trbrdrl\brdrnil \trbrdrt\brdrnil \trbrdrr\brdrnil 
+\clvertalt \clshdrawnil \clwWidth3680\clftsWidth3 \clheight200 \clbrdrt\brdrs\brdrw20\brdrcf9 \clbrdrl\brdrs\brdrw20\brdrcf9 \clbrdrb\brdrs\brdrw20\brdrcf9 \clbrdrr\brdrs\brdrw20\brdrcf9 \clpadt80 \clpadl80 \clpadb80 \clpadr80 \gaph\cellx4320
+\clvertalt \clshdrawnil \clwWidth4980\clftsWidth3 \clheight200 \clbrdrt\brdrs\brdrw20\brdrcf9 \clbrdrl\brdrs\brdrw20\brdrcf9 \clbrdrb\brdrs\brdrw20\brdrcf9 \clbrdrr\brdrs\brdrw20\brdrcf9 \clpadt80 \clpadl80 \clpadb80 \clpadr80 \gaph\cellx8640
+\pard\intbl\itap1\pardeftab720\sl288\slmult1\partightenfactor0
+
+\f1\fs20 \cf6 \up0 \nosupersub \ulnone Diameter
+\f3\fs24 \cf0 \up0 \nosupersub \ulnone \cell 
+\pard\intbl\itap1\pardeftab720\sl288\slmult1\partightenfactor0
+
+\f1\fs20 \cf6 \up0 \nosupersub \ulnone 203mm
+\f3\fs24 \cf0 \up0 \nosupersub \ulnone 
+\f0\b\fs26 \cf7 \up0 \nosupersub \ulnone \cell \lastrow\row
+\pard\sa280\partightenfactor0
+
+\fs32 \cf5 3. Detection System Design\
+\pard\sa280\partightenfactor0
+
+\fs26 \cf7 3.1 Detection Method\
+\pard\sa280\partightenfactor0
+\cf6 The system uses infrared (IR) beam-break detection. IR LEDs emit 940nm light across the hoop diameter, and photodiodes on the opposite side detect the light. When a ball passes through, it blocks the beam, causing the photodiode output to change state.\cf7 \
+3.2 Beam Geometry\
+\cf6 With a 500mm hoop inner diameter and 203mm ball diameter, geometric analysis confirms that a minimum of three beams are required to guarantee detection regardless of where the ball passes through the hoop plane.\cf7 \
+\pard\sa100\partightenfactor0
+
+\f2 \cf6 Beam positioning: 
+\f0 Due to flex PCB manufacturing constraints (490mm maximum length at JLCPCB), an asymmetric arrangement is used rather than equal 120\'b0 spacing:\cf7 \
+\pard\tx360\tx720\li720\fi-720\partightenfactor0
+\ls2\ilvl0
+\f1\b0\fs20 \cf6 \up0 \nosupersub \ulnone {\listtext	\uc0\u8226 	}\up0 \nosupersub \ulnone IR LEDs positioned at: 0\'b0, 50\'b0, 100\'b0 on the hoop\
+\ls2\ilvl0\up0 \nosupersub \ulnone {\listtext	\uc0\u8226 	}\up0 \nosupersub \ulnone Sensor pairs positioned at: 180\'b0, 230\'b0, 280\'b0 (directly opposite)\
+\ls2\ilvl0\up0 \nosupersub \ulnone {\listtext	\uc0\u8226 	}\up0 \nosupersub \ulnone Arc span: 100\'b0 \uc0\u8776  436mm (within 490mm limit)\
+\pard\sa280\partightenfactor0
+\cf6 This arrangement has been verified geometrically: even at the worst-case position (140\'b0), a ball will intersect at least one beam by approximately 6mm of its radius.\
+\pard\sa280\partightenfactor0
+
+\f0\b\fs26 \cf7 3.3 Direction Detection\
+\pard\sa100\partightenfactor0
+\cf6 Each beam position has two photodiode sensors spaced 25mm apart (the maximum achievable given hoop constraints). When a ball passes through:\cf7 \
+\pard\tx360\tx720\li720\fi-720\partightenfactor0
+\ls3\ilvl0
+\f1\b0\fs20 \cf6 \up0 \nosupersub \ulnone {\listtext	1.	}\up0 \nosupersub \ulnone The first sensor detects the beam break\
+\ls3\ilvl0\up0 \nosupersub \ulnone {\listtext	2.	}\up0 \nosupersub \ulnone Microseconds later, the second sensor detects the break\
+\ls3\ilvl0\up0 \nosupersub \ulnone {\listtext	3.	}\up0 \nosupersub \ulnone The order of detection determines direction of travel\
+\pard\sa280\partightenfactor0
+\cf6 The ESP32-S3 uses interrupt-driven timestamping to capture transitions with microsecond precision.\
+\pard\sa280\partightenfactor0
+
+\f0\b\fs26 \cf7 3.4 Timing Analysis\
+\pard\sa280\partightenfactor0
+\cf6 Ball transit times through the hoop plane (203mm travel distance):\cf7 \
+
+\itap1\trowd \taflags1 \trgaph108\trleft-108 \trbrdrt\brdrnil \trbrdrl\brdrnil \trbrdrr\brdrnil 
+\clvertalt \clcbpat8 \clwWidth2820\clftsWidth3 \clheight200 \clbrdrt\brdrs\brdrw20\brdrcf9 \clbrdrl\brdrs\brdrw20\brdrcf9 \clbrdrb\brdrs\brdrw20\brdrcf9 \clbrdrr\brdrs\brdrw20\brdrcf9 \clpadt80 \clpadl80 \clpadb80 \clpadr80 \gaph\cellx2880
+\clvertalt \clcbpat8 \clwWidth2840\clftsWidth3 \clheight200 \clbrdrt\brdrs\brdrw20\brdrcf9 \clbrdrl\brdrs\brdrw20\brdrcf9 \clbrdrb\brdrs\brdrw20\brdrcf9 \clbrdrr\brdrs\brdrw20\brdrcf9 \clpadt80 \clpadl80 \clpadb80 \clpadr80 \gaph\cellx5760
+\clvertalt \clcbpat8 \clwWidth2820\clftsWidth3 \clheight200 \clbrdrt\brdrs\brdrw20\brdrcf9 \clbrdrl\brdrs\brdrw20\brdrcf9 \clbrdrb\brdrs\brdrw20\brdrcf9 \clbrdrr\brdrs\brdrw20\brdrcf9 \clpadt80 \clpadl80 \clpadb80 \clpadr80 \gaph\cellx8640
+\pard\intbl\itap1\pardeftab720\sl288\slmult1\partightenfactor0
+
+\f2\fs20 \cf6 Ball Speed
+\f3\b0\fs24 \cf0 \up0 \nosupersub \ulnone \cell 
+\pard\intbl\itap1\pardeftab720\sl288\slmult1\partightenfactor0
+
+\f2\b\fs20 \cf6 \up0 \nosupersub \ulnone Transit Time
+\f3\b0\fs24 \cf0 \up0 \nosupersub \ulnone \cell 
+\pard\intbl\itap1\pardeftab720\sl288\slmult1\partightenfactor0
+
+\f2\b\fs20 \cf6 \up0 \nosupersub \ulnone 25mm Sensor Gap
+\f3\b0\fs24 \cf0 \up0 \nosupersub \ulnone \cell \row
+
+\itap1\trowd \taflags1 \trgaph108\trleft-108 \trbrdrl\brdrnil \trbrdrr\brdrnil 
+\clvertalt \clshdrawnil \clwWidth2820\clftsWidth3 \clheight180 \clbrdrt\brdrs\brdrw20\brdrcf9 \clbrdrl\brdrs\brdrw20\brdrcf9 \clbrdrb\brdrs\brdrw20\brdrcf9 \clbrdrr\brdrs\brdrw20\brdrcf9 \clpadt80 \clpadl80 \clpadb80 \clpadr80 \gaph\cellx2880
+\clvertalt \clshdrawnil \clwWidth2840\clftsWidth3 \clheight180 \clbrdrt\brdrs\brdrw20\brdrcf9 \clbrdrl\brdrs\brdrw20\brdrcf9 \clbrdrb\brdrs\brdrw20\brdrcf9 \clbrdrr\brdrs\brdrw20\brdrcf9 \clpadt80 \clpadl80 \clpadb80 \clpadr80 \gaph\cellx5760
+\clvertalt \clshdrawnil \clwWidth2820\clftsWidth3 \clheight180 \clbrdrt\brdrs\brdrw20\brdrcf9 \clbrdrl\brdrs\brdrw20\brdrcf9 \clbrdrb\brdrs\brdrw20\brdrcf9 \clbrdrr\brdrs\brdrw20\brdrcf9 \clpadt80 \clpadl80 \clpadb80 \clpadr80 \gaph\cellx8640
+\pard\intbl\itap1\pardeftab720\sl288\slmult1\partightenfactor0
+
+\f1\fs20 \cf6 \up0 \nosupersub \ulnone 10 m/s (moderate kick)
+\f3\fs24 \cf0 \up0 \nosupersub \ulnone \cell 
+\pard\intbl\itap1\pardeftab720\sl288\slmult1\partightenfactor0
+
+\f1\fs20 \cf6 \up0 \nosupersub \ulnone 20.3ms
+\f3\fs24 \cf0 \up0 \nosupersub \ulnone \cell 
+\pard\intbl\itap1\pardeftab720\sl288\slmult1\partightenfactor0
+
+\f1\fs20 \cf6 \up0 \nosupersub \ulnone 2.5ms
+\f3\fs24 \cf0 \up0 \nosupersub \ulnone \cell \row
+
+\itap1\trowd \taflags1 \trgaph108\trleft-108 \trbrdrl\brdrnil \trbrdrr\brdrnil 
+\clvertalt \clshdrawnil \clwWidth2820\clftsWidth3 \clheight200 \clbrdrt\brdrs\brdrw20\brdrcf9 \clbrdrl\brdrs\brdrw20\brdrcf9 \clbrdrb\brdrs\brdrw20\brdrcf9 \clbrdrr\brdrs\brdrw20\brdrcf9 \clpadt80 \clpadl80 \clpadb80 \clpadr80 \gaph\cellx2880
+\clvertalt \clshdrawnil \clwWidth2840\clftsWidth3 \clheight200 \clbrdrt\brdrs\brdrw20\brdrcf9 \clbrdrl\brdrs\brdrw20\brdrcf9 \clbrdrb\brdrs\brdrw20\brdrcf9 \clbrdrr\brdrs\brdrw20\brdrcf9 \clpadt80 \clpadl80 \clpadb80 \clpadr80 \gaph\cellx5760
+\clvertalt \clshdrawnil \clwWidth2820\clftsWidth3 \clheight200 \clbrdrt\brdrs\brdrw20\brdrcf9 \clbrdrl\brdrs\brdrw20\brdrcf9 \clbrdrb\brdrs\brdrw20\brdrcf9 \clbrdrr\brdrs\brdrw20\brdrcf9 \clpadt80 \clpadl80 \clpadb80 \clpadr80 \gaph\cellx8640
+\pard\intbl\itap1\pardeftab720\sl288\slmult1\partightenfactor0
+
+\f1\fs20 \cf6 \up0 \nosupersub \ulnone 20 m/s (hard kick)
+\f3\fs24 \cf0 \up0 \nosupersub \ulnone \cell 
+\pard\intbl\itap1\pardeftab720\sl288\slmult1\partightenfactor0
+
+\f1\fs20 \cf6 \up0 \nosupersub \ulnone 10.2ms
+\f3\fs24 \cf0 \up0 \nosupersub \ulnone \cell 
+\pard\intbl\itap1\pardeftab720\sl288\slmult1\partightenfactor0
+
+\f1\fs20 \cf6 \up0 \nosupersub \ulnone 1.25ms
+\f3\fs24 \cf0 \up0 \nosupersub \ulnone \cell \row
+
+\itap1\trowd \taflags1 \trgaph108\trleft-108 \trbrdrl\brdrnil \trbrdrt\brdrnil \trbrdrr\brdrnil 
+\clvertalt \clshdrawnil \clwWidth2820\clftsWidth3 \clheight200 \clbrdrt\brdrs\brdrw20\brdrcf9 \clbrdrl\brdrs\brdrw20\brdrcf9 \clbrdrb\brdrs\brdrw20\brdrcf9 \clbrdrr\brdrs\brdrw20\brdrcf9 \clpadt80 \clpadl80 \clpadb80 \clpadr80 \gaph\cellx2880
+\clvertalt \clshdrawnil \clwWidth2840\clftsWidth3 \clheight200 \clbrdrt\brdrs\brdrw20\brdrcf9 \clbrdrl\brdrs\brdrw20\brdrcf9 \clbrdrb\brdrs\brdrw20\brdrcf9 \clbrdrr\brdrs\brdrw20\brdrcf9 \clpadt80 \clpadl80 \clpadb80 \clpadr80 \gaph\cellx5760
+\clvertalt \clshdrawnil \clwWidth2820\clftsWidth3 \clheight200 \clbrdrt\brdrs\brdrw20\brdrcf9 \clbrdrl\brdrs\brdrw20\brdrcf9 \clbrdrb\brdrs\brdrw20\brdrcf9 \clbrdrr\brdrs\brdrw20\brdrcf9 \clpadt80 \clpadl80 \clpadb80 \clpadr80 \gaph\cellx8640
+\pard\intbl\itap1\pardeftab720\sl288\slmult1\partightenfactor0
+
+\f1\fs20 \cf6 \up0 \nosupersub \ulnone 30 m/s (professional)
+\f3\fs24 \cf0 \up0 \nosupersub \ulnone \cell 
+\pard\intbl\itap1\pardeftab720\sl288\slmult1\partightenfactor0
+
+\f1\fs20 \cf6 \up0 \nosupersub \ulnone 6.8ms
+\f3\fs24 \cf0 \up0 \nosupersub \ulnone \cell 
+\pard\intbl\itap1\pardeftab720\sl288\slmult1\partightenfactor0
+
+\f1\fs20 \cf6 \up0 \nosupersub \ulnone 0.83ms (833\uc0\u956 s)
+\f3\fs24 \cf0 \up0 \nosupersub \ulnone 
+\f0\b\fs26 \cf7 \up0 \nosupersub \ulnone \cell \lastrow\row
+\pard\sa360\partightenfactor0
+\cf6 The selected photodiode (VEMD2020X01) has 100ns response time, providing approximately 8,300 sample opportunities during a 833\uc0\u956 s sensor gap transit at maximum speed.\cf7 \
+\pard\sa280\partightenfactor0
+
+\fs32 \cf5 4. Component Selection\
+\pard\sa280\partightenfactor0
+
+\fs26 \cf7 4.1 Microcontroller\
+
+\itap1\trowd \taflags1 \trgaph108\trleft-108 \trbrdrt\brdrnil \trbrdrl\brdrnil \trbrdrr\brdrnil 
+\clvertalt \clcbpat8 \clwWidth3200\clftsWidth3 \clheight200 \clbrdrt\brdrs\brdrw20\brdrcf9 \clbrdrl\brdrs\brdrw20\brdrcf9 \clbrdrb\brdrs\brdrw20\brdrcf9 \clbrdrr\brdrs\brdrw20\brdrcf9 \clpadt80 \clpadl80 \clpadb80 \clpadr80 \gaph\cellx4320
+\clvertalt \clcbpat8 \clwWidth5460\clftsWidth3 \clheight200 \clbrdrt\brdrs\brdrw20\brdrcf9 \clbrdrl\brdrs\brdrw20\brdrcf9 \clbrdrb\brdrs\brdrw20\brdrcf9 \clbrdrr\brdrs\brdrw20\brdrcf9 \clpadt80 \clpadl80 \clpadb80 \clpadr80 \gaph\cellx8640
+\pard\intbl\itap1\pardeftab720\sl288\slmult1\partightenfactor0
+
+\f2\fs20 \cf6 Parameter
+\f3\b0\fs24 \cf0 \up0 \nosupersub \ulnone \cell 
+\pard\intbl\itap1\pardeftab720\sl288\slmult1\partightenfactor0
+
+\f2\b\fs20 \cf6 \up0 \nosupersub \ulnone Specification
+\f3\b0\fs24 \cf0 \up0 \nosupersub \ulnone \cell \row
+
+\itap1\trowd \taflags1 \trgaph108\trleft-108 \trbrdrl\brdrnil \trbrdrr\brdrnil 
+\clvertalt \clshdrawnil \clwWidth3200\clftsWidth3 \clheight180 \clbrdrt\brdrs\brdrw20\brdrcf9 \clbrdrl\brdrs\brdrw20\brdrcf9 \clbrdrb\brdrs\brdrw20\brdrcf9 \clbrdrr\brdrs\brdrw20\brdrcf9 \clpadt80 \clpadl80 \clpadb80 \clpadr80 \gaph\cellx4320
+\clvertalt \clshdrawnil \clwWidth5460\clftsWidth3 \clheight180 \clbrdrt\brdrs\brdrw20\brdrcf9 \clbrdrl\brdrs\brdrw20\brdrcf9 \clbrdrb\brdrs\brdrw20\brdrcf9 \clbrdrr\brdrs\brdrw20\brdrcf9 \clpadt80 \clpadl80 \clpadb80 \clpadr80 \gaph\cellx8640
+\pard\intbl\itap1\pardeftab720\sl288\slmult1\partightenfactor0
+
+\f1\fs20 \cf6 \up0 \nosupersub \ulnone Module
+\f3\fs24 \cf0 \up0 \nosupersub \ulnone \cell 
+\pard\intbl\itap1\pardeftab720\sl288\slmult1\partightenfactor0
+
+\f1\fs20 \cf6 \up0 \nosupersub \ulnone LilyGO T-Display-S3
+\f3\fs24 \cf0 \up0 \nosupersub \ulnone \cell \row
+
+\itap1\trowd \taflags1 \trgaph108\trleft-108 \trbrdrl\brdrnil \trbrdrr\brdrnil 
+\clvertalt \clshdrawnil \clwWidth3200\clftsWidth3 \clheight200 \clbrdrt\brdrs\brdrw20\brdrcf9 \clbrdrl\brdrs\brdrw20\brdrcf9 \clbrdrb\brdrs\brdrw20\brdrcf9 \clbrdrr\brdrs\brdrw20\brdrcf9 \clpadt80 \clpadl80 \clpadb80 \clpadr80 \gaph\cellx4320
+\clvertalt \clshdrawnil \clwWidth5460\clftsWidth3 \clheight200 \clbrdrt\brdrs\brdrw20\brdrcf9 \clbrdrl\brdrs\brdrw20\brdrcf9 \clbrdrb\brdrs\brdrw20\brdrcf9 \clbrdrr\brdrs\brdrw20\brdrcf9 \clpadt80 \clpadl80 \clpadb80 \clpadr80 \gaph\cellx8640
+\pard\intbl\itap1\pardeftab720\sl288\slmult1\partightenfactor0
+
+\f1\fs20 \cf6 \up0 \nosupersub \ulnone Processor
+\f3\fs24 \cf0 \up0 \nosupersub \ulnone \cell 
+\pard\intbl\itap1\pardeftab720\sl288\slmult1\partightenfactor0
+
+\f1\fs20 \cf6 \up0 \nosupersub \ulnone ESP32-S3
+\f3\fs24 \cf0 \up0 \nosupersub \ulnone \cell \row
+
+\itap1\trowd \taflags1 \trgaph108\trleft-108 \trbrdrl\brdrnil \trbrdrr\brdrnil 
+\clvertalt \clshdrawnil \clwWidth3200\clftsWidth3 \clheight200 \clbrdrt\brdrs\brdrw20\brdrcf9 \clbrdrl\brdrs\brdrw20\brdrcf9 \clbrdrb\brdrs\brdrw20\brdrcf9 \clbrdrr\brdrs\brdrw20\brdrcf9 \clpadt80 \clpadl80 \clpadb80 \clpadr80 \gaph\cellx4320
+\clvertalt \clshdrawnil \clwWidth5460\clftsWidth3 \clheight200 \clbrdrt\brdrs\brdrw20\brdrcf9 \clbrdrl\brdrs\brdrw20\brdrcf9 \clbrdrb\brdrs\brdrw20\brdrcf9 \clbrdrr\brdrs\brdrw20\brdrcf9 \clpadt80 \clpadl80 \clpadb80 \clpadr80 \gaph\cellx8640
+\pard\intbl\itap1\pardeftab720\sl288\slmult1\partightenfactor0
+
+\f1\fs20 \cf6 \up0 \nosupersub \ulnone Display
+\f3\fs24 \cf0 \up0 \nosupersub \ulnone \cell 
+\pard\intbl\itap1\pardeftab720\sl288\slmult1\partightenfactor0
+
+\f1\fs20 \cf6 \up0 \nosupersub \ulnone Integrated TFT (visible during use)
+\f3\fs24 \cf0 \up0 \nosupersub \ulnone \cell \row
+
+\itap1\trowd \taflags1 \trgaph108\trleft-108 \trbrdrl\brdrnil \trbrdrt\brdrnil \trbrdrr\brdrnil 
+\clvertalt \clshdrawnil \clwWidth3200\clftsWidth3 \clheight200 \clbrdrt\brdrs\brdrw20\brdrcf9 \clbrdrl\brdrs\brdrw20\brdrcf9 \clbrdrb\brdrs\brdrw20\brdrcf9 \clbrdrr\brdrs\brdrw20\brdrcf9 \clpadt80 \clpadl80 \clpadb80 \clpadr80 \gaph\cellx4320
+\clvertalt \clshdrawnil \clwWidth5460\clftsWidth3 \clheight200 \clbrdrt\brdrs\brdrw20\brdrcf9 \clbrdrl\brdrs\brdrw20\brdrcf9 \clbrdrb\brdrs\brdrw20\brdrcf9 \clbrdrr\brdrs\brdrw20\brdrcf9 \clpadt80 \clpadl80 \clpadb80 \clpadr80 \gaph\cellx8640
+\pard\intbl\itap1\pardeftab720\sl288\slmult1\partightenfactor0
+
+\f1\fs20 \cf6 \up0 \nosupersub \ulnone Key features
+\f3\fs24 \cf0 \up0 \nosupersub \ulnone \cell 
+\pard\intbl\itap1\pardeftab720\sl288\slmult1\partightenfactor0
+
+\f1\fs20 \cf6 \up0 \nosupersub \ulnone Microsecond GPIO interrupt timestamping, multiple PWM channels
+\f3\fs24 \cf0 \up0 \nosupersub \ulnone 
+\f0\b\fs26 \cf7 \up0 \nosupersub \ulnone \cell \lastrow\row
+\pard\sa300\partightenfactor0
+\cf7 4.2 Power System\
+
+\itap1\trowd \taflags1 \trgaph108\trleft-108 \trbrdrt\brdrnil \trbrdrl\brdrnil \trbrdrr\brdrnil 
+\clvertalt \clcbpat8 \clwWidth3200\clftsWidth3 \clheight200 \clbrdrt\brdrs\brdrw20\brdrcf9 \clbrdrl\brdrs\brdrw20\brdrcf9 \clbrdrb\brdrs\brdrw20\brdrcf9 \clbrdrr\brdrs\brdrw20\brdrcf9 \clpadt80 \clpadl80 \clpadb80 \clpadr80 \gaph\cellx4320
+\clvertalt \clcbpat8 \clwWidth5460\clftsWidth3 \clheight200 \clbrdrt\brdrs\brdrw20\brdrcf9 \clbrdrl\brdrs\brdrw20\brdrcf9 \clbrdrb\brdrs\brdrw20\brdrcf9 \clbrdrr\brdrs\brdrw20\brdrcf9 \clpadt80 \clpadl80 \clpadb80 \clpadr80 \gaph\cellx8640
+\pard\intbl\itap1\pardeftab720\sl288\slmult1\partightenfactor0
+
+\f2\fs20 \cf6 Parameter
+\f3\b0\fs24 \cf0 \up0 \nosupersub \ulnone \cell 
+\pard\intbl\itap1\pardeftab720\sl288\slmult1\partightenfactor0
+
+\f2\b\fs20 \cf6 \up0 \nosupersub \ulnone Specification
+\f3\b0\fs24 \cf0 \up0 \nosupersub \ulnone \cell \row
+
+\itap1\trowd \taflags1 \trgaph108\trleft-108 \trbrdrl\brdrnil \trbrdrr\brdrnil 
+\clvertalt \clshdrawnil \clwWidth3200\clftsWidth3 \clheight180 \clbrdrt\brdrs\brdrw20\brdrcf9 \clbrdrl\brdrs\brdrw20\brdrcf9 \clbrdrb\brdrs\brdrw20\brdrcf9 \clbrdrr\brdrs\brdrw20\brdrcf9 \clpadt80 \clpadl80 \clpadb80 \clpadr80 \gaph\cellx4320
+\clvertalt \clshdrawnil \clwWidth5460\clftsWidth3 \clheight180 \clbrdrt\brdrs\brdrw20\brdrcf9 \clbrdrl\brdrs\brdrw20\brdrcf9 \clbrdrb\brdrs\brdrw20\brdrcf9 \clbrdrr\brdrs\brdrw20\brdrcf9 \clpadt80 \clpadl80 \clpadb80 \clpadr80 \gaph\cellx8640
+\pard\intbl\itap1\pardeftab720\sl288\slmult1\partightenfactor0
+
+\f1\fs20 \cf6 \up0 \nosupersub \ulnone Module
+\f3\fs24 \cf0 \up0 \nosupersub \ulnone \cell 
+\pard\intbl\itap1\pardeftab720\sl288\slmult1\partightenfactor0
+
+\f1\fs20 \cf6 \up0 \nosupersub \ulnone USB-C power module devkit
+\f3\fs24 \cf0 \up0 \nosupersub \ulnone \cell \row
+
+\itap1\trowd \taflags1 \trgaph108\trleft-108 \trbrdrl\brdrnil \trbrdrr\brdrnil 
+\clvertalt \clshdrawnil \clwWidth3200\clftsWidth3 \clheight200 \clbrdrt\brdrs\brdrw20\brdrcf9 \clbrdrl\brdrs\brdrw20\brdrcf9 \clbrdrb\brdrs\brdrw20\brdrcf9 \clbrdrr\brdrs\brdrw20\brdrcf9 \clpadt80 \clpadl80 \clpadb80 \clpadr80 \gaph\cellx4320
+\clvertalt \clshdrawnil \clwWidth5460\clftsWidth3 \clheight200 \clbrdrt\brdrs\brdrw20\brdrcf9 \clbrdrl\brdrs\brdrw20\brdrcf9 \clbrdrb\brdrs\brdrw20\brdrcf9 \clbrdrr\brdrs\brdrw20\brdrcf9 \clpadt80 \clpadl80 \clpadb80 \clpadr80 \gaph\cellx8640
+\pard\intbl\itap1\pardeftab720\sl288\slmult1\partightenfactor0
+
+\f1\fs20 \cf6 \up0 \nosupersub \ulnone Input
+\f3\fs24 \cf0 \up0 \nosupersub \ulnone \cell 
+\pard\intbl\itap1\pardeftab720\sl288\slmult1\partightenfactor0
+
+\f1\fs20 \cf6 \up0 \nosupersub \ulnone USB-C
+\f3\fs24 \cf0 \up0 \nosupersub \ulnone \cell \row
+
+\itap1\trowd \taflags1 \trgaph108\trleft-108 \trbrdrl\brdrnil \trbrdrr\brdrnil 
+\clvertalt \clshdrawnil \clwWidth3200\clftsWidth3 \clheight200 \clbrdrt\brdrs\brdrw20\brdrcf9 \clbrdrl\brdrs\brdrw20\brdrcf9 \clbrdrb\brdrs\brdrw20\brdrcf9 \clbrdrr\brdrs\brdrw20\brdrcf9 \clpadt80 \clpadl80 \clpadb80 \clpadr80 \gaph\cellx4320
+\clvertalt \clshdrawnil \clwWidth5460\clftsWidth3 \clheight200 \clbrdrt\brdrs\brdrw20\brdrcf9 \clbrdrl\brdrs\brdrw20\brdrcf9 \clbrdrb\brdrs\brdrw20\brdrcf9 \clbrdrr\brdrs\brdrw20\brdrcf9 \clpadt80 \clpadl80 \clpadb80 \clpadr80 \gaph\cellx8640
+\pard\intbl\itap1\pardeftab720\sl288\slmult1\partightenfactor0
+
+\f1\fs20 \cf6 \up0 \nosupersub \ulnone Output
+\f3\fs24 \cf0 \up0 \nosupersub \ulnone \cell 
+\pard\intbl\itap1\pardeftab720\sl288\slmult1\partightenfactor0
+
+\f1\fs20 \cf6 \up0 \nosupersub \ulnone 5V @ 2.4A via GPIO pins
+\f3\fs24 \cf0 \up0 \nosupersub \ulnone \cell \row
+
+\itap1\trowd \taflags1 \trgaph108\trleft-108 \trbrdrl\brdrnil \trbrdrt\brdrnil \trbrdrr\brdrnil 
+\clvertalt \clshdrawnil \clwWidth3200\clftsWidth3 \clheight200 \clbrdrt\brdrs\brdrw20\brdrcf9 \clbrdrl\brdrs\brdrw20\brdrcf9 \clbrdrb\brdrs\brdrw20\brdrcf9 \clbrdrr\brdrs\brdrw20\brdrcf9 \clpadt80 \clpadl80 \clpadb80 \clpadr80 \gaph\cellx4320
+\clvertalt \clshdrawnil \clwWidth5460\clftsWidth3 \clheight200 \clbrdrt\brdrs\brdrw20\brdrcf9 \clbrdrl\brdrs\brdrw20\brdrcf9 \clbrdrb\brdrs\brdrw20\brdrcf9 \clbrdrr\brdrs\brdrw20\brdrcf9 \clpadt80 \clpadl80 \clpadb80 \clpadr80 \gaph\cellx8640
+\pard\intbl\itap1\pardeftab720\sl288\slmult1\partightenfactor0
+
+\f1\fs20 \cf6 \up0 \nosupersub \ulnone Battery
+\f3\fs24 \cf0 \up0 \nosupersub \ulnone \cell 
+\pard\intbl\itap1\pardeftab720\sl288\slmult1\partightenfactor0
+
+\f1\fs20 \cf6 \up0 \nosupersub \ulnone 18650 cell (charges while providing power, auto-switchover)
+\f3\fs24 \cf0 \up0 \nosupersub \ulnone 
+\f0\b\fs26 \cf7 \up0 \nosupersub \ulnone \cell \lastrow\row
+\pard\sa300\partightenfactor0
+\cf7 4.3 IR Photodiode Sensors (PROTOTYPE)\
+
+\itap1\trowd \taflags1 \trgaph108\trleft-108 \trbrdrt\brdrnil \trbrdrl\brdrnil \trbrdrr\brdrnil 
+\clvertalt \clcbpat10 \clwWidth3200\clftsWidth3 \clheight200 \clbrdrt\brdrs\brdrw20\brdrcf9 \clbrdrl\brdrs\brdrw20\brdrcf9 \clbrdrb\brdrs\brdrw20\brdrcf9 \clbrdrr\brdrs\brdrw20\brdrcf9 \clpadt80 \clpadl80 \clpadb80 \clpadr80 \gaph\cellx4320
+\clvertalt \clcbpat10 \clwWidth5460\clftsWidth3 \clheight200 \clbrdrt\brdrs\brdrw20\brdrcf9 \clbrdrl\brdrs\brdrw20\brdrcf9 \clbrdrb\brdrs\brdrw20\brdrcf9 \clbrdrr\brdrs\brdrw20\brdrcf9 \clpadt80 \clpadl80 \clpadb80 \clpadr80 \gaph\cellx8640
+\pard\intbl\itap1\pardeftab720\sl288\slmult1\partightenfactor0
+
+\f2\fs20 \cf6 Parameter
+\f3\b0\fs24 \cf0 \up0 \nosupersub \ulnone \cell 
+\pard\intbl\itap1\pardeftab720\sl288\slmult1\partightenfactor0
+
+\f2\b\fs20 \cf6 \up0 \nosupersub \ulnone Specification
+\f3\b0\fs24 \cf0 \up0 \nosupersub \ulnone \cell \row
+
+\itap1\trowd \taflags1 \trgaph108\trleft-108 \trbrdrl\brdrnil \trbrdrr\brdrnil 
+\clvertalt \clshdrawnil \clwWidth3200\clftsWidth3 \clheight180 \clbrdrt\brdrs\brdrw20\brdrcf9 \clbrdrl\brdrs\brdrw20\brdrcf9 \clbrdrb\brdrs\brdrw20\brdrcf9 \clbrdrr\brdrs\brdrw20\brdrcf9 \clpadt80 \clpadl80 \clpadb80 \clpadr80 \gaph\cellx4320
+\clvertalt \clshdrawnil \clwWidth5460\clftsWidth3 \clheight180 \clbrdrt\brdrs\brdrw20\brdrcf9 \clbrdrl\brdrs\brdrw20\brdrcf9 \clbrdrb\brdrs\brdrw20\brdrcf9 \clbrdrr\brdrs\brdrw20\brdrcf9 \clpadt80 \clpadl80 \clpadb80 \clpadr80 \gaph\cellx8640
+\pard\intbl\itap1\pardeftab720\sl288\slmult1\partightenfactor0
+
+\f1\fs20 \cf6 \up0 \nosupersub \ulnone Part number
+\f3\fs24 \cf0 \up0 \nosupersub \ulnone \cell 
+\pard\intbl\itap1\pardeftab720\sl288\slmult1\partightenfactor0
+
+\f2\b\fs20 \cf6 \up0 \nosupersub \ulnone VEMD2020X01
+\f3\b0\fs24 \cf0 \up0 \nosupersub \ulnone \cell \row
+
+\itap1\trowd \taflags1 \trgaph108\trleft-108 \trbrdrl\brdrnil \trbrdrr\brdrnil 
+\clvertalt \clshdrawnil \clwWidth3200\clftsWidth3 \clheight200 \clbrdrt\brdrs\brdrw20\brdrcf9 \clbrdrl\brdrs\brdrw20\brdrcf9 \clbrdrb\brdrs\brdrw20\brdrcf9 \clbrdrr\brdrs\brdrw20\brdrcf9 \clpadt80 \clpadl80 \clpadb80 \clpadr80 \gaph\cellx4320
+\clvertalt \clshdrawnil \clwWidth5460\clftsWidth3 \clheight200 \clbrdrt\brdrs\brdrw20\brdrcf9 \clbrdrl\brdrs\brdrw20\brdrcf9 \clbrdrb\brdrs\brdrw20\brdrcf9 \clbrdrr\brdrs\brdrw20\brdrcf9 \clpadt80 \clpadl80 \clpadb80 \clpadr80 \gaph\cellx8640
+\pard\intbl\itap1\pardeftab720\sl288\slmult1\partightenfactor0
+
+\f1\fs20 \cf6 \up0 \nosupersub \ulnone LCSC Part #
+\f3\fs24 \cf0 \up0 \nosupersub \ulnone \cell 
+\pard\intbl\itap1\pardeftab720\sl288\slmult1\partightenfactor0
+
+\f1\fs20 \cf6 \up0 \nosupersub \ulnone C3210968
+\f3\fs24 \cf0 \up0 \nosupersub \ulnone \cell \row
+
+\itap1\trowd \taflags1 \trgaph108\trleft-108 \trbrdrl\brdrnil \trbrdrr\brdrnil 
+\clvertalt \clshdrawnil \clwWidth3200\clftsWidth3 \clheight200 \clbrdrt\brdrs\brdrw20\brdrcf9 \clbrdrl\brdrs\brdrw20\brdrcf9 \clbrdrb\brdrs\brdrw20\brdrcf9 \clbrdrr\brdrs\brdrw20\brdrcf9 \clpadt80 \clpadl80 \clpadb80 \clpadr80 \gaph\cellx4320
+\clvertalt \clshdrawnil \clwWidth5460\clftsWidth3 \clheight200 \clbrdrt\brdrs\brdrw20\brdrcf9 \clbrdrl\brdrs\brdrw20\brdrcf9 \clbrdrb\brdrs\brdrw20\brdrcf9 \clbrdrr\brdrs\brdrw20\brdrcf9 \clpadt80 \clpadl80 \clpadb80 \clpadr80 \gaph\cellx8640
+\pard\intbl\itap1\pardeftab720\sl288\slmult1\partightenfactor0
+
+\f1\fs20 \cf6 \up0 \nosupersub \ulnone Manufacturer
+\f3\fs24 \cf0 \up0 \nosupersub \ulnone \cell 
+\pard\intbl\itap1\pardeftab720\sl288\slmult1\partightenfactor0
+
+\f1\fs20 \cf6 \up0 \nosupersub \ulnone Vishay
+\f3\fs24 \cf0 \up0 \nosupersub \ulnone \cell \row
+
+\itap1\trowd \taflags1 \trgaph108\trleft-108 \trbrdrl\brdrnil \trbrdrr\brdrnil 
+\clvertalt \clshdrawnil \clwWidth3200\clftsWidth3 \clheight200 \clbrdrt\brdrs\brdrw20\brdrcf9 \clbrdrl\brdrs\brdrw20\brdrcf9 \clbrdrb\brdrs\brdrw20\brdrcf9 \clbrdrr\brdrs\brdrw20\brdrcf9 \clpadt80 \clpadl80 \clpadb80 \clpadr80 \gaph\cellx4320
+\clvertalt \clshdrawnil \clwWidth5460\clftsWidth3 \clheight200 \clbrdrt\brdrs\brdrw20\brdrcf9 \clbrdrl\brdrs\brdrw20\brdrcf9 \clbrdrb\brdrs\brdrw20\brdrcf9 \clbrdrr\brdrs\brdrw20\brdrcf9 \clpadt80 \clpadl80 \clpadb80 \clpadr80 \gaph\cellx8640
+\pard\intbl\itap1\pardeftab720\sl288\slmult1\partightenfactor0
+
+\f1\fs20 \cf6 \up0 \nosupersub \ulnone Type
+\f3\fs24 \cf0 \up0 \nosupersub \ulnone \cell 
+\pard\intbl\itap1\pardeftab720\sl288\slmult1\partightenfactor0
+
+\f1\fs20 \cf6 \up0 \nosupersub \ulnone Silicon PIN photodiode
+\f3\fs24 \cf0 \up0 \nosupersub \ulnone \cell \row
+
+\itap1\trowd \taflags1 \trgaph108\trleft-108 \trbrdrl\brdrnil \trbrdrr\brdrnil 
+\clvertalt \clshdrawnil \clwWidth3200\clftsWidth3 \clheight180 \clbrdrt\brdrs\brdrw20\brdrcf9 \clbrdrl\brdrs\brdrw20\brdrcf9 \clbrdrb\brdrs\brdrw20\brdrcf9 \clbrdrr\brdrs\brdrw20\brdrcf9 \clpadt80 \clpadl80 \clpadb80 \clpadr80 \gaph\cellx4320
+\clvertalt \clshdrawnil \clwWidth5460\clftsWidth3 \clheight180 \clbrdrt\brdrs\brdrw20\brdrcf9 \clbrdrl\brdrs\brdrw20\brdrcf9 \clbrdrb\brdrs\brdrw20\brdrcf9 \clbrdrr\brdrs\brdrw20\brdrcf9 \clpadt80 \clpadl80 \clpadb80 \clpadr80 \gaph\cellx8640
+\pard\intbl\itap1\pardeftab720\sl288\slmult1\partightenfactor0
+
+\f1\fs20 \cf6 \up0 \nosupersub \ulnone Peak wavelength
+\f3\fs24 \cf0 \up0 \nosupersub \ulnone \cell 
+\pard\intbl\itap1\pardeftab720\sl288\slmult1\partightenfactor0
+
+\f1\fs20 \cf6 \up0 \nosupersub \ulnone 940nm
+\f3\fs24 \cf0 \up0 \nosupersub \ulnone \cell \row
+
+\itap1\trowd \taflags1 \trgaph108\trleft-108 \trbrdrl\brdrnil \trbrdrr\brdrnil 
+\clvertalt \clshdrawnil \clwWidth3200\clftsWidth3 \clheight200 \clbrdrt\brdrs\brdrw20\brdrcf9 \clbrdrl\brdrs\brdrw20\brdrcf9 \clbrdrb\brdrs\brdrw20\brdrcf9 \clbrdrr\brdrs\brdrw20\brdrcf9 \clpadt80 \clpadl80 \clpadb80 \clpadr80 \gaph\cellx4320
+\clvertalt \clshdrawnil \clwWidth5460\clftsWidth3 \clheight200 \clbrdrt\brdrs\brdrw20\brdrcf9 \clbrdrl\brdrs\brdrw20\brdrcf9 \clbrdrb\brdrs\brdrw20\brdrcf9 \clbrdrr\brdrs\brdrw20\brdrcf9 \clpadt80 \clpadl80 \clpadb80 \clpadr80 \gaph\cellx8640
+\pard\intbl\itap1\pardeftab720\sl288\slmult1\partightenfactor0
+
+\f1\fs20 \cf6 \up0 \nosupersub \ulnone Spectral bandwidth
+\f3\fs24 \cf0 \up0 \nosupersub \ulnone \cell 
+\pard\intbl\itap1\pardeftab720\sl288\slmult1\partightenfactor0
+
+\f1\fs20 \cf6 \up0 \nosupersub \ulnone 750nm to 1050nm
+\f3\fs24 \cf0 \up0 \nosupersub \ulnone \cell \row
+
+\itap1\trowd \taflags1 \trgaph108\trleft-108 \trbrdrl\brdrnil \trbrdrr\brdrnil 
+\clvertalt \clshdrawnil \clwWidth3200\clftsWidth3 \clheight200 \clbrdrt\brdrs\brdrw20\brdrcf9 \clbrdrl\brdrs\brdrw20\brdrcf9 \clbrdrb\brdrs\brdrw20\brdrcf9 \clbrdrr\brdrs\brdrw20\brdrcf9 \clpadt80 \clpadl80 \clpadb80 \clpadr80 \gaph\cellx4320
+\clvertalt \clshdrawnil \clwWidth5460\clftsWidth3 \clheight200 \clbrdrt\brdrs\brdrw20\brdrcf9 \clbrdrl\brdrs\brdrw20\brdrcf9 \clbrdrb\brdrs\brdrw20\brdrcf9 \clbrdrr\brdrs\brdrw20\brdrcf9 \clpadt80 \clpadl80 \clpadb80 \clpadr80 \gaph\cellx8640
+\pard\intbl\itap1\pardeftab720\sl288\slmult1\partightenfactor0
+
+\f1\fs20 \cf6 \up0 \nosupersub \ulnone Daylight filter
+\f3\fs24 \cf0 \up0 \nosupersub \ulnone \cell 
+\pard\intbl\itap1\pardeftab720\sl288\slmult1\partightenfactor0
+
+\f1\fs20 \cf6 \up0 \nosupersub \ulnone Yes \'97 matched with 830nm to 950nm IR emitters
+\f3\fs24 \cf0 \up0 \nosupersub \ulnone \cell \row
+
+\itap1\trowd \taflags1 \trgaph108\trleft-108 \trbrdrl\brdrnil \trbrdrr\brdrnil 
+\clvertalt \clshdrawnil \clwWidth3200\clftsWidth3 \clheight180 \clbrdrt\brdrs\brdrw20\brdrcf9 \clbrdrl\brdrs\brdrw20\brdrcf9 \clbrdrb\brdrs\brdrw20\brdrcf9 \clbrdrr\brdrs\brdrw20\brdrcf9 \clpadt80 \clpadl80 \clpadb80 \clpadr80 \gaph\cellx4320
+\clvertalt \clshdrawnil \clwWidth5460\clftsWidth3 \clheight180 \clbrdrt\brdrs\brdrw20\brdrcf9 \clbrdrl\brdrs\brdrw20\brdrcf9 \clbrdrb\brdrs\brdrw20\brdrcf9 \clbrdrr\brdrs\brdrw20\brdrcf9 \clpadt80 \clpadl80 \clpadb80 \clpadr80 \gaph\cellx8640
+\pard\intbl\itap1\pardeftab720\sl288\slmult1\partightenfactor0
+
+\f1\fs20 \cf6 \up0 \nosupersub \ulnone Half angle
+\f3\fs24 \cf0 \up0 \nosupersub \ulnone \cell 
+\pard\intbl\itap1\pardeftab720\sl288\slmult1\partightenfactor0
+
+\f1\fs20 \cf6 \up0 \nosupersub \ulnone \'b115\'b0 (narrow, provides natural off-axis rejection)
+\f3\fs24 \cf0 \up0 \nosupersub \ulnone \cell \row
+
+\itap1\trowd \taflags1 \trgaph108\trleft-108 \trbrdrl\brdrnil \trbrdrr\brdrnil 
+\clvertalt \clshdrawnil \clwWidth3200\clftsWidth3 \clheight200 \clbrdrt\brdrs\brdrw20\brdrcf9 \clbrdrl\brdrs\brdrw20\brdrcf9 \clbrdrb\brdrs\brdrw20\brdrcf9 \clbrdrr\brdrs\brdrw20\brdrcf9 \clpadt80 \clpadl80 \clpadb80 \clpadr80 \gaph\cellx4320
+\clvertalt \clshdrawnil \clwWidth5460\clftsWidth3 \clheight200 \clbrdrt\brdrs\brdrw20\brdrcf9 \clbrdrl\brdrs\brdrw20\brdrcf9 \clbrdrb\brdrs\brdrw20\brdrcf9 \clbrdrr\brdrs\brdrw20\brdrcf9 \clpadt80 \clpadl80 \clpadb80 \clpadr80 \gaph\cellx8640
+\pard\intbl\itap1\pardeftab720\sl288\slmult1\partightenfactor0
+
+\f1\fs20 \cf6 \up0 \nosupersub \ulnone Response time
+\f3\fs24 \cf0 \up0 \nosupersub \ulnone \cell 
+\pard\intbl\itap1\pardeftab720\sl288\slmult1\partightenfactor0
+
+\f2\b\fs20 \cf6 \up0 \nosupersub \ulnone 100ns rise/fall
+\f3\b0\fs24 \cf0 \up0 \nosupersub \ulnone \cell \row
+
+\itap1\trowd \taflags1 \trgaph108\trleft-108 \trbrdrl\brdrnil \trbrdrr\brdrnil 
+\clvertalt \clshdrawnil \clwWidth3200\clftsWidth3 \clheight200 \clbrdrt\brdrs\brdrw20\brdrcf9 \clbrdrl\brdrs\brdrw20\brdrcf9 \clbrdrb\brdrs\brdrw20\brdrcf9 \clbrdrr\brdrs\brdrw20\brdrcf9 \clpadt80 \clpadl80 \clpadb80 \clpadr80 \gaph\cellx4320
+\clvertalt \clshdrawnil \clwWidth5460\clftsWidth3 \clheight200 \clbrdrt\brdrs\brdrw20\brdrcf9 \clbrdrl\brdrs\brdrw20\brdrcf9 \clbrdrb\brdrs\brdrw20\brdrcf9 \clbrdrr\brdrs\brdrw20\brdrcf9 \clpadt80 \clpadl80 \clpadb80 \clpadr80 \gaph\cellx8640
+\pard\intbl\itap1\pardeftab720\sl288\slmult1\partightenfactor0
+
+\f1\fs20 \cf6 \up0 \nosupersub \ulnone Photocurrent
+\f3\fs24 \cf0 \up0 \nosupersub \ulnone \cell 
+\pard\intbl\itap1\pardeftab720\sl288\slmult1\partightenfactor0
+
+\f1\fs20 \cf6 \up0 \nosupersub \ulnone 12\uc0\u956 A typical at 1mW/cm\'b2
+\f3\fs24 \cf0 \up0 \nosupersub \ulnone \cell \row
+
+\itap1\trowd \taflags1 \trgaph108\trleft-108 \trbrdrl\brdrnil \trbrdrr\brdrnil 
+\clvertalt \clshdrawnil \clwWidth3200\clftsWidth3 \clheight180 \clbrdrt\brdrs\brdrw20\brdrcf9 \clbrdrl\brdrs\brdrw20\brdrcf9 \clbrdrb\brdrs\brdrw20\brdrcf9 \clbrdrr\brdrs\brdrw20\brdrcf9 \clpadt80 \clpadl80 \clpadb80 \clpadr80 \gaph\cellx4320
+\clvertalt \clshdrawnil \clwWidth5460\clftsWidth3 \clheight180 \clbrdrt\brdrs\brdrw20\brdrcf9 \clbrdrl\brdrs\brdrw20\brdrcf9 \clbrdrb\brdrs\brdrw20\brdrcf9 \clbrdrr\brdrs\brdrw20\brdrcf9 \clpadt80 \clpadl80 \clpadb80 \clpadr80 \gaph\cellx8640
+\pard\intbl\itap1\pardeftab720\sl288\slmult1\partightenfactor0
+
+\f1\fs20 \cf6 \up0 \nosupersub \ulnone Package
+\f3\fs24 \cf0 \up0 \nosupersub \ulnone \cell 
+\pard\intbl\itap1\pardeftab720\sl288\slmult1\partightenfactor0
+
+\f1\fs20 \cf6 \up0 \nosupersub \ulnone 2.3mm \'d7 2.3mm \'d7 2.8mm SMD (gullwing)
+\f3\fs24 \cf0 \up0 \nosupersub \ulnone \cell \row
+
+\itap1\trowd \taflags1 \trgaph108\trleft-108 \trbrdrl\brdrnil \trbrdrr\brdrnil 
+\clvertalt \clshdrawnil \clwWidth3200\clftsWidth3 \clheight200 \clbrdrt\brdrs\brdrw20\brdrcf9 \clbrdrl\brdrs\brdrw20\brdrcf9 \clbrdrb\brdrs\brdrw20\brdrcf9 \clbrdrr\brdrs\brdrw20\brdrcf9 \clpadt80 \clpadl80 \clpadb80 \clpadr80 \gaph\cellx4320
+\clvertalt \clshdrawnil \clwWidth5460\clftsWidth3 \clheight200 \clbrdrt\brdrs\brdrw20\brdrcf9 \clbrdrl\brdrs\brdrw20\brdrcf9 \clbrdrb\brdrs\brdrw20\brdrcf9 \clbrdrr\brdrs\brdrw20\brdrcf9 \clpadt80 \clpadl80 \clpadb80 \clpadr80 \gaph\cellx8640
+\pard\intbl\itap1\pardeftab720\sl288\slmult1\partightenfactor0
+
+\f1\fs20 \cf6 \up0 \nosupersub \ulnone Quantity required
+\f3\fs24 \cf0 \up0 \nosupersub \ulnone \cell 
+\pard\intbl\itap1\pardeftab720\sl288\slmult1\partightenfactor0
+
+\f1\fs20 \cf6 \up0 \nosupersub \ulnone 6 (2 per beam \'d7 3 beams)
+\f3\fs24 \cf0 \up0 \nosupersub \ulnone \cell \row
+
+\itap1\trowd \taflags1 \trgaph108\trleft-108 \trbrdrl\brdrnil \trbrdrr\brdrnil 
+\clvertalt \clshdrawnil \clwWidth3200\clftsWidth3 \clheight200 \clbrdrt\brdrs\brdrw20\brdrcf9 \clbrdrl\brdrs\brdrw20\brdrcf9 \clbrdrb\brdrs\brdrw20\brdrcf9 \clbrdrr\brdrs\brdrw20\brdrcf9 \clpadt80 \clpadl80 \clpadb80 \clpadr80 \gaph\cellx4320
+\clvertalt \clshdrawnil \clwWidth5460\clftsWidth3 \clheight200 \clbrdrt\brdrs\brdrw20\brdrcf9 \clbrdrl\brdrs\brdrw20\brdrcf9 \clbrdrb\brdrs\brdrw20\brdrcf9 \clbrdrr\brdrs\brdrw20\brdrcf9 \clpadt80 \clpadl80 \clpadb80 \clpadr80 \gaph\cellx8640
+\pard\intbl\itap1\pardeftab720\sl288\slmult1\partightenfactor0
+
+\f1\fs20 \cf6 \up0 \nosupersub \ulnone Stock (LCSC)
+\f3\fs24 \cf0 \up0 \nosupersub \ulnone \cell 
+\pard\intbl\itap1\pardeftab720\sl288\slmult1\partightenfactor0
+
+\f1\fs20 \cf6 \up0 \nosupersub \ulnone 12,235 units
+\f3\fs24 \cf0 \up0 \nosupersub \ulnone \cell \row
+
+\itap1\trowd \taflags1 \trgaph108\trleft-108 \trbrdrl\brdrnil \trbrdrt\brdrnil \trbrdrr\brdrnil 
+\clvertalt \clshdrawnil \clwWidth3200\clftsWidth3 \clheight200 \clbrdrt\brdrs\brdrw20\brdrcf9 \clbrdrl\brdrs\brdrw20\brdrcf9 \clbrdrb\brdrs\brdrw20\brdrcf9 \clbrdrr\brdrs\brdrw20\brdrcf9 \clpadt80 \clpadl80 \clpadb80 \clpadr80 \gaph\cellx4320
+\clvertalt \clshdrawnil \clwWidth5460\clftsWidth3 \clheight200 \clbrdrt\brdrs\brdrw20\brdrcf9 \clbrdrl\brdrs\brdrw20\brdrcf9 \clbrdrb\brdrs\brdrw20\brdrcf9 \clbrdrr\brdrs\brdrw20\brdrcf9 \clpadt80 \clpadl80 \clpadb80 \clpadr80 \gaph\cellx8640
+\pard\intbl\itap1\pardeftab720\sl288\slmult1\partightenfactor0
+
+\f1\fs20 \cf6 \up0 \nosupersub \ulnone Unit price
+\f3\fs24 \cf0 \up0 \nosupersub \ulnone \cell 
+\pard\intbl\itap1\pardeftab720\sl288\slmult1\partightenfactor0
+
+\f1\fs20 \cf6 \up0 \nosupersub \ulnone $0.364
+\f3\fs24 \cf0 \up0 \nosupersub \ulnone 
+\f0\b\fs26 \cf7 \up0 \nosupersub \ulnone \cell \lastrow\row
+\pard\sa300\partightenfactor0
+
+\f2 \cf6 Selection rationale: 
+\f0 The VEMD2020X01 was selected over integrated IR receiver modules (like the IRM-V838M3-C) because those modules have AGC (automatic gain control) that requires burst timing patterns. The burst cycle (~1.2ms) is too slow for reliable direction detection at high ball speeds with 25mm sensor spacing. The photodiode's 100ns response time eliminates this constraint entirely.\cf7 \
+4.4 IR LED Emitters (CANDIDATE \'97 PENDING DATASHEET VERIFICATION)\
+
+\itap1\trowd \taflags1 \trgaph108\trleft-108 \trbrdrt\brdrnil \trbrdrl\brdrnil \trbrdrr\brdrnil 
+\clvertalt \clcbpat11 \clwWidth3200\clftsWidth3 \clheight200 \clbrdrt\brdrs\brdrw20\brdrcf9 \clbrdrl\brdrs\brdrw20\brdrcf9 \clbrdrb\brdrs\brdrw20\brdrcf9 \clbrdrr\brdrs\brdrw20\brdrcf9 \clpadt80 \clpadl80 \clpadb80 \clpadr80 \gaph\cellx4320
+\clvertalt \clcbpat11 \clwWidth5460\clftsWidth3 \clheight200 \clbrdrt\brdrs\brdrw20\brdrcf9 \clbrdrl\brdrs\brdrw20\brdrcf9 \clbrdrb\brdrs\brdrw20\brdrcf9 \clbrdrr\brdrs\brdrw20\brdrcf9 \clpadt80 \clpadl80 \clpadb80 \clpadr80 \gaph\cellx8640
+\pard\intbl\itap1\pardeftab720\sl288\slmult1\partightenfactor0
+
+\f2\fs20 \cf6 Parameter
+\f3\b0\fs24 \cf0 \up0 \nosupersub \ulnone \cell 
+\pard\intbl\itap1\pardeftab720\sl288\slmult1\partightenfactor0
+
+\f2\b\fs20 \cf6 \up0 \nosupersub \ulnone Specification
+\f3\b0\fs24 \cf0 \up0 \nosupersub \ulnone \cell \row
+
+\itap1\trowd \taflags1 \trgaph108\trleft-108 \trbrdrl\brdrnil \trbrdrr\brdrnil 
+\clvertalt \clshdrawnil \clwWidth3200\clftsWidth3 \clheight180 \clbrdrt\brdrs\brdrw20\brdrcf9 \clbrdrl\brdrs\brdrw20\brdrcf9 \clbrdrb\brdrs\brdrw20\brdrcf9 \clbrdrr\brdrs\brdrw20\brdrcf9 \clpadt80 \clpadl80 \clpadb80 \clpadr80 \gaph\cellx4320
+\clvertalt \clshdrawnil \clwWidth5460\clftsWidth3 \clheight180 \clbrdrt\brdrs\brdrw20\brdrcf9 \clbrdrl\brdrs\brdrw20\brdrcf9 \clbrdrb\brdrs\brdrw20\brdrcf9 \clbrdrr\brdrs\brdrw20\brdrcf9 \clpadt80 \clpadl80 \clpadb80 \clpadr80 \gaph\cellx8640
+\pard\intbl\itap1\pardeftab720\sl288\slmult1\partightenfactor0
+
+\f1\fs20 \cf6 \up0 \nosupersub \ulnone Part number
+\f3\fs24 \cf0 \up0 \nosupersub \ulnone \cell 
+\pard\intbl\itap1\pardeftab720\sl288\slmult1\partightenfactor0
+
+\f2\b\fs20 \cf6 \up0 \nosupersub \ulnone P2835P1VIRB8G025-940
+\f3\b0\fs24 \cf0 \up0 \nosupersub \ulnone \cell \row
+
+\itap1\trowd \taflags1 \trgaph108\trleft-108 \trbrdrl\brdrnil \trbrdrr\brdrnil 
+\clvertalt \clshdrawnil \clwWidth3200\clftsWidth3 \clheight200 \clbrdrt\brdrs\brdrw20\brdrcf9 \clbrdrl\brdrs\brdrw20\brdrcf9 \clbrdrb\brdrs\brdrw20\brdrcf9 \clbrdrr\brdrs\brdrw20\brdrcf9 \clpadt80 \clpadl80 \clpadb80 \clpadr80 \gaph\cellx4320
+\clvertalt \clshdrawnil \clwWidth5460\clftsWidth3 \clheight200 \clbrdrt\brdrs\brdrw20\brdrcf9 \clbrdrl\brdrs\brdrw20\brdrcf9 \clbrdrb\brdrs\brdrw20\brdrcf9 \clbrdrr\brdrs\brdrw20\brdrcf9 \clpadt80 \clpadl80 \clpadb80 \clpadr80 \gaph\cellx8640
+\pard\intbl\itap1\pardeftab720\sl288\slmult1\partightenfactor0
+
+\f1\fs20 \cf6 \up0 \nosupersub \ulnone LCSC Part #
+\f3\fs24 \cf0 \up0 \nosupersub \ulnone \cell 
+\pard\intbl\itap1\pardeftab720\sl288\slmult1\partightenfactor0
+
+\f1\fs20 \cf6 \up0 \nosupersub \ulnone C22466183
+\f3\fs24 \cf0 \up0 \nosupersub \ulnone \cell \row
+
+\itap1\trowd \taflags1 \trgaph108\trleft-108 \trbrdrl\brdrnil \trbrdrr\brdrnil 
+\clvertalt \clshdrawnil \clwWidth3200\clftsWidth3 \clheight200 \clbrdrt\brdrs\brdrw20\brdrcf9 \clbrdrl\brdrs\brdrw20\brdrcf9 \clbrdrb\brdrs\brdrw20\brdrcf9 \clbrdrr\brdrs\brdrw20\brdrcf9 \clpadt80 \clpadl80 \clpadb80 \clpadr80 \gaph\cellx4320
+\clvertalt \clshdrawnil \clwWidth5460\clftsWidth3 \clheight200 \clbrdrt\brdrs\brdrw20\brdrcf9 \clbrdrl\brdrs\brdrw20\brdrcf9 \clbrdrb\brdrs\brdrw20\brdrcf9 \clbrdrr\brdrs\brdrw20\brdrcf9 \clpadt80 \clpadl80 \clpadb80 \clpadr80 \gaph\cellx8640
+\pard\intbl\itap1\pardeftab720\sl288\slmult1\partightenfactor0
+
+\f1\fs20 \cf6 \up0 \nosupersub \ulnone Manufacturer
+\f3\fs24 \cf0 \up0 \nosupersub \ulnone \cell 
+\pard\intbl\itap1\pardeftab720\sl288\slmult1\partightenfactor0
+
+\f1\fs20 \cf6 \up0 \nosupersub \ulnone Silverlight
+\f3\fs24 \cf0 \up0 \nosupersub \ulnone \cell \row
+
+\itap1\trowd \taflags1 \trgaph108\trleft-108 \trbrdrl\brdrnil \trbrdrr\brdrnil 
+\clvertalt \clshdrawnil \clwWidth3200\clftsWidth3 \clheight200 \clbrdrt\brdrs\brdrw20\brdrcf9 \clbrdrl\brdrs\brdrw20\brdrcf9 \clbrdrb\brdrs\brdrw20\brdrcf9 \clbrdrr\brdrs\brdrw20\brdrcf9 \clpadt80 \clpadl80 \clpadb80 \clpadr80 \gaph\cellx4320
+\clvertalt \clshdrawnil \clwWidth5460\clftsWidth3 \clheight200 \clbrdrt\brdrs\brdrw20\brdrcf9 \clbrdrl\brdrs\brdrw20\brdrcf9 \clbrdrb\brdrs\brdrw20\brdrcf9 \clbrdrr\brdrs\brdrw20\brdrcf9 \clpadt80 \clpadl80 \clpadb80 \clpadr80 \gaph\cellx8640
+\pard\intbl\itap1\pardeftab720\sl288\slmult1\partightenfactor0
+
+\f1\fs20 \cf6 \up0 \nosupersub \ulnone Wavelength
+\f3\fs24 \cf0 \up0 \nosupersub \ulnone \cell 
+\pard\intbl\itap1\pardeftab720\sl288\slmult1\partightenfactor0
+
+\f1\fs20 \cf6 \up0 \nosupersub \ulnone 940nm
+\f3\fs24 \cf0 \up0 \nosupersub \ulnone \cell \row
+
+\itap1\trowd \taflags1 \trgaph108\trleft-108 \trbrdrl\brdrnil \trbrdrr\brdrnil 
+\clvertalt \clshdrawnil \clwWidth3200\clftsWidth3 \clheight180 \clbrdrt\brdrs\brdrw20\brdrcf9 \clbrdrl\brdrs\brdrw20\brdrcf9 \clbrdrb\brdrs\brdrw20\brdrcf9 \clbrdrr\brdrs\brdrw20\brdrcf9 \clpadt80 \clpadl80 \clpadb80 \clpadr80 \gaph\cellx4320
+\clvertalt \clshdrawnil \clwWidth5460\clftsWidth3 \clheight180 \clbrdrt\brdrs\brdrw20\brdrcf9 \clbrdrl\brdrs\brdrw20\brdrcf9 \clbrdrb\brdrs\brdrw20\brdrcf9 \clbrdrr\brdrs\brdrw20\brdrcf9 \clpadt80 \clpadl80 \clpadb80 \clpadr80 \gaph\cellx8640
+\pard\intbl\itap1\pardeftab720\sl288\slmult1\partightenfactor0
+
+\f1\fs20 \cf6 \up0 \nosupersub \ulnone Half angle (estimated)
+\f3\fs24 \cf0 \up0 \nosupersub \ulnone \cell 
+\pard\intbl\itap1\pardeftab720\sl288\slmult1\partightenfactor0
+
+\f1\fs20 \cf6 \up0 \nosupersub \ulnone 12\'b0-15\'b0
+\f3\fs24 \cf0 \up0 \nosupersub \ulnone \cell \row
+
+\itap1\trowd \taflags1 \trgaph108\trleft-108 \trbrdrl\brdrnil \trbrdrr\brdrnil 
+\clvertalt \clshdrawnil \clwWidth3200\clftsWidth3 \clheight200 \clbrdrt\brdrs\brdrw20\brdrcf9 \clbrdrl\brdrs\brdrw20\brdrcf9 \clbrdrb\brdrs\brdrw20\brdrcf9 \clbrdrr\brdrs\brdrw20\brdrcf9 \clpadt80 \clpadl80 \clpadb80 \clpadr80 \gaph\cellx4320
+\clvertalt \clshdrawnil \clwWidth5460\clftsWidth3 \clheight200 \clbrdrt\brdrs\brdrw20\brdrcf9 \clbrdrl\brdrs\brdrw20\brdrcf9 \clbrdrb\brdrs\brdrw20\brdrcf9 \clbrdrr\brdrs\brdrw20\brdrcf9 \clpadt80 \clpadl80 \clpadb80 \clpadr80 \gaph\cellx8640
+\pard\intbl\itap1\pardeftab720\sl288\slmult1\partightenfactor0
+
+\f1\fs20 \cf6 \up0 \nosupersub \ulnone Beam diameter at 500mm
+\f3\fs24 \cf0 \up0 \nosupersub \ulnone \cell 
+\pard\intbl\itap1\pardeftab720\sl288\slmult1\partightenfactor0
+
+\f1\fs20 \cf6 \up0 \nosupersub \ulnone ~106mm to ~134mm
+\f3\fs24 \cf0 \up0 \nosupersub \ulnone \cell \row
+
+\itap1\trowd \taflags1 \trgaph108\trleft-108 \trbrdrl\brdrnil \trbrdrr\brdrnil 
+\clvertalt \clshdrawnil \clwWidth3200\clftsWidth3 \clheight340 \clbrdrt\brdrs\brdrw20\brdrcf9 \clbrdrl\brdrs\brdrw20\brdrcf9 \clbrdrb\brdrs\brdrw20\brdrcf9 \clbrdrr\brdrs\brdrw20\brdrcf9 \clpadt80 \clpadl80 \clpadb80 \clpadr80 \gaph\cellx4320
+\clvertalt \clshdrawnil \clwWidth5460\clftsWidth3 \clheight340 \clbrdrt\brdrs\brdrw20\brdrcf9 \clbrdrl\brdrs\brdrw20\brdrcf9 \clbrdrb\brdrs\brdrw20\brdrcf9 \clbrdrr\brdrs\brdrw20\brdrcf9 \clpadt80 \clpadl80 \clpadb80 \clpadr80 \gaph\cellx8640
+\pard\intbl\itap1\pardeftab720\sl288\slmult1\partightenfactor0
+
+\f1\fs20 \cf6 \up0 \nosupersub \ulnone Package
+\f3\fs24 \cf0 \up0 \nosupersub \ulnone \cell 
+\pard\intbl\itap1\pardeftab720\partightenfactor0
+
+\f4\fs28 \cf12 \up0 \nosupersub \ulnone SMD, 3.5x2.8mm
+\f3\fs24 \cf0 \up0 \nosupersub \ulnone \cell \row
+
+\itap1\trowd \taflags1 \trgaph108\trleft-108 \trbrdrl\brdrnil \trbrdrr\brdrnil 
+\clvertalt \clshdrawnil \clwWidth3200\clftsWidth3 \clheight200 \clbrdrt\brdrs\brdrw20\brdrcf9 \clbrdrl\brdrs\brdrw20\brdrcf9 \clbrdrb\brdrs\brdrw20\brdrcf9 \clbrdrr\brdrs\brdrw20\brdrcf9 \clpadt80 \clpadl80 \clpadb80 \clpadr80 \gaph\cellx4320
+\clvertalt \clshdrawnil \clwWidth5460\clftsWidth3 \clheight200 \clbrdrt\brdrs\brdrw20\brdrcf9 \clbrdrl\brdrs\brdrw20\brdrcf9 \clbrdrb\brdrs\brdrw20\brdrcf9 \clbrdrr\brdrs\brdrw20\brdrcf9 \clpadt80 \clpadl80 \clpadb80 \clpadr80 \gaph\cellx8640
+\pard\intbl\itap1\pardeftab720\sl288\slmult1\partightenfactor0
+
+\f1\fs20 \cf6 \up0 \nosupersub \ulnone Quantity required
+\f3\fs24 \cf0 \up0 \nosupersub \ulnone \cell 
+\pard\intbl\itap1\pardeftab720\sl288\slmult1\partightenfactor0
+
+\f1\fs20 \cf6 \up0 \nosupersub \ulnone 3 (1 per beam)
+\f3\fs24 \cf0 \up0 \nosupersub \ulnone \cell \row
+
+\itap1\trowd \taflags1 \trgaph108\trleft-108 \trbrdrl\brdrnil \trbrdrr\brdrnil 
+\clvertalt \clshdrawnil \clwWidth3200\clftsWidth3 \clheight180 \clbrdrt\brdrs\brdrw20\brdrcf9 \clbrdrl\brdrs\brdrw20\brdrcf9 \clbrdrb\brdrs\brdrw20\brdrcf9 \clbrdrr\brdrs\brdrw20\brdrcf9 \clpadt80 \clpadl80 \clpadb80 \clpadr80 \gaph\cellx4320
+\clvertalt \clshdrawnil \clwWidth5460\clftsWidth3 \clheight180 \clbrdrt\brdrs\brdrw20\brdrcf9 \clbrdrl\brdrs\brdrw20\brdrcf9 \clbrdrb\brdrs\brdrw20\brdrcf9 \clbrdrr\brdrs\brdrw20\brdrcf9 \clpadt80 \clpadl80 \clpadb80 \clpadr80 \gaph\cellx8640
+\pard\intbl\itap1\pardeftab720\sl288\slmult1\partightenfactor0
+
+\f1\fs20 \cf6 \up0 \nosupersub \ulnone Stock (LCSC)
+\f3\fs24 \cf0 \up0 \nosupersub \ulnone \cell 
+\pard\intbl\itap1\pardeftab720\sl288\slmult1\partightenfactor0
+
+\f1\fs20 \cf6 \up0 \nosupersub \ulnone 230 units
+\f3\fs24 \cf0 \up0 \nosupersub \ulnone \cell \row
+
+\itap1\trowd \taflags1 \trgaph108\trleft-108 \trbrdrl\brdrnil \trbrdrr\brdrnil 
+\clvertalt \clshdrawnil \clwWidth3200\clftsWidth3 \clheight200 \clbrdrt\brdrs\brdrw20\brdrcf9 \clbrdrl\brdrs\brdrw20\brdrcf9 \clbrdrb\brdrs\brdrw20\brdrcf9 \clbrdrr\brdrs\brdrw20\brdrcf9 \clpadt80 \clpadl80 \clpadb80 \clpadr80 \gaph\cellx4320
+\clvertalt \clshdrawnil \clwWidth5460\clftsWidth3 \clheight200 \clbrdrt\brdrs\brdrw20\brdrcf9 \clbrdrl\brdrs\brdrw20\brdrcf9 \clbrdrb\brdrs\brdrw20\brdrcf9 \clbrdrr\brdrs\brdrw20\brdrcf9 \clpadt80 \clpadl80 \clpadb80 \clpadr80 \gaph\cellx8640
+\pard\intbl\itap1\pardeftab720\sl288\slmult1\partightenfactor0
+
+\f1\fs20 \cf6 \up0 \nosupersub \ulnone Unit price
+\f3\fs24 \cf0 \up0 \nosupersub \ulnone \cell 
+\pard\intbl\itap1\pardeftab720\sl288\slmult1\partightenfactor0
+
+\f1\fs20 \cf6 \up0 \nosupersub \ulnone $0.1405
+\f3\fs24 \cf0 \up0 \nosupersub \ulnone \cell \row
+
+\itap1\trowd \taflags1 \trgaph108\trleft-108 \trbrdrl\brdrnil \trbrdrt\brdrnil \trbrdrr\brdrnil 
+\clvertalt \clshdrawnil \clwWidth3200\clftsWidth3 \clheight200 \clbrdrt\brdrs\brdrw20\brdrcf9 \clbrdrl\brdrs\brdrw20\brdrcf9 \clbrdrb\brdrs\brdrw20\brdrcf9 \clbrdrr\brdrs\brdrw20\brdrcf9 \clpadt80 \clpadl80 \clpadb80 \clpadr80 \gaph\cellx4320
+\clvertalt \clshdrawnil \clwWidth5460\clftsWidth3 \clheight200 \clbrdrt\brdrs\brdrw20\brdrcf9 \clbrdrl\brdrs\brdrw20\brdrcf9 \clbrdrb\brdrs\brdrw20\brdrcf9 \clbrdrr\brdrs\brdrw20\brdrcf9 \clpadt80 \clpadl80 \clpadb80 \clpadr80 \gaph\cellx8640
+\pard\intbl\itap1\pardeftab720\sl288\slmult1\partightenfactor0
+
+\f2\b\fs20 \cf6 \up0 \nosupersub \ulnone Status
+\f3\b0\fs24 \cf0 \up0 \nosupersub \ulnone \cell 
+\pard\intbl\itap1\pardeftab720\sl288\slmult1\partightenfactor0
+
+\f1\fs20 \cf13 \up0 \nosupersub \ulnone Chosen for prototype
+\f3\fs24 \cf0 \up0 \nosupersub \ulnone 
+\f0\b\fs26 \cf7 \up0 \nosupersub \ulnone \cell \lastrow\row
+\pard\sa280\partightenfactor0
+
+\fs32 \cf5 5. PCB Architecture\
+\pard\sa280\partightenfactor0
+
+\fs26 \cf7 5.1 Board Configuration\
+\pard\sa100\partightenfactor0
+\cf6 The system uses three PCBs manufactured by JLCPCB:\cf7 \
+\pard\tx360\tx720\li720\fi-720\partightenfactor0
+\ls4\ilvl0
+\f1\b0\fs20 \cf6 \up0 \nosupersub \ulnone {\listtext	4.	}
+\f2\b \up0 \nosupersub \ulnone Main PCB (rigid): 
+\f1\b0 Houses the T-Display-S3 MCU, USB-C power module, 18650 battery holder, ZIF FPC connectors, and supporting circuitry\
+\ls4\ilvl0\up0 \nosupersub \ulnone {\listtext	5.	}
+\f2\b \up0 \nosupersub \ulnone LED Flex PCB: 
+\f1\b0 Contains 3\'d7 IR LEDs with drive circuits, spans 0\'b0 to 100\'b0 arc (~436mm)\
+\pard\tx360\tx720\li720\fi-720\sa280\partightenfactor0
+\ls4\ilvl0\cf6 \up0 \nosupersub \ulnone {\listtext	6.	}
+\f2\b \up0 \nosupersub \ulnone Sensor Flex PCB: 
+\f1\b0 Contains 6\'d7 photodiodes with detection circuits, spans 180\'b0 to 280\'b0 arc (~436mm)\
+\pard\sa100\partightenfactor0
+
+\f0\b\fs26 \cf7 5.2 Flex PCB Connections\
+\pard\tx360\tx720\li720\fi-720\partightenfactor0
+\ls5\ilvl0
+\f1\b0\fs20 \cf6 \up0 \nosupersub \ulnone {\listtext	\uc0\u8226 	}\up0 \nosupersub \ulnone ZIF FPC connectors on main PCB\
+\ls5\ilvl0\up0 \nosupersub \ulnone {\listtext	\uc0\u8226 	}\up0 \nosupersub \ulnone Flex PCBs conform to hoop's inner curve (250mm radius)\
+\ls5\ilvl0\up0 \nosupersub \ulnone {\listtext	\uc0\u8226 	}\up0 \nosupersub \ulnone SMD components only on flex PCBs (reliability on curved surface)\
+\ls5\ilvl0\up0 \nosupersub \ulnone {\listtext	\uc0\u8226 	}\up0 \nosupersub \ulnone 0.11mm or 0.2mm polyimide thickness for flexibility\
+\pard\tx360\tx720\li720\fi-720\sa280\partightenfactor0
+\ls5\ilvl0\cf6 \up0 \nosupersub \ulnone {\listtext	\uc0\u8226 	}\up0 \nosupersub \ulnone Stiffeners at component locations and connector ends\
+\pard\sa280\partightenfactor0
+
+\f0\b\fs26 \cf7 5.3 Signal Routing\
+\pard\sa280\partightenfactor0
+
+\f2 \cf6 LED Flex PCB signals: 
+\f0 VCC, GND, PWM (can be shared for synchronized pulsing)\cf7 \
+\pard\sa360\partightenfactor0
+
+\f2 \cf6 Sensor Flex PCB signals: 
+\f0 VCC, GND, 6\'d7 sensor outputs (one per photodiode)\cf7 \
+\pard\sa280\partightenfactor0
+
+\fs32 \cf5 6. Mechanical Design\
+\pard\sa280\partightenfactor0
+
+\fs26 \cf7 6.1 3D Printed Components\
+\pard\sa100\partightenfactor0
+\cf6 Custom 3D-printed clips attach to the 25.4mm \'d7 3.4mm flat steel bar profile:\cf7 \
+\pard\tx360\tx720\li720\fi-720\partightenfactor0
+\ls6\ilvl0
+\f1\b0\fs20 \cf6 \up0 \nosupersub \ulnone {\listtext	\uc0\u8226 	}\up0 \nosupersub \ulnone Main enclosure clip: Houses main PCB, provides display visibility, battery access\
+\ls6\ilvl0\up0 \nosupersub \ulnone {\listtext	\uc0\u8226 	}\up0 \nosupersub \ulnone Flex PCB channel clips: Guide and protect flex PCBs along hoop interior\
+\ls6\ilvl0\up0 \nosupersub \ulnone {\listtext	\uc0\u8226 	}\up0 \nosupersub \ulnone Sensor housings: Position photodiodes with 25mm spacing, may include baffles if needed\
+\pard\tx360\tx720\li720\fi-720\sa360\partightenfactor0
+\ls6\ilvl0\cf6 \up0 \nosupersub \ulnone {\listtext	\uc0\u8226 	}\up0 \nosupersub \ulnone LED housings: Position and protect IR LEDs, ensure correct aiming\
+\pard\sa280\partightenfactor0
+
+\f0\b\fs32 \cf5 7. Open Items and Next Steps\
+\pard\sa100\partightenfactor0
+
+\fs26 \cf7 7.1 Pending Tasks\
+\pard\tx360\tx720\li720\fi-720\partightenfactor0
+\ls7\ilvl0
+\f1\b0\fs20 \cf6 \up0 \nosupersub \ulnone {\listtext	7.	}
+\f2\b \up0 \nosupersub \ulnone Photodiode detection circuit design: 
+\f1\b0 Design transimpedance amplifier or comparator circuit for converting photodiode current to digital GPIO signal\
+\ls7\ilvl0\up0 \nosupersub \ulnone {\listtext	8.	}
+\f2\b \up0 \nosupersub \ulnone LED drive circuit design: 
+\f1\b0 Size current-limiting resistors and MOSFET switches, determine continuous vs. pulsed operation\
+\ls7\ilvl0\up0 \nosupersub \ulnone {\listtext	9.	}
+\f2\b \up0 \nosupersub \ulnone Schematic capture: 
+\f1\b0 Create KiCad schematics for all three PCBs\
+\ls7\ilvl0\up0 \nosupersub \ulnone {\listtext	10.	}
+\f2\b \up0 \nosupersub \ulnone PCB layout: 
+\f1\b0 Layout main rigid PCB and both flex PCBs in KiCad\
+\ls7\ilvl0\up0 \nosupersub \ulnone {\listtext	11.	}
+\f2\b \up0 \nosupersub \ulnone 3D enclosure design: 
+\f1\b0 Model mounting clips and enclosures\
+\pard\tx360\tx720\li720\fi-720\sa280\partightenfactor0
+\ls7\ilvl0\cf6 \up0 \nosupersub \ulnone {\listtext	12.	}
+\f2\b \up0 \nosupersub \ulnone Firmware development: 
+\f1\b0 Implement interrupt-driven detection, direction logic, and display output\
+\pard\sa100\partightenfactor0
+
+\f0\b\fs26 \cf7 7.2 Design Decisions to Finalize\
+\pard\tx360\tx720\li720\fi-720\partightenfactor0
+\ls8\ilvl0
+\f1\b0\fs20 \cf6 \up0 \nosupersub \ulnone {\listtext	\uc0\u8226 	}\up0 \nosupersub \ulnone Continuous vs. modulated (38kHz) LED drive \'97 with photodiodes, continuous may be sufficient and simpler\
+\ls8\ilvl0\up0 \nosupersub \ulnone {\listtext	\uc0\u8226 	}\up0 \nosupersub \ulnone Photodiode bias mode \'97 photovoltaic (simpler) vs. reverse-biased (faster, already fast enough)\
+\ls8\ilvl0\up0 \nosupersub \ulnone {\listtext	\uc0\u8226 	}\up0 \nosupersub \ulnone Detection circuit topology \'97 simple resistive load vs. transimpedance amplifier vs. comparator\
+\pard\tx360\tx720\li720\fi-720\sa400\partightenfactor0
+\ls8\ilvl0\cf6 \up0 \nosupersub \ulnone {\listtext	\uc0\u8226 	}\up0 \nosupersub \ulnone Main PCB mounting position on hoop\
+\pard\sa400\partightenfactor0
+
+\f5\i \cf4 \'97 End of Document \'97}

@@ -25,6 +25,9 @@ motion-play/
 ├── lambda/             # AWS Lambda functions
 ├── infrastructure/     # AWS setup and deployment
 ├── hardware/           # KiCad PCB designs
+│   ├── pcb-main/       # Main controller board
+│   ├── sensor-rigid/   # Sensor rigid base (mux, connectors)
+│   └── sensor-flex/    # Sensor flex strip (VCNL4040s)
 └── docs/references/    # Hardware datasheets
 ```
 
@@ -47,7 +50,8 @@ cd frontend/motion-play-ui && npm install && npm run dev
 ## Hardware
 
 - **MCU**: LilyGO T-Display-S3 (ESP32-S3)
-- **Sensors**: 6× VCNL4040 proximity sensors (3 boards × 2 sensors)
+- **Sensors**: 6× VCNL4040 proximity sensors (3 assemblies × 2 sensors)
+- **Sensor Design**: Rigid+Flex hybrid PCBs (sensors on flex strip angle outward for better direction detection)
 - **Architecture**: TCA9548A → PCA9546A → VCNL4040 (dual I2C multiplexing)
 
 ## License

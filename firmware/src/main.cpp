@@ -13,6 +13,7 @@
 #include "components/detection/DirectionDetector.h"
 #include "components/led/LEDController.h"
 #include "components/interrupt/InterruptManager.h"
+#include "components/calibration/CalibrationManager.h"
 
 // Button pins for T-Display-S3
 #define BUTTON_1 0  // Left button (BOOT)
@@ -44,7 +45,7 @@ DeviceMode currentMode = DeviceMode::DEBUG; // Default to debug for backwards co
 // Play mode state
 bool playModeActive = false;
 unsigned long lastDetectionTime = 0;
-const unsigned long DETECTION_COOLDOWN = 3000; // 3 seconds between detections
+const unsigned long DETECTION_COOLDOWN = 500; // 500ms - prevents double-trigger, allows quick successive throws
 
 // Timing
 unsigned long lastStatusUpdate = 0;
@@ -267,6 +268,17 @@ void initializeSystem()
     Serial.println("Sensors initialized successfully");
     delay(500);
 
+    // Initialize CalibrationManager (uses SensorManager for readings)
+    Serial.println("Initializing CalibrationManager...");
+    if (!calibrationManager.begin(&sensorManager, &display))
+    {
+        Serial.println("WARNING: CalibrationManager init failed");
+    }
+    else
+    {
+        Serial.println("CalibrationManager initialized");
+    }
+
     // Load network configuration
     Serial.println("Loading WiFi config...");
     if (!networkManager.loadConfig())
@@ -448,6 +460,18 @@ void handleCommand(const String &command, JsonDocument *doc)
                               intConfig.thresholdMargin, intConfig.hysteresis,
                               intConfig.persistence, intConfig.integrationTime,
                               intConfig.mode == InterruptMode::LOGIC_OUTPUT ? "logic" : "normal");
+
+                // Apply calibration data if available
+                if (deviceCalibration.isValid())
+                {
+                    interruptManager.setCalibration(&deviceCalibration);
+                    Serial.println("Calibration data applied to InterruptManager");
+                }
+                else
+                {
+                    interruptManager.setCalibration(nullptr);
+                    Serial.println("No calibration - InterruptManager using fallback thresholds");
+                }
 
                 if (!interruptManager.configure(intConfig))
                 {
@@ -773,9 +797,58 @@ void handleCommand(const String &command, JsonDocument *doc)
                 mqttManager->publishStatus("mode_play");
                 // Reset detector to establish fresh baseline for this session
                 directionDetector.fullReset();
+                
+                // Apply calibration data if available
+                if (deviceCalibration.isValid())
+                {
+                    directionDetector.setCalibration(&deviceCalibration);
+                    Serial.println("Calibration data applied to DirectionDetector");
+                }
+                else
+                {
+                    directionDetector.setCalibration(nullptr);
+                    Serial.println("No calibration - using fallback thresholds");
+                }
+                
                 // Turn off LEDs until baseline is established
                 ledController.off();
                 Serial.println("Direction detector reset for new play session");
+            }
+            else if (modeStr == "calibrate")
+            {
+                // Start calibration mode
+                Serial.println("Starting calibration via MQTT command...");
+                
+                // Only start if not collecting
+                if (sessionManager.getState() == IDLE)
+                {
+                    // Set sensor config before starting
+                    uint8_t mp = currentConfig.multi_pulse.toInt();
+                    if (mp == 0) mp = 1;
+                    uint8_t it = currentConfig.integration_time.substring(0, 1).toInt();
+                    if (it == 0) it = 1;
+                    uint8_t led = currentConfig.led_current.toInt();
+                    if (led == 0) led = 200;
+                    calibrationManager.setSensorConfig(mp, it, led);
+                    
+                    if (calibrationManager.startCalibration())
+                    {
+                        mqttManager->publishStatus("calibration_started");
+                    }
+                    else
+                    {
+                        display.showMessage("Calibration failed to start", TFT_RED);
+                        mqttManager->publishStatus("calibration_failed");
+                    }
+                }
+                else
+                {
+                    display.showMessage("Stop collection first!", TFT_RED);
+                    mqttManager->publishStatus("calibration_rejected_busy");
+                }
+                
+                delay(1500);
+                return; // Skip the displayState set below
             }
             else
             {
@@ -800,8 +873,80 @@ void loop()
 {
     static int buttonState2 = HIGH;
     static unsigned long lastSampleUpdate = 0;
+    static unsigned long button1HoldStart = 0;
+    static bool button1WasPressed = false;
 
+    int currentButton1 = digitalRead(BUTTON_1);
     int currentButton2 = digitalRead(BUTTON_2);
+
+    // If calibration is active, handle it exclusively
+    if (calibrationManager.isActive())
+    {
+        calibrationManager.update();
+        
+        // After calibration completes, restore normal display
+        if (!calibrationManager.isActive())
+        {
+            display.showSessionScreen();
+            display.setSensorConfig(&currentConfig);
+            
+            // Set sensor config in calibration manager for next time
+            uint8_t mp = currentConfig.multi_pulse.toInt();
+            if (mp == 0) mp = 1;
+            uint8_t it = currentConfig.integration_time.substring(0, 1).toInt();
+            if (it == 0) it = 1;
+            uint8_t led = currentConfig.led_current.toInt();
+            if (led == 0) led = 200;
+            calibrationManager.setSensorConfig(mp, it, led);
+        }
+        
+        delay(10);
+        return; // Skip normal loop during calibration
+    }
+
+    // Check for LEFT button (BOOT) long-press to start calibration
+    if (currentButton1 == LOW)
+    {
+        if (!button1WasPressed)
+        {
+            button1WasPressed = true;
+            button1HoldStart = millis();
+        }
+        else if (millis() - button1HoldStart >= 3000)
+        {
+            // 3 second hold - trigger calibration
+            Serial.println("Button 1 held 3s - Starting calibration...");
+            
+            // Only start if not collecting
+            if (sessionManager.getState() == IDLE)
+            {
+                // Set sensor config before starting
+                uint8_t mp = currentConfig.multi_pulse.toInt();
+                if (mp == 0) mp = 1;
+                uint8_t it = currentConfig.integration_time.substring(0, 1).toInt();
+                if (it == 0) it = 1;
+                uint8_t led = currentConfig.led_current.toInt();
+                if (led == 0) led = 200;
+                calibrationManager.setSensorConfig(mp, it, led);
+                
+                calibrationManager.startCalibration();
+            }
+            else
+            {
+                display.showMessage("Stop collection first!", TFT_RED);
+                delay(1500);
+                display.setDisplayState(DISPLAY_IDLE);
+            }
+            
+            button1WasPressed = false; // Reset to prevent re-trigger
+            button1HoldStart = 0;
+        }
+    }
+    else
+    {
+        button1WasPressed = false;
+        button1HoldStart = 0;
+    }
 
     // Check for RIGHT button press to restart anytime
     if (currentButton2 == LOW && buttonState2 == HIGH)

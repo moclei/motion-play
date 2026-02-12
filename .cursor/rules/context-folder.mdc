@@ -6,5 +6,6 @@ I maintain a `.context/` folder in my projects for AI-readable documentation.
 - `.context/PROJECT.md` — Start here. Central context document for the project.
 - `.context/manifest.yaml` — Structured metadata, file locations, tech stack.
 - `.context/IDEAS.md` — Feature ideas and backlog (if present).
+- `.context/WORKFLOW.md` - Outline of the workflow for new iniatives and features
 
 When starting work on a project, check for `.context/PROJECT.md` first to understand what the project is and how it's organized.

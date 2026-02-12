@@ -194,6 +194,23 @@ uint16_t InterruptManager::getBaseline(uint8_t position) const
     return _baselines[position];
 }
 
+void InterruptManager::setCalibration(const DeviceCalibration *cal)
+{
+    _externalCalibration = cal;
+    
+    if (cal != nullptr && cal->isValid())
+    {
+        Serial.println("[InterruptManager] External calibration data set:");
+        Serial.printf("  PCB1 threshold: %d\n", cal->pcbs[0].threshold);
+        Serial.printf("  PCB2 threshold: %d\n", cal->pcbs[1].threshold);
+        Serial.printf("  PCB3 threshold: %d\n", cal->pcbs[2].threshold);
+    }
+    else
+    {
+        Serial.println("[InterruptManager] External calibration cleared (using fallback)");
+    }
+}
+
 // ============================================================================
 // Configuration
 // ============================================================================
@@ -276,22 +293,46 @@ bool InterruptManager::configureSensor(uint8_t position)
     sensor.setMultiPulse(_config.multiPulse); // Multi-pulse for stronger signal
     sensor.setProxCancellation(0);            // No hardware cancellation
 
-    // NEW: Per-sensor threshold based on calibrated MAX baseline
-    // High threshold = baseline_max + margin (ensures no noise triggers)
-    // Low threshold = baseline_max + margin - hysteresis (for state reset)
+    // Calculate thresholds
+    uint16_t highThresh, lowThresh;
     uint16_t baseline = _baselines[position];
-    uint16_t highThresh = baseline + _config.thresholdMargin;
-    uint16_t lowThresh = baseline + _config.thresholdMargin - _config.hysteresis;
-
-    // Ensure low threshold is reasonable
-    if (lowThresh < baseline)
-        lowThresh = baseline;
+    
+    // Check if we have external calibration data
+    if (_externalCalibration != nullptr && _externalCalibration->isValid())
+    {
+        // Use calibrated threshold from CalibrationManager
+        // Sensor position 0-1 = PCB1, 2-3 = PCB2, 4-5 = PCB3
+        uint8_t pcbIndex = position / 2;
+        
+        // The calibrated threshold is for the PCB as a whole (sum of both sensors)
+        // For per-sensor threshold, we use half of the PCB threshold as an approximation
+        uint16_t pcbThreshold = _externalCalibration->pcbs[pcbIndex].threshold;
+        highThresh = pcbThreshold / 2;
+        
+        // Low threshold with hysteresis
+        lowThresh = highThresh > _config.hysteresis ? highThresh - _config.hysteresis : 1;
+        
+        Serial.printf("    Sensor %d (CALIBRATED): PCB%d threshold=%d, HIGH=%d, LOW=%d\n",
+                      position, pcbIndex + 1, pcbThreshold, highThresh, lowThresh);
+    }
+    else
+    {
+        // Fallback: Per-sensor threshold based on measured MAX baseline
+        // High threshold = baseline_max + margin (ensures no noise triggers)
+        // Low threshold = baseline_max + margin - hysteresis (for state reset)
+        highThresh = baseline + _config.thresholdMargin;
+        lowThresh = baseline + _config.thresholdMargin - _config.hysteresis;
+        
+        // Ensure low threshold is reasonable
+        if (lowThresh < baseline)
+            lowThresh = baseline;
+        
+        Serial.printf("    Sensor %d (FALLBACK): baseline=%d, HIGH=%d, LOW=%d\n",
+                      position, baseline, highThresh, lowThresh);
+    }
 
     sensor.setProxHighThreshold(highThresh);
     sensor.setProxLowThreshold(lowThresh);
-
-    Serial.printf("    Sensor %d: baseline=%d, HIGH=%d, LOW=%d\n",
-                  position, baseline, highThresh, lowThresh);
 
     // Configure interrupt behavior
     sensor.setProxPersistence(_config.persistence);

@@ -1,0 +1,141 @@
+ERC report (2025-12-22T15:09:34-0800, Encoding UTF8)
+
+***** Sheet /
+[pin_not_connected]: Pin not connected
+    ; error
+    @(3550 mils, 2250 mils): Symbol FPC1 Pin 9 [9, Unspecified, Line]
+[pin_to_pin]: Pins of type Unspecified and Power output are connected
+    ; warning
+    @(3900 mils, 2400 mils): Symbol FPC1 Pin 8 [8, Unspecified, Line]
+    @(4400 mils, 3750 mils): Symbol #FLG02 Pin 1 [Power output, Line]
+[footprint_link_issues]: The current configuration does not include the footprint library ''.
+    ; warning
+    @(3700 mils, 2750 mils): Symbol FPC1 [FPC1.0-8P]
+[pin_to_pin]: Pins of type Unspecified and Unspecified are connected
+    ; warning
+    @(3900 mils, 2500 mils): Symbol FPC1 Pin 7 [7, Unspecified, Line]
+    @(3900 mils, 2400 mils): Symbol FPC1 Pin 8 [8, Unspecified, Line]
+[pin_to_pin]: Pins of type Unspecified and Unspecified are connected
+    ; warning
+    @(3900 mils, 2600 mils): Symbol FPC1 Pin 6 [6, Unspecified, Line]
+    @(3900 mils, 2500 mils): Symbol FPC1 Pin 7 [7, Unspecified, Line]
+[pin_to_pin]: Pins of type Unspecified and Unspecified are connected
+    ; warning
+    @(3900 mils, 2700 mils): Symbol FPC1 Pin 5 [5, Unspecified, Line]
+    @(3900 mils, 2600 mils): Symbol FPC1 Pin 6 [6, Unspecified, Line]
+[pin_to_pin]: Pins of type Unspecified and Unspecified are connected
+    ; warning
+    @(3900 mils, 2800 mils): Symbol FPC1 Pin 4 [4, Unspecified, Line]
+    @(3900 mils, 2700 mils): Symbol FPC1 Pin 5 [5, Unspecified, Line]
+[unconnected_wire_endpoint]: Unconnected wire endpoint
+    ; warning
+    @(3850 mils, 2900 mils): Horizontal Wire, length 50 mils
+[pin_not_connected]: Pin not connected
+    ; error
+    @(3550 mils, 3300 mils): Symbol FPC1 Pin 10 [10, Unspecified, Line]
+[pin_to_pin]: Pins of type Unspecified and Unspecified are connected
+    ; warning
+    @(3900 mils, 2900 mils): Symbol FPC1 Pin 3 [3, Unspecified, Line]
+    @(3900 mils, 2800 mils): Symbol FPC1 Pin 4 [4, Unspecified, Line]
+[pin_to_pin]: Pins of type Unspecified and Unspecified are connected
+    ; warning
+    @(3900 mils, 3000 mils): Symbol FPC1 Pin 2 [2, Unspecified, Line]
+    @(3900 mils, 2900 mils): Symbol FPC1 Pin 3 [3, Unspecified, Line]
+[pin_to_pin]: Pins of type Unspecified and Power output are connected
+    ; warning
+    @(3900 mils, 3100 mils): Symbol FPC1 Pin 1 [1, Unspecified, Line]
+    @(4000 mils, 3750 mils): Symbol #FLG01 Pin 1 [Power output, Line]
+[multiple_net_names]: Both GND and S2B are attached to the same items; GND will be used in the netlist
+    ; warning
+    @(7400 mils, 1250 mils): Symbol #PWR08 Pin 1 [Power input, Line]
+    @(5600 mils, 2600 mils): Label 'S2B'
+[pin_to_pin]: Pins of type Unspecified and Unspecified are connected
+    ; warning
+    @(6250 mils, 1100 mils): Symbol LED5 Pin 2 [C, Unspecified, Line]
+    @(6250 mils, 1450 mils): Symbol LED6 Pin 2 [C, Unspecified, Line]
+[multiple_net_names]: Both +5V and 5V are attached to the same items; +5V will be used in the netlist
+    ; warning
+    @(3600 mils, 3700 mils): Symbol #PWR01 Pin 1 [Power input, Line]
+    @(5600 mils, 3100 mils): Label '5V'
+[pin_to_pin]: Pins of type Unspecified and Power output are connected
+    ; warning
+    @(6250 mils, 1450 mils): Symbol LED6 Pin 2 [C, Unspecified, Line]
+    @(4000 mils, 3750 mils): Symbol #FLG01 Pin 1 [Power output, Line]
+[pin_to_pin]: Pins of type Unspecified and Unspecified are connected
+    ; warning
+    @(6250 mils, 1900 mils): Symbol LED3 Pin 2 [C, Unspecified, Line]
+    @(6250 mils, 2250 mils): Symbol LED4 Pin 2 [C, Unspecified, Line]
+[footprint_link_issues]: The current configuration does not include the footprint library 'component_lib'.
+    ; warning
+    @(6550 mils, 1100 mils): Symbol LED5 [VEMD2020X01]
+[lib_symbol_mismatch]: Symbol 'VEMD2020X01' doesn't match copy in library 'VEMD2020X01'
+    ; warning
+    @(6550 mils, 1100 mils): Symbol LED5 [VEMD2020X01]
+[pin_to_pin]: Pins of type Unspecified and Unspecified are connected
+    ; warning
+    @(6250 mils, 2250 mils): Symbol LED4 Pin 2 [C, Unspecified, Line]
+    @(6250 mils, 1450 mils): Symbol LED6 Pin 2 [C, Unspecified, Line]
+[footprint_link_issues]: The current configuration does not include the footprint library 'component_lib'.
+    ; warning
+    @(6550 mils, 1450 mils): Symbol LED6 [VEMD2020X01]
+[lib_symbol_mismatch]: Symbol 'VEMD2020X01' doesn't match copy in library 'VEMD2020X01'
+    ; warning
+    @(6550 mils, 1450 mils): Symbol LED6 [VEMD2020X01]
+[footprint_link_issues]: The current configuration does not include the footprint library 'component_lib'.
+    ; warning
+    @(6550 mils, 1900 mils): Symbol LED3 [VEMD2020X01]
+[lib_symbol_mismatch]: Symbol 'VEMD2020X01' doesn't match copy in library 'VEMD2020X01'
+    ; warning
+    @(6550 mils, 1900 mils): Symbol LED3 [VEMD2020X01]
+[pin_to_pin]: Pins of type Unspecified and Unspecified are connected
+    ; warning
+    @(6250 mils, 2750 mils): Symbol LED2 Pin 2 [C, Unspecified, Line]
+    @(6250 mils, 2250 mils): Symbol LED4 Pin 2 [C, Unspecified, Line]
+[pin_to_pin]: Pins of type Unspecified and Passive are connected
+    ; warning
+    @(6800 mils, 1100 mils): Symbol LED5 Pin 1 [A, Unspecified, Line]
+    @(6900 mils, 1100 mils): Symbol R5 Pin 1 [Passive, Line]
+[footprint_link_issues]: The current configuration does not include the footprint library 'component_lib'.
+    ; warning
+    @(6550 mils, 2250 mils): Symbol LED4 [VEMD2020X01]
+[lib_symbol_mismatch]: Symbol 'VEMD2020X01' doesn't match copy in library 'VEMD2020X01'
+    ; warning
+    @(6550 mils, 2250 mils): Symbol LED4 [VEMD2020X01]
+[pin_to_pin]: Pins of type Unspecified and Passive are connected
+    ; warning
+    @(6800 mils, 1450 mils): Symbol LED6 Pin 1 [A, Unspecified, Line]
+    @(6900 mils, 1450 mils): Symbol R6 Pin 1 [Passive, Line]
+[pin_to_pin]: Pins of type Unspecified and Unspecified are connected
+    ; warning
+    @(6250 mils, 3100 mils): Symbol LED1 Pin 2 [C, Unspecified, Line]
+    @(6250 mils, 2750 mils): Symbol LED2 Pin 2 [C, Unspecified, Line]
+[pin_to_pin]: Pins of type Unspecified and Passive are connected
+    ; warning
+    @(6800 mils, 1900 mils): Symbol LED3 Pin 1 [A, Unspecified, Line]
+    @(6900 mils, 1900 mils): Symbol R3 Pin 1 [Passive, Line]
+[footprint_link_issues]: The current configuration does not include the footprint library 'component_lib'.
+    ; warning
+    @(6550 mils, 2750 mils): Symbol LED2 [VEMD2020X01]
+[lib_symbol_mismatch]: Symbol 'VEMD2020X01' doesn't match copy in library 'VEMD2020X01'
+    ; warning
+    @(6550 mils, 2750 mils): Symbol LED2 [VEMD2020X01]
+[pin_to_pin]: Pins of type Unspecified and Passive are connected
+    ; warning
+    @(6800 mils, 2250 mils): Symbol LED4 Pin 1 [A, Unspecified, Line]
+    @(6900 mils, 2250 mils): Symbol R4 Pin 1 [Passive, Line]
+[footprint_link_issues]: The current configuration does not include the footprint library 'component_lib'.
+    ; warning
+    @(6550 mils, 3100 mils): Symbol LED1 [VEMD2020X01]
+[lib_symbol_mismatch]: Symbol 'VEMD2020X01' doesn't match copy in library 'VEMD2020X01'
+    ; warning
+    @(6550 mils, 3100 mils): Symbol LED1 [VEMD2020X01]
+[pin_to_pin]: Pins of type Unspecified and Passive are connected
+    ; warning
+    @(6800 mils, 2750 mils): Symbol LED2 Pin 1 [A, Unspecified, Line]
+    @(6900 mils, 2750 mils): Symbol R2 Pin 1 [Passive, Line]
+[pin_to_pin]: Pins of type Unspecified and Passive are connected
+    ; warning
+    @(6800 mils, 3100 mils): Symbol LED1 Pin 1 [A, Unspecified, Line]
+    @(6900 mils, 3100 mils): Symbol R1 Pin 1 [Passive, Line]
+
+ ** ERC messages: 38  Errors 2  Warnings 36

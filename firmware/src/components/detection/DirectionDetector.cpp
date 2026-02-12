@@ -88,6 +88,37 @@ void DirectionDetector::updateBaseline(float valueA, float valueB)
 
 void DirectionDetector::calculateThresholds()
 {
+    // Check if we should use calibration data
+    if (_calibration != nullptr && _calibration->isValid())
+    {
+        // Use calibrated thresholds
+        // DirectionDetector aggregates by side (A=S2, B=S1) across all PCBs
+        // Each PCB's calibration is for both sensors combined
+        // We'll take the maximum threshold across PCBs as conservative threshold
+        
+        uint16_t maxThreshold = 0;
+        for (int i = 0; i < CALIBRATION_NUM_PCBS; i++)
+        {
+            if (_calibration->pcbs[i].threshold > maxThreshold)
+            {
+                maxThreshold = _calibration->pcbs[i].threshold;
+            }
+        }
+        
+        // Apply calibrated threshold to both sides
+        // Since each PCB has one sensor per side, we use the same threshold
+        waveA.threshold = (float)maxThreshold;
+        waveB.threshold = (float)maxThreshold;
+        _useCalibration = true;
+        
+        Serial.printf("[DirectionDetector] Using CALIBRATED thresholds: A=%.0f, B=%.0f\n",
+                      waveA.threshold, waveB.threshold);
+        return;
+    }
+
+    // Fallback: calculate from baseline (original behavior)
+    _useCalibration = false;
+    
     // Use max value as baseline (captures noise ceiling)
     float baseA = baselineA.max;
     float baseB = baselineB.max;
@@ -99,6 +130,9 @@ void DirectionDetector::calculateThresholds()
 
     waveA.threshold = baseA + riseA;
     waveB.threshold = baseB + riseB;
+    
+    Serial.printf("[DirectionDetector] Using FALLBACK thresholds: A=%.0f, B=%.0f\n",
+                  waveA.threshold, waveB.threshold);
 }
 
 void DirectionDetector::processReading(uint32_t timestamp, float smoothedA, float smoothedB)
@@ -332,6 +366,28 @@ void DirectionDetector::setConfig(const DetectorConfig &cfg)
     }
 }
 
+void DirectionDetector::setCalibration(const DeviceCalibration *cal)
+{
+    _calibration = cal;
+    
+    if (cal != nullptr && cal->isValid())
+    {
+        Serial.println("[DirectionDetector] Calibration data set");
+        cal->debugPrint();
+        
+        // If we already have baseline, recalculate thresholds with calibration
+        if (state != DetectorState::ESTABLISHING_BASELINE)
+        {
+            calculateThresholds();
+        }
+    }
+    else
+    {
+        _useCalibration = false;
+        Serial.println("[DirectionDetector] Calibration cleared (invalid or null)");
+    }
+}
+
 const char *DirectionDetector::directionToString(Direction dir)
 {
     switch (dir)
@@ -351,6 +407,7 @@ void DirectionDetector::debugPrint() const
     Serial.printf("State: %s\n",
                   state == DetectorState::ESTABLISHING_BASELINE ? "ESTABLISHING_BASELINE" : state == DetectorState::READY ? "READY"
                                                                                                                           : "DETECTING");
+    Serial.printf("Threshold source: %s\n", _useCalibration ? "CALIBRATED" : "FALLBACK");
     Serial.printf("Baseline readings: %lu / %u\n", baselineReadingCount, config.baselineReadings);
     Serial.printf("Baseline A: mean=%.1f, max=%.1f\n", baselineA.getMean(), baselineA.max);
     Serial.printf("Baseline B: mean=%.1f, max=%.1f\n", baselineB.getMean(), baselineB.max);

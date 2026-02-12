@@ -1,0 +1,255 @@
+# Netlist Annotations
+# This file provides human-readable context for the circuit design.
+# Fill in 'nickname' and 'purpose' fields for components and nets.
+# Items marked with '_new: true' need your attention.
+
+_meta:
+  description: motion-play-sensor-strip.kicad_sch
+  last_synced: "2025-12-17T09:54:57.296383"
+  netlist_hash: aa9caf165485
+
+_status:
+  missing_annotations: ["C1", "C2", "C4", "C6", "C7", "C8", "D1", "D2", "D3", "IC1", ... (44 total)]
+  archived_count: 0
+
+components:
+  C1:
+    nickname: ""
+    purpose: ""
+    _part: C
+    _value: 2.2µF
+    _new: true
+  C2:
+    nickname: ""
+    purpose: ""
+    _part: C
+    _value: 0.1µF
+    _new: true
+  C4:
+    nickname: ""
+    purpose: ""
+    _part: C
+    _value: 2.2µF
+    _new: true
+  C6:
+    nickname: ""
+    purpose: ""
+    _part: C
+    _value: 0.1µF
+    _new: true
+  C7:
+    nickname: ""
+    purpose: ""
+    _part: C
+    _value: 0.1µF
+    _new: true
+  C8:
+    nickname: ""
+    purpose: ""
+    _part: C
+    _value: 2.2µF
+    _new: true
+  D1:
+    nickname: ""
+    purpose: ""
+    _part: LED
+    _value: LED
+    _new: true
+  D2:
+    nickname: ""
+    purpose: ""
+    _part: BAT54S
+    _value: BAT54S
+    _new: true
+  D3:
+    nickname: ""
+    purpose: ""
+    _part: BAT54S
+    _value: BAT54S
+    _new: true
+  IC1:
+    nickname: ""
+    purpose: ""
+    _part: VCNL4040M3OE
+    _value: VCNL4040M3OE
+    _new: true
+  IC2:
+    nickname: ""
+    purpose: ""
+    _part: VCNL4040M3OE
+    _value: VCNL4040M3OE
+    _new: true
+  J1:
+    nickname: ""
+    purpose: ""
+    _part: Conn_01x05
+    _value: Conn_01x05
+    _new: true
+  JP3:
+    nickname: ""
+    purpose: ""
+    _part: SolderJumper_2_Open
+    _value: SolderJumper_2_Open
+    _new: true
+  JP4:
+    nickname: ""
+    purpose: ""
+    _part: SolderJumper_2_Open
+    _value: SolderJumper_2_Open
+    _new: true
+  R1:
+    nickname: ""
+    purpose: ""
+    _part: R
+    _value: 4.7kΩ
+    _new: true
+  R2:
+    nickname: ""
+    purpose: ""
+    _part: R
+    _value: 4.7kΩ
+    _new: true
+  R3:
+    nickname: ""
+    purpose: ""
+    _part: R
+    _value: 10kΩ
+    _new: true
+  R4:
+    nickname: ""
+    purpose: ""
+    _part: R
+    _value: 1kΩ
+    _new: true
+  R5:
+    nickname: ""
+    purpose: ""
+    _part: R
+    _value: 10kΩ
+    _new: true
+  R6:
+    nickname: ""
+    purpose: ""
+    _part: R
+    _value: 4.7kΩ
+    _new: true
+  R7:
+    nickname: ""
+    purpose: ""
+    _part: R
+    _value: 4.7kΩ
+    _new: true
+  R8:
+    nickname: ""
+    purpose: ""
+    _part: R
+    _value: 4.7kΩ
+    _new: true
+  R9:
+    nickname: ""
+    purpose: ""
+    _part: R
+    _value: 4.7kΩ
+    _new: true
+  TP1:
+    nickname: ""
+    purpose: ""
+    _part: TestPoint_Small
+    _value: TestPoint_Small
+    _new: true
+  TP2:
+    nickname: ""
+    purpose: ""
+    _part: TestPoint_Small
+    _value: TestPoint_Small
+    _new: true
+  TP3:
+    nickname: ""
+    purpose: ""
+    _part: TestPoint_Small
+    _value: TestPoint_Small
+    _new: true
+  TP4:
+    nickname: ""
+    purpose: ""
+    _part: TestPoint_Small
+    _value: TestPoint_Small
+    _new: true
+  TP5:
+    nickname: ""
+    purpose: ""
+    _part: TestPoint_Small
+    _value: TestPoint_Small
+    _new: true
+  U1:
+    nickname: ""
+    purpose: ""
+    _part: PCA9546APWR
+    _value: PCA9546APWR
+    _new: true
+
+nets:
+  Net-(D1-A):
+    nickname: ""
+    purpose: ""
+    _new: true
+  Net-(D2-A):
+    nickname: ""
+    purpose: ""
+    _new: true
+  Net-(D2-COM):
+    nickname: ""
+    purpose: ""
+    _new: true
+  Net-(D3-COM):
+    nickname: ""
+    purpose: ""
+    _new: true
+  Net-(IC1-A):
+    nickname: ""
+    purpose: ""
+    _new: true
+  Net-(IC1-SCLK):
+    nickname: ""
+    purpose: ""
+    _new: true
+  Net-(IC1-SDAT):
+    nickname: ""
+    purpose: ""
+    _new: true
+  Net-(IC2-A):
+    nickname: ""
+    purpose: ""
+    _new: true
+  Net-(IC2-SCLK):
+    nickname: ""
+    purpose: ""
+    _new: true
+  Net-(IC2-SDAT):
+    nickname: ""
+    purpose: ""
+    _new: true
+  Net-(J1-Pin_3):
+    nickname: ""
+    purpose: ""
+    _new: true
+  Net-(J1-Pin_4):
+    nickname: ""
+    purpose: ""
+    _new: true
+  Net-(JP3-A):
+    nickname: ""
+    purpose: ""
+    _new: true
+  Net-(JP4-A):
+    nickname: ""
+    purpose: ""
+    _new: true
+  "Net-(U1-~{RESET})":
+    nickname: ""
+    purpose: ""
+    _new: true
+
+_archived:
+  _archived_components: {}
+  _archived_nets: {}

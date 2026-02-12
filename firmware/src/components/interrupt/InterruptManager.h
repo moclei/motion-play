@@ -39,6 +39,7 @@
 #include <freertos/task.h>
 #include "../mux/MuxController.h"
 #include "../vcnl4040/VCNL4040.h"
+#include "../calibration/CalibrationData.h"
 #include "pin_config.h"
 
 // ============================================================================
@@ -267,6 +268,19 @@ public:
      */
     uint16_t getBaseline(uint8_t position) const;
 
+    /**
+     * Set external calibration data
+     * When set, thresholds will be derived from the calibration data
+     * instead of using margin + hysteresis on measured baseline.
+     * @param cal Pointer to calibration data (can be nullptr to clear)
+     */
+    void setCalibration(const DeviceCalibration *cal);
+
+    /**
+     * Check if using external calibration
+     */
+    bool isUsingCalibration() const { return _externalCalibration != nullptr && _externalCalibration->isValid(); }
+
 private:
     MuxController _mux;
     VCNL4040 _sensors[MUX_TOTAL_SENSORS];
@@ -276,6 +290,9 @@ private:
     // Calibrated baseline values per sensor
     uint16_t _baselines[MUX_TOTAL_SENSORS];
     bool _calibrated;
+    
+    // External calibration data (from CalibrationManager)
+    const DeviceCalibration *_externalCalibration = nullptr;
 
     volatile bool _monitoring;
     QueueHandle_t _eventQueue;
