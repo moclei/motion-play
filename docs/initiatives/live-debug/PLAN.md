@@ -86,7 +86,11 @@ Firmware generates all session IDs, as it already does today. `SessionManager::g
 
 ## Open Questions
 
-- Padding duration: 0.5s total (using buffer data up to detection moment) is the starting plan. Adjust if captures feel too short or long.
-- Missed-event window: 3s fixed initially. Make configurable later via cloud settings.
-- Labels: Use existing `labels` array on session (e.g. `["correct"]`, `["false_positive"]`) via existing `updateSession` API. No new field needed.
-- Post-detection data: The buffer at detection time already contains some post-event data since the algorithm fires late. If we need more, add a configurable post-capture delay. Not needed for v1.
+(None — all resolved)
+
+### Resolved
+
+- **Padding duration**: 0.5s of pre-detection data. Constant `DETECTION_WINDOW_MS = 500`.
+- **Missed-event window**: 3s fixed. Constant `MISSED_EVENT_WINDOW_MS = 3000`. Configurable via cloud settings later.
+- **Labels**: Use existing `labels` array on session (e.g. `["correct"]`, `["false_positive"]`) via existing `updateSession` API. No new field needed.
+- **Post-detection data**: Use what's in the buffer at detection time (algorithm fires late, naturally includes some post-event data). No explicit post-capture delay for v1.
