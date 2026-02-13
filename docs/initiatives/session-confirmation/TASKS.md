@@ -37,7 +37,7 @@
 - [x] Add `SessionSummary` TypeScript interface in `api.ts`
 - [x] Add Live Debug fields to `Session` interface (`capture_reason`, `detection_direction`, `detection_confidence`)
 - [x] Add "Time Window" stat card to `SessionChart.tsx` showing duration in seconds
-- [ ] Show selected time range when Brush is active ("Viewing: 0.32s of 0.75s")
+- [x] Show selected time range when Brush is active ("Viewing: 0.32s of 0.75s")
 
 ## Phase 6: Frontend — Session Confirmation panel
 - [x] Build collapsible Session Confirmation panel component

@@ -65,6 +65,7 @@ const CustomTooltip = ({ active, payload, label }: CustomTooltipProps) => {
 export const SessionChart = memo(({ readings, session, onBrushChange }: Props) => {
     const [selectedSide, setSelectedSide] = useState<number | null>(null);
     const [selectedPcb, setSelectedPcb] = useState<number | null>(null);
+    const [brushRange, setBrushRange] = useState<{ startMs: number; endMs: number } | null>(null);
 
     // Ref for debouncing brush change notifications (doesn't affect chart behavior)
     const brushDebounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -233,9 +234,11 @@ export const SessionChart = memo(({ readings, session, onBrushChange }: Props) =
 
             if (isFullRange) {
                 console.log('handleBrushChange, it was full range so we are sending null');
+                setBrushRange(null);
                 onBrushChangeRef.current(null);
             } else {
                 console.log('handleBrushChange, it was not full range so we are sending the time range');
+                setBrushRange({ startMs: startTime, endMs: endTime });
                 onBrushChangeRef.current({ startTime, endTime });
             }
         }, 300);
@@ -637,6 +640,11 @@ export const SessionChart = memo(({ readings, session, onBrushChange }: Props) =
                 <div className="p-4 bg-purple-50 rounded">
                     <div className="text-sm text-gray-600">Time Window</div>
                     <div className="text-2xl font-bold text-gray-900">{timeWindowSeconds}s</div>
+                    {brushRange && (
+                        <div className="text-xs text-purple-600 mt-1">
+                            Viewing: {((brushRange.endMs - brushRange.startMs) / 1000).toFixed(3)}s of {timeWindowSeconds}s
+                        </div>
+                    )}
                 </div>
                 <div className="p-4 bg-blue-50 rounded">
                     <div className="text-sm text-gray-600">Total Readings</div>
