@@ -11,10 +11,27 @@ SessionManager::SessionManager()
     }
 }
 
+void SessionManager::setDeviceId(const String &fullDeviceId)
+{
+    // Extract short suffix for session IDs (e.g. "motionplay-device-002" -> "device-002")
+    int lastDash = fullDeviceId.lastIndexOf('-');
+    int secondLastDash = fullDeviceId.lastIndexOf('-', lastDash - 1);
+    if (secondLastDash >= 0)
+    {
+        deviceIdPrefix = fullDeviceId.substring(secondLastDash + 1);
+    }
+    else
+    {
+        deviceIdPrefix = fullDeviceId;
+    }
+    Serial.printf("Session ID prefix set to: %s\n", deviceIdPrefix.c_str());
+}
+
 void SessionManager::generateSessionId()
 {
-    // Generate unique session ID: device-001_timestamp
-    sessionId = "device-001_" + String(millis());
+    // Generate unique session ID: device-NNN_timestamp
+    String prefix = deviceIdPrefix.isEmpty() ? "device-001" : deviceIdPrefix;
+    sessionId = prefix + "_" + String(millis());
 }
 
 bool SessionManager::startSession()
@@ -26,7 +43,7 @@ bool SessionManager::startSession()
     }
 
     Serial.println("Starting new session...");
-    Serial.printf("  Session type: %s\n", 
+    Serial.printf("  Session type: %s\n",
                   sessionType == SessionType::INTERRUPT_BASED ? "INTERRUPT" : "PROXIMITY");
 
     // Clear any old data based on session type
@@ -37,8 +54,8 @@ bool SessionManager::startSession()
     }
     else
     {
-    dataBuffer.clear();
-    dataBuffer.reserve(MAX_BUFFER_SIZE);
+        dataBuffer.clear();
+        dataBuffer.reserve(MAX_BUFFER_SIZE);
     }
 
     // Generate new session ID
@@ -69,13 +86,13 @@ bool SessionManager::stopSession()
     // Process any remaining items in queue (only for proximity mode)
     if (sessionType == SessionType::PROXIMITY)
     {
-    processQueue();
+        processQueue();
     }
 
     Serial.print("Session stopped. Duration: ");
     Serial.print(sessionDuration);
     Serial.print("ms, ");
-    
+
     if (sessionType == SessionType::INTERRUPT_BASED)
     {
         Serial.print("Events: ");
@@ -84,7 +101,7 @@ bool SessionManager::stopSession()
     else
     {
         Serial.print("Samples: ");
-    Serial.println(dataBuffer.size());
+        Serial.println(dataBuffer.size());
     }
 
     return true;
@@ -181,7 +198,7 @@ void SessionManager::clearBuffer()
     dataBuffer.clear();
     interruptBuffer.clear();
     state = IDLE;
-    sessionType = SessionType::PROXIMITY;  // Reset to default
+    sessionType = SessionType::PROXIMITY; // Reset to default
     Serial.println("Buffer cleared, session reset to IDLE");
 }
 
@@ -200,19 +217,19 @@ QueueHandle_t SessionManager::getQueue()
     return dataQueue;
 }
 
-bool SessionManager::addInterruptEvent(const InterruptEvent& event)
+bool SessionManager::addInterruptEvent(const InterruptEvent &event)
 {
     if (state != COLLECTING || sessionType != SessionType::INTERRUPT_BASED)
     {
         return false;
     }
-    
+
     if (interruptBuffer.size() >= MAX_INTERRUPT_BUFFER)
     {
         Serial.println("WARNING: Interrupt buffer full, dropping event");
         return false;
     }
-    
+
     interruptBuffer.push_back(event);
     return true;
 }

@@ -47,6 +47,18 @@ bool playModeActive = false;
 unsigned long lastDetectionTime = 0;
 const unsigned long DETECTION_COOLDOWN = 500; // 500ms - prevents double-trigger, allows quick successive throws
 
+<<<<<<< Updated upstream
+=======
+// Live Debug mode state
+bool liveDebugActive = false;
+
+// Live Debug capture window constants
+const size_t LIVE_DEBUG_BUFFER_CAP = 18000;        // ~3 seconds buffer cap
+const unsigned long DETECTION_WINDOW_MS = 500;     // 0.5s of pre-detection data to capture
+const unsigned long POST_DETECTION_DELAY_MS = 250; // 0.25s of post-detection data (sensor task keeps collecting)
+const unsigned long MISSED_EVENT_WINDOW_MS = 3000; // 3s of pre-button data to capture
+
+>>>>>>> Stashed changes
 // Timing
 unsigned long lastStatusUpdate = 0;
 const unsigned long STATUS_UPDATE_INTERVAL = 30000; // 30 seconds
@@ -336,6 +348,9 @@ void initializeSystem()
 
     // Initialize data transmitter
     dataTransmitter = new DataTransmitter(mqttManager);
+
+    // Pass device ID to SessionManager for session ID generation
+    sessionManager.setDeviceId(networkManager.getDeviceId());
 
     // Set up command handler
     mqttManager->setCallback([](char *topic, byte *payload, unsigned int length)
@@ -861,6 +876,86 @@ void handleCommand(const String &command, JsonDocument *doc)
             display.setDisplayState(DISPLAY_IDLE);
         }
     }
+<<<<<<< Updated upstream
+=======
+    else if (command == "capture_missed_event")
+    {
+        // Live Debug: capture data window for a missed event (user-triggered)
+        if (currentMode != DeviceMode::LIVE_DEBUG || !liveDebugActive)
+        {
+            Serial.println("capture_missed_event ignored — not in Live Debug mode");
+            mqttManager->publishStatus("capture_missed_ignored");
+            return;
+        }
+
+        Serial.println("[LIVE_DEBUG] Missed event capture requested");
+
+        // 1. Stop sensor polling
+        sensorManager.stopCollection();
+        delay(50);
+        sessionManager.processQueue();
+
+        // 2. Show status
+        display.showMessage("Capturing missed...", TFT_MAGENTA);
+
+        // 3. Extract window: last MISSED_EVENT_WINDOW_MS of data (using timestamps)
+        auto &buffer = sessionManager.getDataBuffer();
+        size_t actualBufferSize = buffer.size();
+        size_t startIdx = 0;
+
+        if (actualBufferSize > 0)
+        {
+            unsigned long latestTs = buffer[actualBufferSize - 1].timestamp_ms;
+            unsigned long cutoffTs = (latestTs > MISSED_EVENT_WINDOW_MS) ? latestTs - MISSED_EVENT_WINDOW_MS : 0;
+
+            // Binary search for the first reading at or after cutoffTs
+            size_t lo = 0, hi = actualBufferSize;
+            while (lo < hi)
+            {
+                size_t mid = lo + (hi - lo) / 2;
+                if (buffer[mid].timestamp_ms < cutoffTs)
+                    lo = mid + 1;
+                else
+                    hi = mid;
+            }
+            startIdx = lo;
+        }
+
+        size_t captureCount = actualBufferSize - startIdx;
+        unsigned long capDurationMs = (captureCount > 0)
+                                          ? buffer[actualBufferSize - 1].timestamp_ms - buffer[startIdx].timestamp_ms
+                                          : 0;
+
+        Serial.printf("[LIVE_DEBUG] Missed event: capturing %d readings (%lums)\n",
+                      captureCount, capDurationMs);
+
+        // 4. Transmit
+        bool txSuccess = dataTransmitter->transmitLiveDebugCapture(
+            buffer, startIdx, captureCount,
+            "missed_event", nullptr, 0.0,
+            &currentConfig);
+
+        if (txSuccess)
+        {
+            Serial.println("[LIVE_DEBUG] Missed event capture transmitted");
+            mqttManager->publishStatus("live_debug_missed_captured");
+        }
+        else
+        {
+            Serial.println("[LIVE_DEBUG] ERROR: Missed event capture failed!");
+            mqttManager->publishStatus("live_debug_capture_failed");
+        }
+
+        // 5. Clear buffer and reset
+        directionDetector.reset();
+        buffer.clear();
+
+        // 6. Resume
+        sensorManager.startCollection(sessionManager.getQueue());
+        display.showMessage("Ready", TFT_MAGENTA);
+        Serial.println("[LIVE_DEBUG] Resumed after missed event capture");
+    }
+>>>>>>> Stashed changes
     else if (command == "reboot")
     {
         display.showMessage("Rebooting...", TFT_YELLOW);
@@ -1123,6 +1218,159 @@ void loop()
 
             // No timeout in play mode - it runs until stopped
         }
+<<<<<<< Updated upstream
+=======
+        else if (liveDebugActive && currentMode == DeviceMode::LIVE_DEBUG)
+        {
+            // LIVE DEBUG MODE: Detection with event capture
+
+            // Update LED animation (handles fade-out after detection)
+            ledController.update();
+
+            // Debug: log buffer status periodically
+            static unsigned long lastLiveDebugLog = 0;
+            if (millis() - lastLiveDebugLog > 2000)
+            {
+                lastLiveDebugLog = millis();
+                Serial.printf("[LIVE_DEBUG] Buffer: %d samples, Detector: %s\n",
+                              sessionManager.getDataCount(),
+                              directionDetector.isReady() ? "READY" : "establishing baseline...");
+            }
+
+            // Check cooldown between detections
+            unsigned long now = millis();
+            bool inCooldown = (lastDetectionTime > 0) && (now - lastDetectionTime < DETECTION_COOLDOWN);
+
+            if (!inCooldown)
+            {
+                // Feed new readings to the detector
+                auto &buffer = sessionManager.getDataBuffer();
+                static size_t lastLiveDebugIndex = 0;
+
+                // Add new readings since last check
+                size_t bufferSize = buffer.size();
+                for (size_t i = lastLiveDebugIndex; i < bufferSize; i++)
+                {
+                    directionDetector.addReading(buffer[i]);
+                }
+                directionDetector.flushReading();
+                lastLiveDebugIndex = bufferSize;
+
+                // Check for detection
+                if (directionDetector.hasDetection())
+                {
+                    DetectionResult result = directionDetector.getResult();
+
+                    Serial.printf("[LIVE_DEBUG] DETECTION: %s (confidence: %.2f, CoM gap: %dms)\n",
+                                  DirectionDetector::directionToString(result.direction),
+                                  result.confidence,
+                                  result.comGapMs);
+
+                    // LED feedback (same as Play)
+                    ledController.showDirection(result.direction, 3000);
+
+                    // Display feedback
+                    if (result.direction == Direction::A_TO_B)
+                    {
+                        display.showMessage("A -> B", TFT_BLUE);
+                    }
+                    else
+                    {
+                        display.showMessage("B -> A", TFT_ORANGE);
+                    }
+
+                    // === CAPTURE FLOW: Delay → Pause → Extract → Transmit → Resume ===
+
+                    // 1. Post-detection delay: keep collecting so we capture the trailing edge
+                    //    Sensor task runs on Core 0, so delay() on Core 1 lets it continue
+                    Serial.printf("[LIVE_DEBUG] Post-detection delay: %lums\n", POST_DETECTION_DELAY_MS);
+                    delay(POST_DETECTION_DELAY_MS);
+
+                    // 2. Stop sensor polling
+                    sensorManager.stopCollection();
+                    delay(50); // Let queue drain
+
+                    // Process any remaining queued readings
+                    sessionManager.processQueue();
+
+                    // 3. Show transmitting status
+                    display.showMessage("Transmitting...", TFT_MAGENTA);
+
+                    // 4. Calculate window using actual timestamps in the buffer
+                    //    Capture from (detectionTime - DETECTION_WINDOW_MS) to end of buffer
+                    size_t actualBufferSize = buffer.size();
+                    size_t startIdx = 0;
+
+                    if (actualBufferSize > 0)
+                    {
+                        unsigned long latestTs = buffer[actualBufferSize - 1].timestamp_ms;
+                        unsigned long totalWindowMs = DETECTION_WINDOW_MS + POST_DETECTION_DELAY_MS;
+                        unsigned long cutoffTs = (latestTs > totalWindowMs) ? latestTs - totalWindowMs : 0;
+
+                        // Binary search for the first reading at or after cutoffTs
+                        size_t lo = 0, hi = actualBufferSize;
+                        while (lo < hi)
+                        {
+                            size_t mid = lo + (hi - lo) / 2;
+                            if (buffer[mid].timestamp_ms < cutoffTs)
+                                lo = mid + 1;
+                            else
+                                hi = mid;
+                        }
+                        startIdx = lo;
+                    }
+
+                    size_t captureCount = actualBufferSize - startIdx;
+                    Serial.printf("[LIVE_DEBUG] Capture: %d readings from idx %d (buffer has %d)\n",
+                                  captureCount, startIdx, actualBufferSize);
+
+                    // 5. Transmit the capture
+                    const char *dirStr = (result.direction == Direction::A_TO_B) ? "a_to_b" : "b_to_a";
+                    bool txSuccess = dataTransmitter->transmitLiveDebugCapture(
+                        buffer, startIdx, captureCount,
+                        "detection", dirStr, result.confidence,
+                        &currentConfig);
+
+                    if (txSuccess)
+                    {
+                        Serial.println("[LIVE_DEBUG] Detection capture transmitted successfully");
+                        mqttManager->publishStatus("live_debug_detection_captured");
+                    }
+                    else
+                    {
+                        Serial.println("[LIVE_DEBUG] ERROR: Detection capture transmission failed!");
+                        mqttManager->publishStatus("live_debug_capture_failed");
+                    }
+
+                    // 6. Clear buffer and reset detector
+                    lastDetectionTime = millis();
+                    directionDetector.reset();
+                    lastLiveDebugIndex = 0;
+                    buffer.clear();
+
+                    // 7. Resume sensor polling
+                    sensorManager.startCollection(sessionManager.getQueue());
+                    display.showMessage("Ready", TFT_MAGENTA);
+                    Serial.println("[LIVE_DEBUG] Resumed — waiting for next event");
+                }
+
+                // Buffer overflow prevention (higher cap than Play)
+                if (bufferSize > LIVE_DEBUG_BUFFER_CAP)
+                {
+                    Serial.printf("[LIVE_DEBUG] Buffer overflow prevention: clearing %d samples\n", bufferSize);
+                    directionDetector.reset();
+                    lastLiveDebugIndex = 0;
+                    buffer.clear();
+                }
+            }
+            else if (!ledController.isAnimating() && directionDetector.isReady())
+            {
+                ledController.showReady();
+            }
+
+            // No timeout in live debug mode - runs until stopped
+        }
+>>>>>>> Stashed changes
         else
         {
             // DEBUG MODE: Standard collection behavior

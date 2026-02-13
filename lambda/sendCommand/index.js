@@ -16,7 +16,7 @@ exports.handler = async (event) => {
     try {
         // Parse API Gateway event
         const body = JSON.parse(event.body || '{}');
-        const deviceId = body.device_id || 'motionplay-device-001'; // Default device ID
+        const deviceId = body.device_id || 'motionplay-device-002'; // Default device ID
         const command = body.command;
         
         if (!command) {

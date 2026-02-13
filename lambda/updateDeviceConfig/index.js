@@ -61,7 +61,7 @@ exports.handler = async (event) => {
     console.log('Received event:', JSON.stringify(event, null, 2));
     
     try {
-        const deviceId = event.pathParameters?.device_id || 'motionplay-device-001';
+        const deviceId = event.pathParameters?.device_id || 'motionplay-device-002';
         const body = JSON.parse(event.body || '{}');
         
         if (!body.sensor_config) {

@@ -19,8 +19,8 @@ enum SessionState
 // Note: Using SESSION_* prefix to avoid conflict with ESP32 SDK macros
 enum class SessionType
 {
-    PROXIMITY,       // Traditional polling mode - SensorReading data
-    INTERRUPT_BASED  // Interrupt-based mode - InterruptEvent data
+    PROXIMITY,      // Traditional polling mode - SensorReading data
+    INTERRUPT_BASED // Interrupt-based mode - InterruptEvent data
 };
 
 class SessionManager
@@ -31,9 +31,10 @@ private:
     QueueHandle_t dataQueue = NULL;
 
     String sessionId;
+    String deviceIdPrefix; // Short prefix for session IDs (e.g. "device-002")
     unsigned long sessionStartTime = 0;
     unsigned long sessionDuration = 0;
-    
+
     // CRITICAL: Use PSRAM allocator to prevent heap exhaustion
     // 30,000 samples × 12 bytes = 360KB would exhaust the 400KB heap
     // PSRAM has 8MB available
@@ -43,24 +44,27 @@ private:
     // Interrupt session buffer (much smaller - typically <1000 events)
     std::vector<InterruptEvent> interruptBuffer;
 
-    static const size_t MAX_BUFFER_SIZE = 30000;        // 30 seconds * 1000 Hz (proximity)
-    static const size_t MAX_INTERRUPT_BUFFER = 10000;   // Max interrupt events
+    static const size_t MAX_BUFFER_SIZE = 30000;      // 30 seconds * 1000 Hz (proximity)
+    static const size_t MAX_INTERRUPT_BUFFER = 10000; // Max interrupt events
 
     void generateSessionId();
 
 public:
     SessionManager();
-    
+
+    // Device ID for session ID generation
+    void setDeviceId(const String &fullDeviceId);
+
     // Session control
     bool startSession();
     bool stopSession();
     void processQueue();
     void clearBuffer();
-    
+
     // Session type
     void setSessionType(SessionType type) { sessionType = type; }
     SessionType getSessionType() const { return sessionType; }
-    
+
     // State and metadata
     bool hasData();
     size_t getDataCount();
@@ -69,19 +73,19 @@ public:
     unsigned long getDuration();
     unsigned long getStartTime();
     QueueHandle_t getQueue();
-    
+
     // Proximity mode data
     std::vector<SensorReading, PSRAMAllocator<SensorReading>> &getDataBuffer();
     void setSensorMetadata(const std::vector<SensorMetadata> &metadata);
     const std::vector<SensorMetadata> &getSensorMetadata();
-    
+
     // Interrupt mode data
     std::vector<InterruptEvent> &getInterruptBuffer() { return interruptBuffer; }
     const std::vector<InterruptEvent> &getInterruptBuffer() const { return interruptBuffer; }
     size_t getInterruptEventCount() const { return interruptBuffer.size(); }
-    
+
     // Add interrupt event to buffer
-    bool addInterruptEvent(const InterruptEvent& event);
+    bool addInterruptEvent(const InterruptEvent &event);
 };
 
 #endif

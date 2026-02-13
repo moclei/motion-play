@@ -36,6 +36,7 @@ public:
     void disconnect();
     bool isConnected();
     void loop();
+    const String &getDeviceId() const { return deviceId; }
     bool publishStatus(const char *status);
     bool publishData(const JsonDocument &data);
     void setCallback(std::function<void(char *, byte *, unsigned int)> callback);

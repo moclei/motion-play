@@ -27,14 +27,15 @@ For Live Debug, raise the Play mode's buffer overflow cap (currently 500 samples
 
 **Detection capture flow** (when `directionDetector.hasDetection()`):
 1. Get `DetectionResult` (direction, confidence, CoM timestamps, peak signals, baselines, thresholds)
-2. Stop sensor polling: `sensorManager.stopCollection()`
-3. Show "Transmitting..." on T-Display
-4. Extract last ~3,000 readings (~0.5s) from `sessionManager.getDataBuffer()`
-5. Generate session_id via `SessionManager::generateSessionId()`
-6. Transmit window as mini-session with `mode: "live_debug"`, `capture_reason: "detection"`, and detection metadata
-7. Clear buffer, reset DirectionDetector
-8. Resume polling: `sensorManager.startCollection(queue)`
-9. Show "Ready" on T-Display, LED feedback for detection
+2. LED + display feedback (same as Play mode)
+3. Post-detection delay: `delay(POST_DETECTION_DELAY_MS)` — sensor task on Core 0 keeps collecting so the buffer accumulates trailing-edge data
+4. Stop sensor polling: `sensorManager.stopCollection()`, drain queue
+5. Show "Transmitting..." on T-Display
+6. Calculate capture window using actual buffer timestamps (binary search for cutoff = latestTs - DETECTION_WINDOW_MS - POST_DETECTION_DELAY_MS)
+7. Generate session_id, transmit window as mini-session with `mode: "live_debug"`, `capture_reason: "detection"`, and detection metadata
+8. Clear buffer, reset DirectionDetector
+9. Resume polling: `sensorManager.startCollection(queue)`
+10. Show "Ready" on T-Display
 
 **Missed-event capture flow** (on `capture_missed_event` MQTT command):
 1. Stop sensor polling
@@ -50,7 +51,9 @@ For Live Debug, raise the Play mode's buffer overflow cap (currently 500 samples
 
 These could be separate constants (`LIVE_DEBUG_BATCH_SIZE`, `LIVE_DEBUG_BATCH_DELAY`) to avoid affecting normal Debug session uploads.
 
-**Post-detection padding**: At the moment of detection, the buffer already contains data through the detection point. The algorithm fires slightly after the physical event, so the buffer naturally includes some post-event data. For v1, just capture what's in the buffer up to the detection moment. If we need explicit post-detection padding later, we can add a short delay before extracting.
+**Post-detection padding**: After detection, the main loop delays `POST_DETECTION_DELAY_MS` (250ms) before stopping collection. The sensor task runs on Core 0 and continues filling the buffer during this delay, capturing trailing-edge data. Combined with 500ms pre-detection, each capture contains ~750ms centered around the event.
+
+**Timestamp-based windowing**: The capture window is calculated from actual reading timestamps in the buffer (binary search), not a hardcoded readings-per-ms constant. This adapts automatically to the actual sample rate regardless of sensor settings (integration time, duty cycle, ambient reads).
 
 **Start/stop flow**: Same as Play mode. Frontend sends `set_mode: "live_debug"`, then `start_collection` to begin, `stop_collection` to end. Individual event captures happen automatically within the session. `start_collection` / `stop_collection` control the overall "listening" period.
 
@@ -82,11 +85,20 @@ Detection metadata (direction, confidence, thresholds, peaks) can be included in
 
 ### Session ID Strategy
 
-Firmware generates all session IDs, as it already does today. `SessionManager::generateSessionId()` produces `"device-001_" + String(millis())`. The sendCommand Lambda generates a UUID for `start_collection` commands, but the firmware ignores it. No change needed for Live Debug — each capture gets a firmware-generated ID. The frontend discovers sessions by polling `getSessions` filtered by `mode: "live_debug"`.
+Firmware generates all session IDs using the device ID from `config.json`. `SessionManager::generateSessionId()` produces `"device-NNN_" + String(millis())` where the prefix comes from `setDeviceId()`. `DataTransmitter` reads the device ID from `MQTTManager::getDeviceId()`. The sendCommand Lambda generates a UUID for `start_collection` commands, but the firmware ignores it. No change needed for Live Debug — each capture gets a firmware-generated ID. The frontend discovers sessions by polling `getSessions` filtered by `mode: "live_debug"`.
 
 ## Open Questions
 
+<<<<<<< Updated upstream
 - Padding duration: 0.5s total (using buffer data up to detection moment) is the starting plan. Adjust if captures feel too short or long.
 - Missed-event window: 3s fixed initially. Make configurable later via cloud settings.
 - Labels: Use existing `labels` array on session (e.g. `["correct"]`, `["false_positive"]`) via existing `updateSession` API. No new field needed.
 - Post-detection data: The buffer at detection time already contains some post-event data since the algorithm fires late. If we need more, add a configurable post-capture delay. Not needed for v1.
+=======
+- **Detection window**: 0.5s pre + 0.25s post. Constants `DETECTION_WINDOW_MS = 500`, `POST_DETECTION_DELAY_MS = 250`.
+- **Missed-event window**: 3s fixed. Constant `MISSED_EVENT_WINDOW_MS = 3000`. Configurable via cloud settings later.
+- **Labels**: Use existing `labels` array on session (e.g. `["correct"]`, `["false_positive"]`) via existing `updateSession` API. No new field needed.
+- **Post-detection data**: 250ms post-detection delay on Core 1 while sensor task continues on Core 0. Captures trailing-edge of the wave.
+- **Window sizing**: Timestamp-based binary search in the buffer, not hardcoded readings-per-ms. Adapts to any sensor configuration.
+- **Device ID**: Dynamic from `config.json` throughout — SessionManager, DataTransmitter, frontend, and Lambdas. No hardcoded device IDs.
+>>>>>>> Stashed changes
