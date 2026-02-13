@@ -77,7 +77,7 @@ bool DataTransmitter::transmitBatch(const String &sessionId,
             configObj["i2c_clock_khz"] = config->i2c_clock_khz;
             configObj["actual_sample_rate_hz"] = config->actual_sample_rate_hz;
         }
-        
+
         // Add calibration metadata if available
         if (deviceCalibration.isValid())
         {
@@ -86,7 +86,7 @@ bool DataTransmitter::transmitBatch(const String &sessionId,
             calObj["timestamp"] = deviceCalibration.timestamp;
             calObj["multi_pulse"] = deviceCalibration.multi_pulse;
             calObj["integration_time"] = deviceCalibration.integration_time;
-            
+
             JsonArray thresholds = calObj.createNestedArray("thresholds");
             for (int i = 0; i < CALIBRATION_NUM_PCBS; i++)
             {
@@ -136,6 +136,12 @@ bool DataTransmitter::transmitBatch(const String &sessionId,
         Serial.println(" bytes");
         Serial.print("  First 200 chars: ");
         Serial.println(payload.substring(0, 200));
+    }
+    else if (activeSummary)
+    {
+        // Session Confirmation: count transmitted readings and batches
+        activeSummary->total_readings_transmitted += count;
+        activeSummary->total_batches_transmitted++;
     }
 
     return success;
@@ -230,7 +236,7 @@ bool DataTransmitter::transmitInterruptBatch(const String &sessionId,
         intConfig["smart_persistence"] = config->interrupt_smart_persistence;
         intConfig["mode"] = config->interrupt_mode;
         intConfig["led_current"] = config->led_current;
-        
+
         // Add calibration metadata if available
         if (deviceCalibration.isValid())
         {
@@ -239,7 +245,7 @@ bool DataTransmitter::transmitInterruptBatch(const String &sessionId,
             calObj["timestamp"] = deviceCalibration.timestamp;
             calObj["multi_pulse"] = deviceCalibration.multi_pulse;
             calObj["integration_time"] = deviceCalibration.integration_time;
-            
+
             JsonArray thresholds = calObj.createNestedArray("thresholds");
             for (int i = 0; i < CALIBRATION_NUM_PCBS; i++)
             {
@@ -355,8 +361,6 @@ bool DataTransmitter::transmitInterruptSession(SessionManager &session, const Se
 
     Serial.println("Interrupt session transmission complete!");
     return true;
-<<<<<<< Updated upstream
-=======
 }
 
 // ============================================================================
@@ -489,6 +493,13 @@ bool DataTransmitter::transmitLiveDebugCapture(
             return false;
         }
 
+        // Session Confirmation: count transmitted readings and batches
+        if (activeSummary)
+        {
+            activeSummary->total_readings_transmitted += batchCount;
+            activeSummary->total_batches_transmitted++;
+        }
+
         offset += batchCount;
 
         // Short delay between batches
@@ -501,5 +512,54 @@ bool DataTransmitter::transmitLiveDebugCapture(
     Serial.printf("Live Debug capture transmitted: session=%s, %d readings\n",
                   sessionId.c_str(), count);
     return true;
->>>>>>> Stashed changes
+}
+
+// ============================================================================
+// Session Confirmation: Transmit pipeline integrity summary
+// ============================================================================
+
+bool DataTransmitter::transmitSessionSummary(const SessionSummary &summary,
+                                             const String &sessionId,
+                                             const String &deviceId)
+{
+    DynamicJsonDocument doc(4096);
+
+    doc["type"] = "session_summary";
+    doc["session_id"] = sessionId;
+    doc["device_id"] = deviceId;
+
+    JsonObject summaryObj = doc.createNestedObject("summary");
+    summaryObj["total_cycles"] = summary.total_cycles;
+    summaryObj["queue_drops"] = summary.queue_drops;
+    summaryObj["buffer_drops"] = summary.buffer_drops;
+    summaryObj["total_readings_transmitted"] = summary.total_readings_transmitted;
+    summaryObj["total_batches_transmitted"] = summary.total_batches_transmitted;
+    summaryObj["measured_cycle_rate_hz"] = summary.measured_cycle_rate_hz;
+    summaryObj["duration_ms"] = summary.duration_ms;
+    summaryObj["theoretical_max_readings"] = summary.theoretical_max_readings;
+    summaryObj["num_active_sensors"] = summary.num_active_sensors;
+
+    // Per-sensor arrays
+    JsonArray collectedArr = summaryObj.createNestedArray("readings_collected");
+    JsonArray errorsArr = summaryObj.createNestedArray("i2c_errors");
+    for (int i = 0; i < NUM_SENSORS; i++)
+    {
+        collectedArr.add(summary.readings_collected[i]);
+        errorsArr.add(summary.i2c_errors[i]);
+    }
+
+    // Retry up to 3 times
+    for (int attempt = 0; attempt < 3; attempt++)
+    {
+        if (mqttManager->publishData(doc))
+        {
+            Serial.printf("Session summary transmitted (attempt %d)\n", attempt + 1);
+            return true;
+        }
+        Serial.printf("WARNING: Session summary publish failed (attempt %d/3)\n", attempt + 1);
+        delay(500);
+    }
+
+    Serial.println("ERROR: Failed to transmit session summary after 3 attempts");
+    return false;
 }

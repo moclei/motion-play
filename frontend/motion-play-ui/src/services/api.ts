@@ -4,6 +4,21 @@ const API_BASE_URL = import.meta.env.VITE_API_ENDPOINT;
 
 export type SessionType = 'proximity' | 'interrupt';
 
+// Session Confirmation: pipeline integrity summary from firmware
+export interface SessionSummary {
+    total_cycles: number;
+    readings_collected: number[];   // per sensor position [0-5]
+    i2c_errors: number[];           // per sensor position [0-5]
+    queue_drops: number;
+    buffer_drops: number;
+    total_readings_transmitted: number;
+    total_batches_transmitted: number;
+    measured_cycle_rate_hz: number;
+    duration_ms: number;
+    theoretical_max_readings: number;
+    num_active_sensors: number;
+}
+
 export interface Session {
     session_id: string;
     device_id: string;
@@ -23,6 +38,16 @@ export interface Session {
     active_sensors?: ActiveSensor[];
     vcnl4040_config?: VCNL4040Config;
     interrupt_config?: InterruptConfig;
+
+    // Live Debug fields
+    capture_reason?: 'detection' | 'missed_event';
+    detection_direction?: 'a_to_b' | 'b_to_a';
+    detection_confidence?: number;
+
+    // Session Confirmation fields
+    session_summary?: SessionSummary;
+    batches_received?: number;
+    pipeline_status?: 'complete' | 'partial' | 'pending';
 }
 
 export interface SensorReading {

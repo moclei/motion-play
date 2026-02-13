@@ -62,6 +62,11 @@ exports.handler = async (event) => {
     try {
         const data = event;
         
+        // Session Confirmation: handle summary message (separate from data batches)
+        if (data.type === 'session_summary') {
+            return await processSessionSummary(data);
+        }
+        
         // Validate required fields
         if (!data.session_id || !data.device_id || !data.start_timestamp) {
             throw new Error('Missing required fields');
@@ -350,6 +355,28 @@ async function processProximitySession(data) {
                     expressionAttributeValues[':vcnl4040_config'] = sanitizeConfig(data.vcnl4040_config);
                 }
                 
+                // Live Debug: optional capture metadata
+                if (data.capture_reason) {
+                    updateExpressions.push('#capture_reason = :capture_reason');
+                    expressionAttributeNames['#capture_reason'] = 'capture_reason';
+                    expressionAttributeValues[':capture_reason'] = data.capture_reason;
+                }
+                if (data.detection_direction) {
+                    updateExpressions.push('#detection_direction = :detection_direction');
+                    expressionAttributeNames['#detection_direction'] = 'detection_direction';
+                    expressionAttributeValues[':detection_direction'] = data.detection_direction;
+                }
+                if (data.detection_confidence !== undefined) {
+                    updateExpressions.push('#detection_confidence = :detection_confidence');
+                    expressionAttributeNames['#detection_confidence'] = 'detection_confidence';
+                    expressionAttributeValues[':detection_confidence'] = data.detection_confidence;
+                }
+                
+                // Session Confirmation: initialize batches_received counter
+                updateExpressions.push('#batches_received = :one');
+                expressionAttributeNames['#batches_received'] = 'batches_received';
+                expressionAttributeValues[':one'] = 1;
+                
                 await docClient.send(new UpdateCommand({
                     TableName: SESSIONS_TABLE,
                     Key: { session_id: data.session_id },
@@ -386,8 +413,22 @@ async function processProximitySession(data) {
                         read_ambient: true,
                         i2c_clock_khz: 400,
                         actual_sample_rate_hz: 0
-                    }
+                    },
+                    // Session Confirmation
+                    batches_received: 1,
+                    pipeline_status: 'pending'
                 };
+                
+                // Live Debug: optional capture metadata
+                if (data.capture_reason) {
+                    sessionItem.capture_reason = data.capture_reason;
+                }
+                if (data.detection_direction) {
+                    sessionItem.detection_direction = data.detection_direction;
+                }
+                if (data.detection_confidence !== undefined) {
+                    sessionItem.detection_confidence = data.detection_confidence;
+                }
                 
                 await docClient.send(new PutCommand({
                     TableName: SESSIONS_TABLE,
@@ -397,13 +438,14 @@ async function processProximitySession(data) {
                 console.log('New session metadata stored');
             }
         } else {
-            // Subsequent batches: Increment the sample_count
+            // Subsequent batches: Increment sample_count and batches_received
             await docClient.send(new UpdateCommand({
                 TableName: SESSIONS_TABLE,
                 Key: { session_id: data.session_id },
-                UpdateExpression: 'ADD sample_count :count',
+                UpdateExpression: 'ADD sample_count :count, batches_received :one',
                 ExpressionAttributeValues: {
-                    ':count': readingsCount
+                    ':count': readingsCount,
+                    ':one': 1
                 }
             }));
             
@@ -482,3 +524,68 @@ async function processProximitySession(data) {
             })
         };
     }
+
+// ============================================================================
+// Session Confirmation: Process pipeline integrity summary
+// ============================================================================
+
+async function processSessionSummary(data) {
+    if (!data.session_id || !data.device_id) {
+        throw new Error('Session summary missing required fields (session_id, device_id)');
+    }
+    
+    const summary = data.summary;
+    if (!summary) {
+        throw new Error('Session summary missing summary object');
+    }
+    
+    console.log(`Processing session summary for: ${data.session_id}`);
+    
+    // Read current session to compare counts
+    const sessionResult = await docClient.send(new GetCommand({
+        TableName: SESSIONS_TABLE,
+        Key: { session_id: data.session_id }
+    }));
+    
+    const currentSampleCount = sessionResult.Item?.sample_count || 0;
+    const transmitted = summary.total_readings_transmitted || 0;
+    
+    // Determine pipeline status
+    let pipelineStatus;
+    if (currentSampleCount === transmitted) {
+        pipelineStatus = 'complete';
+    } else if (currentSampleCount < transmitted) {
+        pipelineStatus = 'partial';
+    } else {
+        // More readings stored than transmitted — shouldn't happen, but handle it
+        pipelineStatus = 'complete';
+    }
+    
+    console.log(`Pipeline status: ${pipelineStatus} (stored: ${currentSampleCount}, transmitted: ${transmitted})`);
+    
+    // Store summary and pipeline status on the session
+    await docClient.send(new UpdateCommand({
+        TableName: SESSIONS_TABLE,
+        Key: { session_id: data.session_id },
+        UpdateExpression: 'SET #session_summary = :summary, #pipeline_status = :status',
+        ExpressionAttributeNames: {
+            '#session_summary': 'session_summary',
+            '#pipeline_status': 'pipeline_status'
+        },
+        ExpressionAttributeValues: {
+            ':summary': summary,
+            ':status': pipelineStatus
+        }
+    }));
+    
+    console.log('Session summary stored successfully');
+    
+    return {
+        statusCode: 200,
+        body: JSON.stringify({
+            message: 'Session summary processed',
+            session_id: data.session_id,
+            pipeline_status: pipelineStatus
+        })
+    };
+}

@@ -7,6 +7,9 @@
 #include <Adafruit_VCNL4040.h>
 #include "SensorConfiguration.h"
 
+// Forward declaration for session confirmation counters
+struct SessionSummary;
+
 // Sensor configuration
 #define NUM_SENSORS 6
 #define SAMPLE_RATE_HZ 1000
@@ -105,6 +108,11 @@ private:
     // Graceful shutdown flag - volatile because accessed from multiple cores
     volatile bool stopRequested = false;
 
+    // Session Confirmation: pointer to active session summary for counter updates
+    // Set when collection starts, cleared when collection stops.
+    // Written only from Core 0 sensor task — no synchronization needed.
+    struct SessionSummary *activeSummary = nullptr;
+
     bool initializePCA();
     void cleanupI2CBus(); // Clean up I2C bus state
     void debugI2CScan();  // Debug: scan I2C bus on each TCA channel
@@ -121,7 +129,7 @@ private:
 public:
     SensorManager();
     bool init(SensorConfiguration *config = nullptr);
-    bool startCollection(QueueHandle_t queue);
+    bool startCollection(QueueHandle_t queue, SessionSummary *summary = nullptr);
     void stopCollection();
     bool isCollecting();
     bool readSensor(uint8_t sensorIndex, SensorReading &reading);

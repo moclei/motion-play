@@ -1,6 +1,6 @@
 import { useState, useRef, useCallback, useMemo, memo } from 'react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Brush, ReferenceArea } from 'recharts';
-import type { SensorReading } from '../services/api';
+import type { SensorReading, Session } from '../services/api';
 import { detectEvents, formatDirection, summarizeEvents, DEFAULT_CONFIG, type DetectionEvent, type DetectorConfig } from '../lib/directionDetector';
 
 // Time range selection for export (decoupled from chart behavior)
@@ -11,6 +11,7 @@ export interface BrushTimeRange {
 
 interface Props {
     readings: SensorReading[];
+    session?: Session;  // Session metadata for confirmation panel
     onBrushChange?: (range: BrushTimeRange | null) => void;
 }
 
@@ -61,7 +62,7 @@ const CustomTooltip = ({ active, payload, label }: CustomTooltipProps) => {
     );
 };
 
-export const SessionChart = memo(({ readings, onBrushChange }: Props) => {
+export const SessionChart = memo(({ readings, session, onBrushChange }: Props) => {
     const [selectedSide, setSelectedSide] = useState<number | null>(null);
     const [selectedPcb, setSelectedPcb] = useState<number | null>(null);
 
@@ -254,6 +255,12 @@ export const SessionChart = memo(({ readings, onBrushChange }: Props) => {
     const minProximity = validProximities.length > 0
         ? Math.min(...validProximities)
         : 0;
+
+    // Session Confirmation: compute time window in seconds
+    const timeWindowMs = allTimestamps.length > 0
+        ? Math.max(...allTimestamps) - Math.min(...allTimestamps)
+        : 0;
+    const timeWindowSeconds = (timeWindowMs / 1000).toFixed(3);
 
     // Get unique PCB IDs from the session for the dropdown
     // Filter to only valid PCB IDs (1-3) and sort them
@@ -626,7 +633,11 @@ export const SessionChart = memo(({ readings, onBrushChange }: Props) => {
             </div>
 
             {/* Statistics */}
-            <div className="grid grid-cols-4 gap-4">
+            <div className="grid grid-cols-5 gap-4">
+                <div className="p-4 bg-purple-50 rounded">
+                    <div className="text-sm text-gray-600">Time Window</div>
+                    <div className="text-2xl font-bold text-gray-900">{timeWindowSeconds}s</div>
+                </div>
                 <div className="p-4 bg-blue-50 rounded">
                     <div className="text-sm text-gray-600">Total Readings</div>
                     <div className="text-2xl font-bold text-gray-900">{filteredReadings.length}</div>
@@ -954,6 +965,195 @@ export const SessionChart = memo(({ readings, onBrushChange }: Props) => {
                     </p>
                 </div>
             </div>
+
+            {/* Session Confirmation Panel */}
+            {session && <SessionConfirmationPanel
+                session={session}
+                displayedReadings={filteredReadings.length}
+            />}
         </div>
     );
 });
+
+// ============================================================================
+// Session Confirmation Panel Component
+// ============================================================================
+
+interface ConfirmationPanelProps {
+    session: Session;
+    displayedReadings: number;
+}
+
+function StatusDot({ ok }: { ok: boolean }) {
+    return (
+        <span className={`inline-block w-2.5 h-2.5 rounded-full ${ok ? 'bg-green-500' : 'bg-red-500'}`} />
+    );
+}
+
+function SessionConfirmationPanel({ session, displayedReadings }: ConfirmationPanelProps) {
+    const [isOpen, setIsOpen] = useState(false);
+    const summary = session.session_summary;
+
+    if (!summary && !session.pipeline_status) {
+        return (
+            <div className="p-3 bg-gray-50 rounded border border-gray-200">
+                <div className="text-sm text-gray-500 italic">
+                    Session confirmation data not available (older session or summary not received)
+                </div>
+            </div>
+        );
+    }
+
+    const storedCount = session.sample_count || 0;
+    const pipelineStatus = session.pipeline_status || 'pending';
+    const statusColor = pipelineStatus === 'complete' ? 'text-green-700 bg-green-50 border-green-200'
+        : pipelineStatus === 'partial' ? 'text-yellow-700 bg-yellow-50 border-yellow-200'
+            : 'text-gray-600 bg-gray-50 border-gray-200';
+    const statusLabel = pipelineStatus === 'complete' ? 'Complete'
+        : pipelineStatus === 'partial' ? 'Partial'
+            : 'Pending';
+
+    return (
+        <div className="border rounded">
+            <button
+                onClick={() => setIsOpen(!isOpen)}
+                className={`w-full p-3 flex items-center justify-between text-left ${statusColor} border-0 rounded`}
+            >
+                <div className="flex items-center gap-2">
+                    <span className="font-semibold text-sm">Session Confirmation</span>
+                    <span className={`text-xs px-2 py-0.5 rounded-full border ${statusColor}`}>
+                        {statusLabel}
+                    </span>
+                </div>
+                <span className="text-xs">{isOpen ? '▲' : '▼'}</span>
+            </button>
+
+            {isOpen && summary && (
+                <div className="p-4 space-y-4 bg-white">
+                    {/* Pipeline Chain */}
+                    <div>
+                        <h4 className="font-semibold text-sm text-gray-800 mb-2">Pipeline Integrity</h4>
+                        <div className="space-y-1.5 text-xs">
+                            <PipelineRow
+                                label="Firmware Collected"
+                                value={summary.readings_collected.reduce((a, b) => a + b, 0)}
+                                ok={summary.readings_collected.reduce((a, b) => a + b, 0) > 0}
+                            />
+                            <PipelineRow
+                                label="I2C Errors"
+                                value={summary.i2c_errors.reduce((a, b) => a + b, 0)}
+                                ok={summary.i2c_errors.reduce((a, b) => a + b, 0) === 0}
+                            />
+                            <PipelineRow
+                                label="Queue Drops"
+                                value={summary.queue_drops}
+                                ok={summary.queue_drops === 0}
+                            />
+                            <PipelineRow
+                                label="Buffer Drops"
+                                value={summary.buffer_drops}
+                                ok={summary.buffer_drops === 0}
+                            />
+                            <PipelineRow
+                                label="Firmware Transmitted"
+                                value={summary.total_readings_transmitted}
+                                ok={summary.total_readings_transmitted === summary.readings_collected.reduce((a, b) => a + b, 0) - summary.queue_drops - summary.buffer_drops}
+                            />
+                            <PipelineRow
+                                label="Lambda Stored"
+                                value={storedCount}
+                                ok={storedCount === summary.total_readings_transmitted}
+                            />
+                            <PipelineRow
+                                label="Frontend Loaded"
+                                value={displayedReadings}
+                                ok={displayedReadings === storedCount}
+                            />
+                        </div>
+                    </div>
+
+                    {/* Theoretical vs Actual */}
+                    <div className="bg-gray-50 p-3 rounded text-xs">
+                        <h4 className="font-semibold text-sm text-gray-800 mb-2">Theoretical vs Actual</h4>
+                        <p className="text-gray-700">
+                            Config target: {summary.measured_cycle_rate_hz || '?'} Hz measured
+                            × {summary.num_active_sensors} sensors
+                            × {(summary.duration_ms / 1000).toFixed(3)}s
+                            = <span className="font-bold">{summary.theoretical_max_readings}</span> readings
+                        </p>
+                        <p className="text-gray-700 mt-1">
+                            Actual collected: <span className="font-bold">{summary.readings_collected.reduce((a, b) => a + b, 0)}</span>
+                            {summary.theoretical_max_readings > 0 && (
+                                <span className="ml-1">
+                                    ({((summary.readings_collected.reduce((a, b) => a + b, 0) / summary.theoretical_max_readings) * 100).toFixed(1)}% of theoretical)
+                                </span>
+                            )}
+                        </p>
+                        <p className="text-gray-700 mt-1">
+                            Frontend displaying: <span className="font-bold">{displayedReadings}</span>
+                            {summary.readings_collected.reduce((a, b) => a + b, 0) > 0 && (
+                                <span className="ml-1">
+                                    ({((displayedReadings / summary.readings_collected.reduce((a, b) => a + b, 0)) * 100).toFixed(1)}% of collected)
+                                </span>
+                            )}
+                        </p>
+                    </div>
+
+                    {/* Per-Sensor Breakdown */}
+                    <div>
+                        <h4 className="font-semibold text-sm text-gray-800 mb-2">Per-Sensor Breakdown</h4>
+                        <div className="overflow-x-auto">
+                            <table className="w-full text-xs">
+                                <thead>
+                                    <tr className="border-b text-left text-gray-600">
+                                        <th className="py-1 pr-3">Sensor</th>
+                                        <th className="py-1 pr-3">Collected</th>
+                                        <th className="py-1 pr-3">I2C Errors</th>
+                                        <th className="py-1 pr-3">Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {summary.readings_collected.map((count, idx) => {
+                                        const pcb = Math.floor(idx / 2) + 1;
+                                        const side = (idx % 2) + 1;
+                                        const sensorName = `P${pcb}S${side}`;
+                                        const errors = summary.i2c_errors[idx] || 0;
+                                        return (
+                                            <tr key={idx} className="border-b border-gray-100">
+                                                <td className="py-1 pr-3 font-medium">{sensorName}</td>
+                                                <td className="py-1 pr-3">{count}</td>
+                                                <td className="py-1 pr-3">{errors}</td>
+                                                <td className="py-1 pr-3">
+                                                    <StatusDot ok={errors === 0 && count > 0} />
+                                                </td>
+                                            </tr>
+                                        );
+                                    })}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    {/* Session Info */}
+                    <div className="text-xs text-gray-500 pt-2 border-t">
+                        <span>Batches: {session.batches_received ?? '?'} received, {summary.total_batches_transmitted} transmitted</span>
+                        <span className="mx-2">|</span>
+                        <span>Cycle rate: {summary.measured_cycle_rate_hz} Hz</span>
+                        <span className="mx-2">|</span>
+                        <span>Duration: {(summary.duration_ms / 1000).toFixed(3)}s</span>
+                    </div>
+                </div>
+            )}
+        </div>
+    );
+}
+
+function PipelineRow({ label, value, ok }: { label: string; value: number; ok: boolean }) {
+    return (
+        <div className="flex items-center gap-2">
+            <StatusDot ok={ok} />
+            <span className="text-gray-700 w-40">{label}:</span>
+            <span className="font-mono font-bold">{value.toLocaleString()}</span>
+        </div>
+    );
+}

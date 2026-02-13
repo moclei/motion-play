@@ -1,4 +1,5 @@
 #include "SensorManager.h"
+#include "../session/SessionManager.h" // For SessionSummary full definition
 
 SensorManager::SensorManager() : mux(0x70)
 {
@@ -922,6 +923,12 @@ void SensorManager::sensorTaskFunction(void *parameter)
             int successfulReads = 0;
             int failedReads = 0;
 
+            // Session Confirmation: count this cycle
+            if (manager->activeSummary)
+            {
+                manager->activeSummary->total_cycles++;
+            }
+
             // Read all active sensors (REVERSED for timing test - normally 0 to NUM_SENSORS)
             for (int i = NUM_SENSORS - 1; i >= 0; i--)
             {
@@ -938,17 +945,33 @@ void SensorManager::sensorTaskFunction(void *parameter)
                     // Override timestamp with cycle timestamp for synchronization
                     reading.timestamp_ms = cycleTimestamp;
 
-                    successfulReads++;
                     // Send to queue (non-blocking)
-                    if (xQueueSend(manager->dataQueue, &reading, 0) != pdTRUE)
+                    if (xQueueSend(manager->dataQueue, &reading, 0) == pdTRUE)
+                    {
+                        successfulReads++;
+                        // Session Confirmation: count successful read + queue
+                        if (manager->activeSummary)
+                        {
+                            manager->activeSummary->readings_collected[i]++;
+                        }
+                    }
+                    else
                     {
                         // Queue full - data lost
-                        // Could increment a dropped sample counter here
+                        if (manager->activeSummary)
+                        {
+                            manager->activeSummary->queue_drops++;
+                        }
                     }
                 }
                 else
                 {
                     failedReads++;
+                    // Session Confirmation: count I2C error
+                    if (manager->activeSummary)
+                    {
+                        manager->activeSummary->i2c_errors[i]++;
+                    }
                 }
             }
 
@@ -1000,6 +1023,9 @@ void SensorManager::sensorTaskFunction(void *parameter)
     // Clean up I2C bus state
     manager->cleanupI2CBus();
 
+    // Clear summary pointer (collection is over)
+    manager->activeSummary = nullptr;
+
     Serial.println("Sensor task cleanup complete, exiting.");
 
     // Mark task as NULL before deleting (atomic-ish on ESP32)
@@ -1009,7 +1035,7 @@ void SensorManager::sensorTaskFunction(void *parameter)
     vTaskDelete(NULL);
 }
 
-bool SensorManager::startCollection(QueueHandle_t queue)
+bool SensorManager::startCollection(QueueHandle_t queue, SessionSummary *summary)
 {
     if (!initialized)
     {
@@ -1024,6 +1050,7 @@ bool SensorManager::startCollection(QueueHandle_t queue)
     }
 
     dataQueue = queue;
+    activeSummary = summary;
 
     // Reset stop flag before starting new task
     stopRequested = false;

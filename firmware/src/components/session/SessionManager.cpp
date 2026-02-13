@@ -46,6 +46,9 @@ bool SessionManager::startSession()
     Serial.printf("  Session type: %s\n",
                   sessionType == SessionType::INTERRUPT_BASED ? "INTERRUPT" : "PROXIMITY");
 
+    // Reset session confirmation counters
+    sessionSummary.reset();
+
     // Clear any old data based on session type
     if (sessionType == SessionType::INTERRUPT_BASED)
     {
@@ -129,7 +132,15 @@ void SessionManager::processQueue()
         }
         else
         {
-            Serial.println("WARNING: Buffer full, dropping samples");
+            // Count remaining items in queue that will be dropped
+            uint32_t dropped = 1; // This one
+            SensorReading discardReading;
+            while (xQueueReceive(dataQueue, &discardReading, 0) == pdTRUE)
+            {
+                dropped++;
+            }
+            sessionSummary.buffer_drops += dropped;
+            Serial.printf("WARNING: Buffer full, dropped %lu samples\n", (unsigned long)dropped);
             break;
         }
     }
@@ -232,4 +243,49 @@ bool SessionManager::addInterruptEvent(const InterruptEvent &event)
 
     interruptBuffer.push_back(event);
     return true;
+}
+
+void SessionManager::finalizeSessionSummary(const SensorConfiguration *config, uint8_t numActiveSensors)
+{
+    sessionSummary.duration_ms = sessionDuration;
+    sessionSummary.num_active_sensors = numActiveSensors;
+
+    // Compute measured cycle rate
+    if (sessionSummary.duration_ms > 0)
+    {
+        sessionSummary.measured_cycle_rate_hz =
+            (uint16_t)((uint32_t)sessionSummary.total_cycles * 1000 / sessionSummary.duration_ms);
+    }
+
+    // Compute theoretical max from config
+    if (config != nullptr && sessionSummary.duration_ms > 0)
+    {
+        // theoretical = sample_rate * (duration_seconds) * active_sensors
+        sessionSummary.theoretical_max_readings =
+            (uint32_t)((float)config->sample_rate_hz * (sessionSummary.duration_ms / 1000.0f) * numActiveSensors);
+
+        // Also populate actual_sample_rate_hz on the config (mutable cast — config is owned by main.cpp)
+        const_cast<SensorConfiguration *>(config)->actual_sample_rate_hz = sessionSummary.measured_cycle_rate_hz;
+    }
+
+    // Log summary
+    uint32_t totalCollected = 0;
+    uint32_t totalErrors = 0;
+    for (int i = 0; i < NUM_SENSORS; i++)
+    {
+        totalCollected += sessionSummary.readings_collected[i];
+        totalErrors += sessionSummary.i2c_errors[i];
+    }
+
+    Serial.println("\n=== Session Summary ===");
+    Serial.printf("  Duration: %lu ms\n", (unsigned long)sessionSummary.duration_ms);
+    Serial.printf("  Cycles: %lu, Rate: %u Hz\n",
+                  (unsigned long)sessionSummary.total_cycles, sessionSummary.measured_cycle_rate_hz);
+    Serial.printf("  Readings collected: %lu\n", (unsigned long)totalCollected);
+    Serial.printf("  I2C errors: %lu\n", (unsigned long)totalErrors);
+    Serial.printf("  Queue drops: %lu\n", (unsigned long)sessionSummary.queue_drops);
+    Serial.printf("  Buffer drops: %lu\n", (unsigned long)sessionSummary.buffer_drops);
+    Serial.printf("  Theoretical max: %lu\n", (unsigned long)sessionSummary.theoretical_max_readings);
+    Serial.printf("  Active sensors: %u\n", sessionSummary.num_active_sensors);
+    Serial.println("=======================\n");
 }
