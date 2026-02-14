@@ -137,6 +137,12 @@ bool DataTransmitter::transmitBatch(const String &sessionId,
         Serial.print("  First 200 chars: ");
         Serial.println(payload.substring(0, 200));
     }
+    else if (activeSummary)
+    {
+        // Session Confirmation: count transmitted readings and batches
+        activeSummary->total_readings_transmitted += count;
+        activeSummary->total_batches_transmitted++;
+    }
 
     return success;
 }
@@ -150,7 +156,7 @@ bool DataTransmitter::transmitProximitySession(SessionManager &session, const Se
     }
 
     String sessionId = session.getSessionId();
-    String deviceId = "motionplay-device-001"; // TODO: Get from config
+    String deviceId = mqttManager->getDeviceId();
     unsigned long startTime = session.getStartTime();
     unsigned long duration = session.getDuration();
 
@@ -318,7 +324,7 @@ bool DataTransmitter::transmitInterruptSession(SessionManager &session, const Se
     }
 
     String sessionId = session.getSessionId();
-    String deviceId = "motionplay-device-001"; // TODO: Get from config
+    String deviceId = mqttManager->getDeviceId();
     unsigned long startTime = session.getStartTime();
     unsigned long duration = session.getDuration();
 
@@ -361,7 +367,7 @@ bool DataTransmitter::transmitInterruptSession(SessionManager &session, const Se
 // Live Debug Capture Transmission
 // ============================================================================
 
-bool DataTransmitter::transmitLiveDebugCapture(
+String DataTransmitter::transmitLiveDebugCapture(
     std::vector<SensorReading, PSRAMAllocator<SensorReading>> &readings,
     size_t startIdx,
     size_t count,
@@ -373,12 +379,20 @@ bool DataTransmitter::transmitLiveDebugCapture(
     if (count == 0)
     {
         Serial.println("Live Debug: No readings to transmit");
-        return false;
+        return "";
     }
 
     // Generate a unique session ID for this capture
-    String sessionId = "device-001_" + String(millis());
-    String deviceId = "motionplay-device-001"; // TODO: Get from config
+    String deviceId = mqttManager->getDeviceId();
+    // Extract short device suffix for session ID (e.g. "motionplay-device-002" -> "device-002")
+    String deviceSuffix = deviceId;
+    int lastDash = deviceId.lastIndexOf('-');
+    int secondLastDash = deviceId.lastIndexOf('-', lastDash - 1);
+    if (secondLastDash >= 0)
+    {
+        deviceSuffix = deviceId.substring(secondLastDash + 1);
+    }
+    String sessionId = deviceSuffix + "_" + String(millis());
 
     // Calculate timing from the readings themselves
     unsigned long startTime = readings[startIdx].timestamp_ms;
@@ -476,7 +490,14 @@ bool DataTransmitter::transmitLiveDebugCapture(
             String payload;
             size_t payloadSize = serializeJson(doc, payload);
             Serial.printf("ERROR: Live Debug MQTT publish failed! Size: %d bytes\n", payloadSize);
-            return false;
+            return "";
+        }
+
+        // Session Confirmation: count transmitted readings and batches
+        if (activeSummary)
+        {
+            activeSummary->total_readings_transmitted += batchCount;
+            activeSummary->total_batches_transmitted++;
         }
 
         offset += batchCount;
@@ -490,5 +511,55 @@ bool DataTransmitter::transmitLiveDebugCapture(
 
     Serial.printf("Live Debug capture transmitted: session=%s, %d readings\n",
                   sessionId.c_str(), count);
-    return true;
+    return sessionId;
+}
+
+// ============================================================================
+// Session Confirmation: Transmit pipeline integrity summary
+// ============================================================================
+
+bool DataTransmitter::transmitSessionSummary(const SessionSummary &summary,
+                                             const String &sessionId,
+                                             const String &deviceId)
+{
+    DynamicJsonDocument doc(4096);
+
+    doc["type"] = "session_summary";
+    doc["session_id"] = sessionId;
+    doc["device_id"] = deviceId;
+
+    JsonObject summaryObj = doc.createNestedObject("summary");
+    summaryObj["total_cycles"] = summary.total_cycles;
+    summaryObj["queue_drops"] = summary.queue_drops;
+    summaryObj["buffer_drops"] = summary.buffer_drops;
+    summaryObj["total_readings_transmitted"] = summary.total_readings_transmitted;
+    summaryObj["total_batches_transmitted"] = summary.total_batches_transmitted;
+    summaryObj["measured_cycle_rate_hz"] = summary.measured_cycle_rate_hz;
+    summaryObj["duration_ms"] = summary.duration_ms;
+    summaryObj["theoretical_max_readings"] = summary.theoretical_max_readings;
+    summaryObj["num_active_sensors"] = summary.num_active_sensors;
+
+    // Per-sensor arrays
+    JsonArray collectedArr = summaryObj.createNestedArray("readings_collected");
+    JsonArray errorsArr = summaryObj.createNestedArray("i2c_errors");
+    for (int i = 0; i < NUM_SENSORS; i++)
+    {
+        collectedArr.add(summary.readings_collected[i]);
+        errorsArr.add(summary.i2c_errors[i]);
+    }
+
+    // Retry up to 3 times
+    for (int attempt = 0; attempt < 3; attempt++)
+    {
+        if (mqttManager->publishData(doc))
+        {
+            Serial.printf("Session summary transmitted (attempt %d)\n", attempt + 1);
+            return true;
+        }
+        Serial.printf("WARNING: Session summary publish failed (attempt %d/3)\n", attempt + 1);
+        delay(500);
+    }
+
+    Serial.println("ERROR: Failed to transmit session summary after 3 attempts");
+    return false;
 }

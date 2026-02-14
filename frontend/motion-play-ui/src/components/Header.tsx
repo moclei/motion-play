@@ -124,7 +124,7 @@ export const Header = ({ onCollectionStopped, onSettingsClick }: HeaderProps) =>
                         Motion Play Dashboard
                     </h1>
                     <div className="text-sm text-gray-500">
-                        Device: motionplay-device-001
+                        Device: {import.meta.env.VITE_DEVICE_ID || 'unknown'}
                     </div>
                 </div>
 

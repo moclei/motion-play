@@ -1,5 +1,7 @@
 # Live Debug
 
+**Status**: Complete (Feb 2026). Detection capture working end-to-end. Missed-event and labeling flows code-complete, pending hardware testing.
+
 ## Intent
 
 A hybrid mode that combines Play's live detection and LED feedback with selective data capture. When the device detects a trigger, it pauses detection, syncs that detection plus a short sample window to the cloud, and resumes. A "missed event" button captures data leading up to the button press when a throw wasn't detected. The goal is to build a curated, labeled dataset for refining the heuristic algorithm and — later — training ML models on clean, labeled event windows, without the overhead of full-session recording. This feature directly supports the project's three detection approaches: heuristic tuning benefits from labeled good/bad examples, and the ML approach requires exactly the kind of short, labeled windows this mode produces.

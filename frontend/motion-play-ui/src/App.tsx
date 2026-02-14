@@ -170,6 +170,7 @@ function App() {
                   ) : isProximitySession(sessionData) ? (
                     <SessionChart
                       readings={sessionData.readings}
+                      session={sessionData.session}
                       onBrushChange={handleBrushChange}
                     />
                   ) : null}

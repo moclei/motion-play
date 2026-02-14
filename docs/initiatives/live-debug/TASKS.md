@@ -21,8 +21,8 @@
   - [x] Clear buffer, reset DirectionDetector, resume polling
 - [x] Add `transmitLiveDebugCapture` method to DataTransmitter with larger batch size (200) and shorter delay (20ms)
 - [x] Add `capture_missed_event` command handler: same pause-transmit-resume flow, extract full buffer (~3s), `capture_reason: "missed_event"`
-- [ ] Test: verify detection capture round-trip (detect → pause → transmit → resume → detect again)
-- [ ] Test: verify missed-event capture round-trip
+- [x] Test: verify detection capture round-trip (detect → pause → transmit → resume → detect again)
+- [ ] Test: verify missed-event capture round-trip — code complete, not yet tested on hardware
 
 ## Phase 3: Backend
 - [x] Extend processData Lambda to accept and store optional `capture_reason`, `detection_direction`, `detection_confidence` on session — both update and create paths
@@ -37,10 +37,5 @@
 - [x] Event detail: existing SessionChart + LabelEditor already work for live_debug sessions (proximity data with labels)
 
 ## Phase 5: Polish and validation
-- [x] Verify firmware compiles (15.2% RAM, 17.7% Flash — no new errors)
-- [x] Verify frontend type-checks cleanly
-- [x] Clean up PLAN.md — moved resolved questions to "Resolved Design Decisions"
-- [ ] Deploy updated Lambdas (processData, sendCommand) — commands prepared, awaiting manual deploy
-- [ ] End-to-end test: detection capture round-trip (detect → pause → transmit → resume → detect again)
-- [ ] End-to-end test: missed-event capture round-trip
-- [ ] End-to-end test: labeling and data retrieval in frontend
+- [ ] End-to-end test: detection capture, missed-event capture, labeling, data retrieval
+- [ ] Remove resolved Open Questions from PLAN.md
