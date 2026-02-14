@@ -77,7 +77,7 @@ bool DataTransmitter::transmitBatch(const String &sessionId,
             configObj["i2c_clock_khz"] = config->i2c_clock_khz;
             configObj["actual_sample_rate_hz"] = config->actual_sample_rate_hz;
         }
-        
+
         // Add calibration metadata if available
         if (deviceCalibration.isValid())
         {
@@ -86,7 +86,7 @@ bool DataTransmitter::transmitBatch(const String &sessionId,
             calObj["timestamp"] = deviceCalibration.timestamp;
             calObj["multi_pulse"] = deviceCalibration.multi_pulse;
             calObj["integration_time"] = deviceCalibration.integration_time;
-            
+
             JsonArray thresholds = calObj.createNestedArray("thresholds");
             for (int i = 0; i < CALIBRATION_NUM_PCBS; i++)
             {
@@ -230,7 +230,7 @@ bool DataTransmitter::transmitInterruptBatch(const String &sessionId,
         intConfig["smart_persistence"] = config->interrupt_smart_persistence;
         intConfig["mode"] = config->interrupt_mode;
         intConfig["led_current"] = config->led_current;
-        
+
         // Add calibration metadata if available
         if (deviceCalibration.isValid())
         {
@@ -239,7 +239,7 @@ bool DataTransmitter::transmitInterruptBatch(const String &sessionId,
             calObj["timestamp"] = deviceCalibration.timestamp;
             calObj["multi_pulse"] = deviceCalibration.multi_pulse;
             calObj["integration_time"] = deviceCalibration.integration_time;
-            
+
             JsonArray thresholds = calObj.createNestedArray("thresholds");
             for (int i = 0; i < CALIBRATION_NUM_PCBS; i++)
             {
@@ -354,5 +354,141 @@ bool DataTransmitter::transmitInterruptSession(SessionManager &session, const Se
     }
 
     Serial.println("Interrupt session transmission complete!");
+    return true;
+}
+
+// ============================================================================
+// Live Debug Capture Transmission
+// ============================================================================
+
+bool DataTransmitter::transmitLiveDebugCapture(
+    std::vector<SensorReading, PSRAMAllocator<SensorReading>> &readings,
+    size_t startIdx,
+    size_t count,
+    const char *captureReason,
+    const char *detectionDirection,
+    float detectionConfidence,
+    const SensorConfiguration *config)
+{
+    if (count == 0)
+    {
+        Serial.println("Live Debug: No readings to transmit");
+        return false;
+    }
+
+    // Generate a unique session ID for this capture
+    String sessionId = "device-001_" + String(millis());
+    String deviceId = "motionplay-device-001"; // TODO: Get from config
+
+    // Calculate timing from the readings themselves
+    unsigned long startTime = readings[startIdx].timestamp_ms;
+    unsigned long endTime = readings[startIdx + count - 1].timestamp_ms;
+    unsigned long duration = endTime - startTime;
+
+    Serial.printf("Live Debug capture: reason=%s, readings=%d, duration=%lums\n",
+                  captureReason, count, duration);
+
+    // Send in batches using Live Debug batch settings
+    size_t offset = 0;
+    while (offset < count)
+    {
+        size_t remaining = count - offset;
+        size_t batchCount = (remaining > LIVE_DEBUG_BATCH_SIZE) ? LIVE_DEBUG_BATCH_SIZE : remaining;
+
+        // Create JSON document
+        DynamicJsonDocument doc(16384); // 16KB for larger batches
+
+        doc["session_id"] = sessionId;
+        doc["device_id"] = deviceId;
+        doc["session_type"] = "proximity";
+        doc["mode"] = "live_debug";
+        doc["start_timestamp"] = startTime;
+        doc["duration_ms"] = duration;
+        doc["sample_rate"] = SAMPLE_RATE_HZ;
+        doc["batch_offset"] = offset;
+        doc["batch_size"] = batchCount;
+
+        // First batch: include capture metadata and config
+        if (offset == 0)
+        {
+            // Live Debug capture metadata
+            doc["capture_reason"] = captureReason;
+            if (detectionDirection != nullptr)
+            {
+                doc["detection_direction"] = detectionDirection;
+                doc["detection_confidence"] = detectionConfidence;
+            }
+
+            // Sensor configuration
+            if (config != nullptr)
+            {
+                JsonObject configObj = doc.createNestedObject("vcnl4040_config");
+                configObj["sample_rate_hz"] = config->sample_rate_hz;
+                configObj["led_current"] = config->led_current;
+                configObj["integration_time"] = config->integration_time;
+                configObj["high_resolution"] = config->high_resolution;
+                configObj["read_ambient"] = config->read_ambient;
+                configObj["i2c_clock_khz"] = config->i2c_clock_khz;
+                configObj["actual_sample_rate_hz"] = config->actual_sample_rate_hz;
+            }
+
+            // Calibration metadata
+            if (deviceCalibration.isValid())
+            {
+                JsonObject calObj = doc.createNestedObject("calibration");
+                calObj["valid"] = true;
+                calObj["timestamp"] = deviceCalibration.timestamp;
+                calObj["multi_pulse"] = deviceCalibration.multi_pulse;
+                calObj["integration_time"] = deviceCalibration.integration_time;
+
+                JsonArray thresholds = calObj.createNestedArray("thresholds");
+                for (int i = 0; i < CALIBRATION_NUM_PCBS; i++)
+                {
+                    JsonObject pcbCal = thresholds.createNestedObject();
+                    pcbCal["pcb"] = i + 1;
+                    pcbCal["baseline_max"] = deviceCalibration.pcbs[i].baseline_max;
+                    pcbCal["signal_min"] = deviceCalibration.pcbs[i].signal_min;
+                    pcbCal["signal_max"] = deviceCalibration.pcbs[i].signal_max;
+                    pcbCal["threshold"] = deviceCalibration.pcbs[i].threshold;
+                }
+            }
+        }
+
+        // Add readings array
+        JsonArray readingsArray = doc.createNestedArray("readings");
+        for (size_t i = 0; i < batchCount; i++)
+        {
+            SensorReading &reading = readings[startIdx + offset + i];
+
+            JsonObject readingObj = readingsArray.createNestedObject();
+            readingObj["ts"] = reading.timestamp_ms;
+            readingObj["pos"] = reading.position;
+            readingObj["pcb"] = reading.pcb_id;
+            readingObj["side"] = reading.side;
+            readingObj["prox"] = reading.proximity;
+            readingObj["amb"] = reading.ambient;
+        }
+
+        // Publish via MQTT
+        bool success = mqttManager->publishData(doc);
+        if (!success)
+        {
+            String payload;
+            size_t payloadSize = serializeJson(doc, payload);
+            Serial.printf("ERROR: Live Debug MQTT publish failed! Size: %d bytes\n", payloadSize);
+            return false;
+        }
+
+        offset += batchCount;
+
+        // Short delay between batches
+        if (offset < count)
+        {
+            delay(LIVE_DEBUG_BATCH_DELAY);
+        }
+    }
+
+    Serial.printf("Live Debug capture transmitted: session=%s, %d readings\n",
+                  sessionId.c_str(), count);
     return true;
 }

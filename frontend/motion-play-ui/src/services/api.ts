@@ -23,6 +23,11 @@ export interface Session {
     active_sensors?: ActiveSensor[];
     vcnl4040_config?: VCNL4040Config;
     interrupt_config?: InterruptConfig;
+
+    // Live Debug capture metadata (optional, present when mode === 'live_debug')
+    capture_reason?: 'detection' | 'missed_event';
+    detection_direction?: 'a_to_b' | 'b_to_a';
+    detection_confidence?: number;
 }
 
 export interface SensorReading {

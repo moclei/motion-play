@@ -23,9 +23,10 @@
 // Note: HOW we sense (polling vs interrupt) is determined by currentConfig.sensor_mode
 enum class DeviceMode
 {
-    IDLE,  // Standby mode
-    DEBUG, // Data collection for algorithm development
-    PLAY   // Active game mode with direction detection
+    IDLE,      // Standby mode
+    DEBUG,     // Data collection for algorithm development
+    PLAY,      // Active game mode with direction detection
+    LIVE_DEBUG // Live detection with event capture (hybrid play+debug)
 };
 
 // Managers
@@ -46,6 +47,14 @@ DeviceMode currentMode = DeviceMode::DEBUG; // Default to debug for backwards co
 bool playModeActive = false;
 unsigned long lastDetectionTime = 0;
 const unsigned long DETECTION_COOLDOWN = 500; // 500ms - prevents double-trigger, allows quick successive throws
+
+// Live Debug mode state
+bool liveDebugActive = false;
+
+// Live Debug capture window constants
+const size_t LIVE_DEBUG_BUFFER_CAP = 18000;        // ~3 seconds at 6 sensors × 1000 Hz
+const unsigned long DETECTION_WINDOW_MS = 500;     // 0.5s of pre-detection data to capture
+const unsigned long MISSED_EVENT_WINDOW_MS = 3000; // 3s of pre-button data to capture
 
 // Timing
 unsigned long lastStatusUpdate = 0;
@@ -418,8 +427,10 @@ void handleCommand(const String &command, JsonDocument *doc)
         // Determine sensor mode from config (how we sense)
         bool useInterruptMode = (currentConfig.sensor_mode == SensorMode::INTERRUPT_MODE);
 
+        const char *modeLabel = currentMode == DeviceMode::PLAY ? "PLAY" : currentMode == DeviceMode::LIVE_DEBUG ? "LIVE_DEBUG"
+                                                                                                                 : "DEBUG";
         Serial.printf("Starting collection - Mode: %s, Sensor: %s\n",
-                      currentMode == DeviceMode::PLAY ? "PLAY" : "DEBUG",
+                      modeLabel,
                       useInterruptMode ? "INTERRUPT" : "POLLING");
 
         if (useInterruptMode)
@@ -546,6 +557,21 @@ void handleCommand(const String &command, JsonDocument *doc)
                     mqttManager->publishStatus("play_started");
                     display.showMessage("PLAY MODE", TFT_GREEN);
                 }
+                else if (currentMode == DeviceMode::LIVE_DEBUG)
+                {
+                    // Initialize LED controller for live debug mode
+                    if (!ledController.init())
+                    {
+                        Serial.println("WARNING: LED controller init failed");
+                    }
+                    directionDetector.reset();
+                    liveDebugActive = true;
+                    lastDetectionTime = 0;
+                    ledController.showReady();
+
+                    mqttManager->publishStatus("live_debug_started");
+                    display.showMessage("LIVE DEBUG", TFT_MAGENTA);
+                }
                 else
                 {
                     mqttManager->publishStatus("collection_started");
@@ -565,9 +591,12 @@ void handleCommand(const String &command, JsonDocument *doc)
         // Check session type to determine how to stop
         bool wasInterruptSession = (sessionManager.getSessionType() == SessionType::INTERRUPT_BASED);
         bool isPlayMode = (currentMode == DeviceMode::PLAY);
+        bool isLiveDebugMode = (currentMode == DeviceMode::LIVE_DEBUG);
 
+        const char *stopModeLabel = isPlayMode ? "PLAY" : isLiveDebugMode ? "LIVE_DEBUG"
+                                                                          : "DEBUG";
         Serial.printf("Stopping collection - Mode: %s, Session: %s\n",
-                      isPlayMode ? "PLAY" : "DEBUG",
+                      stopModeLabel,
                       wasInterruptSession ? "INTERRUPT" : "POLLING");
 
         // Stop the appropriate sensor system
@@ -597,6 +626,19 @@ void handleCommand(const String &command, JsonDocument *doc)
 
             mqttManager->publishStatus("play_stopped");
             display.showMessage("Play mode stopped", TFT_YELLOW);
+            delay(1500);
+            display.setDisplayState(DISPLAY_IDLE);
+        }
+        else if (isLiveDebugMode && liveDebugActive)
+        {
+            // LIVE DEBUG MODE: Just stop, no bulk upload (captures happened inline)
+            sessionManager.clearBuffer();
+            liveDebugActive = false;
+            directionDetector.reset();
+            ledController.off();
+
+            mqttManager->publishStatus("live_debug_stopped");
+            display.showMessage("Live Debug stopped", TFT_YELLOW);
             delay(1500);
             display.setDisplayState(DISPLAY_IDLE);
         }
@@ -797,7 +839,7 @@ void handleCommand(const String &command, JsonDocument *doc)
                 mqttManager->publishStatus("mode_play");
                 // Reset detector to establish fresh baseline for this session
                 directionDetector.fullReset();
-                
+
                 // Apply calibration data if available
                 if (deviceCalibration.isValid())
                 {
@@ -809,28 +851,61 @@ void handleCommand(const String &command, JsonDocument *doc)
                     directionDetector.setCalibration(nullptr);
                     Serial.println("No calibration - using fallback thresholds");
                 }
-                
+
                 // Turn off LEDs until baseline is established
                 ledController.off();
                 Serial.println("Direction detector reset for new play session");
+            }
+            else if (modeStr == "live_debug")
+            {
+                currentMode = DeviceMode::LIVE_DEBUG;
+                liveDebugActive = false; // Reset — will activate on start_collection
+                // Stop interrupt monitoring if it was running
+                if (interruptManager.isMonitoring())
+                {
+                    interruptManager.stopMonitoring();
+                }
+                display.setMode(MODE_LIVE_DEBUG);
+                display.showMessage("Mode: LIVE DEBUG", TFT_MAGENTA);
+                mqttManager->publishStatus("mode_live_debug");
+                // Reset detector to establish fresh baseline
+                directionDetector.fullReset();
+
+                // Apply calibration data if available
+                if (deviceCalibration.isValid())
+                {
+                    directionDetector.setCalibration(&deviceCalibration);
+                    Serial.println("Calibration data applied to DirectionDetector");
+                }
+                else
+                {
+                    directionDetector.setCalibration(nullptr);
+                    Serial.println("No calibration - using fallback thresholds");
+                }
+
+                ledController.off();
+                Serial.println("Direction detector reset for new live debug session");
             }
             else if (modeStr == "calibrate")
             {
                 // Start calibration mode
                 Serial.println("Starting calibration via MQTT command...");
-                
+
                 // Only start if not collecting
                 if (sessionManager.getState() == IDLE)
                 {
                     // Set sensor config before starting
                     uint8_t mp = currentConfig.multi_pulse.toInt();
-                    if (mp == 0) mp = 1;
+                    if (mp == 0)
+                        mp = 1;
                     uint8_t it = currentConfig.integration_time.substring(0, 1).toInt();
-                    if (it == 0) it = 1;
+                    if (it == 0)
+                        it = 1;
                     uint8_t led = currentConfig.led_current.toInt();
-                    if (led == 0) led = 200;
+                    if (led == 0)
+                        led = 200;
                     calibrationManager.setSensorConfig(mp, it, led);
-                    
+
                     if (calibrationManager.startCalibration())
                     {
                         mqttManager->publishStatus("calibration_started");
@@ -846,7 +921,7 @@ void handleCommand(const String &command, JsonDocument *doc)
                     display.showMessage("Stop collection first!", TFT_RED);
                     mqttManager->publishStatus("calibration_rejected_busy");
                 }
-                
+
                 delay(1500);
                 return; // Skip the displayState set below
             }
@@ -860,6 +935,63 @@ void handleCommand(const String &command, JsonDocument *doc)
             delay(1500);
             display.setDisplayState(DISPLAY_IDLE);
         }
+    }
+    else if (command == "capture_missed_event")
+    {
+        // Live Debug: capture data window for a missed event (user-triggered)
+        if (currentMode != DeviceMode::LIVE_DEBUG || !liveDebugActive)
+        {
+            Serial.println("capture_missed_event ignored — not in Live Debug mode");
+            mqttManager->publishStatus("capture_missed_ignored");
+            return;
+        }
+
+        Serial.println("[LIVE_DEBUG] Missed event capture requested");
+
+        // 1. Stop sensor polling
+        sensorManager.stopCollection();
+        delay(50);
+        sessionManager.processQueue();
+
+        // 2. Show status
+        display.showMessage("Capturing missed...", TFT_MAGENTA);
+
+        // 3. Extract window: last MISSED_EVENT_WINDOW_MS of data
+        auto &buffer = sessionManager.getDataBuffer();
+        const size_t READINGS_PER_MS = 6;
+        size_t windowSamples = MISSED_EVENT_WINDOW_MS * READINGS_PER_MS;
+        size_t actualBufferSize = buffer.size();
+        size_t startIdx = (actualBufferSize > windowSamples) ? actualBufferSize - windowSamples : 0;
+        size_t captureCount = actualBufferSize - startIdx;
+
+        Serial.printf("[LIVE_DEBUG] Missed event: capturing %d readings (~%lums)\n",
+                      captureCount, (captureCount / READINGS_PER_MS));
+
+        // 4. Transmit
+        bool txSuccess = dataTransmitter->transmitLiveDebugCapture(
+            buffer, startIdx, captureCount,
+            "missed_event", nullptr, 0.0,
+            &currentConfig);
+
+        if (txSuccess)
+        {
+            Serial.println("[LIVE_DEBUG] Missed event capture transmitted");
+            mqttManager->publishStatus("live_debug_missed_captured");
+        }
+        else
+        {
+            Serial.println("[LIVE_DEBUG] ERROR: Missed event capture failed!");
+            mqttManager->publishStatus("live_debug_capture_failed");
+        }
+
+        // 5. Clear buffer and reset
+        directionDetector.reset();
+        buffer.clear();
+
+        // 6. Resume
+        sensorManager.startCollection(sessionManager.getQueue());
+        display.showMessage("Ready", TFT_MAGENTA);
+        Serial.println("[LIVE_DEBUG] Resumed after missed event capture");
     }
     else if (command == "reboot")
     {
@@ -883,23 +1015,26 @@ void loop()
     if (calibrationManager.isActive())
     {
         calibrationManager.update();
-        
+
         // After calibration completes, restore normal display
         if (!calibrationManager.isActive())
         {
             display.showSessionScreen();
             display.setSensorConfig(&currentConfig);
-            
+
             // Set sensor config in calibration manager for next time
             uint8_t mp = currentConfig.multi_pulse.toInt();
-            if (mp == 0) mp = 1;
+            if (mp == 0)
+                mp = 1;
             uint8_t it = currentConfig.integration_time.substring(0, 1).toInt();
-            if (it == 0) it = 1;
+            if (it == 0)
+                it = 1;
             uint8_t led = currentConfig.led_current.toInt();
-            if (led == 0) led = 200;
+            if (led == 0)
+                led = 200;
             calibrationManager.setSensorConfig(mp, it, led);
         }
-        
+
         delay(10);
         return; // Skip normal loop during calibration
     }
@@ -916,19 +1051,22 @@ void loop()
         {
             // 3 second hold - trigger calibration
             Serial.println("Button 1 held 3s - Starting calibration...");
-            
+
             // Only start if not collecting
             if (sessionManager.getState() == IDLE)
             {
                 // Set sensor config before starting
                 uint8_t mp = currentConfig.multi_pulse.toInt();
-                if (mp == 0) mp = 1;
+                if (mp == 0)
+                    mp = 1;
                 uint8_t it = currentConfig.integration_time.substring(0, 1).toInt();
-                if (it == 0) it = 1;
+                if (it == 0)
+                    it = 1;
                 uint8_t led = currentConfig.led_current.toInt();
-                if (led == 0) led = 200;
+                if (led == 0)
+                    led = 200;
                 calibrationManager.setSensorConfig(mp, it, led);
-                
+
                 calibrationManager.startCalibration();
             }
             else
@@ -937,7 +1075,7 @@ void loop()
                 delay(1500);
                 display.setDisplayState(DISPLAY_IDLE);
             }
-            
+
             button1WasPressed = false; // Reset to prevent re-trigger
             button1HoldStart = 0;
         }
@@ -1122,6 +1260,130 @@ void loop()
             }
 
             // No timeout in play mode - it runs until stopped
+        }
+        else if (liveDebugActive && currentMode == DeviceMode::LIVE_DEBUG)
+        {
+            // LIVE DEBUG MODE: Detection with event capture
+
+            // Update LED animation (handles fade-out after detection)
+            ledController.update();
+
+            // Debug: log buffer status periodically
+            static unsigned long lastLiveDebugLog = 0;
+            if (millis() - lastLiveDebugLog > 2000)
+            {
+                lastLiveDebugLog = millis();
+                Serial.printf("[LIVE_DEBUG] Buffer: %d samples, Detector: %s\n",
+                              sessionManager.getDataCount(),
+                              directionDetector.isReady() ? "READY" : "establishing baseline...");
+            }
+
+            // Check cooldown between detections
+            unsigned long now = millis();
+            bool inCooldown = (lastDetectionTime > 0) && (now - lastDetectionTime < DETECTION_COOLDOWN);
+
+            if (!inCooldown)
+            {
+                // Feed new readings to the detector
+                auto &buffer = sessionManager.getDataBuffer();
+                static size_t lastLiveDebugIndex = 0;
+
+                // Add new readings since last check
+                size_t bufferSize = buffer.size();
+                for (size_t i = lastLiveDebugIndex; i < bufferSize; i++)
+                {
+                    directionDetector.addReading(buffer[i]);
+                }
+                directionDetector.flushReading();
+                lastLiveDebugIndex = bufferSize;
+
+                // Check for detection
+                if (directionDetector.hasDetection())
+                {
+                    DetectionResult result = directionDetector.getResult();
+
+                    Serial.printf("[LIVE_DEBUG] DETECTION: %s (confidence: %.2f, CoM gap: %dms)\n",
+                                  DirectionDetector::directionToString(result.direction),
+                                  result.confidence,
+                                  result.comGapMs);
+
+                    // LED feedback (same as Play)
+                    ledController.showDirection(result.direction, 3000);
+
+                    // Display feedback
+                    if (result.direction == Direction::A_TO_B)
+                    {
+                        display.showMessage("A -> B", TFT_BLUE);
+                    }
+                    else
+                    {
+                        display.showMessage("B -> A", TFT_ORANGE);
+                    }
+
+                    // === CAPTURE FLOW: Pause → Extract → Transmit → Resume ===
+
+                    // 1. Stop sensor polling
+                    sensorManager.stopCollection();
+                    delay(50); // Let queue drain
+
+                    // Process any remaining queued readings
+                    sessionManager.processQueue();
+
+                    // 2. Show transmitting status
+                    display.showMessage("Transmitting...", TFT_MAGENTA);
+
+                    // 3. Calculate window: last DETECTION_WINDOW_MS of data
+                    const size_t READINGS_PER_MS = 6; // 6 sensors × 1000 Hz
+                    size_t windowSamples = DETECTION_WINDOW_MS * READINGS_PER_MS;
+                    size_t actualBufferSize = buffer.size();
+                    size_t startIdx = (actualBufferSize > windowSamples) ? actualBufferSize - windowSamples : 0;
+                    size_t captureCount = actualBufferSize - startIdx;
+
+                    // 4. Transmit the capture
+                    const char *dirStr = (result.direction == Direction::A_TO_B) ? "a_to_b" : "b_to_a";
+                    bool txSuccess = dataTransmitter->transmitLiveDebugCapture(
+                        buffer, startIdx, captureCount,
+                        "detection", dirStr, result.confidence,
+                        &currentConfig);
+
+                    if (txSuccess)
+                    {
+                        Serial.println("[LIVE_DEBUG] Detection capture transmitted successfully");
+                        mqttManager->publishStatus("live_debug_detection_captured");
+                    }
+                    else
+                    {
+                        Serial.println("[LIVE_DEBUG] ERROR: Detection capture transmission failed!");
+                        mqttManager->publishStatus("live_debug_capture_failed");
+                    }
+
+                    // 5. Clear buffer and reset detector
+                    lastDetectionTime = millis();
+                    directionDetector.reset();
+                    lastLiveDebugIndex = 0;
+                    buffer.clear();
+
+                    // 6. Resume sensor polling
+                    sensorManager.startCollection(sessionManager.getQueue());
+                    display.showMessage("Ready", TFT_MAGENTA);
+                    Serial.println("[LIVE_DEBUG] Resumed — waiting for next event");
+                }
+
+                // Buffer overflow prevention (higher cap than Play)
+                if (bufferSize > LIVE_DEBUG_BUFFER_CAP)
+                {
+                    Serial.printf("[LIVE_DEBUG] Buffer overflow prevention: clearing %d samples\n", bufferSize);
+                    directionDetector.reset();
+                    lastLiveDebugIndex = 0;
+                    buffer.clear();
+                }
+            }
+            else if (!ledController.isAnimating() && directionDetector.isReady())
+            {
+                ledController.showReady();
+            }
+
+            // No timeout in live debug mode - runs until stopped
         }
         else
         {

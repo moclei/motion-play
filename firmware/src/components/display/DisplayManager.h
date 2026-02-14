@@ -34,7 +34,8 @@ enum DisplayMode
 {
     MODE_IDLE,
     MODE_DEBUG,
-    MODE_PLAY
+    MODE_PLAY,
+    MODE_LIVE_DEBUG
 };
 
 class DisplayManager
@@ -43,11 +44,11 @@ private:
     TFT_eSPI tft = TFT_eSPI();
     InitStage currentInitStage = INIT_BOOT;
     DisplayState currentDisplayState = DISPLAY_IDLE;
-    DisplayMode currentMode = MODE_DEBUG;  // Default to debug mode
+    DisplayMode currentMode = MODE_DEBUG; // Default to debug mode
     String errorMessage = "";
     int sampleCount = 0;
     String configString = ""; // For displaying config during recording
-    
+
     // Cached config values for display
     uint16_t cachedSampleRate = 1000;
     String cachedLedCurrent = "200mA";
@@ -62,26 +63,26 @@ private:
     static const int SCREEN_HEIGHT = 170;
     static const int PROGRESS_BAR_Y = 20;
     static const int PROGRESS_BAR_HEIGHT = 40;
-    
+
     // New layout: Header with status badge
     static const int HEADER_HEIGHT = 28;
-    static const int STATUS_BADGE_X = 130;  // After title
+    static const int STATUS_BADGE_X = 130; // After title
     static const int STATUS_BADGE_Y = 4;
     static const int STATUS_BADGE_W = 50;
     static const int STATUS_BADGE_H = 20;
-    
+
     // Config area (center of screen)
     static const int CONFIG_AREA_Y = 35;
     static const int CONFIG_AREA_HEIGHT = 100;
-    
+
     // Message area at bottom
     static const int MESSAGE_Y = 145;
 
     // Drawing helpers
     void drawProgressBar();
     void drawSessionStatus();
-    void drawStatusBadge();  // New: compact status in header
-    void drawConfigPanel();  // New: config display in center
+    void drawStatusBadge(); // New: compact status in header
+    void drawConfigPanel(); // New: config display in center
     void drawCheckmark(int x, int y, uint16_t color);
     void drawModeBadge();
 
@@ -98,9 +99,9 @@ public:
     void setDisplayState(DisplayState state);
     void updateSampleCount(int count);
     void showMessage(const String &message, uint16_t color = TFT_WHITE);
-    void setConfigString(const String &config); // Legacy: Set config string for display
-    void setSensorConfig(const SensorConfiguration* config); // New: Set full config for display
-    void setMode(DisplayMode mode); // Set current device mode (idle/debug/play)
+    void setConfigString(const String &config);              // Legacy: Set config string for display
+    void setSensorConfig(const SensorConfiguration *config); // New: Set full config for display
+    void setMode(DisplayMode mode);                          // Set current device mode (idle/debug/play)
 
     // Legacy compatibility (for gradual migration)
     void showBootScreen();
@@ -108,7 +109,7 @@ public:
     void showNetworkInfo(const String &ip, int rssi);
     void showMQTTStatus(bool connected);
     void clear();
-    
+
     // Calibration display
     void showCalibrationIntro();
     void showCalibrationBaseline(uint8_t pcbId, uint8_t progress);
