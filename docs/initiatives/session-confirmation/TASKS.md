@@ -30,7 +30,7 @@
 - [x] Add `batches_received` atomic counter increment on each data batch in `processData`
 - [x] Add Live Debug fields (`capture_reason`, `detection_direction`, `detection_confidence`) to first-batch create/update paths
 - [x] Verify `getSessionData` returns new fields without code changes (DynamoDB schemaless)
-- [ ] Deploy updated Lambda
+- [x] Deploy updated Lambda
 
 ## Phase 5: Frontend — Time display and API types
 - [x] Extend `Session` interface in `api.ts` with `session_summary`, `batches_received`, `pipeline_status`
@@ -52,4 +52,4 @@
 - [ ] End-to-end test: Live Debug capture — verify summary per mini-session
 - [ ] Test graceful degradation: what happens if summary message fails (kill WiFi mid-upload)
 - [ ] Test with older sessions that lack summary data — confirm frontend handles absence
-- [ ] Update DATABASE_SCHEMA.md with new optional session fields
+- [x] Update DATABASE_SCHEMA.md with new optional session fields

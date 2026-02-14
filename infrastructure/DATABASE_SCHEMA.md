@@ -43,6 +43,12 @@ Partition Key: session_id (String)
 | active_sensors | List[Object] | Which sensors were active during recording |
 | vcnl4040_config | Object | Sensor hardware configuration (proximity mode) |
 | **interrupt_config** | **Object** | **Interrupt detection configuration (interrupt mode)** |
+| **session_summary** | **Object** | **Pipeline integrity summary from firmware (added Feb 2026)** |
+| **batches_received** | **Number** | **Count of MQTT data batches received by Lambda (added Feb 2026)** |
+| **pipeline_status** | **String** | **"complete", "partial", or "pending" (added Feb 2026)** |
+| **capture_reason** | **String** | **Live Debug: "detection" or "missed_event" (added Feb 2026)** |
+| **detection_direction** | **String** | **Live Debug: "a_to_b" or "b_to_a" (added Feb 2026)** |
+| **detection_confidence** | **Number** | **Live Debug: detection confidence score (added Feb 2026)** |
 
 ### Session Type Field
 
@@ -65,6 +71,45 @@ For interrupt sessions, the `interrupt_config` field stores detection settings:
   "integration_time": "1T"
 }
 ```
+
+### Session Summary Object (Session Confirmation)
+
+For sessions that include pipeline integrity tracking, the `session_summary` field stores counters measured by the firmware during the session:
+
+```json
+{
+  "total_cycles": 750,
+  "readings_collected": [750, 748, 750, 750, 749, 750],
+  "i2c_errors": [0, 2, 0, 0, 1, 0],
+  "queue_drops": 0,
+  "buffer_drops": 0,
+  "total_readings_transmitted": 4497,
+  "total_batches_transmitted": 9,
+  "measured_cycle_rate_hz": 985,
+  "duration_ms": 762,
+  "theoretical_max_readings": 4500,
+  "num_active_sensors": 6
+}
+```
+
+**Pipeline Status** (`pipeline_status`):
+- `"complete"` — Lambda stored count matches firmware transmitted count
+- `"partial"` — Some readings were lost between firmware and Lambda
+- `"pending"` — Summary not yet received (session still in progress or summary failed)
+
+**Notes**:
+- `readings_collected` and `i2c_errors` are arrays indexed by sensor position (0-5)
+- `theoretical_max_readings` = measured_cycle_rate_hz × num_active_sensors × (duration_ms / 1000)
+- These fields are optional — older sessions will not have them
+- `batches_received` is incremented atomically by the Lambda on each data batch
+
+### Live Debug Capture Fields
+
+For Live Debug sessions, optional metadata about what triggered the capture:
+
+- `capture_reason`: `"detection"` (normal direction detection) or `"missed_event"` (no detection within timeout)
+- `detection_direction`: `"a_to_b"` or `"b_to_a"` (which direction was detected)
+- `detection_confidence`: Numeric confidence score from the detection algorithm
 
 ### Global Secondary Index (GSI)
 
@@ -358,7 +403,7 @@ If you ever need to change the composite key scheme:
 
 ---
 
-**Last Updated**: December 13, 2025  
+**Last Updated**: February 13, 2026  
 **Author**: Marc  
-**Version**: 1.3 (Added MotionPlayInterruptEvents table and session_type field for interrupt detection)
+**Version**: 1.4 (Added session_summary, pipeline_status, batches_received, and Live Debug capture fields)
 
