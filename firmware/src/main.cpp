@@ -1024,13 +1024,18 @@ void handleCommand(const String &command, JsonDocument *doc)
         }
 
         // 5. Transmit
-        bool txSuccess = dataTransmitter->transmitLiveDebugCapture(
+        String captureSessionId = dataTransmitter->transmitLiveDebugCapture(
             buffer, startIdx, captureCount,
             "missed_event", nullptr, 0.0,
             &currentConfig);
 
-        if (txSuccess)
+        if (captureSessionId.length() > 0)
         {
+            // Session Confirmation: send summary for this capture
+            dataTransmitter->transmitSessionSummary(
+                sessionManager.getSessionSummary(),
+                captureSessionId,
+                mqttManager->getDeviceId());
             Serial.println("[LIVE_DEBUG] Missed event capture transmitted");
             mqttManager->publishStatus("live_debug_missed_captured");
         }
@@ -1443,16 +1448,18 @@ void loop()
 
                     // 6. Transmit the capture
                     const char *dirStr = (result.direction == Direction::A_TO_B) ? "a_to_b" : "b_to_a";
-                    bool txSuccess = dataTransmitter->transmitLiveDebugCapture(
+                    String captureSessionId = dataTransmitter->transmitLiveDebugCapture(
                         buffer, startIdx, captureCount,
                         "detection", dirStr, result.confidence,
                         &currentConfig);
 
-                    if (txSuccess)
+                    if (captureSessionId.length() > 0)
                     {
                         // Session Confirmation: send summary for this capture
-                        // Note: transmitLiveDebugCapture generates its own session_id,
-                        // so we use the device ID and let the summary associate by timing
+                        dataTransmitter->transmitSessionSummary(
+                            sessionManager.getSessionSummary(),
+                            captureSessionId,
+                            mqttManager->getDeviceId());
                         Serial.println("[LIVE_DEBUG] Detection capture transmitted successfully");
                         mqttManager->publishStatus("live_debug_detection_captured");
                     }

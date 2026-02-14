@@ -247,7 +247,12 @@ bool SessionManager::addInterruptEvent(const InterruptEvent &event)
 
 void SessionManager::finalizeSessionSummary(const SensorConfiguration *config, uint8_t numActiveSensors)
 {
-    sessionSummary.duration_ms = sessionDuration;
+    // Use caller-provided duration_ms if already set (Live Debug sets capture window duration),
+    // otherwise fall back to the full session duration
+    if (sessionSummary.duration_ms == 0)
+    {
+        sessionSummary.duration_ms = sessionDuration;
+    }
     sessionSummary.num_active_sensors = numActiveSensors;
 
     // Compute measured cycle rate

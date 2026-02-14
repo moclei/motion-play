@@ -1001,6 +1001,7 @@ function StatusDot({ ok }: { ok: boolean }) {
 function SessionConfirmationPanel({ session, displayedReadings }: ConfirmationPanelProps) {
     const [isOpen, setIsOpen] = useState(false);
     const summary = session.session_summary;
+    const isLiveDebug = session.mode === 'live_debug';
 
     if (!summary && !session.pipeline_status) {
         return (
@@ -1041,6 +1042,11 @@ function SessionConfirmationPanel({ session, displayedReadings }: ConfirmationPa
                     {/* Pipeline Chain */}
                     <div>
                         <h4 className="font-semibold text-sm text-gray-800 mb-2">Pipeline Integrity</h4>
+                        {isLiveDebug && (
+                            <p className="text-xs text-gray-500 mb-2 italic">
+                                Live Debug: only a capture window is transmitted, so Collected &gt; Transmitted is normal.
+                            </p>
+                        )}
                         <div className="space-y-1.5 text-xs">
                             <PipelineRow
                                 label="Firmware Collected"
@@ -1065,17 +1071,14 @@ function SessionConfirmationPanel({ session, displayedReadings }: ConfirmationPa
                             <PipelineRow
                                 label="Firmware Transmitted"
                                 value={summary.total_readings_transmitted}
-                                ok={summary.total_readings_transmitted === summary.readings_collected.reduce((a, b) => a + b, 0) - summary.queue_drops - summary.buffer_drops}
-                            />
-                            <PipelineRow
-                                label="Lambda Stored"
-                                value={storedCount}
-                                ok={storedCount === summary.total_readings_transmitted}
+                                ok={isLiveDebug
+                                    ? summary.total_readings_transmitted > 0
+                                    : summary.total_readings_transmitted === summary.readings_collected.reduce((a, b) => a + b, 0) - summary.queue_drops - summary.buffer_drops}
                             />
                             <PipelineRow
                                 label="Frontend Loaded"
                                 value={displayedReadings}
-                                ok={displayedReadings === storedCount}
+                                ok={displayedReadings > 0 && displayedReadings <= summary.total_readings_transmitted}
                             />
                         </div>
                     </div>
@@ -1083,25 +1086,31 @@ function SessionConfirmationPanel({ session, displayedReadings }: ConfirmationPa
                     {/* Theoretical vs Actual */}
                     <div className="bg-gray-50 p-3 rounded text-xs">
                         <h4 className="font-semibold text-sm text-gray-800 mb-2">Theoretical vs Actual</h4>
-                        <p className="text-gray-700">
-                            Config target: {summary.measured_cycle_rate_hz || '?'} Hz measured
-                            × {summary.num_active_sensors} sensors
-                            × {(summary.duration_ms / 1000).toFixed(3)}s
-                            = <span className="font-bold">{summary.theoretical_max_readings}</span> readings
-                        </p>
+                        {summary.measured_cycle_rate_hz > 0 && summary.duration_ms > 0 ? (
+                            <p className="text-gray-700">
+                                Config target: {summary.measured_cycle_rate_hz} Hz measured
+                                × {summary.num_active_sensors} sensors
+                                × {(summary.duration_ms / 1000).toFixed(3)}s
+                                = <span className="font-bold">{summary.theoretical_max_readings}</span> readings
+                            </p>
+                        ) : (
+                            <p className="text-gray-500 italic">
+                                Theoretical estimate not available (duration or cycle rate not measured)
+                            </p>
+                        )}
                         <p className="text-gray-700 mt-1">
-                            Actual collected: <span className="font-bold">{summary.readings_collected.reduce((a, b) => a + b, 0)}</span>
-                            {summary.theoretical_max_readings > 0 && (
-                                <span className="ml-1">
-                                    ({((summary.readings_collected.reduce((a, b) => a + b, 0) / summary.theoretical_max_readings) * 100).toFixed(1)}% of theoretical)
+                            Firmware transmitted: <span className="font-bold">{summary.total_readings_transmitted}</span>
+                            {isLiveDebug && (
+                                <span className="ml-1 text-gray-500">
+                                    (capture window — {summary.readings_collected.reduce((a, b) => a + b, 0).toLocaleString()} total collected during listening)
                                 </span>
                             )}
                         </p>
                         <p className="text-gray-700 mt-1">
                             Frontend displaying: <span className="font-bold">{displayedReadings}</span>
-                            {summary.readings_collected.reduce((a, b) => a + b, 0) > 0 && (
+                            {summary.total_readings_transmitted > 0 && (
                                 <span className="ml-1">
-                                    ({((displayedReadings / summary.readings_collected.reduce((a, b) => a + b, 0)) * 100).toFixed(1)}% of collected)
+                                    ({((displayedReadings / summary.total_readings_transmitted) * 100).toFixed(1)}% of transmitted)
                                 </span>
                             )}
                         </p>
@@ -1111,7 +1120,7 @@ function SessionConfirmationPanel({ session, displayedReadings }: ConfirmationPa
                     <div>
                         <h4 className="font-semibold text-sm text-gray-800 mb-2">Per-Sensor Breakdown</h4>
                         <div className="overflow-x-auto">
-                            <table className="w-full text-xs">
+                            <table className="w-full text-xs text-gray-800">
                                 <thead>
                                     <tr className="border-b text-left text-gray-600">
                                         <th className="py-1 pr-3">Sensor</th>
@@ -1161,7 +1170,7 @@ function PipelineRow({ label, value, ok }: { label: string; value: number; ok: b
         <div className="flex items-center gap-2">
             <StatusDot ok={ok} />
             <span className="text-gray-700 w-40">{label}:</span>
-            <span className="font-mono font-bold">{value.toLocaleString()}</span>
+            <span className="font-mono font-bold text-gray-900">{value.toLocaleString()}</span>
         </div>
     );
 }

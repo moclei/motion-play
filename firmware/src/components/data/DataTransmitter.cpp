@@ -367,7 +367,7 @@ bool DataTransmitter::transmitInterruptSession(SessionManager &session, const Se
 // Live Debug Capture Transmission
 // ============================================================================
 
-bool DataTransmitter::transmitLiveDebugCapture(
+String DataTransmitter::transmitLiveDebugCapture(
     std::vector<SensorReading, PSRAMAllocator<SensorReading>> &readings,
     size_t startIdx,
     size_t count,
@@ -379,7 +379,7 @@ bool DataTransmitter::transmitLiveDebugCapture(
     if (count == 0)
     {
         Serial.println("Live Debug: No readings to transmit");
-        return false;
+        return "";
     }
 
     // Generate a unique session ID for this capture
@@ -490,7 +490,7 @@ bool DataTransmitter::transmitLiveDebugCapture(
             String payload;
             size_t payloadSize = serializeJson(doc, payload);
             Serial.printf("ERROR: Live Debug MQTT publish failed! Size: %d bytes\n", payloadSize);
-            return false;
+            return "";
         }
 
         // Session Confirmation: count transmitted readings and batches
@@ -511,7 +511,7 @@ bool DataTransmitter::transmitLiveDebugCapture(
 
     Serial.printf("Live Debug capture transmitted: session=%s, %d readings\n",
                   sessionId.c_str(), count);
-    return true;
+    return sessionId;
 }
 
 // ============================================================================

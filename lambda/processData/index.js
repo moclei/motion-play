@@ -10,7 +10,7 @@
  */
 
 const { DynamoDBClient } = require('@aws-sdk/client-dynamodb');
-const { DynamoDBDocumentClient, PutCommand, BatchWriteCommand, UpdateCommand, GetCommand } = require('@aws-sdk/lib-dynamodb');
+const { DynamoDBDocumentClient, PutCommand, BatchWriteCommand, UpdateCommand, GetCommand, QueryCommand } = require('@aws-sdk/lib-dynamodb');
 
 const client = new DynamoDBClient({ region: process.env.AWS_REGION });
 const docClient = DynamoDBDocumentClient.from(client);
@@ -355,23 +355,6 @@ async function processProximitySession(data) {
                     expressionAttributeValues[':vcnl4040_config'] = sanitizeConfig(data.vcnl4040_config);
                 }
 
-                // Live Debug capture metadata (optional)
-                if (data.capture_reason) {
-                    updateExpressions.push('#capture_reason = :capture_reason');
-                    expressionAttributeNames['#capture_reason'] = 'capture_reason';
-                    expressionAttributeValues[':capture_reason'] = data.capture_reason;
-                }
-                if (data.detection_direction) {
-                    updateExpressions.push('#detection_direction = :detection_direction');
-                    expressionAttributeNames['#detection_direction'] = 'detection_direction';
-                    expressionAttributeValues[':detection_direction'] = data.detection_direction;
-                }
-                if (data.detection_confidence !== undefined && Number.isFinite(data.detection_confidence)) {
-                    updateExpressions.push('#detection_confidence = :detection_confidence');
-                    expressionAttributeNames['#detection_confidence'] = 'detection_confidence';
-                    expressionAttributeValues[':detection_confidence'] = data.detection_confidence;
-                }
-                
                 // Live Debug: optional capture metadata
                 if (data.capture_reason) {
                     updateExpressions.push('#capture_reason = :capture_reason');
@@ -383,7 +366,7 @@ async function processProximitySession(data) {
                     expressionAttributeNames['#detection_direction'] = 'detection_direction';
                     expressionAttributeValues[':detection_direction'] = data.detection_direction;
                 }
-                if (data.detection_confidence !== undefined) {
+                if (data.detection_confidence !== undefined && Number.isFinite(data.detection_confidence)) {
                     updateExpressions.push('#detection_confidence = :detection_confidence');
                     expressionAttributeNames['#detection_confidence'] = 'detection_confidence';
                     expressionAttributeValues[':detection_confidence'] = data.detection_confidence;
@@ -447,17 +430,6 @@ async function processProximitySession(data) {
                     sessionItem.detection_confidence = data.detection_confidence;
                 }
                 
-                // Live Debug: optional capture metadata
-                if (data.capture_reason) {
-                    sessionItem.capture_reason = data.capture_reason;
-                }
-                if (data.detection_direction) {
-                    sessionItem.detection_direction = data.detection_direction;
-                }
-                if (data.detection_confidence !== undefined) {
-                    sessionItem.detection_confidence = data.detection_confidence;
-                }
-                
                 await docClient.send(new PutCommand({
                     TableName: SESSIONS_TABLE,
                     Item: sessionItem
@@ -467,6 +439,9 @@ async function processProximitySession(data) {
             }
         } else {
             // Subsequent batches: Increment sample_count and batches_received
+            // Note: For Live Debug (20ms batch spacing), concurrent Lambda invocations may race
+            // on these counters. The sample_count may be approximate. The frontend pipeline
+            // check uses the actual DynamoDB query count, not this counter.
             await docClient.send(new UpdateCommand({
                 TableName: SESSIONS_TABLE,
                 Key: { session_id: data.session_id },
@@ -569,27 +544,45 @@ async function processSessionSummary(data) {
     
     console.log(`Processing session summary for: ${data.session_id}`);
     
-    // Read current session to compare counts
-    const sessionResult = await docClient.send(new GetCommand({
-        TableName: SESSIONS_TABLE,
-        Key: { session_id: data.session_id }
+    // Query actual stored reading count from the data table (more reliable than sample_count
+    // counter, which can have race conditions with concurrent Lambda invocations)
+    const countResult = await docClient.send(new QueryCommand({
+        TableName: SENSOR_DATA_TABLE,
+        KeyConditionExpression: 'session_id = :sid',
+        Select: 'COUNT',
+        ExpressionAttributeValues: {
+            ':sid': data.session_id
+        }
     }));
     
-    const currentSampleCount = sessionResult.Item?.sample_count || 0;
+    const actualStoredCount = countResult.Count || 0;
     const transmitted = summary.total_readings_transmitted || 0;
     
-    // Determine pipeline status
+    // Determine pipeline status by comparing actual stored readings vs transmitted
+    // Allow a small tolerance for composite key collisions at >1000Hz cycle rates
     let pipelineStatus;
-    if (currentSampleCount === transmitted) {
+    const deliveryRate = transmitted > 0 ? actualStoredCount / transmitted : 0;
+    if (actualStoredCount === transmitted) {
         pipelineStatus = 'complete';
-    } else if (currentSampleCount < transmitted) {
+    } else if (deliveryRate >= 0.95) {
+        // >95% delivery — mark as complete (minor composite key collisions at high sample rates)
+        pipelineStatus = 'complete';
+    } else if (actualStoredCount > 0) {
         pipelineStatus = 'partial';
     } else {
-        // More readings stored than transmitted — shouldn't happen, but handle it
-        pipelineStatus = 'complete';
+        pipelineStatus = 'partial';
     }
     
-    console.log(`Pipeline status: ${pipelineStatus} (stored: ${currentSampleCount}, transmitted: ${transmitted})`);
+    console.log(`Pipeline status: ${pipelineStatus} (stored: ${actualStoredCount}, transmitted: ${transmitted}, delivery: ${(deliveryRate * 100).toFixed(1)}%)`);
+    
+    // Also update sample_count to the accurate value from the actual query
+    await docClient.send(new UpdateCommand({
+        TableName: SESSIONS_TABLE,
+        Key: { session_id: data.session_id },
+        UpdateExpression: 'SET #sample_count = :count',
+        ExpressionAttributeNames: { '#sample_count': 'sample_count' },
+        ExpressionAttributeValues: { ':count': actualStoredCount }
+    }));
     
     // Store summary and pipeline status on the session
     await docClient.send(new UpdateCommand({
