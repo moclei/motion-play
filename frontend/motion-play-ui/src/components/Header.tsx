@@ -67,12 +67,12 @@ export const Header = ({ onCollectionStopped, onSettingsClick }: HeaderProps) =>
         try {
             setCalibrating(true);
             toast.loading('Starting calibration...', { id: 'calibration' });
-            
+
             await api.sendCommand('set_mode', { mode: 'calibrate' });
-            
-            toast.success('Calibration started! Follow instructions on device display.', { 
+
+            toast.success('Calibration started! Follow instructions on device display.', {
                 id: 'calibration',
-                duration: 5000 
+                duration: 5000
             });
 
             // Reset state after calibration timeout
@@ -155,18 +155,10 @@ export const Header = ({ onCollectionStopped, onSettingsClick }: HeaderProps) =>
                                     key={m}
                                     onClick={() => handleModeChange(m)}
                                     disabled={changingMode}
-<<<<<<< Updated upstream
-                                    className={`px-4 py-2 rounded border-2 transition-all text-sm font-medium capitalize ${
-                                        mode === m
+                                    className={`px-4 py-2 rounded border-2 transition-all text-sm font-medium capitalize ${mode === m
                                             ? `${getModeColor(m)} bg-gray-100 text-gray-800`
                                             : 'border-gray-300 bg-white text-gray-700 hover:bg-gray-50'
-                                    } ${changingMode ? 'opacity-50 cursor-not-allowed' : ''}`}
-=======
-                                    className={`px-4 py-2 rounded border-2 transition-all text-sm font-medium capitalize ${mode === m
-                                        ? `${getModeColor(m)} bg-gray-100 text-gray-800`
-                                        : 'border-gray-300 bg-white text-gray-700 hover:bg-gray-50'
                                         } ${changingMode ? 'opacity-50 cursor-not-allowed' : ''}`}
->>>>>>> Stashed changes
                                 >
                                     {getModeLabel(m)}
                                 </button>
@@ -178,22 +170,12 @@ export const Header = ({ onCollectionStopped, onSettingsClick }: HeaderProps) =>
                     <button
                         onClick={handleStartCalibration}
                         disabled={calibrating || mode !== 'idle'}
-<<<<<<< Updated upstream
-                        className={`flex items-center gap-2 px-4 py-2 rounded transition-colors font-medium ${
-                            calibrating
+                        className={`flex items-center gap-2 px-4 py-2 rounded transition-colors font-medium ${calibrating
                                 ? 'bg-purple-500 text-white animate-pulse'
                                 : mode !== 'idle'
-                                ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
-                                : 'bg-purple-100 text-purple-700 hover:bg-purple-200'
-                        }`}
-=======
-                        className={`flex items-center gap-2 px-4 py-2 rounded transition-colors font-medium ${calibrating
-                            ? 'bg-purple-500 text-white animate-pulse'
-                            : mode !== 'idle'
-                                ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
-                                : 'bg-purple-100 text-purple-700 hover:bg-purple-200'
+                                    ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                                    : 'bg-purple-100 text-purple-700 hover:bg-purple-200'
                             }`}
->>>>>>> Stashed changes
                         title={mode !== 'idle' ? 'Set device to Idle mode first' : 'Calibrate sensor thresholds'}
                     >
                         <Target size={18} />
