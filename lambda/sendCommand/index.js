@@ -50,6 +50,9 @@ exports.handler = async (event) => {
         if (command === 'configure_sensors' && body.sensor_config) {
             payload.sensor_config = body.sensor_config;
         }
+
+        // capture_missed_event: no extra params needed, firmware handles it
+        // (command name is sufficient — firmware extracts buffer on receipt)
         
         // Publish to IoT Core
         const topic = `motionplay/${deviceId}/commands`;

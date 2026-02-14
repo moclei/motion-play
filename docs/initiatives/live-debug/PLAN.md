@@ -87,18 +87,9 @@ Detection metadata (direction, confidence, thresholds, peaks) can be included in
 
 Firmware generates all session IDs using the device ID from `config.json`. `SessionManager::generateSessionId()` produces `"device-NNN_" + String(millis())` where the prefix comes from `setDeviceId()`. `DataTransmitter` reads the device ID from `MQTTManager::getDeviceId()`. The sendCommand Lambda generates a UUID for `start_collection` commands, but the firmware ignores it. No change needed for Live Debug — each capture gets a firmware-generated ID. The frontend discovers sessions by polling `getSessions` filtered by `mode: "live_debug"`.
 
-## Open Questions
+## Resolved Design Decisions
 
-<<<<<<< Updated upstream
-- Padding duration: 0.5s total (using buffer data up to detection moment) is the starting plan. Adjust if captures feel too short or long.
-- Missed-event window: 3s fixed initially. Make configurable later via cloud settings.
-- Labels: Use existing `labels` array on session (e.g. `["correct"]`, `["false_positive"]`) via existing `updateSession` API. No new field needed.
-- Post-detection data: The buffer at detection time already contains some post-event data since the algorithm fires late. If we need more, add a configurable post-capture delay. Not needed for v1.
-=======
-- **Detection window**: 0.5s pre + 0.25s post. Constants `DETECTION_WINDOW_MS = 500`, `POST_DETECTION_DELAY_MS = 250`.
+- **Detection window**: 0.5s of pre-detection data. Constant `DETECTION_WINDOW_MS = 500`.
 - **Missed-event window**: 3s fixed. Constant `MISSED_EVENT_WINDOW_MS = 3000`. Configurable via cloud settings later.
 - **Labels**: Use existing `labels` array on session (e.g. `["correct"]`, `["false_positive"]`) via existing `updateSession` API. No new field needed.
-- **Post-detection data**: 250ms post-detection delay on Core 1 while sensor task continues on Core 0. Captures trailing-edge of the wave.
-- **Window sizing**: Timestamp-based binary search in the buffer, not hardcoded readings-per-ms. Adapts to any sensor configuration.
-- **Device ID**: Dynamic from `config.json` throughout — SessionManager, DataTransmitter, frontend, and Lambdas. No hardcoded device IDs.
->>>>>>> Stashed changes
+- **Post-detection data**: Use what's in the buffer at detection time (algorithm fires late, naturally includes some post-event data). No explicit post-capture delay for v1.

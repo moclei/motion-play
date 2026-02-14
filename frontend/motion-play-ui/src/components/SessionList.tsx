@@ -3,7 +3,7 @@ import { useEffect, useState, useImperativeHandle, forwardRef, useCallback } fro
 import { api } from '../services/api';
 import type { Session } from '../services/api';
 import { formatDistance } from 'date-fns';
-import { Trash2, RefreshCw, ChevronLeft, ChevronRight, Zap } from 'lucide-react';
+import { Trash2, RefreshCw, ChevronLeft, ChevronRight, Zap, Radio } from 'lucide-react';
 import toast from 'react-hot-toast';
 
 export interface SessionListRef {
@@ -305,6 +305,7 @@ export const SessionList = forwardRef<SessionListRef, SessionListProps>(({
                         <option value="debug">Debug (Proximity)</option>
                         <option value="interrupt_debug">Debug (Interrupt)</option>
                         <option value="play">Play Mode</option>
+                        <option value="live_debug">Live Debug</option>
                         <option value="idle">Idle Mode</option>
                     </select>
 
@@ -394,12 +395,12 @@ export const SessionList = forwardRef<SessionListRef, SessionListProps>(({
                                 <div
                                     key={session.session_id}
                                     className={`p-3 border rounded transition-colors relative ${isUploading
-                                            ? 'bg-amber-50 border-amber-300'
-                                            : selectedId === session.session_id
-                                                ? 'bg-blue-50 border-blue-300'
-                                                : selectedForDeletion.has(session.session_id)
-                                                    ? 'bg-red-50 border-red-300'
-                                                    : 'hover:bg-gray-50 border-gray-200'
+                                        ? 'bg-amber-50 border-amber-300'
+                                        : selectedId === session.session_id
+                                            ? 'bg-blue-50 border-blue-300'
+                                            : selectedForDeletion.has(session.session_id)
+                                                ? 'bg-red-50 border-red-300'
+                                                : 'hover:bg-gray-50 border-gray-200'
                                         } ${loadingSessionId === session.session_id ? 'opacity-50' : ''}`}
                                 >
                                     {/* Uploading progress indicator */}
@@ -455,6 +456,12 @@ export const SessionList = forwardRef<SessionListRef, SessionListProps>(({
                                                     <span className="flex items-center gap-0.5 text-cyan-600 font-medium">
                                                         <Zap size={10} />
                                                         INT
+                                                    </span>
+                                                )}
+                                                {session.mode === 'live_debug' && (
+                                                    <span className="flex items-center gap-0.5 text-fuchsia-600 font-medium">
+                                                        <Radio size={10} />
+                                                        {session.capture_reason === 'missed_event' ? 'MISSED' : 'LIVE'}
                                                     </span>
                                                 )}
                                                 <span>{(session.duration_ms / 1000).toFixed(1)}s</span>

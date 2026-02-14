@@ -33,7 +33,7 @@ Partition Key: session_id (String)
 | start_timestamp | String | Session start time (ISO 8601 or epoch ms) |
 | end_timestamp | String | Session end time (ISO 8601) |
 | duration_ms | Number | Session duration in milliseconds |
-| mode | String | Recording mode (debug, play, idle, interrupt_debug) |
+| mode | String | Recording mode (debug, play, idle, interrupt_debug, **live_debug**) |
 | sample_count | Number | Total number of sensor readings (proximity sessions) |
 | **event_count** | **Number** | **Total number of interrupt events (interrupt sessions)** |
 | sample_rate | Number | Sampling rate in Hz |
@@ -103,13 +103,16 @@ For sessions that include pipeline integrity tracking, the `session_summary` fie
 - These fields are optional — older sessions will not have them
 - `batches_received` is incremented atomically by the Lambda on each data batch
 
-### Live Debug Capture Fields
+### Live Debug Sessions
 
-For Live Debug sessions, optional metadata about what triggered the capture:
+Sessions with `mode: "live_debug"` are short event captures from the Live Debug feature (added Feb 2026). They use `session_type: "proximity"` and store readings in `MotionPlaySensorData` like normal proximity sessions, but are much smaller (~0.5s detection windows or ~3s missed-event windows).
 
-- `capture_reason`: `"detection"` (normal direction detection) or `"missed_event"` (no detection within timeout)
-- `detection_direction`: `"a_to_b"` or `"b_to_a"` (which direction was detected)
-- `detection_confidence`: Numeric confidence score from the detection algorithm
+Optional fields present on live_debug sessions:
+- `capture_reason`: `"detection"` (algorithm triggered) or `"missed_event"` (user pressed button)
+- `detection_direction`: `"a_to_b"` or `"b_to_a"` (only for detection captures)
+- `detection_confidence`: Float 0.0–1.0 (only for detection captures)
+
+Labels can be added via `updateSession` to categorize captures: `["correct"]`, `["false_positive"]`, `["wrong_direction"]`, `["missed"]`.
 
 ### Global Secondary Index (GSI)
 
@@ -405,5 +408,5 @@ If you ever need to change the composite key scheme:
 
 **Last Updated**: February 13, 2026  
 **Author**: Marc  
-**Version**: 1.4 (Added session_summary, pipeline_status, batches_received, and Live Debug capture fields)
+**Version**: 1.5 (Merged live_debug mode fields and session_confirmation pipeline integrity fields)
 

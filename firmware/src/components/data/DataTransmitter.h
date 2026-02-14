@@ -15,7 +15,7 @@ private:
     static const size_t BATCH_SIZE = 25;             // Proximity: 25 samples per batch
     static const size_t INT_BATCH_SIZE = 100;        // Interrupt: 100 events per batch
     static const size_t LIVE_DEBUG_BATCH_SIZE = 200; // Live Debug: larger batches for speed
-    static const size_t LIVE_DEBUG_BATCH_DELAY = 20; // ms between Live Debug batches
+    static const unsigned long LIVE_DEBUG_BATCH_DELAY = 20; // ms between Live Debug batches
 
     // Session Confirmation: pointer to active session summary for transmission counters
     SessionSummary *activeSummary = nullptr;

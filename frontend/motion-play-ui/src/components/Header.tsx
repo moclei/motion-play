@@ -1,9 +1,9 @@
 import { useState } from 'react';
 import { api } from '../services/api';
-import { Play, Square, Activity, Settings, Target } from 'lucide-react';
+import { Play, Square, Activity, Settings, Target, AlertCircle } from 'lucide-react';
 import toast from 'react-hot-toast';
 
-type DeviceMode = 'idle' | 'debug' | 'play';
+type DeviceMode = 'idle' | 'debug' | 'play' | 'live_debug';
 
 interface HeaderProps {
     onCollectionStopped?: () => void;
@@ -86,10 +86,22 @@ export const Header = ({ onCollectionStopped, onSettingsClick }: HeaderProps) =>
         }
     };
 
+    const handleMissedEvent = async () => {
+        try {
+            toast.loading('Capturing missed event...', { id: 'missed-event' });
+            await api.sendCommand('capture_missed_event');
+            toast.success('Missed event captured', { id: 'missed-event', duration: 3000 });
+        } catch (err) {
+            toast.error('Failed to capture missed event', { id: 'missed-event' });
+            console.error(err);
+        }
+    };
+
     const getModeColor = (m: DeviceMode) => {
         switch (m) {
             case 'debug': return 'border-blue-600';
             case 'play': return 'border-green-600';
+            case 'live_debug': return 'border-fuchsia-600';
             case 'idle': return 'border-gray-600';
         }
     };
@@ -98,6 +110,7 @@ export const Header = ({ onCollectionStopped, onSettingsClick }: HeaderProps) =>
         switch (m) {
             case 'debug': return 'Debug';
             case 'play': return 'Play';
+            case 'live_debug': return 'Live Debug';
             case 'idle': return 'Idle';
         }
     };
@@ -150,7 +163,7 @@ export const Header = ({ onCollectionStopped, onSettingsClick }: HeaderProps) =>
                         <Activity size={20} className="text-gray-600" />
                         <span className="text-sm font-medium text-gray-700">Mode:</span>
                         <div className="flex gap-2">
-                            {(['idle', 'debug', 'play'] as DeviceMode[]).map((m) => (
+                            {(['idle', 'debug', 'play', 'live_debug'] as DeviceMode[]).map((m) => (
                                 <button
                                     key={m}
                                     onClick={() => handleModeChange(m)}
@@ -181,6 +194,18 @@ export const Header = ({ onCollectionStopped, onSettingsClick }: HeaderProps) =>
                         <Target size={18} />
                         {calibrating ? 'Calibrating...' : 'Calibrate'}
                     </button>
+
+                    {/* Missed Event Button - visible in Live Debug mode while collecting */}
+                    {mode === 'live_debug' && collecting && (
+                        <button
+                            onClick={handleMissedEvent}
+                            className="flex items-center gap-2 px-4 py-2 bg-fuchsia-500 text-white rounded hover:bg-fuchsia-600 transition-colors font-medium animate-pulse hover:animate-none"
+                            title="Capture data for a missed detection (saves ~3s of data)"
+                        >
+                            <AlertCircle size={18} />
+                            Missed Event
+                        </button>
+                    )}
 
                     {/* Settings Button */}
                     <button

@@ -354,6 +354,23 @@ async function processProximitySession(data) {
                     expressionAttributeNames['#vcnl4040_config'] = 'vcnl4040_config';
                     expressionAttributeValues[':vcnl4040_config'] = sanitizeConfig(data.vcnl4040_config);
                 }
+
+                // Live Debug capture metadata (optional)
+                if (data.capture_reason) {
+                    updateExpressions.push('#capture_reason = :capture_reason');
+                    expressionAttributeNames['#capture_reason'] = 'capture_reason';
+                    expressionAttributeValues[':capture_reason'] = data.capture_reason;
+                }
+                if (data.detection_direction) {
+                    updateExpressions.push('#detection_direction = :detection_direction');
+                    expressionAttributeNames['#detection_direction'] = 'detection_direction';
+                    expressionAttributeValues[':detection_direction'] = data.detection_direction;
+                }
+                if (data.detection_confidence !== undefined && Number.isFinite(data.detection_confidence)) {
+                    updateExpressions.push('#detection_confidence = :detection_confidence');
+                    expressionAttributeNames['#detection_confidence'] = 'detection_confidence';
+                    expressionAttributeValues[':detection_confidence'] = data.detection_confidence;
+                }
                 
                 // Live Debug: optional capture metadata
                 if (data.capture_reason) {
@@ -418,6 +435,17 @@ async function processProximitySession(data) {
                     batches_received: 1,
                     pipeline_status: 'pending'
                 };
+
+                // Live Debug capture metadata (optional)
+                if (data.capture_reason) {
+                    sessionItem.capture_reason = data.capture_reason;
+                }
+                if (data.detection_direction) {
+                    sessionItem.detection_direction = data.detection_direction;
+                }
+                if (data.detection_confidence !== undefined && Number.isFinite(data.detection_confidence)) {
+                    sessionItem.detection_confidence = data.detection_confidence;
+                }
                 
                 // Live Debug: optional capture metadata
                 if (data.capture_reason) {

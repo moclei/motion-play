@@ -431,8 +431,10 @@ void handleCommand(const String &command, JsonDocument *doc)
         // Determine sensor mode from config (how we sense)
         bool useInterruptMode = (currentConfig.sensor_mode == SensorMode::INTERRUPT_MODE);
 
+        const char *modeLabel = currentMode == DeviceMode::PLAY ? "PLAY" : currentMode == DeviceMode::LIVE_DEBUG ? "LIVE_DEBUG"
+                                                                                                                 : "DEBUG";
         Serial.printf("Starting collection - Mode: %s, Sensor: %s\n",
-                      currentMode == DeviceMode::PLAY ? "PLAY" : "DEBUG",
+                      modeLabel,
                       useInterruptMode ? "INTERRUPT" : "POLLING");
 
         if (useInterruptMode)
@@ -593,9 +595,12 @@ void handleCommand(const String &command, JsonDocument *doc)
         // Check session type to determine how to stop
         bool wasInterruptSession = (sessionManager.getSessionType() == SessionType::INTERRUPT_BASED);
         bool isPlayMode = (currentMode == DeviceMode::PLAY);
+        bool isLiveDebugMode = (currentMode == DeviceMode::LIVE_DEBUG);
 
+        const char *stopModeLabel = isPlayMode ? "PLAY" : isLiveDebugMode ? "LIVE_DEBUG"
+                                                                          : "DEBUG";
         Serial.printf("Stopping collection - Mode: %s, Session: %s\n",
-                      isPlayMode ? "PLAY" : "DEBUG",
+                      stopModeLabel,
                       wasInterruptSession ? "INTERRUPT" : "POLLING");
 
         // Stop the appropriate sensor system
@@ -890,6 +895,7 @@ void handleCommand(const String &command, JsonDocument *doc)
                 // Reset detector for live debug session
                 directionDetector.fullReset();
 
+                // Apply calibration data if available
                 if (deviceCalibration.isValid())
                 {
                     directionDetector.setCalibration(&deviceCalibration);
