@@ -462,6 +462,7 @@ async function processProximitySession(data) {
             const batchSize = 25;
             const readings = data.readings;
         const startTimestamp = Number(data.start_timestamp);
+        const isTimestampMicroseconds = data.timestamp_unit === 'us';
             
             for (let i = 0; i < readings.length; i += batchSize) {
                 const batch = readings.slice(i, i + batchSize);
@@ -469,14 +470,23 @@ async function processProximitySession(data) {
                     const absoluteTimestamp = reading.ts || reading.t;
                     const relativeTimestamp = absoluteTimestamp - startTimestamp;
                     const position = reading.pos !== undefined ? reading.pos : reading.p;
+                    
+                    // Composite key: (relativeTimestamp * 10) + position
+                    // With microsecond timestamps, this provides unique keys at >1000Hz cycle rates
+                    // Old firmware sends millisecond timestamps; new firmware sends microsecond timestamps
                     const compositeKey = (relativeTimestamp * 10) + position;
+                    
+                    // Derive millisecond timestamp for query convenience
+                    const timestampMs = isTimestampMicroseconds 
+                        ? Math.floor(relativeTimestamp / 1000)
+                        : relativeTimestamp;
                     
                 return {
                     PutRequest: {
                         Item: {
                         session_id: data.session_id,
                             timestamp_offset: compositeKey,
-                            timestamp_ms: relativeTimestamp,
+                            timestamp_ms: timestampMs,
                             position: position,
                             pcb_id: reading.pcb || 0,
                             side: reading.side || 0,
