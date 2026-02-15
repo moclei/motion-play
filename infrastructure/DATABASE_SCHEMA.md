@@ -147,10 +147,28 @@ P1S2 at 100ms: (session_id="abc", timestamp_offset=100) ❌ DUPLICATE KEY!
 **Solution**: Encode both timestamp AND sensor position into a single number:
 
 ```javascript
-timestamp_offset = (timestamp_ms * 10) + position
+// Current (microsecond-based, Feb 2026+):
+timestamp_offset = (relative_timestamp_us * 10) + position
+
+// Legacy (millisecond-based, pre-Feb 2026):
+timestamp_offset = (relative_timestamp_ms * 10) + position
 ```
 
-**Example**:
+#### Microsecond Timestamps (Current)
+
+Since Feb 2026, the firmware sends reading timestamps in **microseconds** (`micros()`) instead of milliseconds (`millis()`). This eliminates composite key collisions at cycle rates >1000Hz (previously ~28% data loss at 1,132Hz due to duplicate millisecond timestamps).
+
+The MQTT payload includes `"timestamp_unit": "us"` to signal the Lambda that timestamps are microsecond-based.
+
+**Example (microsecond-based)**:
+| Sensor | Time | Position | Relative µs | Calculation | timestamp_offset |
+|--------|------|----------|-------------|-------------|------------------|
+| P1S1   | 100ms | 0 | 100000 | 100000 × 10 + 0 | 1000000 |
+| P1S2   | 100ms | 1 | 100000 | 100000 × 10 + 1 | 1000001 |
+| P2S1   | 100ms | 2 | 100000 | 100000 × 10 + 2 | 1000002 |
+| P2S2   | 100ms | 3 | 100000 | 100000 × 10 + 3 | 1000003 |
+
+**Example (legacy millisecond-based)**:
 | Sensor | Time | Position | Calculation | timestamp_offset |
 |--------|------|----------|-------------|------------------|
 | P1S1   | 100ms | 0 | 100 × 10 + 0 | 1000 |
@@ -158,22 +176,31 @@ timestamp_offset = (timestamp_ms * 10) + position
 | P2S1   | 100ms | 2 | 100 × 10 + 2 | 1002 |
 | P2S2   | 100ms | 3 | 100 × 10 + 3 | 1003 |
 
-**Decoding**:
+**Decoding** (with backwards compatibility):
 ```javascript
-actual_timestamp = Math.floor(timestamp_offset / 10)
-sensor_position = timestamp_offset % 10
+// Detect by magnitude: microsecond sessions have much larger timestamp_offset values
+if (timestamp_offset > 1_000_000) {
+    // Microsecond-based session
+    actual_timestamp_ms = Math.floor(timestamp_offset / 10 / 1000);
+} else {
+    // Legacy millisecond-based session
+    actual_timestamp_ms = Math.floor(timestamp_offset / 10);
+}
+sensor_position = timestamp_offset % 10;
 ```
 
 **Why This Works**:
-1. ✅ Each reading gets a unique key (no duplicates)
+1. ✅ Each reading gets a unique key (no duplicates, even at >1000Hz)
 2. ✅ Sort order is preserved (earlier timestamps appear first)
 3. ✅ Position values 0-5 fit cleanly in the ones digit
 4. ✅ All sensors can share synchronized timestamps
+5. ✅ DynamoDB Number type supports up to 38 digits (35s session = ~350,000,005 max key)
+6. ✅ Old sessions remain readable via magnitude-based detection
 
 **Where Implemented**:
-- Encoding: `lambda/processData/index.js`
-- Decoding: `lambda/getSessionData/index.js`
-- Frontend: Receives decoded `timestamp_ms` values
+- Encoding: `lambda/processData/index.js` (checks `timestamp_unit` field)
+- Decoding: `lambda/getSessionData/index.js` (magnitude-based backwards compat)
+- Frontend: Receives decoded `timestamp_ms` values (always milliseconds)
 
 ### Attributes
 
@@ -362,7 +389,17 @@ Device → MQTT → IoT Rule → processData Lambda → DynamoDB
 
 ## Migration Notes
 
-If you ever need to change the composite key scheme:
+### Microsecond Timestamp Migration (Feb 2026)
+
+The composite key scheme was updated from millisecond to microsecond timestamps **without data migration**:
+- Old sessions: `timestamp_offset` values are small (ms × 10 + position)
+- New sessions: `timestamp_offset` values are large (µs × 10 + position)
+- Detection: `getSessionData` Lambda checks if any `timestamp_offset > 1,000,000`
+- Both old and new sessions coexist in the same table with no issues
+
+### General Migration Guidance
+
+If you ever need to change the composite key scheme more fundamentally:
 
 1. **DO NOT** modify the existing table
 2. Create a new table with the new schema
@@ -394,7 +431,8 @@ If you ever need to change the composite key scheme:
 ### "Provided list of item keys contains duplicates"
 - **Cause**: Multiple readings with same `(session_id, timestamp_offset)`
 - **Fix**: Ensure composite key encoding is working
-- **Check**: `timestamp_offset = (timestamp_ms * 10) + position`
+- **Check**: `timestamp_offset = (relative_timestamp_us * 10) + position` (microsecond firmware)
+- **Note**: With millisecond timestamps (legacy), cycle rates >1000Hz could produce duplicate keys. Microsecond timestamps resolve this.
 
 ### "The provided key element does not match the schema"
 - **Cause**: Trying to use String for `timestamp_offset` (must be Number)
@@ -406,7 +444,7 @@ If you ever need to change the composite key scheme:
 
 ---
 
-**Last Updated**: February 13, 2026  
+**Last Updated**: February 14, 2026  
 **Author**: Marc  
-**Version**: 1.5 (Merged live_debug mode fields and session_confirmation pipeline integrity fields)
+**Version**: 1.6 (Microsecond timestamps for composite key collision fix)
 

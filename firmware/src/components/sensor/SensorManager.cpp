@@ -838,7 +838,7 @@ bool SensorManager::readSensor(uint8_t sensorIndex, SensorReading &reading)
     if (!pca_instances[tca_ch].selectChannel(pca_ch))
         return false;
 
-    reading.timestamp_ms = millis();
+    reading.timestamp_us = micros();
     reading.position = sensorIndex;
 
     // Calculate PCB ID and side from position
@@ -918,7 +918,7 @@ void SensorManager::sensorTaskFunction(void *parameter)
             // This ensures all sensors from the same sample have the same timestamp
             // ⚠️ IMPORTANT: This synchronized timestamping requires the backend to use
             // a composite key. See: infrastructure/DATABASE_SCHEMA.md for details.
-            unsigned long cycleTimestamp = millis();
+            unsigned long cycleTimestamp = micros();
 
             int successfulReads = 0;
             int failedReads = 0;
@@ -943,7 +943,7 @@ void SensorManager::sensorTaskFunction(void *parameter)
                 if (manager->readSensor(i, reading))
                 {
                     // Override timestamp with cycle timestamp for synchronization
-                    reading.timestamp_ms = cycleTimestamp;
+                    reading.timestamp_us = cycleTimestamp;
 
                     // Send to queue (non-blocking)
                     if (xQueueSend(manager->dataQueue, &reading, 0) == pdTRUE)

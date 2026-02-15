@@ -986,15 +986,16 @@ void handleCommand(const String &command, JsonDocument *doc)
 
         if (actualBufferSize > 0)
         {
-            unsigned long latestTs = buffer[actualBufferSize - 1].timestamp_ms;
-            unsigned long cutoffTs = (latestTs > MISSED_EVENT_WINDOW_MS) ? latestTs - MISSED_EVENT_WINDOW_MS : 0;
+            unsigned long latestTs = buffer[actualBufferSize - 1].timestamp_us;
+            unsigned long windowUs = MISSED_EVENT_WINDOW_MS * 1000UL; // Convert ms constant to microseconds
+            unsigned long cutoffTs = (latestTs > windowUs) ? latestTs - windowUs : 0;
 
             // Binary search for the first reading at or after cutoffTs
             size_t lo = 0, hi = actualBufferSize;
             while (lo < hi)
             {
                 size_t mid = lo + (hi - lo) / 2;
-                if (buffer[mid].timestamp_ms < cutoffTs)
+                if (buffer[mid].timestamp_us < cutoffTs)
                     lo = mid + 1;
                 else
                     hi = mid;
@@ -1004,7 +1005,7 @@ void handleCommand(const String &command, JsonDocument *doc)
 
         size_t captureCount = actualBufferSize - startIdx;
         unsigned long capDurationMs = (captureCount > 0)
-                                          ? buffer[actualBufferSize - 1].timestamp_ms - buffer[startIdx].timestamp_ms
+                                          ? (buffer[actualBufferSize - 1].timestamp_us - buffer[startIdx].timestamp_us) / 1000
                                           : 0;
 
         Serial.printf("[LIVE_DEBUG] Missed event: capturing %d readings (%lums)\n",
@@ -1408,16 +1409,16 @@ void loop()
 
                     if (actualBufferSize > 0)
                     {
-                        unsigned long latestTs = buffer[actualBufferSize - 1].timestamp_ms;
-                        unsigned long totalWindowMs = DETECTION_WINDOW_MS + POST_DETECTION_DELAY_MS;
-                        unsigned long cutoffTs = (latestTs > totalWindowMs) ? latestTs - totalWindowMs : 0;
+                        unsigned long latestTs = buffer[actualBufferSize - 1].timestamp_us;
+                        unsigned long totalWindowUs = (DETECTION_WINDOW_MS + POST_DETECTION_DELAY_MS) * 1000UL; // Convert ms to us
+                        unsigned long cutoffTs = (latestTs > totalWindowUs) ? latestTs - totalWindowUs : 0;
 
                         // Binary search for the first reading at or after cutoffTs
                         size_t lo = 0, hi = actualBufferSize;
                         while (lo < hi)
                         {
                             size_t mid = lo + (hi - lo) / 2;
-                            if (buffer[mid].timestamp_ms < cutoffTs)
+                            if (buffer[mid].timestamp_us < cutoffTs)
                                 lo = mid + 1;
                             else
                                 hi = mid;
@@ -1439,7 +1440,7 @@ void loop()
                         }
                         // Use capture duration for summary, not full session duration
                         unsigned long capDur = (captureCount > 0)
-                                                   ? buffer[actualBufferSize - 1].timestamp_ms - buffer[startIdx].timestamp_ms
+                                                   ? (buffer[actualBufferSize - 1].timestamp_us - buffer[startIdx].timestamp_us) / 1000
                                                    : 0;
                         sessionManager.getSessionSummary().duration_ms = capDur;
                         sessionManager.finalizeSessionSummary(&currentConfig, activeCnt);
