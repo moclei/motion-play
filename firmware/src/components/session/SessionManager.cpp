@@ -255,19 +255,23 @@ void SessionManager::finalizeSessionSummary(const SensorConfiguration *config, u
     }
     sessionSummary.num_active_sensors = numActiveSensors;
 
-    // Compute measured cycle rate
-    if (sessionSummary.duration_ms > 0)
+    // Compute measured cycle rate from the ACTUAL collection time (time since startSession),
+    // not the capture window duration. In Live Debug mode, sensors run continuously during the
+    // listening period — total_cycles covers that entire period, so dividing by the capture
+    // window would give a wildly inflated rate.
+    unsigned long actualCollectionTime = millis() - sessionStartTime;
+    if (actualCollectionTime > 0)
     {
         sessionSummary.measured_cycle_rate_hz =
-            (uint16_t)((uint32_t)sessionSummary.total_cycles * 1000 / sessionSummary.duration_ms);
+            (uint16_t)((uint32_t)sessionSummary.total_cycles * 1000 / actualCollectionTime);
     }
 
-    // Compute theoretical max from config
+    // Compute theoretical max from config using the capture/session window (duration_ms),
+    // NOT the full collection time — this represents expected readings in the data window
     if (config != nullptr && sessionSummary.duration_ms > 0)
     {
-        // theoretical = sample_rate * (duration_seconds) * active_sensors
         sessionSummary.theoretical_max_readings =
-            (uint32_t)((float)config->sample_rate_hz * (sessionSummary.duration_ms / 1000.0f) * numActiveSensors);
+            (uint32_t)((float)sessionSummary.measured_cycle_rate_hz * (sessionSummary.duration_ms / 1000.0f) * numActiveSensors);
 
         // Also populate actual_sample_rate_hz on the config (mutable cast — config is owned by main.cpp)
         const_cast<SensorConfiguration *>(config)->actual_sample_rate_hz = sessionSummary.measured_cycle_rate_hz;

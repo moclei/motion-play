@@ -411,8 +411,10 @@ String DataTransmitter::transmitLiveDebugCapture(
         size_t remaining = count - offset;
         size_t batchCount = (remaining > LIVE_DEBUG_BATCH_SIZE) ? LIVE_DEBUG_BATCH_SIZE : remaining;
 
-        // Create JSON document
-        DynamicJsonDocument doc(16384); // 16KB for larger batches
+        // Create JSON document — 32KB to comfortably fit 200 readings
+        // At ~80 bytes per reading in ArduinoJson memory, 200 readings needs ~16KB+
+        // Previous 16KB buffer silently truncated readings via ArduinoJson overflow
+        DynamicJsonDocument doc(32768);
 
         doc["session_id"] = sessionId;
         doc["device_id"] = deviceId;
@@ -486,6 +488,14 @@ String DataTransmitter::transmitLiveDebugCapture(
             readingObj["amb"] = reading.ambient;
         }
 
+        // Check for ArduinoJson buffer overflow (silent data truncation)
+        size_t actualReadingsInDoc = readingsArray.size();
+        if (doc.overflowed())
+        {
+            Serial.printf("WARNING: ArduinoJson overflow! Wanted %d readings, only %d fit (doc: %d/%d bytes)\n",
+                          batchCount, actualReadingsInDoc, doc.memoryUsage(), 32768);
+        }
+
         // Publish via MQTT
         bool success = mqttManager->publishData(doc);
         if (!success)
@@ -496,10 +506,10 @@ String DataTransmitter::transmitLiveDebugCapture(
             return "";
         }
 
-        // Session Confirmation: count transmitted readings and batches
+        // Session Confirmation: count only readings that actually made it into the JSON
         if (activeSummary)
         {
-            activeSummary->total_readings_transmitted += batchCount;
+            activeSummary->total_readings_transmitted += actualReadingsInDoc;
             activeSummary->total_batches_transmitted++;
         }
 
@@ -512,8 +522,10 @@ String DataTransmitter::transmitLiveDebugCapture(
         }
     }
 
-    Serial.printf("Live Debug capture transmitted: session=%s, %d readings\n",
-                  sessionId.c_str(), count);
+    uint32_t actualTransmitted = activeSummary ? activeSummary->total_readings_transmitted : count;
+    Serial.printf("Live Debug capture transmitted: session=%s, %d/%d readings in %d batches\n",
+                  sessionId.c_str(), actualTransmitted, count,
+                  activeSummary ? activeSummary->total_batches_transmitted : 0);
     return sessionId;
 }
 

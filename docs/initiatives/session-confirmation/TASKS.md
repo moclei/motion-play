@@ -23,7 +23,7 @@
 - [x] Call `transmitSessionSummary()` from main.cpp after `transmitProximitySession()` completes (Debug mode)
 - [x] Wire up summary for Live Debug detection and missed event captures (finalize before transmit, reset after)
 - [x] Resolve merge conflicts from live_debug branch (DataTransmitter.cpp, main.cpp)
-- [ ] Verify firmware compiles cleanly
+- [x] Verify firmware compiles cleanly
 
 ## Phase 4: Backend — Lambda changes
 - [x] Add `type === "session_summary"` code path in `processData` Lambda: store summary on session item, compute and set `pipeline_status`
@@ -48,8 +48,8 @@
 - [x] Pass `session` prop from App.tsx to `SessionChart`
 
 ## Phase 7: Testing and polish
-- [ ] End-to-end test: Debug mode session — verify summary arrives, pipeline shows complete
-- [ ] End-to-end test: Live Debug capture — verify summary per mini-session
+- [x] End-to-end test: Debug mode session — verify summary arrives, pipeline shows complete
+- [x] End-to-end test: Live Debug capture — verify summary per mini-session
 - [ ] Test graceful degradation: what happens if summary message fails (kill WiFi mid-upload)
 - [ ] Test with older sessions that lack summary data — confirm frontend handles absence
 - [x] Update DATABASE_SCHEMA.md with new optional session fields
