@@ -177,12 +177,30 @@ async function getProximitySessionData(session) {
         
     console.log(`Retrieved proximity session ${sessionId} with ${allReadings.length} readings across ${pageCount} page(s)`);
         
-        // Transform readings to use actual timestamp for frontend compatibility
+        // Transform readings to use millisecond timestamp for frontend compatibility
+        // 
+        // Backwards compatibility:
+        // - Old sessions (pre-microsecond): timestamp_ms is in ms, timestamp_offset is ms-based (small values)
+        // - New sessions (microsecond): timestamp_ms is derived ms value, timestamp_offset is us-based (large values)
+        // 
+        // Detection: if timestamp_offset values exceed 1,000,000, the session uses microsecond timestamps
+        const isMicrosecondSession = allReadings.length > 0 && allReadings.some(item => 
+            item.timestamp_offset !== undefined && item.timestamp_offset > 1_000_000
+        );
+        
         const readings = allReadings.map(item => {
+            // Prefer the stored timestamp_ms (always in ms, set by processData)
             let numericTimestamp = item.timestamp_ms;
             
-            if (numericTimestamp === undefined && item.timestamp_offset) {
-                numericTimestamp = Math.floor(item.timestamp_offset / 10);
+            // Fallback: derive from timestamp_offset if timestamp_ms is missing
+            if (numericTimestamp === undefined && item.timestamp_offset !== undefined) {
+                if (isMicrosecondSession) {
+                    // Microsecond-based composite key: divide by 10 to get us, then by 1000 to get ms
+                    numericTimestamp = Math.floor(item.timestamp_offset / 10 / 1000);
+                } else {
+                    // Millisecond-based composite key: divide by 10 to get ms
+                    numericTimestamp = Math.floor(item.timestamp_offset / 10);
+                }
             }
             
             return {

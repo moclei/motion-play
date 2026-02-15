@@ -1,18 +1,22 @@
 #include "MQTTManager.h"
 
-MQTTManager::MQTTManager(NetworkManager* netManager) : networkManager(netManager) {
+MQTTManager::MQTTManager(NetworkManager *netManager) : networkManager(netManager)
+{
     mqttClient.setClient(networkManager->getClient());
 }
 
-bool MQTTManager::loadConfig() {
+bool MQTTManager::loadConfig()
+{
     File configFile = LittleFS.open("/config.json", "r");
-    if (!configFile) return false;
+    if (!configFile)
+        return false;
 
     DynamicJsonDocument doc(1024);
     DeserializationError error = deserializeJson(doc, configFile);
     configFile.close();
 
-    if (error) return false;
+    if (error)
+        return false;
 
     broker = doc["mqtt"]["broker"].as<String>();
     port = doc["mqtt"]["port"];
@@ -25,26 +29,29 @@ bool MQTTManager::loadConfig() {
     commandTopic = "motionplay/" + deviceId + "/commands";
 
     // Load certificates
-    if (!loadCertificates()) {
+    if (!loadCertificates())
+    {
         Serial.println("Failed to load certificates");
         return false;
     }
 
     mqttClient.setServer(broker.c_str(), port);
     mqttClient.setCallback(messageCallback);
-    
+
     // Set buffer size for large data payloads (default is 256 bytes)
-    // AWS IoT Core max is 128KB, we set to 16KB for batch data
-    mqttClient.setBufferSize(16384);
-    Serial.println("MQTT buffer size set to 16KB");
+    // AWS IoT Core max is 128KB, we set to 32KB for Live Debug batch data
+    mqttClient.setBufferSize(32768);
+    Serial.println("MQTT buffer size set to 32KB");
 
     return true;
 }
 
-bool MQTTManager::loadCertificates() {
+bool MQTTManager::loadCertificates()
+{
     // Load CA certificate
     File ca = LittleFS.open("/certs/root-ca.pem", "r");
-    if (!ca) {
+    if (!ca)
+    {
         Serial.println("Failed to open CA certificate");
         return false;
     }
@@ -53,7 +60,8 @@ bool MQTTManager::loadCertificates() {
 
     // Load client certificate
     File cert = LittleFS.open("/certs/device-cert.pem", "r");
-    if (!cert) {
+    if (!cert)
+    {
         Serial.println("Failed to open device certificate");
         return false;
     }
@@ -62,7 +70,8 @@ bool MQTTManager::loadCertificates() {
 
     // Load private key
     File key = LittleFS.open("/certs/private-key.pem", "r");
-    if (!key) {
+    if (!key)
+    {
         Serial.println("Failed to open private key");
         return false;
     }
@@ -77,8 +86,10 @@ bool MQTTManager::loadCertificates() {
     return true;
 }
 
-bool MQTTManager::connect() {
-    if (!networkManager->isConnected()) {
+bool MQTTManager::connect()
+{
+    if (!networkManager->isConnected())
+    {
         Serial.println("No WiFi connection");
         return false;
     }
@@ -87,12 +98,15 @@ bool MQTTManager::connect() {
     Serial.println(broker);
 
     int attempts = 0;
-    while (!mqttClient.connected() && attempts < 5) {
-        if (mqttClient.connect(clientId.c_str())) {
+    while (!mqttClient.connected() && attempts < 5)
+    {
+        if (mqttClient.connect(clientId.c_str()))
+        {
             Serial.println("MQTT connected!");
 
             // Subscribe to command topic
-            if (mqttClient.subscribe(commandTopic.c_str())) {
+            if (mqttClient.subscribe(commandTopic.c_str()))
+            {
                 Serial.print("Subscribed to: ");
                 Serial.println(commandTopic);
             }
@@ -114,22 +128,27 @@ bool MQTTManager::connect() {
     return false;
 }
 
-void MQTTManager::disconnect() {
+void MQTTManager::disconnect()
+{
     mqttClient.disconnect();
 }
 
-bool MQTTManager::isConnected() {
+bool MQTTManager::isConnected()
+{
     return mqttClient.connected();
 }
 
-void MQTTManager::loop() {
-    if (!mqttClient.connected()) {
+void MQTTManager::loop()
+{
+    if (!mqttClient.connected())
+    {
         connect();
     }
     mqttClient.loop();
 }
 
-bool MQTTManager::publishStatus(const char* status) {
+bool MQTTManager::publishStatus(const char *status)
+{
     DynamicJsonDocument doc(256);
     doc["device_id"] = deviceId;
     doc["status"] = status;
@@ -144,25 +163,33 @@ bool MQTTManager::publishStatus(const char* status) {
     return mqttClient.publish(statusTopic.c_str(), payload.c_str());
 }
 
-bool MQTTManager::publishData(const JsonDocument& data) {
+bool MQTTManager::publishData(const JsonDocument &data)
+{
     String payload;
     size_t payloadSize = serializeJson(data, payload);
-    
+
+    // Warn if payload approaches MQTT buffer limit
+    if (payloadSize > 24576)
+    {
+        Serial.printf("WARNING: Large MQTT payload: %d bytes (buffer: 32KB)\n", payloadSize);
+    }
+
     bool success = mqttClient.publish(dataTopic.c_str(), payload.c_str());
-    
-    // Only log errors, not every successful publish
-    if (!success) {
+
+    if (!success)
+    {
         Serial.println("ERROR: mqttClient.publish() failed!");
-        Serial.printf("  MQTT state: %d, connected: %s, size: %d bytes\n",
+        Serial.printf("  MQTT state: %d, connected: %s, payload: %d bytes\n",
                       mqttClient.state(),
                       mqttClient.connected() ? "YES" : "NO",
                       payloadSize);
     }
-    
+
     return success;
 }
 
-void MQTTManager::messageCallback(char* topic, byte* payload, unsigned int length) {
+void MQTTManager::messageCallback(char *topic, byte *payload, unsigned int length)
+{
     Serial.print("Message received on topic: ");
     Serial.println(topic);
 
@@ -177,19 +204,22 @@ void MQTTManager::messageCallback(char* topic, byte* payload, unsigned int lengt
     DynamicJsonDocument doc(256);
     DeserializationError error = deserializeJson(doc, message);
 
-    if (!error) {
+    if (!error)
+    {
         String command = doc["command"].as<String>();
         Serial.print("Command: ");
         Serial.println(command);
 
         // Handle commands here
-        if (command == "ping") {
+        if (command == "ping")
+        {
             // Respond to ping
             Serial.println("Received ping command");
         }
     }
 }
 
-void MQTTManager::setCallback(std::function<void(char*, byte*, unsigned int)> callback) {
+void MQTTManager::setCallback(std::function<void(char *, byte *, unsigned int)> callback)
+{
     mqttClient.setCallback(callback);
 }

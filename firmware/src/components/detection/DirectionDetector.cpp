@@ -6,14 +6,18 @@ DirectionDetector::DirectionDetector(const DetectorConfig &cfg) : config(cfg) {}
 
 void DirectionDetector::addReading(const SensorReading &reading)
 {
+    // Convert microsecond timestamp to milliseconds for the detector
+    // The detector's config and algorithm are designed for millisecond-scale timing
+    uint32_t timestampMs = reading.timestamp_us / 1000;
+
     // Check if this is a new timestamp (need to flush previous)
-    if (hasCurrentReading && reading.timestamp_ms != currentTimestamp)
+    if (hasCurrentReading && timestampMs != currentTimestamp)
     {
         flushReading();
     }
 
     // Aggregate by side
-    currentTimestamp = reading.timestamp_ms;
+    currentTimestamp = timestampMs;
     if (reading.side == 2)
     {
         currentSideA += reading.proximity;
@@ -95,7 +99,7 @@ void DirectionDetector::calculateThresholds()
         // DirectionDetector aggregates by side (A=S2, B=S1) across all PCBs
         // Each PCB's calibration is for both sensors combined
         // We'll take the maximum threshold across PCBs as conservative threshold
-        
+
         uint16_t maxThreshold = 0;
         for (int i = 0; i < CALIBRATION_NUM_PCBS; i++)
         {
@@ -104,13 +108,13 @@ void DirectionDetector::calculateThresholds()
                 maxThreshold = _calibration->pcbs[i].threshold;
             }
         }
-        
+
         // Apply calibrated threshold to both sides
         // Since each PCB has one sensor per side, we use the same threshold
         waveA.threshold = (float)maxThreshold;
         waveB.threshold = (float)maxThreshold;
         _useCalibration = true;
-        
+
         Serial.printf("[DirectionDetector] Using CALIBRATED thresholds: A=%.0f, B=%.0f\n",
                       waveA.threshold, waveB.threshold);
         return;
@@ -118,7 +122,7 @@ void DirectionDetector::calculateThresholds()
 
     // Fallback: calculate from baseline (original behavior)
     _useCalibration = false;
-    
+
     // Use max value as baseline (captures noise ceiling)
     float baseA = baselineA.max;
     float baseB = baselineB.max;
@@ -130,7 +134,7 @@ void DirectionDetector::calculateThresholds()
 
     waveA.threshold = baseA + riseA;
     waveB.threshold = baseB + riseB;
-    
+
     Serial.printf("[DirectionDetector] Using FALLBACK thresholds: A=%.0f, B=%.0f\n",
                   waveA.threshold, waveB.threshold);
 }
@@ -369,12 +373,12 @@ void DirectionDetector::setConfig(const DetectorConfig &cfg)
 void DirectionDetector::setCalibration(const DeviceCalibration *cal)
 {
     _calibration = cal;
-    
+
     if (cal != nullptr && cal->isValid())
     {
         Serial.println("[DirectionDetector] Calibration data set");
         cal->debugPrint();
-        
+
         // If we already have baseline, recalculate thresholds with calibration
         if (state != DetectorState::ESTABLISHING_BASELINE)
         {

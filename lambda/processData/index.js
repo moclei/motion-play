@@ -462,6 +462,7 @@ async function processProximitySession(data) {
             const batchSize = 25;
             const readings = data.readings;
         const startTimestamp = Number(data.start_timestamp);
+        const isTimestampMicroseconds = data.timestamp_unit === 'us';
             
             for (let i = 0; i < readings.length; i += batchSize) {
                 const batch = readings.slice(i, i + batchSize);
@@ -469,14 +470,23 @@ async function processProximitySession(data) {
                     const absoluteTimestamp = reading.ts || reading.t;
                     const relativeTimestamp = absoluteTimestamp - startTimestamp;
                     const position = reading.pos !== undefined ? reading.pos : reading.p;
+                    
+                    // Composite key: (relativeTimestamp * 10) + position
+                    // With microsecond timestamps, this provides unique keys at >1000Hz cycle rates
+                    // Old firmware sends millisecond timestamps; new firmware sends microsecond timestamps
                     const compositeKey = (relativeTimestamp * 10) + position;
+                    
+                    // Derive millisecond timestamp for query convenience
+                    const timestampMs = isTimestampMicroseconds 
+                        ? Math.floor(relativeTimestamp / 1000)
+                        : relativeTimestamp;
                     
                 return {
                     PutRequest: {
                         Item: {
                         session_id: data.session_id,
                             timestamp_offset: compositeKey,
-                            timestamp_ms: relativeTimestamp,
+                            timestamp_ms: timestampMs,
                             position: position,
                             pcb_id: reading.pcb || 0,
                             side: reading.side || 0,
@@ -544,6 +554,15 @@ async function processSessionSummary(data) {
     
     console.log(`Processing session summary for: ${data.session_id}`);
     
+    // Wait for concurrent batch-processing Lambda invocations to finish writing.
+    // The firmware sends all data batches within ~140ms (7 batches × 20ms delay),
+    // and the session summary immediately after. Each batch Lambda invocation takes
+    // 1-3 seconds to complete its DynamoDB BatchWriteCommand. Without this delay,
+    // we'd query the count before all batches are written, getting a partial count.
+    const BATCH_SETTLE_DELAY_MS = 5000;
+    console.log(`Waiting ${BATCH_SETTLE_DELAY_MS}ms for batch writes to settle...`);
+    await new Promise(resolve => setTimeout(resolve, BATCH_SETTLE_DELAY_MS));
+    
     // Query actual stored reading count from the data table (more reliable than sample_count
     // counter, which can have race conditions with concurrent Lambda invocations)
     const countResult = await docClient.send(new QueryCommand({
@@ -559,13 +578,13 @@ async function processSessionSummary(data) {
     const transmitted = summary.total_readings_transmitted || 0;
     
     // Determine pipeline status by comparing actual stored readings vs transmitted
-    // Allow a small tolerance for composite key collisions at >1000Hz cycle rates
+    // Allow a small tolerance for minor edge cases
     let pipelineStatus;
     const deliveryRate = transmitted > 0 ? actualStoredCount / transmitted : 0;
     if (actualStoredCount === transmitted) {
         pipelineStatus = 'complete';
     } else if (deliveryRate >= 0.95) {
-        // >95% delivery — mark as complete (minor composite key collisions at high sample rates)
+        // >95% delivery — mark as complete (minor variations acceptable)
         pipelineStatus = 'complete';
     } else if (actualStoredCount > 0) {
         pipelineStatus = 'partial';
@@ -575,27 +594,20 @@ async function processSessionSummary(data) {
     
     console.log(`Pipeline status: ${pipelineStatus} (stored: ${actualStoredCount}, transmitted: ${transmitted}, delivery: ${(deliveryRate * 100).toFixed(1)}%)`);
     
-    // Also update sample_count to the accurate value from the actual query
+    // Store summary, pipeline status, and corrected sample_count in a single update
     await docClient.send(new UpdateCommand({
         TableName: SESSIONS_TABLE,
         Key: { session_id: data.session_id },
-        UpdateExpression: 'SET #sample_count = :count',
-        ExpressionAttributeNames: { '#sample_count': 'sample_count' },
-        ExpressionAttributeValues: { ':count': actualStoredCount }
-    }));
-    
-    // Store summary and pipeline status on the session
-    await docClient.send(new UpdateCommand({
-        TableName: SESSIONS_TABLE,
-        Key: { session_id: data.session_id },
-        UpdateExpression: 'SET #session_summary = :summary, #pipeline_status = :status',
+        UpdateExpression: 'SET #session_summary = :summary, #pipeline_status = :status, #sample_count = :count',
         ExpressionAttributeNames: {
             '#session_summary': 'session_summary',
-            '#pipeline_status': 'pipeline_status'
+            '#pipeline_status': 'pipeline_status',
+            '#sample_count': 'sample_count'
         },
         ExpressionAttributeValues: {
             ':summary': summary,
-            ':status': pipelineStatus
+            ':status': pipelineStatus,
+            ':count': actualStoredCount
         }
     }));
     

@@ -42,12 +42,13 @@ bool DataTransmitter::transmitBatch(const String &sessionId,
 
     doc["session_id"] = sessionId;
     doc["device_id"] = deviceId;
-    doc["session_type"] = "proximity"; // Explicit session type
-    doc["start_timestamp"] = startTime;
+    doc["session_type"] = "proximity";           // Explicit session type
+    doc["start_timestamp"] = startTime * 1000UL; // Convert session start from ms to us (consistent with reading timestamps)
     doc["duration_ms"] = duration;
     doc["sample_rate"] = SAMPLE_RATE_HZ;
     doc["batch_offset"] = offset;
     doc["batch_size"] = count;
+    doc["timestamp_unit"] = "us"; // Signal to Lambda that timestamps are in microseconds
 
     // Add sensor metadata AND configuration (only in first batch)
     if (offset == 0 && sensorMetadata != nullptr)
@@ -113,7 +114,7 @@ bool DataTransmitter::transmitBatch(const String &sessionId,
         SensorReading &reading = readings[offset + i];
 
         JsonObject readingObj = readingsArray.createNestedObject();
-        readingObj["ts"] = reading.timestamp_ms;
+        readingObj["ts"] = reading.timestamp_us;
         readingObj["pos"] = reading.position;
         readingObj["pcb"] = reading.pcb_id;
         readingObj["side"] = reading.side;
@@ -394,13 +395,14 @@ String DataTransmitter::transmitLiveDebugCapture(
     }
     String sessionId = deviceSuffix + "_" + String(millis());
 
-    // Calculate timing from the readings themselves
-    unsigned long startTime = readings[startIdx].timestamp_ms;
-    unsigned long endTime = readings[startIdx + count - 1].timestamp_ms;
-    unsigned long duration = endTime - startTime;
+    // Calculate timing from the readings themselves (timestamps are in microseconds)
+    unsigned long startTime = readings[startIdx].timestamp_us;
+    unsigned long endTime = readings[startIdx + count - 1].timestamp_us;
+    unsigned long durationUs = endTime - startTime;
+    unsigned long durationMs = durationUs / 1000;
 
     Serial.printf("Live Debug capture: reason=%s, readings=%d, duration=%lums\n",
-                  captureReason, count, duration);
+                  captureReason, count, durationMs);
 
     // Send in batches using Live Debug batch settings
     size_t offset = 0;
@@ -409,15 +411,18 @@ String DataTransmitter::transmitLiveDebugCapture(
         size_t remaining = count - offset;
         size_t batchCount = (remaining > LIVE_DEBUG_BATCH_SIZE) ? LIVE_DEBUG_BATCH_SIZE : remaining;
 
-        // Create JSON document
-        DynamicJsonDocument doc(16384); // 16KB for larger batches
+        // Create JSON document — 32KB to comfortably fit 200 readings
+        // At ~80 bytes per reading in ArduinoJson memory, 200 readings needs ~16KB+
+        // Previous 16KB buffer silently truncated readings via ArduinoJson overflow
+        DynamicJsonDocument doc(32768);
 
         doc["session_id"] = sessionId;
         doc["device_id"] = deviceId;
         doc["session_type"] = "proximity";
         doc["mode"] = "live_debug";
-        doc["start_timestamp"] = startTime;
-        doc["duration_ms"] = duration;
+        doc["start_timestamp"] = startTime; // Microseconds (first reading timestamp)
+        doc["duration_ms"] = durationMs;
+        doc["timestamp_unit"] = "us"; // Signal to Lambda that timestamps are in microseconds
         doc["sample_rate"] = SAMPLE_RATE_HZ;
         doc["batch_offset"] = offset;
         doc["batch_size"] = batchCount;
@@ -475,12 +480,20 @@ String DataTransmitter::transmitLiveDebugCapture(
             SensorReading &reading = readings[startIdx + offset + i];
 
             JsonObject readingObj = readingsArray.createNestedObject();
-            readingObj["ts"] = reading.timestamp_ms;
+            readingObj["ts"] = reading.timestamp_us;
             readingObj["pos"] = reading.position;
             readingObj["pcb"] = reading.pcb_id;
             readingObj["side"] = reading.side;
             readingObj["prox"] = reading.proximity;
             readingObj["amb"] = reading.ambient;
+        }
+
+        // Check for ArduinoJson buffer overflow (silent data truncation)
+        size_t actualReadingsInDoc = readingsArray.size();
+        if (doc.overflowed())
+        {
+            Serial.printf("WARNING: ArduinoJson overflow! Wanted %d readings, only %d fit (doc: %d/%d bytes)\n",
+                          batchCount, actualReadingsInDoc, doc.memoryUsage(), 32768);
         }
 
         // Publish via MQTT
@@ -493,10 +506,10 @@ String DataTransmitter::transmitLiveDebugCapture(
             return "";
         }
 
-        // Session Confirmation: count transmitted readings and batches
+        // Session Confirmation: count only readings that actually made it into the JSON
         if (activeSummary)
         {
-            activeSummary->total_readings_transmitted += batchCount;
+            activeSummary->total_readings_transmitted += actualReadingsInDoc;
             activeSummary->total_batches_transmitted++;
         }
 
@@ -509,8 +522,10 @@ String DataTransmitter::transmitLiveDebugCapture(
         }
     }
 
-    Serial.printf("Live Debug capture transmitted: session=%s, %d readings\n",
-                  sessionId.c_str(), count);
+    uint32_t actualTransmitted = activeSummary ? activeSummary->total_readings_transmitted : count;
+    Serial.printf("Live Debug capture transmitted: session=%s, %d/%d readings in %d batches\n",
+                  sessionId.c_str(), actualTransmitted, count,
+                  activeSummary ? activeSummary->total_batches_transmitted : 0);
     return sessionId;
 }
 
