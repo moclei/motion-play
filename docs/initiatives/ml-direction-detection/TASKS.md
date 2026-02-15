@@ -4,8 +4,8 @@
 - [x] Create BRIEF.md
 - [x] Create PLAN.md
 - [x] Create TASKS.md
-- [ ] Verify TFLite Micro PlatformIO library compatibility with arduino-esp32 2.0.14 (test that it compiles)
-- [ ] Set up `tools/ml-training/` Python project structure (requirements.txt, README)
+- [x] Verify TFLite Micro PlatformIO library compatibility with arduino-esp32 2.0.14 — `spaziochirale/Chirale_TensorFLowLite@^2.0.0` compiles cleanly. Smoke test with TFLite headers passes. Note: does not include ESP-NN (PIE vector acceleration); generic CMSIS-NN kernels only. Acceptable for initial work, ESP-NN optimization is a future enhancement.
+- [x] Set up `tools/ml-training/` Python project structure (requirements.txt, README)
 
 ## Phase 2: Data collection
 - [ ] Confirm Live Debug mode is working end-to-end (detection capture + labeling)
@@ -28,7 +28,7 @@
 - [ ] Document results and any model architecture adjustments
 
 ## Phase 4: Firmware integration
-- [ ] Add TFLite Micro library to platformio.ini lib_deps
+- [x] Add TFLite Micro library to platformio.ini lib_deps — `spaziochirale/Chirale_TensorFLowLite@^2.0.0`
 - [ ] Create MLDetector component (firmware/src/components/detection/MLDetector.h, MLDetector.cpp)
 - [ ] Implement model loading from flash (embedded header file)
 - [ ] Implement input tensor preparation: extract 300ms window from buffer, reshape to (300, 6)

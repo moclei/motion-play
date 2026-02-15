@@ -1,0 +1,17 @@
+# ML Training Pipeline for Motion Play Direction Detection
+# Python 3.9+
+
+# Core ML
+tensorflow>=2.15.0
+numpy>=1.24.0
+
+# Data handling
+pandas>=2.0.0
+requests>=2.31.0
+
+# Visualization & evaluation
+matplotlib>=3.7.0
+scikit-learn>=1.3.0
+
+# TFLite model conversion (included in tensorflow, but explicit for clarity)
+# tflite-support  # Optional: for metadata and visualization

@@ -90,7 +90,7 @@ The current heuristic uses `maxWaveDurationMs` (200ms) + `maxPeakGapMs` (150ms) 
 
 **New component:** `MLDetector` in `firmware/src/components/detection/`
 
-**Library:** Add TFLite Micro to PlatformIO `lib_deps`. The `pio-tflite-lib` package or `TensorFlowLite_ESP32` are candidates; need to verify compatibility with arduino-esp32 2.0.14 during setup.
+**Library:** `spaziochirale/Chirale_TensorFLowLite@^2.0.0` — verified compatible with arduino-esp32 2.0.14 on PlatformIO. Includes CMSIS-NN generic kernels but not ESP-NN (PIE vector acceleration). Performance is sufficient for the small model (~300K MACs); ESP-NN optimization can be explored later if needed.
 
 **Trigger-first architecture:**
 - Reuse existing threshold/baseline logic (from `DirectionDetector`) to detect "something crossed above the noise floor"
@@ -120,6 +120,5 @@ The existing `DirectionDetector` (heuristic) and the new `MLDetector` coexist:
 
 ## Open Questions
 
-- Which TFLite Micro PlatformIO library is best for arduino-esp32 2.0.14? Need to verify during setup phase.
 - What is the minimum number of training samples needed for acceptable accuracy? Start with ~50 per class and evaluate.
 - Should the trigger threshold be shared with the heuristic's baseline logic, or independent? Start shared, separate if needed.
