@@ -55,3 +55,10 @@ yarn.lock
 
 # Lambda function zips
 lambda/**/*.zip
+
+# ML training data and artifacts
+tools/ml-training/data/
+tools/ml-training/venv/
+tools/ml-training/__pycache__/
+tools/ml-training/*.tflite
+tools/ml-training/*.h5
