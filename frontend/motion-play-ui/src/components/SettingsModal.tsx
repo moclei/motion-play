@@ -16,6 +16,8 @@ const Tooltip = ({ text }: { text: string }) => (
 interface SensorConfig {
     // Primary sensor mode selection
     sensor_mode: 'polling' | 'interrupt';
+    // Detection algorithm mode
+    detection_mode: 'heuristic' | 'ml';
     // Polling mode settings
     sample_rate_hz: number;
     led_current: string;
@@ -43,6 +45,8 @@ interface SettingsModalProps {
 const DEFAULT_CONFIG: SensorConfig = {
     // Primary mode selection
     sensor_mode: 'polling',
+    // Detection algorithm
+    detection_mode: 'heuristic',
     // Polling mode settings
     sample_rate_hz: 1000,
     led_current: '200mA',
@@ -87,6 +91,8 @@ export const SettingsModal = ({ isOpen, onClose }: SettingsModalProps) => {
                 ...cloudConfig,
                 // Primary mode
                 sensor_mode: cloudConfig.sensor_mode ?? 'polling',
+                // Detection algorithm
+                detection_mode: cloudConfig.detection_mode ?? 'heuristic',
                 // Polling settings
                 i2c_clock_khz: cloudConfig.i2c_clock_khz || 400,
                 multi_pulse: cloudConfig.multi_pulse || '1',
@@ -179,8 +185,8 @@ export const SettingsModal = ({ isOpen, onClose }: SettingsModalProps) => {
                                     setActiveTab('proximity');
                                 }}
                                 className={`px-4 py-2 rounded-lg text-sm font-medium transition-all flex items-center gap-2 ${config.sensor_mode === 'polling'
-                                        ? 'bg-blue-600 text-white shadow-md'
-                                        : 'bg-white text-gray-700 border border-gray-300 hover:bg-gray-50'
+                                    ? 'bg-blue-600 text-white shadow-md'
+                                    : 'bg-white text-gray-700 border border-gray-300 hover:bg-gray-50'
                                     }`}
                             >
                                 <span className="w-2 h-2 rounded-full bg-current opacity-75"></span>
@@ -192,8 +198,8 @@ export const SettingsModal = ({ isOpen, onClose }: SettingsModalProps) => {
                                     setActiveTab('interrupt');
                                 }}
                                 className={`px-4 py-2 rounded-lg text-sm font-medium transition-all flex items-center gap-2 ${config.sensor_mode === 'interrupt'
-                                        ? 'bg-cyan-600 text-white shadow-md'
-                                        : 'bg-white text-gray-700 border border-gray-300 hover:bg-gray-50'
+                                    ? 'bg-cyan-600 text-white shadow-md'
+                                    : 'bg-white text-gray-700 border border-gray-300 hover:bg-gray-50'
                                     }`}
                             >
                                 <Zap size={14} />
@@ -206,6 +212,36 @@ export const SettingsModal = ({ isOpen, onClose }: SettingsModalProps) => {
                             ? 'Sensors are read continuously at the configured sample rate. Best for detailed waveform analysis.'
                             : 'Sensors trigger events when thresholds are crossed. Best for low-power detection.'}
                     </p>
+
+                    {/* Detection Algorithm Selector */}
+                    <div className="flex items-center gap-4 mt-3 pt-3 border-t border-gray-200">
+                        <span className="text-sm font-medium text-gray-700">Detection:</span>
+                        <div className="flex gap-2">
+                            <button
+                                onClick={() => setConfig({ ...config, detection_mode: 'heuristic' })}
+                                className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${config.detection_mode === 'heuristic'
+                                    ? 'bg-gray-700 text-white shadow-md'
+                                    : 'bg-white text-gray-700 border border-gray-300 hover:bg-gray-50'
+                                    }`}
+                            >
+                                Heuristic
+                            </button>
+                            <button
+                                onClick={() => setConfig({ ...config, detection_mode: 'ml' })}
+                                className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${config.detection_mode === 'ml'
+                                    ? 'bg-purple-600 text-white shadow-md'
+                                    : 'bg-white text-gray-700 border border-gray-300 hover:bg-gray-50'
+                                    }`}
+                            >
+                                ML (Neural Network)
+                            </button>
+                        </div>
+                    </div>
+                    <p className="text-xs text-gray-500 mt-1">
+                        {config.detection_mode === 'heuristic'
+                            ? 'Wave envelope + center-of-mass algorithm. Well-tested, no model required.'
+                            : 'TFLite Micro 1D CNN inference on-device. Experimental — requires trained model in firmware.'}
+                    </p>
                 </div>
 
                 {/* Tab Navigation - for detailed settings */}
@@ -213,8 +249,8 @@ export const SettingsModal = ({ isOpen, onClose }: SettingsModalProps) => {
                     <button
                         onClick={() => setActiveTab('proximity')}
                         className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors ${activeTab === 'proximity'
-                                ? 'border-blue-500 text-blue-600'
-                                : 'border-transparent text-gray-500 hover:text-gray-700'
+                            ? 'border-blue-500 text-blue-600'
+                            : 'border-transparent text-gray-500 hover:text-gray-700'
                             }`}
                     >
                         Polling Settings
@@ -222,8 +258,8 @@ export const SettingsModal = ({ isOpen, onClose }: SettingsModalProps) => {
                     <button
                         onClick={() => setActiveTab('interrupt')}
                         className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors flex items-center gap-1 ${activeTab === 'interrupt'
-                                ? 'border-cyan-500 text-cyan-600'
-                                : 'border-transparent text-gray-500 hover:text-gray-700'
+                            ? 'border-cyan-500 text-cyan-600'
+                            : 'border-transparent text-gray-500 hover:text-gray-700'
                             }`}
                     >
                         Interrupt Settings

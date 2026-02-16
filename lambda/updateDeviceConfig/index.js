@@ -34,9 +34,15 @@ function sanitizeConfig(config) {
     const validInterruptModes = ["normal", "logic"];
     const interruptMode = validInterruptModes.includes(config.interrupt_mode) ? config.interrupt_mode : "normal";
     
+    // Validate detection_mode
+    const validDetectionModes = ["heuristic", "ml"];
+    const detectionMode = validDetectionModes.includes(config.detection_mode) ? config.detection_mode : "heuristic";
+    
     return {
         // Primary sensor mode
         sensor_mode: sensorMode,
+        // Detection algorithm mode
+        detection_mode: detectionMode,
         // Polling mode settings
         sample_rate_hz: Number.isFinite(config.sample_rate_hz) ? config.sample_rate_hz : 1000,
         led_current: config.led_current || "200mA",
@@ -103,6 +109,8 @@ exports.handler = async (event) => {
             sensor_config: {
                 // Primary mode
                 sensor_mode: sensorConfig.sensor_mode,
+                // Detection algorithm
+                detection_mode: sensorConfig.detection_mode,
                 // Polling settings
                 sample_rate: sensorConfig.sample_rate_hz,
                 led_current: sensorConfig.led_current,

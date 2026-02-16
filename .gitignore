@@ -62,3 +62,4 @@ tools/ml-training/venv/
 tools/ml-training/__pycache__/
 tools/ml-training/*.tflite
 tools/ml-training/*.h5
+tools/ml-training/output/

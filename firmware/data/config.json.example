@@ -15,5 +15,6 @@
   "sampling": {
     "rate_hz": 1000,
     "max_duration_seconds": 30
-  }
+  },
+  "detection_mode": "heuristic"
 }
