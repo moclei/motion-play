@@ -8,7 +8,7 @@ Add a machine-learning-based direction detection path that classifies transit di
 
 - Establish a repeatable data collection protocol for gathering labeled training data using Live Debug mode.
 - Build a Python training pipeline that downloads session data, trains a small 1D CNN, and exports a quantized TFLite model.
-- Integrate TFLite Micro into the firmware with a new MLDetector component that runs inference on the ESP32-S3, using the PIE vector instructions via ESP-NN.
+- Integrate TFLite Micro into the firmware with a new MLDetector component that runs inference on the ESP32-S3. (ESP-NN PIE acceleration deferred — requires int8 quantization, currently blocked.)
 - Make detection method selectable via config (heuristic vs ML) so both approaches coexist.
 
 ## Scope
@@ -32,6 +32,6 @@ What's out:
 
 - Must use Arduino framework on PlatformIO (rules out ESP-DL, which requires ESP-IDF).
 - TFLite Micro library must be compatible with the existing build setup (espressif32 platform, arduino-esp32 2.0.14).
-- Model must be small enough to fit in flash and run inference within ~10ms to avoid impacting the sensor loop.
+- Model must be small enough to fit in flash. Current float32 inference takes ~140ms (acceptable for PoC; int8 would reduce to ~1-5ms).
 - Core 0 remains dedicated to sensor collection; ML inference runs on Core 1.
 - Training data must be collected fresh with this purpose in mind (prior sessions were for pipeline testing).

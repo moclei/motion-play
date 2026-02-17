@@ -258,7 +258,13 @@ def evaluate_model(model, X_test, y_test):
 # ---------------------------------------------------------------------------
 
 def export_tflite(model, X_train, output_path="model.tflite"):
-    """Export model as TFLite with dynamic range quantization."""
+    """Export model as fully float32 TFLite (no quantization).
+    
+    Dynamic range quantization creates hybrid models (int8 weights, float32
+    activations) which TFLite Micro's Conv2D kernel does not support.
+    Exporting as pure float32 avoids this issue — the model is small enough
+    (~100KB) that quantization is unnecessary.
+    """
     import tensorflow as tf
 
     # Save as SavedModel first for more reliable conversion
@@ -267,14 +273,14 @@ def export_tflite(model, X_train, output_path="model.tflite"):
     model.export(saved_model_dir)
 
     converter = tf.lite.TFLiteConverter.from_saved_model(saved_model_dir)
-    converter.optimizations = [tf.lite.Optimize.DEFAULT]
+    # No quantization — fully float32 for TFLite Micro compatibility
 
     tflite_model = converter.convert()
 
     with open(output_path, "wb") as f:
         f.write(tflite_model)
 
-    print(f"\nTFLite model saved (dynamic range quantization): {output_path} ({len(tflite_model)} bytes)")
+    print(f"\nTFLite model saved (float32, no quantization): {output_path} ({len(tflite_model)} bytes)")
 
     # Clean up
     import shutil

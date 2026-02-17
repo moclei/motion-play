@@ -250,7 +250,11 @@ bool fetchConfigFromCloud()
             {
                 String detMode = config["detection_mode"].as<String>();
                 useMLDetection = (detMode == "ml");
-                Serial.printf("  Detection Mode: %s\n", useMLDetection ? "ML" : "heuristic");
+                Serial.printf("  Detection Mode: %s (raw value: '%s')\n", useMLDetection ? "ML" : "heuristic", detMode.c_str());
+            }
+            else
+            {
+                Serial.println("  Detection Mode: not present in cloud config (defaulting to heuristic)");
             }
 
             http.end();
@@ -399,6 +403,10 @@ void initializeSystem()
     {
         Serial.println("WARNING: Failed to fetch config from cloud, using defaults");
     }
+
+    // Log detection mode state after cloud config fetch
+    Serial.printf("\n[Config] Detection mode after cloud fetch: %s (useMLDetection=%d)\n",
+                  useMLDetection ? "ML" : "heuristic", useMLDetection);
 
     // Initialize ML detector if ML mode is selected
     if (useMLDetection)
@@ -720,7 +728,39 @@ void handleCommand(const String &command, JsonDocument *doc)
     }
     else if (command == "configure_sensors")
     {
-        Serial.println("Configuring sensors...");
+        Serial.println("[Config] Received configure_sensors command");
+        // Log raw payload keys for debugging
+        if (doc != nullptr)
+        {
+            Serial.print("[Config] Top-level keys: ");
+            for (JsonPair kv : doc->as<JsonObject>())
+            {
+                Serial.printf("%s ", kv.key().c_str());
+            }
+            Serial.println();
+            if (doc->containsKey("sensor_config"))
+            {
+                JsonObject sc = (*doc)["sensor_config"];
+                Serial.print("[Config] sensor_config keys: ");
+                for (JsonPair kv : sc)
+                {
+                    Serial.printf("%s ", kv.key().c_str());
+                }
+                Serial.println();
+                if (sc.containsKey("detection_mode"))
+                {
+                    Serial.printf("[Config] detection_mode value: '%s'\n", sc["detection_mode"].as<const char *>());
+                }
+                else
+                {
+                    Serial.println("[Config] detection_mode NOT found in sensor_config");
+                }
+            }
+            else
+            {
+                Serial.println("[Config] sensor_config key NOT found in payload");
+            }
+        }
         display.showMessage("Configuring sensors...", TFT_CYAN);
 
         if (doc != nullptr && doc->containsKey("sensor_config"))
@@ -867,6 +907,8 @@ void handleCommand(const String &command, JsonDocument *doc)
     }
     else if (command == "set_mode")
     {
+        Serial.printf("[Config] Current detection mode: %s (useMLDetection=%d)\n",
+                      useMLDetection ? "ML" : "heuristic", useMLDetection);
         if (doc != nullptr && doc->containsKey("mode"))
         {
             String modeStr = (*doc)["mode"].as<String>();

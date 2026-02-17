@@ -9,16 +9,35 @@ MLDetector::MLDetector() {}
 
 MLDetector::~MLDetector()
 {
+    deinit();
+}
+
+// ============================================================================
+// Cleanup (safe to call multiple times or before first init)
+// ============================================================================
+
+void MLDetector::deinit()
+{
+    modelReady_ = false;
+    inputTensor_ = nullptr;
+    outputTensor_ = nullptr;
+
     if (interpreter_)
     {
         delete interpreter_;
         interpreter_ = nullptr;
+    }
+    if (resolver_)
+    {
+        delete resolver_;
+        resolver_ = nullptr;
     }
     if (tensorArena_)
     {
         free(tensorArena_);
         tensorArena_ = nullptr;
     }
+    model_ = nullptr;
 }
 
 // ============================================================================
@@ -27,6 +46,9 @@ MLDetector::~MLDetector()
 
 bool MLDetector::init()
 {
+    // Clean up any previous (possibly failed) initialization
+    deinit();
+
     Serial.println("[MLDetector] Initializing TFLite Micro...");
 
     // Load model from flash
@@ -65,25 +87,25 @@ bool MLDetector::init()
         Serial.printf("[MLDetector] Tensor arena: %u bytes in PSRAM\n", ML_TENSOR_ARENA_SIZE);
     }
 
-    // Register required ops
-    static tflite::MicroMutableOpResolver<6> resolver;
-    resolver.AddConv2D();
-    resolver.AddMaxPool2D();
-    resolver.AddReshape();
-    resolver.AddFullyConnected();
-    resolver.AddSoftmax();
-    resolver.AddQuantize();
+    // Register required ops (heap-allocated so init() is safely re-callable)
+    resolver_ = new tflite::MicroMutableOpResolver<8>();
+    resolver_->AddConv2D();
+    resolver_->AddMaxPool2D();
+    resolver_->AddReshape();
+    resolver_->AddFullyConnected();
+    resolver_->AddSoftmax();
+    resolver_->AddExpandDims();
 
-    // Create interpreter
-    static tflite::MicroInterpreter static_interpreter(
-        model_, resolver, tensorArena_, ML_TENSOR_ARENA_SIZE);
-    interpreter_ = &static_interpreter;
+    // Create interpreter (heap-allocated for safe re-init)
+    interpreter_ = new tflite::MicroInterpreter(
+        model_, *resolver_, tensorArena_, ML_TENSOR_ARENA_SIZE);
 
     // Allocate tensors
     TfLiteStatus status = interpreter_->AllocateTensors();
     if (status != kTfLiteOk)
     {
         Serial.println("[MLDetector] ERROR: AllocateTensors() failed");
+        deinit();
         return false;
     }
 

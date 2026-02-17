@@ -117,11 +117,15 @@ public:
 private:
     // --- TFLite members ---
     const tflite::Model *model_ = nullptr;
+    tflite::MicroMutableOpResolver<8> *resolver_ = nullptr;
     tflite::MicroInterpreter *interpreter_ = nullptr;
     uint8_t *tensorArena_ = nullptr;
     TfLiteTensor *inputTensor_ = nullptr;
     TfLiteTensor *outputTensor_ = nullptr;
     bool modelReady_ = false;
+
+    /** Clean up all TFLite resources (safe to call multiple times). */
+    void deinit();
 
     // --- Ring buffer for sensor frames ---
     static constexpr size_t RING_BUFFER_SIZE = 512; // ~1.3s at ~2.7ms per frame

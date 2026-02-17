@@ -62,15 +62,15 @@ Input: (300, 6)  — 300 timesteps, 6 proximity channels
   → Dense(3, Softmax)   # A_TO_B, B_TO_A, NO_TRANSIT
 ```
 
-- Estimated ~5-10KB of parameters
+- 78,995 parameters (~309KB float32, ~321KB TFLite)
 - ~300K multiply-accumulate operations per inference
-- With ESP-NN int8 acceleration: ~0.3-1ms inference on ESP32-S3
+- **Actual inference time: ~140ms** (float32, no ESP-NN acceleration). Original estimate of ~0.3-1ms assumed int8 quantization with ESP-NN — hybrid quantization is not supported by TFLite Micro, so the model runs as float32 on generic CMSIS-NN kernels. True int8 quantization (which would enable ESP-NN) is blocked by a Keras 3 / TF 2.16 MLIR bug.
 
 **Training and export:**
 - Train with TensorFlow/Keras
 - Evaluate accuracy, confusion matrix, per-scenario breakdown
-- Quantize to int8 using TFLite post-training quantization (required for ESP-NN acceleration)
-- Convert: `xxd -i model.tflite > model_data.h` for embedding in firmware
+- Export as float32 TFLite (no quantization). Dynamic range quantization creates hybrid models (int8 weights, float32 activations) that TFLite Micro's Conv2D kernel rejects. Full int8 post-training quantization is blocked by a Keras 3 / TF 2.16 MLIR assertion crash. Future: resolve int8 export to enable ESP-NN acceleration.
+- Convert to C header via `export_c_header()` in `train.py` for embedding in firmware
 
 ### 3. Window Size Rationale
 
@@ -100,13 +100,14 @@ The current heuristic uses `maxWaveDurationMs` (200ms) + `maxPeakGapMs` (150ms) 
 - Output: classification (A_TO_B / B_TO_A / NO_TRANSIT) + softmax confidence
 - Drive LED feedback and detection events from ML result
 
-**Core allocation:** Inference runs on Core 1 (networking/display core). Core 0 continues uninterrupted sensor collection at 1kHz. The inference is fast enough (~1ms) that it won't meaningfully block Core 1's other responsibilities.
+**Core allocation:** Inference runs on Core 1 (networking/display core). Core 0 continues sensor collection, but the sensor poll rate drops significantly during the ~140ms inference window (from ~1000Hz to 20-365Hz) because the main loop on Core 1 is blocked. This is acceptable for initial testing but would benefit from optimization (async inference, or moving inference to a separate FreeRTOS task).
 
-**Memory budget:**
-- Model weights: ~5-10KB in flash (int8 quantized)
-- TFLite Micro tensor arena: ~10-30KB in SRAM
-- Input buffer: ~3.6KB (300 × 6 × 2 bytes)
-- PSRAM available: 8MB — plenty of headroom
+**Memory budget (actual):**
+- Model weights: 321KB in flash (float32 TFLite)
+- TFLite Micro tensor arena: 150KB allocated in PSRAM, ~40KB actually used
+- Ring buffer: 512 × `MLSensorFrame` (16 bytes each) = ~8KB
+- Total flash: 24.0% used (1.57MB / 6.5MB)
+- PSRAM: 97.4% free after init — plenty of headroom
 
 **Config:** Add `"detection_mode": "heuristic" | "ml"` to `config.json`. The main loop checks this to decide which detector processes sensor data and drives output.
 
@@ -118,7 +119,16 @@ The existing `DirectionDetector` (heuristic) and the new `MLDetector` coexist:
 - Could optionally run both simultaneously and log comparisons for validation
 - The heuristic remains the default and fallback
 
-## Open Questions
+## Open Questions (Resolved)
 
-- What is the minimum number of training samples needed for acceptable accuracy? Start with ~50 per class and evaluate.
-- Should the trigger threshold be shared with the heuristic's baseline logic, or independent? Start shared, separate if needed.
+- **Minimum training samples?** 46 sessions (15/19/12 per class) yielded 90% validation accuracy. On-device, ~57% of triggers result in detections. More data would improve reliability, especially for edge cases near the confidence threshold.
+- **Shared trigger threshold?** Yes — the ML detector reuses the heuristic's baseline/threshold logic for triggering. This works well: the trigger fires on real activity, and the ML model classifies direction. The main issue is that some triggers fire too early (before the full wave), producing low-confidence results that miss the threshold.
+
+## Learnings from Phase 4
+
+1. **Dynamic range quantization is incompatible with TFLite Micro.** The converter produces hybrid models (int8 weights, float32 activations) that the Conv2D kernel rejects. Must use either fully float32 or fully int8.
+2. **TFLite op resolver must include all ops the model uses.** The Keras Conv1D → TFLite Conv2D conversion introduces `EXPAND_DIMS` ops not in the original architecture.
+3. **Static TFLite objects prevent re-initialization.** Resolver and interpreter must be heap-allocated (not `static` locals) if `init()` may be called more than once.
+4. **140ms inference is usable but slow.** The heuristic is near-instant. The ~140ms float32 inference blocks the main loop and degrades sensor poll rate. True int8 quantization with ESP-NN could bring this to ~1-5ms.
+5. **Confidence threshold of 0.6 is borderline.** Many real events produce confidence in the 0.57-0.60 range. Lowering to 0.55 would catch more events but may increase false positives. More training data is the better path.
+6. **Re-trigger behavior is a feature, not a bug.** When the first trigger misses the threshold, subsequent triggers on the same event often succeed with higher confidence as more of the wave is captured.
