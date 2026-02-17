@@ -11,6 +11,7 @@
 #include "components/data/DataTransmitter.h"
 #include "components/diagnostics/MemoryMonitor.h"
 #include "components/detection/DirectionDetector.h"
+#include "components/detection/MLDetector.h"
 #include "components/led/LEDController.h"
 #include "components/interrupt/InterruptManager.h"
 #include "components/calibration/CalibrationManager.h"
@@ -37,7 +38,11 @@ SensorManager sensorManager;
 SessionManager sessionManager;
 DataTransmitter *dataTransmitter;
 DirectionDetector directionDetector;
+MLDetector mlDetector;
 LEDController ledController;
+
+// Detection mode: false = heuristic (DirectionDetector), true = ML (MLDetector)
+bool useMLDetection = false;
 InterruptManager interruptManager;
 
 // Current device mode
@@ -240,6 +245,18 @@ bool fetchConfigFromCloud()
                 Serial.printf("  INT Multi-Pulse: %d\n", currentConfig.interrupt_multi_pulse);
             }
 
+            // Check for detection_mode in sensor config
+            if (config.containsKey("detection_mode"))
+            {
+                String detMode = config["detection_mode"].as<String>();
+                useMLDetection = (detMode == "ml");
+                Serial.printf("  Detection Mode: %s (raw value: '%s')\n", useMLDetection ? "ML" : "heuristic", detMode.c_str());
+            }
+            else
+            {
+                Serial.println("  Detection Mode: not present in cloud config (defaulting to heuristic)");
+            }
+
             http.end();
             return true;
         }
@@ -385,6 +402,25 @@ void initializeSystem()
     else
     {
         Serial.println("WARNING: Failed to fetch config from cloud, using defaults");
+    }
+
+    // Log detection mode state after cloud config fetch
+    Serial.printf("\n[Config] Detection mode after cloud fetch: %s (useMLDetection=%d)\n",
+                  useMLDetection ? "ML" : "heuristic", useMLDetection);
+
+    // Initialize ML detector if ML mode is selected
+    if (useMLDetection)
+    {
+        Serial.println("\n=== Initializing ML Detector ===");
+        if (!mlDetector.init())
+        {
+            Serial.println("WARNING: ML detector initialization failed, falling back to heuristic");
+            useMLDetection = false;
+        }
+        else
+        {
+            Serial.println("ML detector initialized successfully");
+        }
     }
 
     // Initialization complete!
@@ -692,7 +728,39 @@ void handleCommand(const String &command, JsonDocument *doc)
     }
     else if (command == "configure_sensors")
     {
-        Serial.println("Configuring sensors...");
+        Serial.println("[Config] Received configure_sensors command");
+        // Log raw payload keys for debugging
+        if (doc != nullptr)
+        {
+            Serial.print("[Config] Top-level keys: ");
+            for (JsonPair kv : doc->as<JsonObject>())
+            {
+                Serial.printf("%s ", kv.key().c_str());
+            }
+            Serial.println();
+            if (doc->containsKey("sensor_config"))
+            {
+                JsonObject sc = (*doc)["sensor_config"];
+                Serial.print("[Config] sensor_config keys: ");
+                for (JsonPair kv : sc)
+                {
+                    Serial.printf("%s ", kv.key().c_str());
+                }
+                Serial.println();
+                if (sc.containsKey("detection_mode"))
+                {
+                    Serial.printf("[Config] detection_mode value: '%s'\n", sc["detection_mode"].as<const char *>());
+                }
+                else
+                {
+                    Serial.println("[Config] detection_mode NOT found in sensor_config");
+                }
+            }
+            else
+            {
+                Serial.println("[Config] sensor_config key NOT found in payload");
+            }
+        }
         display.showMessage("Configuring sensors...", TFT_CYAN);
 
         if (doc != nullptr && doc->containsKey("sensor_config"))
@@ -782,6 +850,28 @@ void handleCommand(const String &command, JsonDocument *doc)
                 currentConfig.interrupt_mode = config["interrupt_mode"].as<String>();
             }
 
+            // Handle detection_mode (heuristic vs ml)
+            if (config.containsKey("detection_mode"))
+            {
+                String detMode = config["detection_mode"].as<String>();
+                bool wasML = useMLDetection;
+                useMLDetection = (detMode == "ml");
+                if (useMLDetection && !wasML)
+                {
+                    // Switching to ML: initialize if needed
+                    if (!mlDetector.isReady())
+                    {
+                        Serial.println("  Initializing ML detector on config change...");
+                        if (!mlDetector.init())
+                        {
+                            Serial.println("  ML detector init failed, staying on heuristic");
+                            useMLDetection = false;
+                        }
+                    }
+                }
+                Serial.printf("  Detection Mode: %s\n", useMLDetection ? "ML" : "heuristic");
+            }
+
             Serial.println("Configuration updated:");
             Serial.printf("  Sample Rate: %d Hz\n", currentConfig.sample_rate_hz);
             Serial.printf("  LED Current: %s\n", currentConfig.led_current.c_str());
@@ -817,6 +907,8 @@ void handleCommand(const String &command, JsonDocument *doc)
     }
     else if (command == "set_mode")
     {
+        Serial.printf("[Config] Current detection mode: %s (useMLDetection=%d)\n",
+                      useMLDetection ? "ML" : "heuristic", useMLDetection);
         if (doc != nullptr && doc->containsKey("mode"))
         {
             String modeStr = (*doc)["mode"].as<String>();
@@ -861,23 +953,31 @@ void handleCommand(const String &command, JsonDocument *doc)
                 display.showMessage("Mode: PLAY", TFT_GREEN);
                 mqttManager->publishStatus("mode_play");
                 // Reset detector to establish fresh baseline for this session
-                directionDetector.fullReset();
-
-                // Apply calibration data if available
-                if (deviceCalibration.isValid())
+                if (useMLDetection)
                 {
-                    directionDetector.setCalibration(&deviceCalibration);
-                    Serial.println("Calibration data applied to DirectionDetector");
+                    mlDetector.fullReset();
+                    Serial.println("ML detector reset for new play session");
                 }
                 else
                 {
-                    directionDetector.setCalibration(nullptr);
-                    Serial.println("No calibration - using fallback thresholds");
+                    directionDetector.fullReset();
+
+                    // Apply calibration data if available
+                    if (deviceCalibration.isValid())
+                    {
+                        directionDetector.setCalibration(&deviceCalibration);
+                        Serial.println("Calibration data applied to DirectionDetector");
+                    }
+                    else
+                    {
+                        directionDetector.setCalibration(nullptr);
+                        Serial.println("No calibration - using fallback thresholds");
+                    }
+                    Serial.println("Heuristic detector reset for new play session");
                 }
 
                 // Turn off LEDs until baseline is established
                 ledController.off();
-                Serial.println("Direction detector reset for new play session");
             }
             else if (modeStr == "live_debug")
             {
@@ -893,21 +993,29 @@ void handleCommand(const String &command, JsonDocument *doc)
                 display.showMessage("Mode: LIVE DEBUG", TFT_MAGENTA);
                 mqttManager->publishStatus("mode_live_debug");
                 // Reset detector for live debug session
-                directionDetector.fullReset();
-
-                // Apply calibration data if available
-                if (deviceCalibration.isValid())
+                if (useMLDetection)
                 {
-                    directionDetector.setCalibration(&deviceCalibration);
-                    Serial.println("Calibration data applied to DirectionDetector");
+                    mlDetector.fullReset();
+                    Serial.println("ML detector reset for live debug session");
                 }
                 else
                 {
-                    directionDetector.setCalibration(nullptr);
-                    Serial.println("No calibration - using fallback thresholds");
+                    directionDetector.fullReset();
+
+                    // Apply calibration data if available
+                    if (deviceCalibration.isValid())
+                    {
+                        directionDetector.setCalibration(&deviceCalibration);
+                        Serial.println("Calibration data applied to DirectionDetector");
+                    }
+                    else
+                    {
+                        directionDetector.setCalibration(nullptr);
+                        Serial.println("No calibration - using fallback thresholds");
+                    }
+                    Serial.println("Heuristic detector reset for live debug session");
                 }
                 ledController.off();
-                Serial.println("Direction detector reset for live debug session");
             }
             else if (modeStr == "calibrate")
             {
@@ -1057,6 +1165,43 @@ void handleCommand(const String &command, JsonDocument *doc)
         sensorManager.startCollection(sessionManager.getQueue(), &sessionManager.getSessionSummary());
         display.showMessage("Ready", TFT_MAGENTA);
         Serial.println("[LIVE_DEBUG] Resumed after missed event capture");
+    }
+    else if (command == "set_detection_mode")
+    {
+        if (doc && doc->containsKey("mode"))
+        {
+            String mode = (*doc)["mode"].as<String>();
+            if (mode == "ml")
+            {
+                if (!mlDetector.isReady() && !useMLDetection)
+                {
+                    Serial.println("Initializing ML detector on demand...");
+                    if (mlDetector.init())
+                    {
+                        useMLDetection = true;
+                        Serial.println("Switched to ML detection");
+                        mqttManager->publishStatus("detection_mode_ml");
+                    }
+                    else
+                    {
+                        Serial.println("ML detector init failed, staying on heuristic");
+                        mqttManager->publishStatus("detection_mode_ml_failed");
+                    }
+                }
+                else
+                {
+                    useMLDetection = true;
+                    Serial.println("Switched to ML detection");
+                    mqttManager->publishStatus("detection_mode_ml");
+                }
+            }
+            else
+            {
+                useMLDetection = false;
+                Serial.println("Switched to heuristic detection");
+                mqttManager->publishStatus("detection_mode_heuristic");
+            }
+        }
     }
     else if (command == "reboot")
     {
@@ -1243,9 +1388,11 @@ void loop()
             if (millis() - lastPlayDebug > 2000)
             {
                 lastPlayDebug = millis();
-                Serial.printf("[PLAY] Buffer: %d samples, Detector: %s\n",
+                bool detectorReady = useMLDetection ? mlDetector.isReady() : directionDetector.isReady();
+                Serial.printf("[PLAY] Buffer: %d samples, Detector(%s): %s\n",
                               sessionManager.getDataCount(),
-                              directionDetector.isReady() ? "READY" : "establishing baseline...");
+                              useMLDetection ? "ML" : "heuristic",
+                              detectorReady ? "READY" : "establishing baseline...");
             }
 
             // Check cooldown between detections
@@ -1262,25 +1409,29 @@ void loop()
                 size_t bufferSize = buffer.size();
                 for (size_t i = lastProcessedIndex; i < bufferSize; i++)
                 {
-                    directionDetector.addReading(buffer[i]);
+                    if (useMLDetection)
+                        mlDetector.addReading(buffer[i]);
+                    else
+                        directionDetector.addReading(buffer[i]);
                 }
                 // Flush the last reading to ensure it's processed
-                directionDetector.flushReading();
+                if (useMLDetection)
+                    mlDetector.flushReading();
+                else
+                    directionDetector.flushReading();
                 lastProcessedIndex = bufferSize;
 
-                // Check for detection (V3: adaptive threshold + wave envelope)
-                if (directionDetector.hasDetection())
+                // Check for detection
+                bool detected = useMLDetection ? mlDetector.hasDetection() : directionDetector.hasDetection();
+                if (detected)
                 {
-                    DetectionResult result = directionDetector.getResult();
+                    DetectionResult result = useMLDetection ? mlDetector.getResult() : directionDetector.getResult();
 
                     // Detection successful!
-                    Serial.printf("DETECTION: %s (confidence: %.2f, CoM gap: %dms)\n",
+                    Serial.printf("DETECTION [%s]: %s (confidence: %.2f)\n",
+                                  useMLDetection ? "ML" : "heuristic",
                                   DirectionDetector::directionToString(result.direction),
-                                  result.confidence,
-                                  result.comGapMs);
-                    Serial.printf("  Thresholds: A=%.1f, B=%.1f | Peaks: A=%d, B=%d\n",
-                                  result.thresholdA, result.thresholdB,
-                                  result.maxSignalA, result.maxSignalB);
+                                  result.confidence);
 
                     // Show on LEDs
                     ledController.showDirection(result.direction, 3000);
@@ -1301,26 +1452,30 @@ void loop()
 
                     // Reset for next detection (clear buffer without changing state)
                     lastDetectionTime = now;
-                    directionDetector.reset();
+                    if (useMLDetection)
+                        mlDetector.reset();
+                    else
+                        directionDetector.reset();
                     lastProcessedIndex = 0;
-                    buffer.clear(); // Clear buffer directly, don't reset session state
+                    buffer.clear();
                     Serial.println("Detection complete, buffer cleared for next event");
                 }
 
                 // Limit buffer size to prevent memory issues in play mode
                 if (bufferSize > 500)
                 {
-                    // Keep only recent data, reset detector
                     Serial.printf("Buffer overflow prevention: clearing %d samples\n", bufferSize);
-                    directionDetector.reset();
+                    if (useMLDetection)
+                        mlDetector.reset();
+                    else
+                        directionDetector.reset();
                     lastProcessedIndex = 0;
-                    buffer.clear(); // Clear buffer directly, don't reset session state
+                    buffer.clear();
                 }
             }
-            else if (!ledController.isAnimating() && directionDetector.isReady())
+            else if (!ledController.isAnimating() &&
+                     (useMLDetection ? mlDetector.isReady() : directionDetector.isReady()))
             {
-                // Show ready pulse while in cooldown (but not animating a detection)
-                // Only show after baseline is established
                 ledController.showReady();
             }
 
@@ -1338,9 +1493,11 @@ void loop()
             if (millis() - lastLiveDebugLog > 2000)
             {
                 lastLiveDebugLog = millis();
-                Serial.printf("[LIVE_DEBUG] Buffer: %d samples, Detector: %s\n",
+                bool detectorReady = useMLDetection ? mlDetector.isReady() : directionDetector.isReady();
+                Serial.printf("[LIVE_DEBUG] Buffer: %d samples, Detector(%s): %s\n",
                               sessionManager.getDataCount(),
-                              directionDetector.isReady() ? "READY" : "establishing baseline...");
+                              useMLDetection ? "ML" : "heuristic",
+                              detectorReady ? "READY" : "establishing baseline...");
             }
 
             // Check cooldown between detections
@@ -1357,20 +1514,27 @@ void loop()
                 size_t bufferSize = buffer.size();
                 for (size_t i = lastLiveDebugIndex; i < bufferSize; i++)
                 {
-                    directionDetector.addReading(buffer[i]);
+                    if (useMLDetection)
+                        mlDetector.addReading(buffer[i]);
+                    else
+                        directionDetector.addReading(buffer[i]);
                 }
-                directionDetector.flushReading();
+                if (useMLDetection)
+                    mlDetector.flushReading();
+                else
+                    directionDetector.flushReading();
                 lastLiveDebugIndex = bufferSize;
 
                 // Check for detection
-                if (directionDetector.hasDetection())
+                bool detected = useMLDetection ? mlDetector.hasDetection() : directionDetector.hasDetection();
+                if (detected)
                 {
-                    DetectionResult result = directionDetector.getResult();
+                    DetectionResult result = useMLDetection ? mlDetector.getResult() : directionDetector.getResult();
 
-                    Serial.printf("[LIVE_DEBUG] DETECTION: %s (confidence: %.2f, CoM gap: %dms)\n",
+                    Serial.printf("[LIVE_DEBUG] DETECTION [%s]: %s (confidence: %.2f)\n",
+                                  useMLDetection ? "ML" : "heuristic",
                                   DirectionDetector::directionToString(result.direction),
-                                  result.confidence,
-                                  result.comGapMs);
+                                  result.confidence);
 
                     // LED feedback (same as Play)
                     ledController.showDirection(result.direction, 3000);
@@ -1474,7 +1638,10 @@ void loop()
 
                     // 7. Clear buffer and reset detector
                     lastDetectionTime = millis();
-                    directionDetector.reset();
+                    if (useMLDetection)
+                        mlDetector.reset();
+                    else
+                        directionDetector.reset();
                     lastLiveDebugIndex = 0;
                     buffer.clear();
 
@@ -1489,12 +1656,16 @@ void loop()
                 if (bufferSize > LIVE_DEBUG_BUFFER_CAP)
                 {
                     Serial.printf("[LIVE_DEBUG] Buffer overflow prevention: clearing %d samples\n", bufferSize);
-                    directionDetector.reset();
+                    if (useMLDetection)
+                        mlDetector.reset();
+                    else
+                        directionDetector.reset();
                     lastLiveDebugIndex = 0;
                     buffer.clear();
                 }
             }
-            else if (!ledController.isAnimating() && directionDetector.isReady())
+            else if (!ledController.isAnimating() &&
+                     (useMLDetection ? mlDetector.isReady() : directionDetector.isReady()))
             {
                 ledController.showReady();
             }

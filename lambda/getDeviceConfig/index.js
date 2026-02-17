@@ -17,6 +17,8 @@ const DEVICES_TABLE = process.env.DEVICES_TABLE || 'MotionPlayDevices';
 const DEFAULT_CONFIG = {
     // Primary sensor mode
     sensor_mode: "polling",  // "polling" or "interrupt"
+    // Detection algorithm mode
+    detection_mode: "heuristic",  // "heuristic" or "ml"
     // Polling mode settings
     sample_rate_hz: 1000,
     led_current: "200mA",
