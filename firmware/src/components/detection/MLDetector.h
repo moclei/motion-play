@@ -27,7 +27,7 @@
 static constexpr uint16_t ML_WINDOW_MS = 300;
 static constexpr uint8_t ML_NUM_POSITIONS = 6;
 static constexpr float ML_NORMALIZATION_MAX = 490.0f;
-static constexpr float ML_CONFIDENCE_THRESHOLD = 0.6f;
+static constexpr float ML_CONFIDENCE_THRESHOLD = 0.55f;
 
 // Tensor arena size — allocated in PSRAM for the dynamic-range quantized model
 static constexpr size_t ML_TENSOR_ARENA_SIZE = 150 * 1024; // 150KB
