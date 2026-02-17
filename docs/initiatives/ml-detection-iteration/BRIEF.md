@@ -6,21 +6,27 @@ Improve the ML-based direction detection from its initial proof-of-concept state
 
 ## Goals
 
+- **Fix training/inference pipeline mismatches** that undermine current model accuracy (normalization, window alignment).
 - Achieve ML detection accuracy comparable to the heuristic algorithm on standard transit events.
 - Reduce inference time from ~140ms (float32) to <10ms via int8 quantization and ESP-NN hardware acceleration.
 - Make ML parameters (confidence threshold, post-trigger delay) tunable from the frontend without reflashing.
-- Collect a substantially larger labeled dataset (100+ sessions per class).
+- Collect a substantially larger labeled dataset (100+ sessions per class), supplemented by data augmentation.
 - Establish a side-by-side comparison capability to objectively evaluate ML vs heuristic.
+- Introduce model versioning from the start so every trained model is tracked and reproducible.
 
 ## Scope
 
 What's in:
+- Fix training/inference pipeline mismatches (normalization scheme, window alignment)
+- Model versioning (version constant in C header, logged on boot and in detection events)
 - Expanded data collection (more sessions per class, edge cases)
+- Data augmentation (channel-swap direction flipping, time-shifting, noise injection, amplitude scaling)
 - Int8 quantization and ESP-NN integration for hardware-accelerated inference
 - Frontend-settable ML parameters (confidence threshold, post-trigger delay)
 - Async inference (FreeRTOS task) to avoid blocking the main loop
 - Side-by-side comparison mode (run both detectors, log both results)
 - Model architecture experimentation if needed
+- Validation strategy improvements (k-fold cross-validation, per-module evaluation)
 - Clean up debug logging from Phase 4
 
 What's out:
