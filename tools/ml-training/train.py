@@ -7,12 +7,13 @@ trains a 1D CNN, evaluates, and exports as a C header file for
 firmware embedding via TFLite.
 
 Usage:
-    python train.py                          # Train with defaults (trigger-aligned, norm=490)
+    python train.py                          # Train with defaults (trigger-aligned, norm=490, augmented)
     python train.py --data-dir ./data/sessions --window-ms 300
     python train.py --epochs 50 --batch-size 16
     python train.py --alignment center       # Legacy centered window alignment
     python train.py --norm-max 500           # Custom normalization constant
     python train.py --model-version "v2-test" # Custom version string
+    python train.py --no-augment             # Disable channel-swap data augmentation
 """
 
 import argparse
@@ -210,8 +211,44 @@ def normalize(X, norm_max=DEFAULT_NORMALIZATION_MAX):
     return X_norm
 
 
+def channel_swap_augment(X, y):
+    """Augment directional samples by swapping Side A / Side B sensor channels.
+
+    Sensor layout (6 channels):
+        Positions [0, 2, 4] = Side B (S1 sensors)
+        Positions [1, 3, 5] = Side A (S2 sensors)
+
+    Swapping Side A ↔ Side B and flipping the direction label produces a
+    physically valid mirror of the transit event. This doubles directional
+    training data without any hand-crafted noise.
+
+    no_transit samples are included unchanged (label stays the same).
+
+    Returns augmented (X_aug, y_aug) concatenated with the originals.
+    """
+    SWAP_ORDER = [1, 0, 3, 2, 5, 4]  # swap within each module pair
+    DIRECTION_FLIP = {
+        CLASS_TO_IDX["a_to_b"]: CLASS_TO_IDX["b_to_a"],
+        CLASS_TO_IDX["b_to_a"]: CLASS_TO_IDX["a_to_b"],
+        CLASS_TO_IDX["no_transit"]: CLASS_TO_IDX["no_transit"],
+    }
+
+    X_swapped = X[:, :, SWAP_ORDER]
+    y_swapped = np.array([DIRECTION_FLIP[label] for label in y], dtype=y.dtype)
+
+    X_aug = np.concatenate([X, X_swapped], axis=0)
+    y_aug = np.concatenate([y, y_swapped], axis=0)
+
+    n_original = len(y)
+    n_dir_original = int(np.sum((y == CLASS_TO_IDX["a_to_b"]) | (y == CLASS_TO_IDX["b_to_a"])))
+    print(f"  Channel-swap augmentation: {n_original} → {len(y_aug)} samples "
+          f"(+{n_dir_original} mirrored directional, +{n_original - n_dir_original} mirrored no_transit)")
+
+    return X_aug, y_aug
+
+
 def build_dataset(sessions, window_ms=300, norm_max=DEFAULT_NORMALIZATION_MAX,
-                   alignment="trigger"):
+                   alignment="trigger", augment=True):
     """Build X (features) and y (labels) arrays from sessions."""
     X_list = []
     y_list = []
@@ -230,9 +267,17 @@ def build_dataset(sessions, window_ms=300, norm_max=DEFAULT_NORMALIZATION_MAX,
     X = np.stack(X_list, axis=0)  # (N, window_ms, 6)
     y = np.array(y_list, dtype=np.int32)  # (N,)
 
-    print(f"Dataset: X={X.shape}, y={y.shape}")
+    print(f"Dataset (before augmentation): X={X.shape}, y={y.shape}")
     print(f"  Class distribution: "
           + ", ".join(f"{CLASSES[i]}={np.sum(y==i)}" for i in range(len(CLASSES))))
+
+    if augment:
+        X, y = channel_swap_augment(X, y)
+        # Duplicate session_ids for augmented samples (with suffix)
+        session_ids = session_ids + [f"{sid}_swapped" for sid in session_ids]
+        print(f"  Post-augmentation distribution: "
+              + ", ".join(f"{CLASSES[i]}={np.sum(y==i)}" for i in range(len(CLASSES))))
+
     print(f"  Raw value range: [{X.min():.1f}, {X.max():.1f}]")
     print(f"  Normalization: fixed constant = {norm_max:.1f} (must match firmware ML_NORMALIZATION_MAX)")
 
@@ -336,7 +381,8 @@ def generate_model_version(args, num_sessions):
     """Generate a model version string from training parameters."""
     from datetime import datetime
     date_str = datetime.now().strftime("%Y%m%d")
-    return f"v{date_str}-{num_sessions}sess-{args.alignment}-norm{int(args.norm_max)}"
+    aug_tag = "aug" if not args.no_augment else "noaug"
+    return f"v{date_str}-{num_sessions}sess-{args.alignment}-norm{int(args.norm_max)}-{aug_tag}"
 
 
 def export_c_header(tflite_path, header_path="model_data.h", model_version=None):
@@ -400,6 +446,8 @@ def main():
                         help="Window alignment mode: 'trigger' matches firmware behavior (default), 'center' is legacy centered")
     parser.add_argument("--model-version", type=str, default=None,
                         help="Model version string (auto-generated if not provided)")
+    parser.add_argument("--no-augment", action="store_true",
+                        help="Disable channel-swap data augmentation")
     args = parser.parse_args()
 
     os.makedirs(args.output_dir, exist_ok=True)
@@ -414,9 +462,15 @@ def main():
     # Build dataset
     print("\n=== Preprocessing ===")
     print(f"  Window alignment: {args.alignment}")
+    augment = not args.no_augment
+    if augment:
+        print(f"  Channel-swap augmentation: ENABLED")
+    else:
+        print(f"  Channel-swap augmentation: DISABLED")
     X, y, session_ids = build_dataset(sessions, window_ms=args.window_ms,
                                       norm_max=args.norm_max,
-                                      alignment=args.alignment)
+                                      alignment=args.alignment,
+                                      augment=augment)
 
     # Train/test split (stratified)
     from sklearn.model_selection import train_test_split
