@@ -1,0 +1,145 @@
+# Motion Play Project Manifest
+# Structured metadata for AI parsing and navigation
+
+project_name: motion-play
+description: ESP32-based sensor system for detecting and tracking fast-moving objects through a detection plane
+version: 0.4.0  # Phase 4 - Integration & Polish
+last_updated: 2026-01-30
+
+# Repository structure
+type: monorepo
+structure:
+  firmware:
+    path: firmware/
+    framework: arduino
+    platform: platformio
+    board: esp32-s3 (lilygo-t-display-s3)
+    entry_point: firmware/src/main.cpp
+    components: firmware/src/components/
+    config: firmware/data/config.json
+    certificates: firmware/data/certs/
+    
+  frontend:
+    path: frontend/motion-play-ui/
+    framework: react
+    language: typescript
+    build_tool: vite
+    styling: tailwind
+    entry_point: frontend/motion-play-ui/src/App.tsx
+    components: frontend/motion-play-ui/src/components/
+    api_client: frontend/motion-play-ui/src/services/api.ts
+    
+  lambda:
+    path: lambda/
+    runtime: nodejs20.x
+    functions:
+      - processData      # IoT Rule → Store sensor data
+      - processStatus    # IoT Rule → Update device status
+      - sendCommand      # API → Send MQTT command to device
+      - getSessions      # API → List sessions
+      - getSessionData   # API → Get session details + readings
+      - updateSession    # API → Update session labels/notes
+      - deleteSession    # API → Delete session
+      - getDeviceConfig  # API → Get device configuration
+      - updateDeviceConfig  # API → Update device configuration
+      
+  infrastructure:
+    path: infrastructure/
+    provider: aws
+    region: us-west-2
+    services:
+      - iot-core      # MQTT broker for device connectivity
+      - dynamodb      # Session and sensor data storage
+      - lambda        # Serverless compute
+      - api-gateway   # REST API for frontend
+      
+  hardware:
+    path: hardware/
+    tool: kicad
+    pcbs:
+      main: hardware/pcb-main/kicad/
+      sensor_rigid: hardware/sensor-rigid/  # Rigid base PCB with PCA9546A mux, connector, support circuitry
+      sensor_flex: hardware/sensor-flex/    # Flex PCB with VCNL4040 sensors, bends to angle sensors outward
+      sensor_legacy: hardware/pcb-sensor/   # Deprecated - replaced by sensor_rigid + sensor_flex
+    components: hardware/components/
+    
+  context:
+    path: .context/
+    main_doc: .context/PROJECT.md
+    ideas: .context/IDEAS.md
+    netlists: .context/motion-play-*/netlist/
+
+# Key technical decisions (quick reference)
+decisions:
+  - name: Composite Timestamp Key
+    what: DynamoDB sort key encodes both timestamp and sensor position
+    why: Multiple sensors reading simultaneously need unique keys
+    formula: timestamp_offset = (timestamp_ms * 10) + sensor_position
+    
+  - name: Dual-Core Architecture
+    what: ESP32 Core 0 for sensors, Core 1 for networking
+    why: Sensor sampling at 1000 Hz cannot be interrupted by WiFi/MQTT
+    
+  - name: Dual-MUX Architecture
+    what: TCA9548A (main) → PCA9546A (per sensor board) → VCNL4040
+    why: All VCNL4040s share same I2C address (0x60)
+    
+  - name: MQTT over HTTP
+    what: MQTT for device-to-cloud, HTTP REST for frontend-to-cloud
+    why: MQTT enables bidirectional communication with device
+    
+  - name: Cloud Config Source of Truth
+    what: Device fetches sensor config from cloud on boot
+    why: Config persists across firmware reboots, frontend is authoritative
+
+# Hardware components (quick reference)
+hardware:
+  mcu: LilyGO T-Display-S3 (ESP32-S3 with LCD)
+  main_mux: TCA9548A (8-channel I2C multiplexer)
+  local_mux: PCA9546A (4-channel I2C multiplexer, one per sensor board)
+  sensors: VCNL4040 (proximity + ambient light, 2 per sensor board)
+  sensor_boards: 3 (6 sensors total)
+  power: DWEII USB-C module (5V 2.4A)
+  regulator: AP2112K-3.3 (3.3V LDO)
+  level_shifter: SN74AHCT125 (for LED strip)
+  led_strip: WS2818B (72 LEDs)
+
+# I2C Addresses
+i2c:
+  tca9548a: 0x70
+  pca9546a:
+    board_1: 0x70  # A1=0, A0=0
+    board_2: 0x71  # A1=0, A0=1
+    board_3: 0x72  # A1=1, A0=0
+  vcnl4040: 0x60  # All sensors share this address
+
+# GPIO Pinout (T-Display-S3)
+gpio:
+  i2c_sda: 43
+  i2c_scl: 44
+  tca_reset: 10
+  sensor_int_1: 11
+  sensor_int_2: 12
+  sensor_int_3: 13
+  led_strip: 16
+  button_1: 14
+  button_2: 0
+
+# AWS Resources
+aws:
+  api_endpoint: https://gur8ivkb44.execute-api.us-west-2.amazonaws.com/prod
+  iot_endpoint: # Device-specific, in firmware/data/config.json
+  dynamodb_tables:
+    - MotionPlaySessions
+    - MotionPlaySensorData
+    - MotionPlayDevices
+  mqtt_topics:
+    data: motionplay/{device_id}/data
+    status: motionplay/{device_id}/status
+    commands: motionplay/{device_id}/commands
+
+# Documentation references
+references:
+  hardware_datasheets: docs/references/
+  vcnl4040_config: docs/references/vcnl4040/CONFIGURATION_GUIDE.md
+
