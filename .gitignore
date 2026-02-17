@@ -5,9 +5,6 @@
 .vscode/launch.json
 .vscode/ipch
 
-#Context files
-.context/
-
 #Mac and system files
 .DS_Store
 *.zip

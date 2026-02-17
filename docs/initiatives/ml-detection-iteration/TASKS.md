@@ -3,16 +3,16 @@
 ## Phase 1: Pipeline fixes, versioning, and cleanup
 
 ### Pipeline correctness (do before mass data collection)
-- [ ] Fix normalization mismatch: update `train.py` `normalize()` to use fixed constant (match firmware's `ML_NORMALIZATION_MAX`) instead of per-sample max
-- [ ] Determine optimal normalization constant: analyze dataset for practical max proximity, or use current 490.0 and document rationale
-- [ ] Fix window alignment: update `preprocess_session()` to extract windows aligned to trigger-end (matching firmware behavior) instead of centering on peak
+- [x] Fix normalization mismatch: update `train.py` `normalize()` to use fixed constant (match firmware's `ML_NORMALIZATION_MAX`) instead of per-sample max
+- [x] Determine optimal normalization constant: using current 490.0, matching firmware `ML_NORMALIZATION_MAX`. Added `--norm-max` CLI arg for experimentation.
+- [x] Fix window alignment: update `preprocess_session()` to extract windows aligned to trigger-end (matching firmware behavior) instead of centering on peak. Added `--alignment` CLI arg (`trigger` default, `center` for legacy).
 - [ ] Retrain with fixes applied, compare accuracy to Phase 3 baseline — expect improvement from fixes alone
 
 ### Model versioning
-- [ ] Add `MODEL_VERSION` string constant to generated C header (e.g., `"v2.0-float32-46sess"`)
-- [ ] Log model version on firmware boot (serial output)
+- [x] Add `MODEL_VERSION` string constant to generated C header (auto-generated from date, session count, alignment, norm constant)
+- [x] Log model version on firmware boot (serial output in `MLDetector::init()`)
 - [ ] Include model version in detection event MQTT messages
-- [ ] Create `tools/ml-training/MODEL_CHANGELOG.md` to track training parameters, dataset size, and metrics per version
+- [x] Create `tools/ml-training/MODEL_CHANGELOG.md` to track training parameters, dataset size, and metrics per version
 
 ### Cleanup
 - [ ] Clean up verbose `[Config]` debug logging added during Phase 4 troubleshooting
