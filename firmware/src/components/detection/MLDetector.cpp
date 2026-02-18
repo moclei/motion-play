@@ -133,6 +133,9 @@ bool MLDetector::init()
                   interpreter_->arena_used_bytes(), ML_TENSOR_ARENA_SIZE);
 
     modelReady_ = true;
+#ifdef ML_MODEL_VERSION
+    Serial.printf("[MLDetector] Model version: %s\n", ML_MODEL_VERSION);
+#endif
     Serial.println("[MLDetector] Initialization complete");
     return true;
 }

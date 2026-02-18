@@ -187,6 +187,8 @@ function App() {
                     sessionId={selectedSession.session_id}
                     currentLabels={sessionData.session.labels || []}
                     currentNotes={sessionData.session.notes || ''}
+                    detectionDirection={sessionData.session.detection_direction}
+                    detectionConfidence={sessionData.session.detection_confidence}
                     onUpdate={handleSessionUpdate}
                   />
                 </div>

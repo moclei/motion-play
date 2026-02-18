@@ -6,29 +6,29 @@ interface LabelEditorProps {
     sessionId: string;
     currentLabels: string[];
     currentNotes: string;
+    detectionDirection?: 'a_to_b' | 'b_to_a';
+    detectionConfidence?: number;
     onUpdate: (labels: string[], notes: string) => void;
 }
 
-export const LabelEditor = ({ sessionId, currentLabels, currentNotes, onUpdate }: LabelEditorProps) => {
+export const LabelEditor = ({ sessionId, currentLabels, currentNotes, detectionDirection, detectionConfidence, onUpdate }: LabelEditorProps) => {
     const [labels, setLabels] = useState<string[]>(currentLabels);
     const [notes, setNotes] = useState(currentNotes);
     const [newLabel, setNewLabel] = useState('');
     const [saving, setSaving] = useState(false);
 
-    // Predefined label suggestions
     const suggestions = [
+        'a->b',
+        'b->a',
+        'no-transit',
+        'false-transit',
         'successful-shot',
         'missed-shot',
         'practice',
-        'warmup',
         'test',
         'baseline',
-        'calibration',
         'high-speed',
         'slow-motion',
-        'left-side',
-        'right-side',
-        'center'
     ];
 
     const addLabel = (label: string) => {
@@ -60,6 +60,23 @@ export const LabelEditor = ({ sessionId, currentLabels, currentNotes, onUpdate }
     return (
         <div className="space-y-4 p-4 border rounded bg-gray-50">
             <h3 className="font-semibold text-gray-800">Labels & Notes</h3>
+
+            {detectionDirection && (
+                <div className="flex items-center gap-2 px-3 py-2 bg-indigo-50 border border-indigo-200 rounded text-sm">
+                    <span className="font-medium text-indigo-700">Auto-detected:</span>
+                    <span className="font-bold text-indigo-900">
+                        {detectionDirection === 'a_to_b' ? 'A → B' : 'B → A'}
+                    </span>
+                    {detectionConfidence !== undefined && (
+                        <span className="text-indigo-500">
+                            ({(detectionConfidence * 100).toFixed(0)}% confidence)
+                        </span>
+                    )}
+                    <span className="text-indigo-400 text-xs ml-auto">
+                        Add a label to override
+                    </span>
+                </div>
+            )}
 
             {/* Current Labels */}
             <div>

@@ -1461,13 +1461,14 @@ void loop()
                     Serial.println("Detection complete, buffer cleared for next event");
                 }
 
-                // Limit buffer size to prevent memory issues in play mode
+                // Limit buffer size to prevent memory issues in play mode.
+                // Only clear the session buffer — detectors maintain their own
+                // internal state (ring buffer for ML, wave state for heuristic)
+                // and must NOT be reset here or they lose accumulated data.
                 if (bufferSize > 500)
                 {
                     Serial.printf("Buffer overflow prevention: clearing %d samples\n", bufferSize);
-                    if (useMLDetection)
-                        mlDetector.reset();
-                    else
+                    if (!useMLDetection)
                         directionDetector.reset();
                     lastProcessedIndex = 0;
                     buffer.clear();

@@ -3,13 +3,17 @@
 ML Training Pipeline for Motion Play Direction Detection.
 
 Loads downloaded session data, preprocesses into fixed-size tensors,
-trains a 1D CNN, evaluates, quantizes to int8 TFLite, and exports
-as a C header file for firmware embedding.
+trains a 1D CNN, evaluates, and exports as a C header file for
+firmware embedding via TFLite.
 
 Usage:
-    python train.py                          # Train with defaults
+    python train.py                          # Train with defaults (trigger-aligned, norm=490, augmented)
     python train.py --data-dir ./data/sessions --window-ms 300
     python train.py --epochs 50 --batch-size 16
+    python train.py --alignment center       # Legacy centered window alignment
+    python train.py --norm-max 500           # Custom normalization constant
+    python train.py --model-version "v2-test" # Custom version string
+    python train.py --no-augment             # Disable channel-swap data augmentation
 """
 
 import argparse
@@ -22,6 +26,12 @@ import numpy as np
 # Class mapping
 CLASSES = ["a_to_b", "b_to_a", "no_transit"]
 CLASS_TO_IDX = {c: i for i, c in enumerate(CLASSES)}
+
+# Normalization constant — MUST match ML_NORMALIZATION_MAX in firmware (MLDetector.h).
+# This is the fixed divisor for proximity values. Using a fixed constant ensures
+# training and on-device inference see identical input distributions.
+# Value is based on observed practical maximum proximity at operating distance.
+DEFAULT_NORMALIZATION_MAX = 490.0
 
 
 # ---------------------------------------------------------------------------
@@ -112,21 +122,28 @@ def find_event_center(matrix):
     return int(np.argmax(total_signal))
 
 
-def extract_window(matrix, window_ms, center=None):
+def extract_window(matrix, window_ms, anchor=None, anchor_position=0.5):
     """
     Extract a fixed-size window from a (T, 6) matrix.
 
-    If center is provided, extracts around that point.
-    Otherwise, centers on the peak signal.
+    Args:
+        matrix: (T, 6) proximity data matrix.
+        window_ms: Output window length in ms.
+        anchor: Timestamp index to anchor the window around. If None, uses peak signal.
+        anchor_position: Where in the output window the anchor should land, as a
+            fraction [0, 1]. 0.5 = centered, 0.67 = anchor at 2/3 of window (matching
+            firmware trigger-aligned behavior).
+
     Pads with zeros if the window extends beyond the matrix.
     """
     T = matrix.shape[0]
 
-    if center is None:
-        center = find_event_center(matrix)
+    if anchor is None:
+        anchor = find_event_center(matrix)
 
-    half = window_ms // 2
-    start = center - half
+    # Position the anchor at the specified fraction of the window
+    offset_before = int(window_ms * anchor_position)
+    start = anchor - offset_before
     end = start + window_ms
 
     # Create output window
@@ -144,31 +161,94 @@ def extract_window(matrix, window_ms, center=None):
     return window
 
 
-def preprocess_session(session, window_ms=300):
-    """Convert a session to a (window_ms, 6) normalized tensor."""
+def preprocess_session(session, window_ms=300, alignment="trigger"):
+    """Convert a session to a (window_ms, 6) tensor.
+
+    Args:
+        alignment: How to position the transit event in the window.
+            "center" — Peak signal centered in window (legacy behavior).
+            "trigger" — Peak at ~2/3 of window, matching firmware behavior where
+                the trigger fires early in the wave and the 150ms post-trigger delay
+                places the peak in the latter portion of the captured window.
+    """
     readings = session["readings"]
     matrix = readings_to_matrix(readings)
 
     if session["class"] == "no_transit":
-        # For no-transit: use center of session (or random for augmentation)
         center = matrix.shape[0] // 2
+        anchor_position = 0.5  # no-transit: centered regardless of alignment mode
     else:
-        # For transit events: center on peak activity
         center = find_event_center(matrix)
+        if alignment == "trigger":
+            # Firmware behavior: trigger fires at start of wave, then 150ms delay,
+            # then captures 300ms window ending at current time. Peak is typically
+            # ~50-100ms after trigger, so ~100ms from end of window → 2/3 through.
+            anchor_position = 0.67
+        else:
+            anchor_position = 0.5
 
-    window = extract_window(matrix, window_ms, center=center)
+    window = extract_window(matrix, window_ms, anchor=center,
+                            anchor_position=anchor_position)
     return window
 
 
-def normalize(X):
-    """Normalize proximity values to [0, 1] range based on actual data."""
-    max_val = X.max()
-    if max_val == 0:
+def normalize(X, norm_max=DEFAULT_NORMALIZATION_MAX):
+    """Normalize proximity values using a fixed constant (must match firmware).
+
+    Uses a fixed divisor rather than per-sample or per-dataset max to ensure
+    training normalization matches on-device inference exactly.
+    Values exceeding norm_max are clipped to 1.0.
+    """
+    if norm_max <= 0:
         return X
-    return X / max_val
+    X_norm = X / norm_max
+    clipped_count = int(np.sum(X_norm > 1.0))
+    if clipped_count > 0:
+        over_max = X[X > norm_max].max()
+        print(f"  WARNING: {clipped_count} values exceed norm_max ({norm_max:.1f}), "
+              f"max observed = {over_max:.1f}. Clipping to 1.0.")
+        X_norm = np.clip(X_norm, 0.0, 1.0)
+    return X_norm
 
 
-def build_dataset(sessions, window_ms=300):
+def channel_swap_augment(X, y):
+    """Augment directional samples by swapping Side A / Side B sensor channels.
+
+    Sensor layout (6 channels):
+        Positions [0, 2, 4] = Side B (S1 sensors)
+        Positions [1, 3, 5] = Side A (S2 sensors)
+
+    Swapping Side A ↔ Side B and flipping the direction label produces a
+    physically valid mirror of the transit event. This doubles directional
+    training data without any hand-crafted noise.
+
+    no_transit samples are included unchanged (label stays the same).
+
+    Returns augmented (X_aug, y_aug) concatenated with the originals.
+    """
+    SWAP_ORDER = [1, 0, 3, 2, 5, 4]  # swap within each module pair
+    DIRECTION_FLIP = {
+        CLASS_TO_IDX["a_to_b"]: CLASS_TO_IDX["b_to_a"],
+        CLASS_TO_IDX["b_to_a"]: CLASS_TO_IDX["a_to_b"],
+        CLASS_TO_IDX["no_transit"]: CLASS_TO_IDX["no_transit"],
+    }
+
+    X_swapped = X[:, :, SWAP_ORDER]
+    y_swapped = np.array([DIRECTION_FLIP[label] for label in y], dtype=y.dtype)
+
+    X_aug = np.concatenate([X, X_swapped], axis=0)
+    y_aug = np.concatenate([y, y_swapped], axis=0)
+
+    n_original = len(y)
+    n_dir_original = int(np.sum((y == CLASS_TO_IDX["a_to_b"]) | (y == CLASS_TO_IDX["b_to_a"])))
+    print(f"  Channel-swap augmentation: {n_original} → {len(y_aug)} samples "
+          f"(+{n_dir_original} mirrored directional, +{n_original - n_dir_original} mirrored no_transit)")
+
+    return X_aug, y_aug
+
+
+def build_dataset(sessions, window_ms=300, norm_max=DEFAULT_NORMALIZATION_MAX,
+                   alignment="trigger", augment=True):
     """Build X (features) and y (labels) arrays from sessions."""
     X_list = []
     y_list = []
@@ -176,7 +256,8 @@ def build_dataset(sessions, window_ms=300):
 
     for session in sessions:
         try:
-            window = preprocess_session(session, window_ms=window_ms)
+            window = preprocess_session(session, window_ms=window_ms,
+                                        alignment=alignment)
             X_list.append(window)
             y_list.append(session["class_idx"])
             session_ids.append(session["session_id"])
@@ -186,14 +267,21 @@ def build_dataset(sessions, window_ms=300):
     X = np.stack(X_list, axis=0)  # (N, window_ms, 6)
     y = np.array(y_list, dtype=np.int32)  # (N,)
 
-    raw_max = X.max()
-    print(f"Dataset: X={X.shape}, y={y.shape}")
+    print(f"Dataset (before augmentation): X={X.shape}, y={y.shape}")
     print(f"  Class distribution: "
           + ", ".join(f"{CLASSES[i]}={np.sum(y==i)}" for i in range(len(CLASSES))))
-    print(f"  Raw value range: [{X.min():.1f}, {X.max():.1f}]")
-    print(f"  Normalization max: {raw_max:.1f}")
 
-    X = normalize(X)
+    if augment:
+        X, y = channel_swap_augment(X, y)
+        # Duplicate session_ids for augmented samples (with suffix)
+        session_ids = session_ids + [f"{sid}_swapped" for sid in session_ids]
+        print(f"  Post-augmentation distribution: "
+              + ", ".join(f"{CLASSES[i]}={np.sum(y==i)}" for i in range(len(CLASSES))))
+
+    print(f"  Raw value range: [{X.min():.1f}, {X.max():.1f}]")
+    print(f"  Normalization: fixed constant = {norm_max:.1f} (must match firmware ML_NORMALIZATION_MAX)")
+
+    X = normalize(X, norm_max=norm_max)
     print(f"  Normalized range: [{X.min():.4f}, {X.max():.4f}]")
 
     return X, y, session_ids
@@ -289,10 +377,20 @@ def export_tflite(model, X_train, output_path="model.tflite"):
     return tflite_model
 
 
-def export_c_header(tflite_path, header_path="model_data.h"):
-    """Convert TFLite model to a C header file."""
+def generate_model_version(args, num_sessions):
+    """Generate a model version string from training parameters."""
+    from datetime import datetime
+    date_str = datetime.now().strftime("%Y%m%d")
+    aug_tag = "aug" if not args.no_augment else "noaug"
+    return f"v{date_str}-{num_sessions}sess-{args.alignment}-norm{int(args.norm_max)}-{aug_tag}"
+
+
+def export_c_header(tflite_path, header_path="model_data.h", model_version=None):
+    """Convert TFLite model to a C header file with version metadata."""
     with open(tflite_path, "rb") as f:
         model_bytes = f.read()
+
+    version_str = model_version or "unknown"
 
     # Generate C array
     var_name = "direction_model_tflite"
@@ -302,6 +400,9 @@ def export_c_header(tflite_path, header_path="model_data.h"):
         "",
         f"// Auto-generated from {os.path.basename(tflite_path)}",
         f"// Model size: {len(model_bytes)} bytes",
+        f"// Model version: {version_str}",
+        "",
+        f'#define ML_MODEL_VERSION "{version_str}"',
         "",
         f"const unsigned int {var_name}_len = {len(model_bytes)};",
         f"alignas(8) const unsigned char {var_name}[] = {{",
@@ -323,6 +424,7 @@ def export_c_header(tflite_path, header_path="model_data.h"):
         f.write("\n".join(lines))
 
     print(f"C header saved: {header_path}")
+    print(f"  Model version: {version_str}")
 
 
 # ---------------------------------------------------------------------------
@@ -338,6 +440,14 @@ def main():
     parser.add_argument("--test-split", type=float, default=0.2, help="Test split ratio")
     parser.add_argument("--output-dir", default="./output", help="Output directory for model files")
     parser.add_argument("--no-export", action="store_true", help="Skip TFLite export")
+    parser.add_argument("--norm-max", type=float, default=DEFAULT_NORMALIZATION_MAX,
+                        help=f"Normalization constant (must match firmware ML_NORMALIZATION_MAX, default: {DEFAULT_NORMALIZATION_MAX})")
+    parser.add_argument("--alignment", choices=["trigger", "center"], default="trigger",
+                        help="Window alignment mode: 'trigger' matches firmware behavior (default), 'center' is legacy centered")
+    parser.add_argument("--model-version", type=str, default=None,
+                        help="Model version string (auto-generated if not provided)")
+    parser.add_argument("--no-augment", action="store_true",
+                        help="Disable channel-swap data augmentation")
     args = parser.parse_args()
 
     os.makedirs(args.output_dir, exist_ok=True)
@@ -351,7 +461,16 @@ def main():
 
     # Build dataset
     print("\n=== Preprocessing ===")
-    X, y, session_ids = build_dataset(sessions, window_ms=args.window_ms)
+    print(f"  Window alignment: {args.alignment}")
+    augment = not args.no_augment
+    if augment:
+        print(f"  Channel-swap augmentation: ENABLED")
+    else:
+        print(f"  Channel-swap augmentation: DISABLED")
+    X, y, session_ids = build_dataset(sessions, window_ms=args.window_ms,
+                                      norm_max=args.norm_max,
+                                      alignment=args.alignment,
+                                      augment=augment)
 
     # Train/test split (stratified)
     from sklearn.model_selection import train_test_split
@@ -392,8 +511,12 @@ def main():
         tflite_path = os.path.join(args.output_dir, "direction_model.tflite")
         header_path = os.path.join(args.output_dir, "model_data.h")
 
+        model_version = args.model_version or generate_model_version(args, len(sessions))
+        print(f"Model version: {model_version}")
+
         export_tflite(model, X_train, output_path=tflite_path)
-        export_c_header(tflite_path, header_path=header_path)
+        export_c_header(tflite_path, header_path=header_path,
+                        model_version=model_version)
 
     print("\nDone!")
 

@@ -6,6 +6,9 @@ Fetches sessions filtered by labels and/or date, downloads full session data
 (including readings), and saves them as JSON files organized by label.
 
 Usage:
+    # Download all live_debug sessions from today (auto-classifies from detection metadata)
+    python download_sessions.py --mode live_debug --date 2026-02-17
+
     # Download all sessions with label "a->b" from today
     python download_sessions.py --label "a->b" --date 2026-02-15
 
@@ -58,9 +61,13 @@ def fetch_session_data(session_id):
     return resp.json()
 
 
-def filter_sessions(sessions, labels=None, date_str=None):
-    """Filter sessions by labels and/or date."""
+def filter_sessions(sessions, labels=None, date_str=None, mode=None):
+    """Filter sessions by labels, date, and/or mode."""
     filtered = sessions
+
+    if mode:
+        filtered = [s for s in filtered if s.get("mode") == mode]
+        print(f"  After mode filter ({mode}): {len(filtered)} sessions")
 
     if labels:
         label_set = set(labels)
@@ -99,16 +106,29 @@ def filter_sessions(sessions, labels=None, date_str=None):
 
 
 def classify_session(session):
-    """Determine the ML training class from session labels."""
+    """Determine the ML training class from session labels or detection metadata.
+
+    Priority order:
+      1. Manual labels (user overrides) — always win
+      2. detection_direction metadata from firmware — auto-classifies detections
+      3. Falls back to "unlabeled" (skipped during training)
+    """
     labels = session.get("labels", []) or []
+
     if "a->b" in labels:
         return "a_to_b"
     elif "b->a" in labels:
         return "b_to_a"
-    elif "no-transit" in labels:
+    elif "no-transit" in labels or "false-transit" in labels:
         return "no_transit"
-    else:
-        return "unlabeled"
+
+    detection_dir = session.get("detection_direction")
+    if detection_dir == "a_to_b":
+        return "a_to_b"
+    elif detection_dir == "b_to_a":
+        return "b_to_a"
+
+    return "unlabeled"
 
 
 def save_session(session_data, output_dir, class_name):
@@ -174,20 +194,26 @@ def main():
         help="Show what would be downloaded without actually downloading"
     )
     parser.add_argument(
+        "--mode", type=str,
+        help="Filter by session mode (e.g. 'live_debug'). Useful for fetching all "
+             "live_debug sessions which auto-classify from detection metadata."
+    )
+    parser.add_argument(
         "--delay", type=float, default=0.2,
         help="Delay between API calls in seconds (default: 0.2)"
     )
 
     args = parser.parse_args()
 
-    if not args.labels and not args.date:
-        print("Error: specify at least --label or --date to filter sessions.")
+    if not args.labels and not args.date and not args.mode:
+        print("Error: specify at least --label, --date, or --mode to filter sessions.")
         print("Run with --help for usage.")
         sys.exit(1)
 
     # Fetch and filter
     sessions = fetch_sessions(limit=args.limit)
-    filtered = filter_sessions(sessions, labels=args.labels, date_str=args.date)
+    filtered = filter_sessions(sessions, labels=args.labels, date_str=args.date,
+                               mode=args.mode)
 
     if not filtered:
         print("\nNo sessions match the filters.")
