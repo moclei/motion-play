@@ -436,7 +436,7 @@ void initializeSystem()
     }
 
     // Initialize Serial Studio output
-    serialStudioOutput.begin(&sessionManager.getDataBuffer());
+    serialStudioOutput.begin(&sessionManager.getDataBuffer(), &directionDetector);
     serialStudioOutput.setEnabled(serialStudioEnabled);
     Serial.printf("Serial Studio output: %s\n", serialStudioEnabled ? "enabled" : "disabled");
 
@@ -942,6 +942,7 @@ void handleCommand(const String &command, JsonDocument *doc)
                 currentMode = DeviceMode::IDLE;
                 playModeActive = false;
                 ledController.off();
+                serialStudioOutput.setEmitTelemetry(false);
                 // Stop interrupt monitoring if it was running
                 if (interruptManager.isMonitoring())
                 {
@@ -956,6 +957,7 @@ void handleCommand(const String &command, JsonDocument *doc)
                 currentMode = DeviceMode::DEBUG;
                 playModeActive = false;
                 ledController.off();
+                serialStudioOutput.setEmitTelemetry(false);
                 // Stop interrupt monitoring if it was running
                 if (interruptManager.isMonitoring())
                 {
@@ -968,6 +970,7 @@ void handleCommand(const String &command, JsonDocument *doc)
             else if (modeStr == "play")
             {
                 currentMode = DeviceMode::PLAY;
+                serialStudioOutput.setEmitTelemetry(true);
                 // Stop interrupt monitoring if it was running
                 if (interruptManager.isMonitoring())
                 {
@@ -1009,6 +1012,7 @@ void handleCommand(const String &command, JsonDocument *doc)
                 playModeActive = false;
                 liveDebugActive = false;
                 ledController.off();
+                serialStudioOutput.setEmitTelemetry(true);
                 if (interruptManager.isMonitoring())
                 {
                     interruptManager.stopMonitoring();
@@ -1453,6 +1457,7 @@ void loop()
                 if (detected)
                 {
                     DetectionResult result = useMLDetection ? mlDetector.getResult() : directionDetector.getResult();
+                    serialStudioOutput.cacheDetection(result);
 
                     // Detection successful!
                     Serial.printf("DETECTION [%s]: %s (confidence: %.2f)\n",
@@ -1560,6 +1565,7 @@ void loop()
                 if (detected)
                 {
                     DetectionResult result = useMLDetection ? mlDetector.getResult() : directionDetector.getResult();
+                    serialStudioOutput.cacheDetection(result);
 
                     Serial.printf("[LIVE_DEBUG] DETECTION [%s]: %s (confidence: %.2f)\n",
                                   useMLDetection ? "ML" : "heuristic",

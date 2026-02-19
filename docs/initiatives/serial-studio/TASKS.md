@@ -16,13 +16,13 @@
 
 ## Phase 2: Custom Dashboard + Detection Telemetry
 
-- [ ] Add public getters to `DirectionDetector`: `getSmoothedA/B()`, `getThresholdA/B()`, `getWaveStateA/B()`
-- [ ] Add detection result caching to `SerialStudioOutput` (cache last direction + confidence independently of detector reset, clear on timeout)
-- [ ] Extend frame format with 9 algorithm telemetry fields (1 decimal place for floats)
-- [ ] Only emit detection telemetry fields in PLAY and LIVE_DEBUG modes; emit basic sensor-only frames in DEBUG mode
+- [x] Add public getters to `DirectionDetector`: `getSmoothedA/B()`, `getThresholdA/B()`, `getWaveStateA/B()`
+- [x] Add detection result caching to `SerialStudioOutput` (cache last direction + confidence independently of detector reset, clear on timeout)
+- [x] Extend frame format with 9 algorithm telemetry fields (1 decimal place for floats)
+- [x] Only emit detection telemetry fields in PLAY and LIVE_DEBUG modes; emit basic sensor-only frames in DEBUG mode
+- [x] Create Serial Studio project file `tools/serial-studio/motion-play.json`
+- [x] Design dashboard layout: per-module sensor plots, all-sensors overlay, algorithm plot, detection status grid
 - [ ] Verify extended `Serial.printf()` does not introduce Core 1 loop blocking
-- [ ] Create Serial Studio project file `tools/serial-studio/motion-play.json`
-- [ ] Design dashboard layout: per-module sensor plots, all-sensors overlay, algorithm plot, detection status grid
 - [ ] Test dashboard with live detection events — verify algorithm visualization is useful for tuning
 
 ## Phase 3: Local CSV Data Collection

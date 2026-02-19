@@ -3,6 +3,7 @@
 
 #include <Arduino.h>
 #include "../sensor/SensorManager.h"
+#include "../detection/DirectionDetector.h"
 #include "../memory/PSRAMAllocator.h"
 
 class SerialStudioOutput
@@ -10,7 +11,9 @@ class SerialStudioOutput
 private:
     // Reference to the session data buffer (owned by SessionManager)
     std::vector<SensorReading, PSRAMAllocator<SensorReading>> *_buffer = nullptr;
+    DirectionDetector *_detector = nullptr;
     bool _enabled = false;
+    bool _emitTelemetry = false;
 
     // Buffer read tracking
     size_t _lastProcessedIndex = 0;
@@ -21,21 +24,36 @@ private:
     uint32_t _currentTimestamp = 0;
     bool _hasPendingFrame = false;
 
+    // Detection result cache (persists after detector reset)
+    Direction _cachedDirection = Direction::UNKNOWN;
+    float _cachedConfidence = 0.0f;
+    unsigned long _cacheTime = 0;
+    static const unsigned long CACHE_TIMEOUT_MS = 3000;
+
     void emitFrame();
     void resetAccumulator(uint32_t newTimestamp);
 
 public:
     /**
-     * Initialize with a reference to the session data buffer.
-     * Call once after SessionManager is ready.
+     * Initialize with references to session data buffer and direction detector.
      */
-    void begin(std::vector<SensorReading, PSRAMAllocator<SensorReading>> *buffer);
+    void begin(std::vector<SensorReading, PSRAMAllocator<SensorReading>> *buffer,
+               DirectionDetector *detector);
 
-    /**
-     * Enable or disable serial studio output at runtime.
-     */
     void setEnabled(bool enabled) { _enabled = enabled; }
     bool isEnabled() const { return _enabled; }
+
+    /**
+     * When true, frames include algorithm telemetry fields (smoothed signals,
+     * thresholds, wave states, detection status). Set to true in PLAY/LIVE_DEBUG.
+     */
+    void setEmitTelemetry(bool emit) { _emitTelemetry = emit; }
+
+    /**
+     * Cache a detection result so it persists in the output after the detector
+     * is reset. Clears automatically after CACHE_TIMEOUT_MS.
+     */
+    void cacheDetection(const DetectionResult &result);
 
     /**
      * Process new readings from the buffer and emit CSV frames.

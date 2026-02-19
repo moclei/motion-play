@@ -297,6 +297,14 @@ public:
      */
     bool isUsingCalibration() const { return _useCalibration; }
 
+    // Serial Studio telemetry accessors (read-only views of internal state)
+    float getSmoothedA() const { return smoothBufferA.getSmoothedAverage(config.smoothingWindow); }
+    float getSmoothedB() const { return smoothBufferB.getSmoothedAverage(config.smoothingWindow); }
+    float getThresholdA() const { return waveA.threshold; }
+    float getThresholdB() const { return waveB.threshold; }
+    WaveState getWaveStateA() const { return waveA.state; }
+    WaveState getWaveStateB() const { return waveB.state; }
+
     /**
      * Get string representation of direction
      */
