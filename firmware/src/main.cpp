@@ -15,6 +15,7 @@
 #include "components/led/LEDController.h"
 #include "components/interrupt/InterruptManager.h"
 #include "components/calibration/CalibrationManager.h"
+#include "components/serialstudio/SerialStudioOutput.h"
 
 // Button pins for T-Display-S3
 #define BUTTON_1 0  // Left button (BOOT)
@@ -40,9 +41,13 @@ DataTransmitter *dataTransmitter;
 DirectionDetector directionDetector;
 MLDetector mlDetector;
 LEDController ledController;
+SerialStudioOutput serialStudioOutput;
 
 // Detection mode: false = heuristic (DirectionDetector), true = ML (MLDetector)
 bool useMLDetection = false;
+
+// Serial Studio output: compile-time default from build flags, overridable via cloud config
+bool serialStudioEnabled = SERIAL_STUDIO_DEFAULT;
 InterruptManager interruptManager;
 
 // Current device mode
@@ -257,6 +262,13 @@ bool fetchConfigFromCloud()
                 Serial.println("  Detection Mode: not present in cloud config (defaulting to heuristic)");
             }
 
+            if (config.containsKey("serial_studio_enabled"))
+            {
+                serialStudioEnabled = config["serial_studio_enabled"].as<bool>();
+                serialStudioOutput.setEnabled(serialStudioEnabled);
+                Serial.printf("  Serial Studio: %s\n", serialStudioEnabled ? "enabled" : "disabled");
+            }
+
             http.end();
             return true;
         }
@@ -422,6 +434,11 @@ void initializeSystem()
             Serial.println("ML detector initialized successfully");
         }
     }
+
+    // Initialize Serial Studio output
+    serialStudioOutput.begin(&sessionManager.getDataBuffer());
+    serialStudioOutput.setEnabled(serialStudioEnabled);
+    Serial.printf("Serial Studio output: %s\n", serialStudioEnabled ? "enabled" : "disabled");
 
     // Initialization complete!
     Serial.println("\n=== System Initialization Complete ===\n");
@@ -870,6 +887,13 @@ void handleCommand(const String &command, JsonDocument *doc)
                     }
                 }
                 Serial.printf("  Detection Mode: %s\n", useMLDetection ? "ML" : "heuristic");
+            }
+
+            if (config.containsKey("serial_studio_enabled"))
+            {
+                serialStudioEnabled = config["serial_studio_enabled"].as<bool>();
+                serialStudioOutput.setEnabled(serialStudioEnabled);
+                Serial.printf("  Serial Studio: %s\n", serialStudioEnabled ? "enabled" : "disabled");
             }
 
             Serial.println("Configuration updated:");
@@ -1375,6 +1399,9 @@ void loop()
         {
             // POLLING MODE: Regular proximity processing
             sessionManager.processQueue();
+
+            // Serial Studio: emit CSV frames for new readings
+            serialStudioOutput.update();
         }
 
         // PLAY MODE: Run direction detection on collected data
@@ -1383,9 +1410,9 @@ void loop()
             // Update LED animation (handles fade-out after detection)
             bool animating = ledController.update();
 
-            // Debug: log buffer status periodically
+            // Debug: log buffer status periodically (suppressed when Serial Studio active)
             static unsigned long lastPlayDebug = 0;
-            if (millis() - lastPlayDebug > 2000)
+            if (!serialStudioEnabled && millis() - lastPlayDebug > 2000)
             {
                 lastPlayDebug = millis();
                 bool detectorReady = useMLDetection ? mlDetector.isReady() : directionDetector.isReady();
@@ -1458,6 +1485,7 @@ void loop()
                         directionDetector.reset();
                     lastProcessedIndex = 0;
                     buffer.clear();
+                    serialStudioOutput.resetIndex();
                     Serial.println("Detection complete, buffer cleared for next event");
                 }
 
@@ -1472,6 +1500,7 @@ void loop()
                         directionDetector.reset();
                     lastProcessedIndex = 0;
                     buffer.clear();
+                    serialStudioOutput.resetIndex();
                 }
             }
             else if (!ledController.isAnimating() &&
@@ -1489,9 +1518,9 @@ void loop()
             // Update LED animation (handles fade-out after detection)
             ledController.update();
 
-            // Debug: log buffer status periodically
+            // Debug: log buffer status periodically (suppressed when Serial Studio active)
             static unsigned long lastLiveDebugLog = 0;
-            if (millis() - lastLiveDebugLog > 2000)
+            if (!serialStudioEnabled && millis() - lastLiveDebugLog > 2000)
             {
                 lastLiveDebugLog = millis();
                 bool detectorReady = useMLDetection ? mlDetector.isReady() : directionDetector.isReady();
@@ -1645,6 +1674,7 @@ void loop()
                         directionDetector.reset();
                     lastLiveDebugIndex = 0;
                     buffer.clear();
+                    serialStudioOutput.resetIndex();
 
                     // 8. Reset summary for next capture and resume sensor polling
                     sessionManager.getSessionSummary().reset();
@@ -1663,6 +1693,7 @@ void loop()
                         directionDetector.reset();
                     lastLiveDebugIndex = 0;
                     buffer.clear();
+                    serialStudioOutput.resetIndex();
                 }
             }
             else if (!ledController.isAnimating() &&
@@ -1740,9 +1771,11 @@ void loop()
                 int sampleCount = sessionManager.getDataCount();
                 display.updateSampleCount(sampleCount);
 
-                // Log to serial with memory status
-                Serial.printf("Samples: %d | ", sampleCount);
-                MemoryMonitor::printCompactStatus();
+                if (!serialStudioEnabled)
+                {
+                    Serial.printf("Samples: %d | ", sampleCount);
+                    MemoryMonitor::printCompactStatus();
+                }
 
                 // Check memory health during collection
                 if (!MemoryMonitor::isMemoryHealthy())
