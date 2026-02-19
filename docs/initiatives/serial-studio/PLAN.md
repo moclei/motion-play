@@ -126,35 +126,11 @@ Create `tools/serial-studio/motion-play.json` with these widget groups:
 
 The project file uses `frameDetection: 2` (start + end delimiters) with `/*` and `*/`, and a default comma-separated parser.
 
-## Phase 3: Local CSV Collection
+## Phase 3: Local CSV Collection — Deferred
 
-### Workflow
+Phase 3 is deferred. The existing frontend-based ML data collection workflow (live_debug mode with labeled event capture, missed event button, download script, training pipeline) is better suited for ML training data than Serial Studio CSV export. The frontend workflow provides event segmentation and labeling, which Serial Studio's continuous CSV stream does not.
 
-1. Launch Serial Studio, load `motion-play.json` project file
-2. Click CSV logging button in Serial Studio toolbar
-3. Put device in PLAY or LIVE_DEBUG mode
-4. Pass objects through hoop — all frames (sensor data + algorithm state) are captured to CSV
-5. Stop CSV logging
-6. Run conversion script to transform into ML training pipeline format
-
-### Conversion Tooling
-
-Create `tools/serial-studio/convert_csv.py`:
-
-- Reads Serial Studio's timestamped CSV output
-- Uses the **device-side timestamp** (`timestamp_us` from the frame data), not Serial Studio's host-side timestamp column, since the device timestamp is synchronized across sensors and has microsecond precision
-- Segments into sessions using time gaps or detection events
-- Maps columns to the `SensorReading` structure expected by `tools/ml-training/train.py`
-- Outputs session files in the format the training pipeline expects (or directly compatible JSON)
-
-### Session Boundaries
-
-Serial Studio captures a continuous stream. Sessions can be segmented by:
-- Time gaps (>1 second gap between frames indicates a session boundary)
-- Detection events (detDir transitions from 0 to non-zero)
-- Explicit markers (firmware could emit a special frame on session start/stop)
-
-The conversion script should support at least the time-gap approach, with detection-event segmentation as an enhancement.
+Serial Studio's role in this project is real-time visualization and algorithm debugging — Phases 1 and 2 deliver that value. If a local/offline CSV collection workflow becomes needed in the future, this phase can be revisited.
 
 ## Technical Notes
 

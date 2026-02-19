@@ -1,8 +1,10 @@
 # Serial Studio Integration
 
+**Status:** ✅ Complete (Phases 1-2 delivered, Phase 3 deferred)
+
 ## Intent
 
-Integrate Serial Studio as a local development tool for real-time sensor visualization, detection algorithm debugging, and local CSV data collection. This provides a faster feedback loop for firmware development by eliminating the need for the full MQTT/AWS pipeline during iterative work.
+Integrate Serial Studio as a local development tool for real-time sensor visualization and detection algorithm debugging. This provides a faster feedback loop for firmware development by eliminating the need for the full MQTT/AWS pipeline during iterative work.
 
 ## Goals
 
