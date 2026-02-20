@@ -75,8 +75,9 @@
 // Optional reduced SPI frequency for reading TFT
 #define SPI_READ_FREQUENCY 20000000
 
-// Touch screen interface
-#define TOUCH_CS -1 // T-Display-S3 uses I2C touch, so disable SPI touch
+// Touch screen interface — do NOT define TOUCH_CS for parallel mode
+// T-Display-S3 uses I2C touch, not SPI touch
+// #define TOUCH_CS -1
 
 // Support for "SPIFFS" filesystem, used by smooth fonts
 #define SUPPORT_TRANSACTIONS
