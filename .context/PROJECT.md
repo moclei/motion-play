@@ -115,10 +115,15 @@ See the Annotated Netlist Specification below for file locations and format.
 
 ### Dependencies
 ```ini
-lib_deps = 
-    TFT_eSPI @ ^2.5.31
-    Adafruit BusIO @ ^1.14.5
-    Adafruit ADS1X15 @ ^2.4.0
+lib_deps =
+    bodmer/TFT_eSPI@^2.5.31        ; Display driver (ST7789, 8-bit parallel)
+    adafruit/Adafruit BusIO@^1.14.5
+    adafruit/Adafruit VCNL4040@^1.1.4
+    robtillaart/TCA9548@^0.3.0
+    fastled/FastLED@^3.7.0
+    knolleary/PubSubClient@^2.8
+    bblanchon/ArduinoJson@^6.21.3
+    spaziochirale/Chirale_TensorFLowLite@^2.0.0
 ```
 
 ### Configuration Parameters
@@ -129,6 +134,13 @@ board_build.flash_mode = qio
 board_build.f_cpu = 240000000L
 board_build.f_flash = 80000000L
 ```
+
+**Critical TFT_eSPI build flags** — The T-Display-S3 requires a custom `User_Setup.h` (in `firmware/include/`) to configure the ST7789 driver with 8-bit parallel interface and correct pin mappings. Two build flags in `platformio.ini` ensure the library always uses this custom config instead of its default:
+```ini
+-DUSER_SETUP_LOADED
+-include firmware/include/User_Setup.h
+```
+Without these, TFT_eSPI falls back to its default ILI9341 SPI configuration, resulting in a black screen (backlight on, no display output).
 
 ## Power Management Architecture
 
@@ -218,9 +230,44 @@ The system uses isolated power paths to prevent conflicts:
 - *Note: This doesn't work reliably yet - investigating*
 
 ### Debugging Tools
-- Built-in T-Display screen for status messages
-- Serial monitor via Cable B (with data-only adapter)
-- DWEII power indicator LED (when module powered)
+
+- **Built-in T-Display screen** for status messages and mode display
+- **Serial monitor** via Cable B (with data-only adapter) — `pio device monitor`
+- **DWEII power indicator LED** (when module powered)
+
+#### Serial Studio (Real-Time Visualization)
+
+Serial Studio is a standalone desktop app for real-time sensor visualization and detection algorithm debugging. It provides live plotting of all 6 sensor channels plus algorithm internals (smoothed signals, thresholds, wave states, detection results) without needing the full cloud pipeline.
+
+**Installation:**
+```bash
+brew install --cask serial-studio
+```
+
+**Enabling Serial Studio output:**
+
+1. In `platformio.ini`, change the build flag from `false` to `true`:
+   ```
+   -DSERIAL_STUDIO_DEFAULT=true
+   ```
+2. Build and flash: `pio run -t upload`
+3. The firmware will now emit structured CSV frames (`/*...*/` delimited) alongside normal serial output.
+
+**Connecting Serial Studio:**
+
+1. **Close the PlatformIO serial monitor first** — only one application can hold the serial port at a time.
+2. Open Serial Studio.
+3. Load the project file: `tools/serial-studio/motion-play.json` (File → Open).
+4. Select the serial port (same one PlatformIO uses) and set baud rate to **115200**.
+5. Click Connect. The custom dashboard should populate with live sensor and algorithm data.
+
+**Important notes:**
+- When done with Serial Studio, disconnect it before reopening the PlatformIO serial monitor.
+- Set `SERIAL_STUDIO_DEFAULT` back to `false` when not using Serial Studio, to keep normal serial output clean.
+- The flag can also be overridden at runtime via cloud config (`serial_studio_enabled` key) if WiFi is connected.
+- Serial Studio output works in all active modes (DEBUG, PLAY, LIVE_DEBUG). Algorithm telemetry fields are populated in PLAY and LIVE_DEBUG modes.
+
+**Full technical details:** See `docs/initiatives/serial-studio/` (BRIEF, PLAN, TASKS).
 
 ## Project Structure
 
@@ -914,4 +961,4 @@ Configure via solder jumpers JP3 (A1) and JP4 (A0):
 
 ----
 
-*Last Updated: January 30, 2026*
+*Last Updated: February 18, 2026*

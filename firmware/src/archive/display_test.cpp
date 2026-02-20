@@ -73,7 +73,6 @@ void setup()
 
 void loop()
 {
-    // Blink text to show it's running
     static unsigned long lastBlink = 0;
     static bool textVisible = true;
 
