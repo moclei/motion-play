@@ -3,6 +3,7 @@
 
 #include <Arduino.h>
 #include "../sensor/SensorManager.h"
+#include "../sensor/SensorConfiguration.h"
 #include "../detection/DirectionDetector.h"
 #include "../memory/PSRAMAllocator.h"
 
@@ -12,6 +13,7 @@ private:
     // Reference to the session data buffer (owned by SessionManager)
     std::vector<SensorReading, PSRAMAllocator<SensorReading>> *_buffer = nullptr;
     DirectionDetector *_detector = nullptr;
+    SensorConfiguration *_config = nullptr;
     bool _enabled = false;
     bool _emitTelemetry = false;
 
@@ -24,11 +26,14 @@ private:
     uint32_t _currentTimestamp = 0;
     bool _hasPendingFrame = false;
 
-    // Detection result cache (persists after detector reset)
+    // Detection result cache (persists until next detection or full reset)
     Direction _cachedDirection = Direction::UNKNOWN;
     float _cachedConfidence = 0.0f;
-    unsigned long _cacheTime = 0;
-    static const unsigned long CACHE_TIMEOUT_MS = 3000;
+
+    // Frames-per-second tracking (counts all sensor cycles, not just emitted frames)
+    uint32_t _frameCount = 0;
+    unsigned long _fpsWindowStart = 0;
+    uint16_t _currentFps = 0;
 
     void emitFrame();
     void resetAccumulator(uint32_t newTimestamp);
@@ -43,6 +48,8 @@ public:
     void setEnabled(bool enabled) { _enabled = enabled; }
     bool isEnabled() const { return _enabled; }
 
+    void setConfig(SensorConfiguration *config) { _config = config; }
+
     /**
      * When true, frames include algorithm telemetry fields (smoothed signals,
      * thresholds, wave states, detection status). Set to true in PLAY/LIVE_DEBUG.
@@ -51,7 +58,7 @@ public:
 
     /**
      * Cache a detection result so it persists in the output after the detector
-     * is reset. Clears automatically after CACHE_TIMEOUT_MS.
+     * is reset. Remains until the next detection or a full reset.
      */
     void cacheDetection(const DetectionResult &result);
 

@@ -5,6 +5,8 @@
 #include <esp_heap_caps.h>
 #include <esp_system.h>
 
+extern bool serialStudioEnabled;
+
 /**
  * Memory monitoring utility for detecting heap exhaustion and memory leaks
  * Tracks both internal RAM and PSRAM usage
@@ -17,6 +19,8 @@ public:
      */
     static void printMemoryStats()
     {
+        if (serialStudioEnabled)
+            return;
         Serial.println("\n=== MEMORY STATISTICS ===");
 
         // Internal RAM (heap)
@@ -128,6 +132,8 @@ public:
      */
     static void printCompactStatus()
     {
+        if (serialStudioEnabled)
+            return;
         size_t freeHeap = getFreeHeap();
         size_t freePSRAM = getFreePSRAM();
         Serial.printf("Memory: Heap=%uKB, PSRAM=%uKB\n",

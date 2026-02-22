@@ -1,5 +1,7 @@
 #include "DirectionDetector.h"
 
+extern bool serialStudioEnabled;
+
 DirectionDetector::DirectionDetector() : config() {}
 
 DirectionDetector::DirectionDetector(const DetectorConfig &cfg) : config(cfg) {}
@@ -82,11 +84,14 @@ void DirectionDetector::updateBaseline(float valueA, float valueB)
         calculateThresholds();
         state = DetectorState::READY;
 
-        Serial.println("=== BASELINE ESTABLISHED ===");
-        Serial.printf("  Side A: mean=%.1f, max=%.1f, threshold=%.1f\n",
-                      baselineA.getMean(), baselineA.max, waveA.threshold);
-        Serial.printf("  Side B: mean=%.1f, max=%.1f, threshold=%.1f\n",
-                      baselineB.getMean(), baselineB.max, waveB.threshold);
+        if (!serialStudioEnabled)
+        {
+            Serial.println("=== BASELINE ESTABLISHED ===");
+            Serial.printf("  Side A: mean=%.1f, max=%.1f, threshold=%.1f\n",
+                          baselineA.getMean(), baselineA.max, waveA.threshold);
+            Serial.printf("  Side B: mean=%.1f, max=%.1f, threshold=%.1f\n",
+                          baselineB.getMean(), baselineB.max, waveB.threshold);
+        }
     }
 }
 
@@ -115,8 +120,9 @@ void DirectionDetector::calculateThresholds()
         waveB.threshold = (float)maxThreshold;
         _useCalibration = true;
 
-        Serial.printf("[DirectionDetector] Using CALIBRATED thresholds: A=%.0f, B=%.0f\n",
-                      waveA.threshold, waveB.threshold);
+        if (!serialStudioEnabled)
+            Serial.printf("[DirectionDetector] Using CALIBRATED thresholds: A=%.0f, B=%.0f\n",
+                          waveA.threshold, waveB.threshold);
         return;
     }
 
@@ -135,8 +141,9 @@ void DirectionDetector::calculateThresholds()
     waveA.threshold = baseA + riseA;
     waveB.threshold = baseB + riseB;
 
-    Serial.printf("[DirectionDetector] Using FALLBACK thresholds: A=%.0f, B=%.0f\n",
-                  waveA.threshold, waveB.threshold);
+    if (!serialStudioEnabled)
+        Serial.printf("[DirectionDetector] Using FALLBACK thresholds: A=%.0f, B=%.0f\n",
+                      waveA.threshold, waveB.threshold);
 }
 
 void DirectionDetector::processReading(uint32_t timestamp, float smoothedA, float smoothedB)
@@ -153,10 +160,11 @@ void DirectionDetector::processReading(uint32_t timestamp, float smoothedA, floa
         {
             state = DetectorState::DETECTING;
             detectionStartTime = timestamp;
-            Serial.printf("WAVE DETECTED at %lu (A=%s, B=%s)\n",
-                          timestamp,
-                          waveA.state == WaveState::IN_WAVE ? "IN_WAVE" : "IDLE",
-                          waveB.state == WaveState::IN_WAVE ? "IN_WAVE" : "IDLE");
+            if (!serialStudioEnabled)
+                Serial.printf("WAVE DETECTED at %lu (A=%s, B=%s)\n",
+                              timestamp,
+                              waveA.state == WaveState::IN_WAVE ? "IN_WAVE" : "IDLE",
+                              waveB.state == WaveState::IN_WAVE ? "IN_WAVE" : "IDLE");
         }
     }
 
@@ -166,7 +174,8 @@ void DirectionDetector::processReading(uint32_t timestamp, float smoothedA, floa
         uint32_t elapsed = timestamp - detectionStartTime;
         if (elapsed > config.maxWaveDurationMs + config.maxPeakGapMs)
         {
-            Serial.println("Detection timeout - resetting waves");
+            if (!serialStudioEnabled)
+                Serial.println("Detection timeout - resetting waves");
             waveA.reset();
             waveB.reset();
             state = DetectorState::READY;
@@ -223,9 +232,10 @@ void DirectionDetector::updateWaveTracker(WaveTracker &tracker, float value, uin
                 tracker.centerOfMass = tracker.peakTime;
             }
 
-            Serial.printf("  Wave complete: start=%lu, peak=%lu (%.1f), end=%lu, CoM=%lu\n",
-                          tracker.waveStartTime, tracker.peakTime, tracker.peakValue,
-                          tracker.waveEndTime, tracker.centerOfMass);
+            if (!serialStudioEnabled)
+                Serial.printf("  Wave complete: start=%lu, peak=%lu (%.1f), end=%lu, CoM=%lu\n",
+                              tracker.waveStartTime, tracker.peakTime, tracker.peakValue,
+                              tracker.waveEndTime, tracker.centerOfMass);
         }
 
         // Check for wave timeout
@@ -242,7 +252,8 @@ void DirectionDetector::updateWaveTracker(WaveTracker &tracker, float value, uin
             {
                 tracker.centerOfMass = tracker.peakTime;
             }
-            Serial.println("  Wave timeout - forced completion");
+            if (!serialStudioEnabled)
+                Serial.println("  Wave timeout - forced completion");
         }
         break;
     }

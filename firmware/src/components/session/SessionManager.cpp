@@ -1,5 +1,7 @@
 #include "SessionManager.h"
 
+extern bool serialStudioEnabled;
+
 SessionManager::SessionManager()
 {
     // Create queue for sensor data (6 sensors * 1000Hz = 6000 items/sec)
@@ -210,7 +212,8 @@ void SessionManager::clearBuffer()
     interruptBuffer.clear();
     state = IDLE;
     sessionType = SessionType::PROXIMITY; // Reset to default
-    Serial.println("Buffer cleared, session reset to IDLE");
+    if (!serialStudioEnabled)
+        Serial.println("Buffer cleared, session reset to IDLE");
 }
 
 void SessionManager::setSensorMetadata(const std::vector<SensorMetadata> &metadata)

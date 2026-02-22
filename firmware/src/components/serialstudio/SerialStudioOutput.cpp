@@ -6,6 +6,9 @@ void SerialStudioOutput::begin(
 {
     _buffer = buffer;
     _detector = detector;
+    _fpsWindowStart = millis();
+    _frameCount = 0;
+    _currentFps = 0;
     resetIndex();
 }
 
@@ -13,7 +16,6 @@ void SerialStudioOutput::cacheDetection(const DetectionResult &result)
 {
     _cachedDirection = result.direction;
     _cachedConfidence = result.confidence;
-    _cacheTime = millis();
 }
 
 void SerialStudioOutput::update()
@@ -33,12 +35,13 @@ void SerialStudioOutput::update()
     if (bufferSize == 0 || _lastProcessedIndex >= bufferSize)
         return;
 
-    // Expire cached detection result
-    if (_cachedDirection != Direction::UNKNOWN &&
-        millis() - _cacheTime > CACHE_TIMEOUT_MS)
+    // Update FPS counter
+    unsigned long now = millis();
+    if (now - _fpsWindowStart >= 1000)
     {
-        _cachedDirection = Direction::UNKNOWN;
-        _cachedConfidence = 0.0f;
+        _currentFps = _frameCount;
+        _frameCount = 0;
+        _fpsWindowStart = now;
     }
 
     for (size_t i = _lastProcessedIndex; i < bufferSize; i++)
@@ -70,9 +73,20 @@ void SerialStudioOutput::emitFrame()
     if (!_hasPendingFrame)
         return;
 
+    _frameCount++;
+
+    uint16_t intTimeNum = _config ? _config->integration_time.toInt() : 0;
+    uint16_t ledCurNum = _config ? _config->led_current.toInt() : 0;
+    uint16_t dutyCycNum = 0;
+    if (_config)
+    {
+        int slash = _config->duty_cycle.indexOf('/');
+        dutyCycNum = (slash >= 0) ? _config->duty_cycle.substring(slash + 1).toInt() : _config->duty_cycle.toInt();
+    }
+    uint16_t multiPulseNum = _config ? _config->multi_pulse.toInt() : 0;
+
     if (_emitTelemetry && _detector)
     {
-        // Full frame: 7 sensor fields + 9 telemetry fields = 16 total
         int detState = 0;
         DetectorState ds = _detector->getState();
         if (ds == DetectorState::READY)
@@ -80,7 +94,7 @@ void SerialStudioOutput::emitFrame()
         else if (ds == DetectorState::DETECTING)
             detState = 2;
 
-        Serial.printf("/*%lu,%u,%u,%u,%u,%u,%u,%.1f,%.1f,%.1f,%.1f,%d,%d,%d,%d,%.1f*/\n",
+        Serial.printf("/*%lu,%u,%u,%u,%u,%u,%u,%.1f,%.1f,%.1f,%.1f,%d,%d,%d,%d,%.1f,%u,%u,%u,%u,%u*/\n",
                       _currentTimestamp,
                       _accumulator[0], _accumulator[1],
                       _accumulator[2], _accumulator[3],
@@ -93,16 +107,19 @@ void SerialStudioOutput::emitFrame()
                       (int)_detector->getWaveStateB(),
                       detState,
                       (int)_cachedDirection,
-                      _cachedConfidence);
+                      _cachedConfidence,
+                      _currentFps,
+                      intTimeNum, ledCurNum, dutyCycNum, multiPulseNum);
     }
     else
     {
-        // Basic frame: sensor data only
-        Serial.printf("/*%lu,%u,%u,%u,%u,%u,%u*/\n",
+        Serial.printf("/*%lu,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u*/\n",
                       _currentTimestamp,
                       _accumulator[0], _accumulator[1],
                       _accumulator[2], _accumulator[3],
-                      _accumulator[4], _accumulator[5]);
+                      _accumulator[4], _accumulator[5],
+                      _currentFps,
+                      intTimeNum, ledCurNum, dutyCycNum, multiPulseNum);
     }
 }
 

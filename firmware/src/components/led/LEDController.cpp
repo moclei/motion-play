@@ -1,5 +1,7 @@
 #include "LEDController.h"
 
+extern bool serialStudioEnabled;
+
 // Define static colors
 const CRGB LEDController::COLOR_A_TO_B = CRGB(0, 100, 255); // Blue
 const CRGB LEDController::COLOR_B_TO_A = CRGB(255, 100, 0); // Orange
@@ -13,7 +15,8 @@ bool LEDController::init()
     if (initialized)
         return true;
 
-    Serial.println("Initializing LED strip...");
+    if (!serialStudioEnabled)
+        Serial.println("Initializing LED strip...");
 
     // Initialize FastLED
     FastLED.addLeds<LED_TYPE, LED_PIN, COLOR_ORDER>(leds, NUM_LEDS);
@@ -24,7 +27,8 @@ bool LEDController::init()
     FastLED.show();
 
     initialized = true;
-    Serial.printf("LED strip initialized: %d LEDs on GPIO %d\n", NUM_LEDS, LED_PIN);
+    if (!serialStudioEnabled)
+        Serial.printf("LED strip initialized: %d LEDs on GPIO %d\n", NUM_LEDS, LED_PIN);
 
     return true;
 }
@@ -55,7 +59,8 @@ void LEDController::showDirection(Direction direction, uint32_t duration)
         break;
     }
 
-    Serial.printf("LED: Showing %s for %dms\n", dirName, duration);
+    if (!serialStudioEnabled)
+        Serial.printf("LED: Showing %s for %dms\n", dirName, duration);
 
     // Reset brightness to full (may have been dimmed by previous fade)
     FastLED.setBrightness(DEFAULT_BRIGHTNESS);

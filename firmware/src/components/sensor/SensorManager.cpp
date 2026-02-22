@@ -1,6 +1,8 @@
 #include "SensorManager.h"
 #include "../session/SessionManager.h" // For SessionSummary full definition
 
+extern bool serialStudioEnabled;
+
 SensorManager::SensorManager() : mux(0x70)
 {
     // Constructor
@@ -897,7 +899,8 @@ void SensorManager::sensorTaskFunction(void *parameter)
 {
     SensorManager *manager = (SensorManager *)parameter;
 
-    Serial.println("Sensor task started on Core 0");
+    if (!serialStudioEnabled)
+        Serial.println("Sensor task started on Core 0");
 
     unsigned long lastSampleTime = micros();
     unsigned long lastErrorLog = 0;
@@ -982,11 +985,14 @@ void SensorManager::sensorTaskFunction(void *parameter)
                 // Log every 100 failures or first 3 failures
                 if (consecutiveFailures <= 3 || (millis() - lastErrorLog > 5000))
                 {
-                    Serial.print("WARNING: Sensor read failures: ");
-                    Serial.print(failedReads);
-                    Serial.print(" failed, ");
-                    Serial.print(successfulReads);
-                    Serial.println(" succeeded");
+                    if (!serialStudioEnabled)
+                    {
+                        Serial.print("WARNING: Sensor read failures: ");
+                        Serial.print(failedReads);
+                        Serial.print(" failed, ");
+                        Serial.print(successfulReads);
+                        Serial.println(" succeeded");
+                    }
                     lastErrorLog = millis();
                 }
             }
@@ -1067,7 +1073,8 @@ bool SensorManager::startCollection(QueueHandle_t queue, SessionSummary *summary
         0 // Core 0 (protocol CPU)
     );
 
-    Serial.println("Sensor collection started");
+    if (!serialStudioEnabled)
+        Serial.println("Sensor collection started");
     return true;
 }
 
