@@ -251,13 +251,13 @@ brew install --cask serial-studio
    -DSERIAL_STUDIO_DEFAULT=true
    ```
 2. Build and flash: `pio run -t upload`
-3. The firmware will now emit structured CSV frames (`/*...*/` delimited) alongside normal serial output.
+3. The firmware will now emit structured CSV frames (`/*...*/` markers, newline-delimited) alongside normal serial output.
 
 **Connecting Serial Studio:**
 
 1. **Close the PlatformIO serial monitor first** — only one application can hold the serial port at a time.
 2. Open Serial Studio.
-3. Load the project file: `tools/serial-studio/motion-play.json` (File → Open).
+3. Load the latest project file from `tools/serial-studio/` (File → Open). The current version is `motion-play-v6.json`.
 4. Select the serial port (same one PlatformIO uses) and set baud rate to **115200**.
 5. Click Connect. The custom dashboard should populate with live sensor and algorithm data.
 
@@ -266,6 +266,7 @@ brew install --cask serial-studio
 - Set `SERIAL_STUDIO_DEFAULT` back to `false` when not using Serial Studio, to keep normal serial output clean.
 - The flag can also be overridden at runtime via cloud config (`serial_studio_enabled` key) if WiFi is connected.
 - Serial Studio output works in all active modes (DEBUG, PLAY, LIVE_DEBUG). Algorithm telemetry fields are populated in PLAY and LIVE_DEBUG modes.
+- **Dashboard file versioning:** Serial Studio overwrites the loaded project file on disk (it saves window layout and other state back into the JSON). When updating the dashboard definition, always create a new file with an incremented version number (e.g., `motion-play-v6.json`) rather than editing the current file in place. Otherwise Serial Studio will overwrite your changes.
 
 **Full technical details:** See `docs/initiatives/serial-studio/` (BRIEF, PLAN, TASKS).
 

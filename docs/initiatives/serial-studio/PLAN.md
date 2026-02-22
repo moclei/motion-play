@@ -79,30 +79,35 @@ Open Serial Studio, select the serial port at 921600 baud, enable Quick Plot mod
 
 ### Extended Frame Format
 
-Add 9 algorithm telemetry fields to the frame (16 fields total):
+Telemetry mode (PLAY/LIVE_DEBUG) emits 21 fields per frame:
 
 ```
-/*ts,p1s1,p1s2,p2s1,p2s2,p3s1,p3s2,smoothA,smoothB,threshA,threshB,waveA,waveB,detState,detDir,detConf*/
+/*ts,p1s1,p1s2,p2s1,p2s2,p3s1,p3s2,smoothA,smoothB,threshA,threshB,waveA,waveB,detState,detDir,detConf,fps,intTime,ledCur,dutyCyc,multiPulse*/
 ```
 
-| Field | Type | Description |
-|-------|------|-------------|
-| `smoothA`, `smoothB` | float (1dp) | Current smoothed aggregated signal per side |
-| `threshA`, `threshB` | float (1dp) | Current adaptive detection threshold per side |
-| `waveA`, `waveB` | int | Wave state: 0=idle, 1=in_wave, 2=complete |
-| `detState` | int | Detector state: 0=establishing baseline, 1=ready, 2=detecting |
-| `detDir` | int | Last detection direction: 0=unknown, 1=a_to_b, 2=b_to_a |
-| `detConf` | float (1dp) | Last detection confidence (0.0–1.0) |
+| Index | Field | Type | Description |
+|-------|-------|------|-------------|
+| 1 | `ts` | uint32 | Microsecond timestamp |
+| 2–7 | `p1s1`–`p3s2` | uint16 | Raw proximity per sensor |
+| 8–9 | `smoothA`, `smoothB` | float (1dp) | Smoothed aggregated signal per side |
+| 10–11 | `threshA`, `threshB` | float (1dp) | Adaptive detection threshold per side |
+| 12–13 | `waveA`, `waveB` | int | Wave state: 0=idle, 1=in_wave, 2=complete |
+| 14 | `detState` | int | Detector state: 0=establishing baseline, 1=ready, 2=detecting |
+| 15 | `detDir` | int | Last detection direction: 0=unknown, 1=a_to_b, 2=b_to_a |
+| 16 | `detConf` | float (1dp) | Last detection confidence (0.0–1.0) |
+| 17 | `fps` | uint16 | Frames per second (measured over 1-second window) |
+| 18 | `intTime` | uint16 | Integration time multiplier (e.g. 4 for "4T") |
+| 19 | `ledCur` | uint16 | LED current in mA (e.g. 200 for "200mA") |
+| 20 | `dutyCyc` | uint16 | Duty cycle denominator (e.g. 40 for "1/40") |
+| 21 | `multiPulse` | uint16 | Multi-pulse count (e.g. 1, 2, 4, 8) |
 
-USB CDC throughput is not a concern (see Phase 1). The Phase 2 test should verify that the extended `Serial.printf()` call does not introduce Core 1 loop blocking.
+All 21 fields are numeric. Config values are emitted as integers to avoid string characters (especially `/` in duty cycle) that conflict with the `*/` frame delimiter and cause serial frame corruption at high data rates.
+
+Basic mode (DEBUG) emits 12 fields: ts, 6 sensors, fps, and 4 numeric config values.
 
 ### Detection Result Caching
 
-After a detection, the detector is immediately reset (`directionDetector.reset()` or `mlDetector.reset()`), which clears its internal state. `SerialStudioOutput` must independently cache the last detection result (direction, confidence) and continue outputting those cached values in each frame until either:
-- A new detection occurs (cache is updated), or
-- A timeout elapses (cache is cleared to 0/unknown)
-
-This ensures the detection is visible in the Serial Studio dashboard for a meaningful duration rather than disappearing after a single frame.
+After a detection, the detector is immediately reset (`directionDetector.reset()` or `mlDetector.reset()`), which clears its internal state. `SerialStudioOutput` independently caches the last detection result (direction, confidence) and continues outputting those cached values in each frame until a new detection occurs. There is no timeout — the cached result persists until overwritten, giving the user time to read the dashboard.
 
 ### DirectionDetector Changes
 
@@ -117,14 +122,17 @@ These are read-only accessors to existing internal state. No algorithmic changes
 
 Create `tools/serial-studio/motion-play.json` with these widget groups:
 
-- **Module 1** (`multipleplots`): P1S1 + P1S2 proximity overlaid
-- **Module 2** (`multipleplots`): P2S1 + P2S2 proximity overlaid
-- **Module 3** (`multipleplots`): P3S1 + P3S2 proximity overlaid
-- **All Sensors** (`multipleplots`): All 6 proximity values overlaid for cross-module comparison
-- **Algorithm** (`multipleplots`): smoothedA, smoothedB, thresholdA, thresholdB overlaid — shows signal vs threshold in real time
+- **Module 1** (`multiplot`): P1S1 + P1S2 proximity overlaid
+- **Module 2** (`multiplot`): P2S1 + P2S2 proximity overlaid
+- **Module 3** (`multiplot`): P3S1 + P3S2 proximity overlaid
+- **All Sensors** (`multiplot`): All 6 proximity values overlaid for cross-module comparison
+- **All Side A** (`multiplot`): P1S1 + P2S1 + P3S1 — all back-facing sensors overlaid for cross-module comparison
+- **All Side B** (`multiplot`): P1S2 + P2S2 + P3S2 — all front-facing sensors overlaid for cross-module comparison
+- **Algorithm** (`multiplot`): smoothedA, smoothedB, thresholdA, thresholdB overlaid — shows signal vs threshold in real time
 - **Detection Status** (`datagrid`): detector state, wave states, last direction, confidence
+- **Sample Rate & Config** (`datagrid`): frames per second (gauge), integration time, LED current, duty cycle, multi-pulse
 
-The project file uses `frameDetection: 2` (start + end delimiters) with `/*` and `*/`, and a default comma-separated parser.
+The project file uses `frameDetection: 0` (end delimiter only) with `\n` as the frame end. The `/*` and `*/` markers remain in the frame data and are validated by a custom JavaScript parser that strips them before splitting on commas. This approach is more robust against USB CDC packetization artifacts than start+end delimiter mode (see Frame Corruption Fix below).
 
 ## Phase 3: Local CSV Collection — Deferred
 
@@ -134,13 +142,29 @@ Serial Studio's role in this project is real-time visualization and algorithm de
 
 ## Technical Notes
 
+### Frame Corruption Fix (v4)
+
+The original Serial Studio integration (v1–v3) suffered from ~10–12% frame corruption in CSV exports. Corrupted rows appeared in pairs: a truncated frame followed by a malformed frame containing data from both.
+
+**Root cause**: The ESP32-S3 uses USB CDC (Hardware CDC, `ARDUINO_USB_MODE=1`), which packetizes serial data into USB transfers. When multiple frames accumulate in the HWCDC TX FIFO between USB host polls, they arrive as a single chunk. Serial Studio's `/*...*/` start+end delimiter parser occasionally misaligned when frame boundaries fell mid-chunk, merging adjacent frames.
+
+**Additional bug found**: The `char buf[64]` used by the snprintf approach was too small for 21-field telemetry frames (~76+ chars). The safety check `(len < sizeof(buf))` silently dropped oversized frames, meaning telemetry mode frames were never actually emitted in v3.
+
+**Fix (v4)**:
+1. **Switched to newline-only frame detection** (`frameDetection: 0` / EndDelimiterOnly with `\n` end delimiter). Newline is a single byte — no risk of delimiter splitting across USB packets. Line-oriented parsing trivially handles multiple frames per USB read.
+2. **JS parser validates `/*...*/` markers**: The frame parser strips and validates the markers, rejecting any non-frame lines (debug output, partial frames) by returning an empty array.
+3. **Reverted to `Serial.printf()`**: Removed the snprintf/Serial.write workaround (and its undersized 64-byte buffer). `Serial.printf()` handles buffer management internally with no frame size limit.
+4. **Restored full precision**: Timestamp back to microseconds (`_currentTimestamp` directly), float precision back to `%.1f`.
+5. **Removed the 50 FPS output throttle**: With newline framing eliminating corruption, the full sensor rate (~370 Hz) flows to Serial Studio for maximum temporal resolution.
+6. **Kept debug print suppression**: The `serialStudioEnabled` guards prevent non-frame serial output from interfering.
+
+**Fixes retained from earlier iterations**:
+- Config strings → numeric values (fix #1): prevents `/` in duty cycle from conflicting with `*/`.
+- Debug print suppression (fix #2): `extern bool serialStudioEnabled` guards across 6 files.
+
 ### Coexistence with Debug Output
 
-When `serial_studio_enabled` is true, the firmware emits both:
-- Structured CSV frames with `/*` ... `*/` delimiters (consumed by Serial Studio)
-- Normal `Serial.print` debug messages (ignored by Serial Studio)
-
-Serial Studio only parses lines matching its frame delimiters. Debug text passes through harmlessly. However, when `serial_studio_enabled` is true, verbose periodic debug prints (e.g., the 2-second `[PLAY] Buffer: %d samples` messages) should be suppressed or reduced to keep the serial path clean and avoid unnecessary USB buffer contention.
+When `serial_studio_enabled` is true, debug prints are suppressed by `if (!serialStudioEnabled)` guards across all firmware components. The few that might slip through (e.g., during initialization before the flag is set) are rejected by the Serial Studio JS parser since they lack `/*...*/` markers.
 
 ### Config Flag
 
