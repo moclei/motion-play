@@ -1,61 +1,87 @@
 # VCNL4040 Configuration Guide
 ## Understanding the Settings for Optimal Performance
 
-Based on analysis of the Vishay VCNL4040 design guide and testing with Motion Play hardware.
+Based on analysis of the Vishay VCNL4040 design guide, datasheet, and testing with Motion Play hardware.
 
 ---
 
 ## TL;DR - Quick Reference
 
-**For your goals (fast sample rate + good detection):**
+**For Motion Play (fast sample rate + good detection):**
 ```cpp
-Integration Time: 2T or 4T    // Better range/SNR than 1T, still fast
-Duty Cycle: 1/40              // Maximum sample rate (~200 Hz)
-LED Current: 200mA            // Maximum detection range
-High Resolution: true         // 16-bit for better precision
+Integration Time: 2T           // Good signal, 100 Hz at 1/40 duty
+Duty Cycle: 1/40               // Maximum measurement rate
+Multi-Pulse: x4                // 4× signal boost, no rate penalty
+LED Current: 200mA             // Maximum detection range
+High Resolution: true          // 16-bit for better precision
 ```
 
 ---
 
-## The Key Insight: Two Independent Controls
+## The Three Controls That Matter
 
-### 1. **Duty Cycle (PS_Duty)** - Controls SAMPLE RATE
-- **1/40** → ~5ms between measurements → **~200 Hz** (FASTEST)
-- **1/80** → ~10ms between measurements → **~100 Hz**
-- **1/160** → ~20ms between measurements → **~50 Hz**
-- **1/320** → ~40ms between measurements → **~25 Hz** (SLOWEST)
+### 1. Integration Time (PS_IT) — Controls PULSE LENGTH, SENSITIVITY, AND RATE
 
-This is the PRIMARY control for how often measurements happen.
+Each measurement fires an IR pulse of this duration. Longer pulses collect more photons (stronger signal) but take longer, directly reducing the measurement rate.
 
-### 2. **Integration Time (PS_IT)** - Controls PULSE LENGTH & SENSITIVITY
-- **1T** → 125 μs pulse → Lower signal, shorter range
-- **2T** → 250 μs pulse → Better signal
-- **4T** → 500 μs pulse → Even better signal
-- **8T** → 1000 μs pulse → Best signal, longest range
+| Setting | Pulse Width | Rate @ 1/40 duty | Signal Strength |
+|---------|------------|-------------------|-----------------|
+| 1T | 125 μs | **200 Hz** | Baseline |
+| 1.5T | 187.5 μs | **133 Hz** | 1.5× |
+| 2T | 250 μs | **100 Hz** | 2× |
+| 2.5T | 312.5 μs | **80 Hz** | 2.5× |
+| 3T | 375 μs | **67 Hz** | 3× |
+| 3.5T | 437.5 μs | **57 Hz** | 3.5× |
+| 4T | 500 μs | **50 Hz** | 4× |
+| 8T | 1000 μs | **25 Hz** | 8× |
 
-This controls how STRONG each measurement is, NOT how often they happen.
+> **Note on pulse width:** Some Vishay documentation says "about 100 μs" for 1T. The actual value measured on oscilloscope is 125 μs (see designingvcnl4040.txt lines 438, 461). All calculations use 125 μs.
+
+### 2. Duty Cycle (PS_Duty) — Controls MEASUREMENT PERIOD
+
+The duty cycle denominator multiplies the pulse width to set the total measurement period:
+
+```
+Measurement Period ≈ Pulse Width × Duty Denominator
+Measurement Rate ≈ 1 / Period
+```
+
+| Duty Cycle | Multiplier | Period @ 1T | Rate @ 1T | Period @ 2T | Rate @ 2T |
+|-----------|-----------|-----------|---------|-----------|---------|
+| 1/40 | ×40 | ~5 ms | ~200 Hz | ~10 ms | ~100 Hz |
+| 1/80 | ×80 | ~10 ms | ~100 Hz | ~20 ms | ~50 Hz |
+| 1/160 | ×160 | ~20 ms | ~50 Hz | ~40 ms | ~25 Hz |
+| 1/320 | ×320 | ~40 ms | ~25 Hz | ~80 ms | ~12.5 Hz |
+
+> **Confidence: Medium.** This formula is derived from the Vishay design guide, not explicitly stated. The design guide says 1T/1/40 yields measurements "every 4.85 ms" (line 430), while our formula gives 5.0 ms. It also confirms proportionality: "These pulse lengths are always doubled... but the repetition time is also doubled" (lines 439-441). The formula is a close approximation (~3% error at 1T/1/40) but may not be exact.
+
+**Both IT and duty cycle directly determine the measurement rate.** There is no way around this — longer integration time = slower rate at the same duty cycle.
+
+### 3. Multi-Pulse (PS_MPS) — SIGNAL BOOST (LIKELY NO RATE PENALTY)
+
+Multi-pulse fires 1/2/4/8 consecutive IR pulses per measurement and accumulates the result. This boosts signal strength and is believed to not affect the measurement rate because all pulses fit within the measurement period.
+
+| Setting | Pulses | Signal Boost | Rate Impact |
+|---------|--------|-------------|-------------|
+| x1 | 1 | 1× | None (believed) |
+| x2 | 2 | ~2× | None (believed) |
+| x4 | 4 | ~4× | None (believed) |
+| x8 | 8 | ~8× | None (believed) |
+
+> **Confidence: Medium.** The Vishay datasheet and design guide say nothing about how PS_MPS affects measurement timing. The best evidence comes from the Linux kernel IIO driver (Astrid Rost, Axis Communications, 2023): *"Instead of one single pulse per every defined time frame, one can program 2, 4, or even 8 pulses."* The phrase "per every defined time frame" implies the period is fixed and multi-pulse fires within it. However, this is a third-party interpretation, not a Vishay specification. Empirical testing on our hardware is recommended to confirm.
 
 ---
 
-## Common Misconception (From Your Frontend)
+## Full Rate Table (at 1/40 duty)
 
-❌ **WRONG**: "Longer integration time = slower sample rate"
-✅ **RIGHT**: "Longer integration time = stronger signal per measurement"
+| IT | x1 Rate | x1 Signal | x4 Rate | x4 Signal | x8 Rate | x8 Signal |
+|----|---------|-----------|---------|-----------|---------|-----------|
+| 1T | 200 Hz | 1× | 200 Hz | ~4× | 200 Hz | ~8× |
+| 2T | 100 Hz | 2× | 100 Hz | ~8× | 100 Hz | ~16× |
+| 4T | 50 Hz | 4× | 50 Hz | ~16× | 50 Hz | ~32× |
+| 8T | 25 Hz | 8× | 25 Hz | ~32× | 25 Hz | ~64× |
 
-The duty cycle setting determines sample rate. Integration time only affects it indirectly through the relationship:
-
-```
-Measurement Period = Pulse Length × Duty Cycle Denominator
-
-Example 1: 1T with 1/40 duty
-  Period = 125μs × 40 = 5ms → 200 Hz
-
-Example 2: 8T with 1/40 duty  
-  Period = 1000μs × 40 = 40ms → 25 Hz
-
-Example 3: 1T with 1/320 duty
-  Period = 125μs × 320 = 40ms → 25 Hz
-```
+**Key insight (if multi-pulse is rate-free as believed):** Multi-pulse gives you the signal boost of a higher IT without the rate penalty. `1T/x8` would give ~8× signal at 200 Hz, while `8T/x1` also gives ~8× signal but at only 25 Hz.
 
 ---
 
@@ -64,169 +90,112 @@ Example 3: 1T with 1/320 duty
 ### Integration Time (Lines 537-543)
 > "If higher detection distances and / or objects with very low reflectivity should be detected, there is the option to extend these proximity pulses up to about 1000 μs for 8T. This results in higher counts"
 
-**Key Points:**
 - 8T can achieve 10,000+ counts vs 1,000 counts with 1T (see Fig 14 vs Fig 15)
-- Better SNR because more photons are collected
-- Reduces saturation risk at very close range (higher counts before hitting max)
+- Better SNR because more photons are collected per pulse
 
 ### Duty Cycle (Lines 515-520, 564-569)
 > "With defining the duty time (PS_Duty), the repetition rate = the number of proximity measurements per second (speed of proximity measurements) is defined. This is possible between 5 ms (about 200 measurements/s) by programming PS_Duty with 1/40 and 40 ms (about 25 measurements/s) with programming PS_Duty with 1/320."
 
-**Key Points:**
-- This is the PRIMARY control for measurement frequency
-- 1/40 = fastest response time
-- 1/320 = longest battery life
+Note: The "5 ms → 200 Hz" figure is for 1T integration time. With longer IT, the period increases proportionally. Also note the design guide says "4.85 ms" for 1T/1/40 (line 430), not exactly 5 ms.
 
 ---
 
 ## Configuration Strategy for Motion Play
 
-### Your Goals
-1. **Fast sample rate** - Need to catch fast-moving objects
-2. **Good detection** - Strong signal when something passes through
-3. **Less concerned about** - Exact distance measurement accuracy
+### The Trade-off
 
-### Recommended Configuration
+You need **enough samples per transit** to form a clear detection wave. For a ball traveling at up to 13.4 m/s (30 mph) through a 450mm hoop with a size 3 ball (190mm), the transit takes ~14 ms. At that speed:
 
-```cpp
-// BEST for Motion Play
-Duty Cycle: 1/40           // ~200 Hz maximum - catch fast objects
-Integration Time: 2T or 4T  // 2-4× stronger signal than 1T
-LED Current: 200mA         // Maximum range
-High Resolution: true      // 16-bit for better differentiation
+| Config | Rate | Samples per transit | Verdict |
+|--------|------|-------------------|---------|
+| 1T/x4 @ 1/40 | 200 Hz | 2.8 | Marginal |
+| 2T/x4 @ 1/40 | 100 Hz | 1.4 | Likely missed |
+| 1T/x8 @ 1/40 | 200 Hz | 2.8 | Marginal (best signal) |
 
-// Result: ~200 Hz actual sample rate with strong detection
+For typical throws (5-8 m/s), transit takes ~24-38 ms:
+
+| Config | Rate | Samples @ 8 m/s | Samples @ 5 m/s |
+|--------|------|-----------------|-----------------|
+| 1T/x4 @ 1/40 | 200 Hz | 4.8 | 7.6 |
+| 2T/x4 @ 1/40 | 100 Hz | 2.4 | 3.8 |
+| 1T/x8 @ 1/40 | 200 Hz | 4.8 | 7.6 |
+
+### Recommended Configurations
+
+**Best for fast objects (speed priority):**
+```
+Integration Time: 1T
+Multi-Pulse: x8            // Compensate with multi-pulse for signal
+Duty Cycle: 1/40
+LED Current: 200mA
+→ 200 Hz, ~8× signal
 ```
 
-### Why Not 8T Integration Time?
-- 8T with 1/40 duty → ~25 Hz effective rate (too slow for fast objects)
-- 2T or 4T gives good signal strength while maintaining high sample rate
-
-### Alternative: If Objects Are Very Fast
-```cpp
-Duty Cycle: 1/40           // Still fastest
-Integration Time: 1T       // Shortest pulse for maximum speed
-LED Current: 200mA         // Compensate with high power
+**Best balance (recommended starting point):**
 ```
+Integration Time: 2T
+Multi-Pulse: x4
+Duty Cycle: 1/40
+LED Current: 200mA
+→ 100 Hz, ~8× signal
+```
+
+**Best for slow/weak objects (sensitivity priority):**
+```
+Integration Time: 4T
+Multi-Pulse: x4
+Duty Cycle: 1/40
+LED Current: 200mA
+→ 50 Hz, ~16× signal
+```
+
+Use `python3 tools/transit-calculator.py` to model samples-per-transit for your specific setup.
 
 ---
 
-## Power Consumption Considerations
+## Power Consumption
 
-### Integration Time Impact
-- **Minimal** - pulse is longer but still very short (125μs to 1000μs)
-- At 1/40 duty, LED is only ON 2.5% of the time anyway
+For Motion Play (USB-powered), power is not a concern. Use 1/40 duty cycle.
 
-### Duty Cycle Impact (Critical for Battery Life)
-- **1/40**: Avg current = 200mA / 40 = **5.0 mA**
-- **1/80**: Avg current = 200mA / 80 = **2.5 mA**
-- **1/160**: Avg current = 200mA / 160 = **1.25 mA**
-- **1/320**: Avg current = 200mA / 320 = **0.625 mA**
-
-For Motion Play (powered by USB), this isn't a concern. Use 1/40.
+For reference, at 200mA LED current:
+- **1/40 duty**: Avg LED current = 200mA / 40 = **5.0 mA**
+- **1/320 duty**: Avg LED current = 200mA / 320 = **0.625 mA**
 
 ---
 
-## I2C Timing Impact
+## I2C Pipeline
 
-From your modified Adafruit library:
-```cpp
-delayMicroseconds(500); // Your optimization: 0.5ms vs 10ms delay
-```
+The firmware reads all 6 sensors sequentially through a TCA9548A → PCA9546A mux chain at 400 kHz I2C. A complete read cycle takes ~1.8 ms (~549 polls/sec), which is faster than the sensor's measurement rate at all practical settings.
 
-**I2C Read Time** (at 400 kHz):
-- Reading proximity value: ~500 μs
-- This is SMALL compared to duty cycle periods (5ms+)
-- Your optimization is good!
+**The sensor's internal measurement rate is always the bottleneck, not the I2C pipeline.**
 
-**Bottleneck Analysis:**
-```
-Duty Cycle 1/40 → 5ms period
-├─ IR Pulse: 125μs (1T) to 1000μs (8T)
-├─ I2C Read: ~500μs
-└─ Remaining time: ~3.5ms (plenty of buffer)
-
-Even with 6 sensors sequentially:
-6 × 500μs = 3ms < 5ms period
-```
-
-You can read all 6 sensors within one duty cycle period!
+See `SENSOR_READING_PIPELINE.md` for the complete timing analysis with sequence diagrams.
 
 ---
 
-## Implementation Notes
+## Current Configuration Status
 
-### Current Status
-- ✅ Integration Time: Exposed in config
-- ✅ LED Current: Exposed in config
-- ✅ High Resolution: Exposed in config
-- ❌ **Duty Cycle: NOT exposed** (likely defaulting to 1/160)
-
-### What's Happening Now
-The Adafruit library initializes sensors but doesn't set duty cycle explicitly, so it uses the chip default (1/160 based on datasheet).
-
-Your "sample_rate_hz" config is probably controlling your reading loop in firmware, but the SENSOR is only taking measurements at 1/160 duty rate (~50 Hz), so reading faster doesn't help!
+- ✅ Integration Time: Exposed in cloud config
+- ✅ LED Current: Exposed in cloud config
+- ✅ Duty Cycle: Exposed in cloud config (default: 1/40)
+- ✅ Multi-Pulse: Exposed in cloud config
+- ✅ High Resolution: Exposed in cloud config
 
 ---
 
-## Recommended Next Steps
+## Evidence & References
 
-1. **Add duty cycle to SensorConfiguration.h**
-2. **Expose duty cycle in frontend configuration**
-3. **Set to 1/40 for maximum speed**
-4. **Test with 2T or 4T integration time**
-5. **Measure actual detection performance**
+### Primary Sources (Vishay)
+- **Design Guide** (`designingvcnl4040.txt`) — Contains oscilloscope measurements (1T = 125 μs), duty cycle timing data (1T/1/40 = 4.85 ms), and the proportionality statement for IT vs repetition time. Does NOT mention PS_MPS at all.
+- **Datasheet** (`vcnl4040_datasheet_text.txt`) — Register definitions only. PS_MPS described as "Proximity multi pulse numbers: 1, 2, 4, 8 multi pulses" with no timing information.
 
-This will give you:
-- Real ~200 Hz sensor measurements (not just reads)
-- Strong detection signal
-- Fast response to objects passing through
+### Third-Party Sources
+- **Linux kernel IIO driver** — [Patch series by Astrid Rost (Axis Communications, May 2023)](https://patchew.org/linux/20230517151406.368219-1-astrid.rost@axis.com/). Treats PS_MPS as "oversampling_ratio" and describes it as firing multiple pulses "per every defined time frame." Treats IT, duty cycle, and multi-pulse as independent parameters.
 
----
-
-## Testing Strategy
-
-### Baseline Test (Current Config)
-```
-Integration: 1T
-Duty: 1/160 (default)
-LED: 200mA
-Expected: ~50 Hz effective, moderate signal
-```
-
-### Speed Optimized Test
-```
-Integration: 1T
-Duty: 1/40
-LED: 200mA
-Expected: ~200 Hz, moderate signal
-```
-
-### Balanced Test (RECOMMENDED)
-```
-Integration: 2T
-Duty: 1/40
-LED: 200mA
-Expected: ~200 Hz, strong signal
-```
-
-### Range Optimized Test
-```
-Integration: 4T
-Duty: 1/40
-LED: 200mA
-Expected: ~200 Hz, very strong signal
-```
+### Project Tools
+- Sensor Reading Pipeline (`SENSOR_READING_PIPELINE.md`)
+- Transit Calculator (`tools/transit-calculator.py`)
 
 ---
 
-## References
-
-- Vishay VCNL4040 Design Guide (designingvcnl4040.txt)
-- Adafruit VCNL4040 Library
-- Motion Play PROJECT.md
-
----
-
-*Last Updated: November 26, 2025*
-
+*Last Updated: February 2026*

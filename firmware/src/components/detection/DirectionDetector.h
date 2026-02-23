@@ -53,6 +53,8 @@ struct DetectionResult
     uint32_t comGapMs;      // Time gap between centers of mass
     uint16_t maxSignalA;
     uint16_t maxSignalB;
+    uint32_t waveDurationA; // Wave duration in ms (side A)
+    uint32_t waveDurationB; // Wave duration in ms (side B)
     // Debug info
     float baselineA;
     float baselineB;

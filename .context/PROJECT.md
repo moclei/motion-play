@@ -257,7 +257,7 @@ brew install --cask serial-studio
 
 1. **Close the PlatformIO serial monitor first** — only one application can hold the serial port at a time.
 2. Open Serial Studio.
-3. Load the latest project file from `tools/serial-studio/` (File → Open). The current version is `motion-play-v6.json`.
+3. Load the latest project file from `tools/serial-studio/` (File → Open). The current version is `motion-play-v8.json`.
 4. Select the serial port (same one PlatformIO uses) and set baud rate to **115200**.
 5. Click Connect. The custom dashboard should populate with live sensor and algorithm data.
 
@@ -266,7 +266,11 @@ brew install --cask serial-studio
 - Set `SERIAL_STUDIO_DEFAULT` back to `false` when not using Serial Studio, to keep normal serial output clean.
 - The flag can also be overridden at runtime via cloud config (`serial_studio_enabled` key) if WiFi is connected.
 - Serial Studio output works in all active modes (DEBUG, PLAY, LIVE_DEBUG). Algorithm telemetry fields are populated in PLAY and LIVE_DEBUG modes.
-- **Dashboard file versioning:** Serial Studio overwrites the loaded project file on disk (it saves window layout and other state back into the JSON). When updating the dashboard definition, always create a new file with an incremented version number (e.g., `motion-play-v6.json`) rather than editing the current file in place. Otherwise Serial Studio will overwrite your changes.
+- **Transit speed estimation:** After a detection event, the dashboard shows an estimated ball speed (m/s) derived from the wave duration and the configured ball diameter. Configure `ball_diameter_mm` (default: 190, size 3 soccer ball) and `hoop_inner_diameter_mm` (default: 450) via cloud config to match your test setup.
+- **Transit calculator:** Run `python3 tools/transit-calculator.py --help` to calculate expected samples-per-transit for different combinations of hoop size, ball size, speed, and sensor settings. Useful for determining optimal sensor configuration.
+- **Dual rate display:** The dashboard shows two rate metrics: **Sensor Rate** (calculated from IT × duty cycle — how fast the sensor produces new measurements) and **Poll Rate** (measured I2C read cycles/sec — how fast we're polling). The sensor rate is always the bottleneck; poll rate should always exceed it.
+- **Sensor reading pipeline:** See `docs/references/vcnl4040/SENSOR_READING_PIPELINE.md` for a complete timing analysis of the I2C mux chain, including sequence diagrams and oversampling ratios.
+- **Dashboard file versioning:** Serial Studio overwrites the loaded project file on disk (it saves window layout and other state back into the JSON). When updating the dashboard definition, always create a new file with an incremented version number (e.g., `motion-play-v8.json`) rather than editing the current file in place. Otherwise Serial Studio will overwrite your changes.
 
 **Full technical details:** See `docs/initiatives/serial-studio/` (BRIEF, PLAN, TASKS).
 

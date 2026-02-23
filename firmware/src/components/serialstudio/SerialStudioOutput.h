@@ -29,12 +29,15 @@ private:
     // Detection result cache (persists until next detection or full reset)
     Direction _cachedDirection = Direction::UNKNOWN;
     float _cachedConfidence = 0.0f;
+    float _cachedSpeedMs = 0.0f; // Estimated transit speed in m/s
 
-    // Frames-per-second tracking (counts all sensor cycles, not just emitted frames)
-    uint32_t _frameCount = 0;
-    unsigned long _fpsWindowStart = 0;
-    uint16_t _currentFps = 0;
+    // Rate tracking
+    uint32_t _pollCount = 0;         // Frames emitted in current 1-second window
+    unsigned long _rateWindowStart = 0;
+    uint16_t _pollRate = 0;          // Measured I2C polling rate (cycles/sec)
+    uint16_t _sensorRate = 0;        // Calculated sensor measurement rate (Hz) from IT × duty
 
+    uint16_t calculateSensorRate();
     void emitFrame();
     void resetAccumulator(uint32_t newTimestamp);
 

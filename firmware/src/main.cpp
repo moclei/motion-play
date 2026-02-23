@@ -194,6 +194,12 @@ bool fetchConfigFromCloud()
                 currentConfig.multi_pulse = "1"; // Default: 1 pulse
             }
 
+            // Physical geometry for transit speed estimation
+            if (config.containsKey("ball_diameter_mm"))
+                currentConfig.ball_diameter_mm = config["ball_diameter_mm"];
+            if (config.containsKey("hoop_inner_diameter_mm"))
+                currentConfig.hoop_inner_diameter_mm = config["hoop_inner_diameter_mm"];
+
             // Sensor mode (polling vs interrupt)
             if (config.containsKey("sensor_mode"))
             {
@@ -821,6 +827,12 @@ void handleCommand(const String &command, JsonDocument *doc)
             {
                 currentConfig.multi_pulse = "1"; // Default: 1 pulse
             }
+
+            // Physical geometry for transit speed estimation
+            if (config.containsKey("ball_diameter_mm"))
+                currentConfig.ball_diameter_mm = config["ball_diameter_mm"];
+            if (config.containsKey("hoop_inner_diameter_mm"))
+                currentConfig.hoop_inner_diameter_mm = config["hoop_inner_diameter_mm"];
 
             // Handle sensor_mode (polling vs interrupt)
             if (config.containsKey("sensor_mode"))
