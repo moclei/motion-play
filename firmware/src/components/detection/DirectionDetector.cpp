@@ -290,6 +290,8 @@ DetectionResult DirectionDetector::getResult()
     result.comGapMs = 0;
     result.maxSignalA = 0;
     result.maxSignalB = 0;
+    result.waveDurationA = 0;
+    result.waveDurationB = 0;
     result.baselineA = baselineA.max;
     result.baselineB = baselineB.max;
     result.thresholdA = waveA.threshold;
@@ -303,6 +305,8 @@ DetectionResult DirectionDetector::getResult()
     // Fill in result
     result.centerOfMassA = waveA.centerOfMass;
     result.centerOfMassB = waveB.centerOfMass;
+    result.waveDurationA = waveA.waveEndTime - waveA.waveStartTime;
+    result.waveDurationB = waveB.waveEndTime - waveB.waveStartTime;
     result.comGapMs = abs((int32_t)waveA.centerOfMass - (int32_t)waveB.centerOfMass);
     result.maxSignalA = (uint16_t)waveA.peakValue;
     result.maxSignalB = (uint16_t)waveB.peakValue;

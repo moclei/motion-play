@@ -28,6 +28,10 @@ struct SensorConfiguration
     uint32_t i2c_clock_khz = 400;       // I2C clock speed in kHz (400 or 1000)
     uint16_t actual_sample_rate_hz = 0; // Measured actual sample rate (populated during session)
 
+    // === Physical Geometry (for transit speed estimation) ===
+    uint16_t ball_diameter_mm = 190;         // Soccer ball size 3 (~190mm). Sizes: 2=165, 3=190, 4=206, 5=220
+    uint16_t hoop_inner_diameter_mm = 450;   // Hoop inner diameter in mm
+
     // === Interrupt Mode Settings ===
     // Note: Uses calibration-based approach - thresholds are relative to baseline (set via PS_CANC)
     uint16_t interrupt_threshold_margin = 10; // Trigger when prox exceeds baseline + margin
