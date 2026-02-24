@@ -35,7 +35,12 @@ const DEFAULT_CONFIG = {
     interrupt_multi_pulse: 8,          // 8 pulses for maximum signal
     interrupt_persistence: 1,
     interrupt_smart_persistence: true,
-    interrupt_mode: "normal"
+    interrupt_mode: "normal",
+    // Detection algorithm parameters (heuristic mode)
+    peak_multiplier: 1.5,             // Adaptive threshold sensitivity
+    min_rise: 10,                     // Minimum absolute signal rise
+    min_wave_duration_ms: 8,          // Noise spike filter (ms)
+    smoothing_window: 5               // Signal smoothing window size
 };
 
 exports.handler = async (event) => {

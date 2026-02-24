@@ -35,6 +35,11 @@ interface SensorConfig {
     interrupt_persistence?: number;       // Consecutive hits before interrupt (1-4)
     interrupt_smart_persistence?: boolean;
     interrupt_mode?: 'normal' | 'logic';
+    // Detection algorithm parameters (heuristic mode)
+    peak_multiplier?: number;       // Adaptive threshold = baseline + (baseline × multiplier)
+    min_rise?: number;              // Minimum absolute signal rise to trigger a wave
+    min_wave_duration_ms?: number;  // Waves shorter than this are noise-rejected
+    smoothing_window?: number;      // Rolling average window size for signal smoothing
 }
 
 interface SettingsModalProps {
@@ -64,6 +69,11 @@ const DEFAULT_CONFIG: SensorConfig = {
     interrupt_persistence: 1,
     interrupt_smart_persistence: true,
     interrupt_mode: 'normal',
+    // Detection algorithm parameters (heuristic mode)
+    peak_multiplier: 1.5,
+    min_rise: 10,
+    min_wave_duration_ms: 8,
+    smoothing_window: 5,
 };
 
 type SettingsTab = 'proximity' | 'interrupt';
@@ -104,6 +114,11 @@ export const SettingsModal = ({ isOpen, onClose }: SettingsModalProps) => {
                 interrupt_persistence: cloudConfig.interrupt_persistence ?? 1,
                 interrupt_smart_persistence: cloudConfig.interrupt_smart_persistence ?? true,
                 interrupt_mode: cloudConfig.interrupt_mode ?? 'normal',
+                // Detection algorithm parameters
+                peak_multiplier: cloudConfig.peak_multiplier ?? 1.5,
+                min_rise: cloudConfig.min_rise ?? 10,
+                min_wave_duration_ms: cloudConfig.min_wave_duration_ms ?? 8,
+                smoothing_window: cloudConfig.smoothing_window ?? 5,
             });
             // Switch to appropriate tab based on sensor mode
             setActiveTab(cloudConfig.sensor_mode === 'interrupt' ? 'interrupt' : 'proximity');
@@ -242,6 +257,72 @@ export const SettingsModal = ({ isOpen, onClose }: SettingsModalProps) => {
                             ? 'Wave envelope + center-of-mass algorithm. Well-tested, no model required.'
                             : 'TFLite Micro 1D CNN inference on-device. Experimental — requires trained model in firmware.'}
                     </p>
+
+                    {/* Detection algorithm tuning (heuristic only) */}
+                    {config.detection_mode === 'heuristic' && (
+                        <div className="mt-3 pt-3 border-t border-gray-200">
+                            <span className="text-sm font-medium text-gray-700">Algorithm Tuning</span>
+                            <div className="grid grid-cols-4 gap-3 mt-2">
+                                <div>
+                                    <label className="flex items-center text-xs text-gray-600 mb-1">
+                                        Peak Mult
+                                        <Tooltip text="Adaptive threshold sensitivity. Threshold = baseline × multiplier. Lower = more sensitive, more false positives." />
+                                    </label>
+                                    <input
+                                        type="number"
+                                        value={config.peak_multiplier}
+                                        onChange={(e) => setConfig({ ...config, peak_multiplier: parseFloat(e.target.value) || 1.5 })}
+                                        step={0.1}
+                                        min={1.0}
+                                        max={5.0}
+                                        className="w-full px-2 py-1.5 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-500 text-sm"
+                                    />
+                                </div>
+                                <div>
+                                    <label className="flex items-center text-xs text-gray-600 mb-1">
+                                        Min Rise
+                                        <Tooltip text="Minimum absolute signal rise required to start a wave. Filters out low-amplitude noise." />
+                                    </label>
+                                    <input
+                                        type="number"
+                                        value={config.min_rise}
+                                        onChange={(e) => setConfig({ ...config, min_rise: parseInt(e.target.value) || 10 })}
+                                        min={1}
+                                        max={500}
+                                        className="w-full px-2 py-1.5 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-500 text-sm"
+                                    />
+                                </div>
+                                <div>
+                                    <label className="flex items-center text-xs text-gray-600 mb-1">
+                                        Min Wave (ms)
+                                        <Tooltip text="Waves shorter than this duration are rejected as noise spikes. Increase if seeing false triggers." />
+                                    </label>
+                                    <input
+                                        type="number"
+                                        value={config.min_wave_duration_ms}
+                                        onChange={(e) => setConfig({ ...config, min_wave_duration_ms: parseInt(e.target.value) || 8 })}
+                                        min={1}
+                                        max={100}
+                                        className="w-full px-2 py-1.5 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-500 text-sm"
+                                    />
+                                </div>
+                                <div>
+                                    <label className="flex items-center text-xs text-gray-600 mb-1">
+                                        Smoothing
+                                        <Tooltip text="Rolling average window size. Higher = smoother signal, more latency. Lower = faster response, noisier." />
+                                    </label>
+                                    <input
+                                        type="number"
+                                        value={config.smoothing_window}
+                                        onChange={(e) => setConfig({ ...config, smoothing_window: parseInt(e.target.value) || 5 })}
+                                        min={1}
+                                        max={20}
+                                        className="w-full px-2 py-1.5 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-500 text-sm"
+                                    />
+                                </div>
+                            </div>
+                        </div>
+                    )}
                 </div>
 
                 {/* Tab Navigation - for detailed settings */}

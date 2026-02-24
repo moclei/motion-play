@@ -59,7 +59,12 @@ function sanitizeConfig(config) {
         interrupt_multi_pulse: Number.isFinite(config.interrupt_multi_pulse) ? config.interrupt_multi_pulse : 8,
         interrupt_persistence: Number.isFinite(config.interrupt_persistence) ? config.interrupt_persistence : 1,
         interrupt_smart_persistence: typeof config.interrupt_smart_persistence === 'boolean' ? config.interrupt_smart_persistence : true,
-        interrupt_mode: interruptMode
+        interrupt_mode: interruptMode,
+        // Detection algorithm parameters (heuristic mode)
+        peak_multiplier: Number.isFinite(config.peak_multiplier) ? config.peak_multiplier : 1.5,
+        min_rise: Number.isFinite(config.min_rise) ? config.min_rise : 10,
+        min_wave_duration_ms: Number.isFinite(config.min_wave_duration_ms) ? config.min_wave_duration_ms : 8,
+        smoothing_window: Number.isFinite(config.smoothing_window) ? config.smoothing_window : 5
     };
 }
 
@@ -126,7 +131,12 @@ exports.handler = async (event) => {
                 interrupt_multi_pulse: sensorConfig.interrupt_multi_pulse,
                 interrupt_persistence: sensorConfig.interrupt_persistence,
                 interrupt_smart_persistence: sensorConfig.interrupt_smart_persistence,
-                interrupt_mode: sensorConfig.interrupt_mode
+                interrupt_mode: sensorConfig.interrupt_mode,
+                // Detection algorithm parameters
+                peak_multiplier: sensorConfig.peak_multiplier,
+                min_rise: sensorConfig.min_rise,
+                min_wave_duration_ms: sensorConfig.min_wave_duration_ms,
+                smoothing_window: sensorConfig.smoothing_window
             },
             timestamp: new Date().toISOString()
         };
