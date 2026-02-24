@@ -1,7 +1,6 @@
-import { useState, useRef, useCallback, useMemo, memo } from 'react';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Brush, ReferenceArea } from 'recharts';
+import { useState, useRef, useCallback, memo } from 'react';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Brush } from 'recharts';
 import type { SensorReading, Session } from '../services/api';
-import { detectEvents, formatDirection, summarizeEvents, DEFAULT_CONFIG, type DetectionEvent, type DetectorConfig } from '../lib/directionDetector';
 
 // Time range selection for export (decoupled from chart behavior)
 export interface BrushTimeRange {
@@ -78,18 +77,6 @@ export const SessionChart = memo(({ readings, session, onBrushChange }: Props) =
     const [enableBaselineRemoval, setEnableBaselineRemoval] = useState(false);
     const [enableThreshold, setEnableThreshold] = useState(false);
     const [thresholdValue, setThresholdValue] = useState(10);
-
-    // Direction detection
-    const [enableDetection, setEnableDetection] = useState(true);
-    const [detectorConfig, setDetectorConfig] = useState<DetectorConfig>(DEFAULT_CONFIG);
-
-    // Run direction detection on readings
-    const detectionResults = useMemo(() => {
-        if (!enableDetection || readings.length === 0) {
-            return [];
-        }
-        return detectEvents(readings, detectorConfig);
-    }, [readings, enableDetection, detectorConfig]);
 
     // Apply both PCB and Side filters
     const filteredReadings = readings.filter(r => {
@@ -277,308 +264,50 @@ export const SessionChart = memo(({ readings, session, onBrushChange }: Props) =
 
     return (
         <div className="space-y-4">
-            {/* Data Processing Controls */}
-            <div className="p-4 bg-purple-50 border border-purple-200 rounded">
-                <div className="font-semibold text-gray-800 mb-3 flex items-center gap-2">
-                    <span>📊 Data Processing</span>
-                    <span className="text-xs font-normal text-gray-600">(for analysis & ML prep)</span>
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    {/* Smoothing */}
+            {/* Data Processing Controls (collapsed by default) */}
+            <details className="border border-purple-200 rounded">
+                <summary className="p-2 bg-purple-50 cursor-pointer text-sm font-medium text-gray-700 flex items-center gap-2">
+                    <span>Data Processing</span>
+                    {(enableSmoothing || enableBaselineRemoval || enableThreshold) && (
+                        <span className="text-xs text-purple-600 font-normal">
+                            ({[enableSmoothing && 'smoothing', enableBaselineRemoval && 'baseline', enableThreshold && 'threshold'].filter(Boolean).join(', ')})
+                        </span>
+                    )}
+                </summary>
+                <div className="p-3 grid grid-cols-1 md:grid-cols-3 gap-4">
                     <div className="space-y-2">
                         <label className="flex items-center gap-2 text-sm font-medium text-gray-700">
-                            <input
-                                type="checkbox"
-                                checked={enableSmoothing}
-                                onChange={(e) => setEnableSmoothing(e.target.checked)}
-                                className="rounded"
-                            />
+                            <input type="checkbox" checked={enableSmoothing} onChange={(e) => setEnableSmoothing(e.target.checked)} className="rounded" />
                             Moving Average Smoothing
                         </label>
                         {enableSmoothing && (
                             <div className="ml-6 space-y-1">
-                                <label className="text-xs text-gray-600">
-                                    Window Size: {smoothingWindow} samples
-                                </label>
-                                <input
-                                    type="range"
-                                    min="3"
-                                    max="21"
-                                    step="2"
-                                    value={smoothingWindow}
-                                    onChange={(e) => setSmoothingWindow(parseInt(e.target.value))}
-                                    className="w-full"
-                                />
+                                <label className="text-xs text-gray-600">Window: {smoothingWindow}</label>
+                                <input type="range" min="3" max="21" step="2" value={smoothingWindow} onChange={(e) => setSmoothingWindow(parseInt(e.target.value))} className="w-full" />
                             </div>
                         )}
                     </div>
-
-                    {/* Baseline Removal */}
                     <div className="space-y-2">
                         <label className="flex items-center gap-2 text-sm font-medium text-gray-700">
-                            <input
-                                type="checkbox"
-                                checked={enableBaselineRemoval}
-                                onChange={(e) => setEnableBaselineRemoval(e.target.checked)}
-                                className="rounded"
-                            />
+                            <input type="checkbox" checked={enableBaselineRemoval} onChange={(e) => setEnableBaselineRemoval(e.target.checked)} className="rounded" />
                             Remove Baseline
                         </label>
-                        <p className="text-xs text-gray-500 ml-6">
-                            Subtract minimum value to show relative changes
-                        </p>
+                        <p className="text-xs text-gray-500 ml-6">Subtract minimum value</p>
                     </div>
-
-                    {/* Threshold Filter */}
                     <div className="space-y-2">
                         <label className="flex items-center gap-2 text-sm font-medium text-gray-700">
-                            <input
-                                type="checkbox"
-                                checked={enableThreshold}
-                                onChange={(e) => setEnableThreshold(e.target.checked)}
-                                className="rounded"
-                            />
+                            <input type="checkbox" checked={enableThreshold} onChange={(e) => setEnableThreshold(e.target.checked)} className="rounded" />
                             Peak Threshold Filter
                         </label>
                         {enableThreshold && (
                             <div className="ml-6 space-y-1">
-                                <label className="text-xs text-gray-600">
-                                    Show only values ≥ {thresholdValue}
-                                </label>
-                                <input
-                                    type="range"
-                                    min="0"
-                                    max="20"
-                                    step="1"
-                                    value={thresholdValue}
-                                    onChange={(e) => setThresholdValue(parseInt(e.target.value))}
-                                    className="w-full"
-                                />
+                                <label className="text-xs text-gray-600">Min: {thresholdValue}</label>
+                                <input type="range" min="0" max="20" step="1" value={thresholdValue} onChange={(e) => setThresholdValue(parseInt(e.target.value))} className="w-full" />
                             </div>
                         )}
                     </div>
                 </div>
-            </div>
-
-            {/* Direction Detection Results */}
-            <div className="p-4 bg-amber-50 border border-amber-200 rounded">
-                <div className="flex items-center justify-between mb-3">
-                    <div className="font-semibold text-gray-800 flex items-center gap-2">
-                        <span>🎯 Direction Detection</span>
-                        <span className="text-xs font-normal text-gray-600">(algorithm testing)</span>
-                    </div>
-                    <label className="flex items-center gap-2 text-sm">
-                        <input
-                            type="checkbox"
-                            checked={enableDetection}
-                            onChange={(e) => setEnableDetection(e.target.checked)}
-                            className="rounded"
-                        />
-                        <span className="text-gray-700">Enable</span>
-                    </label>
-                </div>
-
-                {enableDetection && (
-                    <>
-                        {/* Detection Config (collapsible) */}
-                        <details className="mb-3">
-                            <summary className="text-xs text-gray-600 cursor-pointer hover:text-gray-800">
-                                ⚙️ Algorithm Parameters
-                            </summary>
-                            <div className="mt-2 grid grid-cols-2 md:grid-cols-4 gap-3 p-2 bg-white rounded border">
-                                <div>
-                                    <label className="text-xs text-gray-600 block">Smoothing Window</label>
-                                    <input
-                                        type="number"
-                                        min="1"
-                                        max="10"
-                                        value={detectorConfig.smoothingWindow}
-                                        onChange={(e) => setDetectorConfig(c => ({ ...c, smoothingWindow: parseInt(e.target.value) || 3 }))}
-                                        className="w-full px-2 py-1 text-sm border rounded"
-                                    />
-                                </div>
-                                <div>
-                                    <label className="text-xs text-gray-600 block">Min Rise</label>
-                                    <input
-                                        type="number"
-                                        min="1"
-                                        max="50"
-                                        value={detectorConfig.minRise}
-                                        onChange={(e) => setDetectorConfig(c => ({ ...c, minRise: parseInt(e.target.value) || 10 }))}
-                                        className="w-full px-2 py-1 text-sm border rounded"
-                                    />
-                                </div>
-                                <div>
-                                    <label className="text-xs text-gray-600 block">Max Peak Gap (ms)</label>
-                                    <input
-                                        type="number"
-                                        min="10"
-                                        max="500"
-                                        value={detectorConfig.maxPeakGapMs}
-                                        onChange={(e) => setDetectorConfig(c => ({ ...c, maxPeakGapMs: parseInt(e.target.value) || 100 }))}
-                                        className="w-full px-2 py-1 text-sm border rounded"
-                                    />
-                                </div>
-                                <div>
-                                    <label className="text-xs text-gray-600 block">Wave Threshold (%)</label>
-                                    <input
-                                        type="number"
-                                        min="0.05"
-                                        max="0.5"
-                                        step="0.05"
-                                        value={detectorConfig.waveThresholdPct}
-                                        onChange={(e) => setDetectorConfig(c => ({ ...c, waveThresholdPct: parseFloat(e.target.value) || 0.2 }))}
-                                        className="w-full px-2 py-1 text-sm border rounded"
-                                    />
-                                </div>
-                                <div>
-                                    <label className="text-xs text-gray-600 block">Window Size (ms)</label>
-                                    <input
-                                        type="number"
-                                        min="50"
-                                        max="500"
-                                        step="10"
-                                        value={detectorConfig.windowSizeMs}
-                                        onChange={(e) => setDetectorConfig(c => ({ ...c, windowSizeMs: parseInt(e.target.value) || 200 }))}
-                                        className="w-full px-2 py-1 text-sm border rounded"
-                                    />
-                                </div>
-                                <div>
-                                    <label className="text-xs text-gray-600 block">Window Step (ms)</label>
-                                    <input
-                                        type="number"
-                                        min="10"
-                                        max="100"
-                                        step="5"
-                                        value={detectorConfig.windowStepMs}
-                                        onChange={(e) => setDetectorConfig(c => ({ ...c, windowStepMs: parseInt(e.target.value) || 50 }))}
-                                        className="w-full px-2 py-1 text-sm border rounded"
-                                    />
-                                </div>
-
-                                {/* Adaptive Threshold Section */}
-                                <div className="col-span-4 border-t pt-2 mt-2">
-                                    <label className="flex items-center gap-2 text-xs font-medium text-gray-700 mb-2">
-                                        <input
-                                            type="checkbox"
-                                            checked={detectorConfig.useAdaptiveThreshold}
-                                            onChange={(e) => setDetectorConfig(c => ({ ...c, useAdaptiveThreshold: e.target.checked }))}
-                                            className="rounded"
-                                        />
-                                        Adaptive Threshold (calculates noise floor from first N ms)
-                                    </label>
-                                </div>
-
-                                {detectorConfig.useAdaptiveThreshold && (
-                                    <>
-                                        <div>
-                                            <label className="text-xs text-gray-600 block">Baseline Window (ms)</label>
-                                            <input
-                                                type="number"
-                                                min="50"
-                                                max="500"
-                                                step="50"
-                                                value={detectorConfig.baselineWindowMs}
-                                                onChange={(e) => setDetectorConfig(c => ({ ...c, baselineWindowMs: parseInt(e.target.value) || 200 }))}
-                                                className="w-full px-2 py-1 text-sm border rounded"
-                                            />
-                                        </div>
-                                        <div>
-                                            <label className="text-xs text-gray-600 block">Peak Multiplier (×baseline)</label>
-                                            <input
-                                                type="number"
-                                                min="1.05"
-                                                max="2"
-                                                step="0.05"
-                                                value={detectorConfig.peakMultiplier}
-                                                onChange={(e) => setDetectorConfig(c => ({ ...c, peakMultiplier: parseFloat(e.target.value) || 2.0 }))}
-                                                className="w-full px-2 py-1 text-sm border rounded"
-                                            />
-                                        </div>
-                                    </>
-                                )}
-
-                                <div className="col-span-2 flex items-end">
-                                    <button
-                                        onClick={() => setDetectorConfig(DEFAULT_CONFIG)}
-                                        className="px-3 py-1 text-xs bg-gray-200 hover:bg-gray-300 rounded"
-                                    >
-                                        Reset to Defaults
-                                    </button>
-                                </div>
-                            </div>
-                        </details>
-
-                        {/* Results Summary */}
-                        <div className="text-sm font-medium text-gray-800 mb-2">
-                            {summarizeEvents(detectionResults)}
-                        </div>
-
-                        {/* Individual Events */}
-                        {detectionResults.length > 0 ? (
-                            <div className="space-y-2">
-                                {detectionResults.map((event, idx) => (
-                                    <div
-                                        key={idx}
-                                        className={`p-3 rounded border ${event.direction === 'A_TO_B'
-                                            ? 'bg-green-50 border-green-300'
-                                            : event.direction === 'B_TO_A'
-                                                ? 'bg-blue-50 border-blue-300'
-                                                : 'bg-gray-50 border-gray-300'
-                                            }`}
-                                    >
-                                        <div className="flex items-center justify-between">
-                                            <div className="flex items-center gap-3">
-                                                <span className={`text-lg font-bold ${event.direction === 'A_TO_B' ? 'text-green-700' : 'text-blue-700'
-                                                    }`}>
-                                                    {formatDirection(event.direction)}
-                                                </span>
-                                                <span className="text-sm text-gray-600">
-                                                    {Math.round(event.confidence * 100)}% confidence
-                                                </span>
-                                            </div>
-                                            <span className="text-xs text-gray-500">
-                                                Event #{idx + 1}
-                                            </span>
-                                        </div>
-                                        <div className="mt-1 grid grid-cols-2 md:grid-cols-4 gap-2 text-xs text-gray-600">
-                                            <div>
-                                                <span className="font-medium">CoM A:</span> {Math.round(event.centerOfMassA)}ms
-                                            </div>
-                                            <div>
-                                                <span className="font-medium">CoM B:</span> {Math.round(event.centerOfMassB)}ms
-                                            </div>
-                                            <div>
-                                                <span className="font-medium">CoM Gap:</span> {Math.round(event.comGapMs)}ms
-                                            </div>
-                                            <div>
-                                                <span className="font-medium">Window:</span> {event.windowStart}-{event.windowEnd}ms
-                                            </div>
-                                            <div>
-                                                <span className="font-medium">Wave A:</span> {event.waveStartA}-{event.waveEndA}ms
-                                            </div>
-                                            <div>
-                                                <span className="font-medium">Wave B:</span> {event.waveStartB}-{event.waveEndB}ms
-                                            </div>
-                                            <div>
-                                                <span className="font-medium">Peak A:</span> {event.peakTimeA}ms ({Math.round(event.maxSignalA)})
-                                            </div>
-                                            <div>
-                                                <span className="font-medium">Peak B:</span> {event.peakTimeB}ms ({Math.round(event.maxSignalB)})
-                                            </div>
-                                        </div>
-                                    </div>
-                                ))}
-                            </div>
-                        ) : (
-                            <div className="text-sm text-gray-500 italic">
-                                No events detected in this session. Try adjusting the algorithm parameters.
-                            </div>
-                        )}
-                    </>
-                )}
-            </div>
+            </details>
 
             {/* Filter Controls */}
             <div className="flex gap-4 items-center p-4 bg-gray-50 rounded border">
@@ -635,72 +364,26 @@ export const SessionChart = memo(({ readings, session, onBrushChange }: Props) =
                 )}
             </div>
 
-            {/* Statistics */}
-            <div className="grid grid-cols-5 gap-4">
-                <div className="p-4 bg-purple-50 rounded">
-                    <div className="text-sm text-gray-600">Time Window</div>
-                    <div className="text-2xl font-bold text-gray-900">{timeWindowSeconds}s</div>
-                    {brushRange && (
-                        <div className="text-xs text-purple-600 mt-1">
-                            Viewing: {((brushRange.endMs - brushRange.startMs) / 1000).toFixed(3)}s of {timeWindowSeconds}s
-                        </div>
-                    )}
-                </div>
-                <div className="p-4 bg-blue-50 rounded">
-                    <div className="text-sm text-gray-600">Total Readings</div>
-                    <div className="text-2xl font-bold text-gray-900">{filteredReadings.length}</div>
-                </div>
-                <div className="p-4 bg-green-50 rounded">
-                    <div className="text-sm text-gray-600">Avg Proximity</div>
-                    <div className="text-2xl font-bold text-gray-900">
-                        {isNaN(avgProximity) ? '0.0' : avgProximity.toFixed(1)}
-                    </div>
-                </div>
-                <div className="p-4 bg-yellow-50 rounded">
-                    <div className="text-sm text-gray-600">Max Proximity</div>
-                    <div className="text-2xl font-bold text-gray-900">
-                        {isNaN(maxProximity) ? '0' : maxProximity}
-                    </div>
-                </div>
-                <div className="p-4 bg-red-50 rounded">
-                    <div className="text-sm text-gray-600">Min Proximity</div>
-                    <div className="text-2xl font-bold text-gray-900">
-                        {isNaN(minProximity) ? '0' : minProximity}
-                    </div>
-                </div>
-            </div>
-
-            {/* Visual Legend */}
-            <div className="bg-blue-50 border border-blue-200 rounded p-3">
-                <div className="text-sm font-semibold text-gray-800 mb-2">Chart Legend:</div>
-                <div className="grid grid-cols-2 gap-3 text-xs">
-                    <div>
-                        <span className="font-medium text-gray-700">Colors:</span>
-                        <div className="flex items-center gap-2 mt-1">
-                            <div className="w-8 h-0.5 bg-green-700"></div>
-                            <span className="text-gray-600">Side 1 (S1)</span>
-                        </div>
-                        <div className="flex items-center gap-2 mt-1">
-                            <div className="w-8 h-0.5 bg-blue-700"></div>
-                            <span className="text-gray-600">Side 2 (S2)</span>
-                        </div>
-                    </div>
-                    <div>
-                        <span className="font-medium text-gray-700">Line Styles:</span>
-                        <div className="flex items-center gap-2 mt-1">
-                            <div className="w-8 h-0.5 bg-gray-700"></div>
-                            <span className="text-gray-600">Solid = PCB 1</span>
-                        </div>
-                        <div className="flex items-center gap-2 mt-1">
-                            <div className="w-8 h-0.5 bg-gray-700" style={{ borderTop: '2px dashed' }}></div>
-                            <span className="text-gray-600">Dashed = PCB 2</span>
-                        </div>
-                        <div className="flex items-center gap-2 mt-1">
-                            <div className="w-8 h-0.5 bg-gray-700" style={{ borderTop: '2px dotted' }}></div>
-                            <span className="text-gray-600">Dotted = PCB 3</span>
-                        </div>
-                    </div>
-                </div>
+            {/* Stats + Legend row */}
+            <div className="flex items-center gap-4 text-xs text-gray-600 px-1">
+                <span><span className="font-medium">{timeWindowSeconds}s</span> window</span>
+                <span className="text-gray-300">|</span>
+                <span><span className="font-medium">{filteredReadings.length}</span> readings</span>
+                <span className="text-gray-300">|</span>
+                <span>avg <span className="font-medium">{isNaN(avgProximity) ? '0' : avgProximity.toFixed(1)}</span></span>
+                <span>max <span className="font-medium">{isNaN(maxProximity) ? '0' : maxProximity}</span></span>
+                <span>min <span className="font-medium">{isNaN(minProximity) ? '0' : minProximity}</span></span>
+                {brushRange && (
+                    <>
+                        <span className="text-gray-300">|</span>
+                        <span className="text-purple-600">viewing {((brushRange.endMs - brushRange.startMs) / 1000).toFixed(3)}s</span>
+                    </>
+                )}
+                <span className="ml-auto flex items-center gap-3">
+                    <span className="flex items-center gap-1"><span className="inline-block w-4 h-0.5 bg-green-700"></span> S1</span>
+                    <span className="flex items-center gap-1"><span className="inline-block w-4 h-0.5 bg-blue-700"></span> S2</span>
+                    <span className="text-gray-400">solid=PCB1 dash=PCB2 dot=PCB3</span>
+                </span>
             </div>
 
             {/* Proximity Chart */}
@@ -714,64 +397,6 @@ export const SessionChart = memo(({ readings, session, onBrushChange }: Props) =
                     )}
                 </h3>
 
-                {/* Detection event wave markers - rendered above the chart */}
-                {enableDetection && detectionResults.length > 0 && chartData.length > 0 && (
-                    <div className="mb-2 space-y-1">
-                        {detectionResults.map((event, idx) => {
-                            // Calculate positions as percentages of the time range
-                            const minTime = chartData[0]?.time ?? 0;
-                            const maxTime = chartData[chartData.length - 1]?.time ?? 1;
-                            const timeRange = maxTime - minTime;
-
-                            if (timeRange <= 0) return null;
-
-                            // Convert wave boundaries to percentages
-                            const waveAStartPct = ((event.waveStartA - minTime) / timeRange) * 100;
-                            const waveAEndPct = ((event.waveEndA - minTime) / timeRange) * 100;
-                            const waveBStartPct = ((event.waveStartB - minTime) / timeRange) * 100;
-                            const waveBEndPct = ((event.waveEndB - minTime) / timeRange) * 100;
-
-                            // Clamp to valid range
-                            const clamp = (val: number) => Math.max(0, Math.min(100, val));
-
-                            return (
-                                <div key={`wave-markers-${idx}`} className="relative h-8 bg-gray-50 rounded border">
-                                    {/* Wave A bar (green) */}
-                                    <div
-                                        className="absolute h-2 top-1 rounded"
-                                        style={{
-                                            left: `${clamp(waveAStartPct)}%`,
-                                            width: `${clamp(waveAEndPct - waveAStartPct)}%`,
-                                            backgroundColor: '#22c55e',
-                                        }}
-                                    >
-                                        <span className="absolute -top-0.5 left-1/2 -translate-x-1/2 text-[10px] font-bold text-green-700">A</span>
-                                    </div>
-
-                                    {/* Wave B bar (blue) */}
-                                    <div
-                                        className="absolute h-2 bottom-1 rounded"
-                                        style={{
-                                            left: `${clamp(waveBStartPct)}%`,
-                                            width: `${clamp(waveBEndPct - waveBStartPct)}%`,
-                                            backgroundColor: '#3b82f6',
-                                        }}
-                                    >
-                                        <span className="absolute -bottom-0.5 left-1/2 -translate-x-1/2 text-[10px] font-bold text-blue-700">B</span>
-                                    </div>
-
-                                    {/* Direction indicator */}
-                                    <div className="absolute right-2 top-1/2 -translate-y-1/2 text-xs font-bold">
-                                        <span className={event.direction === 'A_TO_B' ? 'text-green-600' : 'text-blue-600'}>
-                                            {event.direction === 'A_TO_B' ? 'A → B' : 'B → A'}
-                                        </span>
-                                    </div>
-                                </div>
-                            );
-                        })}
-                    </div>
-                )}
-
                 <ResponsiveContainer width="100%" height={500}>
                     <LineChart data={chartData}>
                         <CartesianGrid strokeDasharray="3 3" />
@@ -782,61 +407,6 @@ export const SessionChart = memo(({ readings, session, onBrushChange }: Props) =
                         <YAxis label={{ value: 'Proximity', angle: -90, position: 'insideLeft' }} />
                         <Tooltip content={<CustomTooltip />} />
                         <Legend />
-
-                        {/* Detection event reference areas - highlight the full wave span */}
-                        {enableDetection && detectionResults.map((event, idx) => {
-                            // Determine the full span based on direction
-                            // A→B: A starts first, B ends last
-                            // B→A: B starts first, A ends last
-                            const rawX1 = event.direction === 'A_TO_B' ? event.waveStartA : event.waveStartB;
-                            const rawX2 = event.direction === 'A_TO_B' ? event.waveEndB : event.waveEndA;
-
-                            // Round to nearest 10 to match chart data points (sampled at 10ms intervals, starting from 0)
-                            const x1 = Math.round(rawX1 / 10) * 10;
-                            const x2 = Math.round(rawX2 / 10) * 10;
-
-                            // Find max individual sensor reading within the detection window from actual chart data
-                            const windowData = chartData.filter(d => d.time >= x1 && d.time <= x2);
-                            let maxY = 0;
-                            windowData.forEach(dataPoint => {
-                                Array.from(sensorGroups.keys()).forEach(sensorKey => {
-                                    const val = dataPoint[sensorKey];
-                                    if (typeof val === 'number' && val > maxY) {
-                                        maxY = val;
-                                    }
-                                });
-                            });
-
-                            // Y bounds: peak from chart data as top, threshold as bottom
-                            // Clamp y2 to be within chart range (0 to maxY)
-                            const y1 = maxY;
-                            const threshold = detectorConfig.minRise;
-                            const y2 = Math.min(threshold, maxY); // Don't go above the peak
-
-                            const fill = event.direction === 'A_TO_B' ? '#22c55e' : '#3b82f6'; // green / blue
-
-                            // DEBUG: Log the values
-                            console.log(`ReferenceArea ${idx}:`, {
-                                x1, x2, y1, y2,
-                                threshold,
-                                windowDataPoints: windowData.length
-                            });
-
-                            return (
-                                <ReferenceArea
-                                    key={`ref-area-${idx}`}
-                                    x1={x1}
-                                    x2={x2}
-                                    y1={y1}
-                                    y2={y2}
-                                    fill={fill}
-                                    fillOpacity={0.2}
-                                    stroke={fill}
-                                    strokeOpacity={0.6}
-                                    strokeWidth={1}
-                                />
-                            );
-                        })}
 
                         {/* Brush component for time window selection */}
                         <Brush
@@ -902,77 +472,53 @@ export const SessionChart = memo(({ readings, session, onBrushChange }: Props) =
                 </div>
             </div>
 
-            {/* Individual Sensor Stats */}
-            <div>
-                <h4 className="font-semibold text-gray-800 mb-3">Individual Sensor Statistics</h4>
-                <div className="grid grid-cols-3 gap-3">
-                    {Array.from(sensorGroups.entries())
-                        .sort(([keyA], [keyB]) => keyA.localeCompare(keyB))
-                        .map(([sensorKey, sensorReadings]) => {
-                            const pcb = parseInt(sensorKey.charAt(1));
-                            const side = parseInt(sensorKey.charAt(3));
-                            const avgProx = sensorReadings.length > 0
-                                ? (sensorReadings.reduce((sum, r) => sum + r.proximity, 0) / sensorReadings.length).toFixed(1)
-                                : '0.0';
-                            const maxProx = sensorReadings.length > 0
-                                ? Math.max(...sensorReadings.map(r => r.proximity))
-                                : 0;
+            {/* Sensor Statistics (collapsed by default) */}
+            <details className="border rounded">
+                <summary className="p-3 bg-gray-50 cursor-pointer text-sm font-medium text-gray-700 flex items-center justify-between">
+                    <span>Sensor Statistics</span>
+                    <span className="text-xs text-gray-500 font-normal">
+                        S1: {s1Readings.length} readings (avg {s1Readings.length > 0 ? (s1Readings.reduce((sum, r) => sum + r.proximity, 0) / s1Readings.length).toFixed(1) : '0'})
+                        &nbsp;·&nbsp;
+                        S2: {s2Readings.length} readings (avg {s2Readings.length > 0 ? (s2Readings.reduce((sum, r) => sum + r.proximity, 0) / s2Readings.length).toFixed(1) : '0'})
+                    </span>
+                </summary>
+                <div className="p-3 space-y-3">
+                    <div className="grid grid-cols-3 gap-3">
+                        {Array.from(sensorGroups.entries())
+                            .sort(([keyA], [keyB]) => keyA.localeCompare(keyB))
+                            .map(([sensorKey, sensorReadings]) => {
+                                const pcb = parseInt(sensorKey.charAt(1));
+                                const side = parseInt(sensorKey.charAt(3));
+                                const avgProx = sensorReadings.length > 0
+                                    ? (sensorReadings.reduce((sum, r) => sum + r.proximity, 0) / sensorReadings.length).toFixed(1)
+                                    : '0.0';
+                                const maxProx = sensorReadings.length > 0
+                                    ? Math.max(...sensorReadings.map(r => r.proximity))
+                                    : 0;
+                                const bgColor = side === 1 ? 'bg-green-50' : 'bg-blue-50';
+                                const borderColor = side === 1 ? 'border-green-200' : 'border-blue-200';
+                                const dotColor = side === 1 ? 'bg-green-700' : 'bg-blue-800';
+                                const lineStyle = pcb === 1 ? 'Solid' : pcb === 2 ? 'Dashed' : 'Dotted';
 
-                            // Style based on side
-                            const bgColor = side === 1 ? 'bg-green-50' : 'bg-blue-50';
-                            const borderColor = side === 1 ? 'border-green-200' : 'border-blue-200';
-                            const dotColor = side === 1 ? 'bg-green-700' : 'bg-blue-800';
-
-                            // Line style indicator
-                            const lineStyle = pcb === 1 ? 'Solid' : pcb === 2 ? 'Dashed' : 'Dotted';
-
-                            return (
-                                <div key={sensorKey} className={`p-3 rounded border ${bgColor} ${borderColor}`}>
-                                    <div className="flex items-center justify-between mb-2">
-                                        <h5 className="font-semibold text-gray-800 text-sm">{sensorKey}</h5>
-                                        <div className={`w-3 h-3 rounded-full ${dotColor}`}></div>
+                                return (
+                                    <div key={sensorKey} className={`p-2 rounded border text-xs ${bgColor} ${borderColor}`}>
+                                        <div className="flex items-center justify-between mb-1">
+                                            <span className="font-semibold text-gray-800">{sensorKey}</span>
+                                            <div className={`w-2 h-2 rounded-full ${dotColor}`}></div>
+                                        </div>
+                                        <span className="text-gray-600">{lineStyle}</span>
+                                        <span className="mx-1">·</span>
+                                        <span className="text-gray-700">{sensorReadings.length} readings</span>
+                                        <span className="mx-1">·</span>
+                                        <span className="text-gray-700">avg {avgProx}</span>
+                                        <span className="mx-1">·</span>
+                                        <span className="text-gray-700">max {maxProx}</span>
                                     </div>
-                                    <p className="text-xs text-gray-600 mb-1">{lineStyle} Line</p>
-                                    <p className="text-xs text-gray-700">Readings: {sensorReadings.length}</p>
-                                    <p className="text-xs text-gray-700">Avg: {avgProx}</p>
-                                    <p className="text-xs text-gray-700">Max: {maxProx}</p>
-                                </div>
-                            );
-                        })}
-                </div>
-            </div>
-
-            {/* Side Aggregates - Quick summary */}
-            <div className="grid grid-cols-2 gap-4">
-                <div className="p-3 rounded border bg-green-50 border-green-200">
-                    <div className="flex items-center justify-between mb-1">
-                        <h4 className="font-semibold text-gray-800 text-sm">
-                            All Side 1 Sensors (S1)
-                        </h4>
-                        <div className="w-3 h-3 rounded-full bg-green-700"></div>
+                                );
+                            })}
                     </div>
-                    <p className="text-xs text-gray-700">Total Readings: {s1Readings.length}</p>
-                    <p className="text-xs text-gray-700">
-                        Avg Proximity: {s1Readings.length > 0
-                            ? (s1Readings.reduce((sum, r) => sum + r.proximity, 0) / s1Readings.length).toFixed(1)
-                            : '0.0'}
-                    </p>
                 </div>
-                <div className="p-3 rounded border bg-blue-50 border-blue-200">
-                    <div className="flex items-center justify-between mb-1">
-                        <h4 className="font-semibold text-gray-800 text-sm">
-                            All Side 2 Sensors (S2)
-                        </h4>
-                        <div className="w-3 h-3 rounded-full bg-blue-800"></div>
-                    </div>
-                    <p className="text-xs text-gray-700">Total Readings: {s2Readings.length}</p>
-                    <p className="text-xs text-gray-700">
-                        Avg Proximity: {s2Readings.length > 0
-                            ? (s2Readings.reduce((sum, r) => sum + r.proximity, 0) / s2Readings.length).toFixed(1)
-                            : '0.0'}
-                    </p>
-                </div>
-            </div>
+            </details>
 
             {/* Session Confirmation Panel */}
             {session && <SessionConfirmationPanel
@@ -1013,7 +559,6 @@ function SessionConfirmationPanel({ session, displayedReadings }: ConfirmationPa
         );
     }
 
-    const storedCount = session.sample_count || 0;
     const pipelineStatus = session.pipeline_status || 'pending';
     const statusColor = pipelineStatus === 'complete' ? 'text-green-700 bg-green-50 border-green-200'
         : pipelineStatus === 'partial' ? 'text-yellow-700 bg-yellow-50 border-yellow-200'

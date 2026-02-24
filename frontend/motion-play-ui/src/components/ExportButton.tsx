@@ -1,12 +1,12 @@
 import { useState, useMemo } from 'react';
 import { Download, ChevronDown, Tag, Edit3 } from 'lucide-react';
-import type { SessionData, SensorReading } from '../services/api';
+import type { ProximitySessionData, SensorReading } from '../services/api';
 import type { BrushTimeRange } from './SessionChart';
 
 type ExportFormat = 'csv' | 'json';
 
 interface ExportButtonProps {
-    sessionData: SessionData;
+    sessionData: ProximitySessionData;
     brushTimeRange?: BrushTimeRange | null;
 }
 

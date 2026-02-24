@@ -73,6 +73,8 @@ bool DataTransmitter::transmitBatch(const String &sessionId,
             configObj["sample_rate_hz"] = config->sample_rate_hz;
             configObj["led_current"] = config->led_current;
             configObj["integration_time"] = config->integration_time;
+            configObj["duty_cycle"] = config->duty_cycle;
+            configObj["multi_pulse"] = config->multi_pulse;
             configObj["high_resolution"] = config->high_resolution;
             configObj["read_ambient"] = config->read_ambient;
             configObj["i2c_clock_khz"] = config->i2c_clock_khz;
@@ -445,6 +447,8 @@ String DataTransmitter::transmitLiveDebugCapture(
                 configObj["sample_rate_hz"] = config->sample_rate_hz;
                 configObj["led_current"] = config->led_current;
                 configObj["integration_time"] = config->integration_time;
+                configObj["duty_cycle"] = config->duty_cycle;
+                configObj["multi_pulse"] = config->multi_pulse;
                 configObj["high_resolution"] = config->high_resolution;
                 configObj["read_ambient"] = config->read_ambient;
                 configObj["i2c_clock_khz"] = config->i2c_clock_khz;

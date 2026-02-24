@@ -41,7 +41,7 @@ export interface Session {
 
     // Live Debug fields
     capture_reason?: 'detection' | 'missed_event';
-    detection_direction?: 'a_to_b' | 'b_to_a';
+    detection_direction?: 'a_to_b' | 'b_to_a' | 'unknown';
     detection_confidence?: number;
 
     // Session Confirmation fields

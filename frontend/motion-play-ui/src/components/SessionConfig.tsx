@@ -1,4 +1,3 @@
-import { Settings, Zap, Clock, Gauge, Repeat } from 'lucide-react';
 import type { Session } from '../services/api';
 
 interface SessionConfigProps {
@@ -10,132 +9,37 @@ export const SessionConfig = ({ session }: SessionConfigProps) => {
 
     if (!config) {
         return (
-            <div className="p-4 border rounded bg-gray-50">
-                <p className="text-sm text-gray-500">
-                    Configuration data not available for this session
-                </p>
-            </div>
+            <div className="text-xs text-gray-400 italic">No config data</div>
         );
     }
 
+    const items: { label: string; value: string }[] = [
+        { label: 'Rate', value: `${config.sample_rate_hz} Hz` },
+        { label: 'LED', value: String(config.led_current) },
+        { label: 'Integration', value: String(config.integration_time) },
+        { label: 'Resolution', value: config.high_resolution ? '16-bit' : '12-bit' },
+    ];
+
+    if (config.duty_cycle) {
+        items.push({ label: 'Duty', value: String(config.duty_cycle) });
+    }
+    if (config.multi_pulse) {
+        const mp = String(config.multi_pulse);
+        items.push({ label: 'Pulses', value: mp === '1' ? '1' : mp });
+    }
+    if (config.read_ambient !== undefined) {
+        items.push({ label: 'Ambient', value: config.read_ambient ? 'On' : 'Off' });
+    }
+
     return (
-        <div className="p-4 border rounded bg-white">
-            <div className="flex items-center gap-2 mb-4">
-                <Settings size={20} className="text-gray-700" />
-                <h3 className="font-semibold text-gray-800">
-                    Session Configuration
-                </h3>
-            </div>
-
-            <div className="grid grid-cols-2 gap-4">
-                {/* Sample Rate */}
-                <div className="flex items-start gap-3 p-3 bg-blue-50 rounded">
-                    <Gauge size={20} className="text-blue-600 mt-1" />
-                    <div>
-                        <div className="text-sm font-medium text-gray-700">
-                            Sample Rate
-                        </div>
-                        <div className="text-lg font-bold text-gray-900">
-                            {config.sample_rate_hz} Hz
-                        </div>
-                    </div>
-                </div>
-
-                {/* LED Current */}
-                <div className="flex items-start gap-3 p-3 bg-yellow-50 rounded">
-                    <Zap size={20} className="text-yellow-600 mt-1" />
-                    <div>
-                        <div className="text-sm font-medium text-gray-700">
-                            LED Current
-                        </div>
-                        <div className="text-lg font-bold text-gray-900">
-                            {config.led_current}
-                        </div>
-                    </div>
-                </div>
-
-                {/* Integration Time */}
-                <div className="flex items-start gap-3 p-3 bg-green-50 rounded">
-                    <Clock size={20} className="text-green-600 mt-1" />
-                    <div>
-                        <div className="text-sm font-medium text-gray-700">
-                            Integration Time (Pulse)
-                        </div>
-                        <div className="text-lg font-bold text-gray-900">
-                            {config.integration_time}
-                        </div>
-                    </div>
-                </div>
-
-                {/* Duty Cycle */}
-                {config.duty_cycle && (
-                    <div className="flex items-start gap-3 p-3 bg-orange-50 rounded">
-                        <Gauge size={20} className="text-orange-600 mt-1" />
-                        <div>
-                            <div className="text-sm font-medium text-gray-700">
-                                Duty Cycle (Sample Rate)
-                            </div>
-                            <div className="text-lg font-bold text-gray-900">
-                                {config.duty_cycle}
-                            </div>
-                        </div>
-                    </div>
-                )}
-
-                {/* Multi-Pulse Mode */}
-                {config.multi_pulse && (
-                    <div className="flex items-start gap-3 p-3 bg-pink-50 rounded">
-                        <Repeat size={20} className="text-pink-600 mt-1" />
-                        <div>
-                            <div className="text-sm font-medium text-gray-700">
-                                Multi-Pulse Mode
-                            </div>
-                            <div className="text-lg font-bold text-gray-900">
-                                {config.multi_pulse === '1' ? '1 pulse (normal)' : `${config.multi_pulse} pulses`}
-                            </div>
-                        </div>
-                    </div>
-                )}
-
-                {/* Resolution */}
-                <div className="flex items-start gap-3 p-3 bg-purple-50 rounded">
-                    <Settings size={20} className="text-purple-600 mt-1" />
-                    <div>
-                        <div className="text-sm font-medium text-gray-700">
-                            Resolution
-                        </div>
-                        <div className="text-lg font-bold text-gray-900">
-                            {config.high_resolution ? '16-bit' : '12-bit'}
-                        </div>
-                    </div>
-                </div>
-
-                {/* Ambient Light Reading */}
-                {config.read_ambient !== undefined && (
-                    <div className="flex items-start gap-3 p-3 bg-indigo-50 rounded col-span-2">
-                        <Settings size={20} className="text-indigo-600 mt-1" />
-                        <div>
-                            <div className="text-sm font-medium text-gray-700">
-                                Ambient Light Reading
-                            </div>
-                            <div className="text-lg font-bold text-gray-900">
-                                {config.read_ambient ? 'Enabled' : 'Disabled (Speed Optimized)'}
-                            </div>
-                        </div>
-                    </div>
-                )}
-            </div>
-
-            {/* Active Sensors Count */}
-            {session.active_sensors && (
-                <div className="mt-4 p-3 bg-gray-50 rounded">
-                    <div className="text-sm text-gray-700">
-                        <span className="font-medium">Active Sensors:</span>{' '}
-                        {session.active_sensors.filter(s => s.active).length} of{' '}
-                        {session.active_sensors.length}
-                    </div>
-                </div>
-            )}
+        <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-gray-600 px-1">
+            <span className="font-medium text-gray-700 text-sm">Config</span>
+            {items.map(({ label, value }) => (
+                <span key={label}>
+                    <span className="text-gray-500">{label}</span>{' '}
+                    <span className="font-medium text-gray-800">{value}</span>
+                </span>
+            ))}
         </div>
     );
 };
