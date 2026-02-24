@@ -342,7 +342,7 @@ void DisplayManager::drawConfigPanel()
         tft.drawString("OFF", col2X + 63, row3Y);
     }
 
-    // Row 4: Sample count during recording
+    // Row 4: Detection config or sample count
     if (currentDisplayState == DISPLAY_RECORDING)
     {
         tft.setTextColor(TFT_CYAN, TFT_BLACK);
@@ -350,6 +350,27 @@ void DisplayManager::drawConfigPanel()
         tft.setTextColor(TFT_WHITE, TFT_BLACK);
         tft.drawString(String(sampleCount), col1X + 55, row4Y);
     }
+    else
+    {
+        tft.setTextColor(TFT_LIGHTGREY, TFT_BLACK);
+        tft.drawString("Pk:", col1X, row4Y);
+        tft.drawString("Rise:", col2X, row4Y);
+
+        tft.setTextColor(TFT_WHITE, TFT_BLACK);
+        tft.drawString(String(cachedPeakMultiplier, 1) + "x", col1X + 22, row4Y);
+        tft.drawString(String(cachedMinRise), col2X + 35, row4Y);
+
+        tft.setTextColor(TFT_LIGHTGREY, TFT_BLACK);
+        tft.drawString("Wave:", col3X, row4Y);
+        tft.setTextColor(TFT_WHITE, TFT_BLACK);
+        tft.drawString(String(cachedMinWaveDurationMs) + "ms", col3X + 35, row4Y);
+    }
+
+    // Smoothing window on row 3 col3 (always visible)
+    tft.setTextColor(TFT_LIGHTGREY, TFT_BLACK);
+    tft.drawString("Sm:", col3X, row3Y);
+    tft.setTextColor(TFT_WHITE, TFT_BLACK);
+    tft.drawString(String(cachedSmoothingWindow), col3X + 22, row3Y);
 }
 
 void DisplayManager::setMode(DisplayMode mode)
@@ -374,6 +395,19 @@ void DisplayManager::setSensorConfig(const SensorConfiguration *config)
     cachedI2cClock = config->i2c_clock_khz;
 
     // Redraw config panel if on session screen
+    if (currentDisplayState != DISPLAY_ERROR)
+    {
+        drawConfigPanel();
+    }
+}
+
+void DisplayManager::setDetectionConfig(float peakMult, uint16_t minRise, uint32_t minWaveDurMs, uint8_t smoothWin)
+{
+    cachedPeakMultiplier = peakMult;
+    cachedMinRise = minRise;
+    cachedMinWaveDurationMs = minWaveDurMs;
+    cachedSmoothingWindow = smoothWin;
+
     if (currentDisplayState != DISPLAY_ERROR)
     {
         drawConfigPanel();

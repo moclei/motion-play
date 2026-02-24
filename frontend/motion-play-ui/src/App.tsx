@@ -10,8 +10,8 @@ import { SessionConfig } from './components/SessionConfig';
 import { Header } from './components/Header';
 import { SettingsModal } from './components/SettingsModal';
 import { api, isInterruptSession, isProximitySession } from './services/api';
-import type { Session, SessionData } from './services/api';
-import { Trash2, RefreshCw } from 'lucide-react';
+import type { Session, SessionData, ProximitySessionData } from './services/api';
+import { Trash2, RefreshCw, Download, X } from 'lucide-react';
 
 function App() {
   const [selectedSession, setSelectedSession] = useState<Session | null>(null);
@@ -19,6 +19,7 @@ function App() {
   const [loading, setLoading] = useState(false);
   const [loadingSessionId, setLoadingSessionId] = useState<string | null>(null);
   const [settingsOpen, setSettingsOpen] = useState(false);
+  const [exportOpen, setExportOpen] = useState(false);
   const [brushTimeRange, setBrushTimeRange] = useState<BrushTimeRange | null>(null);
   const sessionListRef = useRef<SessionListRef>(null);
 
@@ -140,26 +141,46 @@ function App() {
                 </div>
               </div>
             ) : sessionData ? (
-              <div className="p-6">
-                {/* Session Header */}
-                <div className="flex justify-between items-start mb-6 pb-4 border-b">
-                  <div className="flex-1 min-w-0">
-                    <div className="text-xs text-gray-500 mb-1">Selected Session</div>
-                    <h2 className="text-lg font-bold font-mono text-gray-800 break-all">
-                      {selectedSession.session_id}
-                    </h2>
+              <div className="p-4">
+                {/* Compact Header */}
+                <div className="flex items-center gap-3 mb-3 pb-2 border-b">
+                  <h2 className="text-sm font-bold font-mono text-gray-800 truncate flex-1 min-w-0" title={selectedSession.session_id}>
+                    {selectedSession.session_id}
+                  </h2>
+                  <div className="flex items-center gap-2 flex-shrink-0">
+                    {isProximitySession(sessionData) && (
+                      <button
+                        onClick={() => setExportOpen(true)}
+                        className="flex items-center gap-1.5 px-3 py-1.5 text-sm bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors"
+                      >
+                        <Download size={14} />
+                        Export
+                      </button>
+                    )}
+                    <button
+                      onClick={handleDeleteSession}
+                      className="flex items-center gap-1.5 px-3 py-1.5 text-sm bg-red-500 text-white rounded hover:bg-red-600 transition-colors"
+                    >
+                      <Trash2 size={14} />
+                      Delete
+                    </button>
                   </div>
-                  <button
-                    onClick={handleDeleteSession}
-                    className="flex items-center gap-2 px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 flex-shrink-0 ml-4 transition-colors"
-                  >
-                    <Trash2 size={18} />
-                    Delete
-                  </button>
                 </div>
 
-                {/* Chart/Visualization - Most important, show first */}
-                <div className="mb-6">
+                {/* Labels & Detection (near chart) */}
+                <div className="mb-3">
+                  <LabelEditor
+                    sessionId={selectedSession.session_id}
+                    currentLabels={sessionData.session.labels || []}
+                    currentNotes={sessionData.session.notes || ''}
+                    detectionDirection={sessionData.session.detection_direction}
+                    detectionConfidence={sessionData.session.detection_confidence}
+                    onUpdate={handleSessionUpdate}
+                  />
+                </div>
+
+                {/* Chart/Visualization */}
+                <div className="mb-4">
                   {isInterruptSession(sessionData) ? (
                     <InterruptSessionView
                       events={sessionData.events}
@@ -176,31 +197,26 @@ function App() {
                   ) : null}
                 </div>
 
-                {/* Session Config - Context about data collection */}
-                <div className="mb-6">
+                {/* Compact Session Config */}
+                <div className="mb-3">
                   <SessionConfig session={sessionData.session} />
                 </div>
 
-                {/* Label Editor - Metadata/annotation */}
-                <div className="mb-6">
-                  <LabelEditor
-                    sessionId={selectedSession.session_id}
-                    currentLabels={sessionData.session.labels || []}
-                    currentNotes={sessionData.session.notes || ''}
-                    detectionDirection={sessionData.session.detection_direction}
-                    detectionConfidence={sessionData.session.detection_confidence}
-                    onUpdate={handleSessionUpdate}
-                  />
-                </div>
-
-                {/* Export - Utility function (only for proximity sessions for now) */}
-                {isProximitySession(sessionData) && (
-                  <div className="p-4 border rounded bg-gray-50">
-                    <h3 className="font-semibold text-gray-800 mb-3">Export Data</h3>
-                    <ExportButton
-                      sessionData={sessionData}
-                      brushTimeRange={brushTimeRange}
-                    />
+                {/* Export Modal */}
+                {exportOpen && isProximitySession(sessionData) && (
+                  <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50" onClick={() => setExportOpen(false)}>
+                    <div className="bg-white rounded-lg shadow-xl p-6 w-full max-w-lg mx-4" onClick={(e) => e.stopPropagation()}>
+                      <div className="flex items-center justify-between mb-4">
+                        <h3 className="font-semibold text-gray-800">Export Data</h3>
+                        <button onClick={() => setExportOpen(false)} className="text-gray-400 hover:text-gray-600">
+                          <X size={20} />
+                        </button>
+                      </div>
+                      <ExportButton
+                        sessionData={sessionData as ProximitySessionData}
+                        brushTimeRange={brushTimeRange}
+                      />
+                    </div>
                   </div>
                 )}
               </div>

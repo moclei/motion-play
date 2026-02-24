@@ -58,6 +58,12 @@ private:
     bool cachedReadAmbient = true;
     uint32_t cachedI2cClock = 400;
 
+    // Cached detection config values
+    float cachedPeakMultiplier = 1.5f;
+    uint16_t cachedMinRise = 10;
+    uint32_t cachedMinWaveDurationMs = 8;
+    uint8_t cachedSmoothingWindow = 5;
+
     // Layout constants
     static const int SCREEN_WIDTH = 320;
     static const int SCREEN_HEIGHT = 170;
@@ -100,8 +106,9 @@ public:
     void updateSampleCount(int count);
     void showMessage(const String &message, uint16_t color = TFT_WHITE);
     void setConfigString(const String &config);              // Legacy: Set config string for display
-    void setSensorConfig(const SensorConfiguration *config); // New: Set full config for display
-    void setMode(DisplayMode mode);                          // Set current device mode (idle/debug/play)
+    void setSensorConfig(const SensorConfiguration *config);
+    void setDetectionConfig(float peakMult, uint16_t minRise, uint32_t minWaveDurMs, uint8_t smoothWin);
+    void setMode(DisplayMode mode);
 
     // Legacy compatibility (for gradual migration)
     void showBootScreen();

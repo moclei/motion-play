@@ -30,9 +30,7 @@ const getSide = (sensorPosition: number): 'A' | 'B' => {
     return sensorPosition % 2 === 0 ? 'A' : 'B';
 };
 
-// Detection algorithm parameters
 const DETECTION_WINDOW_US = 200000;  // 200ms window to group events into a single detection
-const MIN_CONFIDENCE_THRESHOLD = 0.5;
 
 /**
  * Analyze interrupt events to detect direction of movement
@@ -297,7 +295,7 @@ export const InterruptSessionView = ({ events, config, durationMs, sessionId }: 
 
     // Calculate statistics
     const stats = useMemo(() => {
-        const sensorCounts: Record<number, { close: number; away: number }> = {};
+        const sensorCounts: Record<number, Record<string, number>> = {};
         let firstEventTime = Infinity;
         let lastEventTime = 0;
 

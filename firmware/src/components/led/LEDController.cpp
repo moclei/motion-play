@@ -52,10 +52,8 @@ void LEDController::showDirection(Direction direction, uint32_t duration)
         dirName = "B→A (Orange)";
         break;
     default:
-        // Unknown - quick white flash
-        color = CRGB::White;
-        dirName = "Unknown (White)";
-        duration = 500; // Short flash for unknown
+        color = CRGB::Red;
+        dirName = "Unknown (Red)";
         break;
     }
 

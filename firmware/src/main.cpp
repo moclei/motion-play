@@ -46,6 +46,9 @@ SerialStudioOutput serialStudioOutput;
 // Detection mode: false = heuristic (DirectionDetector), true = ML (MLDetector)
 bool useMLDetection = false;
 
+// Detection algorithm config (runtime-configurable via cloud config)
+DetectorConfig detectorConfig;
+
 // Serial Studio output: compile-time default from build flags, overridable via cloud config
 bool serialStudioEnabled = SERIAL_STUDIO_DEFAULT;
 InterruptManager interruptManager;
@@ -275,6 +278,21 @@ bool fetchConfigFromCloud()
                 Serial.printf("  Serial Studio: %s\n", serialStudioEnabled ? "enabled" : "disabled");
             }
 
+            // Detection algorithm parameters
+            if (config.containsKey("peak_multiplier"))
+                detectorConfig.peakMultiplier = config["peak_multiplier"].as<float>();
+            if (config.containsKey("min_rise"))
+                detectorConfig.minRise = config["min_rise"];
+            if (config.containsKey("min_wave_duration_ms"))
+                detectorConfig.minWaveDurationMs = config["min_wave_duration_ms"];
+            if (config.containsKey("smoothing_window"))
+                detectorConfig.smoothingWindow = config["smoothing_window"];
+
+            directionDetector.setConfig(detectorConfig);
+            Serial.printf("  Detection Config: peak=%.1fx, rise=%d, wave=%dms, smooth=%d\n",
+                          detectorConfig.peakMultiplier, detectorConfig.minRise,
+                          detectorConfig.minWaveDurationMs, detectorConfig.smoothingWindow);
+
             http.end();
             return true;
         }
@@ -458,6 +476,8 @@ void initializeSystem()
 
     // Switch to session screen and show current config
     display.setSensorConfig(&currentConfig);
+    display.setDetectionConfig(detectorConfig.peakMultiplier, detectorConfig.minRise,
+                               detectorConfig.minWaveDurationMs, detectorConfig.smoothingWindow);
     display.showSessionScreen();
     systemInitialized = true;
 }
@@ -909,6 +929,18 @@ void handleCommand(const String &command, JsonDocument *doc)
                 Serial.printf("  Serial Studio: %s\n", serialStudioEnabled ? "enabled" : "disabled");
             }
 
+            // Detection algorithm parameters
+            if (config.containsKey("peak_multiplier"))
+                detectorConfig.peakMultiplier = config["peak_multiplier"].as<float>();
+            if (config.containsKey("min_rise"))
+                detectorConfig.minRise = config["min_rise"];
+            if (config.containsKey("min_wave_duration_ms"))
+                detectorConfig.minWaveDurationMs = config["min_wave_duration_ms"];
+            if (config.containsKey("smoothing_window"))
+                detectorConfig.smoothingWindow = config["smoothing_window"];
+
+            directionDetector.setConfig(detectorConfig);
+
             Serial.println("Configuration updated:");
             Serial.printf("  Sample Rate: %d Hz\n", currentConfig.sample_rate_hz);
             Serial.printf("  LED Current: %s\n", currentConfig.led_current.c_str());
@@ -918,12 +950,17 @@ void handleCommand(const String &command, JsonDocument *doc)
             Serial.printf("  High Resolution: %s\n", currentConfig.high_resolution ? "enabled" : "disabled");
             Serial.printf("  Read Ambient: %s\n", currentConfig.read_ambient ? "enabled" : "disabled");
             Serial.printf("  I2C Clock: %d kHz\n", currentConfig.i2c_clock_khz);
+            Serial.printf("  Detection Config: peak=%.1fx, rise=%d, wave=%dms, smooth=%d\n",
+                          detectorConfig.peakMultiplier, detectorConfig.minRise,
+                          detectorConfig.minWaveDurationMs, detectorConfig.smoothingWindow);
 
             // Apply configuration to sensors immediately
             if (sensorManager.reinitialize(&currentConfig))
             {
                 // Update display with new config
                 display.setSensorConfig(&currentConfig);
+                display.setDetectionConfig(detectorConfig.peakMultiplier, detectorConfig.minRise,
+                                           detectorConfig.minWaveDurationMs, detectorConfig.smoothingWindow);
                 display.showMessage("Config applied successfully!", TFT_GREEN);
                 mqttManager->publishStatus("config_applied");
             }
@@ -1489,13 +1526,11 @@ void loop()
 
                     // Show on display
                     if (result.direction == Direction::A_TO_B)
-                    {
                         display.showMessage("A -> B", TFT_BLUE);
-                    }
-                    else
-                    {
+                    else if (result.direction == Direction::B_TO_A)
                         display.showMessage("B -> A", TFT_ORANGE);
-                    }
+                    else
+                        display.showMessage("Unknown", TFT_RED);
 
                     // Publish detection result
                     String statusMsg = "detection_" + String(DirectionDetector::directionToString(result.direction));
@@ -1599,13 +1634,11 @@ void loop()
 
                     // Display feedback
                     if (result.direction == Direction::A_TO_B)
-                    {
                         display.showMessage("A -> B", TFT_BLUE);
-                    }
-                    else
-                    {
+                    else if (result.direction == Direction::B_TO_A)
                         display.showMessage("B -> A", TFT_ORANGE);
-                    }
+                    else
+                        display.showMessage("Unknown", TFT_RED);
 
                     // === CAPTURE FLOW: Delay → Pause → Extract → Transmit → Resume ===
 
@@ -1672,7 +1705,13 @@ void loop()
                     }
 
                     // 6. Transmit the capture
-                    const char *dirStr = (result.direction == Direction::A_TO_B) ? "a_to_b" : "b_to_a";
+                    const char *dirStr;
+                    if (result.direction == Direction::A_TO_B)
+                        dirStr = "a_to_b";
+                    else if (result.direction == Direction::B_TO_A)
+                        dirStr = "b_to_a";
+                    else
+                        dirStr = "unknown";
                     String captureSessionId = dataTransmitter->transmitLiveDebugCapture(
                         buffer, startIdx, captureCount,
                         "detection", dirStr, result.confidence,
