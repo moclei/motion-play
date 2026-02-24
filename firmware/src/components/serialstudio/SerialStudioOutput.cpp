@@ -36,6 +36,13 @@ void SerialStudioOutput::cacheDetection(const DetectionResult &result)
     {
         _cachedSpeedMs = 0.0f;
     }
+
+    _cachedPeakA = result.maxSignalA;
+    _cachedPeakB = result.maxSignalB;
+    _cachedWaveDurA = result.waveDurationA;
+    _cachedWaveDurB = result.waveDurationB;
+    _cachedComGap = result.comGapMs;
+    _cachedDetModule = result.detectedModule;
 }
 
 void SerialStudioOutput::update()
@@ -108,31 +115,27 @@ void SerialStudioOutput::emitFrame()
 
     if (_emitTelemetry && _detector)
     {
-        int detState = 0;
-        DetectorState ds = _detector->getState();
-        if (ds == DetectorState::READY)
-            detState = 1;
-        else if (ds == DetectorState::DETECTING)
-            detState = 2;
-
-        Serial.printf("/*%lu,%u,%u,%u,%u,%u,%u,%.1f,%.1f,%.1f,%.1f,%d,%d,%d,%d,%.1f,%.1f,%u,%u,%u,%u,%u,%u*/\n",
+        Serial.printf("/*%lu,%u,%u,%u,%u,%u,%u,%.1f,%.1f,%.1f,%.1f,%.1f,%.1f,%d,%d,%.1f,%.1f,%u,%u,%u,%u,%u,%u,%u,%u,%lu,%lu,%lu*/\n",
                       _currentTimestamp,
                       _accumulator[0], _accumulator[1],
                       _accumulator[2], _accumulator[3],
                       _accumulator[4], _accumulator[5],
-                      _detector->getSmoothedA(),
-                      _detector->getSmoothedB(),
-                      _detector->getThresholdA(),
-                      _detector->getThresholdB(),
-                      (int)_detector->getWaveStateA(),
-                      (int)_detector->getWaveStateB(),
-                      detState,
+                      _detector->getSensorThreshold(0),
+                      _detector->getSensorThreshold(1),
+                      _detector->getSensorThreshold(2),
+                      _detector->getSensorThreshold(3),
+                      _detector->getSensorThreshold(4),
+                      _detector->getSensorThreshold(5),
+                      (int)_cachedDetModule,
                       (int)_cachedDirection,
                       _cachedConfidence,
                       _cachedSpeedMs,
                       _sensorRate,
                       _pollRate,
-                      intTimeNum, ledCurNum, dutyCycNum, multiPulseNum);
+                      intTimeNum, ledCurNum, dutyCycNum, multiPulseNum,
+                      _cachedPeakA, _cachedPeakB,
+                      _cachedWaveDurA, _cachedWaveDurB,
+                      _cachedComGap);
     }
     else
     {

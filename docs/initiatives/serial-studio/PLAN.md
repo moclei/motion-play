@@ -77,46 +77,57 @@ Open Serial Studio, select the serial port at 921600 baud, enable Quick Plot mod
 
 ## Phase 2: Custom Dashboard + Detection Telemetry
 
-### Extended Frame Format
+### Extended Frame Format (v10)
 
-Telemetry mode (PLAY/LIVE_DEBUG) emits 21 fields per frame:
+Telemetry mode (PLAY/LIVE_DEBUG) emits 28 fields per frame:
 
 ```
-/*ts,p1s1,p1s2,p2s1,p2s2,p3s1,p3s2,smoothA,smoothB,threshA,threshB,waveA,waveB,detState,detDir,detConf,fps,intTime,ledCur,dutyCyc,multiPulse*/
+/*ts,p1s1,p1s2,p2s1,p2s2,p3s1,p3s2,thresh_p1s1,thresh_p1s2,thresh_p2s1,thresh_p2s2,thresh_p3s1,thresh_p3s2,detModule,detDir,detConf,estSpeed,sensorRate,pollRate,intTime,ledCur,dutyCyc,multiPulse,peakA,peakB,waveDurA,waveDurB,comGap*/
 ```
 
 | Index | Field | Type | Description |
 |-------|-------|------|-------------|
 | 1 | `ts` | uint32 | Microsecond timestamp |
 | 2–7 | `p1s1`–`p3s2` | uint16 | Raw proximity per sensor |
-| 8–9 | `smoothA`, `smoothB` | float (1dp) | Smoothed aggregated signal per side |
-| 10–11 | `threshA`, `threshB` | float (1dp) | Adaptive detection threshold per side |
-| 12–13 | `waveA`, `waveB` | int | Wave state: 0=idle, 1=in_wave, 2=complete |
-| 14 | `detState` | int | Detector state: 0=establishing baseline, 1=ready, 2=detecting |
+| 8–13 | `thresh_p1s1`–`thresh_p3s2` | float (1dp) | Per-sensor adaptive threshold |
+| 14 | `detModule` | int | Which module triggered detection: 0=none, 1–3=module |
 | 15 | `detDir` | int | Last detection direction: 0=unknown, 1=a_to_b, 2=b_to_a |
 | 16 | `detConf` | float (1dp) | Last detection confidence (0.0–1.0) |
-| 17 | `fps` | uint16 | Frames per second (measured over 1-second window) |
-| 18 | `intTime` | uint16 | Integration time multiplier (e.g. 4 for "4T") |
-| 19 | `ledCur` | uint16 | LED current in mA (e.g. 200 for "200mA") |
-| 20 | `dutyCyc` | uint16 | Duty cycle denominator (e.g. 40 for "1/40") |
-| 21 | `multiPulse` | uint16 | Multi-pulse count (e.g. 1, 2, 4, 8) |
+| 17 | `estSpeed` | float (1dp) | Estimated transit speed (m/s), cached from last detection |
+| 18 | `sensorRate` | uint16 | Calculated sensor measurement rate (Hz) from IT × duty |
+| 19 | `pollRate` | uint16 | Measured I2C polling rate (cycles/sec) |
+| 20 | `intTime` | uint16 | Integration time multiplier (e.g. 4 for "4T") |
+| 21 | `ledCur` | uint16 | LED current in mA (e.g. 200 for "200mA") |
+| 22 | `dutyCyc` | uint16 | Duty cycle denominator (e.g. 40 for "1/40") |
+| 23 | `multiPulse` | uint16 | Multi-pulse count (e.g. 1, 2, 4, 8) |
+| 24 | `peakA` | uint16 | Peak signal strength for side A of detected module |
+| 25 | `peakB` | uint16 | Peak signal strength for side B of detected module |
+| 26 | `waveDurA` | uint32 | Wave duration side A (ms), from detected module |
+| 27 | `waveDurB` | uint32 | Wave duration side B (ms), from detected module |
+| 28 | `comGap` | uint32 | Center-of-mass gap (ms), from detected module |
 
-All 21 fields are numeric. Config values are emitted as integers to avoid string characters (especially `/` in duty cycle) that conflict with the `*/` frame delimiter and cause serial frame corruption at high data rates.
+All 28 fields are numeric. Fields 14–17 and 24–28 are "persistent post-detection metadata": they cache the last detection result and persist in every subsequent frame until a new detection overwrites them.
 
-Basic mode (DEBUG) emits 12 fields: ts, 6 sensors, fps, and 4 numeric config values.
+The v10 frame replaces the v9 smoothedA/B, thresholdA/B, waveA/B, and detState fields (indices 8–14) with 6 per-sensor adaptive thresholds and a detected-module indicator. This reflects the per-sensor detection architecture introduced in DirectionDetector v4.
+
+Config values are emitted as integers to avoid string characters (especially `/` in duty cycle) that conflict with the `*/` frame delimiter and cause serial frame corruption at high data rates.
+
+Basic mode (DEBUG) emits 13 fields: ts, 6 sensors, sensorRate, pollRate, and 4 numeric config values.
 
 ### Detection Result Caching
 
-After a detection, the detector is immediately reset (`directionDetector.reset()` or `mlDetector.reset()`), which clears its internal state. `SerialStudioOutput` independently caches the last detection result (direction, confidence) and continues outputting those cached values in each frame until a new detection occurs. There is no timeout — the cached result persists until overwritten, giving the user time to read the dashboard.
+After a detection, the detector is immediately reset (`directionDetector.reset()` or `mlDetector.reset()`), which clears its internal state. `SerialStudioOutput` independently caches the last detection result (direction, confidence, module, peaks, durations, CoM gap) and continues outputting those cached values in each frame until a new detection occurs. There is no timeout — the cached result persists until overwritten, giving the user time to read the dashboard.
 
-### DirectionDetector Changes
+### DirectionDetector v4: Per-Sensor Adaptive Thresholds
 
-Add public getter methods to `DirectionDetector` for:
-- `getSmoothedA()` / `getSmoothedB()` — current smoothed values from ring buffers
-- `getThresholdA()` / `getThresholdB()` — current adaptive thresholds
-- `getWaveStateA()` / `getWaveStateB()` — current wave tracker states
+The detection algorithm was rewritten from side-level aggregation to per-sensor tracking:
 
-These are read-only accessors to existing internal state. No algorithmic changes.
+- **Per-sensor tracking**: Each of the 6 sensors maintains its own rolling baseline (circular buffer, 200 readings, updated only when IDLE — transit waves excluded), adaptive threshold, and wave state machine.
+- **Per-module detection**: When both sensors on a module complete waves within `maxPeakGapMs`, that module produces a direction from center-of-mass comparison.
+- **Multi-module consensus**: Multiple modules detecting the same direction boosts confidence. Disagreement lowers it.
+- **A/B swap fix**: Sensor positions (0–5) map directly to modules and sides, eliminating the previous side-2-as-A naming inversion.
+
+Public telemetry accessors: `getSensorThreshold(pos)`, `getSensorSmoothed(pos)`, `getSensorWaveState(pos)` for per-sensor data. Legacy `getSmoothedA/B()`, `getThresholdA/B()`, `getWaveStateA/B()` return data from the most recently detected module.
 
 ### Serial Studio Project File
 

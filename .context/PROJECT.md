@@ -257,7 +257,9 @@ brew install --cask serial-studio
 
 1. **Close the PlatformIO serial monitor first** — only one application can hold the serial port at a time.
 2. Open Serial Studio.
-3. Load the latest project file from `tools/serial-studio/` (File → Open). The current version is `motion-play-v8.json`.
+3. Load a project file from `tools/serial-studio/` (File → Open). Two dashboard files are available:
+   - `motion-play-v10.json` — Main dashboard: per-module sensor graphs with per-sensor adaptive threshold overlays, detection summary with module identification and post-detection metadata, rates & config. Optimized for algorithm debugging in PLAY/LIVE_DEBUG mode.
+   - `motion-play-v9-sensors.json` — Sensor comparison dashboard: per-module graphs plus All Sensors, All Side A, All Side B overlays, and rates & config. Best for sensor-level debugging in any mode.
 4. Select the serial port (same one PlatformIO uses) and set baud rate to **115200**.
 5. Click Connect. The custom dashboard should populate with live sensor and algorithm data.
 

@@ -7,20 +7,21 @@
 #include "../calibration/CalibrationData.h"
 
 /**
- * Direction Detection - Version 3: Adaptive Threshold + Wave Envelope (Real-Time)
+ * Direction Detection - Version 4: Per-Sensor Adaptive Thresholds
  *
- * Ported from TypeScript directionDetector.ts to work in real-time streaming mode.
+ * Each of the 6 sensors tracks independently with its own rolling baseline
+ * and adaptive threshold. Detection works in three layers:
  *
- * Algorithm Overview:
- * 1. Establish baseline from first N readings (noise floor)
- * 2. Calculate adaptive threshold: baseline + max(baseline × (mult-1), minRise)
- * 3. Detect wave entry when signal exceeds threshold
- * 4. Track wave envelope, calculate center of mass
- * 5. Detect wave exit when signal drops below threshold
- * 6. Compare centers of mass between sides → direction
+ * Layer 1 - Per-Sensor: Each sensor maintains a rolling baseline (only updated
+ *   during IDLE — transit waves are excluded), computes its own adaptive
+ *   threshold, and runs an independent wave state machine.
  *
- * Key improvement over V1: Adaptive thresholding prevents false detections
- * in low-noise sessions while still catching events in high-noise sessions.
+ * Layer 2 - Per-Module: When both sensors on a module complete waves within
+ *   a valid time window, that module produces a detection with direction
+ *   from center-of-mass comparison.
+ *
+ * Layer 3 - Consensus: Multiple modules detecting the same direction boosts
+ *   confidence. Disagreement lowers it.
  */
 
 enum class Direction
@@ -32,108 +33,55 @@ enum class Direction
 
 enum class DetectorState
 {
-    ESTABLISHING_BASELINE, // Collecting initial readings for baseline
-    READY,                 // Baseline established, waiting for event
-    DETECTING              // Wave detected, tracking for direction
+    ESTABLISHING_BASELINE,
+    READY,
+    DETECTING
 };
 
 enum class WaveState
 {
-    IDLE,    // Below threshold, waiting
-    IN_WAVE, // Above threshold, tracking
-    COMPLETE // Wave finished, data ready
+    IDLE,
+    IN_WAVE,
+    COMPLETE
 };
 
 struct DetectionResult
 {
     Direction direction;
     float confidence;
-    uint32_t centerOfMassA; // Center of mass timestamp for side A
-    uint32_t centerOfMassB; // Center of mass timestamp for side B
-    uint32_t comGapMs;      // Time gap between centers of mass
+    uint32_t centerOfMassA;
+    uint32_t centerOfMassB;
+    uint32_t comGapMs;
     uint16_t maxSignalA;
     uint16_t maxSignalB;
-    uint32_t waveDurationA; // Wave duration in ms (side A)
-    uint32_t waveDurationB; // Wave duration in ms (side B)
-    // Debug info
+    uint32_t waveDurationA;
+    uint32_t waveDurationB;
     float baselineA;
     float baselineB;
     float thresholdA;
     float thresholdB;
+    uint8_t detectedModule;  // 1-3 for which module triggered, 0 for none
+    uint8_t modulesDetected; // how many modules corroborated
 };
 
 struct DetectorConfig
 {
-    // Baseline parameters
-    uint16_t baselineReadings = 50; // Number of readings to establish baseline
-    float peakMultiplier = 1.5f;    // Threshold = baseline + max(baseline*(mult-1), minRise)
-    uint16_t minRise = 10;          // Minimum absolute rise required
+    uint16_t baselineReadings = 50;
+    float peakMultiplier = 1.5f;
+    uint16_t minRise = 10;
 
-    // Wave detection parameters
-    uint8_t smoothingWindow = 3;      // Moving average window size
-    uint32_t maxWaveDurationMs = 200; // Maximum wave duration before timeout
-    uint32_t maxPeakGapMs = 150;      // Maximum time between side A and B waves
-    float waveExitThreshold = 0.5f;   // Exit wave when signal drops to this fraction of peak
+    uint8_t smoothingWindow = 5;
+    uint32_t minWaveDurationMs = 8;
+    uint32_t maxWaveDurationMs = 200;
+    uint32_t maxPeakGapMs = 150;
+    float waveExitThreshold = 0.5f;
 
-    // Confidence parameters
-    uint32_t minGapForConfidence = 5;  // Minimum gap (ms) for high confidence
-    float minSignalForConfidence = 20; // Minimum signal for high confidence
+    uint32_t minGapForConfidence = 5;
+    float minSignalForConfidence = 20;
 };
 
 /**
- * Wave tracking state for one side
- */
-struct WaveTracker
-{
-    WaveState state = WaveState::IDLE;
-
-    // Wave envelope data
-    uint32_t waveStartTime = 0;
-    uint32_t waveEndTime = 0;
-    uint32_t peakTime = 0;
-    float peakValue = 0;
-
-    // Center of mass calculation (running accumulation)
-    float weightedSum = 0;     // Sum of (value * timestamp)
-    float totalWeight = 0;     // Sum of values
-    uint32_t centerOfMass = 0; // Calculated when wave completes
-
-    // Threshold for this side
-    float threshold = 0;
-
-    void reset()
-    {
-        state = WaveState::IDLE;
-        waveStartTime = 0;
-        waveEndTime = 0;
-        peakTime = 0;
-        peakValue = 0;
-        weightedSum = 0;
-        totalWeight = 0;
-        centerOfMass = 0;
-    }
-};
-
-/**
- * Baseline statistics for one side
- */
-struct BaselineStats
-{
-    float sum = 0;
-    float max = 0;
-    uint32_t count = 0;
-
-    float getMean() const { return count > 0 ? sum / count : 0; }
-    void reset()
-    {
-        sum = 0;
-        max = 0;
-        count = 0;
-    }
-};
-
-/**
- * Ring buffer for smoothing
+ * Ring buffer for smoothing and baseline tracking
  */
 template <typename T, size_t SIZE>
 class RingBuffer
@@ -172,7 +120,6 @@ public:
     }
     bool isFull() const { return count == SIZE; }
 
-    // Get smoothed average of last N items
     float getSmoothedAverage(size_t windowSize) const
     {
         if (count == 0)
@@ -185,136 +132,120 @@ public:
         }
         return sum / n;
     }
+
+    float getMax() const
+    {
+        if (count == 0)
+            return 0;
+        float maxVal = buffer[(head - count + SIZE) % SIZE];
+        for (size_t i = 1; i < count; i++)
+        {
+            float val = buffer[(head - count + i + SIZE) % SIZE];
+            if (val > maxVal)
+                maxVal = val;
+        }
+        return maxVal;
+    }
 };
 
 /**
- * Aggregated sensor reading by side
+ * Independent tracker for a single sensor.
+ * Maintains its own baseline, threshold, and wave state.
  */
-struct AggregatedReading
+struct SensorTracker
 {
-    uint32_t timestamp;
-    uint16_t sideA; // Sum of all side 2 sensors (A-facing)
-    uint16_t sideB; // Sum of all side 1 sensors (B-facing)
+    static const size_t SMOOTH_SIZE = 10;
+    static const size_t BASELINE_SIZE = 200;
+
+    RingBuffer<float, SMOOTH_SIZE> smoothBuffer;
+    RingBuffer<float, BASELINE_SIZE> baselineBuffer;
+    uint32_t baselineUpdateCount = 0;
+    bool baselineReady = false;
+
+    float threshold = 0;
+
+    WaveState waveState = WaveState::IDLE;
+    uint32_t waveStartTime = 0;
+    uint32_t waveEndTime = 0;
+    uint32_t peakTime = 0;
+    float peakValue = 0;
+    float weightedSum = 0;
+    float totalWeight = 0;
+    uint32_t centerOfMass = 0;
+
+    void resetWave()
+    {
+        waveState = WaveState::IDLE;
+        waveStartTime = 0;
+        waveEndTime = 0;
+        peakTime = 0;
+        peakValue = 0;
+        weightedSum = 0;
+        totalWeight = 0;
+        centerOfMass = 0;
+    }
+
+    void fullReset()
+    {
+        smoothBuffer.clear();
+        baselineBuffer.clear();
+        baselineUpdateCount = 0;
+        baselineReady = false;
+        threshold = 0;
+        resetWave();
+    }
 };
 
 class DirectionDetector
 {
 private:
     DetectorConfig config;
-    DetectorState state = DetectorState::ESTABLISHING_BASELINE;
+    SensorTracker sensors[NUM_SENSORS];
 
-    // Baseline tracking
-    BaselineStats baselineA;
-    BaselineStats baselineB;
-    uint32_t baselineReadingCount = 0;
-
-    // Wave tracking for each side
-    WaveTracker waveA;
-    WaveTracker waveB;
-
-    // Smoothing buffers
-    static const size_t SMOOTH_BUFFER_SIZE = 10;
-    RingBuffer<float, SMOOTH_BUFFER_SIZE> smoothBufferA;
-    RingBuffer<float, SMOOTH_BUFFER_SIZE> smoothBufferB;
-
-    // Current aggregated reading
-    uint32_t currentTimestamp = 0;
-    uint16_t currentSideA = 0;
-    uint16_t currentSideB = 0;
-    bool hasCurrentReading = false;
-
-    // Detection state
-    uint32_t detectionStartTime = 0;
-
-    // Calibration state
     const DeviceCalibration *_calibration = nullptr;
     bool _useCalibration = false;
 
-    // Helper methods
-    void updateBaseline(float valueA, float valueB);
-    void calculateThresholds();
-    void processReading(uint32_t timestamp, float smoothedA, float smoothedB);
-    void updateWaveTracker(WaveTracker &tracker, float value, uint32_t timestamp);
-    DetectionResult checkForDetection();
+    // Tracks which module last produced a detection (for telemetry)
+    int _detectedModule = -1;
+
+    void updateSensorWave(SensorTracker &sensor, float smoothed, uint32_t timestamp);
+    void recalculateThreshold(SensorTracker &sensor, uint8_t position);
+    bool isModuleDetected(int module) const;
 
 public:
     DirectionDetector();
     DirectionDetector(const DetectorConfig &cfg);
 
-    /**
-     * Add a new sensor reading
-     */
     void addReading(const SensorReading &reading);
-
-    /**
-     * Flush current aggregated reading and process it
-     */
     void flushReading();
 
-    /**
-     * Check if a detection is ready
-     */
     bool hasDetection() const;
-
-    /**
-     * Get the detection result (call after hasDetection returns true)
-     */
     DetectionResult getResult();
 
-    /**
-     * Reset detector state (keeps baseline if established)
-     */
     void reset();
-
-    /**
-     * Full reset including baseline
-     */
     void fullReset();
 
-    /**
-     * Check if baseline is established
-     */
-    bool isReady() const { return state != DetectorState::ESTABLISHING_BASELINE; }
+    bool isReady() const;
+    DetectorState getState() const;
 
-    /**
-     * Get current state for debugging
-     */
-    DetectorState getState() const { return state; }
-
-    /**
-     * Update configuration
-     */
     void setConfig(const DetectorConfig &cfg);
-
-    /**
-     * Set calibration data for threshold calculation
-     * When valid calibration is set, thresholds are derived from it
-     * instead of being calculated from baseline readings.
-     * @param cal Pointer to calibration data (can be nullptr to clear)
-     */
     void setCalibration(const DeviceCalibration *cal);
-
-    /**
-     * Check if using calibrated thresholds
-     */
     bool isUsingCalibration() const { return _useCalibration; }
 
-    // Serial Studio telemetry accessors (read-only views of internal state)
-    float getSmoothedA() const { return smoothBufferA.getSmoothedAverage(config.smoothingWindow); }
-    float getSmoothedB() const { return smoothBufferB.getSmoothedAverage(config.smoothingWindow); }
-    float getThresholdA() const { return waveA.threshold; }
-    float getThresholdB() const { return waveB.threshold; }
-    WaveState getWaveStateA() const { return waveA.state; }
-    WaveState getWaveStateB() const { return waveB.state; }
+    // Per-sensor telemetry accessors
+    float getSensorThreshold(uint8_t position) const;
+    float getSensorSmoothed(uint8_t position) const;
+    WaveState getSensorWaveState(uint8_t position) const;
 
-    /**
-     * Get string representation of direction
-     */
+    // Legacy telemetry (returns data from most recently detected module, or module 0)
+    float getSmoothedA() const;
+    float getSmoothedB() const;
+    float getThresholdA() const;
+    float getThresholdB() const;
+    WaveState getWaveStateA() const;
+    WaveState getWaveStateB() const;
+
     static const char *directionToString(Direction dir);
-
-    /**
-     * Debug: Print current state
-     */
     void debugPrint() const;
 };
 
