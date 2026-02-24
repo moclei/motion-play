@@ -30,6 +30,12 @@ private:
     Direction _cachedDirection = Direction::UNKNOWN;
     float _cachedConfidence = 0.0f;
     float _cachedSpeedMs = 0.0f; // Estimated transit speed in m/s
+    uint16_t _cachedPeakA = 0;
+    uint16_t _cachedPeakB = 0;
+    uint32_t _cachedWaveDurA = 0;
+    uint32_t _cachedWaveDurB = 0;
+    uint32_t _cachedComGap = 0;
+    uint8_t _cachedDetModule = 0; // 1-3 for module, 0 for none
 
     // Rate tracking
     uint32_t _pollCount = 0;         // Frames emitted in current 1-second window
