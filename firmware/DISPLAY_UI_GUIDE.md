@@ -96,12 +96,11 @@ The Motion Play device now features a professional, two-stage UI with clear visu
 
 **Boot Sequence:**
 1. Power on device
-2. Serial initializes (1 second)
-3. Display shows initialization screen
-4. 2-second stabilization delay
-5. **Auto-starts initialization** (no button press needed!)
-6. Progress bar fills as each stage completes
-7. Switches to Session Screen when complete
+2. Serial + display initialize
+3. WiFi → MQTT → cloud config fetch
+4. Sensors initialize (once, with cloud config)
+5. Progress bar fills as each stage completes
+6. Switches to Session Screen when complete
 
 **No More Button Press Required!**
 - System automatically initializes on boot
