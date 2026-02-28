@@ -131,8 +131,8 @@ class MotionPlayAPI {
     }
 
     // Get session with readings
-    async getSessionData(sessionId: string): Promise<SessionData> {
-        const response = await axios.get(`${API_BASE_URL}/sessions/${sessionId}`);
+    async getSessionData(sessionId: string, signal?: AbortSignal): Promise<SessionData> {
+        const response = await axios.get(`${API_BASE_URL}/sessions/${sessionId}`, { signal });
         return response.data;
     }
 

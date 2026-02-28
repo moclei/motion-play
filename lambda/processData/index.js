@@ -23,9 +23,11 @@ const INTERRUPT_EVENTS_TABLE = process.env.INTERRUPT_EVENTS_TABLE || 'MotionPlay
 function sanitizeConfig(config) {
     if (!config) return null;
     
-    // Validate multi_pulse is a valid value
-    const validMultiPulse = ["1", "2", "4", "8"];
-    const multiPulse = validMultiPulse.includes(config.multi_pulse) ? config.multi_pulse : "1";
+    // Validate multi_pulse - handle both string and number types from firmware
+    const validMultiPulse = [1, 2, 4, 8];
+    const rawPulse = config.multi_pulse;
+    const pulseNum = typeof rawPulse === 'string' ? parseInt(rawPulse, 10) : rawPulse;
+    const multiPulse = validMultiPulse.includes(pulseNum) ? String(pulseNum) : "1";
     
     return {
         sample_rate_hz: Number.isFinite(config.sample_rate_hz) ? config.sample_rate_hz : 1000,
@@ -412,6 +414,7 @@ async function processProximitySession(data) {
                         high_resolution: true,
                         read_ambient: true,
                         i2c_clock_khz: 400,
+                        multi_pulse: "1",
                         actual_sample_rate_hz: 0
                     },
                     // Session Confirmation

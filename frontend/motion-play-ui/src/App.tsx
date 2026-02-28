@@ -22,6 +22,7 @@ function App() {
   const [exportOpen, setExportOpen] = useState(false);
   const [brushTimeRange, setBrushTimeRange] = useState<BrushTimeRange | null>(null);
   const sessionListRef = useRef<SessionListRef>(null);
+  const abortControllerRef = useRef<AbortController | null>(null);
 
   // Stable callback for brush changes (won't cause SessionChart to re-render)
   const handleBrushChange = useCallback((range: BrushTimeRange | null) => {
@@ -29,43 +30,48 @@ function App() {
   }, []);
 
   const handleSelectSession = async (session: Session) => {
+    // Cancel any in-flight fetch so stale responses don't overwrite
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort();
+    }
+    const controller = new AbortController();
+    abortControllerRef.current = controller;
+
     setSelectedSession(session);
     setLoading(true);
     setLoadingSessionId(session.session_id);
-    setBrushTimeRange(null); // Reset brush selection when changing sessions
+    setBrushTimeRange(null);
 
     try {
-      const data = await api.getSessionData(session.session_id);
+      const data = await api.getSessionData(session.session_id, controller.signal);
+      if (controller.signal.aborted) return;
       setSessionData(data);
-    } catch (err) {
+    } catch (err: any) {
+      if (err?.name === 'CanceledError' || err?.name === 'AbortError') return;
       console.error('Failed to load session data:', err);
       toast.error('Failed to load session data');
     } finally {
-      setLoading(false);
-      setLoadingSessionId(null);
+      if (!controller.signal.aborted) {
+        setLoading(false);
+        setLoadingSessionId(null);
+      }
     }
   };
 
   const handleSessionUpdate = (labels: string[], notes: string) => {
     if (selectedSession && sessionData) {
-      // Update local state
       const updatedSession = { ...selectedSession, labels, notes };
       setSelectedSession(updatedSession);
       setSessionData({
         ...sessionData,
         session: { ...sessionData.session, labels, notes }
       });
-      // Trigger session list refresh
       sessionListRef.current?.refresh();
     }
   };
 
   const handleCollectionStopped = async () => {
-    // Wait a moment for data to be processed, then auto-select newest
-    setTimeout(async () => {
-      await sessionListRef.current?.refresh();
-      sessionListRef.current?.autoSelectNewest();
-    }, 2000);
+    await sessionListRef.current?.refresh();
   };
 
   const handleDeleteSession = async () => {

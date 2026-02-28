@@ -26,9 +26,11 @@ function sanitizeConfig(config) {
     const validSensorModes = ["polling", "interrupt"];
     const sensorMode = validSensorModes.includes(config.sensor_mode) ? config.sensor_mode : "polling";
     
-    // Validate multi_pulse is a valid value
-    const validMultiPulse = ["1", "2", "4", "8"];
-    const multiPulse = validMultiPulse.includes(config.multi_pulse) ? config.multi_pulse : "1";
+    // Validate multi_pulse - handle both string and number types
+    const validMultiPulse = [1, 2, 4, 8];
+    const rawPulse = config.multi_pulse;
+    const pulseNum = typeof rawPulse === 'string' ? parseInt(rawPulse, 10) : rawPulse;
+    const multiPulse = validMultiPulse.includes(pulseNum) ? String(pulseNum) : "1";
     
     // Validate interrupt_mode
     const validInterruptModes = ["normal", "logic"];
