@@ -2,9 +2,43 @@
 import { useEffect, useState, useImperativeHandle, forwardRef, useCallback } from 'react';
 import { api } from '../services/api';
 import type { Session } from '../services/api';
-import { formatDistance } from 'date-fns';
 import { Trash2, RefreshCw, ChevronLeft, ChevronRight, Zap, Radio } from 'lucide-react';
 import toast from 'react-hot-toast';
+
+function formatCompactTime(timestamp: number): string {
+    const seconds = Math.floor((Date.now() - timestamp) / 1000);
+    if (seconds < 5) return 'now';
+    if (seconds < 60) return `${seconds}s`;
+    const minutes = Math.floor(seconds / 60);
+    if (minutes < 60) return `${minutes}m`;
+    const hours = Math.floor(minutes / 60);
+    if (hours < 24) return `${hours}h`;
+    const days = Math.floor(hours / 24);
+    return `${days}d`;
+}
+
+const DIRECTION_LABELS = ['a->b', 'b->a', 'no-transit', 'false-transit'] as const;
+
+function getDirectionDisplay(session: Session): { text: string; color: string } | null {
+    const dirLabel = session.labels?.find(l => DIRECTION_LABELS.includes(l as any));
+    if (dirLabel) {
+        const colors: Record<string, string> = {
+            'a->b': 'bg-emerald-100 text-emerald-800',
+            'b->a': 'bg-amber-100 text-amber-800',
+            'no-transit': 'bg-gray-200 text-gray-700',
+            'false-transit': 'bg-red-100 text-red-700',
+        };
+        return { text: dirLabel, color: colors[dirLabel] || 'bg-gray-100 text-gray-700' };
+    }
+    if (session.detection_direction && session.detection_direction !== 'unknown') {
+        const text = session.detection_direction === 'a_to_b' ? 'a->b' : 'b->a';
+        const color = session.detection_direction === 'a_to_b'
+            ? 'bg-emerald-100 text-emerald-800'
+            : 'bg-amber-100 text-amber-800';
+        return { text, color: `${color} border border-dashed border-current opacity-75` };
+    }
+    return null;
+}
 
 export interface SessionListRef {
     refresh: () => Promise<void>;
@@ -34,11 +68,17 @@ export const SessionList = forwardRef<SessionListRef, SessionListProps>(({
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 10;
 
-    // Track sessions that are still uploading (sample_count is changing)
+    // Track sessions that are still uploading
     const [previousSampleCounts, setPreviousSampleCounts] = useState<Map<string, number>>(new Map());
     const [previousSessionIds, setPreviousSessionIds] = useState<Set<string>>(new Set());
     const [uploadingSessions, setUploadingSessions] = useState<Set<string>>(new Set());
-    const [justCompletedSession, setJustCompletedSession] = useState<string | null>(null);
+
+    const isSessionReady = (session: Session): boolean => {
+        if (session.pipeline_status === 'complete' || session.pipeline_status === 'partial') {
+            return true;
+        }
+        return false;
+    };
 
     const loadSessions = useCallback(async (showLoading = true) => {
         try {
@@ -57,13 +97,15 @@ export const SessionList = forwardRef<SessionListRef, SessionListProps>(({
         }
     }, []);
 
-    // Auto-select newest session
+    // Auto-select newest ready session (that isn't already selected)
     const autoSelectNewest = useCallback(() => {
         if (sessions.length > 0) {
-            const sortedSessions = [...sessions].sort((a, b) => b.created_at - a.created_at);
-            const newest = sortedSessions[0];
-            setSelectedId(newest.session_id);
-            onSelectSession(newest);
+            const readySessions = sessions.filter(s => isSessionReady(s));
+            if (readySessions.length > 0) {
+                const newest = [...readySessions].sort((a, b) => b.created_at - a.created_at)[0];
+                setSelectedId(newest.session_id);
+                onSelectSession(newest);
+            }
         }
     }, [sessions, onSelectSession]);
 
@@ -81,17 +123,18 @@ export const SessionList = forwardRef<SessionListRef, SessionListProps>(({
     // Polling mechanism - check for new sessions every 5 seconds
     useEffect(() => {
         const interval = setInterval(() => {
-            loadSessions(false); // Silent refresh
+            loadSessions(false);
         }, 5000);
 
         return () => clearInterval(interval);
     }, [loadSessions]);
 
-    // Track uploading sessions (sample_count is changing OR newly appeared)
+    // Track uploading sessions and auto-select on completion
     useEffect(() => {
         const newUploadingSessions = new Set<string>();
         const newCounts = new Map<string, number>();
         const currentSessionIds = new Set(sessions.map(s => s.session_id));
+        const justCompleted: Session[] = [];
 
         sessions.forEach(session => {
             const prevCount = previousSampleCounts.get(session.session_id);
@@ -99,38 +142,33 @@ export const SessionList = forwardRef<SessionListRef, SessionListProps>(({
             const wasKnownBefore = previousSessionIds.has(session.session_id);
             newCounts.set(session.session_id, currentCount);
 
-            // If sample count increased, it's still uploading
-            if (prevCount !== undefined && currentCount > prevCount) {
-                newUploadingSessions.add(session.session_id);
-            }
-            // If session is truly NEW (wasn't in the previous poll at all), mark as uploading
-            else if (!wasKnownBefore && previousSessionIds.size > 0) {
-                // Only mark as new/uploading if we've already done at least one poll
-                // (previousSessionIds.size > 0 means this isn't the initial load)
-                newUploadingSessions.add(session.session_id);
-            }
-            // If session was uploading but count is now stable, it just completed
-            else if (uploadingSessions.has(session.session_id) && prevCount !== undefined && currentCount === prevCount) {
-                setJustCompletedSession(session.session_id);
+            const ready = isSessionReady(session);
+
+            if (ready && uploadingSessions.has(session.session_id)) {
+                justCompleted.push(session);
+            } else if (!ready) {
+                if (prevCount !== undefined && currentCount > prevCount) {
+                    newUploadingSessions.add(session.session_id);
+                } else if (!wasKnownBefore && previousSessionIds.size > 0) {
+                    newUploadingSessions.add(session.session_id);
+                } else if (uploadingSessions.has(session.session_id)) {
+                    // Count stabilized but pipeline_status not yet set -- still uploading
+                    newUploadingSessions.add(session.session_id);
+                }
             }
         });
 
         setPreviousSampleCounts(newCounts);
         setPreviousSessionIds(currentSessionIds);
         setUploadingSessions(newUploadingSessions);
-    }, [sessions]);
 
-    // Auto-select just completed session
-    useEffect(() => {
-        if (justCompletedSession) {
-            const session = sessions.find(s => s.session_id === justCompletedSession);
-            if (session) {
-                setSelectedId(justCompletedSession);
-                onSelectSession(session);
-            }
-            setJustCompletedSession(null);
+        // Auto-select the newest session that just completed
+        if (justCompleted.length > 0) {
+            const newest = justCompleted.sort((a, b) => b.created_at - a.created_at)[0];
+            setSelectedId(newest.session_id);
+            onSelectSession(newest);
         }
-    }, [justCompletedSession, sessions, onSelectSession]);
+    }, [sessions]);
 
     // Handle batch deletion with rate limiting
     const handleBatchDelete = async () => {
@@ -395,7 +433,7 @@ export const SessionList = forwardRef<SessionListRef, SessionListProps>(({
                                 <div
                                     key={session.session_id}
                                     className={`p-3 border rounded transition-colors relative ${isUploading
-                                        ? 'bg-amber-50 border-amber-300'
+                                        ? 'bg-amber-50/60 border-amber-300 opacity-60'
                                         : selectedId === session.session_id
                                             ? 'bg-blue-50 border-blue-300'
                                             : selectedForDeletion.has(session.session_id)
@@ -405,8 +443,8 @@ export const SessionList = forwardRef<SessionListRef, SessionListProps>(({
                                 >
                                     {/* Uploading progress indicator */}
                                     {isUploading && (
-                                        <div className="absolute top-0 left-0 right-0 h-1 bg-amber-200 rounded-t overflow-hidden">
-                                            <div className="h-full bg-amber-500 animate-pulse" style={{ width: '100%' }} />
+                                        <div className="absolute top-0 left-0 right-0 h-1.5 bg-amber-200 rounded-t overflow-hidden">
+                                            <div className="h-full bg-amber-400 rounded-full animate-[pulse_1.5s_ease-in-out_infinite]" style={{ width: '100%' }} />
                                         </div>
                                     )}
 
@@ -430,116 +468,99 @@ export const SessionList = forwardRef<SessionListRef, SessionListProps>(({
 
                                         {/* Session content */}
                                         <div
-                                            className={`flex-1 ${isUploading ? 'cursor-wait' : 'cursor-pointer'}`}
+                                            className={`flex-1 ${isUploading ? 'cursor-not-allowed select-none' : 'cursor-pointer'}`}
                                             onClick={() => {
-                                                if (isUploading) return; // Prevent selection while uploading
+                                                if (isUploading) return;
                                                 setSelectedId(session.session_id);
                                                 onSelectSession(session);
                                             }}
                                         >
+                                            {/* Row 1: Session ID + timestamp */}
                                             <div className="flex justify-between items-start mb-1">
-                                                <div className="flex-1 min-w-0">
-                                                    <div className="text-xs text-gray-500 mb-0.5">Session ID</div>
-                                                    <h3 className="font-mono text-xs font-semibold text-gray-800 truncate">
-                                                        {session.session_id}
-                                                    </h3>
-                                                </div>
-                                                <div className="text-right text-xs text-gray-500 ml-2 flex-shrink-0">
-                                                    {session.created_at ? formatDistance(new Date(session.created_at), new Date(), {
-                                                        addSuffix: true
-                                                    }) : 'Unknown'}
-                                                </div>
+                                                <h3 className="font-mono text-xs font-semibold text-gray-800 truncate flex-1 min-w-0" title={session.session_id}>
+                                                    {session.session_id}
+                                                </h3>
+                                                <span className="text-xs text-gray-400 ml-2 flex-shrink-0">
+                                                    {session.created_at ? formatCompactTime(session.created_at) : '?'}
+                                                </span>
                                             </div>
-                                            <div className="flex gap-3 text-xs text-gray-600 mb-1">
-                                                {/* Session type indicator */}
+                                            {/* Row 2: Mode + duration + sample count */}
+                                            <div className="flex flex-wrap items-center gap-1 mb-1">
                                                 {(session.session_type === 'interrupt' || session.mode === 'interrupt_debug') && (
-                                                    <span className="flex items-center gap-0.5 text-cyan-600 font-medium">
+                                                    <span className="flex items-center gap-0.5 px-1.5 py-0.5 bg-cyan-100 text-cyan-700 rounded text-xs font-medium">
                                                         <Zap size={10} />
                                                         INT
                                                     </span>
                                                 )}
                                                 {session.mode === 'live_debug' && (
-                                                    <span className="flex items-center gap-0.5 text-fuchsia-600 font-medium">
+                                                    <span className="flex items-center gap-0.5 px-1.5 py-0.5 bg-fuchsia-100 text-fuchsia-700 rounded text-xs font-medium">
                                                         <Radio size={10} />
                                                         {session.capture_reason === 'missed_event' ? 'MISSED' : 'LIVE'}
                                                     </span>
                                                 )}
-                                                <span>{(session.duration_ms / 1000).toFixed(1)}s</span>
-                                                <span className={isUploading ? 'text-amber-600 font-medium' : ''}>
-                                                    {session.session_type === 'interrupt' || session.mode === 'interrupt_debug'
-                                                        ? `${session.event_count || 0} events`
-                                                        : `${session.sample_count} samples`}
-                                                    {isUploading && (
-                                                        <span className="ml-1 inline-flex items-center">
-                                                            <RefreshCw size={10} className="animate-spin" />
-                                                        </span>
-                                                    )}
+                                                <span className="px-1.5 py-0.5 bg-slate-100 text-slate-700 rounded text-xs font-mono">
+                                                    {(session.duration_ms / 1000).toFixed(1)}s
                                                 </span>
-                                                {session.session_type !== 'interrupt' && session.mode !== 'interrupt_debug' && (
-                                                    <span>{session.sample_rate} Hz</span>
+                                                {isUploading ? (
+                                                    <span className="px-1.5 py-0.5 bg-amber-100 text-amber-700 rounded text-xs font-medium flex items-center gap-1">
+                                                        <RefreshCw size={10} className="animate-spin" />
+                                                        Uploading...
+                                                    </span>
+                                                ) : (
+                                                    <span className="px-1.5 py-0.5 bg-blue-50 text-blue-700 rounded text-xs font-mono">
+                                                        {session.session_type === 'interrupt' || session.mode === 'interrupt_debug'
+                                                            ? `${session.event_count || 0} events`
+                                                            : `${session.sample_count} samples`}
+                                                    </span>
                                                 )}
                                             </div>
-                                            {session.labels && session.labels.length > 0 && (
-                                                <div className="flex flex-wrap gap-1 mb-1">
-                                                    {session.labels.slice(0, 3).map((label, i) => (
-                                                        <span key={i} className="px-1.5 py-0.5 bg-blue-100 text-blue-800 rounded text-xs">
-                                                            {label}
-                                                        </span>
-                                                    ))}
-                                                    {session.labels.length > 3 && (
-                                                        <span className="text-xs text-gray-500">
-                                                            +{session.labels.length - 3} more
-                                                        </span>
-                                                    )}
-                                                </div>
-                                            )}
-                                            {/* Config Badges - show different info for interrupt vs proximity */}
-                                            {session.interrupt_config ? (
-                                                <div className="flex flex-wrap gap-1 mt-1">
-                                                    <span className="px-1.5 py-0.5 bg-cyan-100 text-cyan-800 rounded text-xs font-mono">
-                                                        M:{session.interrupt_config.threshold_margin}
-                                                    </span>
-                                                    <span className="px-1.5 py-0.5 bg-cyan-100 text-cyan-800 rounded text-xs font-mono">
-                                                        {session.interrupt_config.integration_time}T
-                                                    </span>
-                                                    <span className="px-1.5 py-0.5 bg-pink-100 text-pink-800 rounded text-xs font-mono">
-                                                        {session.interrupt_config.multi_pulse}P
-                                                    </span>
-                                                    <span className="px-1.5 py-0.5 bg-purple-100 text-purple-800 rounded text-xs">
-                                                        {session.interrupt_config.mode}
-                                                    </span>
-                                                </div>
-                                            ) : session.vcnl4040_config && (
-                                                <div className="flex flex-wrap gap-1 mt-1">
-                                                    <span className="px-1.5 py-0.5 bg-purple-100 text-purple-800 rounded text-xs font-mono">
-                                                        {session.vcnl4040_config.sample_rate_hz}Hz
-                                                    </span>
-                                                    <span className="px-1.5 py-0.5 bg-orange-100 text-orange-800 rounded text-xs font-mono">
-                                                        {session.vcnl4040_config.led_current}
-                                                    </span>
-                                                    <span className="px-1.5 py-0.5 bg-green-100 text-green-800 rounded text-xs font-mono">
-                                                        {session.vcnl4040_config.integration_time}
-                                                    </span>
-                                                    <span className="px-1.5 py-0.5 bg-indigo-100 text-indigo-800 rounded text-xs">
-                                                        {session.vcnl4040_config.high_resolution ? '16-bit' : '12-bit'}
-                                                    </span>
-                                                    {session.vcnl4040_config.read_ambient && (
-                                                        <span className="px-1.5 py-0.5 bg-teal-100 text-teal-800 rounded text-xs">
-                                                            Ambient
-                                                        </span>
-                                                    )}
-                                                    {session.vcnl4040_config.i2c_clock_khz && (
-                                                        <span className="px-1.5 py-0.5 bg-gray-100 text-gray-800 rounded text-xs font-mono">
-                                                            {session.vcnl4040_config.i2c_clock_khz}kHz
-                                                        </span>
-                                                    )}
-                                                    {session.vcnl4040_config.multi_pulse && session.vcnl4040_config.multi_pulse !== '1' && (
-                                                        <span className="px-1.5 py-0.5 bg-pink-100 text-pink-800 rounded text-xs font-mono">
-                                                            {session.vcnl4040_config.multi_pulse}P
-                                                        </span>
-                                                    )}
-                                                </div>
-                                            )}
+                                            {/* Row 3: Direction label + config badges */}
+                                            {(() => {
+                                                const dir = getDirectionDisplay(session);
+                                                const otherLabels = session.labels?.filter(l => !DIRECTION_LABELS.includes(l as any)) || [];
+                                                const configTooltip = session.interrupt_config
+                                                    ? `Margin: ${session.interrupt_config.threshold_margin} | Mode: ${session.interrupt_config.mode} | LED: ${session.interrupt_config.led_current}`
+                                                    : session.vcnl4040_config
+                                                        ? `${session.vcnl4040_config.sample_rate_hz}Hz | LED: ${session.vcnl4040_config.led_current} | Duty: ${session.vcnl4040_config.duty_cycle} | ${session.vcnl4040_config.high_resolution ? '16-bit' : '12-bit'}${session.vcnl4040_config.read_ambient ? ' | Ambient' : ''}${session.vcnl4040_config.i2c_clock_khz ? ` | I2C: ${session.vcnl4040_config.i2c_clock_khz}kHz` : ''}`
+                                                        : undefined;
+                                                return (
+                                                    <div className="flex flex-wrap items-center gap-1" title={configTooltip}>
+                                                        {dir && (
+                                                            <span className={`px-1.5 py-0.5 rounded text-xs font-medium ${dir.color}`}>
+                                                                {dir.text}
+                                                            </span>
+                                                        )}
+                                                        {otherLabels.slice(0, 2).map((label, i) => (
+                                                            <span key={i} className="px-1.5 py-0.5 bg-blue-100 text-blue-800 rounded text-xs">
+                                                                {label}
+                                                            </span>
+                                                        ))}
+                                                        {otherLabels.length > 2 && (
+                                                            <span className="text-xs text-gray-500">+{otherLabels.length - 2}</span>
+                                                        )}
+                                                        {session.interrupt_config && (
+                                                            <>
+                                                                <span className="px-1.5 py-0.5 bg-green-100 text-green-800 rounded text-xs font-mono">
+                                                                    {session.interrupt_config.integration_time}T
+                                                                </span>
+                                                                <span className="px-1.5 py-0.5 bg-pink-100 text-pink-800 rounded text-xs font-mono">
+                                                                    {session.interrupt_config.multi_pulse}P
+                                                                </span>
+                                                            </>
+                                                        )}
+                                                        {session.vcnl4040_config && (
+                                                            <>
+                                                                <span className="px-1.5 py-0.5 bg-green-100 text-green-800 rounded text-xs font-mono">
+                                                                    {session.vcnl4040_config.integration_time}
+                                                                </span>
+                                                                <span className="px-1.5 py-0.5 bg-pink-100 text-pink-800 rounded text-xs font-mono">
+                                                                    {session.vcnl4040_config.multi_pulse || '1'}P
+                                                                </span>
+                                                            </>
+                                                        )}
+                                                    </div>
+                                                );
+                                            })()}
                                         </div>
                                     </div>
                                 </div>
