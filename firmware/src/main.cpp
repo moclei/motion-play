@@ -87,32 +87,21 @@ bool fetchConfigFromCloud();
 void setup()
 {
     Serial.begin(115200);
-    delay(1500); // Initial stabilization delay
+    delay(500);
 
-    Serial.println("\n\n\n=================================");
+    Serial.println("\n\n=================================");
     Serial.println("Motion Play Device - BOOT");
     Serial.println("=================================");
-    Serial.println("Serial is working!");
-    Serial.println("Auto-initializing in 3 seconds...");
     Serial.println("Press RIGHT button (GPIO 14) to restart anytime");
     Serial.println("=================================\n");
 
-    // Initialize buttons
     pinMode(BUTTON_1, INPUT_PULLUP);
     pinMode(BUTTON_2, INPUT_PULLUP);
-    Serial.println("Buttons initialized");
 
-    // Initialize display
     display.init();
     display.showInitScreen();
     Serial.println("Display initialized");
 
-    // Longer delay for WiFi hardware stabilization (ESP32 needs 3-5 seconds)
-    Serial.println("Waiting for hardware to stabilize...");
-    delay(3000);
-
-    // Auto-initialize system
-    Serial.println("\n=== Starting Auto-Initialization ===\n");
     initializeSystem();
 
     Serial.println("\n=== Setup Complete - Entering Loop ===\n");
@@ -138,7 +127,7 @@ bool fetchConfigFromCloud()
 
     HTTPClient http;
     http.begin(url);
-    http.setTimeout(10000); // 10 second timeout
+    http.setTimeout(5000);
 
     int httpCode = http.GET();
 
@@ -316,33 +305,10 @@ void initializeSystem()
     Serial.println("\n=== Starting System Initialization ===\n");
 
     display.updateInitStage(INIT_BOOT, "Booting up...");
-    delay(500);
 
-    // Initialize sensors first (with current configuration)
-    Serial.println("Initializing sensors...");
-    display.updateInitStage(INIT_SENSORS, "Initializing sensors...");
-    if (!sensorManager.init(&currentConfig))
-    {
-        Serial.println("ERROR: Sensor initialization failed!");
-        display.setInitError("Sensor init failed!");
-        while (1)
-            delay(1000);
-    }
-    Serial.println("Sensors initialized successfully");
-    delay(500);
+    // --- Phase 1: Network (WiFi → MQTT → cloud config) ---
+    // Done first so we have the real sensor config before initializing hardware.
 
-    // Initialize CalibrationManager (uses SensorManager for readings)
-    Serial.println("Initializing CalibrationManager...");
-    if (!calibrationManager.begin(&sensorManager, &display))
-    {
-        Serial.println("WARNING: CalibrationManager init failed");
-    }
-    else
-    {
-        Serial.println("CalibrationManager initialized");
-    }
-
-    // Load network configuration
     Serial.println("Loading WiFi config...");
     if (!networkManager.loadConfig())
     {
@@ -352,9 +318,7 @@ void initializeSystem()
             delay(1000);
     }
     Serial.println("Config loaded successfully");
-    delay(500); // Give WiFi stack time to initialize
 
-    // Connect to WiFi
     Serial.println("Connecting to WiFi...");
     display.updateInitStage(INIT_WIFI_CONNECTING, "Connecting to WiFi...");
     if (!networkManager.connectWiFi())
@@ -366,9 +330,7 @@ void initializeSystem()
     }
     Serial.println("WiFi connected!");
     display.updateInitStage(INIT_WIFI_CONNECTED, "WiFi connected");
-    delay(500);
 
-    // Initialize MQTT
     mqttManager = new MQTTManager(&networkManager);
 
     Serial.println("Loading MQTT config...");
@@ -381,36 +343,30 @@ void initializeSystem()
     }
     Serial.println("MQTT config loaded");
 
-    // Connect to MQTT
     Serial.println("Connecting to MQTT...");
     display.updateInitStage(INIT_MQTT_CONNECTING, "Connecting to AWS IoT...");
     if (!mqttManager->connect())
     {
         Serial.println("WARNING: MQTT connection failed");
         display.setInitError("MQTT connection failed!");
-        delay(3000); // Show error, but continue (can retry later)
+        delay(3000);
     }
     else
     {
         Serial.println("MQTT connected!");
         display.updateInitStage(INIT_MQTT_CONNECTED, "AWS IoT connected");
     }
-    delay(500);
 
-    // Initialize data transmitter
     dataTransmitter = new DataTransmitter(mqttManager);
-
-    // Pass device ID to SessionManager for session ID generation
     sessionManager.setDeviceId(networkManager.getDeviceId());
 
-    // Set up command handler
     mqttManager->setCallback([](char *topic, byte *payload, unsigned int length)
                              {
         char message[length + 1];
         memcpy(message, payload, length);
         message[length] = '\0';
 
-        DynamicJsonDocument doc(1024);  // Increased size for sensor config
+        DynamicJsonDocument doc(1024);
         DeserializationError error = deserializeJson(doc, message);
 
         if (!error) {
@@ -418,33 +374,48 @@ void initializeSystem()
             handleCommand(command, &doc);
         } });
 
-    // Fetch configuration from cloud
+    // Fetch cloud config so sensors get initialized with the right settings
     Serial.println("Fetching sensor config from cloud...");
     display.updateInitStage(INIT_COMPLETE, "Loading config...");
-    if (fetchConfigFromCloud())
+    bool cloudConfigLoaded = fetchConfigFromCloud();
+    if (cloudConfigLoaded)
     {
-        Serial.println("Config fetched successfully, applying to sensors...");
-
-        // Apply config to sensors
-        if (sensorManager.reinitialize(&currentConfig))
-        {
-            Serial.println("Config applied to sensors successfully!");
-        }
-        else
-        {
-            Serial.println("WARNING: Failed to apply config to sensors, using defaults");
-        }
+        Serial.println("Cloud config loaded — sensors will init with cloud settings");
     }
     else
     {
-        Serial.println("WARNING: Failed to fetch config from cloud, using defaults");
+        Serial.println("WARNING: Cloud config unavailable, sensors will use defaults");
     }
 
-    // Log detection mode state after cloud config fetch
-    Serial.printf("\n[Config] Detection mode after cloud fetch: %s (useMLDetection=%d)\n",
+    Serial.printf("\n[Config] Detection mode: %s (useMLDetection=%d)\n",
                   useMLDetection ? "ML" : "heuristic", useMLDetection);
 
-    // Initialize ML detector if ML mode is selected
+    // --- Phase 2: Sensors (one-shot init with final config) ---
+
+    Serial.println("Initializing sensors...");
+    display.updateInitStage(INIT_SENSORS, "Initializing sensors...");
+    if (!sensorManager.init(&currentConfig))
+    {
+        Serial.println("ERROR: Sensor initialization failed!");
+        display.setInitError("Sensor init failed!");
+        while (1)
+            delay(1000);
+    }
+    Serial.println("Sensors initialized successfully");
+
+    // CalibrationManager (just GPIO setup, no delay)
+    Serial.println("Initializing CalibrationManager...");
+    if (!calibrationManager.begin(&sensorManager, &display))
+    {
+        Serial.println("WARNING: CalibrationManager init failed");
+    }
+    else
+    {
+        Serial.println("CalibrationManager initialized");
+    }
+
+    // --- Phase 3: Detection & output ---
+
     if (useMLDetection)
     {
         Serial.println("\n=== Initializing ML Detector ===");
@@ -459,22 +430,19 @@ void initializeSystem()
         }
     }
 
-    // Initialize Serial Studio output
     serialStudioOutput.begin(&sessionManager.getDataBuffer(), &directionDetector);
     serialStudioOutput.setConfig(&currentConfig);
     serialStudioOutput.setEnabled(serialStudioEnabled);
     Serial.printf("Serial Studio output: %s\n", serialStudioEnabled ? "enabled" : "disabled");
 
-    // Initialization complete!
-    Serial.println("\n=== System Initialization Complete ===\n");
+    // --- Done ---
 
-    // Print memory statistics after initialization
+    Serial.println("\n=== System Initialization Complete ===\n");
     MemoryMonitor::printMemoryStats();
 
     display.updateInitStage(INIT_COMPLETE, "System ready!");
-    delay(1500);
+    delay(500);
 
-    // Switch to session screen and show current config
     display.setSensorConfig(&currentConfig);
     display.setDetectionConfig(detectorConfig.peakMultiplier, detectorConfig.minRise,
                                detectorConfig.minWaveDurationMs, detectorConfig.smoothingWindow);

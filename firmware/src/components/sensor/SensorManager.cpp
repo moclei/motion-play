@@ -655,8 +655,9 @@ bool SensorManager::init(SensorConfiguration *config)
     }
     Serial.println("TCA9548A initialized");
 
-    // Run I2C debug scan to help troubleshoot sensor board detection
+#if STARTUP_I2C_SCAN
     debugI2CScan();
+#endif
 
     // Initialize PCA9546A multiplexers
     if (!initializePCA())
@@ -665,7 +666,7 @@ bool SensorManager::init(SensorConfiguration *config)
         return false;
     }
 
-    delay(500); // Give hardware time to settle
+    delay(50);
 
     // Initialize all VCNL4040 sensors
     int sensors_initialized = 0;
@@ -699,7 +700,7 @@ bool SensorManager::init(SensorConfiguration *config)
             continue;
         }
 
-        delay(50);
+        delay(5);
 
         // Select PCA channel on the sensor board
         if (!pca_instances[tca_ch].selectChannel(pca_ch))
@@ -709,7 +710,7 @@ bool SensorManager::init(SensorConfiguration *config)
             continue;
         }
 
-        delay(50);
+        delay(5);
 
         // Check if VCNL4040 responds at standard address 0x60
         Wire.beginTransmission(0x60);
@@ -811,11 +812,10 @@ bool SensorManager::init(SensorConfiguration *config)
     // Dump configuration for all sensors to verify they were configured correctly
     dumpSensorConfiguration();
 
-    // Calibrate PS_CANC for all sensors to remove cover window reflection offset
-    // This should be done with covers installed but NO objects near the sensors
-    Serial.println("Starting baseline calibration for cover offset compensation...");
-    delay(500); // Brief delay to ensure stable readings
-    calibrateProximityCancellation();
+    // PS_CANC calibration removed from startup — the DirectionDetector's
+    // adaptive per-sensor baseline handles offset dynamically, making the
+    // hardware cancellation register redundant for detection.
+    // Calibration is still available via CalibrationManager (button hold / MQTT).
 
     return true;
 }
@@ -1247,11 +1247,8 @@ bool SensorManager::reinitialize(SensorConfiguration *config)
     // Dump configuration to verify all sensors got the new settings
     dumpSensorConfiguration();
 
-    // Re-calibrate PS_CANC after configuration change
-    // Configuration changes (especially LED current, integration time) can affect baseline
-    Serial.println("  Re-calibrating baseline after configuration change...");
-    delay(200);
-    calibrateProximityCancellation();
+    // PS_CANC recalibration removed — adaptive baseline in DirectionDetector
+    // handles offset changes from config updates dynamically.
 
     return true;
 }
