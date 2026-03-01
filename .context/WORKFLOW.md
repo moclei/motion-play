@@ -10,7 +10,9 @@ This document defines how we create, organize, and maintain documentation for fe
 .context/
 ├── PROJECT.md              # Project-level context (what, why, where things live)
 ├── WORKFLOW.md             # This file — how we work on features
-docs/       
+docs/
+├── explorations/
+│   └── <topic-name>.md     # Single-file problem space analysis (pre-initiative)
 └── initiatives/
     ├── <feature-name>/
     │   ├── BRIEF.md        # Intent, goals, and scope (stable)
@@ -22,7 +24,76 @@ docs/
         └── TASKS.md
 ```
 
-## Documents Per Feature
+## Explorations
+
+Not every problem is ready for an initiative. Sometimes you have a clear *problem* but multiple possible *directions*, and you need to think before you commit. Explorations are for that.
+
+An exploration is a **single markdown file** in `docs/explorations/`. It maps a problem space, evaluates options, and converges on a recommendation. Once a decision is made, it spawns zero or more initiatives and stays behind as a record of *why that direction was chosen*.
+
+**When to use an exploration:**
+- You have a problem with multiple viable approaches spanning different levels of effort
+- Jumping straight to an initiative would mean prematurely committing to one direction
+- The decision involves trade-offs that deserve explicit analysis before implementation
+
+**When to skip it:**
+- The path forward is clear enough to write a BRIEF.md directly
+- Most features don't need this — go straight to an initiative
+
+### Exploration Document
+
+**One file per exploration.** Named descriptively: `pipeline-latency.md`, `mcu-migration.md`, etc.
+
+**Template:**
+
+```markdown
+# <Topic> — Exploration
+
+## Problem
+What's wrong, what's limited, or what opportunity exists? Be specific and
+include evidence (measurements, observations, user experience).
+
+## Current State
+How does the system work today in the relevant area? Enough context that
+the options below make sense without reading the full codebase.
+
+## Options
+### Option A: <name>
+What it involves, effort level, expected impact, trade-offs.
+
+### Option B: <name>
+...
+
+## Recommendation
+Which option(s) to pursue and why. This section is empty until a direction
+is chosen — it's fine for an exploration to sit with options but no
+recommendation while you're still thinking.
+
+## Decision
+**Status: Open | Decided | Superseded**
+
+If decided: what was chosen, brief rationale, and link to the resulting
+initiative(s) if any.
+```
+
+**Guidelines:**
+- Keep it to one file. If you need more than a few pages, the problem isn't well-scoped yet.
+- Options should be concrete enough to compare. "Make it faster" is not an option; "consolidate MQTT batches to reduce Lambda invocations" is.
+- An exploration can stay open. Not everything needs an immediate decision. But if it sits untouched for a long time, either decide or close it.
+- When an exploration leads to an initiative, link them: note the initiative in the Decision section, and reference the exploration in the initiative's BRIEF.md.
+
+### Lifecycle
+
+1. Create `docs/explorations/<topic>.md` when facing a multi-option decision.
+2. Fill in Problem, Current State, and Options as you analyze.
+3. Discuss and evaluate. Update the Recommendation section when a direction emerges.
+4. Mark the Decision as **Decided** and create initiative(s) if implementation follows.
+5. The exploration stays as a permanent record.
+
+---
+
+## Initiatives
+
+### Documents Per Feature
 
 Each feature gets **three documents, no more.** If you feel the urge to create a fourth document, that's a signal that one of the existing three needs better organization, not that you need another file.
 
@@ -131,14 +202,15 @@ integrated with, data models, etc. Organize with subheadings as needed.
 
 ---
 
-## Lifecycle
+## Initiative Lifecycle
 
 ### Starting a Feature
-1. Create a new folder under `initiatives/` with a descriptive kebab-case name.
-2. Write BRIEF.md first. Get clarity on intent and scope before touching any code.
-3. Write PLAN.md with the initial technical approach.
-4. Write TASKS.md with the initial task breakdown derived from the plan.
-5. Reference the new feature in PROJECT.md if it's significant enough to be part of the project overview.
+1. If the direction isn't clear yet, start with an exploration (see above). Otherwise, proceed directly.
+2. Create a new folder under `initiatives/` with a descriptive kebab-case name.
+3. Write BRIEF.md first. Get clarity on intent and scope before touching any code. If this came from an exploration, reference it.
+4. Write PLAN.md with the initial technical approach.
+5. Write TASKS.md with the initial task breakdown derived from the plan.
+6. Reference the new feature in PROJECT.md if it's significant enough to be part of the project overview.
 
 ### During Development
 - Update TASKS.md as you work. Treat it as part of the task: *the task isn't done until TASKS.md reflects it.*
@@ -159,7 +231,7 @@ integrated with, data models, etc. Organize with subheadings as needed.
 
 ## Maintenance Rules
 
-1. **No orphan documents.** Every file in an initiative folder must be one of: BRIEF.md, PLAN.md, or TASKS.md. No scratch files, no "notes.md", no "old-plan.md". If you have scratch thoughts, put them in PLAN.md under Open Questions.
+1. **No orphan documents.** Every file in an initiative folder must be one of: BRIEF.md, PLAN.md, or TASKS.md. Every file in `explorations/` must be a single `.md` file. No scratch files, no "notes.md", no "old-plan.md". If you have scratch thoughts, put them in PLAN.md under Open Questions or in the relevant exploration.
 
 2. **No stale tasks.** If a task in TASKS.md is no longer relevant, remove it. Unchecked tasks that sit untouched for multiple sessions are clutter.
 
@@ -171,7 +243,12 @@ integrated with, data models, etc. Organize with subheadings as needed.
 
 ## AI Agent Instructions
 
-When working on a feature:
+When working on an exploration:
+- Read the exploration document at the start of any session involving that topic.
+- Add new options or analysis as they emerge, but don't remove options that were previously considered — they're part of the decision record.
+- Don't create sub-files or folders for an exploration. One file.
+
+When working on an initiative:
 - Read BRIEF.md, PLAN.md, and TASKS.md at the start of every session involving that feature.
 - After completing a task, check it off in TASKS.md before moving on to the next task.
 - If the technical approach changes, update PLAN.md to reflect the current design.
