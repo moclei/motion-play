@@ -120,11 +120,11 @@ export const SessionList = forwardRef<SessionListRef, SessionListProps>(({
         loadSessions();
     }, [loadSessions]);
 
-    // Polling mechanism - check for new sessions every 5 seconds
+    // Polling mechanism - check for new sessions every 2 seconds
     useEffect(() => {
         const interval = setInterval(() => {
             loadSessions(false);
-        }, 5000);
+        }, 2000);
 
         return () => clearInterval(interval);
     }, [loadSessions]);

@@ -557,28 +557,43 @@ async function processSessionSummary(data) {
     
     console.log(`Processing session summary for: ${data.session_id}`);
     
-    // Wait for concurrent batch-processing Lambda invocations to finish writing.
-    // The firmware sends all data batches within ~140ms (7 batches × 20ms delay),
-    // and the session summary immediately after. Each batch Lambda invocation takes
-    // 1-3 seconds to complete its DynamoDB BatchWriteCommand. Without this delay,
-    // we'd query the count before all batches are written, getting a partial count.
-    const BATCH_SETTLE_DELAY_MS = 5000;
-    console.log(`Waiting ${BATCH_SETTLE_DELAY_MS}ms for batch writes to settle...`);
-    await new Promise(resolve => setTimeout(resolve, BATCH_SETTLE_DELAY_MS));
-    
-    // Query actual stored reading count from the data table (more reliable than sample_count
-    // counter, which can have race conditions with concurrent Lambda invocations)
-    const countResult = await docClient.send(new QueryCommand({
-        TableName: SENSOR_DATA_TABLE,
-        KeyConditionExpression: 'session_id = :sid',
-        Select: 'COUNT',
-        ExpressionAttributeValues: {
-            ':sid': data.session_id
-        }
-    }));
-    
-    const actualStoredCount = countResult.Count || 0;
+    // Poll DynamoDB until all batch-processing Lambda invocations have finished writing,
+    // rather than sleeping a fixed 5s. The firmware sends batches within ~160ms and the
+    // summary immediately after; each batch Lambda takes 1-3s to write. We poll the actual
+    // stored count every 200ms and exit as soon as it matches the transmitted count.
+    const SETTLE_POLL_INTERVAL_MS = 200;
+    const SETTLE_TIMEOUT_MS = 8000;
     const transmitted = summary.total_readings_transmitted || 0;
+    let actualStoredCount = 0;
+    const settleStart = Date.now();
+
+    console.log(`Smart settle: waiting for ${transmitted} readings (poll every ${SETTLE_POLL_INTERVAL_MS}ms, timeout ${SETTLE_TIMEOUT_MS}ms)`);
+
+    while (Date.now() - settleStart < SETTLE_TIMEOUT_MS) {
+        const countResult = await docClient.send(new QueryCommand({
+            TableName: SENSOR_DATA_TABLE,
+            KeyConditionExpression: 'session_id = :sid',
+            Select: 'COUNT',
+            ExpressionAttributeValues: {
+                ':sid': data.session_id
+            }
+        }));
+
+        actualStoredCount = countResult.Count || 0;
+        const deliveryRate = transmitted > 0 ? actualStoredCount / transmitted : 0;
+
+        if (actualStoredCount >= transmitted || deliveryRate >= 0.95) {
+            console.log(`Smart settle: converged in ${Date.now() - settleStart}ms (stored: ${actualStoredCount}, transmitted: ${transmitted})`);
+            break;
+        }
+
+        await new Promise(resolve => setTimeout(resolve, SETTLE_POLL_INTERVAL_MS));
+    }
+
+    if (actualStoredCount < transmitted) {
+        const elapsed = Date.now() - settleStart;
+        console.log(`Smart settle: timed out after ${elapsed}ms (stored: ${actualStoredCount}, transmitted: ${transmitted})`);
+    }
     
     // Determine pipeline status by comparing actual stored readings vs transmitted
     // Allow a small tolerance for minor edge cases
