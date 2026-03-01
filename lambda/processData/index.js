@@ -64,6 +64,11 @@ exports.handler = async (event) => {
     try {
         const data = event;
         
+        // Binary-packed Live Debug capture (data + summary in single message)
+        if (data.reading_format === 'bin9' && data.readings_b64) {
+            return await processBinarySession(data);
+        }
+        
         // Session Confirmation: handle summary message (separate from data batches)
         if (data.type === 'session_summary') {
             return await processSessionSummary(data);
@@ -542,6 +547,186 @@ async function processProximitySession(data) {
     }
 
 // ============================================================================
+// Binary-packed Live Debug capture (bin9 format)
+// Single message contains readings + session metadata + summary.
+// No settle delay needed — all data arrives atomically.
+// ============================================================================
+
+async function processBinarySession(data) {
+    if (!data.session_id || !data.device_id || !data.start_timestamp) {
+        throw new Error('Binary session missing required fields (session_id, device_id, start_timestamp)');
+    }
+
+    const readingCount = data.reading_count;
+    console.log(`Processing binary session: ${data.session_id} (${readingCount} readings, bin9 format)`);
+
+    // 1. Decode base64 and unpack 9-byte reading structs (little-endian)
+    const buf = Buffer.from(data.readings_b64, 'base64');
+    if (buf.length !== readingCount * 9) {
+        throw new Error(`Binary payload size mismatch: expected ${readingCount * 9} bytes, got ${buf.length}`);
+    }
+
+    const startTimestamp = Number(data.start_timestamp);
+    const isTimestampMicroseconds = data.timestamp_unit === 'us';
+
+    // 2. Create session in DynamoDB
+    const sessionItem = {
+        session_id: data.session_id,
+        device_id: data.device_id,
+        session_type: 'proximity',
+        start_timestamp: String(data.start_timestamp),
+        end_timestamp: new Date().toISOString(),
+        duration_ms: data.duration_ms || 0,
+        mode: data.mode || 'live_debug',
+        sample_count: readingCount,
+        sample_rate: data.sample_rate || 1000,
+        labels: data.labels || [],
+        notes: data.notes || '',
+        created_at: Date.now(),
+        active_sensors: data.active_sensors || [],
+        vcnl4040_config: sanitizeConfig(data.vcnl4040_config) || {
+            sample_rate_hz: data.sample_rate || 1000,
+            led_current: "200mA",
+            integration_time: "2T",
+            duty_cycle: "1/40",
+            high_resolution: true,
+            read_ambient: true,
+            i2c_clock_khz: 400,
+            multi_pulse: "1",
+            actual_sample_rate_hz: 0
+        },
+        batches_received: 1,
+        pipeline_status: 'pending'
+    };
+
+    if (data.capture_reason) sessionItem.capture_reason = data.capture_reason;
+    if (data.detection_direction) sessionItem.detection_direction = data.detection_direction;
+    if (data.detection_confidence !== undefined && Number.isFinite(data.detection_confidence)) {
+        sessionItem.detection_confidence = data.detection_confidence;
+    }
+
+    await docClient.send(new PutCommand({
+        TableName: SESSIONS_TABLE,
+        Item: sessionItem
+    }));
+    console.log('Binary session metadata stored');
+
+    // 3. Unpack and write readings to DynamoDB in batches of 25
+    const batchSize = 25;
+    let totalWritten = 0;
+
+    for (let i = 0; i < readingCount; i += batchSize) {
+        const end = Math.min(i + batchSize, readingCount);
+        const putRequests = [];
+
+        for (let j = i; j < end; j++) {
+            const off = j * 9;
+            const timestamp_us = buf.readUInt32LE(off);
+            const position = buf[off + 4];
+            const proximity = buf.readUInt16LE(off + 5);
+            const ambient = buf.readUInt16LE(off + 7);
+            const pcb_id = Math.floor(position / 2) + 1;
+            const side = (position % 2) + 1;
+
+            const relativeTimestamp = timestamp_us - startTimestamp;
+            const compositeKey = (relativeTimestamp * 10) + position;
+            const timestampMs = isTimestampMicroseconds
+                ? Math.floor(relativeTimestamp / 1000)
+                : relativeTimestamp;
+
+            putRequests.push({
+                PutRequest: {
+                    Item: {
+                        session_id: data.session_id,
+                        timestamp_offset: compositeKey,
+                        timestamp_ms: timestampMs,
+                        position: position,
+                        pcb_id: pcb_id,
+                        side: side,
+                        proximity: proximity,
+                        ambient: ambient
+                    }
+                }
+            });
+        }
+
+        let requestItems = { [SENSOR_DATA_TABLE]: putRequests };
+        let retryCount = 0;
+        const maxRetries = 3;
+
+        while (requestItems && Object.keys(requestItems).length > 0 && retryCount <= maxRetries) {
+            if (retryCount > 0) {
+                const delay = 100 * Math.pow(2, retryCount - 1);
+                await new Promise(resolve => setTimeout(resolve, delay));
+            }
+
+            const result = await docClient.send(new BatchWriteCommand({
+                RequestItems: requestItems
+            }));
+
+            if (result.UnprocessedItems && result.UnprocessedItems[SENSOR_DATA_TABLE]?.length > 0) {
+                requestItems = result.UnprocessedItems;
+                retryCount++;
+            } else {
+                requestItems = null;
+                totalWritten += putRequests.length;
+            }
+        }
+
+        if (requestItems && Object.keys(requestItems).length > 0) {
+            const failedCount = requestItems[SENSOR_DATA_TABLE]?.length || 0;
+            throw new Error(`Failed to write ${failedCount} items after ${maxRetries} retries`);
+        }
+    }
+
+    console.log(`Binary session: ${totalWritten} readings written to DynamoDB`);
+
+    // 4. Process inline summary — no settle delay needed
+    const summary = data.summary;
+    const transmitted = summary ? (summary.total_readings_transmitted || readingCount) : readingCount;
+    const deliveryRate = transmitted > 0 ? totalWritten / transmitted : 0;
+
+    let pipelineStatus;
+    if (totalWritten >= transmitted || deliveryRate >= 0.95) {
+        pipelineStatus = 'complete';
+    } else if (totalWritten > 0) {
+        pipelineStatus = 'partial';
+    } else {
+        pipelineStatus = 'partial';
+    }
+
+    console.log(`Pipeline status: ${pipelineStatus} (written: ${totalWritten}, transmitted: ${transmitted}, delivery: ${(deliveryRate * 100).toFixed(1)}%)`);
+
+    await docClient.send(new UpdateCommand({
+        TableName: SESSIONS_TABLE,
+        Key: { session_id: data.session_id },
+        UpdateExpression: 'SET #session_summary = :summary, #pipeline_status = :status, #sample_count = :count',
+        ExpressionAttributeNames: {
+            '#session_summary': 'session_summary',
+            '#pipeline_status': 'pipeline_status',
+            '#sample_count': 'sample_count'
+        },
+        ExpressionAttributeValues: {
+            ':summary': summary || {},
+            ':status': pipelineStatus,
+            ':count': totalWritten
+        }
+    }));
+
+    console.log('Binary session complete');
+
+    return {
+        statusCode: 200,
+        body: JSON.stringify({
+            message: 'Binary session processed',
+            session_id: data.session_id,
+            pipeline_status: pipelineStatus,
+            readings_written: totalWritten
+        })
+    };
+}
+
+// ============================================================================
 // Session Confirmation: Process pipeline integrity summary
 // ============================================================================
 
@@ -557,28 +742,43 @@ async function processSessionSummary(data) {
     
     console.log(`Processing session summary for: ${data.session_id}`);
     
-    // Wait for concurrent batch-processing Lambda invocations to finish writing.
-    // The firmware sends all data batches within ~140ms (7 batches × 20ms delay),
-    // and the session summary immediately after. Each batch Lambda invocation takes
-    // 1-3 seconds to complete its DynamoDB BatchWriteCommand. Without this delay,
-    // we'd query the count before all batches are written, getting a partial count.
-    const BATCH_SETTLE_DELAY_MS = 5000;
-    console.log(`Waiting ${BATCH_SETTLE_DELAY_MS}ms for batch writes to settle...`);
-    await new Promise(resolve => setTimeout(resolve, BATCH_SETTLE_DELAY_MS));
-    
-    // Query actual stored reading count from the data table (more reliable than sample_count
-    // counter, which can have race conditions with concurrent Lambda invocations)
-    const countResult = await docClient.send(new QueryCommand({
-        TableName: SENSOR_DATA_TABLE,
-        KeyConditionExpression: 'session_id = :sid',
-        Select: 'COUNT',
-        ExpressionAttributeValues: {
-            ':sid': data.session_id
-        }
-    }));
-    
-    const actualStoredCount = countResult.Count || 0;
+    // Poll DynamoDB until all batch-processing Lambda invocations have finished writing,
+    // rather than sleeping a fixed 5s. The firmware sends batches within ~160ms and the
+    // summary immediately after; each batch Lambda takes 1-3s to write. We poll the actual
+    // stored count every 200ms and exit as soon as it matches the transmitted count.
+    const SETTLE_POLL_INTERVAL_MS = 200;
+    const SETTLE_TIMEOUT_MS = 8000;
     const transmitted = summary.total_readings_transmitted || 0;
+    let actualStoredCount = 0;
+    const settleStart = Date.now();
+
+    console.log(`Smart settle: waiting for ${transmitted} readings (poll every ${SETTLE_POLL_INTERVAL_MS}ms, timeout ${SETTLE_TIMEOUT_MS}ms)`);
+
+    while (Date.now() - settleStart < SETTLE_TIMEOUT_MS) {
+        const countResult = await docClient.send(new QueryCommand({
+            TableName: SENSOR_DATA_TABLE,
+            KeyConditionExpression: 'session_id = :sid',
+            Select: 'COUNT',
+            ExpressionAttributeValues: {
+                ':sid': data.session_id
+            }
+        }));
+
+        actualStoredCount = countResult.Count || 0;
+        const deliveryRate = transmitted > 0 ? actualStoredCount / transmitted : 0;
+
+        if (actualStoredCount >= transmitted || deliveryRate >= 0.95) {
+            console.log(`Smart settle: converged in ${Date.now() - settleStart}ms (stored: ${actualStoredCount}, transmitted: ${transmitted})`);
+            break;
+        }
+
+        await new Promise(resolve => setTimeout(resolve, SETTLE_POLL_INTERVAL_MS));
+    }
+
+    if (actualStoredCount < transmitted) {
+        const elapsed = Date.now() - settleStart;
+        console.log(`Smart settle: timed out after ${elapsed}ms (stored: ${actualStoredCount}, transmitted: ${transmitted})`);
+    }
     
     // Determine pipeline status by comparing actual stored readings vs transmitted
     // Allow a small tolerance for minor edge cases

@@ -38,8 +38,9 @@ bool MQTTManager::loadConfig()
     mqttClient.setServer(broker.c_str(), port);
     mqttClient.setCallback(messageCallback);
 
-    // Set buffer size for large data payloads (default is 256 bytes)
-    // AWS IoT Core max is 128KB, we set to 32KB for Live Debug batch data
+    // Set buffer size for data payloads (default is 256 bytes)
+    // 32KB covers the largest JSON batch (200 readings at ~80 bytes each).
+    // Binary-packed captures (~56KB) use the streaming publishData overload instead.
     mqttClient.setBufferSize(32768);
     Serial.println("MQTT buffer size set to 32KB");
 
@@ -183,6 +184,81 @@ bool MQTTManager::publishData(const JsonDocument &data)
                       mqttClient.state(),
                       mqttClient.connected() ? "YES" : "NO",
                       payloadSize);
+    }
+
+    return success;
+}
+
+bool MQTTManager::publishDataStreaming(const JsonDocument &data)
+{
+    size_t payloadSize = measureJson(data);
+
+    Serial.printf("MQTT streaming publish: %d bytes\n", payloadSize);
+
+    // Serialize into a PSRAM buffer first, then send in small chunks.
+    // Writing the full ~56KB base64 string directly to the TLS socket in one
+    // call can hang on ESP32 — chunked writes let the TCP stack flow-control.
+    char *buf = (char *)ps_malloc(payloadSize + 1);
+    if (!buf)
+    {
+        Serial.printf("ERROR: ps_malloc(%d) failed for streaming publish\n", payloadSize + 1);
+        return false;
+    }
+
+    size_t serialized = serializeJson(data, buf, payloadSize + 1);
+    if (serialized != payloadSize)
+    {
+        Serial.printf("WARNING: measureJson=%d but serializeJson=%d\n", payloadSize, serialized);
+        payloadSize = serialized;
+    }
+
+    if (!mqttClient.beginPublish(dataTopic.c_str(), payloadSize, false))
+    {
+        Serial.printf("ERROR: beginPublish failed (payload: %d bytes, connected: %s)\n",
+                      payloadSize, mqttClient.connected() ? "YES" : "NO");
+        free(buf);
+        return false;
+    }
+
+    // Send in 4KB chunks
+    static const size_t CHUNK_SIZE = 4096;
+    size_t sent = 0;
+    bool writeOk = true;
+
+    while (sent < payloadSize)
+    {
+        size_t chunkLen = payloadSize - sent;
+        if (chunkLen > CHUNK_SIZE)
+            chunkLen = CHUNK_SIZE;
+
+        size_t written = mqttClient.write((const uint8_t *)(buf + sent), chunkLen);
+        if (written != chunkLen)
+        {
+            Serial.printf("ERROR: chunk write failed at offset %d (wanted %d, wrote %d)\n",
+                          sent, chunkLen, written);
+            writeOk = false;
+            break;
+        }
+        sent += written;
+    }
+
+    free(buf);
+
+    if (!writeOk)
+    {
+        Serial.println("ERROR: streaming publish aborted due to write failure");
+        return false;
+    }
+
+    bool success = mqttClient.endPublish();
+    if (!success)
+    {
+        Serial.printf("ERROR: endPublish failed after sending %d bytes\n", sent);
+    }
+    else
+    {
+        Serial.printf("MQTT streaming publish complete: %d bytes in %d chunks\n",
+                      payloadSize, (payloadSize + CHUNK_SIZE - 1) / CHUNK_SIZE);
     }
 
     return success;

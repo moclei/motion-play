@@ -92,7 +92,18 @@ Firmware → 1 MQTT message (data + summary) → 1 Lambda invocation → DynamoD
 Frontend → poll every 2s → detect completion → fetch data → render
 ```
 
-## Open Questions
+## Open Questions (Resolved)
 
-- ArduinoJson `DynamicJsonDocument` at 60 KB: verify this allocates from PSRAM on ESP32-S3 with the current platformio memory config. If it uses heap, may need to use `SpiRamJsonDocument` or allocate the buffer manually.
-- Should the smart settle (Phase 1) be left in place after Phase 2, as a fallback for non-binary sessions? Likely yes — it's harmless and handles edge cases.
+- **ArduinoJson DynamicJsonDocument at 60 KB** — Not needed. The base64 string is stored by `const char*` reference (zero-copy), so the doc only needs ~8 KB for the JSON structure. The string itself lives in a PSRAM buffer allocated with `ps_malloc`.
+- **Smart settle after Phase 2** — Yes, kept in place as a fallback for non-binary sessions (debug mode, interrupt mode).
+- **PubSubClient buffer increase to 60 KB** — Failed. `malloc(61440)` cannot find contiguous internal heap on ESP32-S3. Solved by keeping the 32 KB buffer and using PubSubClient's streaming API (`beginPublish`/`write`/`endPublish`) with the payload serialized to a PSRAM buffer and sent in 4 KB chunks.
+
+## Implementation Notes
+
+### Deviations from Original Plan
+
+1. **No PubSubClient buffer increase.** The plan called for `setBufferSize(61440)`. ESP32-S3 internal heap doesn't have 60 KB contiguous. Instead, the 32 KB buffer is kept for normal JSON batches, and a streaming publish path (`publishDataStreaming`) handles large binary payloads.
+
+2. **Streaming publish with chunked writes.** Sending the full ~54 KB base64 payload in a single `write()` to the TLS socket caused hangs on ESP32. The payload is serialized to a PSRAM buffer first, then sent in 4 KB chunks through the streaming API.
+
+3. **ArduinoJson doc size is 8 KB, not 60 KB.** The base64 string is stored by pointer reference in ArduinoJson (zero-copy for `const char*`), so the document only needs memory for the JSON tree structure.

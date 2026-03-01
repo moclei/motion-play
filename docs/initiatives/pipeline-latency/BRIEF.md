@@ -18,7 +18,7 @@ What's in:
 - Lambda smart settle (replace fixed sleep with polling loop)
 - Binary payload packing on firmware (9-byte struct per reading, base64-encoded)
 - Lambda decoder for the binary format
-- PubSubClient buffer increase to support single-message transmission
+- Streaming MQTT publish via PSRAM buffer to support single-message transmission
 - Merging data + summary into a single MQTT message for live debug captures
 
 What's out:
@@ -34,4 +34,9 @@ What's out:
 - AWS IoT Core MQTT limit is 128 KB per message
 - Binary payload must use little-endian byte order (ESP32 native) — Lambda must decode accordingly
 - Existing IoT Rule (`SELECT * FROM 'motionplay/+/data'`) expects JSON — binary readings are base64-encoded inside a JSON wrapper, not a raw binary payload
+- ESP32 internal heap cannot allocate 60+ KB contiguously — large payloads must use PSRAM buffers and PubSubClient streaming API
 - Origin exploration: `docs/explorations/pipeline-latency.md`
+
+## Status
+
+**Complete.** Both phases implemented and tested. See PLAN.md for implementation notes.
