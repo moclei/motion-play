@@ -1177,22 +1177,17 @@ void handleCommand(const String &command, JsonDocument *doc)
             }
             sessionManager.getSessionSummary().duration_ms = capDurationMs;
             sessionManager.finalizeSessionSummary(&currentConfig, activeCnt);
-            dataTransmitter->setSessionSummary(&sessionManager.getSessionSummary());
         }
 
-        // 5. Transmit
-        String captureSessionId = dataTransmitter->transmitLiveDebugCapture(
+        // 5. Transmit (binary-packed single message — data + summary)
+        String captureSessionId = dataTransmitter->transmitLiveDebugCaptureBinary(
             buffer, startIdx, captureCount,
             "missed_event", nullptr, 0.0,
+            sessionManager.getSessionSummary(),
             &currentConfig);
 
         if (captureSessionId.length() > 0)
         {
-            // Session Confirmation: send summary for this capture
-            dataTransmitter->transmitSessionSummary(
-                sessionManager.getSessionSummary(),
-                captureSessionId,
-                mqttManager->getDeviceId());
             if (!serialStudioEnabled)
                 Serial.println("[LIVE_DEBUG] Missed event capture transmitted");
             mqttManager->publishStatus("live_debug_missed_captured");
@@ -1203,8 +1198,6 @@ void handleCommand(const String &command, JsonDocument *doc)
                 Serial.println("[LIVE_DEBUG] ERROR: Missed event capture failed!");
             mqttManager->publishStatus("live_debug_capture_failed");
         }
-
-        dataTransmitter->setSessionSummary(nullptr);
 
         // 6. Clear buffer and reset
         directionDetector.reset();
@@ -1669,10 +1662,9 @@ void loop()
                                                    : 0;
                         sessionManager.getSessionSummary().duration_ms = capDur;
                         sessionManager.finalizeSessionSummary(&currentConfig, activeCnt);
-                        dataTransmitter->setSessionSummary(&sessionManager.getSessionSummary());
                     }
 
-                    // 6. Transmit the capture
+                    // 6. Transmit the capture (binary-packed single message — data + summary)
                     const char *dirStr;
                     if (result.direction == Direction::A_TO_B)
                         dirStr = "a_to_b";
@@ -1680,18 +1672,14 @@ void loop()
                         dirStr = "b_to_a";
                     else
                         dirStr = "unknown";
-                    String captureSessionId = dataTransmitter->transmitLiveDebugCapture(
+                    String captureSessionId = dataTransmitter->transmitLiveDebugCaptureBinary(
                         buffer, startIdx, captureCount,
                         "detection", dirStr, result.confidence,
+                        sessionManager.getSessionSummary(),
                         &currentConfig);
 
                     if (captureSessionId.length() > 0)
                     {
-                        // Session Confirmation: send summary for this capture
-                        dataTransmitter->transmitSessionSummary(
-                            sessionManager.getSessionSummary(),
-                            captureSessionId,
-                            mqttManager->getDeviceId());
                         if (!serialStudioEnabled)
                             Serial.println("[LIVE_DEBUG] Detection capture transmitted successfully");
                         mqttManager->publishStatus("live_debug_detection_captured");
@@ -1702,8 +1690,6 @@ void loop()
                             Serial.println("[LIVE_DEBUG] ERROR: Detection capture transmission failed!");
                         mqttManager->publishStatus("live_debug_capture_failed");
                     }
-
-                    dataTransmitter->setSessionSummary(nullptr);
 
                     // 7. Clear buffer and reset detector
                     lastDetectionTime = millis();

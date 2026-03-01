@@ -39,9 +39,9 @@ bool MQTTManager::loadConfig()
     mqttClient.setCallback(messageCallback);
 
     // Set buffer size for large data payloads (default is 256 bytes)
-    // AWS IoT Core max is 128KB, we set to 32KB for Live Debug batch data
-    mqttClient.setBufferSize(32768);
-    Serial.println("MQTT buffer size set to 32KB");
+    // AWS IoT Core max is 128KB, we set to 60KB for binary-packed Live Debug captures
+    mqttClient.setBufferSize(61440);
+    Serial.println("MQTT buffer size set to 60KB");
 
     return true;
 }
@@ -169,9 +169,9 @@ bool MQTTManager::publishData(const JsonDocument &data)
     size_t payloadSize = serializeJson(data, payload);
 
     // Warn if payload approaches MQTT buffer limit
-    if (payloadSize > 24576)
+    if (payloadSize > 49152)
     {
-        Serial.printf("WARNING: Large MQTT payload: %d bytes (buffer: 32KB)\n", payloadSize);
+        Serial.printf("WARNING: Large MQTT payload: %d bytes (buffer: 60KB)\n", payloadSize);
     }
 
     bool success = mqttClient.publish(dataTopic.c_str(), payload.c_str());
