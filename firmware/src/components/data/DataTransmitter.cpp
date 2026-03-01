@@ -704,13 +704,13 @@ String DataTransmitter::transmitLiveDebugCaptureBinary(
         return "";
     }
 
-    // 4. Publish single message
-    bool success = mqttManager->publishData(doc);
+    // 4. Publish via streaming API (payload exceeds the 32KB PubSubClient buffer)
+    bool success = mqttManager->publishDataStreaming(doc);
     free(base64Buf);
 
     if (!success)
     {
-        Serial.println("ERROR: Live Debug Binary MQTT publish failed!");
+        Serial.println("ERROR: Live Debug Binary MQTT streaming publish failed!");
         return "";
     }
 

@@ -39,6 +39,7 @@ public:
     const String &getDeviceId() const { return deviceId; }
     bool publishStatus(const char *status);
     bool publishData(const JsonDocument &data);
+    bool publishDataStreaming(const JsonDocument &data);
     void setCallback(std::function<void(char *, byte *, unsigned int)> callback);
 };
 

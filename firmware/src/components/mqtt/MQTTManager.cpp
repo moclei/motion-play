@@ -38,10 +38,11 @@ bool MQTTManager::loadConfig()
     mqttClient.setServer(broker.c_str(), port);
     mqttClient.setCallback(messageCallback);
 
-    // Set buffer size for large data payloads (default is 256 bytes)
-    // AWS IoT Core max is 128KB, we set to 60KB for binary-packed Live Debug captures
-    mqttClient.setBufferSize(61440);
-    Serial.println("MQTT buffer size set to 60KB");
+    // Set buffer size for data payloads (default is 256 bytes)
+    // 32KB covers the largest JSON batch (200 readings at ~80 bytes each).
+    // Binary-packed captures (~56KB) use the streaming publishData overload instead.
+    mqttClient.setBufferSize(32768);
+    Serial.println("MQTT buffer size set to 32KB");
 
     return true;
 }
@@ -169,9 +170,9 @@ bool MQTTManager::publishData(const JsonDocument &data)
     size_t payloadSize = serializeJson(data, payload);
 
     // Warn if payload approaches MQTT buffer limit
-    if (payloadSize > 49152)
+    if (payloadSize > 24576)
     {
-        Serial.printf("WARNING: Large MQTT payload: %d bytes (buffer: 60KB)\n", payloadSize);
+        Serial.printf("WARNING: Large MQTT payload: %d bytes (buffer: 32KB)\n", payloadSize);
     }
 
     bool success = mqttClient.publish(dataTopic.c_str(), payload.c_str());
@@ -183,6 +184,36 @@ bool MQTTManager::publishData(const JsonDocument &data)
                       mqttClient.state(),
                       mqttClient.connected() ? "YES" : "NO",
                       payloadSize);
+    }
+
+    return success;
+}
+
+bool MQTTManager::publishDataStreaming(const JsonDocument &data)
+{
+    size_t payloadSize = measureJson(data);
+
+    Serial.printf("MQTT streaming publish: %d bytes\n", payloadSize);
+
+    if (!mqttClient.beginPublish(dataTopic.c_str(), payloadSize, false))
+    {
+        Serial.printf("ERROR: beginPublish failed (payload: %d bytes, connected: %s)\n",
+                      payloadSize, mqttClient.connected() ? "YES" : "NO");
+        return false;
+    }
+
+    size_t written = serializeJson(data, mqttClient);
+
+    if (written != payloadSize)
+    {
+        Serial.printf("ERROR: streaming write mismatch (expected %d, wrote %d)\n",
+                      payloadSize, written);
+    }
+
+    bool success = mqttClient.endPublish();
+    if (!success)
+    {
+        Serial.println("ERROR: endPublish failed");
     }
 
     return success;
