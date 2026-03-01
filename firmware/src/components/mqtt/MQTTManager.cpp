@@ -195,25 +195,70 @@ bool MQTTManager::publishDataStreaming(const JsonDocument &data)
 
     Serial.printf("MQTT streaming publish: %d bytes\n", payloadSize);
 
+    // Serialize into a PSRAM buffer first, then send in small chunks.
+    // Writing the full ~56KB base64 string directly to the TLS socket in one
+    // call can hang on ESP32 — chunked writes let the TCP stack flow-control.
+    char *buf = (char *)ps_malloc(payloadSize + 1);
+    if (!buf)
+    {
+        Serial.printf("ERROR: ps_malloc(%d) failed for streaming publish\n", payloadSize + 1);
+        return false;
+    }
+
+    size_t serialized = serializeJson(data, buf, payloadSize + 1);
+    if (serialized != payloadSize)
+    {
+        Serial.printf("WARNING: measureJson=%d but serializeJson=%d\n", payloadSize, serialized);
+        payloadSize = serialized;
+    }
+
     if (!mqttClient.beginPublish(dataTopic.c_str(), payloadSize, false))
     {
         Serial.printf("ERROR: beginPublish failed (payload: %d bytes, connected: %s)\n",
                       payloadSize, mqttClient.connected() ? "YES" : "NO");
+        free(buf);
         return false;
     }
 
-    size_t written = serializeJson(data, mqttClient);
+    // Send in 4KB chunks
+    static const size_t CHUNK_SIZE = 4096;
+    size_t sent = 0;
+    bool writeOk = true;
 
-    if (written != payloadSize)
+    while (sent < payloadSize)
     {
-        Serial.printf("ERROR: streaming write mismatch (expected %d, wrote %d)\n",
-                      payloadSize, written);
+        size_t chunkLen = payloadSize - sent;
+        if (chunkLen > CHUNK_SIZE)
+            chunkLen = CHUNK_SIZE;
+
+        size_t written = mqttClient.write((const uint8_t *)(buf + sent), chunkLen);
+        if (written != chunkLen)
+        {
+            Serial.printf("ERROR: chunk write failed at offset %d (wanted %d, wrote %d)\n",
+                          sent, chunkLen, written);
+            writeOk = false;
+            break;
+        }
+        sent += written;
+    }
+
+    free(buf);
+
+    if (!writeOk)
+    {
+        Serial.println("ERROR: streaming publish aborted due to write failure");
+        return false;
     }
 
     bool success = mqttClient.endPublish();
     if (!success)
     {
-        Serial.println("ERROR: endPublish failed");
+        Serial.printf("ERROR: endPublish failed after sending %d bytes\n", sent);
+    }
+    else
+    {
+        Serial.printf("MQTT streaming publish complete: %d bytes in %d chunks\n",
+                      payloadSize, (payloadSize + CHUNK_SIZE - 1) / CHUNK_SIZE);
     }
 
     return success;
