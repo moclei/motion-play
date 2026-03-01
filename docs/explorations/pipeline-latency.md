@@ -159,16 +159,20 @@ Options within this option:
 
 ## Recommendation
 
-*To be decided.* Three tiers emerge naturally from the analysis:
+Pursue a three-phase plan targeting the highest-leverage changes first:
 
-**Quick wins (Options A + B + C + G):** These are largely independent and complementary. Combined, they could reduce average latency from ~20s to ~5–8s with modest code changes across firmware, Lambda, and frontend. Option A (batch consolidation) is the highest-leverage single change because it eliminates the root cause of the settle delay.
+**Phase 1 — Quick wins (Options C + B):** Reduce frontend polling to 2s and replace the fixed 5s settle delay with a smart polling loop in the summary Lambda. Independent changes, minimal effort, saves ~4–5s combined.
 
-**Medium-term (Option D or E):** Either WebSocket push or progressive rendering would shave off another few seconds and improve perceived responsiveness. These are worth pursuing if the quick wins aren't sufficient.
+**Phase 2 — Binary payload packing (modified Option A):** Instead of consolidating JSON batches (which hits the 128 KB MQTT limit with 6 sensors), pack readings into a 9-byte binary struct per reading, base64-encode, and send the entire capture + summary in a single MQTT message (~56 KB). This eliminates concurrent Lambda invocations and the settle delay entirely. Saves another ~5–8s.
 
-**Long-term (Option F):** Direct MQTT-to-browser is the "right" architecture for sub-second live debug feedback. Worth building toward but represents a bigger investment.
+**Not pursued (for now):** Options D (WebSocket push), E (progressive rendering), F (direct MQTT-to-browser), G (reduce post-detection delay — negligible savings), H (time-series DB — not motivated by latency).
 
-Option H (time-series DB) is not well-motivated by latency alone — worth revisiting if query patterns or data volume become pain points.
+### Analysis corrections
+
+The original analysis underestimated the reading count. With 6 sensors at 1000 Hz over a 750ms window, a capture produces ~4,500 readings, not ~1,500. This means ~23 batches at the current batch size of 200, not ~8. The JSON payload for 4,500 readings is ~270 KB — well over the 128 KB MQTT limit — making naive batch consolidation (Option A as originally described) infeasible. Binary packing solves this: 4,500 × 9 bytes = 40.5 KB raw, ~54 KB base64, within both the 128 KB MQTT limit and PubSubClient's 64 KB buffer ceiling (`uint16_t bufferSize`).
 
 ## Decision
 
-**Status: Open**
+**Status: Decided**
+
+Proceeding with Phases 1 and 2 as described above. See `docs/initiatives/pipeline-latency/` for implementation details.
