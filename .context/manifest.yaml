@@ -62,6 +62,12 @@ structure:
       sensor_flex: hardware/sensor-flex/    # Flex PCB with VCNL4040 sensors, bends to angle sensors outward
       sensor_legacy: hardware/pcb-sensor/   # Deprecated - replaced by sensor_rigid + sensor_flex
     components: hardware/components/
+
+  mechanical:
+    path: mechanical/
+    description: Physical enclosures and mounting hardware (3D-printed)
+    specs: mechanical/specs/
+    enclosures: mechanical/enclosures/  # CAD files will be organized here as the design takes shape
     
   context:
     path: .context/
