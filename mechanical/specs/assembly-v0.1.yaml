@@ -1,0 +1,219 @@
+# Soccer Hoop Sensor Assembly — Design Spec v0.1
+
+# ──────────────────────────────────────────────
+# PURPOSE
+# ──────────────────────────────────────────────
+# The current prototype enclosures are fragile, hard to install,
+# and offer no impact protection. This blocks a key milestone:
+# taking Motion Play outside the workshop for portable, battery-powered
+# playtesting where balls will be kicked at the hoop at up to 20 mph.
+#
+# This spec captures the physical constraints and requirements so we
+# can design 3D-printable enclosures that:
+#   1. Protect all electronics (rigid PCB, flex PCB, bend zone) from ball impact
+#   2. Are easy to install and remove for development iteration
+#   3. Make the system portable — survivable in a bag or car
+#   4. Can be iterated toward production-quality enclosures over time
+#
+# See .context/PROJECT.md "Vision & Goals" for broader project direction.
+
+# ──────────────────────────────────────────────
+# PHYSICAL DIMENSIONS (measured / confirmed)
+# ──────────────────────────────────────────────
+
+hoop:
+  inner_diameter_mm: 445
+  inner_radius_mm: 222.5
+  bar_width_mm: 25.25       # the "flat" face — what PCBs sit on
+  bar_thickness_mm: 4.0     # the "thin" edge — what the flex PCB wraps around
+  material: steel_flat_bar
+  bar_count: 1              # closed ring
+
+sensor_pcb:  # "rigid" PCB, sits on outer face of hoop
+  width_mm: 28.5            # E–W axis (runs along hoop circumference)
+  height_mm: 22.6           # N–S axis (runs across hoop bar width)
+  thickness_mm: 1.6         # FR4 board only, no components on underside
+  tallest_component: JST-SH # right-angle female connector
+  tallest_component_height_mm: 3.0  # above PCB surface
+  total_pcb_height_mm: 4.6  # board (1.6) + tallest component (3.0)
+  connectors:
+    - type: JST-SH
+      pin_count: 5
+      style: right-angle female
+      edge: south
+      height_mm: 3.0        # above PCB surface
+      notes: "wire exits toward hoop circumference; needs to be pluggable post-install"
+    - type: FPC
+      edge: west
+      notes: "flex strip exits here, wraps 180° around the 4mm thin edge to the inside"
+
+flex_pcb:
+  length_mm: 56
+  width_mm: 10
+  thickness_mm: 0.08        # effectively negligible
+  wrap_peak_from_edge_mm: 10 # how far the flex bows out at the apex of the 180° bend
+  connector_insertion_depth_mm: 3   # how far it inserts into rigid PCB FPC connector
+  inside_seating_length_mm: ~22     # estimated (56 - 3 insertion - ~31 for 180° arc)
+  sensors_on: inside_face    # optical sensors face into hoop interior
+  sensor_height_mm: 1.4      # VCNL4040 — tallest component on flex strip
+  attachment_inside: double_sided_tape
+  bend_geometry:
+    exit_angle: parallel     # exits FPC connector parallel to rigid PCB plane
+    straight_run_mm: 1-2     # parallel run before curve begins
+    bend_arc_diameter_mm: 14-15  # if the 180° bend described a full circle
+    bend_arc_radius_mm: 7-7.5
+    after_bend: "lies flat on interior piece, stuck with double-sided tape"
+
+sensor_pcb_underside:
+  components: none           # bare — no components protrude from hoop-facing surface
+  orientation: "component-side-up (away from hoop), bare side faces enclosure base"
+
+cable_routing:
+  jst_sh_cable:
+    path: "runs along hoop to main PCB enclosure"
+    destination: "main PCB enclosure (MCU, screen, power — separate design concern)"
+
+# ──────────────────────────────────────────────
+# CURRENT PROTOTYPE (what exists today)
+# ──────────────────────────────────────────────
+# This section describes the existing 3D-printed prototype.
+# The piece count, shape, and fastening method are NOT constraints
+# for the next design — they are just what was built first.
+
+current_prototype:
+  instances: 3               # equally spaced around hoop
+
+  outside_piece:
+    description: >
+      A hollow PLA box that sits on the outer (convex) hoop face and
+      houses the rigid sensor PCB. The base is flat (not curved to
+      match the hoop radius). Two holes in the side walls allow connector
+      access (JST-SH and FPC). The lid is a separate piece that
+      friction-fits on top with a small lip. The rigid PCB is fully
+      contained inside with room to spare.
+    exterior_height_mm: 33   # along hoop circumference
+    exterior_width_mm: 27    # across hoop bar, slightly wider than bar
+    enclosure_body_depth_mm: 11.5  # base to top of walls (without lid)
+    lid_thickness_mm: 2
+    total_depth_mm: 13.5     # enclosure body + lid, total protrusion from hoop
+    interior_cavity_height_mm: 7   # space inside for PCB + components
+    wall_thickness_mm: 2     # sides
+    base_thickness_mm: 4.5   # thicker to incorporate ridges for interior piece
+    connector_hole_header_mm: ~2   # wall material above connector holes (printing stability)
+    pcb_fit_notes: >
+      PCB rests directly on enclosure base (no standoffs or spacers).
+      PCB total height is 4.6mm (1.6mm board + 3mm tallest component),
+      interior cavity is 7mm, leaving ~2.4mm headroom above tallest component.
+    pcb_orientation: "PCB sits flat on outer 25.25mm face, FPC-west edge aligned to thin edge"
+    fastening_to_hoop: "ridges/canyons moulded into the base accept the interior piece clips"
+    lid_fastening: "loose friction fit with small lip — not secure"
+
+  inside_piece:
+    description: >
+      A thin PLA piece that clips onto the inner (concave) hoop face.
+      It has snap-fit ridges sized to grip the hoop bar edges, and
+      those same ridges slide into matching canyons on the outside piece
+      to lock the two together. It is not an enclosure — it serves as
+      a flat base for the flex PCB and as the clip that holds the
+      outside piece to the hoop. The flex PCB is stuck to it with
+      double-sided tape.
+    depth_mm: 2              # thickness of the piece itself
+    height_mm: 12            # along hoop circumference
+    width: "sized to clip tightly around hoop bar edges"
+    fastening_to_hoop: "snap-fit ridges grip hoop bar edges — requires significant force"
+    fastening_to_outside: "ridges slide into outside piece canyons"
+    flex_attachment: double_sided_tape
+
+  what_it_achieves:
+    - fixes assembly in place on hoop with adjustable position
+    - two parts stay fairly rigidly together
+    - protects rigid PCB from fingers touching exposed components
+    - holds flex PCB on interior so sensors are in consistent position
+
+  problems:
+    - easily knocked loose by a stray hand, let alone a ball
+    - flex PCB 180° bend zone is fully exposed between the two pieces
+    - flex PCB interior face (sensors) is fully exposed — a ball could catch on components and damage them
+    - any ball impact on any part of the assembly could damage it or knock it loose
+    - lid is loose friction fit — not secure
+    - interior piece clips require excessive force to install — described as jank
+    - physically difficult to install the full assembly
+    - no impact protection whatsoever
+
+# ──────────────────────────────────────────────
+# REQUIREMENTS (what the next design must achieve)
+# ──────────────────────────────────────────────
+
+requirements:
+  impact_protection:
+    - survive soccer ball impact (~10 mph, ~1 foot) without PCBs moving or rattling
+    - ball must not be able to catch on or contact any PCB component
+    - flex PCB 180° bend zone must be shielded by enclosure
+    - flex PCB interior face (sensor side) must be shielded from direct ball contact
+    - sensor window needs raised edges or ridges so a ball rolls over, not into, the sensors
+
+  sensor_window:
+    - optical sensors must not be occluded or triggered by enclosure material
+    - transparent window material is a future option but not yet viable
+    - for now, prefer open window with raised surround / lip to deflect impacts
+
+  access_and_serviceability:
+    - JST-SH connector must remain pluggable/unpluggable post-install
+    - FPC connector accessible for flex strip replacement (detach and reattach)
+    - removable for PCB replacement
+    - survive accidental wire tug on JST-SH connector
+
+  installation:
+    - installation should be a clean, single-step process ideally
+    - must not require excessive force
+    - must accommodate the flex-to-rigid interface (the curved section is an awkward transition that needs enclosing)
+
+  form_factor:
+    - low profile preferred, but secureness takes priority in v1
+    - fits 3 instances equally spaced — no part can foul adjacent assemblies
+
+  manufacturing:
+    - FDM 3D printing primary method
+    - open to external fasteners (screws, zip ties, etc.)
+    - open to hybrid materials (TPU for compliance, foam for padding, rubber sleeving)
+    - open to drilling hoop if necessary for best result
+
+# ──────────────────────────────────────────────
+# ANSWERED QUESTIONS (resolved during design spec work)
+# ──────────────────────────────────────────────
+
+answered_questions:
+  - q: "Is hoop radius measured to inner edge, outer edge, or bar centerline?"
+    a: "Inner edge. Inner diameter is 445mm, inner radius 222.5mm."
+
+  - q: "Exact PCB thickness (rigid)?"
+    a: "1.6mm (FR4 board only, no components on underside)."
+
+  - q: "What clearance is needed above the sensor PCB for lid (tallest component height)?"
+    a: "3.0mm — the JST-SH right-angle female connector is the tallest component. Interior cavity is 7mm, PCB total height is 4.6mm, so ~2.4mm headroom."
+
+  - q: "Are there any components that protrude from the bottom (hoop-facing) surface of the rigid PCB?"
+    a: >
+      No. The underside is bare. The PCB sits component-side-up (away from the hoop)
+      inside the exterior enclosure, resting directly on the enclosure base
+      (nothing in between). Components face the lid; bare underside faces
+      the enclosure base and the hoop.
+
+  - q: "Is the flex PCB tail exit from the FPC connector parallel to the PCB plane, or does it need to curve immediately?"
+    a: >
+      Exits parallel. Continues parallel for ~1-2mm, then curves into a 180° bend.
+      The bend arc has a diameter of approximately 14-15mm (~7-7.5mm radius).
+      After the bend, the flex lies flat on the interior piece (stuck with
+      double-sided tape) on the inside face of the hoop bar.
+
+  - q: "Wire routing plan: does JST-SH cable run along the hoop toward adjacent assemblies?"
+    a: >
+      The JST-SH cable runs along the hoop to a separate printed enclosure
+      housing the main PCB (MCU, screen, power input, etc.). Main PCB
+      enclosure is a separate design concern.
+
+  - q: "Exact clearance between adjacent sensor assemblies at 120° spacing — any risk of fouling?"
+    a: >
+      No risk. Hoop circumference is ~1,398mm (π × 445mm). At 120° spacing,
+      assemblies are ~466mm apart along the arc. Each assembly is only ~33mm
+      along the circumference, leaving ~430mm of clear hoop between them.

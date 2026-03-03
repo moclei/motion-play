@@ -6,6 +6,16 @@
 
 Motion Play is an ESP32-based sensor system for detecting and tracking fast-moving objects through a detection plane. The system determines movement direction and provides visual feedback through LED lights. Multiple units can be networked via Bluetooth, and the system supports WiFi connectivity for mobile device integration. Designed for games and sports performance training applications.
 
+## Vision & Goals
+
+Motion Play is primarily an engineering project — the goal is to design and build a complete sensor-based sports training system from scratch, learning across every discipline (electronics, firmware, cloud, ML, mechanical design). Creating something commercially viable is part of that learning journey, not the sole objective.
+
+**Near-term milestone:** A portable, battery-powered system robust enough for real playtesting — surviving balls kicked at up to 20mph, transportable by car to remote locations away from the workstation, and capable of gathering training sessions and testing play modes in the field.
+
+**Medium-term:** Iterate through enclosure and hardware designs toward a self-contained device (hoop + main PCB + sensors + LED strip + battery) that is well-tested, durable, and approaching production quality.
+
+**Long-term:** A Motion Play device that could potentially be manufactured at scale and sold — though the path there is through engineering depth, not shortcuts to market.
+
 ## Current Project Status
 
 **Hardware:** ✅ Custom PCBs operational with dual-MUX architecture (TCA→PCA→Sensors)  
@@ -286,7 +296,7 @@ motion-play/
 │   ├── src/            # source code
 │   ├── tools/            # various scripts and code, such as Kicad python extension scripts
 ├── tools/              # Diagnostic scripts (download-session.sh, diagnose-session.sh)
-├── hardware/     # root folder for all hardware for this project
+├── hardware/     # root folder for all electronics/PCB design for this project
 │   ├── components/   # contains folders for each hardware component used, with datasheets, symbols, footprints and more
 │   ├── pcb-main/  # root folder for the main PCB project
 │   │   ├── kicad/ # contains all Kicad files
@@ -294,6 +304,9 @@ motion-play/
 │   ├── sensor-rigid/     # Rigid base PCB with PCA9546A mux, connector, support circuitry
 │   ├── sensor-flex/      # Flex PCB with VCNL4040 sensors (bends to angle sensors outward)
 │   └── pcb-sensor/       # DEPRECATED - legacy single-board sensor design, replaced by sensor-rigid + sensor-flex
+├── mechanical/   # Physical enclosures, mounting hardware, 3D-printed parts
+│   ├── specs/        # Dimensional specs, constraints, design requirements
+│   └── enclosures/   # CAD files (organized as the design takes shape)
 ├── platformio.ini        # PlatformIO configuration
 
 ## Annotated Netlist Specification
@@ -950,7 +963,8 @@ Configure via solder jumpers JP3 (A1) and JP4 (A0):
 - `frontend/` - React web interface (TypeScript)
 - `lambda/` - AWS Lambda functions (Node.js)
 - `infrastructure/` - AWS setup and deployment docs
-- `hardware/` - KiCad schematics and PCB designs
+- `hardware/` - KiCad schematics and PCB designs (electronics)
+- `mechanical/` - Physical enclosures, mounting hardware, 3D-printed parts
 - `docs/references/` - Hardware datasheets and component documentation
 
 **Key Files**:
