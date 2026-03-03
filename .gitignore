@@ -60,3 +60,9 @@ tools/ml-training/__pycache__/
 tools/ml-training/*.tflite
 tools/ml-training/*.h5
 tools/ml-training/output/
+
+# Mechanical CAD
+mechanical/.venv/
+mechanical/__pycache__/
+mechanical/enclosures/**/*.stl
+mechanical/enclosures/**/*.step
