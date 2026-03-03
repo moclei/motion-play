@@ -1,6 +1,23 @@
 # Soccer Hoop Sensor Assembly — Design Spec v0.1
 
 # ──────────────────────────────────────────────
+# PURPOSE
+# ──────────────────────────────────────────────
+# The current prototype enclosures are fragile, hard to install,
+# and offer no impact protection. This blocks a key milestone:
+# taking Motion Play outside the workshop for portable, battery-powered
+# playtesting where balls will be kicked at the hoop at up to 20 mph.
+#
+# This spec captures the physical constraints and requirements so we
+# can design 3D-printable enclosures that:
+#   1. Protect all electronics (rigid PCB, flex PCB, bend zone) from ball impact
+#   2. Are easy to install and remove for development iteration
+#   3. Make the system portable — survivable in a bag or car
+#   4. Can be iterated toward production-quality enclosures over time
+#
+# See .context/PROJECT.md "Vision & Goals" for broader project direction.
+
+# ──────────────────────────────────────────────
 # PHYSICAL DIMENSIONS (measured / confirmed)
 # ──────────────────────────────────────────────
 

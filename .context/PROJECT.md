@@ -6,6 +6,16 @@
 
 Motion Play is an ESP32-based sensor system for detecting and tracking fast-moving objects through a detection plane. The system determines movement direction and provides visual feedback through LED lights. Multiple units can be networked via Bluetooth, and the system supports WiFi connectivity for mobile device integration. Designed for games and sports performance training applications.
 
+## Vision & Goals
+
+Motion Play is primarily an engineering project — the goal is to design and build a complete sensor-based sports training system from scratch, learning across every discipline (electronics, firmware, cloud, ML, mechanical design). Creating something commercially viable is part of that learning journey, not the sole objective.
+
+**Near-term milestone:** A portable, battery-powered system robust enough for real playtesting — surviving balls kicked at up to 20mph, transportable by car to remote locations away from the workstation, and capable of gathering training sessions and testing play modes in the field.
+
+**Medium-term:** Iterate through enclosure and hardware designs toward a self-contained device (hoop + main PCB + sensors + LED strip + battery) that is well-tested, durable, and approaching production quality.
+
+**Long-term:** A Motion Play device that could potentially be manufactured at scale and sold — though the path there is through engineering depth, not shortcuts to market.
+
 ## Current Project Status
 
 **Hardware:** ✅ Custom PCBs operational with dual-MUX architecture (TCA→PCA→Sensors)  
