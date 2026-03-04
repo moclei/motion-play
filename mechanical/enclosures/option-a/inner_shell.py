@@ -64,10 +64,27 @@ SENSOR_ANGLE_DEG = 3.0      # degrees — tilt per sensor from horizontal
 # ============================================================
 
 BASE_THICKNESS = 2.0        # mm — flat plate against bar
-SIDE_EXTENSION = 3.0        # mm — shell extends beyond bar edge each side
 
 RAMP_HEIGHT = 3.5           # mm above base top surface
 RAMP_RUN = 4.0              # mm horizontal ramp slope distance
+
+# ============================================================
+# Tray interface — must match outer_shell.py wrap-tray dimensions
+# ============================================================
+
+TRAY_SIDE_EXT = 8.0         # mm — tray's side extension past bar edge
+TRAY_WRAP_WALL = 2.0        # mm — tray wrap-around wall thickness
+TRAY_BOSS_DIAM = 5.0        # mm — screw boss outer diameter
+ASSEMBLY_CLEARANCE = 0.3    # mm per side
+
+# Inner shell sized to fit inside the tray's wrap-around opening
+TRAY_OPENING_HALF_X = BAR_WIDTH / 2 + TRAY_SIDE_EXT - TRAY_WRAP_WALL  # 18.625
+SIDE_EXTENSION = TRAY_OPENING_HALF_X - ASSEMBLY_CLEARANCE - BAR_WIDTH / 2  # ~5.7 mm
+
+# M2 screw clearance holes — positions must match tray boss centers
+SCREW_HOLE_DIAM = 2.4       # mm — M2 clearance
+SCREW_X = TRAY_OPENING_HALF_X - TRAY_BOSS_DIAM / 2 + 0.5  # 16.625 mm from center
+SCREW_Y = 0.0               # centered in Y
 
 # ============================================================
 # Flex channel positioning
@@ -160,7 +177,16 @@ with BuildPart() as inner_shell:
             mode=Mode.SUBTRACT,
         )
 
-    # 5. V-ridge — lofted triangular prism on base plate surface.
+    # 5. M2 screw clearance holes — through the base plate overhang area.
+    #    These align with the heat-set insert bosses in the wrap-around tray.
+    screw_hole_depth = BASE_THICKNESS + RAMP_HEIGHT + 1
+    screw_hole_z = screw_hole_depth / 2 - 0.5
+    with Locations([(-SCREW_X, SCREW_Y, screw_hole_z)]):
+        Cylinder(SCREW_HOLE_DIAM / 2, screw_hole_depth, mode=Mode.SUBTRACT)
+    with Locations([(SCREW_X, SCREW_Y, screw_hole_z)]):
+        Cylinder(SCREW_HOLE_DIAM / 2, screw_hole_depth, mode=Mode.SUBTRACT)
+
+    # 6. V-ridge — lofted triangular prism on base plate surface.
     #    Bottom face: wide rectangle at Z just below BASE_THICKNESS (overlap
     #    ensures solid boolean union with the base plate).
     #    Top face: hair-thin rectangle at Z = BASE_THICKNESS + RIDGE_HEIGHT.

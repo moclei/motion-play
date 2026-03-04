@@ -1,19 +1,27 @@
 """
-Outer Shell (tray + lid) — Motion Play Sensor Enclosure (Option A)
+Wrap-Around Tray Concept — Motion Play Sensor Enclosure (Option A)
 
-Sits on the outer face of the hoop bar, housing the rigid sensor PCB.
-The tray holds the PCB; the lid covers it. Zip ties hold both shells
-together and to the bar.
+CONCEPT MODEL for visual evaluation. The outer shell evolves from a flat
+tray into a C-shaped channel that wraps around the bar's thin edges.
 
-Two pieces exported:
-  - outer_tray.stl/step — open-top box with PCB cavity and connector slots
-  - outer_lid.stl/step  — flat plate that sits on the tray, held by zip ties
+Upper section (+Z): PCB cavity with connector exit slots (same as before)
+Lower section (-Z): wrap-around walls on -X and +X edges that extend
+  past the bar's thin edges to the inner face level.
 
-Print orientation: base plate flat on build plate for both pieces.
-Material recommendation: PETG for impact toughness.
+The -X wrap-around wall forms the bend channel for the flex PCB.
+The inner shell (unchanged) screws into the inner face opening.
+M2 screw bosses on each wrap-around wall accept heat-set inserts.
+
+Print orientation: UPSIDE DOWN — inner face opening on build plate.
+The tray slides onto the hoop bar like a C-channel.
+
+Coordinate convention:
+  X = across bar width, Y = along hoop, Z = +Z away from bar (outer face)
+  Z = 0 at bar's outer-face contact surface
+  Bar occupies Z = 0 to Z = -BAR_THICKNESS (-4mm)
+  Inner face at Z = -BAR_THICKNESS
 
 See: docs/explorations/sensor-enclosure.md
-See: mechanical/specs/assembly-v0.1.yaml
 """
 
 from build123d import *
@@ -30,79 +38,81 @@ except ImportError:
 OUTPUT_DIR = Path(__file__).parent
 
 # ============================================================
-# Spec dimensions (from assembly-v0.1.yaml)
+# Spec dimensions
 # ============================================================
 
-BAR_WIDTH = 25.25           # mm — flat face width
-BAR_THICKNESS = 4.0         # mm — thin edge
+BAR_WIDTH = 25.25
+BAR_THICKNESS = 4.0
 
-# Rigid PCB — component-side-up, bare underside rests on base plate
-# Looking from above: FPC on west (-X), JST-SH on south (-Y)
-PCB_X = 22.6                # mm across bar — south edge length
-PCB_Y = 28.5                # mm along hoop — west edge length
-PCB_THICKNESS = 1.6         # mm
-PCB_TALLEST_COMPONENT = 3.25 # mm — JST-SH right-angle connector housing
-PCB_TOTAL_HEIGHT = PCB_THICKNESS + PCB_TALLEST_COMPONENT  # 4.85 mm
+PCB_X = 22.6
+PCB_Y = 28.5
+PCB_THICKNESS = 1.6
+PCB_TALLEST_COMPONENT = 3.25
+PCB_TOTAL_HEIGHT = PCB_THICKNESS + PCB_TALLEST_COMPONENT
 
-FLEX_PCB_WIDTH = 10.0       # mm
+FLEX_PCB_WIDTH = 10.0
 
-# JST-SH connector — on south edge (-Y wall), right-angle female
-# 15.5mm from SW corner to center, ~6.5mm from center to SE corner
-JST_HOUSING_W = 7.0         # mm wide (along south edge, X direction)
-JST_HOUSING_H = 3.25        # mm tall (Z, above PCB surface)
-JST_CENTER_FROM_WEST = 15.5 # mm from west end of south edge to connector center
-JST_X_OFFSET = -PCB_X / 2 + JST_CENTER_FROM_WEST  # +4.2 mm from PCB center
+JST_HOUSING_W = 7.0
+JST_HOUSING_H = 3.25
+JST_CENTER_FROM_WEST = 15.5
+JST_X_OFFSET = -PCB_X / 2 + JST_CENTER_FROM_WEST
 
-# FPC connector — on west edge (-X wall), aligned with NW corner
-# Housing: 15mm along west edge x 2.75mm tall
-# Flex PCB (10mm) centered within the 15mm housing
-FPC_HOUSING_W = 15.0        # mm along west edge (Y direction)
-FPC_HOUSING_H = 2.75        # mm tall (Z, above PCB surface)
-FPC_CENTER_Y = PCB_Y / 2 - FPC_HOUSING_W / 2  # +6.75 mm from PCB center
+FPC_HOUSING_W = 15.0
+FPC_HOUSING_H = 2.75
+FPC_CENTER_Y = PCB_Y / 2 - FPC_HOUSING_W / 2  # +6.75 mm
 
 # ============================================================
 # Design parameters
 # ============================================================
 
-BASE_THICKNESS = 2.0        # mm — flat plate against hoop bar
-SIDE_EXTENSION = 3.0        # mm — extend beyond bar edge (match inner shell)
+BASE_THICKNESS = 2.0
+SIDE_EXTENSION = 8.0       # mm past bar edge each side (accommodates wrap walls + bosses)
 
-PCB_CLEARANCE_X = 0.25      # mm per side
-PCB_CLEARANCE_Y = 0.5       # mm per side (slightly more for FDM tolerance)
-HEADROOM = 1.5              # mm above tallest component
+PCB_CLEARANCE_X = 0.25
+PCB_CLEARANCE_Y = 0.5
+HEADROOM = 1.5
+LID_THICKNESS = 2.0
 
-LID_THICKNESS = 2.0         # mm
+CABLE_SLOT_WIDTH = JST_HOUSING_W + 1.5
+CABLE_SLOT_HEIGHT = JST_HOUSING_H + 1.0
+FPC_SLOT_WIDTH = FLEX_PCB_WIDTH + 2.0
+FPC_SLOT_HEIGHT = FPC_HOUSING_H + 1.0
 
-# Connector exit slots — sized to the housing + clearance
-CABLE_SLOT_WIDTH = JST_HOUSING_W + 1.5   # 8.5 mm (X) — housing + clearance
-CABLE_SLOT_HEIGHT = JST_HOUSING_H + 1.0  # 4.25 mm (Z)
-FPC_SLOT_WIDTH = FLEX_PCB_WIDTH + 2.0    # 12 mm (Y) — flex PCB + clearance
-FPC_SLOT_HEIGHT = FPC_HOUSING_H + 1.0    # 3.75 mm (Z)
+# Wrap-around walls
+WRAP_WALL = 2.0            # mm — wall thickness (X direction)
+WRAP_DEPTH = BAR_THICKNESS + 2.5  # 6.5mm below Z=0 (bar + inner shell seat)
+
+# M2 screw bosses
+BOSS_DIAM = 5.0            # mm — outer diameter of boss cylinder
+BOSS_HEIGHT = 6.0          # mm — boss extends upward from wrap bottom
+INSERT_DIAM = 3.2          # mm — M2 heat-set insert hole
+INSERT_DEPTH = 4.0         # mm
 
 # ============================================================
 # Computed
 # ============================================================
 
-SHELL_WIDTH = BAR_WIDTH + 2 * SIDE_EXTENSION     # 31.25 mm (X)
-SHELL_LENGTH = 34.0                                # mm (Y) — matches inner shell
+SHELL_WIDTH = BAR_WIDTH + 2 * SIDE_EXTENSION     # 41.25 mm
+SHELL_LENGTH = 34.0
 
-INTERIOR_X = PCB_X + 2 * PCB_CLEARANCE_X          # 23.1 mm
-INTERIOR_Y = PCB_Y + 2 * PCB_CLEARANCE_Y          # 29.5 mm
+INTERIOR_X = PCB_X + 2 * PCB_CLEARANCE_X         # 23.1 mm
+INTERIOR_Y = PCB_Y + 2 * PCB_CLEARANCE_Y         # 29.5 mm
+WALL_X = (SHELL_WIDTH - INTERIOR_X) / 2          # 9.075 mm
+WALL_Y = (SHELL_LENGTH - INTERIOR_Y) / 2         # 2.25 mm
+CAVITY_DEPTH = PCB_TOTAL_HEIGHT + HEADROOM        # 6.35 mm
 
-WALL_X = (SHELL_WIDTH - INTERIOR_X) / 2           # 4.075 mm
-WALL_Y = (SHELL_LENGTH - INTERIOR_Y) / 2          # 2.25 mm
+# Wrap wall centers
+wrap_wall_z_size = BASE_THICKNESS + WRAP_DEPTH    # 8.5 mm total
+wrap_wall_z_center = (BASE_THICKNESS - WRAP_DEPTH) / 2  # -2.25 mm
 
-CAVITY_DEPTH = PCB_TOTAL_HEIGHT + HEADROOM         # 6.35 mm
-WALL_HEIGHT = CAVITY_DEPTH
-
-TOTAL_HEIGHT = BASE_THICKNESS + WALL_HEIGHT + LID_THICKNESS  # 10.1 mm
+# Boss positions: inward from wall, 0.5mm overlap for solid union
+boss_x_neg = -SHELL_WIDTH / 2 + WRAP_WALL + BOSS_DIAM / 2 - 0.5
+boss_x_pos = SHELL_WIDTH / 2 - WRAP_WALL - BOSS_DIAM / 2 + 0.5
+boss_z_center = -WRAP_DEPTH + BOSS_HEIGHT / 2
 
 # ============================================================
 # Build — Tray
 # ============================================================
-# Coordinate convention (same as inner shell):
-#   X = across bar width, Y = along hoop, Z = +Z away from bar
-#   Origin at center of base plate, bar-contact surface at Z=0
 
 with BuildPart() as tray:
 
@@ -111,44 +121,67 @@ with BuildPart() as tray:
         Rectangle(SHELL_WIDTH, SHELL_LENGTH)
     extrude(amount=BASE_THICKNESS)
 
-    # 2. Walls — extruded frame
+    # 2. PCB cavity walls (above base plate, +Z direction)
     with BuildSketch(Plane.XY.offset(BASE_THICKNESS)):
         Rectangle(SHELL_WIDTH, SHELL_LENGTH)
         Rectangle(INTERIOR_X, INTERIOR_Y, mode=Mode.SUBTRACT)
-    extrude(amount=WALL_HEIGHT)
+    extrude(amount=CAVITY_DEPTH)
 
-    # 3. JST-SH cable exit slot — in the -Y wall, offset +4.2mm in X.
-    #    Connector center is 15.5mm from the SW corner of the PCB.
+    # 3. Wrap-around walls (-X and +X, extending from base plate downward)
+    with Locations([(-SHELL_WIDTH / 2 + WRAP_WALL / 2, 0, wrap_wall_z_center)]):
+        Box(WRAP_WALL, SHELL_LENGTH, wrap_wall_z_size)
+    with Locations([(SHELL_WIDTH / 2 - WRAP_WALL / 2, 0, wrap_wall_z_center)]):
+        Box(WRAP_WALL, SHELL_LENGTH, wrap_wall_z_size)
+
+    # 4. Screw bosses — protrude inward from wrap walls near the bottom.
+    #    These accept M2 heat-set inserts. The insert opens at the bottom
+    #    face (-Z), aligned with the inner shell screw holes.
+    with Locations([(boss_x_neg, 0, boss_z_center)]):
+        Cylinder(BOSS_DIAM / 2, BOSS_HEIGHT)
+    with Locations([(boss_x_pos, 0, boss_z_center)]):
+        Cylinder(BOSS_DIAM / 2, BOSS_HEIGHT)
+
+    # 5. Insert holes (subtracted from bosses)
+    insert_hole_z = -WRAP_DEPTH + INSERT_DEPTH / 2 - 0.5
+    with Locations([(boss_x_neg, 0, insert_hole_z)]):
+        Cylinder(INSERT_DIAM / 2, INSERT_DEPTH + 1, mode=Mode.SUBTRACT)
+    with Locations([(boss_x_pos, 0, insert_hole_z)]):
+        Cylinder(INSERT_DIAM / 2, INSERT_DEPTH + 1, mode=Mode.SUBTRACT)
+
+    # 6. JST-SH cable slot (in -Y cavity wall, same position as before)
     cable_slot_z = BASE_THICKNESS + PCB_THICKNESS + CABLE_SLOT_HEIGHT / 2
     with Locations([(JST_X_OFFSET, -SHELL_LENGTH / 2, cable_slot_z)]):
-        Box(
-            CABLE_SLOT_WIDTH,
-            WALL_Y * 2 + 1,
-            CABLE_SLOT_HEIGHT,
-            mode=Mode.SUBTRACT,
-        )
+        Box(CABLE_SLOT_WIDTH, WALL_Y * 2 + 1, CABLE_SLOT_HEIGHT, mode=Mode.SUBTRACT)
 
-    # 4. FPC exit slot — in the -X wall, offset +6.75mm in Y.
-    #    FPC housing aligned with NW corner; flex (10mm) exits centered
-    #    within the 15mm housing. Slot sized for flex, not full housing.
-    fpc_slot_z = BASE_THICKNESS + FPC_SLOT_HEIGHT / 2
-    with Locations([(-SHELL_WIDTH / 2, FPC_CENTER_Y, fpc_slot_z)]):
-        Box(
-            WALL_X * 2 + 1,
-            FPC_SLOT_WIDTH,
-            FPC_SLOT_HEIGHT,
-            mode=Mode.SUBTRACT,
-        )
+    # 7. FPC flex passthrough — continuous slot from PCB cavity through
+    #    the base plate and into the bend channel below. The flex exits
+    #    the FPC connector, drops through this slot, and curves around
+    #    the bar's -X thin edge inside the wrap-around wall.
+    fpc_pass_top = BASE_THICKNESS + FPC_SLOT_HEIGHT
+    fpc_pass_bot = -WRAP_DEPTH - 1
+    fpc_pass_height = fpc_pass_top - fpc_pass_bot
+    fpc_pass_z = (fpc_pass_top + fpc_pass_bot) / 2
+    fpc_pass_width = WALL_X + 1
+    fpc_pass_x = -SHELL_WIDTH / 2 + fpc_pass_width / 2 - 0.5
+    with Locations([(fpc_pass_x, FPC_CENTER_Y, fpc_pass_z)]):
+        Box(fpc_pass_width, FPC_SLOT_WIDTH, fpc_pass_height, mode=Mode.SUBTRACT)
 
 # ============================================================
-# Build — Lid
+# Build — Lid (unchanged)
 # ============================================================
-# Simple flat plate. Sits on top of tray walls, held down by zip ties.
 
 with BuildPart() as lid:
     with BuildSketch(Plane.XY):
         Rectangle(SHELL_WIDTH, SHELL_LENGTH)
     extrude(amount=LID_THICKNESS)
+
+# ============================================================
+# Reference bar (for visualization — not exported)
+# ============================================================
+
+with BuildPart() as ref_bar:
+    with Locations([(0, 0, -BAR_THICKNESS / 2)]):
+        Box(BAR_WIDTH, SHELL_LENGTH + 20, BAR_THICKNESS)
 
 # ============================================================
 # Export
@@ -159,22 +192,16 @@ export_step(tray.part, str(OUTPUT_DIR / "outer_tray.step"))
 export_stl(lid.part, str(OUTPUT_DIR / "outer_lid.stl"))
 export_step(lid.part, str(OUTPUT_DIR / "outer_lid.step"))
 
-bb_tray = tray.part.bounding_box()
-bb_lid = lid.part.bounding_box()
-
-print("Outer shell built successfully")
-print(f"\nTray:")
-print(f"  Bounding box: {bb_tray.size.X:.1f} x {bb_tray.size.Y:.1f} x {bb_tray.size.Z:.1f} mm")
+bb = tray.part.bounding_box()
+print("Wrap-around tray concept built")
+print(f"  Bounding box: {bb.size.X:.1f} x {bb.size.Y:.1f} x {bb.size.Z:.1f} mm")
 print(f"  Volume: {tray.part.volume:.1f} mm³")
-print(f"  Interior: {INTERIOR_X:.1f} x {INTERIOR_Y:.1f} x {CAVITY_DEPTH:.1f} mm")
-print(f"  Walls: X={WALL_X:.1f} mm, Y={WALL_Y:.1f} mm")
-print(f"\nLid:")
-print(f"  Bounding box: {bb_lid.size.X:.1f} x {bb_lid.size.Y:.1f} x {bb_lid.size.Z:.1f} mm")
-print(f"\nConnector slots:")
-print(f"  JST-SH: X offset = {JST_X_OFFSET:+.1f} mm, slot {CABLE_SLOT_WIDTH:.1f} x {CABLE_SLOT_HEIGHT:.1f} mm in -Y wall")
-print(f"  FPC:    Y offset = {FPC_CENTER_Y:+.1f} mm, slot {FPC_SLOT_WIDTH:.1f} x {FPC_SLOT_HEIGHT:.1f} mm in -X wall")
-print(f"\nAssembled total height: {TOTAL_HEIGHT:.1f} mm")
-print(f"Exported: outer_tray.stl/step, outer_lid.stl/step")
+print(f"  Shell width: {SHELL_WIDTH:.1f} mm (bar + {SIDE_EXTENSION:.0f}mm each side)")
+print(f"  Wrap depth: {WRAP_DEPTH:.1f} mm below base plate")
+print(f"  Bend channel clearance: {SIDE_EXTENSION - WRAP_WALL:.0f} mm from bar edge to wall")
+print(f"  Boss X: {boss_x_neg:.1f} / {boss_x_pos:+.1f} mm")
+print(f"  Boss Z center: {boss_z_center:.1f} mm")
+print(f"  FPC passthrough at Y = {FPC_CENTER_Y:+.1f} mm")
 
 if HAS_VIEWER:
-    show(tray, lid)
+    show(tray, ref_bar, names=["wrap_tray", "bar_reference"])
