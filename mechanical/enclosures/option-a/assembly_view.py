@@ -1,5 +1,5 @@
 """
-Assembly View — Shows tray + inner shell + bar in assembled position.
+Assembly View — Shows tray + lid + inner shell + bar in assembled position.
 For visual evaluation only — no exports.
 """
 
@@ -16,14 +16,20 @@ except ImportError:
 HERE = Path(__file__).parent
 BAR_WIDTH = 25.25
 BAR_THICKNESS = 4.0
+BASE_THICKNESS = 2.0
+CAVITY_DEPTH = 6.35
 
 tray_part = import_step(str(HERE / "outer_tray.step"))
+lid_part = import_step(str(HERE / "outer_lid.step"))
 inner_part = import_step(str(HERE / "inner_shell.step"))
 
+# Lid sits on the cavity wall tops, pressed onto the retention posts.
+# Lid Z=0 is its bottom face; translate up to the cavity top.
+# Posts extend above, so offset by post height for the lid to sit on the wall tops.
+lid_positioned = lid_part.move(Location((0, 0, BASE_THICKNESS + CAVITY_DEPTH)))
+
 # Inner shell is built with Z=0 at bar contact, +Z into hoop.
-# In the outer shell's frame, the inner face is at Z = -BAR_THICKNESS.
-# Rotate 180 deg around X to flip both Y and Z (maps the inner shell's
-# coordinate system into the outer shell's frame), then translate down.
+# Rotate 180 deg around X to flip both Y and Z, then translate down.
 inner_positioned = inner_part.rotate(Axis.X, 180)
 inner_positioned = inner_positioned.move(Location((0, 0, -BAR_THICKNESS)))
 
@@ -34,7 +40,8 @@ with BuildPart() as bar:
 
 show(
     tray_part,
+    lid_positioned,
     inner_positioned,
     bar.part,
-    names=["wrap_tray", "inner_shell", "bar"],
+    names=["wrap_tray", "lid", "inner_shell", "bar"],
 )
