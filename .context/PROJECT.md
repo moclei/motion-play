@@ -79,7 +79,6 @@ motion-play/
 These folders have README.md files or are self-explanatory:
 
 - **`lambda/`** — Lambda function source code. Has its own `README.md` with deployment guides. Closely related to `infrastructure/`.
-- **`mechanical/`** — Enclosure designs using build123d (Python CAD). Has `CONTEXT.md` covering design process, tooling, and constraints. See `specs/assembly-v0.1.yaml` for dimensions.
 - **`docs/`** — Organized per [WORKFLOW.md](./WORKFLOW.md). Explorations are single-file analyses; initiatives follow BRIEF/PLAN/TASKS.
 - **`tools/`** — `ml-training/` has its own README. `serial-studio/` dashboard files are documented in `firmware/CONTEXT.md`.
 - **`scripts/`** — Utility scripts with `README.md`.
