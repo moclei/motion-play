@@ -6,6 +6,10 @@ Provides a flat base against the bar, a ramped surround that deflects
 ball impacts, an open sensor window, and a V-ridge that angles the two
 sensors at ±3° toward opposite hoop entrances for direction detection.
 
+Fastens to the outer shell (wrap-around tray) via 3× M2.5 screws
+in a triangular pattern. Reinforcement pads at each screw position
+replace tapered ramp material with solid stock.
+
 Print orientation: base plate flat on build plate, ramps facing up.
 Material recommendation: PETG for impact toughness.
 
@@ -20,8 +24,8 @@ Its 10mm width runs along Y, centered at Y = -FPC_CENTER_Y because the
 inner shell is viewed from the opposite side of the bar compared to the
 outer shell (Y mirrors when going from outer face to inner face).
 
-See: docs/explorations/sensor-enclosure.md
 See: mechanical/specs/assembly-v0.1.yaml
+See: mechanical/FDM_DESIGN_RULES.md
 """
 
 from build123d import *
@@ -57,7 +61,7 @@ SENSOR_MIDPOINT_FROM_END = (SENSOR_1_FROM_END + SENSOR_2_FROM_END) / 2  # 12.5 m
 # face (opposite side of bar), this maps to Y=-6.75.
 FPC_CENTER_Y_OUTER = 6.75   # mm — on outer shell
 
-SENSOR_ANGLE_DEG = 3.0      # degrees — tilt per sensor from horizontal
+SENSOR_ANGLE_DEG = 5.0      # degrees — tilt per sensor from horizontal
 
 # ============================================================
 # Design parameters
@@ -74,17 +78,25 @@ RAMP_RUN = 4.0              # mm horizontal ramp slope distance
 
 TRAY_SIDE_EXT = 8.0         # mm — tray's side extension past bar edge
 TRAY_WRAP_WALL = 2.0        # mm — tray wrap-around wall thickness
-TRAY_BOSS_DIAM = 5.0        # mm — screw boss outer diameter
+TRAY_BOSS_DIAM = 7.0        # mm — M2.5 screw boss outer diameter
 ASSEMBLY_CLEARANCE = 0.3    # mm per side
 
 # Inner shell sized to fit inside the tray's wrap-around opening
 TRAY_OPENING_HALF_X = BAR_WIDTH / 2 + TRAY_SIDE_EXT - TRAY_WRAP_WALL  # 18.625
 SIDE_EXTENSION = TRAY_OPENING_HALF_X - ASSEMBLY_CLEARANCE - BAR_WIDTH / 2  # ~5.7 mm
 
-# M2 screw clearance holes — positions must match tray boss centers
-SCREW_HOLE_DIAM = 2.4       # mm — M2 clearance
-SCREW_X = TRAY_OPENING_HALF_X - TRAY_BOSS_DIAM / 2 + 0.5  # 16.625 mm from center
-SCREW_Y = 0.0               # centered in Y
+# M2.5 screw clearance holes (see FDM_DESIGN_RULES.md)
+SCREW_HOLE_DIAM = 2.9       # mm — M2.5 clearance (FDM compensated)
+SCREW_PAD_DIAM = 5.0        # mm — limited by distance from screw center to shell edge (~2.7mm)
+
+# Screw positions must match outer shell boss positions (Y is mirrored
+# because the inner shell is rotated 180° around X during assembly).
+TRAY_BOSS_X = BAR_WIDTH / 2 + TRAY_SIDE_EXT - TRAY_WRAP_WALL - TRAY_BOSS_DIAM / 2 + 0.5
+SCREW_POSITIONS = [
+    (+TRAY_BOSS_X, -10.0),   # mirrors outer (+X, +10)
+    (+TRAY_BOSS_X, +10.0),   # mirrors outer (+X, -10)
+    (-TRAY_BOSS_X,  +6.0),   # mirrors outer (-X, -6)
+]
 
 # ============================================================
 # Flex channel positioning
@@ -130,14 +142,14 @@ RIDGE_Y_LENGTH = FLEX_PCB_WIDTH + 1.0                         # 11.0 mm
 # Shell dimensions
 # ============================================================
 
-SHELL_WIDTH = BAR_WIDTH + 2 * SIDE_EXTENSION   # 31.25 mm (X)
+SHELL_WIDTH = BAR_WIDTH + 2 * SIDE_EXTENSION   # ~36.7 mm (X)
 SHELL_LENGTH = 38.0                             # mm (Y) — accommodates offset window
 
 TOTAL_HEIGHT = BASE_THICKNESS + RAMP_HEIGHT     # 5.5 mm
 TAPER_ANGLE = math.degrees(math.atan(RAMP_RUN / RAMP_HEIGHT))
 
-RAMP_TOP_WIDTH = SHELL_WIDTH - 2 * RAMP_RUN    # 23.25 mm
-RAMP_TOP_LENGTH = SHELL_LENGTH - 2 * RAMP_RUN  # 30.0 mm
+RAMP_TOP_WIDTH = SHELL_WIDTH - 2 * RAMP_RUN
+RAMP_TOP_LENGTH = SHELL_LENGTH - 2 * RAMP_RUN
 
 # ============================================================
 # Build
@@ -177,16 +189,22 @@ with BuildPart() as inner_shell:
             mode=Mode.SUBTRACT,
         )
 
-    # 5. M2 screw clearance holes — through the base plate overhang area.
+    # 5. Screw reinforcement pads — flat cylinders at each screw position,
+    #    replacing tapered ramp material with solid full-height stock.
+    pad_z = BASE_THICKNESS + RAMP_HEIGHT / 2
+    for (sx, sy) in SCREW_POSITIONS:
+        with Locations([(sx, sy, pad_z)]):
+            Cylinder(SCREW_PAD_DIAM / 2, RAMP_HEIGHT)
+
+    # 6. M2.5 screw clearance holes — through pads and base plate.
     #    These align with the heat-set insert bosses in the wrap-around tray.
     screw_hole_depth = BASE_THICKNESS + RAMP_HEIGHT + 1
     screw_hole_z = screw_hole_depth / 2 - 0.5
-    with Locations([(-SCREW_X, SCREW_Y, screw_hole_z)]):
-        Cylinder(SCREW_HOLE_DIAM / 2, screw_hole_depth, mode=Mode.SUBTRACT)
-    with Locations([(SCREW_X, SCREW_Y, screw_hole_z)]):
-        Cylinder(SCREW_HOLE_DIAM / 2, screw_hole_depth, mode=Mode.SUBTRACT)
+    for (sx, sy) in SCREW_POSITIONS:
+        with Locations([(sx, sy, screw_hole_z)]):
+            Cylinder(SCREW_HOLE_DIAM / 2, screw_hole_depth, mode=Mode.SUBTRACT)
 
-    # 6. V-ridge — lofted triangular prism on base plate surface.
+    # 7. V-ridge — lofted triangular prism on base plate surface.
     #    Bottom face: wide rectangle at Z just below BASE_THICKNESS (overlap
     #    ensures solid boolean union with the base plate).
     #    Top face: hair-thin rectangle at Z = BASE_THICKNESS + RIDGE_HEIGHT.
@@ -214,9 +232,10 @@ print(f"Inner shell built successfully")
 print(f"  Bounding box: {bb.size.X:.1f} x {bb.size.Y:.1f} x {bb.size.Z:.1f} mm")
 print(f"  Volume: {inner_shell.part.volume:.1f} mm³")
 print(f"  Shell: {SHELL_WIDTH:.1f} x {SHELL_LENGTH:.1f} mm")
+print(f"  Fasteners: 3× M2.5 clearance Ø{SCREW_HOLE_DIAM:.1f}, pad Ø{SCREW_PAD_DIAM:.0f}")
+for i, (sx, sy) in enumerate(SCREW_POSITIONS):
+    print(f"  Screw {i+1}: ({sx:+.1f}, {sy:+.1f}) mm")
 print(f"  Sensor window: {WINDOW_X:.1f} x {WINDOW_Y:.1f} mm at ({WINDOW_CENTER_X:.1f}, {WINDOW_CENTER_Y:.1f})")
-print(f"  Flex channel: X=[{FLEX_NEAR_X:.1f}, {FLEX_FAR_X:.1f}], Y center={FLEX_CENTER_Y:.1f}")
-print(f"  Sensor 1 (far): X={SENSOR_1_X:+.2f},  Sensor 2 (near): X={SENSOR_2_X:+.2f}")
 print(f"  V-ridge: {RIDGE_HEIGHT:.3f} mm peak, {SENSOR_ANGLE_DEG}° each side")
 print(f"  Exported: {stl_path.name}, {step_path.name}")
 
