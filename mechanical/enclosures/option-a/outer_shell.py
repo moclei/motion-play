@@ -1,19 +1,20 @@
 """
-Wrap-Around Tray Concept — Motion Play Sensor Enclosure (Option A)
+Wrap-Around Tray — Motion Play Sensor Enclosure (Option A)
 
-CONCEPT MODEL for visual evaluation. The outer shell evolves from a flat
-tray into a C-shaped channel that wraps around the bar's thin edges.
+Outer shell of the two-piece enclosure. A C-shaped channel that slides
+over the hoop bar, housing the rigid PCB on the outer face.
 
-Upper section (+Z): PCB cavity with connector exit slots (same as before)
-Lower section (-Z): wrap-around walls on -X and +X edges that extend
-  past the bar's thin edges to the inner face level.
+Upper section (+Z): PCB cavity with connector exit slots
+Lower section (-Z): wrap-around walls on -X and +X edges extending
+  past the bar's thin edges, with end walls closing -Y and +Y faces.
+  Bar notches in the end walls allow the tray to seat over the hoop.
 
 The -X wrap-around wall forms the bend channel for the flex PCB.
-The inner shell (unchanged) screws into the inner face opening.
-M2 screw bosses on each wrap-around wall accept heat-set inserts.
+The inner shell screws into the tray from the inner face side.
+3× M2.5 heat-set insert bosses in a triangular pattern. The -X boss
+is offset in Y to clear the FPC passthrough channel.
 
 Print orientation: UPSIDE DOWN — inner face opening on build plate.
-The tray slides onto the hoop bar like a C-channel.
 
 Coordinate convention:
   X = across bar width, Y = along hoop, Z = +Z away from bar (outer face)
@@ -21,7 +22,8 @@ Coordinate convention:
   Bar occupies Z = 0 to Z = -BAR_THICKNESS (-4mm)
   Inner face at Z = -BAR_THICKNESS
 
-See: docs/explorations/sensor-enclosure.md
+See: mechanical/specs/assembly-v0.1.yaml
+See: mechanical/FDM_DESIGN_RULES.md
 """
 
 from build123d import *
@@ -82,11 +84,11 @@ FPC_SLOT_HEIGHT = FPC_HOUSING_H + 1.0
 WRAP_WALL = 2.0            # mm — wall thickness (X direction)
 WRAP_DEPTH = BAR_THICKNESS + 2.5  # 6.5mm below Z=0 (bar + inner shell seat)
 
-# M2 screw bosses
-BOSS_DIAM = 5.0            # mm — outer diameter of boss cylinder
-BOSS_HEIGHT = 6.0          # mm — boss extends upward from wrap bottom
-INSERT_DIAM = 3.2          # mm — M2 heat-set insert hole
-INSERT_DEPTH = 4.0         # mm
+# M2.5 screw bosses (see FDM_DESIGN_RULES.md for fastener specs)
+BOSS_DIAM = 7.0            # mm — outer diameter of boss cylinder
+BOSS_HEIGHT = 6.0          # mm — boss extends from wrap bottom
+INSERT_DIAM = 3.6          # mm — M2.5 heat-set insert hole
+INSERT_DEPTH = 4.5         # mm
 
 # ============================================================
 # Computed
@@ -105,10 +107,17 @@ CAVITY_DEPTH = PCB_TOTAL_HEIGHT + HEADROOM        # 6.35 mm
 wrap_wall_z_size = BASE_THICKNESS + WRAP_DEPTH    # 8.5 mm total
 wrap_wall_z_center = (BASE_THICKNESS - WRAP_DEPTH) / 2  # -2.25 mm
 
-# Boss positions: inward from wall, 0.5mm overlap for solid union
+# Boss X positions (inward from wrap wall, 0.5mm overlap for solid union)
 boss_x_neg = -SHELL_WIDTH / 2 + WRAP_WALL + BOSS_DIAM / 2 - 0.5
 boss_x_pos = SHELL_WIDTH / 2 - WRAP_WALL - BOSS_DIAM / 2 + 0.5
-boss_z_center = -WRAP_DEPTH + BOSS_HEIGHT / 2
+boss_z_center = -BAR_THICKNESS + BOSS_HEIGHT / 2
+
+# 3× M2.5 triangular pattern — -X boss offset in Y to clear FPC channel
+BOSS_POSITIONS = [
+    (boss_x_pos, +10.0),    # +X wall, toward +Y
+    (boss_x_pos, -10.0),    # +X wall, toward -Y
+    (boss_x_neg,  -6.0),    # -X wall, clear of FPC passthrough
+]
 
 # ============================================================
 # Build — Tray
@@ -133,20 +142,18 @@ with BuildPart() as tray:
     with Locations([(SHELL_WIDTH / 2 - WRAP_WALL / 2, 0, wrap_wall_z_center)]):
         Box(WRAP_WALL, SHELL_LENGTH, wrap_wall_z_size)
 
-    # 4. Screw bosses — protrude inward from wrap walls near the bottom.
-    #    These accept M2 heat-set inserts. The insert opens at the bottom
-    #    face (-Z), aligned with the inner shell screw holes.
-    with Locations([(boss_x_neg, 0, boss_z_center)]):
-        Cylinder(BOSS_DIAM / 2, BOSS_HEIGHT)
-    with Locations([(boss_x_pos, 0, boss_z_center)]):
-        Cylinder(BOSS_DIAM / 2, BOSS_HEIGHT)
+    # 4. Screw bosses — 3× M2.5 in triangular pattern.
+    #    Protrude inward from wrap walls. Accept heat-set inserts
+    #    opening at the bottom face (-Z) for inner shell attachment.
+    for (bx, by) in BOSS_POSITIONS:
+        with Locations([(bx, by, boss_z_center)]):
+            Cylinder(BOSS_DIAM / 2, BOSS_HEIGHT)
 
     # 5. Insert holes (subtracted from bosses)
-    insert_hole_z = -WRAP_DEPTH + INSERT_DEPTH / 2 - 0.5
-    with Locations([(boss_x_neg, 0, insert_hole_z)]):
-        Cylinder(INSERT_DIAM / 2, INSERT_DEPTH + 1, mode=Mode.SUBTRACT)
-    with Locations([(boss_x_pos, 0, insert_hole_z)]):
-        Cylinder(INSERT_DIAM / 2, INSERT_DEPTH + 1, mode=Mode.SUBTRACT)
+    insert_hole_z = -BAR_THICKNESS + INSERT_DEPTH / 2 - 0.5
+    for (bx, by) in BOSS_POSITIONS:
+        with Locations([(bx, by, insert_hole_z)]):
+            Cylinder(INSERT_DIAM / 2, INSERT_DEPTH + 1, mode=Mode.SUBTRACT)
 
     # 6. JST-SH cable slot (in -Y cavity wall, same position as before)
     cable_slot_z = BASE_THICKNESS + PCB_THICKNESS + CABLE_SLOT_HEIGHT / 2
@@ -165,6 +172,28 @@ with BuildPart() as tray:
     fpc_pass_x = -SHELL_WIDTH / 2 + fpc_pass_width / 2 - 0.5
     with Locations([(fpc_pass_x, FPC_CENTER_Y, fpc_pass_z)]):
         Box(fpc_pass_width, FPC_SLOT_WIDTH, fpc_pass_height, mode=Mode.SUBTRACT)
+
+    # 8. Bar clearance — trim any boss material that protrudes into the
+    #    bar zone. Creates a flat D-shaped face on each boss rather than
+    #    moving the boss outward (which would thin the inner shell screw edge).
+    bar_clear = 0.3
+    with Locations([(0, 0, -BAR_THICKNESS / 2)]):
+        Box(BAR_WIDTH + 2 * bar_clear, SHELL_LENGTH + 2, BAR_THICKNESS,
+            mode=Mode.SUBTRACT)
+
+    # 9. End walls — close -Y and +Y faces of the wrap section.
+    #    Terminate at Z = -BAR_THICKNESS (bar inner face) so they don't
+    #    collide with the inner shell base plate below.
+    #    Bar notches allow the tray to seat over the continuous hoop.
+    end_wall_z_size = BASE_THICKNESS + BAR_THICKNESS
+    end_wall_z_center = (BASE_THICKNESS - BAR_THICKNESS) / 2
+    for y_sign in (-1, +1):
+        wall_y = y_sign * (SHELL_LENGTH / 2 - WRAP_WALL / 2)
+        with Locations([(0, wall_y, end_wall_z_center)]):
+            Box(SHELL_WIDTH, WRAP_WALL, end_wall_z_size)
+        with Locations([(0, wall_y, -BAR_THICKNESS / 2)]):
+            Box(BAR_WIDTH + 0.5, WRAP_WALL + 2, BAR_THICKNESS + 0.5,
+                mode=Mode.SUBTRACT)
 
 # ============================================================
 # Build — Lid (unchanged)
@@ -193,14 +222,14 @@ export_stl(lid.part, str(OUTPUT_DIR / "outer_lid.stl"))
 export_step(lid.part, str(OUTPUT_DIR / "outer_lid.step"))
 
 bb = tray.part.bounding_box()
-print("Wrap-around tray concept built")
+print("Wrap-around tray built")
 print(f"  Bounding box: {bb.size.X:.1f} x {bb.size.Y:.1f} x {bb.size.Z:.1f} mm")
 print(f"  Volume: {tray.part.volume:.1f} mm³")
-print(f"  Shell width: {SHELL_WIDTH:.1f} mm (bar + {SIDE_EXTENSION:.0f}mm each side)")
+print(f"  Shell: {SHELL_WIDTH:.1f} x {SHELL_LENGTH:.1f} mm")
 print(f"  Wrap depth: {WRAP_DEPTH:.1f} mm below base plate")
-print(f"  Bend channel clearance: {SIDE_EXTENSION - WRAP_WALL:.0f} mm from bar edge to wall")
-print(f"  Boss X: {boss_x_neg:.1f} / {boss_x_pos:+.1f} mm")
-print(f"  Boss Z center: {boss_z_center:.1f} mm")
+print(f"  Fasteners: 3× M2.5 (boss Ø{BOSS_DIAM:.0f}, insert Ø{INSERT_DIAM:.1f})")
+for i, (bx, by) in enumerate(BOSS_POSITIONS):
+    print(f"  Boss {i+1}: ({bx:+.1f}, {by:+.1f}) mm")
 print(f"  FPC passthrough at Y = {FPC_CENTER_Y:+.1f} mm")
 
 if HAS_VIEWER:
