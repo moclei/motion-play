@@ -603,7 +603,234 @@ Listed in priority order (highest impact first):
 
 ### Batch 4: Session & Data
 
-*Not yet analyzed.*
+**Files reviewed:** `SessionManager.cpp` (302 lines), `SessionManager.h` (132 lines), `DataTransmitter.cpp` (769 lines), `DataTransmitter.h` (85 lines), `PSRAMAllocator.h` (98 lines).
+
+**The defining problems in this batch:** (1) DataTransmitter contains ~160 lines of identical calibration and config JSON serialization duplicated across 4 transmission paths, plus ~30 lines of device-ID-suffix extraction duplicated from SessionManager. (2) Proximity batch transmission with `BATCH_SIZE=25` and `delay(100)` between batches means a 30-second session (30,000 readings) blocks the main loop for **~120 seconds** while transmitting. (3) `SessionManager::finalizeSessionSummary()` uses `const_cast` to mutate a `const` parameter — undefined behavior if the pointed-to object is genuinely const. (4) `PSRAMAllocator` logs via `Serial.printf()` on every allocation/deallocation, injecting latency into the data pipeline whenever `std::vector` resizes.
+
+#### 1. Single Responsibility Violations
+
+**SessionManager** (434 total lines across .h/.cpp) performs 5 distinct jobs:
+
+| Responsibility | Lines (approx) | Should live in |
+|---|---|---|
+| Session lifecycle (start, stop, state transitions) | ~50 | Core logic — good |
+| Session ID generation (device-ID parsing + timestamp) | ~30 | Utility function or SessionIdGenerator |
+| Dual-mode data buffering (proximity queue→buffer + interrupt events) | ~100 | Two distinct buffer strategies behind if/else |
+| FreeRTOS queue management (create, drain, overflow counting) | ~50 | Tightly coupled with buffering — acceptable |
+| Session summary finalization (statistics computation + logging) | ~50 | Partly belongs in the summary itself; the `const_cast` mutation belongs elsewhere |
+
+The dual-mode pattern (proximity vs interrupt) permeates every method with `if (sessionType == SessionType::INTERRUPT_BASED)` branches. This is a textbook case for a strategy pattern — two buffer implementations behind a common interface — but at 302 lines it's not urgent to extract.
+
+**DataTransmitter** (854 total lines across .h/.cpp) performs 6 distinct jobs:
+
+| Responsibility | Lines (approx) | Should live in |
+|---|---|---|
+| Proximity batch JSON serialization + MQTT publish | ~150 | **`ProximitySerializer`** or shared helper |
+| Interrupt batch JSON serialization + MQTT publish | ~120 | **`InterruptSerializer`** or shared helper |
+| Live Debug JSON batch serialization + MQTT publish | ~160 | Shares ~90% of proximity serializer |
+| Live Debug binary packing + base64 encoding + MQTT publish | ~180 | **`BinarySerializer`** — distinct enough to justify extraction |
+| Session summary serialization + retry publish | ~45 | Could stay, but retry logic is unique here |
+| Config/calibration/metadata JSON construction (duplicated across all paths) | ~160 (4×~40) | **Extract to shared helpers** |
+
+DataTransmitter is the file that must be split in this batch. Its size (769 lines) exceeds the 600-line "must split" threshold, and the duplication drives most of the bloat.
+
+#### 2. Code Duplication (Critical)
+
+**a) Calibration JSON serialization — duplicated 4 times (~20 lines each):**
+The pattern `if (deviceCalibration.isValid()) { build JSON with timestamp, multi_pulse, integration_time, thresholds array }` appears identically in:
+- `transmitBatch()` (lines 86–109)
+- `transmitInterruptBatch()` (lines 245–268)
+- `transmitLiveDebugCapture()` (lines 460–478)
+- `transmitLiveDebugCaptureBinary()` (lines 659–677)
+
+~80 lines of identical code. A single `serializeCalibration(JsonDocument &doc)` helper eliminates all four instances.
+
+**b) Sensor config JSON serialization — duplicated 3 times (~15 lines each):**
+The `vcnl4040_config` JSON object with 9 fields (`sample_rate_hz`, `led_current`, `integration_time`, `duty_cycle`, `multi_pulse`, `high_resolution`, `read_ambient`, `i2c_clock_khz`, `actual_sample_rate_hz`) appears identically in:
+- `transmitBatch()` (lines 73–83)
+- `transmitLiveDebugCapture()` (lines 447–456)
+- `transmitLiveDebugCaptureBinary()` (lines 646–655)
+
+~45 lines of identical code. A single `serializeConfig(JsonDocument &doc, const SensorConfiguration *config)` helper eliminates all three.
+
+**c) Reading JSON serialization — duplicated 2 times:**
+The per-reading JSON object construction (`ts`, `pos`, `pcb`, `side`, `prox`, `amb`) appears in `transmitBatch()` (lines 115–126) and `transmitLiveDebugCapture()` (lines 483–494). A shared `serializeReading()` helper or a single `serializeReadingsArray()` function eliminates both.
+
+**d) Device ID suffix extraction — tripled across the codebase:**
+The `lastIndexOf('-')` / `secondLastDash` / `substring()` pattern appears in:
+- `SessionManager::setDeviceId()` (lines 19–24)
+- `DataTransmitter::transmitLiveDebugCapture()` (lines 393–398)
+- `DataTransmitter::transmitLiveDebugCaptureBinary()` (lines 560–565)
+
+A single utility function `extractDeviceSuffix(const String &fullId)` eliminates all three. Better yet, DataTransmitter should get the short device ID from SessionManager rather than recomputing it.
+
+**e) Session summary JSON serialization — duplicated 2 times:**
+The full summary JSON construction (total_cycles, queue_drops, buffer_drops, per-sensor arrays, etc.) appears in `transmitLiveDebugCaptureBinary()` (lines 681–698) and `transmitSessionSummary()` (lines 737–754). A shared `serializeSummary()` helper eliminates the duplication.
+
+#### 3. Concurrency Safety
+
+**a) `dataBuffer` is safely single-core, but the invariant is undocumented and unenforced:**
+The data flow is: Core 0 → `xQueueSend(dataQueue)` → Core 1's `processQueue()` → `dataBuffer.push_back()`. The FreeRTOS queue provides the cross-core synchronization. All `dataBuffer` reads (detection loops, transmission, clear) happen on Core 1. This is correct — but the safety depends entirely on no one calling `getDataBuffer()` from Core 0. `getDataBuffer()` returns a mutable reference with no documentation of this constraint. A comment or, better, making `processQueue()` the only writer via a private accessor would enforce it.
+
+**b) `activeSummary` pointer in DataTransmitter — unprotected shared state:**
+`setSessionSummary(SessionSummary*)` stores a raw pointer to SessionManager's `sessionSummary`. During transmission, `transmitBatch()` increments `activeSummary->total_readings_transmitted` and `total_batches_transmitted`. If `SessionManager::startSession()` calls `sessionSummary.reset()` during an ongoing transmission (e.g., a rapid stop-then-start sequence), the counters are zeroed mid-transmission. Currently safe because stop-transmit-start is sequential on Core 1, but the pointer-sharing pattern is fragile and undocumented.
+
+**c) `extern DeviceCalibration deviceCalibration` — global accessed without protection:**
+DataTransmitter reads `deviceCalibration` (4 occurrences) during JSON serialization. CalibrationManager writes to it at calibration completion. Both are on Core 1, so this is safe today. But the coupling is hidden — DataTransmitter has no explicit dependency on calibration data in its constructor or API. It silently reaches for a global. This should be injected via a const pointer/reference in the constructor or per-call.
+
+**d) `extern bool serialStudioEnabled` in SessionManager.cpp (line 3):**
+Same hidden global coupling pattern documented in Batches 2 and 3. Written by Core 1 (command handler), read by Core 1 (`clearBuffer()`). Safe but fragile. Should be injected via config.
+
+**e) `SessionSummary` is written by multiple components without coordination:**
+The `SessionSummary` struct has fields written by:
+- SensorManager (Core 0): `total_cycles`, `readings_collected[]`, `i2c_errors[]`, `queue_drops`
+- SessionManager (Core 1): `buffer_drops`, `duration_ms`, `measured_cycle_rate_hz`, etc.
+- DataTransmitter (Core 1): `total_readings_transmitted`, `total_batches_transmitted`
+
+The Core 0 writes to `total_cycles`, `readings_collected[]`, `i2c_errors[]`, and `queue_drops` happen concurrently with Core 1 reading them for finalization and transmission. Individual uint32_t writes are atomic on ESP32 (Xtensa LX7), so torn reads won't occur. But there's no memory barrier ensuring Core 1 sees Core 0's latest values when `finalizeSessionSummary()` is called. In practice, calling `stopCollection()` before finalization provides an implicit barrier (the task stop handshake flushes the write buffer), but this ordering requirement is undocumented.
+
+#### 4. Memory Safety
+
+**a) `const_cast` in `finalizeSessionSummary()` — undefined behavior risk (line 280):**
+```cpp
+const_cast<SensorConfiguration *>(config)->actual_sample_rate_hz = sessionSummary.measured_cycle_rate_hz;
+```
+The function signature promises `const SensorConfiguration *config`, then mutates through it. If the caller ever passes a genuinely `const` object, this is undefined behavior per the C++ standard. Even when it works, it violates the API contract. The measured rate should be communicated back through the return value, an out-parameter, or by making the parameter non-const.
+
+**b) `DynamicJsonDocument` without overflow check in proximity and interrupt paths:**
+`transmitBatch()` allocates `DynamicJsonDocument doc(8192)`. The first batch includes sensor metadata (6 sensors × ~80 bytes), config (~200 bytes), calibration (~300 bytes), plus 25 readings × ~100 bytes. Total could approach 5–6KB — within the 8KB budget, but with no safety margin if more sensors or config fields are added. The live debug path (line 498) correctly checks `doc.overflowed()`. The proximity and interrupt paths don't.
+
+**c) No bounds validation on `startIdx + count` in live debug transmission:**
+`transmitLiveDebugCapture()` and `transmitLiveDebugCaptureBinary()` access `readings[startIdx + offset + i]` without verifying `startIdx + count <= readings.size()`. The caller is responsible for bounds-checking, but neither the API documentation nor assertions enforce this. An out-of-bounds access on the PSRAM-backed vector would read garbage memory silently (no bounds checking in release builds).
+
+**d) `base64Buf` lifetime depends on synchronous publish (lines 641–709):**
+`transmitLiveDebugCaptureBinary()` stores a pointer to `base64Buf` in the JSON doc (`doc["readings_b64"] = (const char *)base64Buf`), then calls `publishDataStreaming(doc)`, then `free(base64Buf)`. ArduinoJson stores `const char*` by reference (zero-copy), so the doc holds a dangling pointer after `free()`. Currently safe because `publishDataStreaming()` serializes synchronously before returning. But the safety is an undocumented assumption about PubSubClient's internals — any refactoring that defers serialization would introduce use-after-free.
+
+**e) `PSRAMAllocator::allocate()` logs on every allocation — latency injection:**
+`Serial.printf()` in `allocate()` (line 56) and `deallocate()` (line 67) can take 1–10ms depending on serial buffer state. `std::vector::reserve()` calls `allocate()` once (acceptable), but if a `push_back()` triggers reallocation (reserve wasn't large enough, or `clear()` + `reserve()` sequence), the serial print fires during the hot data path. For `interruptBuffer` (no PSRAM allocator, moot) and `dataBuffer` (PSRAM allocator), the `reserve(MAX_BUFFER_SIZE)` in `startSession()` should prevent reallocation. But `clearBuffer()` calls `clear()` which does NOT release capacity — fine, but if the vector was never reserved (e.g., session started in interrupt mode, then switched to proximity without restart), the first `push_back()` allocates with a log. This logging should be compile-time conditional (`#ifdef DEBUG_PSRAM`).
+
+**f) `xQueueCreate(1000, sizeof(SensorReading))` — undersized for peak rate:**
+At 6 sensors × 1000 Hz = 6,000 readings/sec, the queue holds ~167ms of data. If `processQueue()` is delayed (e.g., during a slow MQTT publish with `delay(100)` between batches), the queue overflows and `queue_drops` increment. The queue size should be a named constant and tuned to cover the worst-case processing gap.
+
+#### 5. Error Handling
+
+**a) Transmission failure = data loss (no retry, no persistence):**
+`transmitProximitySession()` (line 192) and `transmitInterruptSession()` (line 356) return `false` immediately on the first failed batch. No retry of the failed batch, no indication of how many batches succeeded, and the caller (main.cpp) clears the buffer — all remaining data is lost. The session summary has already been partially updated with transmission counts. Contrast with `transmitSessionSummary()` which has 3-attempt retry logic — inconsistent.
+
+**b) `delay()` between batches blocks the entire system:**
+- Proximity: `delay(100)` × 1,200 batches (30,000 readings ÷ 25) = **120 seconds** of blocking
+- Interrupt: `delay(50)` × batches
+- Live Debug JSON: `delay(20)` × batches
+- Summary retry: `delay(500)` × 3 attempts
+
+During these blocking delays, no MQTT keepalive processing occurs. If the MQTT broker has a keepalive timeout shorter than the total transmission time, the connection drops mid-transmission. The `delay()` calls should be replaced with cooperative yielding (return to `loop()`, resume next batch on next iteration) or at minimum use `mqttManager->loop()` between batches to maintain the connection.
+
+**c) `processQueue()` gated on `COLLECTING` state (line 117):**
+If `processQueue()` is called after `stopSession()` (which transitions to `UPLOADING`), the state check returns early and queue contents are lost. The call in `stopSession()` (line 94) processes the queue *before* the state transition — correct. But the guard in `processQueue()` is misleading: it suggests the method can be safely called at any time, when in fact it silently drops data unless state is `COLLECTING`.
+
+**d) Queue creation failure logged but not recovered:**
+`SessionManager()` constructor (line 10–13) logs if `xQueueCreate()` fails but stores `NULL` in `dataQueue`. Later, `processQueue()` calls `xQueueReceive(dataQueue, ...)` with a `NULL` handle — undefined behavior on FreeRTOS (likely crash). Should either retry allocation or prevent session start when the queue is `NULL`.
+
+#### 6. API Design
+
+**a) `transmitBatch()` parameter explosion — 8 parameters:**
+```cpp
+bool transmitBatch(const String &sessionId, const String &deviceId,
+                   unsigned long startTime, unsigned long duration,
+                   std::vector<...> &readings, size_t offset, size_t count,
+                   const std::vector<SensorMetadata> *sensorMetadata,
+                   const SensorConfiguration *config);
+```
+Six of these 8 parameters are properties of the session. The method should take `const SessionManager &session` and extract what it needs, or use a lightweight `TransmissionContext` struct.
+
+**b) `transmitLiveDebugCapture()` — 7 parameters, distinct from the session-based API:**
+Takes raw buffer references, indices, strings, and a float. This is a different interface shape from `transmitSession()` despite doing the same fundamental job (serialize readings + publish). A unified `TransmissionRequest` struct would normalize both paths.
+
+**c) Public API exposes batch-level methods:**
+`transmitBatch()` and `transmitInterruptBatch()` are `public` but are implementation details of session-level transmission. External callers should only use `transmitSession()`, `transmitLiveDebugCapture()`, `transmitLiveDebugCaptureBinary()`, and `transmitSessionSummary()`. The batch methods should be `private`.
+
+**d) Two live debug transmission paths with different APIs:**
+`transmitLiveDebugCapture()` doesn't take a `SessionSummary` and requires a separate `transmitSessionSummary()` call. `transmitLiveDebugCaptureBinary()` takes `const SessionSummary &` and inlines it. The caller must know which path to use and what follow-up calls to make. A unified interface would hide this.
+
+**e) `getDataBuffer()` returns mutable reference to internal PSRAM vector:**
+Allows external callers to mutate the buffer contents without SessionManager's knowledge. The detection loops, Serial Studio output, and DataTransmitter all hold mutable references. For read-only consumers (detection, Serial Studio), a `const` overload should be the default. For DataTransmitter (which shouldn't need mutation), `const` is sufficient.
+
+**f) `SAMPLE_RATE_HZ` macro used as transmission metadata (DataTransmitter line 49):**
+`doc["sample_rate"] = SAMPLE_RATE_HZ;` uses the compile-time constant `1000`, but the actual sample rate is configurable via `config->sample_rate_hz`. The same batch also includes `configObj["sample_rate_hz"] = config->sample_rate_hz` in the config metadata. If the configured rate differs from 1000, the consumer gets conflicting values. The batch-level `sample_rate` field should use `config->actual_sample_rate_hz` (the measured rate) or `config->sample_rate_hz` (the configured rate), not the compile-time constant.
+
+#### 7. Magic Numbers
+
+**DataTransmitter:**
+
+| Value | Location(s) | Should be |
+|---|---|---|
+| `8192` | lines 42, 220 | **`JSON_DOC_SIZE_BATCH`** |
+| `32768` | line 420 | **`JSON_DOC_SIZE_LIVE_DEBUG`** |
+| `8192` | line 618 | **`JSON_DOC_SIZE_BINARY`** (different from batch — both are 8192 but for different reasons) |
+| `4096` | line 730 | **`JSON_DOC_SIZE_SUMMARY`** |
+| `9` | lines 578, 589 | **`BINARY_READING_SIZE`** — the packed struct size per reading |
+| `100` | line 198 | **`PROXIMITY_BATCH_DELAY_MS`** |
+| `50` | line 363 | **`INTERRUPT_BATCH_DELAY_MS`** |
+| `500` | line 765 | **`SUMMARY_RETRY_DELAY_MS`** |
+| `3` | line 757 | **`SUMMARY_MAX_RETRIES`** |
+| `200` | line 142 | Minor — debug substring length |
+| `1000` | SAMPLE_RATE_HZ macro used at line 49, 429, 628 | Should use config value, not compile-time constant |
+
+**SessionManager:**
+
+| Value | Location(s) | Should be |
+|---|---|---|
+| `1000` | line 8 | **`DATA_QUEUE_SIZE`** — critical tuning parameter |
+| `1000` | line 153 | **`BUFFER_LOG_INTERVAL`** — "every 1000 samples" status print |
+
+#### 8. Dead Code & Unnecessary Includes
+
+- **`SessionManager.h` line 5: `#include <ArduinoJson.h>`** — SessionManager never uses ArduinoJson. No JSON parsing or serialization in either the header or the implementation. Remove.
+- **`SessionManager.h` line 7: `#include "../sensor/SensorManager.h"`** — Only needed for `SensorReading`, `SensorMetadata`, `NUM_SENSORS`, and `SAMPLE_RATE_HZ`. Pulls the entire SensorManager class definition (including its Adafruit dependencies) into every file that includes SessionManager.h. This creates a transitive include chain: `DataTransmitter.h` → `SessionManager.h` → `SensorManager.h` → `Adafruit_VCNL4040.h`. Should be replaced with a lightweight `SensorTypes.h` (recommended in Batch 3, extraction #11).
+- **`SessionManager.h` line 8: `#include "../interrupt/InterruptManager.h"`** — Only needed for `InterruptEvent` type. Pulls the entire InterruptManager class (357-line header with FreeRTOS internals, mux controller, VCNL4040 driver). Should forward-declare or extract `InterruptEvent` into a lightweight types header.
+- **`DataTransmitter.h` line 8: `#include "../sensor/SensorConfiguration.h"`** — Needed, but comes transitively through `SessionManager.h` → `SensorManager.h` already. The explicit include is harmless but the transitive chain should be broken.
+
+#### 9. PSRAMAllocator Design
+
+**a) Logging in allocator is a latency hazard (lines 56–58, 67–68):**
+`Serial.printf()` fires on every `allocate()` and `deallocate()`. `std::vector::reserve()` triggers one `allocate()` — acceptable. But `clear()` followed by `reserve()` triggers `deallocate()` + `allocate()` — two serial prints. More critically, if the vector was never reserved and `push_back()` triggers geometric growth (1 → 2 → 4 → 8 → ... → 30,000), each reallocation logs twice (deallocate old + allocate new). That's ~30 serial prints during what should be a hot-path operation. This should be `#ifdef DEBUG_PSRAM` conditional.
+
+**b) Missing `max_size()` implementation:**
+The C++11 allocator concept includes `max_size()`. Some STL implementations call it during `reserve()` to validate the requested size. Should return `heap_caps_get_largest_free_block(MALLOC_CAP_SPIRAM) / sizeof(T)`. Not currently causing issues, but technically incomplete.
+
+**c) Deprecated C++17 members present (acceptable for now):**
+`construct()` and `destroy()` are deprecated in C++17 (handled by `std::allocator_traits`). ESP32 Arduino uses C++11/14, so these are still needed. No action required unless the toolchain upgrades.
+
+**d) Equality operators are correct:**
+Always returning `true` is correct for a stateless allocator — containers with `PSRAMAllocator` can freely swap and move-assign. Good.
+
+#### 10. Decomposition Recommendations
+
+Listed in priority order (highest impact first):
+
+| # | Extraction | What it achieves | Est. lines saved | Effort | Notes |
+|---|---|---|---|---|---|
+| 1 | **Extract JSON serialization helpers** | `serializeCalibration()`, `serializeConfig()`, `serializeReadingsArray()`, `serializeSummary()` as private methods or free functions. Eliminates 4× calibration duplication, 3× config duplication, 2× readings duplication, 2× summary duplication. | ~200 | Small | Highest impact per effort. No structural change, just DRY. |
+| 2 | **Make batch methods private** | Move `transmitBatch()` and `transmitInterruptBatch()` from `public` to `private`. | ~0 (API clarity) | Trivial | Quick win. Clarifies the public interface. |
+| 3 | **Extract `BinarySerializer`** | Move `transmitLiveDebugCaptureBinary()` (180 lines) into a dedicated class or at minimum a separate file. The binary packing + base64 encoding is a distinct concern from JSON serialization. | ~180 | Small | Reduces DataTransmitter to ~550 lines. The binary path could also be a strategy class. |
+| 4 | **Fix `const_cast` in `finalizeSessionSummary()`** | Either make the config parameter non-const, or return the measured rate as part of the summary and let the caller update the config. | ~0 (correctness) | Trivial | Eliminates undefined behavior risk. |
+| 5 | **Replace `delay()` with cooperative batching** | Instead of blocking `delay(100)` between batches, return to `loop()` and resume transmission on the next iteration. Track batch offset as member state. Alternatively, call `mqttManager->loop()` between batches to maintain keepalive. | ~0 (responsiveness) | Medium | Fixes the 120-second blocking issue. Major reliability improvement. |
+| 6 | **Guard `dataQueue == NULL`** | Add null check before `xQueueReceive()` in `processQueue()`, and prevent `startSession()` if queue is NULL. | ~5 | Trivial | Prevents crash on allocation failure. |
+| 7 | **Add `doc.overflowed()` checks** | Add overflow detection to `transmitBatch()` and `transmitInterruptBatch()` matching the pattern already used in `transmitLiveDebugCapture()`. | ~10 | Trivial | Prevents silent data truncation. |
+| 8 | **Extract `SensorTypes.h`** | Move `SensorReading`, `SensorMetadata`, `NUM_SENSORS` out of `SensorManager.h` into a lightweight header. Break the transitive include chain `DataTransmitter → SessionManager → SensorManager → Adafruit`. | ~0 (compile-time, decoupling) | Small | Reinforces Batch 3 recommendation #11. Unblocks cleaner headers across the codebase. |
+| 9 | **Extract device-ID suffix utility** | Single `extractDeviceSuffix(const String &fullId)` function shared by SessionManager and DataTransmitter. | ~20 | Trivial | Eliminates triple duplication. |
+| 10 | **Conditional PSRAM logging** | Wrap `Serial.printf()` in `PSRAMAllocator::allocate()` and `deallocate()` with `#ifdef DEBUG_PSRAM`. | ~0 (performance) | Trivial | Quick win. Eliminates latency risk. |
+| 11 | **Add batch retry logic** | Add per-batch retry (1–2 attempts) in `transmitProximitySession()` and `transmitInterruptSession()` before failing the entire session. | ~20 | Small | Reduces data loss from transient MQTT failures. |
+| 12 | **Use config sample rate instead of `SAMPLE_RATE_HZ` macro** | Replace `doc["sample_rate"] = SAMPLE_RATE_HZ` with `doc["sample_rate"] = config->actual_sample_rate_hz` (or `config->sample_rate_hz` as fallback). | ~0 (correctness) | Trivial | Prevents conflicting sample rate values in transmitted data. |
+
+**Recommended execution order:** #4 (fix const_cast) → #10 (conditional PSRAM logging) → #6 (null guard) → #7 (overflow checks) → #12 (sample rate fix) → #2 (make batch methods private) → #9 (device-ID utility) → #1 (JSON serialization helpers) → #8 (SensorTypes.h, coordinate with Batch 3 #11) → #3 (BinarySerializer extraction) → #11 (batch retry) → #5 (cooperative batching).
+
+**Key dependencies:**
+- Extraction #8 (`SensorTypes.h`) is shared with Batch 3 recommendation #11 and Batch 2 recommendation #5. This should be a single coordinated extraction.
+- Extraction #5 (cooperative batching) is the highest-impact reliability fix but requires the most careful implementation — the batch loop must become stateful, and main.cpp's stop-transmit-clear sequence needs to accommodate multi-iteration transmission.
+- Extraction #1 (JSON helpers) is the highest-impact structural fix and enables #3 — do it first, then the binary serializer extraction becomes straightforward.
+
+After these changes, DataTransmitter.cpp should drop from ~769 lines to ~350–400 lines: session-level orchestration, batch loop control, and delegation to serialization helpers. SessionManager stays roughly the same size (302 lines is within budget) but with cleaner interfaces and fixed safety issues.
 
 ### Batch 5: I/O & Peripherals
 
