@@ -361,9 +361,245 @@ After these changes, SensorManager.cpp should drop from ~1,429 lines to ~300–4
 
 **Key dependency:** Extractions #1 and #2 are high-impact because the clean replacements already exist. This is not speculative refactoring — it's unifying two parallel implementations that drifted apart.
 
+**⚠ Unification risk — VCNL4040 driver adoption (extraction #2):**
+
+SensorManager's raw I2C and the custom VCNL4040 driver serve two different sensor modes (polling vs interrupt) that never run simultaneously. The driver is a functional superset — it can do everything SensorManager does. However, three behavioral differences must be handled during migration:
+
+1. **Full-register-write vs read-modify-write:** SensorManager's `applySensorConfig()` builds entire register values from scratch (all bits explicitly set). The VCNL4040 driver's per-field methods (`setLEDCurrent()`, `setProxIntegrationTime()`, etc.) use `bitMask()` which does read-modify-write, preserving bits the caller didn't touch. During migration, we need either: (a) a `configureForPolling()` method that sets ALL fields explicitly, or (b) a `writeRegister()` call to zero-initialize registers before applying per-field settings. Without this, stale bits from a previous interrupt-mode configuration could persist.
+
+2. **Verify-then-retry on LED current:** SensorManager has custom logic that reads back the LED current register after writing and retries with extra delays if it doesn't match. This was added to address a real hardware issue. The VCNL4040 driver has no verify/retry. This pattern must be preserved — either as a wrapper around the driver's `setLEDCurrent()`, or as a new `setLEDCurrentVerified()` method on the driver.
+
+3. **Mode transition cleanup:** When switching from interrupt mode (InterruptManager) to polling mode (SensorManager), the full-register-write approach implicitly clears interrupt-related bits (thresholds, persistence, interrupt type). The driver's per-field approach would NOT clear those unless we explicitly disable them. The migration must include an explicit "reset to polling defaults" step when entering polling mode.
+
 ### Batch 3: Detection & ML
 
-*Not yet analyzed.*
+**Files reviewed:** `DirectionDetector.cpp` (451 lines), `DirectionDetector.h` (252 lines), `MLDetector.cpp` (578 lines), `MLDetector.h` (191 lines), `CalibrationManager.cpp` (725 lines), `CalibrationManager.h` (275 lines), `CalibrationData.h` (207 lines).
+
+**The defining problems in this batch:** (1) DirectionDetector and MLDetector implement parallel detection pipelines with no shared interface, forcing main.cpp to duplicate all detection logic behind `if (useMLDetection)` branches. (2) CalibrationManager blocks the main loop with `delay()` calls despite being designed as a non-blocking state machine. (3) A silent integer overflow bug in `StatsAccumulator` corrupts calibration stddev calculations.
+
+#### 1. Single Responsibility Violations
+
+**DirectionDetector** (703 total lines across .h/.cpp) performs 5 distinct jobs:
+
+| Responsibility | Lines (approx) | Should live in |
+|---|---|---|
+| Per-sensor baseline management (rolling buffer, adaptive threshold) | ~60 | Could stay, but threshold logic is tangled with calibration |
+| Per-sensor wave state machine (IDLE → IN_WAVE → COMPLETE) | ~50 | Core detection logic — good |
+| Module-level detection (pair both sides, validate timing) | ~60 | Good |
+| Cross-module consensus + confidence scoring | ~60 | Could be a separate scoring strategy |
+| Legacy telemetry accessors (6 methods duplicating per-sensor accessors) | ~40 | Should be removed when Serial Studio output is updated |
+
+The header is the bigger problem. `DirectionDetector.h` defines 6 types: `Direction`, `DetectorState`, `WaveState`, `DetectionResult`, `DetectorConfig`, `RingBuffer<T,SIZE>`, and `SensorTracker` — all in one header. Any file that includes `DirectionDetector.h` (including `MLDetector.h`) pulls in everything. `RingBuffer` is a generic utility that should be in its own header. The detection types (`Direction`, `DetectionResult`, `DetectorConfig`) should be in a shared `DetectionTypes.h` that both detectors include.
+
+**MLDetector** (769 total lines) performs 6 distinct jobs:
+
+| Responsibility | Lines (approx) | Should live in |
+|---|---|---|
+| TFLite lifecycle (init, deinit, op registration, arena allocation) | ~130 | **`TFLiteRuntime`** — reusable for any future models |
+| Ring buffer for sensor frames | ~30 | Generic utility (or reuse `RingBuffer` from DirectionDetector) |
+| Reading aggregation (per-timestamp frame assembly) | ~50 | Frame builder / preprocessor |
+| Smoothing + baseline + trigger logic | ~100 | Duplicates DirectionDetector's job |
+| Input preparation (resampling to 1ms grid, normalization) | ~70 | **`MLPreprocessor`** — model-specific preprocessing |
+| Inference execution + result interpretation | ~70 | Could stay |
+
+**CalibrationManager** (1,000 total lines across .h/.cpp) performs 5 distinct jobs:
+
+| Responsibility | Lines (approx) | Should live in |
+|---|---|---|
+| Calibration state machine (transitions, PCB sequencing) | ~200 | Core logic — good |
+| Sensor reading via SensorManager | ~40 | OK as delegation |
+| Display/UI rendering coordination | ~150 scattered | **Should be event-driven**: emit state changes, let a listener handle display |
+| Button input handling (debounce, long-press) | ~30 | **`ButtonHandler`** (same extraction recommended in Batch 1) |
+| Statistics accumulation | ~50 | `StatsAccumulator` is already a separate class — good, but has a bug (see §5) |
+
+#### 2. No Shared Detector Interface (Critical Duplication Driver)
+
+DirectionDetector and MLDetector implement the same public API pattern — `addReading()`, `flushReading()`, `hasDetection()`, `getResult()`, `reset()`, `fullReset()`, `isReady()` — but share no common base class or interface. This forces main.cpp (documented in Batch 1) to duplicate all detection loop logic behind `if (useMLDetection)` checks.
+
+An abstract `IDetector` interface would allow:
+```cpp
+class IDetector {
+public:
+    virtual void addReading(const SensorReading &reading) = 0;
+    virtual void flushReading() = 0;
+    virtual bool hasDetection() const = 0;
+    virtual DetectionResult getResult() = 0;
+    virtual void reset() = 0;
+    virtual void fullReset() = 0;
+    virtual bool isReady() const = 0;
+    virtual ~IDetector() = default;
+};
+```
+
+main.cpp would hold `IDetector *detector` and the play/live-debug detection loops would collapse into a single parameterized flow — reinforcing the Batch 1 recommendation for `DetectionController`.
+
+#### 3. Concurrency Safety
+
+**a) `extern bool serialStudioEnabled` in DirectionDetector.cpp (line 3):**
+Written by Core 1 (command handler), read by Core 1 (detection processing). Currently safe because both are on the same core, but this is a hidden coupling — if detection processing ever moves to Core 0 (plausible optimization), it becomes a data race. Should be injected via config or a logging abstraction rather than a global extern.
+
+**b) CalibrationManager `readPCB()` calls `_sensorMgr->readSensor()` — potential I2C bus collision:**
+CalibrationManager runs in `loop()` on Core 1. `readSensor()` performs raw I2C transactions. If Core 0's sensor task is also running, both cores access the I2C bus simultaneously. The safety depends entirely on main.cpp stopping the sensor task before starting calibration — but CalibrationManager doesn't enforce this. A precondition assertion (`assert(!_sensorMgr->isCollecting())` in `startCalibration()`) would catch violations.
+
+**c) `static` local variables in CalibrationManager state handlers (7 occurrences):**
+`handleIntro()` has `static bool introRendered`, `handleBaseline()` has `static uint32_t lastDisplayUpdate`, `handleApproach()` has `static uint32_t lastReadFailLog`, `static uint32_t lastReadingLog`, `static uint32_t lastDisplayUpdate`, `handleSummary()` has `static bool summaryRendered`, `handleFailed()` has `static bool failedRendered`.
+
+These persist across calibration sessions and across CalibrationManager instances. The render flags (`introRendered`, `summaryRendered`, `failedRendered`) are reset only on the normal exit path. If the state machine is interrupted (e.g., cancel during intro), `introRendered` remains `true` and the next calibration silently skips the intro render. These should be instance members reset in `transitionTo()`.
+
+#### 4. Signal Processing Correctness
+
+**a) DirectionDetector baseline uses `getMax()`, not mean or robust statistic:**
+`recalculateThreshold()` calls `baselineBuffer.getMax()` as the base for threshold calculation. A single noise spike during the baseline window permanently elevates the threshold until that sample rotates out of the 200-sample ring buffer (~200ms at 1kHz). A trimmed mean or median would be more resilient to transient spikes while still capturing the noise ceiling.
+
+**b) DirectionDetector confidence scoring has hardcoded, un-tunable constants:**
+The confidence formula (lines 261–271) uses: `50.0f` (gap normalization), `100.0f` (signal normalization), `0.6f`/`0.4f` (gap vs signal weights), `0.15f` (multi-module consensus boost). These are tuning parameters that cannot be adjusted without recompiling. They should live in `DetectorConfig` alongside the other tuning knobs.
+
+**c) MLDetector baseline is one-shot, not adaptive:**
+`updateBaseline()` accumulates exactly `ML_BASELINE_READINGS` (50) samples, then transitions to READY permanently. DirectionDetector continuously updates its baseline during IDLE, adapting to environmental drift (ambient light changes, temperature). MLDetector never recalibrates — if conditions change mid-session, the trigger threshold becomes stale.
+
+**d) MLDetector forward-fill treats `0.0f` as "no data" (semantic bug):**
+In `prepareInput()` (line 421): `if (input[curIdx] == 0.0f)` → propagate from previous timestep. A legitimate zero-proximity reading is indistinguishable from an unfilled grid cell. VCNL4040 proximity values are typically non-zero when the sensor is active, so this works in practice, but it's semantically wrong and fragile. A sentinel value (`-1.0f`) or a separate validity array would be correct.
+
+**e) MLDetector side aggregation naming is inverted from DirectionDetector:**
+MLDetector maps "Side A" → positions 1,3,5 (S2 sensors) and "Side B" → positions 0,2,4 (S1 sensors). DirectionDetector maps posA → even positions (S1) and posB → odd positions (S2). The ML model was trained with whatever convention was used, so detection works, but the naming inconsistency between the two detectors is a maintenance hazard. If someone "fixes" the naming to match DirectionDetector, they'll break the ML pipeline.
+
+**f) DirectionDetector center-of-mass precision loss:**
+`weightedSum += smoothed * timestamp` accumulates `float(proximity) × uint32_t(ms)`. For a 30-second session (timestamp ~30,000) with proximity ~500, each term is ~15,000,000. Over a wave of ~100 samples, `weightedSum` reaches ~1.5e9. Single-precision float has ~7 significant digits, so the center-of-mass calculation loses ~1ms of precision at this range. Not a practical problem at current session lengths, but `double` would eliminate it.
+
+#### 5. Memory Safety
+
+**a) `StatsAccumulator::sumSq` overflow — silent calibration data corruption:**
+`sumSq` is `uint32_t`. It accumulates `(uint32_t)value * value` where `value` is `uint16_t` (max 65,535). A single `value²` is up to ~4.29e9, which fits in `uint32_t`. But `sumSq` accumulates across samples. At 600ms baseline capture with reads arriving continuously (~100+ samples), `sumSq` can reach ~4.3e11 — overflowing `uint32_t` at ~4.29e9. The overflow wraps silently, producing garbage in `getStdDev()`. **Fix: change `sumSq` to `uint64_t`.**
+
+Similarly, `sum * sum` in `getStdDev()` (`sum * sum / count`) overflows `uint32_t` if `sum > 65,535` — which happens at ~4 samples of maximum signal. **Fix: cast to `uint64_t` before multiplication.**
+
+**b) MLDetector `prepareInput()` writes to input tensor without bounds check:**
+`memset(input, 0, totalElements * sizeof(float))` writes `ML_WINDOW_MS × ML_NUM_POSITIONS × 4 = 7,200 bytes` to `inputTensor_->data.f`. If the model's input tensor shape doesn't match these constants (model updated but constants not), this is a buffer overflow into the tensor arena. Add a check: `assert(inputTensor_->bytes >= totalElements * sizeof(float))`.
+
+**c) MLDetector `lastResult_` is uninitialized until first detection:**
+`DetectionResult lastResult_` in the header has no constructor and no default member initializers. If `getResult()` is called before any detection (perhaps due to a logic error in the caller), it returns an uninitialized struct. `DetectionResult` should have a default constructor or aggregate initializers.
+
+**d) MLDetector ring buffer is 8KB in static storage:**
+`MLSensorFrame ringBuffer_[512]` — each frame is 16 bytes (4 + 6×2 = 16), total 8,192 bytes. This lives in the MLDetector object (global instance), so it's in BSS. Acceptable for ESP32-S3, but worth noting if memory pressure increases. PSRAM allocation would be an option.
+
+**e) CalibrationManager `readPCB()` suppresses partial failures:**
+If one of the two sensors on a PCB fails (`success1 = false, success2 = true`), the function returns only the reading from the working sensor. The caller treats this as a valid PCB reading, but it's half the expected signal magnitude. This silently skews calibration thresholds downward for the affected PCB. At minimum, log a warning; ideally, require both sensors to succeed.
+
+#### 6. Magic Numbers
+
+**DirectionDetector:**
+
+| Value | Location | Should be |
+|---|---|---|
+| `50` | cpp line 39 | **`BASELINE_RECALC_INTERVAL`** — how often to recompute threshold during baseline updates |
+| `50.0f` | cpp line 261 | **`CONFIDENCE_GAP_NORMALIZATION`** — or move to `DetectorConfig` |
+| `100.0f` | cpp line 263 | **`CONFIDENCE_SIGNAL_NORMALIZATION`** — or move to `DetectorConfig` |
+| `0.6f` / `0.4f` | cpp line 264 | **`CONFIDENCE_GAP_WEIGHT`** / **`CONFIDENCE_SIGNAL_WEIGHT`** |
+| `0.15f` | cpp lines 268, 270 | **`CONFIDENCE_CONSENSUS_BOOST`** |
+| `3` | cpp line 155 | **`NUM_MODULES`** (derived from `NUM_SENSORS / 2`) |
+| `SMOOTH_SIZE = 10` | header line 157 | Named but not configurable — consider making it a `DetectorConfig` field |
+| `BASELINE_SIZE = 200` | header line 158 | Named but not configurable |
+
+**MLDetector:**
+
+| Value | Location | Should be |
+|---|---|---|
+| `100` | cpp line 271 | **`ML_MIN_FRAMES_FOR_INFERENCE`** — minimum ring buffer frames |
+| `3` | cpp lines 172, 186 | **`ML_SMOOTH_WINDOW`** — smoothing window size (hardcoded, unlike DirectionDetector) |
+| `8` | header line 91, resolver template | **`ML_MAX_OPS`** — maximum TFLite op count |
+
+**CalibrationManager:**
+
+| Value | Location | Should be |
+|---|---|---|
+| `50` | cpp line 148 | **`CAL_DISPLAY_UPDATE_INTERVAL_MS`** |
+| `100` | cpp line 276 | **`CAL_APPROACH_DISPLAY_INTERVAL_MS`** |
+| `500` | cpp line 204 | **`CAL_READING_LOG_INTERVAL_MS`** |
+| `1000` | cpp lines 185, 378 | **`CAL_READ_FAIL_LOG_INTERVAL_MS`** / **`CAL_FAILED_MIN_DISPLAY_MS`** |
+| `1500` | cpp lines 301, 396 | Already `CAL_SUCCESS_DISPLAY_MS` for one occurrence, but `1500` is hardcoded in two other places |
+| `5` | CalibrationData.h line 68 | **`CAL_OVERLAP_MARGIN`** — threshold margin for signal/noise overlap case |
+| `200` | CalibrationData.h line 151 | **`CAL_DEFAULT_LED_CURRENT`** (duplicated from main.cpp's default) |
+
+**CalibrationManager button GPIOs** (`CAL_BUTTON_TRIGGER = 0`, `CAL_BUTTON_CANCEL = 14`) should come from `pin_config.h` for consistency with other GPIO assignments.
+
+#### 7. API Design
+
+**a) No shared detector interface (see §2):**
+The most impactful API problem. Both detectors have identical public method signatures but no formal interface, preventing polymorphic use.
+
+**b) `getResult()` has non-obvious side effects in both detectors:**
+DirectionDetector's `getResult()` sets `_detectedModule` (line 273), which changes the return values of the legacy telemetry accessors (`getSmoothedA()` etc.). MLDetector's `getResult()` clears `detectionReady_`, making the result consume-once. Neither behavior is documented or obvious from the method signature.
+
+**c) `hasDetection()` + `getResult()` is a TOCTOU pattern:**
+If readings arrive between `hasDetection()` returning true and `getResult()` being called, DirectionDetector's wave states could change (stale waves expire in `updateSensorWave()`). Currently safe because both calls happen sequentially in the same loop iteration, but the API doesn't enforce this. A single `tryGetResult(DetectionResult &out) → bool` would be safer.
+
+**d) CalibrationManager `delay()` calls violate non-blocking contract:**
+`update()` is designed as a cooperative state machine called from `loop()`, but three code paths call `delay()` for 1,500ms each: `handleApproach()` success (line 254), `handleApproach()` timeout (line 301), and `handleCancelled()` (line 396). During these delays, the entire main loop stalls — no MQTT, no display refresh, no button checks. These should be timer-based transitions (add `SUCCESS_DISPLAY` / `FAILURE_DISPLAY` sub-states with timestamp checks).
+
+**e) CalibrationManager `getCalibration()` returns mutable reference:**
+Returns `DeviceCalibration &` (non-const), allowing external code to mutate calibration data while a calibration is in progress. Should return `const DeviceCalibration &` for read-only access, with mutation only through CalibrationManager's own methods.
+
+**f) CalibrationManager `transitionTo()` uses a lambda for logging (lines 567–573):**
+Temporarily swaps `_state` to get the new state's name via `getStateName()`. Unnecessarily clever. A `static stateToString(CalibrationState)` method would be straightforward.
+
+**g) Global instances (`deviceCalibration`, `calibrationManager`) declared in .cpp:**
+Classic singleton-via-globals pattern. Prevents unit testing, couples all consumers to a single instance, and makes lifetime management implicit. The `deviceCalibration` global is written by CalibrationManager at completion (line 347: `deviceCalibration = _calibration`) and read by DirectionDetector via pointer — the data flow is hidden.
+
+#### 8. Dead Code & Unnecessary Includes
+
+- **`DirectionDetector.h` line 6: `#include <vector>`** — `std::vector` is never used in DirectionDetector. Remove.
+- **`DirectionDetector.h` line 6: `#include "../sensor/SensorManager.h"`** — Only needed for `SensorReading` and `NUM_SENSORS`. This pulls the entire SensorManager definition (including its Adafruit dependencies) into every file that includes the detector. Extract `SensorReading` and `NUM_SENSORS` into a lightweight `SensorTypes.h`.
+- **`DirectionDetector::flushReading()`** — Empty method kept "for interface compatibility." If both detectors share `IDetector`, this can be properly documented as optional.
+- **`DetectorConfig::minGapForConfidence` and `DetectorConfig::minSignalForConfidence`** (header lines 79–80) — Declared but never referenced anywhere in the codebase. Dead config fields.
+- **`MLDetector::getFrameCount()`** (header line 137) — Defined inline in the header, never called externally or internally.
+- **`CalibrationManager::configureSensorForCalibration()`** (cpp lines 676–681) — Empty method with a comment saying it does nothing. Remove.
+
+#### 9. State Machine Design (CalibrationManager)
+
+The `CalibrationState` enum encodes the PCB number in each state name (`BASELINE_PCB1`, `BASELINE_PCB2`, `BASELINE_PCB3`, `APPROACH_PCB1`, `APPROACH_PCB2`, `APPROACH_PCB3`), resulting in 12 enum values where 8 would suffice. `_currentPCB` already tracks which PCB is active, making the per-PCB states redundant. This causes:
+
+- `transitionTo()` has a 6-case switch just to set `_currentPCB` and reset stats — the PCB index could be computed from the generic state + `_currentPCB`.
+- `getNextState()` is a 8-case switch that encodes a linear sequence. With generic states, next-state logic would be: if `_currentPCB < 3`, increment PCB and go to BASELINE; else go to SUMMARY.
+- `getPCBForState()` exists solely to reverse the encoding.
+
+A cleaner design: `{IDLE, INTRO, BASELINE, APPROACH, SUCCESS_DISPLAY, SUMMARY, COMPLETE, FAILED, CANCELLED}` + `_currentPCB`. This also creates a natural place for the `SUCCESS_DISPLAY` sub-state that eliminates the `delay()` call.
+
+#### 10. Naming & Style
+
+**a) Private member naming — two conventions in the same layer:**
+DirectionDetector and CalibrationManager use `_prefix` (`_calibration`, `_useCalibration`, `_sensorMgr`, `_state`). MLDetector uses `suffix_` (`modelReady_`, `inputTensor_`, `ringBuffer_`, `state_`). Pick one convention and apply it consistently. `suffix_` is Google C++ style and avoids potential conflicts with reserved identifiers (leading underscore + capital letter is reserved in C++).
+
+**b) Struct member naming — camelCase vs snake_case:**
+`DetectionResult` uses camelCase (`centerOfMassA`, `waveDurationA`, `comGapMs`). `PCBCalibration` and `DeviceCalibration` use snake_case (`baseline_min`, `signal_max`, `multi_pulse`). `MLSensorFrame` uses snake_case (`timestamp_ms`). `DetectorConfig` uses camelCase (`baselineReadings`, `peakMultiplier`). Detection-layer types should use a single convention.
+
+**c) Constants — three different patterns:**
+- `DetectorConfig` stores tuning parameters as struct fields with defaults — configurable at runtime.
+- MLDetector uses `static constexpr` with `ML_` prefix (`ML_WINDOW_MS`, `ML_BASELINE_READINGS`) — compile-time only.
+- CalibrationManager uses `#define` with `CAL_` prefix (`CAL_INTRO_DURATION_MS`, `CAL_BASELINE_DURATION_MS`) — preprocessor macros, no type safety.
+
+`static constexpr` is preferred over `#define` in C++. Runtime-configurable parameters should be in config structs (like `DetectorConfig`). Compile-time constants should use `static constexpr` with a consistent prefix per module.
+
+#### 11. Decomposition Recommendations
+
+Listed in priority order (highest impact first):
+
+| # | Extraction | What it achieves | Est. lines saved | Effort | Notes |
+|---|---|---|---|---|---|
+| 1 | **`IDetector` interface** | Shared base for DirectionDetector and MLDetector. Enables polymorphic use in main.cpp, eliminates `if (useMLDetection)` duplication. | ~0 (enables savings in main.cpp) | Small | Define in `DetectionTypes.h`. Both detectors inherit from it. |
+| 2 | **`DetectionTypes.h`** | Extract `Direction`, `DetectionResult`, `DetectorConfig`, `WaveState`, `DetectorState` out of `DirectionDetector.h`. Both detectors and main.cpp include only the types they need. | ~0 (decoupling) | Small | Quick win. Breaks the transitive include chain through SensorManager. |
+| 3 | **`RingBuffer.h`** | Extract the generic `RingBuffer<T, SIZE>` template into a standalone utility header. Reusable by MLDetector (replace its manual ring buffer) and any future component. | ~60 from DirectionDetector.h | Small | Quick win. Add `getMean()` method to eliminate the manual sum loop in `getResult()`. |
+| 4 | **Fix `StatsAccumulator` overflow** | Change `sumSq` to `uint64_t`, cast `sum * sum` to `uint64_t` in `getStdDev()`. | ~0 (correctness) | Trivial | **High priority** — currently produces corrupt calibration data. |
+| 5 | **Eliminate `delay()` in CalibrationManager** | Replace 3 blocking `delay(1500)` calls with timer-based sub-states (`SUCCESS_DISPLAY`, `FAILURE_DISPLAY`, `CANCELLED_DISPLAY`). | ~0 (responsiveness) | Small | Fixes the non-blocking contract violation. Prerequisite for simplifying the state enum. |
+| 6 | **Simplify CalibrationState enum** | Reduce from 12 to ~9 states by removing per-PCB variants. Use `_currentPCB` for sequencing. Eliminate `getPCBForState()`, simplify `getNextState()` and `transitionTo()`. | ~60 | Medium | Do after #5. Cleaner state machine, fewer switch cases. |
+| 7 | **Replace `static` locals in CalibrationManager** | Move 7 `static` local variables to instance members. Reset them in `transitionTo()`. | ~0 (correctness) | Trivial | Fixes the stale-flag bug on interrupted calibrations. |
+| 8 | **Extract TFLite lifecycle from MLDetector** | Move `init()`, `deinit()`, model loading, op registration, arena allocation into `TFLiteRuntime`. MLDetector delegates to it. | ~130 | Medium | Makes TFLite management reusable for future models. |
+| 9 | **Unify trigger/baseline logic** | MLDetector's baseline + trigger duplicates DirectionDetector's approach. If MLDetector used DirectionDetector's trigger as its trigger source (or shared a common threshold tracker), ~100 lines of duplicated logic disappears. | ~100 | Medium | Requires careful alignment of the side A/B naming convention (see §4e). |
+| 10 | **Move confidence constants to `DetectorConfig`** | Make the 5 hardcoded confidence-scoring parameters configurable. | ~0 (tunability) | Trivial | Quick win for detection tuning. |
+| 11 | **Add `SensorTypes.h`** | Extract `SensorReading`, `NUM_SENSORS`, and sensor position constants out of `SensorManager.h` into a lightweight header. Breaks the heavy include chain. | ~0 (compile-time) | Small | Reduces coupling across the entire codebase. |
+
+**Recommended execution order:** #4 (StatsAccumulator fix) → #2 (DetectionTypes.h) → #11 (SensorTypes.h) → #3 (RingBuffer.h) → #1 (IDetector) → #7 (static locals) → #5 (eliminate delay) → #6 (simplify state enum) → #10 (confidence constants) → #8 (TFLite extraction) → #9 (unify trigger).
+
+**Key dependency:** Extraction #1 (IDetector) is the enabler for the main.cpp `DetectionController` extraction recommended in Batch 1. These should be scheduled together.
 
 ### Batch 4: Session & Data
 
