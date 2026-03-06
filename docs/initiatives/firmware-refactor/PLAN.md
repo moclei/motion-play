@@ -1083,7 +1083,240 @@ After these changes, DisplayManager.cpp drops from ~874 to ~550 lines (calibrati
 
 ### Batch 6: Networking & Infrastructure
 
-*Not yet analyzed.*
+**MQTTManager (300 + 45 lines), NetworkManager (122 + 29 lines), MemoryMonitor (144 lines, header-only), pin_config.h (44 lines). Plus cross-cutting review: header hygiene, include chains, shared constants, `extern bool serialStudioEnabled`.**
+
+#### 1. Single Responsibility Violations
+
+**a) MQTTManager owns config loading, certificate I/O, connection management, serialization, and a vestigial command handler:**
+
+`loadConfig()` reads `/config.json` from LittleFS, parses JSON, extracts MQTT fields, builds topic strings, and calls `loadCertificates()`. `loadCertificates()` reads three PEM files and configures the TLS client. `publishStatus()` constructs a JSON document and publishes it. The static `messageCallback()` (line 267) parses incoming JSON and handles a "ping" command — but this handler is dead code because main.cpp immediately installs its own callback via `setCallback()`. The class is simultaneously a config loader, a certificate manager, a connection state machine, a message serializer, and a (dead) command dispatcher.
+
+**b) NetworkManager manages WiFi, TLS, filesystem initialization, config parsing, and stores unrelated application state:**
+
+`loadConfig()` mounts LittleFS (`LittleFS.begin(true)`), enumerates all files in root (debug listing, lines 16-29), opens and parses `/config.json`, and stores WiFi credentials, `deviceId`, and `apiEndpoint`. The `deviceId` and `apiEndpoint` fields have nothing to do with network connectivity — they are application configuration data that happens to live in the same config file. `getDeviceId()` and `getApiEndpoint()` turn NetworkManager into a config bag.
+
+**c) Both managers parse `/config.json` independently:**
+
+`NetworkManager::loadConfig()` and `MQTTManager::loadConfig()` each open `/config.json`, create a `DynamicJsonDocument(1024)`, deserialize the same JSON file, and extract their respective fields. `device_id` is parsed and stored by both classes (`NetworkManager::deviceId` and `MQTTManager::deviceId`). If the config file format changes, two methods need updating. This is a textbook violation of DRY that also doubles filesystem I/O at boot.
+
+**d) MemoryMonitor is a static utility class with a hidden dependency on Serial Studio state:**
+
+All methods are `static`. The class depends on `extern bool serialStudioEnabled` (line 8 of the header) to gate serial output — a presentation concern embedded in a diagnostic utility. The class should report data unconditionally; callers (or a logging layer) decide whether to print.
+
+#### 2. Error Handling
+
+**a) MQTTManager `connect()` blocks Core 1 for up to 25 seconds:**
+
+Lines 101-128: 5 attempts × `delay(5000)` = up to 25 seconds of blocking. During this time, display updates, heartbeat publishing, and command processing are stalled. On an ESP32 dual-core system, blocking Core 1's loop for 25 seconds is severe — the device appears unresponsive.
+
+**b) MQTTManager `loop()` reconnects on every iteration with no backoff:**
+
+Lines 142-149: If disconnected, `loop()` calls `connect()` unconditionally. If the broker is unreachable (e.g., internet outage), every `loop()` iteration blocks for 25 seconds, retries, fails, then the next `loop()` call immediately tries again. No exponential backoff, no cooldown, no maximum-attempts-per-hour limit. The device enters an infinite block-retry cycle.
+
+**c) NetworkManager `connectWiFi()` blocks for up to 30 seconds:**
+
+Lines 78-94: 30 attempts × `delay(1000)`. Same pattern — Core 1 is completely blocked. If WiFi credentials are wrong (e.g., wrong network at a remote test location), boot takes 30+ seconds before the device becomes usable.
+
+**d) NetworkManager `checkConnection()` triggers the full 30-second blocking reconnect:**
+
+Lines 110-114: If WiFi drops, `checkConnection()` calls `connectWiFi()` which blocks for up to 30 seconds. If called from `loop()`, this stalls the entire Core 1 event loop.
+
+**e) `connected` flag is stale — two sources of truth:**
+
+NetworkManager has a `bool connected` member (set in `connectWiFi()` and `disconnect()`) but `isConnected()` checks `WiFi.status()` directly, ignoring the flag. The flag is only used in `checkConnection()` to detect "was connected but now isn't." If WiFi drops, `connected` remains `true` until `checkConnection()` runs — a split-brain state. The flag should either track `WiFi.status()` or be removed in favor of the hardware check.
+
+**f) MQTTManager `publishDataStreaming()` — partial write leaves connection in undefined state:**
+
+Lines 228-243: If a chunk write fails, the method frees the buffer and returns `false`. But `beginPublish()` has already been called, and `endPublish()` is skipped. The PubSubClient state after a failed streaming write is undefined — subsequent `publish()` calls may fail silently. The method should attempt `endPublish()` (or disconnect/reconnect) even after a partial failure.
+
+**g) MQTTManager `publishStatus()` reaches past NetworkManager to call `WiFi.RSSI()` directly:**
+
+Line 157: `doc["wifi_rssi"] = WiFi.RSSI();`. This bypasses the NetworkManager abstraction entirely. If NetworkManager ever wraps WiFi behind a different transport (or for testing), this call would break. RSSI should be exposed via NetworkManager.
+
+#### 3. Header Hygiene & Transitive Include Chains
+
+**a) `MQTTManager.h` includes `<LittleFS.h>` — only needed in the .cpp:**
+
+LittleFS is used in `loadConfig()` and `loadCertificates()` — both implementation methods. The header doesn't reference any LittleFS types. Moving `#include <LittleFS.h>` to `MQTTManager.cpp` eliminates this transitive dependency from all includers.
+
+**b) `NetworkManager.h` includes `<LittleFS.h>` and `<ArduinoJson.h>` — both only needed in .cpp:**
+
+The header's public interface uses `String`, `WiFiClientSecure`, and `bool` — none of which require LittleFS or ArduinoJson. Both includes should move to `NetworkManager.cpp`.
+
+**c) Transitive chain: `DataTransmitter.h` → `MQTTManager.h` → `NetworkManager.h`:**
+
+Including `DataTransmitter.h` pulls in:
+- `NetworkManager.h` → `<WiFi.h>`, `<WiFiClientSecure.h>`, `<ArduinoJson.h>`, `<LittleFS.h>`
+- `MQTTManager.h` → `<PubSubClient.h>`, `<LittleFS.h>` (again)
+
+DataTransmitter only needs `MQTTManager*`. A forward declaration (`class MQTTManager;`) in `DataTransmitter.h` with the include moved to `DataTransmitter.cpp` would break this chain. Similarly, `MQTTManager.h` only needs `NetworkManager*` — a forward declaration would break the chain further, reducing `DataTransmitter.h` to near-zero transitive cost.
+
+**d) `MemoryMonitor.h` exports `extern bool serialStudioEnabled` to all includers:**
+
+Line 8: `extern bool serialStudioEnabled;` in a header means every file that includes `MemoryMonitor.h` gets an implicit dependency on a global defined in main.cpp. Currently only main.cpp includes it, but this is a maintenance trap — any future includer inherits the dependency silently.
+
+**e) Mixed include guard styles across the codebase:**
+
+| Style | Files |
+|---|---|
+| `#ifndef X_H` / `#define X_H` / `#endif` | MQTTManager.h, NetworkManager.h, DataTransmitter.h, DisplayManager.h, SensorManager.h, SessionManager.h, DirectionDetector.h, MLDetector.h, LEDController.h, PSRAMAllocator.h, SensorConfiguration.h, SerialStudioOutput.h, MemoryMonitor.h |
+| `#pragma once` | pin_config.h, InterruptManager.h, CalibrationManager.h, CalibrationData.h, VCNL4040.h, MuxController.h, TCA9548A.h |
+
+Neither style is wrong, but mixing both in the same project means contributors must check which convention each file uses. The codebase should pick one. `#pragma once` is simpler and supported by all modern compilers targeting ESP32.
+
+#### 4. Concurrency
+
+**a) MQTTManager `loop()` is called from Core 1 only — safe but unenforced:**
+
+All MQTT operations (connect, publish, loop) run on Core 1. PubSubClient is not thread-safe. Same unenforced invariant pattern noted in Batches 3 and 5 for DisplayManager and LEDController.
+
+**b) NetworkManager `checkConnection()` + MQTTManager `connect()` race:**
+
+If `checkConnection()` triggers `connectWiFi()` while `MQTTManager::loop()` is calling `connect()`, both attempt WiFi/MQTT operations simultaneously. In practice both run on Core 1 so they are serialized by the single-threaded event loop. But if either is ever moved to a task or ISR, the lack of synchronization becomes a data race.
+
+#### 5. Magic Numbers
+
+**MQTTManager:**
+
+| Value | Location(s) | Should be |
+|---|---|---|
+| `32768` | cpp line 44 | **`MQTT_BUFFER_SIZE`** |
+| `24576` | cpp line 173 | **`MQTT_LARGE_PAYLOAD_WARN_BYTES`** |
+| `4096` | cpp line 224 | **`MQTT_STREAM_CHUNK_SIZE`** |
+| `5000` | cpp line 126 | **`MQTT_RECONNECT_DELAY_MS`** |
+| `5` | cpp line 102 | **`MQTT_MAX_CONNECT_ATTEMPTS`** |
+| `1024` | cpp lines 14, 280 | **`CONFIG_JSON_CAPACITY`** (shared with NetworkManager) |
+| `256` | cpp line 153 | **`STATUS_JSON_CAPACITY`** |
+| `"motionplay/"` | cpp lines 27-29 | **`MQTT_TOPIC_PREFIX`** — hardcoded topic prefix |
+
+**NetworkManager:**
+
+| Value | Location(s) | Should be |
+|---|---|---|
+| `1024` | cpp line 45 | **`CONFIG_JSON_CAPACITY`** (same as MQTTManager — shared constant) |
+| `30` | cpp line 79 | **`WIFI_MAX_CONNECT_ATTEMPTS`** |
+| `1000` | cpp line 80 | **`WIFI_ATTEMPT_DELAY_MS`** |
+| `100` | cpp line 75 | **`WIFI_MODE_SETTLE_MS`** |
+
+**MemoryMonitor:**
+
+| Value | Location(s) | Should be |
+|---|---|---|
+| `50000` | lines 62, 103 | **`LOW_HEAP_WARNING_BYTES`** (duplicated between `printMemoryStats()` and `isMemoryHealthy()`) |
+| `100000` | line 66 | **`LOW_HEAP_CAUTION_BYTES`** |
+| `1000000` | lines 77, 103 | **`LOW_PSRAM_WARNING_BYTES`** (also duplicated) |
+
+**pin_config.h:**
+
+No magic numbers — all values are named. But see item 6d below for dead definitions.
+
+#### 6. Dead Code & Issues
+
+**a) MQTTManager `messageCallback()` is dead code:**
+
+The static callback is installed in `loadConfig()` (line 39: `mqttClient.setCallback(messageCallback)`), but main.cpp immediately calls `setCallback()` with its own handler, overwriting it. The static method's "ping" handling is never reached. Remove it.
+
+**b) MQTTManager VLA in `messageCallback()`:**
+
+Line 272: `char message[length + 1]` is a variable-length array — a C99 feature, not standard C++. GCC allows it as an extension, but if a large MQTT payload arrives (the buffer is 32KB), this overflows the stack. Should use a fixed-size buffer with length check, or `std::vector<char>`.
+
+**c) NetworkManager debug file listing in `loadConfig()`:**
+
+Lines 16-29: Enumerates all files in LittleFS root and prints their names/sizes. This was useful during initial development but is pure noise in production. Should be gated behind `#ifdef DEBUG_FILESYSTEM` or removed.
+
+**d) pin_config.h SD card definitions are dead:**
+
+Lines 37-41: `PIN_SD_CS`, `PIN_SD_MISO`, `PIN_SD_MOSI`, `PIN_SD_SCLK` — all marked as conflicting with Motion Play hardware. SD card is not used in the project. These dead definitions add confusion. Comment them out or remove.
+
+**e) pin_config.h `PIN_IIC_SDA` / `PIN_IIC_SCL` naming:**
+
+Uses the older `IIC` notation. The rest of the codebase (comments, CONTEXT.md, hardware docs) uses `I2C`. Rename to `PIN_I2C_SDA` / `PIN_I2C_SCL` for consistency.
+
+**f) NetworkManager return-by-value for string accessors:**
+
+`getDeviceId()` and `getApiEndpoint()` return `String` by value — copying the string on every call. Should return `const String&` to avoid unnecessary allocations. (MQTTManager's `getDeviceId()` already does this correctly.)
+
+#### 7. API Design
+
+**a) `MQTTManager` exposes raw `PubSubClient` callback signature to callers:**
+
+`setCallback(std::function<void(char*, byte*, unsigned int)>)` leaks the PubSubClient callback signature into the public API. Callers must know about `byte*` payloads and manual length handling. A higher-level interface (e.g., accepting a `const char* topic, const JsonDocument& doc` callback) would decouple callers from the transport library.
+
+**b) NetworkManager `getClient()` returns a mutable reference to `WiFiClientSecure`:**
+
+This allows any caller to reconfigure TLS settings, change certificates, or close the connection. The SSL client should be encapsulated — MQTTManager should receive it during construction rather than reaching into NetworkManager at will.
+
+**c) LittleFS initialization is an implicit ordering dependency:**
+
+NetworkManager initializes LittleFS in `loadConfig()`. MQTTManager uses LittleFS in `loadConfig()` and `loadCertificates()` without initializing it. If MQTTManager is initialized before NetworkManager, the cert reads fail silently. This dependency is not documented or enforced by the API.
+
+#### 8. Cross-Cutting: `extern bool serialStudioEnabled`
+
+**Final tally across the active codebase (6 files):**
+
+| File | Type | Usage |
+|---|---|---|
+| `main.cpp` line 53 | **Definition** | `bool serialStudioEnabled = SERIAL_STUDIO_DEFAULT;` |
+| `SensorManager.cpp` line 4 | `extern` | Guards debug serial output |
+| `DirectionDetector.cpp` line 3 | `extern` | Guards debug serial output |
+| `SessionManager.cpp` line 3 | `extern` | Guards debug serial output |
+| `LEDController.cpp` line 3 | `extern` | Guards debug serial output |
+| `MemoryMonitor.h` line 8 | `extern` **in a header** | Guards `printMemoryStats()` and `printCompactStatus()` |
+
+Every occurrence follows the same pattern: `if (serialStudioEnabled) return;` or `if (!serialStudioEnabled) { Serial.print(...); }`. The global is purely a debug-output gate.
+
+**Recommended fix:** Create `firmware/include/debug_log.h` with:
+- `extern bool serialStudioEnabled;` declared once
+- Inline helper: `inline bool debugPrintEnabled() { return !serialStudioEnabled; }` or a `DEBUG_LOG(...)` macro that checks the flag and calls `Serial.printf()`
+
+All 5 `extern` declarations are replaced by `#include "debug_log.h"`. The flag definition stays in main.cpp (or moves to a globals.cpp). This eliminates the scattered `extern` declarations, centralizes the Serial Studio concern, and prevents the `extern` from appearing in component headers.
+
+#### 9. Cross-Cutting: Shared Constants Across All Batches
+
+Constants that were identified in multiple batches as needing unification:
+
+| Constant | Value | Files | Recommended name |
+|---|---|---|---|
+| I2C clock speed | `400000` | SensorManager (Batch 2), InterruptManager (Batch 5) | `I2C_CLOCK_HZ` |
+| IR duty denominator | `40` | InterruptManager ×2 (Batch 5), SerialStudioOutput ×2 (Batch 5) | `DEFAULT_IR_DUTY_DENOMINATOR` |
+| MUX settle time | `5` ms | SensorManager (Batch 2), InterruptManager (Batch 5) | `MUX_SETTLE_MS` |
+| Config JSON capacity | `1024` | NetworkManager (Batch 6), MQTTManager (Batch 6) | `CONFIG_JSON_CAPACITY` |
+| Config file path | `"/config.json"` | NetworkManager, MQTTManager | `CONFIG_FILE_PATH` |
+| Heap warning threshold | `50000` | MemoryMonitor ×2 | `LOW_HEAP_WARNING_BYTES` |
+| PSRAM warning threshold | `1000000` | MemoryMonitor ×2 | `LOW_PSRAM_WARNING_BYTES` |
+| MQTT topic prefix | `"motionplay/"` | MQTTManager | `MQTT_TOPIC_PREFIX` |
+
+These should live in a shared `firmware/include/constants.h` (compile-time, `static constexpr`) or per-module constant blocks as appropriate. Pin-related constants already have a home in `pin_config.h`. I2C-related constants (clock speed, settle times) could live in a `firmware/include/i2c_config.h` alongside pin definitions.
+
+#### 10. Decomposition Recommendations
+
+Listed in priority order (highest impact first):
+
+| # | Extraction | What it achieves | Est. lines saved | Effort | Notes |
+|---|---|---|---|---|---|
+| 1 | **Extract `ConfigLoader`** | Single class/function that mounts LittleFS, parses `/config.json` once, and exposes typed fields (WiFi credentials, MQTT settings, device ID, API endpoint). Both NetworkManager and MQTTManager receive config rather than loading it. Eliminates duplicate file I/O, duplicate `device_id`, and the implicit LittleFS initialization ordering. | ~80 (net: new file but removes duplication) | Small | Highest-impact structural fix in this batch. Also a natural home for cert paths and topic prefix constants. |
+| 2 | **Non-blocking reconnection for MQTT and WiFi** | Replace `delay()`-based blocking loops in `MQTTManager::connect()` and `NetworkManager::connectWiFi()` with a state machine: track `lastAttemptMs`, `attemptCount`, return immediately if cooldown hasn't elapsed. `loop()` drives the state machine incrementally. Adds exponential backoff. | ~0 (behavioral) | Medium | Eliminates the 25-30 second blocking stalls that freeze Core 1. Most important behavioral fix. |
+| 3 | **Create `debug_log.h`** | Centralizes `extern bool serialStudioEnabled` and provides `DEBUG_LOG(...)` macro. Replaces 5 scattered `extern` declarations and ad-hoc guard patterns across the codebase. | ~0 (hygiene) | Trivial | Quick win. Can be done independently. Eliminates the `extern` in MemoryMonitor.h. |
+| 4 | **Move LittleFS/ArduinoJson includes from headers to .cpp files** | Break transitive include chains. `MQTTManager.h` drops `<LittleFS.h>`. `NetworkManager.h` drops `<LittleFS.h>` and `<ArduinoJson.h>`. Forward-declare `class NetworkManager;` in `MQTTManager.h`. Forward-declare `class MQTTManager;` in `DataTransmitter.h`. | ~0 (compile time) | Trivial | Dramatically reduces transitive include cost for DataTransmitter and anything that includes it. |
+| 5 | **Split MemoryMonitor into .h + .cpp** | Move `printMemoryStats()` and `printCompactStatus()` implementations to .cpp. Header retains only declarations and trivial inline getters. Follows project convention. | ~0 (convention) | Trivial | Also the place to remove the `extern bool serialStudioEnabled` once #3 is done. |
+| 6 | **Remove dead `messageCallback()`** | Delete the static callback and the "ping" handler in MQTTManager. It's immediately overwritten by main.cpp's `setCallback()`. | ~30 | Trivial | Dead code removal. |
+| 7 | **Fix `publishDataStreaming()` partial-write cleanup** | Call `endPublish()` (or disconnect + reconnect) even after a chunk write failure, to avoid leaving PubSubClient in an undefined state. | ~5 | Trivial | Correctness fix for edge case during data transmission. |
+| 8 | **Clean up pin_config.h** | Remove dead SD card pin definitions. Rename `PIN_IIC_*` to `PIN_I2C_*`. Add comment for GPIO 0 = BOOT button. | ~5 | Trivial | Quick housekeeping. |
+| 9 | **Constants extraction** | Create `firmware/include/constants.h` for cross-module constants (`I2C_CLOCK_HZ`, `MUX_SETTLE_MS`, `DEFAULT_IR_DUTY_DENOMINATOR`, `CONFIG_JSON_CAPACITY`, `CONFIG_FILE_PATH`). Per-module magic numbers become `static constexpr` members (see Batch 6 §5 tables). | ~0 (readability) | Small | Coordinate with Batch 2 #7 and Batch 5 magic number fixes. |
+| 10 | **Unify include guard style** | Pick `#pragma once` project-wide (simpler, universal ESP32 support). Convert all `#ifndef`/`#define`/`#endif` headers. | ~0 (consistency) | Trivial | Mechanical change. Can be done in one pass. |
+| 11 | **Fix NetworkManager string accessor return types** | Change `getDeviceId()` and `getApiEndpoint()` to return `const String&`. | ~0 (performance) | Trivial | Avoids unnecessary string copies. |
+| 12 | **Expose WiFi RSSI through NetworkManager** | Add `int getRSSI() const` to NetworkManager. Replace `WiFi.RSSI()` in MQTTManager::publishStatus(). | ~0 (encapsulation) | Trivial | Fixes the abstraction leak. |
+
+**Recommended execution order:** #3 (debug_log.h) → #6 (remove dead callback) → #8 (pin_config cleanup) → #11 (string refs) → #12 (RSSI accessor) → #4 (move includes to .cpp) → #5 (MemoryMonitor .h/.cpp split) → #10 (unify guards) → #9 (constants extraction, coordinate with Batches 2+5) → #7 (streaming cleanup) → #1 (ConfigLoader extraction) → #2 (non-blocking reconnection).
+
+**Key dependencies:**
+- #3 (`debug_log.h`) should be done before #5 (MemoryMonitor split) — the split removes the `extern` and replaces it with `#include "debug_log.h"`.
+- #4 (header include moves) should be done before #10 (guard unification) to avoid rework.
+- #1 (ConfigLoader) can be done independently but is the largest structural change. Should be done after #4 so the new class follows the clean include patterns.
+- #2 (non-blocking reconnection) is the most complex change. It's behavioral and should be thoroughly tested. Independent of all other extractions.
+- #9 (constants) spans Batches 2, 5, and 6 — should be done in one coordinated pass.
+
+After these changes, MQTTManager.cpp drops from ~300 to ~270 lines (dead callback removed, config loading delegated). NetworkManager.cpp drops from ~122 to ~70 lines (config loading delegated, debug listing removed). MemoryMonitor gains a proper .h/.cpp split. The transitive include chain `DataTransmitter.h` → `WiFi.h` is broken. The `extern bool serialStudioEnabled` global is centralized. Boot no longer blocks for 25-55 seconds on network failures.
 
 ## Refactoring Strategy
 
