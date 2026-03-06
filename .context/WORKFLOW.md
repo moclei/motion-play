@@ -249,9 +249,21 @@ When working on an exploration:
 - Don't create sub-files or folders for an exploration. One file.
 
 When working on an initiative:
+
+**Starting a session:**
 - Read BRIEF.md, PLAN.md, and TASKS.md at the start of every session involving that feature.
+- Find the first unchecked task in TASKS.md — that is the session's goal.
+
+**During a session:**
 - After completing a task, check it off in TASKS.md before moving on to the next task.
 - If the technical approach changes, update PLAN.md to reflect the current design.
 - Do not create additional documentation files beyond BRIEF.md, PLAN.md, and TASKS.md.
 - If you need to capture something and aren't sure where it goes, put it in PLAN.md under Open Questions.
-- When a phase or the whole feature is complete, ensure all tasks are checked off and Open Questions are resolved.
+
+**Ending a session — do this before the session closes, whether by completing a phase or because context is getting long:**
+1. Commit any completed work to git with a descriptive message.
+2. Update TASKS.md so it accurately reflects what is done and what remains.
+3. Update PLAN.md if any decisions changed during the session.
+4. Stop. Do not push into a new phase if the session is long — let the next session start fresh from the docs.
+
+Context compression degrades quality. The initiative docs are the handoff between sessions. A fresh session that reads the three docs picks up exactly where the last one left off — this is always preferable to a compressed continuation.
