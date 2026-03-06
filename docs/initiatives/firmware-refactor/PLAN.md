@@ -834,7 +834,252 @@ After these changes, DataTransmitter.cpp should drop from ~769 lines to ~350–4
 
 ### Batch 5: I/O & Peripherals
 
-*Not yet analyzed.*
+**Files reviewed:** `DisplayManager.cpp` (874 lines), `DisplayManager.h` (130 lines), `InterruptManager.cpp` (795 lines), `InterruptManager.h` (357 lines), `LEDController.cpp` (161 lines), `LEDController.h` (90 lines), `SerialStudioOutput.cpp` (198 lines), `SerialStudioOutput.h` (87 lines).
+
+**The defining problems in this batch:** (1) DisplayManager is a 1,004-line monolithic renderer that knows about every screen in the system — init, session, calibration (8 methods, ~320 lines) — with no separation between rendering concerns. (2) InterruptManager's processing task busy-loops via `taskYIELD()` instead of sleeping on `xTaskNotifyFromISR()`, consuming all spare Core 1 CPU during interrupt monitoring. (3) `volatile bool` is used instead of `std::atomic<bool>` for ISR-to-task communication in InterruptManager (same pattern flagged in Batch 2). (4) LEDController redefines `LED_PIN 16` as a local macro instead of using `PIN_LED_STRIP_DATA` from `pin_config.h`, and includes `DirectionDetector.h` (pulling the entire sensor chain) just for the `Direction` enum.
+
+#### 1. Single Responsibility Violations
+
+**DisplayManager** (1,004 total lines across .h/.cpp) performs 5 distinct jobs:
+
+| Responsibility | Lines (approx) | Should live in |
+|---|---|---|
+| Hardware initialization (power pins, TFT driver) | ~20 | Acceptable in DisplayManager |
+| Init/boot screen rendering (progress bar, checkmarks, error display) | ~150 | **`InitScreen`** or kept inline |
+| Session screen rendering (header, status/mode badges, config panel, messages) | ~250 | Core display logic — good |
+| Calibration screen rendering (intro, baseline, approach, success, failed, summary, complete, cancelled) | **~320** | **`CalibrationScreen`** — called only by CalibrationManager |
+| Legacy compatibility wrappers (`showBootScreen`, `updateStatus`, `showNetworkInfo`) | ~30 | Remove when callers are migrated |
+
+The calibration screens are the dominant extraction target. Eight methods totaling ~320 lines are called exclusively by CalibrationManager. They handle their own layout arithmetic (per-method ad-hoc pixel positions), their own progress bars, and their own text centering — none of which shares layout constants with the session screen. Extracting these into a `CalibrationScreen` class (or a separate file that DisplayManager delegates to) would bring DisplayManager.cpp down to ~550 lines.
+
+**InterruptManager** (1,152 total lines across .h/.cpp) performs 6 distinct jobs:
+
+| Responsibility | Lines (approx) | Should live in |
+|---|---|---|
+| Hardware initialization (MuxController, GPIO pins, event queue) | ~35 | Acceptable in InterruptManager |
+| Sensor calibration (baseline measurement via polling loop) | ~95 | Overlaps with CalibrationManager (Batch 3) — could share or delegate |
+| Per-sensor configuration (threshold calculation from calibration, register programming, verify-readback) | ~125 | Core logic — good, but verbose due to serial debug output |
+| ISR handling (3 trampolines + common handler) | ~30 | Core logic — good, properly minimal |
+| FreeRTOS processing task (ISR flag polling, sensor debug polling) | ~80 | Core logic, but debug polling should be conditional |
+| Event queue management (queue/dequeue/clear/stats) | ~50 | Could be a thin wrapper but not worth extracting at this size |
+
+The header is the bigger concern at 357 lines. It defines 5 data types (`InterruptEventType`, `InterruptEvent`, `InterruptMode`, `InterruptConfig`, `InterruptSessionStats`) plus the full class. `InterruptEvent` is already needed by `SessionManager.h` (noted in Batch 4), so extracting these types into `InterruptTypes.h` would break the transitive include chain and shrink the header to ~100 lines.
+
+**LEDController** (251 total lines) — well-scoped. Single responsibility (LED strip control + animation state). No splitting needed.
+
+**SerialStudioOutput** (285 total lines) — well-scoped. Frame accumulation, CSV emission, rate tracking. No splitting needed.
+
+#### 2. Concurrency Safety
+
+**a) InterruptManager: `_monitoring` is `volatile bool`, not `std::atomic<bool>`:**
+Written by Core 1 (`stopMonitoring()`), read by ISR context (`handleIsr()`) and the processing task (`processingTaskFunc()`). Same pattern as SensorManager's `stopRequested` (Batch 2). `volatile` does not guarantee memory ordering — `std::atomic<bool>` with `memory_order_relaxed` is the correct tool.
+
+**b) InterruptManager: `_stats.isrCount++` in ISR context without synchronization:**
+`isrCount` is a plain `uint32_t` incremented in `handleIsr()` (ISR context) and read by `getStats()` and `stopMonitoring()` on Core 1. On Xtensa LX7, a single-word read-modify-write is typically atomic in practice, but it's not guaranteed by C++. Should be `volatile uint32_t` at minimum, or `std::atomic<uint32_t>`.
+
+**c) InterruptManager: `_processingTask = nullptr` race in task self-deletion (line 689):**
+Same pattern flagged in SensorManager (Batch 2). The task sets `_processingTask = nullptr` then calls `vTaskDelete(NULL)`. Between those two instructions, `stopMonitoring()` could see `nullptr` and proceed while the task is still executing. The `stopMonitoring()` implementation polls with a 500ms timeout and force-deletes as fallback — functional but architecturally fragile. The proper pattern is a task notification or event group for the exit handshake.
+
+**d) InterruptManager: `_isrPending[]` timestamp loss on rapid re-trigger:**
+The ISR writes `_lastIsrTime[board]` unconditionally. If two ISRs fire on the same board before the processing task reads the flag, the first timestamp is overwritten. The processing task processes one event with the second timestamp — the first event's timing is lost. For direction detection where microsecond-level timing between sensors matters, this could degrade accuracy. A small ring buffer per board (e.g., 4 entries) would preserve rapid consecutive events.
+
+**e) InterruptManager: processing task accesses I2C bus without coordination with SensorManager:**
+The processing task (Core 1) reads sensors via `_mux.selectSensor()` + `_sensors[pos].readInterruptFlags()`. SensorManager's task (Core 0) also uses the I2C bus. The two cannot run simultaneously. Safety relies entirely on main.cpp never running both — neither class enforces the invariant. A shared I2C bus mutex or at minimum `assert(!sensorManager.isCollecting())` in `startMonitoring()` would catch violations.
+
+**f) InterruptManager: debug polling changes MUX state during active monitoring:**
+Lines 657-668 in `processingTaskFunc()` select a sensor via MUX and read proximity every 2 seconds. This changes the MUX state while the processing task may also need to handle an ISR event. The subsequent `processBoard()` call re-selects via `_mux.selectSensor()`, so the stale MUX state is overwritten — ultimately safe, but the debug poll adds I2C latency to the interrupt processing path.
+
+**g) DisplayManager: all rendering is Core 1 only — correct but unenforced:**
+`TFT_eSPI` is not thread-safe. All display calls originate from Core 1's `loop()` or MQTT callbacks (also Core 1). Safe in practice, but if any future code calls a display method from Core 0, it would corrupt the SPI bus. No compile-time or runtime enforcement exists.
+
+**h) LEDController: `FastLED.show()` not thread-safe:**
+FastLED accesses GPIO 16 via the RMT peripheral. All LED calls are from Core 1 currently — safe. Same unenforced invariant as DisplayManager.
+
+**i) LEDController: `showReady()` uses `static` local variables (lines 83-84):**
+`pulseValue` and `increasing` persist across calls with no reset mechanism. If `off()` is called between `showReady()` invocations, the pulse state is stale — it resumes from wherever it left off rather than restarting. These should be instance members reset in `off()`.
+
+**j) `extern bool serialStudioEnabled` — now in 5 files across the codebase:**
+LEDController.cpp (line 3) and SerialStudioOutput (via `_enabled` member — clean). Including Batches 2-4, this global appears in SensorManager, DirectionDetector, SessionManager, LEDController. A configuration/logging abstraction would eliminate all occurrences.
+
+#### 3. Interrupt Handling Patterns (InterruptManager)
+
+**a) ISR design is properly minimal — correct:**
+The ISRs only record a timestamp (`micros()`) and set a pending flag. No I2C, no queue operations, no serial output. This is the right pattern for ESP32 ISRs.
+
+**b) ISR-to-task communication via `volatile` polling instead of FreeRTOS notification — inefficient:**
+The processing task (lines 626-683) busy-loops with `taskYIELD()` when no ISR is pending. On a dual-core system, this means the task consumes all remaining Core 1 CPU time even when idle. The standard ESP32 pattern is `xTaskNotifyFromISR()` in the ISR + `xTaskNotifyWait()` in the task — the task sleeps at zero CPU cost until notified. This would also eliminate the latency introduced by `taskYIELD()` (which yields to equal-priority tasks, adding up to one tick period of delay before the task runs again).
+
+**c) No software debounce on GPIO interrupts:**
+The VCNL4040's hardware persistence setting provides some filtering, but there's no software-level debounce. If electrical noise causes rapid GPIO edges (especially during MUX switching — crosstalk between adjacent GPIO traces 11-13), every edge triggers an ISR and eventually generates an event. A minimum inter-interrupt interval check in `handleIsr()` (e.g., ignore if `micros() - _lastIsrTime[board] < 100`) would filter electrical noise without losing real events (VCNL4040's fastest measurement cycle is ~250µs at 1T/40 duty).
+
+**d) Three ISR trampolines are necessary:**
+`isrBoard1()`, `isrBoard2()`, `isrBoard3()` each forward to `handleIsr(N)` with a hardcoded board index. This is required because `attachInterrupt()` on ESP32 Arduino doesn't accept a user parameter. Correct and unavoidable pattern.
+
+**e) GPIO-to-board mapping is inverted and documented only in comments:**
+Lines 453-460: GPIO 11 maps to Board 2 (TCA channel 2), GPIO 12 to Board 1 (TCA channel 1), GPIO 13 to Board 0 (TCA channel 0) — the physical wiring inverts the numbering. This mapping is documented in comments but hardcoded in `attachInterrupt()` calls. A `const uint8_t GPIO_TO_BOARD_MAP[]` array would make this explicit and verifiable.
+
+#### 4. Error Handling
+
+**a) DisplayManager `init()` has no return value:**
+If `tft.init()` fails (wrong SPI configuration, hardware fault), there's no way for the caller to detect it. `init()` should return `bool` so the initialization orchestrator can report the failure. Currently, a display failure results in a black screen with no diagnostic output.
+
+**b) InterruptManager `calibrateSensors()` and `configure()` callable during active monitoring:**
+Neither method checks `_monitoring` before accessing the I2C bus. If called while the processing task is running, they'd compete for the MUX and I2C bus. `calibrateSensors()` uses blocking `delay()` calls that would stall whatever core it's called from while the processing task is selecting different sensors on the same bus. Both should refuse (return error) when `_monitoring` is true.
+
+**c) InterruptManager `begin()` silently succeeds if event queue already exists:**
+Lines 70-71: `if (_eventQueue == nullptr)` skips queue creation if it already exists. This means `begin()` can be called multiple times — but the second call skips GPIO configuration (already done) and MuxController reinitialization. The method should be idempotent or guard against double-init.
+
+**d) InterruptManager verbose serial output in `configureSensor()` (~30 lines of serial debug per sensor):**
+Lines 366-390 verify register values by reading back PS_CONF1_2, thresholds, and current proximity. This is useful during development but adds ~6ms of serial I/O per sensor (6 sensors = ~36ms) during every `configure()` call. Should be gated with `#ifdef DEBUG_INTERRUPTS` or a runtime flag.
+
+#### 5. Magic Numbers
+
+**DisplayManager:**
+
+| Value | Location(s) | Should be |
+|---|---|---|
+| `0x3186` | cpp lines 273, 281 | **`COLOR_DARK_BORDER`** — unnamed 16-bit RGB565 color |
+| `100` | init() line 14 | **`DISPLAY_POWER_UP_DELAY_MS`** |
+| `6` | lines 146, 204, 251, 460 | **`CHAR_WIDTH_PX`** — TFT_eSPI font width at text size 1 |
+| Various pixel offsets | calibration methods throughout | Ad-hoc layout: `SCREEN_WIDTH / 2 - 66`, `- 72`, `- 114`, `- 84`, `- 99`, `- 93`, `- 78`, `- 69`, `- 102`, `- 75`, `- 81`, `- 60`, `- 63`, `- 54`, `- 42`, `- 36`, `- 30`, `- 24`, `- 12` | These are manual text-centering calculations. A helper `drawCenteredString(text, y)` would eliminate all of them. |
+| Progress bar dimensions | calibration methods | Two different progress bar layouts: baseline (barX=40, barW=SCREEN_WIDTH-80, barH=20) vs approach (barX=20, barW=SCREEN_WIDTH-40, barH=16). Should be named or parameterized. |
+
+**InterruptManager:**
+
+| Value | Location(s) | Should be |
+|---|---|---|
+| `400000` | begin() line 61 | **`I2C_CLOCK_HZ`** (shared with SensorManager, Batch 2) |
+| `5` | calibrateSensors() line 121, configureSensor() line 278 | **`MUX_SETTLE_MS`** (same value in Batch 2) |
+| `50` | calibrateSensors() line 142 | **`SENSOR_STABILIZE_MS`** |
+| `40` | calibrateSensors() line 136, configureSensor() line 291 | **`DEFAULT_IR_DUTY_DENOMINATOR`** |
+| `16` | calibrateSensors() line 137, configureSensor() line 292 | **`PROX_RESOLUTION_BITS`** |
+| `4096` | startMonitoring() line 428 | **`INT_TASK_STACK_SIZE`** |
+| `1` | startMonitoring() line 430 | **`INT_TASK_PRIORITY`** |
+| `1` | startMonitoring() line 432 | **`INT_TASK_CORE`** |
+| `50` | processBoard() lines 715, 732 | **`MUX_MIN_SETTLE_US`** |
+| `200` | processingTaskFunc() line 664 | **`MUX_DEBUG_SETTLE_US`** |
+| `10` | stopMonitoring() line 491 | **`TASK_POLL_INTERVAL_MS`** |
+| `255` | processBoard() line 746 | **`SENSOR_ID_UNKNOWN`** |
+| `0x03`, `0x06`, `0x07` | configureSensor() lines 367, 381, 382 | Register constants already defined in VCNL4040.h — should use named constants |
+
+**LEDController:**
+
+| Value | Location(s) | Should be |
+|---|---|---|
+| `500` | update() line 147 | **`LED_FADE_DURATION_MS`** |
+| `50` | showReady() line 89 | **`LED_PULSE_MAX`** |
+| `10` | showReady() line 92 | **`LED_PULSE_MIN`** |
+| `2` | showReady() lines 88, 93 | **`LED_PULSE_STEP`** |
+| `3000` | showDirection() default parameter | **`LED_DEFAULT_DISPLAY_DURATION_MS`** |
+
+**SerialStudioOutput:**
+
+| Value | Location(s) | Should be |
+|---|---|---|
+| `1000` | update() line 67 | **`RATE_UPDATE_INTERVAL_MS`** |
+| `125.0f` | calculateSensorRate() line 177 | **`VCNL4040_BASE_IT_US`** |
+| `40` | calculateSensorRate() lines 188, 194 | **`DEFAULT_DUTY_DENOMINATOR`** (shared with InterruptManager) |
+
+#### 6. Dead Code & Unnecessary Includes
+
+**DisplayManager:**
+- **`configString` member** (header line 50): Set by `setConfigString()` but never read during rendering. It was replaced by the `cached*` config members. `setConfigString()` conditionally calls `drawSessionStatus()`, but `drawSessionStatus()` never uses `configString`. Dead state — remove both the member and the method.
+- **`CalibrationState` forward declaration** (header line 8): Never referenced in the header or implementation. Remove.
+- **`showBootScreen()`** (cpp line 512): Legacy wrapper that just calls `showInitScreen()`. Mark for removal when callers migrate.
+- **`updateStatus()`** (cpp line 517): Legacy wrapper that just calls `showMessage()`. Same.
+- **`showNetworkInfo()`** (cpp line 533): Called once during init. Could be inlined or kept as convenience.
+
+**InterruptManager:**
+- **`INT_PROCESSING_TIMEOUT_MS`** (header line 53): Defined as `10` but never used anywhere. Dead constant — remove.
+- **Debug polling block** (cpp lines 646-674): Development-time diagnostic code that reads sensor proximity every 2 seconds during active monitoring. Adds I2C latency and serial output to the interrupt processing path. Should be gated with `#ifdef DEBUG_INTERRUPTS`.
+
+**LEDController:**
+- **`#include "../detection/DirectionDetector.h"`** (header line 6): Only needs the `Direction` enum. Pulls the entire DirectionDetector → SensorManager → Adafruit_VCNL4040 transitive include chain. Should include `DetectionTypes.h` (recommended in Batch 3) once that extraction is done.
+
+**SerialStudioOutput:**
+- **`#include "../sensor/SensorManager.h"`** (header line 5): Only needs `SensorReading` and `NUM_SENSORS`. Same transitive include chain flagged in Batches 2, 3, and 4. Should use `SensorTypes.h` (recommended in Batch 3).
+
+#### 7. API Design
+
+**a) DisplayManager as a "god renderer" — every screen type is a method:**
+DisplayManager knows about init stages, session states, operating modes, calibration stages, sensor configuration, and detection configuration. Any new screen requires modifying DisplayManager. A screen/view abstraction (e.g., `IScreen` with `render()` / `update()`) would make display extensible, but at the cost of indirection. The pragmatic step is extracting the calibration screens (~320 lines) since they form a self-contained group with no shared state with the session screen.
+
+**b) DisplayManager `showCalibrationApproach()` — 5 parameters:**
+```cpp
+void showCalibrationApproach(uint8_t pcbId, uint16_t currentReading,
+    uint16_t threshold, uint8_t progress, uint32_t timeRemaining);
+```
+This method is called on every CalibrationManager update loop iteration. Each call does `clear()` + full screen redraw (874 lines, ~25 TFT draw calls), causing visible flicker. A partial-update approach (only redraw changed fields — reading, progress bar, time remaining) would eliminate flicker and reduce I/O.
+
+**c) DisplayManager `showCalibrationSummary()` — 6 parameters, boolean explosion:**
+```cpp
+void showCalibrationSummary(uint16_t threshold1, uint16_t threshold2,
+    uint16_t threshold3, bool valid1, bool valid2, bool valid3);
+```
+Should take a `const DeviceCalibration &` or a small struct instead of 6 positional parameters. The caller (CalibrationManager) already has this data in structured form.
+
+**d) InterruptManager `getMux()` exposes internal MuxController:**
+Returns a mutable reference to the MuxController. External code could change MUX state while the processing task is using the I2C bus. Should be removed or return `const MuxController &`.
+
+**e) InterruptManager singleton pattern via `_instance`:**
+The static `_instance` pointer (required for ISR access) is set unconditionally in the constructor — if a second InterruptManager is ever created, the first's ISRs break silently. The constructor should assert `_instance == nullptr` or use a proper singleton pattern.
+
+**f) SerialStudioOutput `setConfig()` takes non-const pointer:**
+`void setConfig(SensorConfiguration *config)` stores a mutable pointer but only reads from it. Should be `const SensorConfiguration *config`.
+
+**g) SerialStudioOutput `emitFrame()` format string is 30+ fields:**
+Lines 118-138: A single `Serial.printf()` call with 30 positional format arguments. Adding, removing, or reordering fields requires counting `%` specifiers manually. This is the most maintenance-hazardous line in the entire codebase. A field-by-field emission approach (multiple `Serial.print()` calls with delimiters) or a builder pattern would be safer, at the cost of more function calls.
+
+**h) LEDController redefines GPIO pin as local macro:**
+`LED_PIN 16` in `LEDController.h` duplicates `PIN_LED_STRIP_DATA 16` from `pin_config.h`. If the pin assignment changes, only one of the two would be updated. `LED_PIN` should be replaced with `PIN_LED_STRIP_DATA` (with an `#include "pin_config.h"`), or the macro should reference it: `#define LED_PIN PIN_LED_STRIP_DATA`.
+
+#### 8. Naming & Style
+
+**a) `_cachedSpeedMs` in SerialStudioOutput (header line 32):**
+Ambiguous — "Ms" reads as "milliseconds" but the value is meters per second. Should be `_cachedSpeedMps` or `_cachedTransitSpeed_mps`.
+
+**b) InterruptManager uses consistent `_prefix` naming — good.**
+All private members use `_prefix` (`_mux`, `_config`, `_monitoring`, `_stats`, etc.). Consistent with DirectionDetector and CalibrationManager conventions (Batch 3).
+
+**c) LEDController uses no-prefix naming:**
+Private members: `initialized`, `animationActive`, `animationStartTime`, `animationDuration`, `currentColor`, `leds`. No prefix at all — inconsistent with InterruptManager's `_prefix` and MLDetector's `suffix_`. Minor but contributes to cross-module inconsistency.
+
+**d) `#define` macros for LEDController constants:**
+`NUM_LEDS`, `LED_PIN`, `LED_TYPE`, `COLOR_ORDER`, `DEFAULT_BRIGHTNESS` are preprocessor macros. These pollute the global namespace and have no type safety. Should be `static constexpr` members of LEDController or namespace-scoped constants. `NUM_LEDS` in particular could collide with other libraries.
+
+**e) InterruptManager config constants use `#define` with `INT_` prefix:**
+`INT_EVENT_BUFFER_SIZE`, `INT_CALIBRATION_DURATION_MS`, etc. Same issue — should be `static constexpr` for type safety. The `INT_` prefix is also potentially confusing (reads as "integer" in some contexts).
+
+#### 9. Decomposition Recommendations
+
+Listed in priority order (highest impact first):
+
+| # | Extraction | What it achieves | Est. lines saved | Effort | Notes |
+|---|---|---|---|---|---|
+| 1 | **Replace `taskYIELD()` with `xTaskNotifyFromISR()`** | Eliminates CPU waste during interrupt monitoring. Processing task sleeps at zero cost until an ISR fires. Improves latency (notification is immediate vs next scheduler tick). | ~0 (behavior) | Small | High impact. Change `handleIsr()` to call `xTaskNotifyFromISR()`, change `processingTaskFunc()` loop to `xTaskNotifyWait()`. |
+| 2 | **Extract calibration screens from DisplayManager** | Move 8 `showCalibration*()` methods (~320 lines) into `CalibrationScreen` (new file or class). DisplayManager delegates to it. | ~320 | Small | Largest single extraction in this batch. Clean separation — calibration screens share no layout state with session screen. |
+| 3 | **Extract `InterruptTypes.h`** | Move `InterruptEventType`, `InterruptEvent`, `InterruptMode`, `InterruptConfig`, `InterruptSessionStats` out of `InterruptManager.h`. Breaks transitive include: `SessionManager.h` → `InterruptManager.h` → `MuxController.h` → `VCNL4040.h`. | ~100 from header | Small | SessionManager.h only needs `InterruptEvent`. DataTransmitter only needs `InterruptEvent`. Neither needs MuxController or VCNL4040. |
+| 4 | **Replace `volatile` with `std::atomic` in InterruptManager** | Fix `_monitoring` (ISR + task), add `volatile` to `_stats.isrCount`. Fix `_processingTask = nullptr` race (use task notification for exit handshake). | ~0 (correctness) | Small | Same pattern as Batch 2 recommendation #8 for SensorManager. Should be done in one pass across both components. |
+| 5 | **Gate debug polling with `#ifdef DEBUG_INTERRUPTS`** | Remove ~25 lines of debug polling from the hot path. Eliminates unnecessary I2C traffic and serial output during monitoring. | ~25 (conditional) | Trivial | Quick win. Also removes `INT_PROCESSING_TIMEOUT_MS` dead constant. |
+| 6 | **Add software debounce in `handleIsr()`** | Ignore ISRs within 100µs of the previous ISR on the same board. Filters electrical noise without losing real events. | ~5 | Trivial | `if (now - _lastIsrTime[board] < MIN_ISR_INTERVAL_US) return;` before writing the flag. |
+| 7 | **Fix LEDController pin/include issues** | Replace `#define LED_PIN 16` with `PIN_LED_STRIP_DATA` from `pin_config.h`. Replace `#include "DirectionDetector.h"` with `DetectionTypes.h` (after Batch 3 #2 is done). Convert remaining `#define` macros to `static constexpr`. | ~0 (correctness) | Trivial | Quick win. Eliminates pin duplication and heavy transitive include. |
+| 8 | **Fix LEDController `showReady()` static locals** | Move `pulseValue` and `increasing` to instance members. Reset in `off()`. | ~0 (correctness) | Trivial | Eliminates stale pulse state on mode transitions. |
+| 9 | **Add `drawCenteredString()` helper to DisplayManager** | Replace ~20 manual `SCREEN_WIDTH / 2 - (text.length() * 6 / 2)` calculations with a single helper. | ~0 (readability) | Trivial | Quick win. Reduces errors when changing text content. |
+| 10 | **Make `DisplayManager::init()` return `bool`** | Allow initialization orchestrator to detect display failure. | ~0 (safety) | Trivial | Currently a black screen is undiagnosable. |
+| 11 | **Remove dead `configString` from DisplayManager** | Delete `configString` member, `setConfigString()` method. | ~15 | Trivial | Dead state that's never rendered. |
+| 12 | **Replace `showCalibrationApproach()` full redraw with partial update** | Only redraw changed fields (reading value, progress bar fill, time remaining) instead of `clear()` + 25 draw calls per iteration. | ~0 (performance/UX) | Medium | Eliminates visible screen flicker during calibration approach phase. |
+| 13 | **Fix SerialStudioOutput `setConfig()` const-correctness** | Change parameter to `const SensorConfiguration *`. | ~0 (correctness) | Trivial | Matches read-only usage. |
+| 14 | **Guard InterruptManager `calibrateSensors()`/`configure()` during monitoring** | Add `if (_monitoring) return false;` at the top of both methods. | ~5 | Trivial | Prevents I2C bus collision if called at the wrong time. |
+
+**Recommended execution order:** #5 (gate debug polling) → #11 (remove dead configString) → #7 (fix LED pin/includes) → #8 (fix LED static locals) → #13 (SerialStudioOutput const) → #14 (guard calibrate/configure) → #10 (init return bool) → #6 (software debounce) → #4 (volatile→atomic, coordinate with Batch 2 #8) → #3 (InterruptTypes.h, coordinate with Batch 4 #8) → #9 (drawCenteredString) → #1 (xTaskNotify, highest-impact behavioral change) → #2 (extract calibration screens) → #12 (partial display update).
+
+**Key dependencies:**
+- Extraction #3 (`InterruptTypes.h`) enables Batch 4 #8 (`SensorTypes.h`) — both break heavy transitive include chains. Should be coordinated.
+- Extraction #7 (LED `DetectionTypes.h` include) depends on Batch 3 #2 (`DetectionTypes.h` extraction).
+- Extraction #4 (`volatile` → `std::atomic`) should be done in one pass with Batch 2 #8 (SensorManager's `stopRequested`) for consistency.
+- Extraction #1 (`xTaskNotify`) is the highest-impact behavioral fix. It's independent of other extractions and can be done at any time.
+
+After these changes, DisplayManager.cpp drops from ~874 to ~550 lines (calibration screens extracted). InterruptManager stays roughly the same line count but with cleaner header separation, correct concurrency primitives, and efficient task scheduling. LEDController and SerialStudioOutput need only minor fixes.
 
 ### Batch 6: Networking & Infrastructure
 
