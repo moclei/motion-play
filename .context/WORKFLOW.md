@@ -264,6 +264,6 @@ When working on an initiative:
 1. Commit any completed work to git with a descriptive message.
 2. Update TASKS.md so it accurately reflects what is done and what remains.
 3. Update PLAN.md if any decisions changed during the session.
-4. Stop. Do not push into a new phase if the session is long — let the next session start fresh from the docs.
+4. Stop. Do not push into a new phase if the session is long — let the next session start fresh from the docs. If you reach what you think is the end of a session, give a prompt for the next session to get started with.
 
 Context compression degrades quality. The initiative docs are the handoff between sessions. A fresh session that reads the three docs picks up exactly where the last one left off — this is always preferable to a compressed continuation.
