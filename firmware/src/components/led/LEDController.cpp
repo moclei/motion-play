@@ -1,6 +1,5 @@
 #include "LEDController.h"
-
-extern bool serialStudioEnabled;
+#include "debug_log.h"
 
 // Define static colors
 const CRGB LEDController::COLOR_A_TO_B = CRGB(0, 100, 255); // Blue

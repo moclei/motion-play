@@ -4,8 +4,7 @@
 #include <Arduino.h>
 #include <esp_heap_caps.h>
 #include <esp_system.h>
-
-extern bool serialStudioEnabled;
+#include "debug_log.h"
 
 /**
  * Memory monitoring utility for detecting heap exhaustion and memory leaks

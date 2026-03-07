@@ -1,6 +1,5 @@
 #include "DirectionDetector.h"
-
-extern bool serialStudioEnabled;
+#include "debug_log.h"
 
 DirectionDetector::DirectionDetector() : config() {}
 

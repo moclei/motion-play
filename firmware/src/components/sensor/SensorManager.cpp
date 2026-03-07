@@ -1,7 +1,6 @@
 #include "SensorManager.h"
 #include "../session/SessionManager.h" // For SessionSummary full definition
-
-extern bool serialStudioEnabled;
+#include "debug_log.h"
 
 SensorManager::SensorManager() : mux(0x70)
 {

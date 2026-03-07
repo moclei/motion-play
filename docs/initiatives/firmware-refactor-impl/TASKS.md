@@ -10,7 +10,7 @@ Creates shared infrastructure. Mostly new files and include changes — low risk
 - [x] **1.2** Create `firmware/include/detection_types.h` — extract `Direction`, `DetectionResult`, `DetectorConfig`, `WaveState`, `DetectorState` from `DirectionDetector.h`. Define `IDetector` interface.
 - [x] **1.3** Create `firmware/include/interrupt_types.h` — extract `InterruptEventType`, `InterruptEvent`, `InterruptMode`, `InterruptConfig`, `InterruptSessionStats` from `InterruptManager.h`.
 - [x] **1.4** Create `firmware/include/ring_buffer.h` — extract generic `RingBuffer<T,SIZE>` from `DirectionDetector.h`.
-- [ ] **1.5** Create `firmware/include/debug_log.h` — centralize `extern bool serialStudioEnabled` + `DEBUG_LOG(...)` macro. Replace 5 scattered `extern` declarations.
+- [x] **1.5** Create `firmware/include/debug_log.h` — centralize `extern bool serialStudioEnabled` + `DEBUG_LOG(...)` macro. Replace 5 scattered `extern` declarations.
 - [ ] **1.6** Create `firmware/include/constants.h` — shared constants: `I2C_CLOCK_HZ`, `MUX_SETTLE_MS`, `DEFAULT_IR_DUTY_DENOMINATOR`, `CONFIG_JSON_CAPACITY`, `CONFIG_FILE_PATH`, memory thresholds.
 - [ ] **1.7** Header cleanup — move `<LittleFS.h>`, `<ArduinoJson.h>` from headers to .cpp files. Add forward declarations. Remove unused includes (`<vector>` from DirectionDetector.h, `<ArduinoJson.h>` from SessionManager.h).
 - [ ] **1.8** Pin config cleanup — rename `PIN_IIC_*` → `PIN_I2C_*`. Remove dead SD card definitions. Replace `LED_PIN` macro in LEDController with `PIN_LED_STRIP_DATA`.
@@ -34,7 +34,7 @@ Targeted fixes — a few lines each. No structural changes.
 - [ ] **2.11** Remove dead code — all items listed in REPORT.md §9.
 - [ ] **2.12** Fix string accessor return types — `NetworkManager::getDeviceId()`, `getApiEndpoint()` return `const String&`.
 - [ ] **2.13** Guard calibrate/configure during monitoring — add `if (_monitoring) return false;` to InterruptManager.
-- [ ] **2.14** Conditional debug logging — gate PSRAMAllocator, InterruptManager debug, NetworkManager file listing with `#ifdef`.
+- [ ] **2.14** Conditional debug logging — gate PSRAMAllocator, InterruptManager debug, NetworkManager file listing with `#ifdef`. *(Also: adopt `DEBUG_LOG()` / `debugPrintEnabled()` from `debug_log.h` (created in 1.5) to replace ad-hoc `if (!serialStudioEnabled)` patterns in main.cpp, DirectionDetector, SessionManager, SensorManager, LEDController, MemoryMonitor.)*
 
 ## Phase 3: Structural Decomposition
 

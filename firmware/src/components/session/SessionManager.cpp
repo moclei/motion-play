@@ -1,7 +1,6 @@
 #include "SessionManager.h"
 #include "../sensor/SensorConfiguration.h"
-
-extern bool serialStudioEnabled;
+#include "debug_log.h"
 
 SessionManager::SessionManager()
 {
