@@ -1318,19 +1318,11 @@ Listed in priority order (highest impact first):
 
 After these changes, MQTTManager.cpp drops from ~300 to ~270 lines (dead callback removed, config loading delegated). NetworkManager.cpp drops from ~122 to ~70 lines (config loading delegated, debug listing removed). MemoryMonitor gains a proper .h/.cpp split. The transitive include chain `DataTransmitter.h` → `WiFi.h` is broken. The `extern bool serialStudioEnabled` global is centralized. Boot no longer blocks for 25-55 seconds on network failures.
 
-## Refactoring Strategy
+## Audit Complete
 
-Will be populated after the audit phase is complete, based on consolidated findings. Expected to include:
+All six batches analyzed. See REPORT.md for synthesized findings and follow-on initiative recommendations. The open questions that were listed here at the start of the audit have been answered by the batch analyses above:
 
-- Decomposition plan for main.cpp (likely the highest-impact change)
-- Module boundary cleanup
-- Shared types / common definitions extraction
-- Header restructuring
-- Specific per-module recommendations
-
-## Open Questions
-
-- How tightly coupled is main.cpp to component internals? (Determines difficulty of decomposition)
-- Are there circular dependencies between components?
-- What shared state exists between Core 0 and Core 1, and how is it protected?
-- Is there a consistent error handling pattern, or does each component do its own thing?
+- **How tightly coupled is main.cpp to component internals?** Very. 30+ mutable globals, 9 distinct responsibilities, direct member access across components. (Batch 1)
+- **Are there circular dependencies between components?** No true circular includes, but heavy transitive chains: `DataTransmitter.h` → `SessionManager.h` → `SensorManager.h` → `Adafruit_VCNL4040.h`. (Batches 4, 6)
+- **What shared state exists between Core 0 and Core 1, and how is it protected?** `stopRequested` (volatile, should be atomic), `sensorTask` handle (unprotected), `activeSummary` pointer (no barrier), `activeConfig` pointer (safe via shutdown ordering). (Batch 2)
+- **Is there a consistent error handling pattern?** No. Each component does its own thing: some use return codes, some print and continue, some block with `delay()` loops, some silently fail. (Batches 1, 4, 6)
