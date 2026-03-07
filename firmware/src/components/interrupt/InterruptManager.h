@@ -47,10 +47,10 @@
 // Configuration
 // ============================================================================
 
-#define INT_EVENT_BUFFER_SIZE 256
-#define INT_PROCESSING_TIMEOUT_MS 10
-#define INT_CALIBRATION_DURATION_MS 1000
-#define INT_CALIBRATION_SAMPLE_INTERVAL_MS 20
+static constexpr uint16_t INT_EVENT_BUFFER_SIZE           = 256;
+static constexpr uint32_t INT_PROCESSING_TIMEOUT_MS       = 10;   // Currently unused — kept for reference, removed in 2.11
+static constexpr uint32_t INT_CALIBRATION_DURATION_MS     = 1000;
+static constexpr uint32_t INT_CALIBRATION_SAMPLE_INTERVAL_MS = 20;
 
 // ============================================================================
 // InterruptManager Class

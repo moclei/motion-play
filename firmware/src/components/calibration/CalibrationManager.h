@@ -32,27 +32,28 @@
 #include "CalibrationData.h"
 #include "../sensor/SensorManager.h"
 #include "../display/DisplayManager.h"
+#include "pin_config.h"
 
 // ============================================================================
 // Configuration Constants
 // ============================================================================
 
-// Timing (milliseconds)
-#define CAL_INTRO_DURATION_MS 3000        // Intro screen duration
-#define CAL_BASELINE_DURATION_MS 600      // Baseline capture per PCB
-#define CAL_APPROACH_TIMEOUT_MS 10000     // Max wait for user to approach
-#define CAL_APPROACH_SUSTAIN_MS 500       // Sustained elevated readings needed
-#define CAL_SUCCESS_DISPLAY_MS 1500       // Show success before next step
-#define CAL_SUMMARY_MIN_DISPLAY_MS 2000   // Minimum summary display time
+// Timing
+static constexpr uint32_t CAL_INTRO_DURATION_MS      = 3000;
+static constexpr uint32_t CAL_BASELINE_DURATION_MS    = 600;
+static constexpr uint32_t CAL_APPROACH_TIMEOUT_MS     = 10000;
+static constexpr uint32_t CAL_APPROACH_SUSTAIN_MS     = 500;
+static constexpr uint32_t CAL_SUCCESS_DISPLAY_MS      = 1500;
+static constexpr uint32_t CAL_SUMMARY_MIN_DISPLAY_MS  = 2000;
 
 // Detection thresholds
-#define CAL_ELEVATED_MULTIPLIER 2.0f      // Reading must be 2× baseline to count as elevated
-#define CAL_MIN_ELEVATED_READING 10       // Minimum absolute reading to count as elevated
+static constexpr float    CAL_ELEVATED_MULTIPLIER     = 2.0f;
+static constexpr uint16_t CAL_MIN_ELEVATED_READING    = 10;
 
-// Button configuration
-#define CAL_BUTTON_HOLD_MS 3000           // Hold time to trigger calibration
-#define CAL_BUTTON_TRIGGER 0              // BOOT button (GPIO 0) - hold to trigger calibration
-#define CAL_BUTTON_CANCEL 14              // Right button (GPIO 14) - press to cancel
+// Button configuration (GPIOs from pin_config.h)
+static constexpr uint32_t CAL_BUTTON_HOLD_MS          = 3000;
+static constexpr uint8_t  CAL_BUTTON_TRIGGER          = PIN_BUTTON_2;  // BOOT button
+static constexpr uint8_t  CAL_BUTTON_CANCEL           = PIN_BUTTON_1;  // Right button
 
 // ============================================================================
 // State Machine

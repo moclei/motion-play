@@ -1,5 +1,14 @@
 #include "CalibrationManager.h"
 
+// Per-module constants (CalibrationManager)
+static constexpr uint32_t CAL_DISPLAY_UPDATE_INTERVAL_MS   = 50;
+static constexpr uint32_t CAL_APPROACH_DISPLAY_INTERVAL_MS = 100;
+static constexpr uint32_t CAL_READING_LOG_INTERVAL_MS      = 500;
+static constexpr uint32_t CAL_READ_FAIL_LOG_INTERVAL_MS    = 1000;
+static constexpr uint32_t CAL_FAILED_MIN_DISPLAY_MS        = 1000;
+static constexpr uint32_t CAL_TIMEOUT_SKIP_DISPLAY_MS      = 1500;
+static constexpr uint32_t CAL_CANCELLED_DISPLAY_MS         = 1500;
+
 // Global instances
 DeviceCalibration deviceCalibration;
 CalibrationManager calibrationManager;
@@ -21,7 +30,7 @@ CalibrationManager::CalibrationManager()
       _buttonWasPressed(false),
       _multiPulse(1),
       _integrationTime(1),
-      _ledCurrent(200)
+      _ledCurrent(CAL_DEFAULT_LED_CURRENT)
 {
     _calibration.reset();
 }
@@ -143,9 +152,8 @@ void CalibrationManager::handleBaseline()
         _baselineStats.addSample(reading);
     }
 
-    // Update display every 50ms
     static uint32_t lastDisplayUpdate = 0;
-    if (millis() - lastDisplayUpdate >= 50)
+    if (millis() - lastDisplayUpdate >= CAL_DISPLAY_UPDATE_INTERVAL_MS)
     {
         lastDisplayUpdate = millis();
         if (_display)
@@ -181,7 +189,7 @@ void CalibrationManager::handleApproach()
     {
         // Read failed - log periodically
         static uint32_t lastReadFailLog = 0;
-        if (millis() - lastReadFailLog > 1000)
+        if (millis() - lastReadFailLog > CAL_READ_FAIL_LOG_INTERVAL_MS)
         {
             lastReadFailLog = millis();
             Serial.printf("[CalibrationManager] PCB%d: Read failed!\n", _currentPCB);
@@ -200,7 +208,7 @@ void CalibrationManager::handleApproach()
 
     // Log readings periodically for debugging
     static uint32_t lastReadingLog = 0;
-    if (millis() - lastReadingLog > 500)
+    if (millis() - lastReadingLog > CAL_READING_LOG_INTERVAL_MS)
     {
         lastReadingLog = millis();
         Serial.printf("[CalibrationManager] PCB%d: reading=%d, baseline_max=%d, threshold=%.0f\n",
@@ -264,7 +272,7 @@ void CalibrationManager::handleApproach()
         {
             // Lost elevation - but don't reset stats, might come back
             // Only reset if we drop significantly
-            if (reading < baselineMax + 5)
+            if (reading < baselineMax + CAL_OVERLAP_MARGIN)
             {
                 _elevatedDetected = false;
                 Serial.printf("[CalibrationManager] PCB%d: Elevation lost, resetting\n", _currentPCB);
@@ -272,9 +280,8 @@ void CalibrationManager::handleApproach()
         }
     }
 
-    // Update display every 100ms (more stable visually)
     static uint32_t lastDisplayUpdate = 0;
-    if (millis() - lastDisplayUpdate >= 100)
+    if (millis() - lastDisplayUpdate >= CAL_APPROACH_DISPLAY_INTERVAL_MS)
     {
         lastDisplayUpdate = millis();
         if (_display)
@@ -298,7 +305,7 @@ void CalibrationManager::handleApproach()
         {
             _display->showCalibrationFailed(_currentPCB, "Timeout - skipping");
         }
-        delay(1500); // Brief pause to show failure
+        delay(CAL_TIMEOUT_SKIP_DISPLAY_MS);
         
         // Continue to next state instead of aborting
         transitionTo(getNextState());
@@ -375,7 +382,7 @@ void CalibrationManager::handleFailed()
     }
 
     // Wait for button press to acknowledge
-    if (elapsed >= 1000) // Minimum display time
+    if (elapsed >= CAL_FAILED_MIN_DISPLAY_MS)
     {
         if (digitalRead(CAL_BUTTON_TRIGGER) == LOW || digitalRead(CAL_BUTTON_CANCEL) == LOW)
         {
@@ -393,7 +400,7 @@ void CalibrationManager::handleCancelled()
         _display->showCalibrationCancelled();
     }
     
-    delay(1500); // Brief display
+    delay(CAL_CANCELLED_DISPLAY_MS);
     
     // Return to idle
     _state = CalibrationState::IDLE;
