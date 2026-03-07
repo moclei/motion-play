@@ -110,6 +110,12 @@ bool InterruptManager::begin()
 
 int InterruptManager::calibrateSensors()
 {
+    if (_monitoring)
+    {
+        Serial.println("InterruptManager: Cannot calibrate while monitoring is active");
+        return -1;
+    }
+
     Serial.println("\n╔══════════════════════════════════════════════════════════════════════════════╗");
     Serial.println("║              INTERRUPT MODE CALIBRATION (MAX Baseline Detection)             ║");
     Serial.println("╠══════════════════════════════════════════════════════════════════════════════╣");
@@ -232,6 +238,12 @@ void InterruptManager::setCalibration(const DeviceCalibration *cal)
 
 bool InterruptManager::configure(const InterruptConfig &config)
 {
+    if (_monitoring)
+    {
+        Serial.println("InterruptManager: Cannot configure while monitoring is active");
+        return false;
+    }
+
     Serial.println("InterruptManager: Configuring sensors for interrupt mode...");
 
     _config = config;
