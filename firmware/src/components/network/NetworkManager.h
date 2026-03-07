@@ -1,5 +1,4 @@
-#ifndef NETWORK_MANAGER_H
-#define NETWORK_MANAGER_H
+#pragma once
 
 #include <WiFi.h>
 #include <WiFiClientSecure.h>
@@ -24,5 +23,3 @@ public:
     String getDeviceId();
     String getApiEndpoint();
 };
-
-#endif

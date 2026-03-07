@@ -1,5 +1,4 @@
-#ifndef ML_DETECTOR_H
-#define ML_DETECTOR_H
+#pragma once
 
 #include <Arduino.h>
 #include "detection_types.h"
@@ -188,5 +187,3 @@ private:
     float getSmoothedA() const;
     float getSmoothedB() const;
 };
-
-#endif // ML_DETECTOR_H

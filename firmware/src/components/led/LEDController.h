@@ -1,5 +1,4 @@
-#ifndef LED_CONTROLLER_H
-#define LED_CONTROLLER_H
+#pragma once
 
 #include <Arduino.h>
 #include <FastLED.h>
@@ -85,6 +84,4 @@ public:
      */
     bool isAnimating() const;
 };
-
-#endif
 

@@ -1,5 +1,4 @@
-#ifndef SERIAL_STUDIO_OUTPUT_H
-#define SERIAL_STUDIO_OUTPUT_H
+#pragma once
 
 #include <Arduino.h>
 #include <vector>
@@ -84,5 +83,3 @@ public:
      */
     void resetIndex();
 };
-
-#endif

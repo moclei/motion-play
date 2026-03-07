@@ -1,5 +1,4 @@
-#ifndef SENSOR_MANAGER_H
-#define SENSOR_MANAGER_H
+#pragma once
 
 #include <Arduino.h>
 #include <vector>
@@ -114,5 +113,3 @@ public:
     bool calibrateProximityCancellation();          // Calibrate PS_CANC for all sensors (cover offset)
     uint16_t getBaselineValue(uint8_t sensorIndex); // Get stored baseline for a sensor
 };
-
-#endif

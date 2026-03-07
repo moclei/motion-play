@@ -1,5 +1,4 @@
-#ifndef MEMORY_MONITOR_H
-#define MEMORY_MONITOR_H
+#pragma once
 
 #include <Arduino.h>
 #include <esp_heap_caps.h>
@@ -139,5 +138,3 @@ public:
                       freeHeap / 1024, freePSRAM / 1024);
     }
 };
-
-#endif // MEMORY_MONITOR_H

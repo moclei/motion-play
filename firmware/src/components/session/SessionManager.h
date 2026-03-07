@@ -1,5 +1,4 @@
-#ifndef SESSION_MANAGER_H
-#define SESSION_MANAGER_H
+#pragma once
 
 #include <Arduino.h>
 #include <vector>
@@ -130,5 +129,3 @@ public:
     const SessionSummary &getSessionSummary() const { return sessionSummary; }
     void finalizeSessionSummary(const SensorConfiguration *config, uint8_t numActiveSensors);
 };
-
-#endif

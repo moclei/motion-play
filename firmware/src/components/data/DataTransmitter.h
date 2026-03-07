@@ -1,5 +1,4 @@
-#ifndef DATA_TRANSMITTER_H
-#define DATA_TRANSMITTER_H
+#pragma once
 
 #include <Arduino.h>
 #include <ArduinoJson.h>
@@ -83,5 +82,3 @@ public:
                                 const String &sessionId,
                                 const String &deviceId);
 };
-
-#endif

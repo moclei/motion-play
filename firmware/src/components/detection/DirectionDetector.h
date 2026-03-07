@@ -1,5 +1,4 @@
-#ifndef DIRECTION_DETECTOR_H
-#define DIRECTION_DETECTOR_H
+#pragma once
 
 #include <Arduino.h>
 #include "ring_buffer.h"
@@ -124,5 +123,3 @@ public:
 
     void debugPrint() const;
 };
-
-#endif

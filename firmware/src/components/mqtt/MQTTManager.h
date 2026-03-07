@@ -1,5 +1,4 @@
-#ifndef MQTT_MANAGER_H
-#define MQTT_MANAGER_H
+#pragma once
 
 #include <PubSubClient.h>
 #include <ArduinoJson.h>
@@ -42,5 +41,3 @@ public:
     bool publishDataStreaming(const JsonDocument &data);
     void setCallback(std::function<void(char *, byte *, unsigned int)> callback);
 };
-
-#endif

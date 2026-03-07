@@ -1,5 +1,4 @@
-#ifndef SENSOR_CONFIGURATION_H
-#define SENSOR_CONFIGURATION_H
+#pragma once
 
 #include <Arduino.h>
 
@@ -45,5 +44,3 @@ struct SensorConfiguration
     // Note: Configuration is applied during sensor initialization.
     // Dynamic reconfiguration requires sensor reinitialization.
 };
-
-#endif

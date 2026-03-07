@@ -1,5 +1,4 @@
-#ifndef PSRAM_ALLOCATOR_H
-#define PSRAM_ALLOCATOR_H
+#pragma once
 
 #include <Arduino.h>
 #include <cstddef>
@@ -94,5 +93,3 @@ bool operator!=(const PSRAMAllocator<T1> &, const PSRAMAllocator<T2> &) noexcept
 {
     return false;
 }
-
-#endif // PSRAM_ALLOCATOR_H

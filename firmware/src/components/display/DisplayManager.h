@@ -1,5 +1,4 @@
-#ifndef DISPLAY_MANAGER_H
-#define DISPLAY_MANAGER_H
+#pragma once
 
 #include <TFT_eSPI.h>
 
@@ -127,5 +126,3 @@ public:
     void showCalibrationComplete();
     void showCalibrationCancelled();
 };
-
-#endif
