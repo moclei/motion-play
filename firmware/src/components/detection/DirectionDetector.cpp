@@ -244,18 +244,8 @@ DetectionResult DirectionDetector::getResult()
     result.detectedModule = bestModule + 1; // 1-indexed
     result.modulesDetected = modulesDetected;
 
-    // Baseline from rolling buffer mean
-    float sumA = 0, sumB = 0;
-    for (size_t i = 0; i < sensors[posA].baselineBuffer.size(); i++)
-        sumA += sensors[posA].baselineBuffer[i];
-    for (size_t i = 0; i < sensors[posB].baselineBuffer.size(); i++)
-        sumB += sensors[posB].baselineBuffer[i];
-    result.baselineA = sensors[posA].baselineBuffer.size() > 0
-                           ? sumA / sensors[posA].baselineBuffer.size()
-                           : 0;
-    result.baselineB = sensors[posB].baselineBuffer.size() > 0
-                           ? sumB / sensors[posB].baselineBuffer.size()
-                           : 0;
+    result.baselineA = sensors[posA].baselineBuffer.getMean();
+    result.baselineB = sensors[posB].baselineBuffer.getMean();
 
     // Confidence scoring
     float gapConfidence = min(1.0f, (float)result.comGapMs / 50.0f);
