@@ -2,6 +2,7 @@
 #include <Adafruit_VCNL4040.h>
 #include <HTTPClient.h>
 #include <ArduinoJson.h>
+#include "components/config/ConfigLoader.h"
 #include "components/network/NetworkManager.h"
 #include "components/mqtt/MQTTManager.h"
 #include "components/display/DisplayManager.h"
@@ -314,14 +315,16 @@ void initializeSystem()
     // --- Phase 1: Network (WiFi → MQTT → cloud config) ---
     // Done first so we have the real sensor config before initializing hardware.
 
-    Serial.println("Loading WiFi config...");
-    if (!networkManager.loadConfig())
+    Serial.println("Loading device config...");
+    ConfigLoader configLoader;
+    if (!configLoader.load())
     {
         Serial.println("ERROR: Config failed!");
         display.setInitError("Config load failed!");
         while (1)
             delay(1000);
     }
+    networkManager.applyConfig(configLoader.getConfig());
     Serial.println("Config loaded successfully");
 
     Serial.println("Connecting to WiFi...");
@@ -339,7 +342,7 @@ void initializeSystem()
     mqttManager = new MQTTManager(&networkManager);
 
     Serial.println("Loading MQTT config...");
-    if (!mqttManager->loadConfig())
+    if (!mqttManager->applyConfig(configLoader.getConfig()))
     {
         Serial.println("ERROR: MQTT config failed!");
         display.setInitError("MQTT config failed!");

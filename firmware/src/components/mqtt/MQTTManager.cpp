@@ -1,5 +1,6 @@
 #include "MQTTManager.h"
 #include "../network/NetworkManager.h"
+#include "../config/ConfigLoader.h"
 #include <LittleFS.h>
 #include "constants.h"
 
@@ -8,30 +9,17 @@ MQTTManager::MQTTManager(NetworkManager *netManager) : networkManager(netManager
     mqttClient.setClient(networkManager->getClient());
 }
 
-bool MQTTManager::loadConfig()
+bool MQTTManager::applyConfig(const DeviceConfig& config)
 {
-    File configFile = LittleFS.open(CONFIG_FILE_PATH, "r");
-    if (!configFile)
-        return false;
+    broker = config.mqttBroker;
+    port = config.mqttPort;
+    clientId = config.mqttClientId;
+    deviceId = config.deviceId;
 
-    DynamicJsonDocument doc(CONFIG_JSON_CAPACITY);
-    DeserializationError error = deserializeJson(doc, configFile);
-    configFile.close();
-
-    if (error)
-        return false;
-
-    broker = doc["mqtt"]["broker"].as<String>();
-    port = doc["mqtt"]["port"];
-    clientId = doc["mqtt"]["client_id"].as<String>();
-    deviceId = doc["device_id"].as<String>();
-
-    // Set up topics
     statusTopic = String(MQTT_TOPIC_PREFIX) + deviceId + "/status";
     dataTopic = String(MQTT_TOPIC_PREFIX) + deviceId + "/data";
     commandTopic = String(MQTT_TOPIC_PREFIX) + deviceId + "/commands";
 
-    // Load certificates
     if (!loadCertificates())
     {
         Serial.println("Failed to load certificates");
@@ -40,7 +28,6 @@ bool MQTTManager::loadConfig()
 
     mqttClient.setServer(broker.c_str(), port);
 
-    // Set buffer size for data payloads (default is 256 bytes)
     // 32KB covers the largest JSON batch (200 readings at ~80 bytes each).
     // Binary-packed captures (~56KB) use the streaming publishData overload instead.
     mqttClient.setBufferSize(32768);

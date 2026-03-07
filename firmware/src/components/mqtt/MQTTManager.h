@@ -4,6 +4,7 @@
 #include <ArduinoJson.h>
 
 class NetworkManager;
+struct DeviceConfig;
 
 class MQTTManager
 {
@@ -29,7 +30,7 @@ private:
 
 public:
     MQTTManager(NetworkManager *netManager);
-    bool loadConfig();
+    bool applyConfig(const DeviceConfig& config);
     bool connect();
     void disconnect();
     bool isConnected();

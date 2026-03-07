@@ -3,6 +3,8 @@
 #include <WiFi.h>
 #include <WiFiClientSecure.h>
 
+struct DeviceConfig;
+
 class NetworkManager {
 private:
     String ssid;
@@ -14,7 +16,7 @@ private:
 
 public:
     NetworkManager();
-    bool loadConfig();
+    void applyConfig(const DeviceConfig& config);
     bool connectWiFi();
     void disconnect();
     bool isConnected();
