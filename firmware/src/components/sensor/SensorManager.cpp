@@ -3,26 +3,11 @@
 #include "constants.h"
 #include "debug_log.h"
 
-SensorManager::SensorManager() : mux(0x70)
+SensorManager::SensorManager()
 {
-    // Constructor
+    // Constructor — MuxController default-constructs with TCA address 0x70
 }
 
-void SensorManager::cleanupI2CBus()
-{
-    // Disable all multiplexer channels to release the I2C bus
-    // IMPORTANT: Must select each TCA channel before disabling its PCA!
-    for (int i = 0; i < 3; i++)
-    {
-        mux.selectChannel(i);
-        delay(2);
-        pca_instances[i].disableAllChannels();
-    }
-    mux.disableAllChannels();
-
-    // Small delay to ensure bus is stable
-    delayMicroseconds(100);
-}
 
 // ============================================================================
 // PS_CANC Baseline Calibration
@@ -37,24 +22,12 @@ void SensorManager::cleanupI2CBus()
 
 bool SensorManager::calibrateSensorBaseline(uint8_t sensorIndex)
 {
-    if (sensorIndex >= NUM_SENSORS || !sensorsActive[sensorIndex])
+    if (sensorIndex >= NUM_SENSORS || !muxController.isSensorAvailable(sensorIndex))
         return false;
 
-    uint8_t tca_ch = sensorMapping[sensorIndex].tca_channel;
-    uint8_t pca_ch = sensorMapping[sensorIndex].pca_channel;
-
-    // Select TCA channel for this sensor board
-    if (!mux.selectChannel(tca_ch))
+    if (!muxController.selectSensor(sensorIndex))
     {
-        Serial.printf("  Calibration: Failed to select TCA channel %d\n", tca_ch);
-        return false;
-    }
-    delay(5);
-
-    // Select PCA channel on the sensor board
-    if (!pca_instances[tca_ch].selectChannel(pca_ch))
-    {
-        Serial.printf("  Calibration: Failed to select PCA channel %d\n", pca_ch);
+        Serial.printf("  Calibration: Failed to select sensor %d\n", sensorIndex);
         return false;
     }
     delay(5);
@@ -68,12 +41,12 @@ bool SensorManager::calibrateSensorBaseline(uint8_t sensorIndex)
     for (int i = 0; i < NUM_SAMPLES; i++)
     {
         // Read proximity directly via I2C
-        Wire.beginTransmission(0x60);
+        Wire.beginTransmission(VCNL4040_ADDR);
         Wire.write(0x08); // PS_DATA register
         if (Wire.endTransmission(false) != 0)
             continue;
 
-        Wire.requestFrom((uint8_t)0x60, (uint8_t)2);
+        Wire.requestFrom((uint8_t)VCNL4040_ADDR, (uint8_t)2);
         if (Wire.available() >= 2)
         {
             uint8_t prox_low = Wire.read();
@@ -95,8 +68,7 @@ bool SensorManager::calibrateSensorBaseline(uint8_t sensorIndex)
     uint16_t baseline = sum / validSamples;
     baselineValues[sensorIndex] = baseline;
 
-    // Write to PS_CANC register (0x05) - this value is subtracted from all readings
-    Wire.beginTransmission(0x60);
+    Wire.beginTransmission(VCNL4040_ADDR);
     Wire.write(0x05);                   // PS_CANC register
     Wire.write(baseline & 0xFF);        // Low byte
     Wire.write((baseline >> 8) & 0xFF); // High byte
@@ -108,12 +80,11 @@ bool SensorManager::calibrateSensorBaseline(uint8_t sensorIndex)
         return false;
     }
 
-    // Verify by reading back
     delay(5);
-    Wire.beginTransmission(0x60);
+    Wire.beginTransmission(VCNL4040_ADDR);
     Wire.write(0x05);
     Wire.endTransmission(false);
-    Wire.requestFrom((uint8_t)0x60, (uint8_t)2);
+    Wire.requestFrom((uint8_t)VCNL4040_ADDR, (uint8_t)2);
     uint8_t verify_low = Wire.available() ? Wire.read() : 0xFF;
     uint8_t verify_high = Wire.available() ? Wire.read() : 0xFF;
     uint16_t verify_value = (verify_high << 8) | verify_low;
@@ -142,16 +113,17 @@ bool SensorManager::calibrateProximityCancellation()
 
     for (int i = 0; i < NUM_SENSORS; i++)
     {
-        if (!sensorsActive[i])
+        SensorPosition pos = muxController.getSensorPosition(i);
+
+        if (!muxController.isSensorAvailable(i))
         {
             Serial.printf("║ Sensor %d (P%dS%d): SKIPPED (not active)                                       ║\n",
-                          i, sensorMapping[i].tca_channel + 1, sensorMapping[i].pca_channel + 1);
+                          i, pos.pcbId, pos.side);
             continue;
         }
 
         char sensorName[8];
-        snprintf(sensorName, sizeof(sensorName), "P%dS%d",
-                 sensorMapping[i].tca_channel + 1, sensorMapping[i].pca_channel + 1);
+        snprintf(sensorName, sizeof(sensorName), "P%dS%d", pos.pcbId, pos.side);
 
         Serial.printf("║ Sensor %d (%-4s): Calibrating...                                              ║\n", i, sensorName);
 
@@ -172,14 +144,7 @@ bool SensorManager::calibrateProximityCancellation()
         taskYIELD();
     }
 
-    // Clean up multiplexer channels
-    for (int i = 0; i < 3; i++)
-    {
-        mux.selectChannel(i);
-        delay(2);
-        pca_instances[i].disableAllChannels();
-    }
-    mux.disableAllChannels();
+    muxController.disableAll();
 
     Serial.println("╠══════════════════════════════════════════════════════════════════════════════╣");
     Serial.printf("║ RESULT: %d sensors calibrated, %d failed                                       ║\n",
@@ -297,21 +262,18 @@ bool SensorManager::applySensorConfig(uint8_t sensorIndex)
                        0x00;                         // PS_SD = 0 (proximity enabled)
     uint8_t ps_conf2 = (highRes ? 0x08 : 0x00);      // PS_HD in bit 3
 
-    Wire.beginTransmission(0x60);
+    Wire.beginTransmission(VCNL4040_ADDR);
     Wire.write(0x03);
     Wire.write(ps_conf1);
     Wire.write(ps_conf2);
     uint8_t err1 = Wire.endTransmission();
 
-    delayMicroseconds(500); // Allow register to settle
+    delayMicroseconds(500);
 
-    // Step 2: Configure PS_CONF3/PS_MS register (0x04)
-    // PS_CONF3 (low byte): bits 6:5 = PS_MPS (multi-pulse), other bits default off
-    // PS_MS (high byte): bits 2:0 = LED_I
-    uint8_t ps_conf3 = (multiPulse & 0x03) << 5; // PS_MPS in bits 6:5 (1, 2, 4, or 8 pulses)
-    uint8_t ps_ms = (led & 0x07);                // LED_I in bits 2:0, White channel enabled (bit 7 = 0)
+    uint8_t ps_conf3 = (multiPulse & 0x03) << 5;
+    uint8_t ps_ms = (led & 0x07);
 
-    Wire.beginTransmission(0x60);
+    Wire.beginTransmission(VCNL4040_ADDR);
     Wire.write(0x04);
     Wire.write(ps_conf3);
     Wire.write(ps_ms);
@@ -323,11 +285,10 @@ bool SensorManager::applySensorConfig(uint8_t sensorIndex)
     // Step 3: Verify by reading back - add longer delay for register to fully settle
     delay(10);
 
-    // Read PS_CONF3/PS_MS (0x04)
-    Wire.beginTransmission(0x60);
+    Wire.beginTransmission(VCNL4040_ADDR);
     Wire.write(0x04);
     Wire.endTransmission(false);
-    Wire.requestFrom((uint8_t)0x60, (uint8_t)2);
+    Wire.requestFrom((uint8_t)VCNL4040_ADDR, (uint8_t)2);
     uint8_t verify_low = Wire.available() ? Wire.read() : 0xFF;
     uint8_t verify_high = Wire.available() ? Wire.read() : 0xFF;
 
@@ -346,7 +307,7 @@ bool SensorManager::applySensorConfig(uint8_t sensorIndex)
         Serial.println("  Retrying LED current write...");
         delay(50);
 
-        Wire.beginTransmission(0x60);
+        Wire.beginTransmission(VCNL4040_ADDR);
         Wire.write(0x04);
         Wire.write(ps_conf3);
         Wire.write(ps_ms);
@@ -354,11 +315,10 @@ bool SensorManager::applySensorConfig(uint8_t sensorIndex)
 
         delay(20);
 
-        // Verify again
-        Wire.beginTransmission(0x60);
+        Wire.beginTransmission(VCNL4040_ADDR);
         Wire.write(0x04);
         Wire.endTransmission(false);
-        Wire.requestFrom((uint8_t)0x60, (uint8_t)2);
+        Wire.requestFrom((uint8_t)VCNL4040_ADDR, (uint8_t)2);
         verify_low = Wire.available() ? Wire.read() : 0xFF;
         verify_high = Wire.available() ? Wire.read() : 0xFF;
         actual_led = verify_high & 0x07;
@@ -381,11 +341,10 @@ void SensorManager::debugI2CScan()
     Serial.println("║                        I2C DEBUG SCAN - TROUBLESHOOTING                      ║");
     Serial.println("╠══════════════════════════════════════════════════════════════════════════════╣");
 
-    // First, scan the main I2C bus BEFORE any TCA channel selection
     Serial.println("║ STEP 1: Scanning main I2C bus (no TCA channel selected)                      ║");
     Serial.println("╠══════════════════════════════════════════════════════════════════════════════╣");
 
-    mux.disableAllChannels();
+    muxController.disableAll();
     delay(10);
 
     int mainBusDevices = 0;
@@ -402,7 +361,7 @@ void SensorManager::debugI2CScan()
                 deviceName = "TCA9548A (main mux)";
             else if (addr >= 0x71 && addr <= 0x77)
                 deviceName = "Possible PCA9546A";
-            else if (addr == 0x60)
+            else if (addr == VCNL4040_ADDR)
                 deviceName = "VCNL4040";
 
             Serial.printf("║   Found device at 0x%02X - %s                            \n", addr, deviceName);
@@ -427,14 +386,13 @@ void SensorManager::debugI2CScan()
     {
         Serial.printf("║ TCA Channel %d:                                                              \n", tca_ch);
 
-        // Select TCA channel
-        if (!mux.selectChannel(tca_ch))
+        if (!muxController.selectTCAChannel(tca_ch))
         {
             Serial.println("║   ⚠️ Failed to select this channel!                                         ║");
             continue;
         }
 
-        delay(20); // Longer delay for channel settling
+        delay(20);
 
         // Scan for devices on this channel
         int channelDevices = 0;
@@ -455,7 +413,7 @@ void SensorManager::debugI2CScan()
                     deviceName = "PCA9546A?";
                 else if (addr == 0x74)
                     deviceName = "PCA9546A (expected addr)";
-                else if (addr == 0x60)
+                else if (addr == VCNL4040_ADDR)
                     deviceName = "VCNL4040";
 
                 Serial.printf("║   ✓ Found: 0x%02X (%s)                                  \n", addr, deviceName);
@@ -468,15 +426,13 @@ void SensorManager::debugI2CScan()
         }
     }
 
-    mux.disableAllChannels();
+    muxController.disableAll();
 
-    // Additional diagnostics
     Serial.println("╠══════════════════════════════════════════════════════════════════════════════╣");
     Serial.println("║ STEP 3: Direct PCA9546A address probe at 0x74 on TCA channel 0               ║");
     Serial.println("╠══════════════════════════════════════════════════════════════════════════════╣");
 
-    // Try to select TCA channel 0 and probe 0x74 specifically with detailed error codes
-    if (mux.selectChannel(0))
+    if (muxController.selectTCAChannel(0))
     {
         Serial.println("║   TCA channel 0 selected successfully                                       ║");
         delay(50); // Extra long delay
@@ -546,7 +502,7 @@ void SensorManager::debugI2CScan()
         Serial.println("║   ⚠️ Failed to select TCA channel 0!                                         ║");
     }
 
-    mux.disableAllChannels();
+    muxController.disableAll();
 
     Serial.println("╠══════════════════════════════════════════════════════════════════════════════╣");
     Serial.println("║ DEBUG SCAN COMPLETE - Check results above for clues                          ║");
@@ -554,76 +510,6 @@ void SensorManager::debugI2CScan()
     Serial.println();
 }
 
-bool SensorManager::initializePCA()
-{
-    Serial.println("Scanning for PCA9546A multiplexers on TCA channels...");
-
-    int pca_found_count = 0;
-
-    // Scan all 3 TCA channels for sensor boards
-    for (int tca_ch = 0; tca_ch < 3; tca_ch++)
-    {
-        Serial.print("  Scanning TCA channel ");
-        Serial.println(tca_ch);
-
-        // Select TCA channel
-        if (!mux.selectChannel(tca_ch))
-        {
-            Serial.println("    ERROR: Failed to select TCA channel");
-            continue;
-        }
-
-        delay(10);
-
-        // Try common PCA9546A addresses
-        uint8_t test_addresses[] = {0x74, 0x75, 0x76, 0x72, 0x71, 0x73, 0x77};
-        bool pca_found = false;
-        uint8_t working_address = 0;
-
-        for (int i = 0; i < 7; i++)
-        {
-            uint8_t test_addr = test_addresses[i];
-
-            PCA9546A test_pca(test_addr);
-            if (test_pca.begin())
-            {
-                Serial.print("    PCA9546A found at 0x");
-                Serial.println(test_addr, HEX);
-                working_address = test_addr;
-                pca_found = true;
-                test_pca.disableAllChannels();
-                break;
-            }
-        }
-
-        if (pca_found)
-        {
-            // Update PCA instance for this TCA channel
-            pca_addresses[tca_ch] = working_address;
-            pca_instances[tca_ch] = PCA9546A(working_address);
-            pca_instances[tca_ch].disableAllChannels();
-            pca_found_count++;
-        }
-        else
-        {
-            Serial.println("    No PCA found on this channel");
-        }
-    }
-
-    mux.disableAllChannels();
-
-    Serial.print("Found ");
-    Serial.print(pca_found_count);
-    Serial.println(" sensor board(s)");
-
-    if (pca_found_count == 0)
-    {
-        Serial.println("ERROR: No PCA9546A multiplexers found!");
-        return false;
-    }
-
-    return true;
-}
 
 bool SensorManager::init(SensorConfiguration *config)
 {
@@ -631,11 +517,6 @@ bool SensorManager::init(SensorConfiguration *config)
 
     // Store configuration reference
     activeConfig = config;
-
-    // Initialize I2C
-    Wire.begin(43, 44);    // SDA=43, SCL=44 for T-Display S3
-    Wire.setClock(I2C_CLOCK_HZ);
-    Serial.println("I2C clock set to 400 kHz");
 
     if (activeConfig != nullptr)
     {
@@ -647,112 +528,41 @@ bool SensorManager::init(SensorConfiguration *config)
         Serial.printf("  Read Ambient: %s\n", activeConfig->read_ambient ? "enabled" : "disabled");
     }
 
-    // Initialize TCA9548A multiplexer
-    if (!mux.begin())
+    // Initialize MuxController (handles I2C init, TCA9548A, PCA9546A scanning, sensor detection)
+    if (!muxController.begin(43, 44, I2C_CLOCK_HZ))
     {
-        Serial.println("ERROR: Failed to initialize TCA9548A");
+        Serial.println("ERROR: MuxController initialization failed (no sensors found)");
         return false;
     }
-    Serial.println("TCA9548A initialized");
 
 #if STARTUP_I2C_SCAN
     debugI2CScan();
 #endif
 
-    // Initialize PCA9546A multiplexers
-    if (!initializePCA())
-    {
-        Serial.println("ERROR: PCA initialization failed!");
-        return false;
-    }
-
     delay(50);
 
-    // Initialize all VCNL4040 sensors
+    // Configure all detected VCNL4040 sensors
     int sensors_initialized = 0;
 
     for (int i = 0; i < NUM_SENSORS; i++)
     {
-        uint8_t tca_ch = sensorMapping[i].tca_channel;
-        uint8_t pca_ch = sensorMapping[i].pca_channel;
+        SensorPosition pos = muxController.getSensorPosition(i);
 
-        Serial.print("Initializing sensor ");
-        Serial.print(i);
-        Serial.print(" (P");
-        Serial.print(tca_ch + 1);
-        Serial.print("S");
-        Serial.print(pca_ch + 1);
-        Serial.println(")...");
+        Serial.printf("Initializing sensor %d (%s)...\n", i, pos.getName().c_str());
 
-        // Skip if no PCA was found on this TCA channel
-        if (pca_addresses[tca_ch] == 0)
+        if (!muxController.isSensorAvailable(i))
         {
-            Serial.println("  No sensor board on this channel");
-            sensorsActive[i] = false;
+            Serial.println("  No sensor detected at this position");
             continue;
         }
 
-        // Select TCA channel for this sensor board
-        if (!mux.selectChannel(tca_ch))
+        if (!muxController.selectSensor(i))
         {
-            Serial.println("  ERROR: Failed to select TCA channel");
-            sensorsActive[i] = false;
+            Serial.println("  ERROR: Failed to select sensor via mux");
             continue;
         }
 
         delay(5);
-
-        // Select PCA channel on the sensor board
-        if (!pca_instances[tca_ch].selectChannel(pca_ch))
-        {
-            Serial.println("  ERROR: Failed to select PCA channel");
-            sensorsActive[i] = false;
-            continue;
-        }
-
-        delay(5);
-
-        // Check if VCNL4040 responds at standard address 0x60
-        Wire.beginTransmission(0x60);
-        byte error = Wire.endTransmission();
-        if (error != 0)
-        {
-            Serial.print("  ERROR: No VCNL4040 at 0x60 (I2C error: ");
-            Serial.print(error);
-            Serial.println(")");
-            sensorsActive[i] = false;
-            continue;
-        }
-
-        // Initialize VCNL4040 - just verify device ID, don't use Adafruit library's begin()
-        // The Adafruit library's begin() and subsequent calls were resetting our config!
-
-        // Read device ID to verify sensor is present
-        Wire.beginTransmission(0x60);
-        Wire.write(0x0C); // Device ID register
-        Wire.endTransmission(false);
-        Wire.requestFrom(0x60, 2);
-
-        if (Wire.available() >= 2)
-        {
-            uint8_t id_low = Wire.read();
-            uint8_t id_high = Wire.read();
-            uint16_t device_id = (id_high << 8) | id_low;
-
-            if (device_id != 0x0186)
-            {
-                Serial.printf("  ERROR: Wrong device ID 0x%04X (expected 0x0186)\n", device_id);
-                sensorsActive[i] = false;
-                continue;
-            }
-            Serial.printf("  Device ID: 0x%04X ✓\n", device_id);
-        }
-        else
-        {
-            Serial.println("  ERROR: Failed to read device ID");
-            sensorsActive[i] = false;
-            continue;
-        }
 
         // Apply configuration using DIRECT I2C only (no Adafruit library!)
         if (activeConfig != nullptr)
@@ -763,14 +573,14 @@ bool SensorManager::init(SensorConfiguration *config)
         {
             // Default configuration - direct I2C write
             // PS_CONF1/2: Enable proximity, 1T integration, 1/40 duty, high res
-            Wire.beginTransmission(0x60);
+            Wire.beginTransmission(VCNL4040_ADDR);
             Wire.write(0x03);
             Wire.write(0x00); // PS_CONF1: PS_IT=0 (1T), PS_Duty=0 (1/40), PS_SD=0 (enabled)
             Wire.write(0x08); // PS_CONF2: PS_HD=1 (high res)
             Wire.endTransmission();
 
             // PS_MS: 200mA LED current
-            Wire.beginTransmission(0x60);
+            Wire.beginTransmission(VCNL4040_ADDR);
             Wire.write(0x04);
             Wire.write(0x00); // PS_MS low
             Wire.write(0x07); // PS_MS high: LED_I=7 (200mA)
@@ -780,25 +590,12 @@ bool SensorManager::init(SensorConfiguration *config)
         }
 
         Serial.println("  Sensor initialized successfully!");
-        sensorsActive[i] = true;
         sensors_initialized++;
     }
 
-    // Clean up - disable all channels
-    // IMPORTANT: Must select each TCA channel before disabling its PCA!
-    for (int i = 0; i < 3; i++)
-    {
-        mux.selectChannel(i);
-        delay(2);
-        pca_instances[i].disableAllChannels();
-    }
-    mux.disableAllChannels();
+    muxController.disableAll();
 
-    Serial.print("Initialized ");
-    Serial.print(sensors_initialized);
-    Serial.print(" / ");
-    Serial.print(NUM_SENSORS);
-    Serial.println(" sensors");
+    Serial.printf("Initialized %d / %d sensors\n", sensors_initialized, NUM_SENSORS);
 
     if (sensors_initialized == 0)
     {
@@ -809,13 +606,7 @@ bool SensorManager::init(SensorConfiguration *config)
     initialized = true;
     Serial.println("Sensor Manager initialization complete!");
 
-    // Dump configuration for all sensors to verify they were configured correctly
     dumpSensorConfiguration();
-
-    // PS_CANC calibration removed from startup — the DirectionDetector's
-    // adaptive per-sensor baseline handles offset dynamically, making the
-    // hardware cancellation register redundant for detection.
-    // Calibration is still available via CalibrationManager (button hold / MQTT).
 
     return true;
 }
@@ -825,38 +616,25 @@ bool SensorManager::readSensor(uint8_t sensorIndex, SensorReading &reading)
     if (sensorIndex >= NUM_SENSORS)
         return false;
 
-    // Skip if sensor not active
-    if (!sensorsActive[sensorIndex])
+    if (!muxController.isSensorAvailable(sensorIndex))
         return false;
 
-    uint8_t tca_ch = sensorMapping[sensorIndex].tca_channel;
-    uint8_t pca_ch = sensorMapping[sensorIndex].pca_channel;
-
-    // Select TCA channel for this sensor board
-    if (!mux.selectChannel(tca_ch))
-        return false;
-
-    // Select PCA channel on the sensor board
-    if (!pca_instances[tca_ch].selectChannel(pca_ch))
+    if (!muxController.selectSensor(sensorIndex))
         return false;
 
     reading.timestamp_us = micros();
     reading.position = sensorIndex;
 
-    // Calculate PCB ID and side from position
-    // Position 0,1 -> PCB 1; Position 2,3 -> PCB 2; Position 4,5 -> PCB 3
-    reading.pcb_id = (sensorIndex / 2) + 1; // 0,1->1  2,3->2  4,5->3
+    SensorPosition pos = muxController.getSensorPosition(sensorIndex);
+    reading.pcb_id = pos.pcbId;
+    reading.side = pos.side;
 
-    // Position 0,2,4 -> Side 1 (S1); Position 1,3,5 -> Side 2 (S2)
-    reading.side = (sensorIndex % 2) + 1; // 0,2,4->1  1,3,5->2
-
-    // Read proximity directly via I2C (bypass Adafruit library to avoid config conflicts)
-    Wire.beginTransmission(0x60);
+    Wire.beginTransmission(VCNL4040_ADDR);
     Wire.write(0x08); // PS_DATA register
     if (Wire.endTransmission(false) != 0)
         return false;
 
-    Wire.requestFrom(0x60, 2);
+    Wire.requestFrom(VCNL4040_ADDR, 2);
     if (Wire.available() < 2)
         return false;
 
@@ -871,13 +649,12 @@ bool SensorManager::readSensor(uint8_t sensorIndex, SensorReading &reading)
     }
     else
     {
-        // Read ambient light directly via I2C
-        Wire.beginTransmission(0x60);
+        Wire.beginTransmission(VCNL4040_ADDR);
         Wire.write(0x09); // ALS_DATA register
         if (Wire.endTransmission(false) != 0)
             return false;
 
-        Wire.requestFrom(0x60, 2);
+        Wire.requestFrom(VCNL4040_ADDR, 2);
         if (Wire.available() < 2)
             return false;
 
@@ -932,8 +709,7 @@ void SensorManager::sensorTaskFunction(void *parameter)
                 if (manager->stopRequested)
                     break;
 
-                // Skip inactive sensors
-                if (!manager->sensorsActive[i])
+                if (!manager->muxController.isSensorAvailable(i))
                     continue;
 
                 if (manager->readSensor(i, reading))
@@ -989,15 +765,7 @@ void SensorManager::sensorTaskFunction(void *parameter)
                 consecutiveFailures = 0;
             }
 
-            // Clean up - disable all channels after reading cycle
-            // IMPORTANT: Must select each TCA channel before disabling its PCA!
-            for (int j = 0; j < 3; j++)
-            {
-                manager->mux.selectChannel(j);
-                delayMicroseconds(100);
-                manager->pca_instances[j].disableAllChannels();
-            }
-            manager->mux.disableAllChannels();
+            manager->muxController.disableAll();
         }
 
         // CRITICAL: Yield periodically to prevent watchdog timer reset
@@ -1014,8 +782,7 @@ void SensorManager::sensorTaskFunction(void *parameter)
     // This ensures the I2C bus is in a clean state before task ends
     Serial.println("Sensor task stopping gracefully...");
 
-    // Clean up I2C bus state
-    manager->cleanupI2CBus();
+    manager->muxController.disableAll();
 
     // Clear summary pointer (collection is over)
     manager->activeSummary = nullptr;
@@ -1103,7 +870,7 @@ void SensorManager::stopCollection()
     {
         Serial.println("WARNING: Sensor task did not stop in time, forcing deletion");
         vTaskDelete(sensorTask);
-        cleanupI2CBus();
+        muxController.disableAll();
         Serial.println("I2C bus cleaned up after forced stop");
     }
 
@@ -1124,14 +891,14 @@ std::vector<SensorMetadata> SensorManager::getSensorMetadata()
 
     for (int i = 0; i < NUM_SENSORS; i++)
     {
+        SensorPosition pos = muxController.getSensorPosition(i);
+
         SensorMetadata meta;
         meta.position = i;
-        meta.pcb_id = (i / 2) + 1;      // PCB 1, 2, or 3
-        meta.side = (i % 2) + 1;        // Side 1 or 2
-        meta.active = sensorsActive[i]; // Actual sensor status
-
-        // Generate name: P1S1, P2S2, etc.
-        meta.name = "P" + String(meta.pcb_id) + "S" + String(meta.side);
+        meta.pcb_id = pos.pcbId;
+        meta.side = pos.side;
+        meta.active = muxController.isSensorAvailable(i);
+        meta.name = pos.getName();
 
         metadata.push_back(meta);
     }
@@ -1154,79 +921,36 @@ bool SensorManager::reinitialize(SensorConfiguration *config)
         Serial.println("  Collection stopped.");
     }
 
-    // CRITICAL: Ensure I2C bus is in a clean state before reconfiguration
-    // This prevents hangs if the bus was left in an inconsistent state
     Serial.println("  Ensuring I2C bus is clean...");
-    cleanupI2CBus();
-    delay(50); // Give hardware time to settle
+    muxController.disableAll();
+    delay(50);
 
     // Update configuration
     activeConfig = config;
     Serial.println("  Applying new configuration to sensors...");
 
-    // Reapply configuration to all active sensors
-    // Track the last TCA channel to properly clean up when switching
-    int8_t lastTcaChannel = -1;
-
     for (int i = 0; i < NUM_SENSORS; i++)
     {
-        if (sensorsActive[i] && activeConfig != nullptr)
+        if (muxController.isSensorAvailable(i) && activeConfig != nullptr)
         {
             Serial.printf("  Reconfiguring sensor %d...\n", i);
 
-            uint8_t tca_ch = sensorMapping[i].tca_channel;
-            uint8_t pca_ch = sensorMapping[i].pca_channel;
-
-            // CRITICAL FIX: If switching TCA channels, disable the PCA on the previous channel first
-            // This prevents I2C bus contention when moving between sensor boards
-            if (lastTcaChannel != -1 && lastTcaChannel != tca_ch)
+            if (!muxController.selectSensor(i))
             {
-                Serial.printf("    Switching TCA channel %d -> %d, cleaning up...\n", lastTcaChannel, tca_ch);
-                // Select the old TCA channel and disable its PCA
-                mux.selectChannel(lastTcaChannel);
-                delay(5);
-                pca_instances[lastTcaChannel].disableAllChannels();
-                delay(5);
-            }
-
-            // Select TCA channel for this sensor board
-            if (!mux.selectChannel(tca_ch))
-            {
-                Serial.printf("    WARNING: Failed to select TCA channel %d\n", tca_ch);
+                Serial.printf("    WARNING: Failed to select sensor %d\n", i);
                 continue;
             }
-            delay(10); // Increased delay for TCA settling
+            delay(10);
 
-            if (!pca_instances[tca_ch].selectChannel(pca_ch))
-            {
-                Serial.printf("    WARNING: Failed to select PCA channel %d\n", pca_ch);
-                continue;
-            }
-            delay(10); // Increased delay for PCA settling
-
-            // Reapply configuration
             applySensorConfig(i);
             Serial.printf("    Sensor %d reconfigured.\n", i);
 
-            // Remember this TCA channel for cleanup on next iteration
-            lastTcaChannel = tca_ch;
-
-            // CRITICAL: Feed watchdog timer during lengthy reconfiguration
-            // This prevents Core 1 watchdog reset during sensor reconfiguration
             taskYIELD();
         }
     }
 
-    // Clean up
     Serial.println("  Cleaning up multiplexer channels...");
-    // IMPORTANT: Must select each TCA channel before disabling its PCA!
-    for (int i = 0; i < 3; i++)
-    {
-        mux.selectChannel(i);
-        delay(2);
-        pca_instances[i].disableAllChannels();
-    }
-    mux.disableAllChannels();
+    muxController.disableAll();
 
     // Final yield to ensure watchdog is fed
     taskYIELD();
@@ -1259,47 +983,37 @@ void SensorManager::dumpSensorConfiguration()
 
     for (int i = 0; i < NUM_SENSORS; i++)
     {
-        uint8_t tca_ch = sensorMapping[i].tca_channel;
-        uint8_t pca_ch = sensorMapping[i].pca_channel;
+        SensorPosition pos = muxController.getSensorPosition(i);
+        uint8_t tca_ch = pos.tcaChannel;
+        uint8_t pca_ch = pos.pcaChannel;
 
-        // Build sensor name
         char sensorName[8];
-        snprintf(sensorName, sizeof(sensorName), "P%dS%d", tca_ch + 1, pca_ch + 1);
+        snprintf(sensorName, sizeof(sensorName), "P%dS%d", pos.pcbId, pos.side);
 
-        if (!sensorsActive[i])
+        if (!muxController.isSensorAvailable(i))
         {
             Serial.printf("║ %-6s │  %d  │  %d  │   NO   │     N/A     │     N/A     │  N/A  │   N/A    ║\n",
                           sensorName, tca_ch, pca_ch);
             continue;
         }
 
-        // Select the sensor's channel with proper delays
-        if (!mux.selectChannel(tca_ch))
+        if (!muxController.selectSensor(i))
         {
-            Serial.printf("║ %-6s │  %d  │  %d  │  YES   │  TCA ERR    │   TCA ERR   │ ERR   │   ERR    ║\n",
+            Serial.printf("║ %-6s │  %d  │  %d  │  YES   │  MUX ERR    │   MUX ERR   │ ERR   │   ERR    ║\n",
                           sensorName, tca_ch, pca_ch);
             continue;
         }
-        delay(10); // Increased delay for multiplexer settling
+        delay(10);
 
-        if (!pca_instances[tca_ch].selectChannel(pca_ch))
-        {
-            Serial.printf("║ %-6s │  %d  │  %d  │  YES   │  PCA ERR    │   PCA ERR   │ ERR   │   ERR    ║\n",
-                          sensorName, tca_ch, pca_ch);
-            continue;
-        }
-        delay(10); // Increased delay for multiplexer settling
-
-        // Verify we can communicate with the sensor by checking device ID first
-        Wire.beginTransmission(0x60);
-        Wire.write(0x0C); // Device ID register
+        Wire.beginTransmission(VCNL4040_ADDR);
+        Wire.write(0x0C);
         if (Wire.endTransmission(false) != 0)
         {
             Serial.printf("║ %-6s │  %d  │  %d  │  YES   │  I2C ERR    │   I2C ERR   │ ERR   │   ERR    ║\n",
                           sensorName, tca_ch, pca_ch);
             continue;
         }
-        Wire.requestFrom((uint8_t)0x60, (uint8_t)2);
+        Wire.requestFrom((uint8_t)VCNL4040_ADDR, (uint8_t)2);
         uint8_t id_low = Wire.available() ? Wire.read() : 0;
         uint8_t id_high = Wire.available() ? Wire.read() : 0;
         uint16_t device_id = (id_high << 8) | id_low;
@@ -1311,13 +1025,12 @@ void SensorManager::dumpSensorConfiguration()
             continue;
         }
 
-        // Read PS_CONF1/2 register (0x03) - contains integration time, duty cycle, high-res
         uint8_t ps_conf1_low = 0, ps_conf1_high = 0;
-        Wire.beginTransmission(0x60);
+        Wire.beginTransmission(VCNL4040_ADDR);
         Wire.write(0x03);
         if (Wire.endTransmission(false) == 0)
         {
-            Wire.requestFrom((uint8_t)0x60, (uint8_t)2);
+            Wire.requestFrom((uint8_t)VCNL4040_ADDR, (uint8_t)2);
             if (Wire.available() >= 2)
             {
                 ps_conf1_low = Wire.read();
@@ -1325,13 +1038,12 @@ void SensorManager::dumpSensorConfiguration()
             }
         }
 
-        // Read PS_CONF3/PS_MS register (0x04) - contains LED current
         uint8_t ps_ms_low = 0, ps_ms_high = 0;
-        Wire.beginTransmission(0x60);
+        Wire.beginTransmission(VCNL4040_ADDR);
         Wire.write(0x04);
         if (Wire.endTransmission(false) == 0)
         {
-            Wire.requestFrom((uint8_t)0x60, (uint8_t)2);
+            Wire.requestFrom((uint8_t)VCNL4040_ADDR, (uint8_t)2);
             if (Wire.available() >= 2)
             {
                 ps_ms_low = Wire.read();
@@ -1407,13 +1119,5 @@ void SensorManager::dumpSensorConfiguration()
     Serial.println("╚══════════════════════════════════════════════════════════════════════════════╝");
     Serial.println();
 
-    // Clean up
-    // IMPORTANT: Must select each TCA channel before disabling its PCA!
-    for (int i = 0; i < 3; i++)
-    {
-        mux.selectChannel(i);
-        delay(2);
-        pca_instances[i].disableAllChannels();
-    }
-    mux.disableAllChannels();
+    muxController.disableAll();
 }

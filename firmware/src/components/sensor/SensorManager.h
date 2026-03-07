@@ -3,73 +3,20 @@
 #include <Arduino.h>
 #include <atomic>
 #include <vector>
-#include "../tca9548a/TCA9548A.h"
 #include <Adafruit_VCNL4040.h>
+#include "../mux/MuxController.h"
 #include "SensorConfiguration.h"
 #include "sensor_types.h"
 
 // Forward declaration for session confirmation counters
 struct SessionSummary;
 
-// Simple PCA9546A wrapper class (for local multiplexing on each sensor board)
-class PCA9546A
-{
-private:
-    uint8_t address;
-
-public:
-    PCA9546A(uint8_t addr = 0x70) : address(addr) {}
-
-    bool begin()
-    {
-        Wire.beginTransmission(address);
-        return (Wire.endTransmission() == 0);
-    }
-
-    bool selectChannel(uint8_t channel)
-    {
-        if (channel > 3)
-            return false;
-        Wire.beginTransmission(address);
-        Wire.write(1 << channel);
-        return (Wire.endTransmission() == 0);
-    }
-
-    bool disableAllChannels()
-    {
-        Wire.beginTransmission(address);
-        Wire.write(0x00);
-        return (Wire.endTransmission() == 0);
-    }
-};
-
 class SensorManager
 {
 private:
-    TCA9548A mux;
-
-    // PCA9546A multiplexers (one per sensor board, up to 3 boards)
-    PCA9546A pca_instances[3] = {PCA9546A(0x74), PCA9546A(0x75), PCA9546A(0x76)};
-    uint8_t pca_addresses[3] = {0, 0, 0}; // Detected addresses (0 = not found)
-
-    // Sensor mapping structure
-    struct SensorMap
-    {
-        uint8_t tca_channel; // 0-2 (which sensor board on TCA)
-        uint8_t pca_channel; // 0-1 (which sensor on board: S1/S2)
-    };
-
-    const SensorMap sensorMapping[NUM_SENSORS] = {
-        {0, 0}, // Sensor 0: P1S1 (TCA0, PCA0)
-        {0, 1}, // Sensor 1: P1S2 (TCA0, PCA1)
-        {1, 0}, // Sensor 2: P2S1 (TCA1, PCA0)
-        {1, 1}, // Sensor 3: P2S2 (TCA1, PCA1)
-        {2, 0}, // Sensor 4: P3S1 (TCA2, PCA0)
-        {2, 1}  // Sensor 5: P3S2 (TCA2, PCA1)
-    };
+    MuxController muxController;
 
     bool initialized = false;
-    bool sensorsActive[NUM_SENSORS] = {false}; // Track which sensors initialized
     TaskHandle_t sensorTask = NULL;
     TaskHandle_t stopRequestorTask = NULL;
     QueueHandle_t dataQueue = NULL;
@@ -88,8 +35,6 @@ private:
     // Written only from Core 0 sensor task — no synchronization needed.
     struct SessionSummary *activeSummary = nullptr;
 
-    bool initializePCA();
-    void cleanupI2CBus(); // Clean up I2C bus state
     void debugI2CScan();  // Debug: scan I2C bus on each TCA channel
     static void sensorTaskFunction(void *parameter);
     bool calibrateSensorBaseline(uint8_t sensorIndex); // Calibrate single sensor PS_CANC
