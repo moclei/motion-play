@@ -853,43 +853,37 @@ bool SensorManager::readSensor(uint8_t sensorIndex, SensorReading &reading)
     // Read proximity directly via I2C (bypass Adafruit library to avoid config conflicts)
     Wire.beginTransmission(0x60);
     Wire.write(0x08); // PS_DATA register
-    Wire.endTransmission(false);
-    Wire.requestFrom(0x60, 2);
+    if (Wire.endTransmission(false) != 0)
+        return false;
 
-    if (Wire.available() >= 2)
-    {
-        uint8_t prox_low = Wire.read();
-        uint8_t prox_high = Wire.read();
-        reading.proximity = (prox_high << 8) | prox_low;
-    }
-    else
-    {
-        reading.proximity = 0;
-    }
+    Wire.requestFrom(0x60, 2);
+    if (Wire.available() < 2)
+        return false;
+
+    uint8_t prox_low = Wire.read();
+    uint8_t prox_high = Wire.read();
+    reading.proximity = (prox_high << 8) | prox_low;
 
     // Conditionally read ambient light (skip if disabled for speed)
     if (activeConfig != nullptr && !activeConfig->read_ambient)
     {
-        reading.ambient = 0; // Mark as not read
+        reading.ambient = 0;
     }
     else
     {
         // Read ambient light directly via I2C
         Wire.beginTransmission(0x60);
         Wire.write(0x09); // ALS_DATA register
-        Wire.endTransmission(false);
-        Wire.requestFrom(0x60, 2);
+        if (Wire.endTransmission(false) != 0)
+            return false;
 
-        if (Wire.available() >= 2)
-        {
-            uint8_t als_low = Wire.read();
-            uint8_t als_high = Wire.read();
-            reading.ambient = (als_high << 8) | als_low;
-        }
-        else
-        {
-            reading.ambient = 0;
-        }
+        Wire.requestFrom(0x60, 2);
+        if (Wire.available() < 2)
+            return false;
+
+        uint8_t als_low = Wire.read();
+        uint8_t als_high = Wire.read();
+        reading.ambient = (als_high << 8) | als_low;
     }
 
     return true;
