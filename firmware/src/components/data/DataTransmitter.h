@@ -20,14 +20,6 @@ private:
     // Session Confirmation: pointer to active session summary for transmission counters
     SessionSummary *activeSummary = nullptr;
 
-    // JSON serialization helpers — DRY up repeated blocks across transmission methods
-    void serializeCalibration(JsonDocument &doc);
-    void serializeConfig(JsonDocument &doc, const SensorConfiguration *config);
-    void serializeReadingsArray(JsonArray &arr,
-                                std::vector<SensorReading, PSRAMAllocator<SensorReading>> &readings,
-                                size_t startIdx, size_t count);
-    void serializeSummary(JsonObject &summaryObj, const SessionSummary &summary);
-
 public:
     DataTransmitter(MQTTManager *mqtt);
 
@@ -70,19 +62,6 @@ public:
         const char *captureReason,
         const char *detectionDirection,
         float detectionConfidence,
-        const SensorConfiguration *config = nullptr);
-
-    // Live Debug capture transmission (binary-packed single message)
-    // Packs all readings as 9-byte structs, base64-encodes, and merges data + summary
-    // into a single MQTT message. No separate summary message needed.
-    String transmitLiveDebugCaptureBinary(
-        std::vector<SensorReading, PSRAMAllocator<SensorReading>> &readings,
-        size_t startIdx,
-        size_t count,
-        const char *captureReason,
-        const char *detectionDirection,
-        float detectionConfidence,
-        const SessionSummary &summary,
         const SensorConfiguration *config = nullptr);
 
     // Session Confirmation: transmit pipeline integrity summary as separate MQTT message

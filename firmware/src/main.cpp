@@ -10,6 +10,7 @@
 #include "components/sensor/SensorConfiguration.h"
 #include "components/session/SessionManager.h"
 #include "components/data/DataTransmitter.h"
+#include "components/data/BinarySerializer.h"
 #include "components/diagnostics/MemoryMonitor.h"
 #include "components/detection/DirectionDetector.h"
 #include "components/detection/MLDetector.h"
@@ -41,6 +42,7 @@ DisplayManager display;
 SensorManager sensorManager;
 SessionManager sessionManager;
 DataTransmitter *dataTransmitter;
+BinarySerializer *binarySerializer;
 DirectionDetector directionDetector;
 MLDetector mlDetector;
 LEDController ledController;
@@ -366,6 +368,7 @@ void initializeSystem()
     }
 
     dataTransmitter = new DataTransmitter(mqttManager);
+    binarySerializer = new BinarySerializer(mqttManager);
     sessionManager.setDeviceId(networkManager.getDeviceId());
 
     mqttManager->setCallback([](char *topic, byte *payload, unsigned int length)
@@ -1191,7 +1194,7 @@ void handleCommand(const String &command, JsonDocument *doc)
         }
 
         // 5. Transmit (binary-packed single message — data + summary)
-        String captureSessionId = dataTransmitter->transmitLiveDebugCaptureBinary(
+        String captureSessionId = binarySerializer->transmitLiveDebugCaptureBinary(
             buffer, startIdx, captureCount,
             "missed_event", nullptr, 0.0,
             sessionManager.getSessionSummary(),
@@ -1672,7 +1675,7 @@ void loop()
                         dirStr = "b_to_a";
                     else
                         dirStr = "unknown";
-                    String captureSessionId = dataTransmitter->transmitLiveDebugCaptureBinary(
+                    String captureSessionId = binarySerializer->transmitLiveDebugCaptureBinary(
                         buffer, startIdx, captureCount,
                         "detection", dirStr, result.confidence,
                         sessionManager.getSessionSummary(),
