@@ -4,6 +4,7 @@
 #include <Arduino.h>
 #include <esp_heap_caps.h>
 #include <esp_system.h>
+#include "constants.h"
 #include "debug_log.h"
 
 /**
@@ -58,11 +59,11 @@ public:
 
         // Memory health warnings
         Serial.println("\nMemory Health:");
-        if (freeHeap < 50000)
+        if (freeHeap < LOW_HEAP_WARNING_BYTES)
         {
             Serial.println("  ⚠️  WARNING: Low heap memory (< 50KB)!");
         }
-        else if (freeHeap < 100000)
+        else if (freeHeap < LOW_HEAP_WARNING_BYTES * 2)
         {
             Serial.println("  ⚡ CAUTION: Heap memory getting low (< 100KB)");
         }
@@ -73,7 +74,7 @@ public:
 
         if (totalPSRAM > 0)
         {
-            if (freePSRAM < 1000000)
+            if (freePSRAM < LOW_PSRAM_WARNING_BYTES)
             {
                 Serial.println("  ⚠️  WARNING: Low PSRAM (< 1MB)!");
             }
@@ -98,8 +99,7 @@ public:
         size_t freeHeap = heap_caps_get_free_size(MALLOC_CAP_8BIT);
         size_t freePSRAM = heap_caps_get_free_size(MALLOC_CAP_SPIRAM);
 
-        // Require at least 50KB heap and 1MB PSRAM
-        return (freeHeap > 50000) && (freePSRAM > 1000000);
+        return (freeHeap > LOW_HEAP_WARNING_BYTES) && (freePSRAM > LOW_PSRAM_WARNING_BYTES);
     }
 
     /**

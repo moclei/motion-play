@@ -1,4 +1,5 @@
 #include "DataTransmitter.h"
+#include "../mqtt/MQTTManager.h"
 #include "../memory/PSRAMAllocator.h"
 #include "../calibration/CalibrationData.h"
 #include "mbedtls/base64.h"

@@ -3,8 +3,9 @@
 
 #include <Arduino.h>
 #include <ArduinoJson.h>
-#include "../mqtt/MQTTManager.h"
 #include "../session/SessionManager.h"
+
+class MQTTManager;
 #include "../sensor/SensorConfiguration.h"
 #include "../memory/PSRAMAllocator.h"
 

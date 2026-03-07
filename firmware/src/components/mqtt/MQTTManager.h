@@ -3,8 +3,8 @@
 
 #include <PubSubClient.h>
 #include <ArduinoJson.h>
-#include <LittleFS.h>
-#include "../network/NetworkManager.h"
+
+class NetworkManager;
 
 class MQTTManager
 {

@@ -2,7 +2,6 @@
 #define SESSION_MANAGER_H
 
 #include <Arduino.h>
-#include <ArduinoJson.h>
 #include <vector>
 #include "sensor_types.h"
 #include "interrupt_types.h"

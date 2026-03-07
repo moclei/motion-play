@@ -5,6 +5,7 @@
  */
 
 #include "InterruptManager.h"
+#include "constants.h"
 
 // Singleton instance for ISR access
 InterruptManager *InterruptManager::_instance = nullptr;
@@ -58,7 +59,7 @@ bool InterruptManager::begin()
     Serial.println("InterruptManager: Initializing...");
 
     // Initialize MuxController
-    if (!_mux.begin(PIN_IIC_SDA, PIN_IIC_SCL, 400000))
+    if (!_mux.begin(PIN_IIC_SDA, PIN_IIC_SCL, I2C_CLOCK_HZ))
     {
         Serial.println("  ERROR: MuxController initialization failed");
         return false;
@@ -118,7 +119,7 @@ int InterruptManager::calibrateSensors()
             continue;
         }
 
-        delay(5); // Allow MUX to settle
+        delay(MUX_SETTLE_MS);
 
         VCNL4040 &sensor = _sensors[pos];
 
@@ -275,7 +276,7 @@ bool InterruptManager::configureSensor(uint8_t position)
         return false;
     }
 
-    delay(5); // Allow MUX to settle
+    delay(MUX_SETTLE_MS);
 
     // Initialize sensor using our enhanced library
     VCNL4040 &sensor = _sensors[position];
@@ -288,7 +289,7 @@ bool InterruptManager::configureSensor(uint8_t position)
     // Configure proximity sensor settings for maximum range
     sensor.setLEDCurrent(_config.ledCurrent);
     sensor.setProxIntegrationTime(_config.integrationTime);
-    sensor.setIRDutyCycle(40);                // 1/40 duty for fast response
+    sensor.setIRDutyCycle(DEFAULT_IR_DUTY_DENOMINATOR);
     sensor.setProxResolution(16);             // 16-bit resolution
     sensor.setMultiPulse(_config.multiPulse); // Multi-pulse for stronger signal
     sensor.setProxCancellation(0);            // No hardware cancellation

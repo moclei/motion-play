@@ -1,5 +1,6 @@
 #include "SensorManager.h"
 #include "../session/SessionManager.h" // For SessionSummary full definition
+#include "constants.h"
 #include "debug_log.h"
 
 SensorManager::SensorManager() : mux(0x70)
@@ -633,7 +634,7 @@ bool SensorManager::init(SensorConfiguration *config)
 
     // Initialize I2C
     Wire.begin(43, 44);    // SDA=43, SCL=44 for T-Display S3
-    Wire.setClock(400000); // 400 kHz (Fast Mode) - set BEFORE sensor initialization
+    Wire.setClock(I2C_CLOCK_HZ);
     Serial.println("I2C clock set to 400 kHz");
 
     if (activeConfig != nullptr)

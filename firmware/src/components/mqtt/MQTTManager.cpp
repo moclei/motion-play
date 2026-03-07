@@ -1,4 +1,7 @@
 #include "MQTTManager.h"
+#include "../network/NetworkManager.h"
+#include <LittleFS.h>
+#include "constants.h"
 
 MQTTManager::MQTTManager(NetworkManager *netManager) : networkManager(netManager)
 {
@@ -7,11 +10,11 @@ MQTTManager::MQTTManager(NetworkManager *netManager) : networkManager(netManager
 
 bool MQTTManager::loadConfig()
 {
-    File configFile = LittleFS.open("/config.json", "r");
+    File configFile = LittleFS.open(CONFIG_FILE_PATH, "r");
     if (!configFile)
         return false;
 
-    DynamicJsonDocument doc(1024);
+    DynamicJsonDocument doc(CONFIG_JSON_CAPACITY);
     DeserializationError error = deserializeJson(doc, configFile);
     configFile.close();
 
@@ -24,9 +27,9 @@ bool MQTTManager::loadConfig()
     deviceId = doc["device_id"].as<String>();
 
     // Set up topics
-    statusTopic = "motionplay/" + deviceId + "/status";
-    dataTopic = "motionplay/" + deviceId + "/data";
-    commandTopic = "motionplay/" + deviceId + "/commands";
+    statusTopic = String(MQTT_TOPIC_PREFIX) + deviceId + "/status";
+    dataTopic = String(MQTT_TOPIC_PREFIX) + deviceId + "/data";
+    commandTopic = String(MQTT_TOPIC_PREFIX) + deviceId + "/commands";
 
     // Load certificates
     if (!loadCertificates())

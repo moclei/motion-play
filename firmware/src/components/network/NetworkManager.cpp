@@ -1,4 +1,7 @@
 #include "NetworkManager.h"
+#include <ArduinoJson.h>
+#include <LittleFS.h>
+#include "constants.h"
 
 NetworkManager::NetworkManager() {
     // Constructor
@@ -30,7 +33,7 @@ bool NetworkManager::loadConfig() {
     }
 
     Serial.println("Attempting to open /config.json...");
-    File configFile = LittleFS.open("/config.json", "r");
+    File configFile = LittleFS.open(CONFIG_FILE_PATH, "r");
     if (!configFile) {
         Serial.println("ERROR: Failed to open config file");
         Serial.println("Trying alternate path /data/config.json...");
@@ -42,7 +45,7 @@ bool NetworkManager::loadConfig() {
     }
     Serial.println("Config file opened successfully!");
 
-    DynamicJsonDocument doc(1024);
+    DynamicJsonDocument doc(CONFIG_JSON_CAPACITY);
     DeserializationError error = deserializeJson(doc, configFile);
     configFile.close();
 
