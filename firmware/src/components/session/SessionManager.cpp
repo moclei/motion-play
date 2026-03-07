@@ -44,6 +44,12 @@ bool SessionManager::startSession()
         return false;
     }
 
+    if (sessionType == SessionType::PROXIMITY && dataQueue == NULL)
+    {
+        Serial.println("ERROR: Data queue not allocated — cannot start proximity session");
+        return false;
+    }
+
     Serial.println("Starting new session...");
     Serial.printf("  Session type: %s\n",
                   sessionType == SessionType::INTERRUPT_BASED ? "INTERRUPT" : "PROXIMITY");
@@ -119,6 +125,9 @@ void SessionManager::processQueue()
 
     // Only process queue for proximity mode
     if (sessionType != SessionType::PROXIMITY)
+        return;
+
+    if (dataQueue == NULL)
         return;
 
     SensorReading reading;

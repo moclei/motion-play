@@ -92,7 +92,7 @@ private:
     void drawModeBadge();
 
 public:
-    void init();
+    bool init();
 
     // Initialization flow
     void showInitScreen();

@@ -2,7 +2,7 @@
 #include "pin_config.h"
 #include "components/sensor/SensorConfiguration.h"
 
-void DisplayManager::init()
+bool DisplayManager::init()
 {
     // Power on display and backlight (CRITICAL for T-Display-S3)
     pinMode(PIN_POWER_ON, OUTPUT);
@@ -17,6 +17,8 @@ void DisplayManager::init()
     tft.setRotation(1); // Landscape (320x170)
     tft.fillScreen(TFT_BLACK);
     tft.setTextDatum(TL_DATUM); // Top-left alignment
+
+    return true;
 }
 
 // ============================================================================

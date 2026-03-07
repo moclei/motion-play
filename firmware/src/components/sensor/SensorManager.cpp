@@ -942,8 +942,9 @@ void SensorManager::sensorTaskFunction(void *parameter)
                     // Override timestamp with cycle timestamp for synchronization
                     reading.timestamp_us = cycleTimestamp;
 
-                    // Send to queue (non-blocking)
-                    if (xQueueSend(manager->dataQueue, &reading, 0) == pdTRUE)
+                    // Send to queue (non-blocking); skip if queue was torn down
+                    if (manager->dataQueue != NULL &&
+                        xQueueSend(manager->dataQueue, &reading, 0) == pdTRUE)
                     {
                         successfulReads++;
                         // Session Confirmation: count successful read + queue
@@ -1044,6 +1045,12 @@ bool SensorManager::startCollection(QueueHandle_t queue, SessionSummary *summary
     if (!initialized)
     {
         Serial.println("ERROR: Sensors not initialized");
+        return false;
+    }
+
+    if (queue == NULL)
+    {
+        Serial.println("ERROR: Cannot start collection with NULL queue");
         return false;
     }
 

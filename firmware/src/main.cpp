@@ -98,7 +98,12 @@ void setup()
     pinMode(BUTTON_1, INPUT_PULLUP);
     pinMode(BUTTON_2, INPUT_PULLUP);
 
-    display.init();
+    if (!display.init())
+    {
+        Serial.println("ERROR: Display initialization failed!");
+        while (1)
+            delay(1000);
+    }
     display.showInitScreen();
     Serial.println("Display initialized");
 

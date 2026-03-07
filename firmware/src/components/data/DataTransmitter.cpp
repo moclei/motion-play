@@ -126,6 +126,12 @@ bool DataTransmitter::transmitBatch(const String &sessionId,
         readingObj["amb"] = reading.ambient;
     }
 
+    if (doc.overflowed())
+    {
+        Serial.printf("WARNING: ArduinoJson overflow in transmitBatch! (doc: %d/8192 bytes, readings: %d)\n",
+                      doc.memoryUsage(), count);
+    }
+
     // Serialize to string
     String payload;
     size_t payloadSize = serializeJson(doc, payload);
@@ -296,6 +302,12 @@ bool DataTransmitter::transmitInterruptBatch(const String &sessionId,
         }
 
         evtObj["flags"] = evt.rawFlags;
+    }
+
+    if (doc.overflowed())
+    {
+        Serial.printf("WARNING: ArduinoJson overflow in transmitInterruptBatch! (doc: %d/8192 bytes, events: %d)\n",
+                      doc.memoryUsage(), count);
     }
 
     // Serialize to string for debugging
