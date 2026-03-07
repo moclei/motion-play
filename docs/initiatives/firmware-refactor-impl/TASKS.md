@@ -13,7 +13,7 @@ Creates shared infrastructure. Mostly new files and include changes — low risk
 - [x] **1.5** Create `firmware/include/debug_log.h` — centralize `extern bool serialStudioEnabled` + `DEBUG_LOG(...)` macro. Replace 5 scattered `extern` declarations.
 - [x] **1.6** Create `firmware/include/constants.h` — shared constants: `I2C_CLOCK_HZ`, `MUX_SETTLE_MS`, `DEFAULT_IR_DUTY_DENOMINATOR`, `CONFIG_JSON_CAPACITY`, `CONFIG_FILE_PATH`, memory thresholds.
 - [x] **1.7** Header cleanup — move `<LittleFS.h>`, `<ArduinoJson.h>` from headers to .cpp files. Add forward declarations. Remove unused includes (`<vector>` from DirectionDetector.h, `<ArduinoJson.h>` from SessionManager.h).
-- [ ] **1.8** Pin config cleanup — rename `PIN_IIC_*` → `PIN_I2C_*`. Remove dead SD card definitions. Replace `LED_PIN` macro in LEDController with `PIN_LED_STRIP_DATA`.
+- [x] **1.8** Pin config cleanup — rename `PIN_IIC_*` → `PIN_I2C_*`. Remove dead SD card definitions. Replace `LED_PIN` macro in LEDController with `PIN_LED_STRIP_DATA`.
 - [ ] **1.9** Unify include guards — convert all headers to `#pragma once`.
 - [ ] **1.10** Per-module magic numbers — convert `#define` constants to `static constexpr` across InterruptManager, CalibrationManager, LEDController. Name per-module magic numbers per audit PLAN.md tables.
 

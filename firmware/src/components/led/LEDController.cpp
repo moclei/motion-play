@@ -18,7 +18,7 @@ bool LEDController::init()
         Serial.println("Initializing LED strip...");
 
     // Initialize FastLED
-    FastLED.addLeds<LED_TYPE, LED_PIN, COLOR_ORDER>(leds, NUM_LEDS);
+    FastLED.addLeds<LED_TYPE, PIN_LED_STRIP_DATA, COLOR_ORDER>(leds, NUM_LEDS);
     FastLED.setBrightness(DEFAULT_BRIGHTNESS);
 
     // Clear all LEDs
@@ -27,7 +27,7 @@ bool LEDController::init()
 
     initialized = true;
     if (!serialStudioEnabled)
-        Serial.printf("LED strip initialized: %d LEDs on GPIO %d\n", NUM_LEDS, LED_PIN);
+        Serial.printf("LED strip initialized: %d LEDs on GPIO %d\n", NUM_LEDS, PIN_LED_STRIP_DATA);
 
     return true;
 }

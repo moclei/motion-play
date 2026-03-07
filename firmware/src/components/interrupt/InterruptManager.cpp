@@ -59,7 +59,7 @@ bool InterruptManager::begin()
     Serial.println("InterruptManager: Initializing...");
 
     // Initialize MuxController
-    if (!_mux.begin(PIN_IIC_SDA, PIN_IIC_SCL, I2C_CLOCK_HZ))
+    if (!_mux.begin(PIN_I2C_SDA, PIN_I2C_SCL, I2C_CLOCK_HZ))
     {
         Serial.println("  ERROR: MuxController initialization failed");
         return false;

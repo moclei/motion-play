@@ -4,6 +4,7 @@
 #include <Arduino.h>
 #include <FastLED.h>
 #include "detection_types.h"
+#include "pin_config.h"
 
 /**
  * LED Controller for Motion Play
@@ -17,7 +18,6 @@
 
 // LED Configuration
 #define NUM_LEDS 72
-#define LED_PIN 16
 #define LED_TYPE WS2812B
 #define COLOR_ORDER GRB
 #define DEFAULT_BRIGHTNESS 128
