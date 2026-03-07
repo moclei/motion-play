@@ -3,8 +3,8 @@
 #include <Arduino.h>
 #include <atomic>
 #include <vector>
-#include <Adafruit_VCNL4040.h>
 #include "../mux/MuxController.h"
+#include "../vcnl4040/VCNL4040.h"
 #include "SensorConfiguration.h"
 #include "sensor_types.h"
 
@@ -15,6 +15,7 @@ class SensorManager
 {
 private:
     MuxController muxController;
+    VCNL4040 vcnl;
 
     bool initialized = false;
     TaskHandle_t sensorTask = NULL;
@@ -39,11 +40,11 @@ private:
     static void sensorTaskFunction(void *parameter);
     bool calibrateSensorBaseline(uint8_t sensorIndex); // Calibrate single sensor PS_CANC
 
-    // Configuration helpers
-    VCNL4040_LEDCurrent parseLEDCurrent(const String &current);
-    VCNL4040_ProximityIntegration parseIntegrationTime(const String &time);
-    VCNL4040_LEDDutyCycle parseDutyCycle(const String &duty);
-    uint8_t parseMultiPulse(const String &mp); // Multi-pulse mode: 1, 2, 4, or 8 pulses
+    // Configuration helpers — return plain values for VCNL4040 driver methods
+    uint16_t parseLEDCurrentMA(const String &current);
+    uint8_t parseIntegrationTimeValue(const String &time);
+    uint16_t parseDutyCycleValue(const String &duty);
+    uint8_t parseMultiPulseCount(const String &mp);
     bool applySensorConfig(uint8_t sensorIndex);
 
 public:

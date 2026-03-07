@@ -32,26 +32,16 @@ bool SensorManager::calibrateSensorBaseline(uint8_t sensorIndex)
     }
     delay(5);
 
-    // Take multiple readings to calculate average baseline
     const int NUM_SAMPLES = 50;
-    const int SAMPLE_DELAY_MS = 10; // 10ms between samples
+    const int SAMPLE_DELAY_MS = 10;
     uint32_t sum = 0;
     int validSamples = 0;
 
     for (int i = 0; i < NUM_SAMPLES; i++)
     {
-        // Read proximity directly via I2C
-        Wire.beginTransmission(VCNL4040_ADDR);
-        Wire.write(0x08); // PS_DATA register
-        if (Wire.endTransmission(false) != 0)
-            continue;
-
-        Wire.requestFrom((uint8_t)VCNL4040_ADDR, (uint8_t)2);
-        if (Wire.available() >= 2)
+        uint16_t proximity;
+        if (vcnl.readRegister(VCNL4040_PS_DATA, proximity))
         {
-            uint8_t prox_low = Wire.read();
-            uint8_t prox_high = Wire.read();
-            uint16_t proximity = (prox_high << 8) | prox_low;
             sum += proximity;
             validSamples++;
         }
@@ -64,30 +54,17 @@ bool SensorManager::calibrateSensorBaseline(uint8_t sensorIndex)
         return false;
     }
 
-    // Calculate average baseline
     uint16_t baseline = sum / validSamples;
     baselineValues[sensorIndex] = baseline;
 
-    Wire.beginTransmission(VCNL4040_ADDR);
-    Wire.write(0x05);                   // PS_CANC register
-    Wire.write(baseline & 0xFF);        // Low byte
-    Wire.write((baseline >> 8) & 0xFF); // High byte
-    uint8_t err = Wire.endTransmission();
-
-    if (err != 0)
+    if (!vcnl.writeRegister(VCNL4040_PS_CANC, baseline))
     {
-        Serial.printf("  Calibration: Failed to write PS_CANC (I2C error %d)\n", err);
+        Serial.println("  Calibration: Failed to write PS_CANC");
         return false;
     }
 
     delay(5);
-    Wire.beginTransmission(VCNL4040_ADDR);
-    Wire.write(0x05);
-    Wire.endTransmission(false);
-    Wire.requestFrom((uint8_t)VCNL4040_ADDR, (uint8_t)2);
-    uint8_t verify_low = Wire.available() ? Wire.read() : 0xFF;
-    uint8_t verify_high = Wire.available() ? Wire.read() : 0xFF;
-    uint16_t verify_value = (verify_high << 8) | verify_low;
+    uint16_t verify_value = vcnl.readRegister(VCNL4040_PS_CANC);
 
     if (verify_value != baseline)
     {
@@ -163,74 +140,48 @@ uint16_t SensorManager::getBaselineValue(uint8_t sensorIndex)
     return baselineValues[sensorIndex];
 }
 
-VCNL4040_LEDCurrent SensorManager::parseLEDCurrent(const String &current)
+uint16_t SensorManager::parseLEDCurrentMA(const String &current)
 {
-    if (current == "50mA")
-        return VCNL4040_LED_CURRENT_50MA;
-    if (current == "75mA")
-        return VCNL4040_LED_CURRENT_75MA;
-    if (current == "100mA")
-        return VCNL4040_LED_CURRENT_100MA;
-    if (current == "120mA")
-        return VCNL4040_LED_CURRENT_120MA;
-    if (current == "140mA")
-        return VCNL4040_LED_CURRENT_140MA;
-    if (current == "160mA")
-        return VCNL4040_LED_CURRENT_160MA;
-    if (current == "180mA")
-        return VCNL4040_LED_CURRENT_180MA;
-    // Default to 200mA
-    return VCNL4040_LED_CURRENT_200MA;
+    if (current == "50mA")  return 50;
+    if (current == "75mA")  return 75;
+    if (current == "100mA") return 100;
+    if (current == "120mA") return 120;
+    if (current == "140mA") return 140;
+    if (current == "160mA") return 160;
+    if (current == "180mA") return 180;
+    return 200;
 }
 
-VCNL4040_ProximityIntegration SensorManager::parseIntegrationTime(const String &time)
+uint8_t SensorManager::parseIntegrationTimeValue(const String &time)
 {
-    if (time == "1T")
-        return VCNL4040_PROXIMITY_INTEGRATION_TIME_1T;
-    if (time == "1.5T")
-        return VCNL4040_PROXIMITY_INTEGRATION_TIME_1_5T;
-    if (time == "2T")
-        return VCNL4040_PROXIMITY_INTEGRATION_TIME_2T;
-    if (time == "2.5T")
-        return VCNL4040_PROXIMITY_INTEGRATION_TIME_2_5T;
-    if (time == "3T")
-        return VCNL4040_PROXIMITY_INTEGRATION_TIME_3T;
-    if (time == "3.5T")
-        return VCNL4040_PROXIMITY_INTEGRATION_TIME_3_5T;
-    if (time == "4T")
-        return VCNL4040_PROXIMITY_INTEGRATION_TIME_4T;
-    if (time == "8T")
-        return VCNL4040_PROXIMITY_INTEGRATION_TIME_8T;
-    // Default to 1T (fastest)
-    return VCNL4040_PROXIMITY_INTEGRATION_TIME_1T;
+    // Returns whole-T values directly, half-T values as ×10 encoding
+    // (matches VCNL4040::setProxIntegrationTime encoding)
+    if (time == "1T")   return 1;
+    if (time == "1.5T") return 15;
+    if (time == "2T")   return 2;
+    if (time == "2.5T") return 25;
+    if (time == "3T")   return 3;
+    if (time == "3.5T") return 35;
+    if (time == "4T")   return 4;
+    if (time == "8T")   return 8;
+    return 1;
 }
 
-VCNL4040_LEDDutyCycle SensorManager::parseDutyCycle(const String &duty)
+uint16_t SensorManager::parseDutyCycleValue(const String &duty)
 {
-    if (duty == "1/40")
-        return VCNL4040_LED_DUTY_1_40; // ~200 Hz - Fastest
-    if (duty == "1/80")
-        return VCNL4040_LED_DUTY_1_80; // ~100 Hz
-    if (duty == "1/160")
-        return VCNL4040_LED_DUTY_1_160; // ~50 Hz
-    if (duty == "1/320")
-        return VCNL4040_LED_DUTY_1_320; // ~25 Hz - Slowest, best battery
-    // Default to 1/40 (fastest)
-    return VCNL4040_LED_DUTY_1_40;
+    if (duty == "1/40")  return 40;
+    if (duty == "1/80")  return 80;
+    if (duty == "1/160") return 160;
+    if (duty == "1/320") return 320;
+    return 40;
 }
 
-// Parse multi-pulse setting string to register value
-// PS_MPS bits 6:5 of PS_CONF3: 00=1, 01=2, 10=4, 11=8 pulses
-uint8_t SensorManager::parseMultiPulse(const String &mp)
+uint8_t SensorManager::parseMultiPulseCount(const String &mp)
 {
-    if (mp == "2")
-        return 0x01; // 01 = 2 pulses
-    if (mp == "4")
-        return 0x02; // 10 = 4 pulses
-    if (mp == "8")
-        return 0x03; // 11 = 8 pulses
-    // Default to 1 pulse (00)
-    return 0x00;
+    if (mp == "2") return 2;
+    if (mp == "4") return 4;
+    if (mp == "8") return 8;
+    return 1;
 }
 
 bool SensorManager::applySensorConfig(uint8_t sensorIndex)
@@ -238,100 +189,85 @@ bool SensorManager::applySensorConfig(uint8_t sensorIndex)
     if (sensorIndex >= NUM_SENSORS || activeConfig == nullptr)
         return false;
 
-    // Parse configuration values
-    VCNL4040_LEDCurrent led = parseLEDCurrent(activeConfig->led_current);
-    VCNL4040_ProximityIntegration integration = parseIntegrationTime(activeConfig->integration_time);
-    VCNL4040_LEDDutyCycle duty = parseDutyCycle(activeConfig->duty_cycle);
-    uint8_t multiPulse = parseMultiPulse(activeConfig->multi_pulse);
+    uint16_t ledMA = parseLEDCurrentMA(activeConfig->led_current);
+    uint8_t itValue = parseIntegrationTimeValue(activeConfig->integration_time);
+    uint16_t dutyValue = parseDutyCycleValue(activeConfig->duty_cycle);
+    uint8_t pulses = parseMultiPulseCount(activeConfig->multi_pulse);
     bool highRes = activeConfig->high_resolution;
 
-    // Debug: Print what we're trying to set
-    Serial.printf("  Config request: LED=%d (want %s), IT=%d, Duty=%d, MultiPulse=%d, HighRes=%d\n",
-                  (int)led, activeConfig->led_current.c_str(), (int)integration, (int)duty, multiPulse, highRes);
+    Serial.printf("  Config request: LED=%dmA, IT=%s, Duty=1/%d, MultiPulse=%d, HighRes=%d\n",
+                  ledMA, activeConfig->integration_time.c_str(), dutyValue, pulses, highRes);
 
-    // ========================================================================
-    // DIRECT REGISTER WRITES - Bypass Adafruit library for reliable config
-    // Using SparkFun-style approach: write full register values directly
-    // ========================================================================
-
-    // Step 1: Configure PS_CONF1/2 register (0x03)
-    // PS_CONF1 (low byte): bits 7:6 = PS_Duty, bits 3:1 = PS_IT, bit 0 = PS_SD
-    // PS_CONF2 (high byte): bit 3 = PS_HD
-    uint8_t ps_conf1 = ((duty & 0x03) << 6) |        // PS_Duty in bits 7:6
-                       ((integration & 0x07) << 1) | // PS_IT in bits 3:1
-                       0x00;                         // PS_SD = 0 (proximity enabled)
-    uint8_t ps_conf2 = (highRes ? 0x08 : 0x00);      // PS_HD in bit 3
-
-    Wire.beginTransmission(VCNL4040_ADDR);
-    Wire.write(0x03);
-    Wire.write(ps_conf1);
-    Wire.write(ps_conf2);
-    uint8_t err1 = Wire.endTransmission();
+    // Zero-initialize both config registers before applying settings.
+    // This clears any stale interrupt-mode bits (thresholds, persistence,
+    // interrupt type) left by InterruptManager, since the driver's per-field
+    // methods use read-modify-write and would preserve those bits.
+    bool ok1 = vcnl.writeRegister(VCNL4040_PS_CONF1_2, 0x0000);
+    bool ok2 = vcnl.writeRegister(VCNL4040_PS_CONF3_MS, 0x0000);
 
     delayMicroseconds(500);
 
-    uint8_t ps_conf3 = (multiPulse & 0x03) << 5;
-    uint8_t ps_ms = (led & 0x07);
+    // Apply config via driver methods (each does read-modify-write on
+    // the now-zeroed registers, so only our intended bits get set)
+    vcnl.setIRDutyCycle(dutyValue);
+    vcnl.setProxIntegrationTime(itValue);
+    vcnl.setProxResolution(highRes ? 16 : 12);
+    vcnl.powerOnProximity(true);
+    vcnl.setMultiPulse(pulses);
+    vcnl.setLEDCurrent(ledMA);
 
-    Wire.beginTransmission(VCNL4040_ADDR);
-    Wire.write(0x04);
-    Wire.write(ps_conf3);
-    Wire.write(ps_ms);
-    uint8_t err2 = Wire.endTransmission();
+    uint16_t conf12 = vcnl.readRegister(VCNL4040_PS_CONF1_2);
+    uint16_t conf3ms = vcnl.readRegister(VCNL4040_PS_CONF3_MS);
+    Serial.printf("  Write: PS_CONF1/2=0x%04X (ok:%d), PS_CONF3/MS=0x%04X (ok:%d)\n",
+                  conf12, ok1, conf3ms, ok2);
 
-    Serial.printf("  Write: PS_CONF1/2=0x%02X%02X (err:%d), PS_CONF3/MS=0x%02X%02X (err:%d)\n",
-                  ps_conf2, ps_conf1, err1, ps_ms, ps_conf3, err2);
-
-    // Step 3: Verify by reading back - add longer delay for register to fully settle
+    // Verify LED current — hardware bug workaround: read back and retry if mismatch
     delay(10);
 
-    Wire.beginTransmission(VCNL4040_ADDR);
-    Wire.write(0x04);
-    Wire.endTransmission(false);
-    Wire.requestFrom((uint8_t)VCNL4040_ADDR, (uint8_t)2);
-    uint8_t verify_low = Wire.available() ? Wire.read() : 0xFF;
-    uint8_t verify_high = Wire.available() ? Wire.read() : 0xFF;
-
-    uint8_t actual_led = verify_high & 0x07;
     const char *led_ma[] = {"50mA", "75mA", "100mA", "120mA", "140mA", "160mA", "180mA", "200mA"};
+    uint8_t verify_high = vcnl.readRegisterHigh(VCNL4040_PS_CONF3_MS);
+    uint8_t actual_led = verify_high & 0x07;
 
-    Serial.printf("  Verify read: PS_CONF3/MS=0x%02X%02X, LED_I bits=%d (%s)\n",
-                  verify_high, verify_low, actual_led, led_ma[actual_led]);
+    // Compute expected LED_I bits from the mA value
+    uint8_t expected_led;
+    switch (ledMA) {
+        case 50:  expected_led = VCNL4040_LED_I_50MA; break;
+        case 75:  expected_led = VCNL4040_LED_I_75MA; break;
+        case 100: expected_led = VCNL4040_LED_I_100MA; break;
+        case 120: expected_led = VCNL4040_LED_I_120MA; break;
+        case 140: expected_led = VCNL4040_LED_I_140MA; break;
+        case 160: expected_led = VCNL4040_LED_I_160MA; break;
+        case 180: expected_led = VCNL4040_LED_I_180MA; break;
+        default:  expected_led = VCNL4040_LED_I_200MA; break;
+    }
 
-    if (actual_led != (led & 0x07))
+    Serial.printf("  Verify read: PS_MS high=0x%02X, LED_I bits=%d (%s)\n",
+                  verify_high, actual_led, led_ma[actual_led]);
+
+    if (actual_led != expected_led)
     {
-        Serial.printf("  ⚠️ LED VERIFY FAILED: wrote %d, read %d (%s)\n",
-                      (int)(led & 0x07), actual_led, led_ma[actual_led]);
+        Serial.printf("  ⚠️ LED VERIFY FAILED: expected %d, read %d (%s)\n",
+                      expected_led, actual_led, led_ma[actual_led]);
 
-        // Try writing AGAIN with extra delay
         Serial.println("  Retrying LED current write...");
         delay(50);
 
-        Wire.beginTransmission(VCNL4040_ADDR);
-        Wire.write(0x04);
-        Wire.write(ps_conf3);
-        Wire.write(ps_ms);
-        uint8_t err_retry = Wire.endTransmission();
+        vcnl.setLEDCurrent(ledMA);
 
         delay(20);
 
-        Wire.beginTransmission(VCNL4040_ADDR);
-        Wire.write(0x04);
-        Wire.endTransmission(false);
-        Wire.requestFrom((uint8_t)VCNL4040_ADDR, (uint8_t)2);
-        verify_low = Wire.available() ? Wire.read() : 0xFF;
-        verify_high = Wire.available() ? Wire.read() : 0xFF;
+        verify_high = vcnl.readRegisterHigh(VCNL4040_PS_CONF3_MS);
         actual_led = verify_high & 0x07;
 
-        Serial.printf("  Retry result: err=%d, LED_I=%d (%s)\n",
-                      err_retry, actual_led, led_ma[actual_led]);
+        Serial.printf("  Retry result: LED_I=%d (%s)\n",
+                      actual_led, led_ma[actual_led]);
     }
     else
     {
         Serial.printf("  ✓ LED verified: %s\n", led_ma[actual_led]);
     }
 
-    return (err1 == 0 && err2 == 0);
+    return (ok1 && ok2);
 }
 
 void SensorManager::debugI2CScan()
@@ -515,7 +451,6 @@ bool SensorManager::init(SensorConfiguration *config)
 {
     Serial.println("Initializing Sensor Manager...");
 
-    // Store configuration reference
     activeConfig = config;
 
     if (activeConfig != nullptr)
@@ -528,7 +463,6 @@ bool SensorManager::init(SensorConfiguration *config)
         Serial.printf("  Read Ambient: %s\n", activeConfig->read_ambient ? "enabled" : "disabled");
     }
 
-    // Initialize MuxController (handles I2C init, TCA9548A, PCA9546A scanning, sensor detection)
     if (!muxController.begin(43, 44, I2C_CLOCK_HZ))
     {
         Serial.println("ERROR: MuxController initialization failed (no sensors found)");
@@ -541,7 +475,11 @@ bool SensorManager::init(SensorConfiguration *config)
 
     delay(50);
 
-    // Configure all detected VCNL4040 sensors
+    // Initialize VCNL4040 driver's Wire reference using the first available sensor.
+    // begin() verifies ID and sets defaults on that one sensor; applySensorConfig()
+    // will overwrite those defaults immediately. For subsequent sensors the driver
+    // methods work because _i2cPort is already set.
+    bool driverInitialized = false;
     int sensors_initialized = 0;
 
     for (int i = 0; i < NUM_SENSORS; i++)
@@ -564,28 +502,30 @@ bool SensorManager::init(SensorConfiguration *config)
 
         delay(5);
 
-        // Apply configuration using DIRECT I2C only (no Adafruit library!)
+        if (!driverInitialized)
+        {
+            if (!vcnl.begin(Wire))
+            {
+                Serial.println("  ERROR: VCNL4040 driver begin() failed");
+                continue;
+            }
+            driverInitialized = true;
+        }
+
         if (activeConfig != nullptr)
         {
             applySensorConfig(i);
         }
         else
         {
-            // Default configuration - direct I2C write
-            // PS_CONF1/2: Enable proximity, 1T integration, 1/40 duty, high res
-            Wire.beginTransmission(VCNL4040_ADDR);
-            Wire.write(0x03);
-            Wire.write(0x00); // PS_CONF1: PS_IT=0 (1T), PS_Duty=0 (1/40), PS_SD=0 (enabled)
-            Wire.write(0x08); // PS_CONF2: PS_HD=1 (high res)
-            Wire.endTransmission();
-
-            // PS_MS: 200mA LED current
-            Wire.beginTransmission(VCNL4040_ADDR);
-            Wire.write(0x04);
-            Wire.write(0x00); // PS_MS low
-            Wire.write(0x07); // PS_MS high: LED_I=7 (200mA)
-            Wire.endTransmission();
-
+            // Zero-init then apply polling defaults via driver
+            vcnl.writeRegister(VCNL4040_PS_CONF1_2, 0x0000);
+            vcnl.writeRegister(VCNL4040_PS_CONF3_MS, 0x0000);
+            vcnl.setIRDutyCycle(40);
+            vcnl.setProxIntegrationTime(1);
+            vcnl.setProxResolution(16);
+            vcnl.powerOnProximity(true);
+            vcnl.setLEDCurrent(200);
             Serial.println("  Applied default config (200mA, 1T, 1/40, HighRes)");
         }
 
@@ -629,38 +569,21 @@ bool SensorManager::readSensor(uint8_t sensorIndex, SensorReading &reading)
     reading.pcb_id = pos.pcbId;
     reading.side = pos.side;
 
-    Wire.beginTransmission(VCNL4040_ADDR);
-    Wire.write(0x08); // PS_DATA register
-    if (Wire.endTransmission(false) != 0)
+    uint16_t proxValue;
+    if (!vcnl.readRegister(VCNL4040_PS_DATA, proxValue))
         return false;
+    reading.proximity = proxValue;
 
-    Wire.requestFrom(VCNL4040_ADDR, 2);
-    if (Wire.available() < 2)
-        return false;
-
-    uint8_t prox_low = Wire.read();
-    uint8_t prox_high = Wire.read();
-    reading.proximity = (prox_high << 8) | prox_low;
-
-    // Conditionally read ambient light (skip if disabled for speed)
     if (activeConfig != nullptr && !activeConfig->read_ambient)
     {
         reading.ambient = 0;
     }
     else
     {
-        Wire.beginTransmission(VCNL4040_ADDR);
-        Wire.write(0x09); // ALS_DATA register
-        if (Wire.endTransmission(false) != 0)
+        uint16_t alsValue;
+        if (!vcnl.readRegister(VCNL4040_ALS_DATA, alsValue))
             return false;
-
-        Wire.requestFrom(VCNL4040_ADDR, 2);
-        if (Wire.available() < 2)
-            return false;
-
-        uint8_t als_low = Wire.read();
-        uint8_t als_high = Wire.read();
-        reading.ambient = (als_high << 8) | als_low;
+        reading.ambient = alsValue;
     }
 
     return true;
@@ -981,6 +904,23 @@ void SensorManager::dumpSensorConfiguration()
 
     int mismatches = 0;
 
+    // Compute expected LED_I bits for mismatch detection
+    uint8_t expected_led_bits = VCNL4040_LED_I_200MA;
+    if (activeConfig != nullptr)
+    {
+        uint16_t expectedMA = parseLEDCurrentMA(activeConfig->led_current);
+        switch (expectedMA) {
+            case 50:  expected_led_bits = VCNL4040_LED_I_50MA; break;
+            case 75:  expected_led_bits = VCNL4040_LED_I_75MA; break;
+            case 100: expected_led_bits = VCNL4040_LED_I_100MA; break;
+            case 120: expected_led_bits = VCNL4040_LED_I_120MA; break;
+            case 140: expected_led_bits = VCNL4040_LED_I_140MA; break;
+            case 160: expected_led_bits = VCNL4040_LED_I_160MA; break;
+            case 180: expected_led_bits = VCNL4040_LED_I_180MA; break;
+            default:  expected_led_bits = VCNL4040_LED_I_200MA; break;
+        }
+    }
+
     for (int i = 0; i < NUM_SENSORS; i++)
     {
         SensorPosition pos = muxController.getSensorPosition(i);
@@ -1005,73 +945,43 @@ void SensorManager::dumpSensorConfiguration()
         }
         delay(10);
 
-        Wire.beginTransmission(VCNL4040_ADDR);
-        Wire.write(0x0C);
-        if (Wire.endTransmission(false) != 0)
+        uint16_t device_id = vcnl.getID();
+        if (device_id != VCNL4040_ID_VALUE)
         {
-            Serial.printf("║ %-6s │  %d  │  %d  │  YES   │  I2C ERR    │   I2C ERR   │ ERR   │   ERR    ║\n",
-                          sensorName, tca_ch, pca_ch);
-            continue;
-        }
-        Wire.requestFrom((uint8_t)VCNL4040_ADDR, (uint8_t)2);
-        uint8_t id_low = Wire.available() ? Wire.read() : 0;
-        uint8_t id_high = Wire.available() ? Wire.read() : 0;
-        uint16_t device_id = (id_high << 8) | id_low;
-
-        if (device_id != 0x0186)
-        {
-            Serial.printf("║ %-6s │  %d  │  %d  │  YES   │ BAD ID 0x%04X                              ║\n",
-                          sensorName, tca_ch, pca_ch, device_id);
+            if (device_id == 0)
+            {
+                Serial.printf("║ %-6s │  %d  │  %d  │  YES   │  I2C ERR    │   I2C ERR   │ ERR   │   ERR    ║\n",
+                              sensorName, tca_ch, pca_ch);
+            }
+            else
+            {
+                Serial.printf("║ %-6s │  %d  │  %d  │  YES   │ BAD ID 0x%04X                              ║\n",
+                              sensorName, tca_ch, pca_ch, device_id);
+            }
             continue;
         }
 
-        uint8_t ps_conf1_low = 0, ps_conf1_high = 0;
-        Wire.beginTransmission(VCNL4040_ADDR);
-        Wire.write(0x03);
-        if (Wire.endTransmission(false) == 0)
-        {
-            Wire.requestFrom((uint8_t)VCNL4040_ADDR, (uint8_t)2);
-            if (Wire.available() >= 2)
-            {
-                ps_conf1_low = Wire.read();
-                ps_conf1_high = Wire.read();
-            }
-        }
+        uint16_t conf12_raw = vcnl.readRegister(VCNL4040_PS_CONF1_2);
+        uint16_t conf3ms_raw = vcnl.readRegister(VCNL4040_PS_CONF3_MS);
 
-        uint8_t ps_ms_low = 0, ps_ms_high = 0;
-        Wire.beginTransmission(VCNL4040_ADDR);
-        Wire.write(0x04);
-        if (Wire.endTransmission(false) == 0)
-        {
-            Wire.requestFrom((uint8_t)VCNL4040_ADDR, (uint8_t)2);
-            if (Wire.available() >= 2)
-            {
-                ps_ms_low = Wire.read();
-                ps_ms_high = Wire.read();
-            }
-        }
+        uint8_t ps_conf1_low = conf12_raw & 0xFF;
+        uint8_t ps_conf1_high = (conf12_raw >> 8) & 0xFF;
+        uint8_t ps_ms_high = (conf3ms_raw >> 8) & 0xFF;
+        uint8_t ps_ms_low = conf3ms_raw & 0xFF;
 
-        // Parse register values
-        // PS_CONF1 low byte: bits 7:6 = PS_Duty, bits 3:1 = PS_IT
-        // PS_CONF2 (high byte of reg 0x03): bit 3 = PS_HD (high resolution)
         uint8_t duty_bits = (ps_conf1_low >> 6) & 0x03;
         uint8_t integration_bits = (ps_conf1_low >> 1) & 0x07;
         bool high_res = (ps_conf1_high >> 3) & 0x01;
-
-        // PS_MS (high byte of reg 0x04): bits 2:0 = LED_I (LED current)
         uint8_t led_current_bits = ps_ms_high & 0x07;
 
-        // Get string representations (with bounds checking)
         const char *led_str = (led_current_bits < 8) ? led_current_names[led_current_bits] : "???";
         const char *int_str = (integration_bits < 8) ? integration_names[integration_bits] : "???";
         const char *duty_str = (duty_bits < 4) ? duty_names[duty_bits] : "???";
 
-        // Check for mismatches with expected config
         bool led_match = true;
         if (activeConfig != nullptr)
         {
-            VCNL4040_LEDCurrent expected_led = parseLEDCurrent(activeConfig->led_current);
-            if (led_current_bits != (expected_led & 0x07))
+            if (led_current_bits != expected_led_bits)
             {
                 led_match = false;
                 mismatches++;
@@ -1086,17 +996,15 @@ void SensorManager::dumpSensorConfiguration()
                       int_str, duty_str,
                       high_res ? "YES" : "NO");
 
-        // Debug: print raw register values if there's a mismatch
         if (!led_match)
         {
-            Serial.printf("║        │ RAW: PS_CONF1/2=0x%02X%02X PS_CONF3/MS=0x%02X%02X                       ║\n",
-                          ps_conf1_high, ps_conf1_low, ps_ms_high, ps_ms_low);
+            Serial.printf("║        │ RAW: PS_CONF1/2=0x%04X PS_CONF3/MS=0x%04X                            ║\n",
+                          conf12_raw, conf3ms_raw);
         }
     }
 
     Serial.println("╠══════════════════════════════════════════════════════════════════════════════╣");
 
-    // Show expected configuration
     if (activeConfig != nullptr)
     {
         Serial.printf("║ EXPECTED: LED=%-7s IT=%-5s Duty=%-5s MultiP=%sP HighRes=%-3s        ║\n",
