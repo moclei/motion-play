@@ -26,21 +26,21 @@ enum class WaveState
 
 struct DetectionResult
 {
-    Direction direction;
-    float confidence;
-    uint32_t centerOfMassA;
-    uint32_t centerOfMassB;
-    uint32_t comGapMs;
-    uint16_t maxSignalA;
-    uint16_t maxSignalB;
-    uint32_t waveDurationA;
-    uint32_t waveDurationB;
-    float baselineA;
-    float baselineB;
-    float thresholdA;
-    float thresholdB;
-    uint8_t detectedModule;
-    uint8_t modulesDetected;
+    Direction direction = Direction::UNKNOWN;
+    float confidence = 0.0f;
+    uint32_t centerOfMassA = 0;
+    uint32_t centerOfMassB = 0;
+    uint32_t comGapMs = 0;
+    uint16_t maxSignalA = 0;
+    uint16_t maxSignalB = 0;
+    uint32_t waveDurationA = 0;
+    uint32_t waveDurationB = 0;
+    float baselineA = 0.0f;
+    float baselineB = 0.0f;
+    float thresholdA = 0.0f;
+    float thresholdB = 0.0f;
+    uint8_t detectedModule = 0;
+    uint8_t modulesDetected = 0;
 };
 
 struct DetectorConfig
