@@ -16,6 +16,7 @@
 #include "components/interrupt/InterruptManager.h"
 #include "components/calibration/CalibrationManager.h"
 #include "components/serialstudio/SerialStudioOutput.h"
+#include "constants.h"
 
 // Button pins for T-Display-S3
 #define BUTTON_1 0  // Left button (BOOT)
@@ -367,7 +368,13 @@ void initializeSystem()
 
     mqttManager->setCallback([](char *topic, byte *payload, unsigned int length)
                              {
-        char message[length + 1];
+        if (length > MQTT_MAX_INCOMING_MSG) {
+            Serial.printf("MQTT message too large (%u bytes, max %u) — dropped\n",
+                          length, (unsigned)MQTT_MAX_INCOMING_MSG);
+            return;
+        }
+
+        char message[MQTT_MAX_INCOMING_MSG + 1];
         memcpy(message, payload, length);
         message[length] = '\0';
 

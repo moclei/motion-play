@@ -22,3 +22,4 @@ static constexpr size_t LOW_PSRAM_WARNING_BYTES = 1000000;  // 1 MB
 
 // --- MQTT ---
 static constexpr const char *MQTT_TOPIC_PREFIX = "motionplay/";
+static constexpr size_t MQTT_MAX_INCOMING_MSG = 512;

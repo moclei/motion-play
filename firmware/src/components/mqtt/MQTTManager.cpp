@@ -273,14 +273,19 @@ void MQTTManager::messageCallback(char *topic, byte *payload, unsigned int lengt
     Serial.print("Message received on topic: ");
     Serial.println(topic);
 
-    char message[length + 1];
+    if (length > MQTT_MAX_INCOMING_MSG) {
+        Serial.printf("MQTT message too large (%u bytes, max %u) — dropped\n",
+                      length, (unsigned)MQTT_MAX_INCOMING_MSG);
+        return;
+    }
+
+    char message[MQTT_MAX_INCOMING_MSG + 1];
     memcpy(message, payload, length);
     message[length] = '\0';
 
     Serial.print("Payload: ");
     Serial.println(message);
 
-    // Parse command
     DynamicJsonDocument doc(256);
     DeserializationError error = deserializeJson(doc, message);
 
