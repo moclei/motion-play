@@ -6,14 +6,10 @@
 #include "../tca9548a/TCA9548A.h"
 #include <Adafruit_VCNL4040.h>
 #include "SensorConfiguration.h"
+#include "sensor_types.h"
 
 // Forward declaration for session confirmation counters
 struct SessionSummary;
-
-// Sensor configuration
-#define NUM_SENSORS 6
-#define SAMPLE_RATE_HZ 1000
-#define SAMPLE_INTERVAL_US (1000000 / SAMPLE_RATE_HZ)
 
 // Simple PCA9546A wrapper class (for local multiplexing on each sensor board)
 class PCA9546A
@@ -45,27 +41,6 @@ public:
         Wire.write(0x00);
         return (Wire.endTransmission() == 0);
     }
-};
-
-// Sensor reading structure
-struct SensorReading
-{
-    uint32_t timestamp_us; // Microsecond timestamp (was timestamp_ms prior to microsecond-timestamps initiative)
-    uint8_t position;      // 0-5 (sensor array index)
-    uint8_t pcb_id;        // 1-3 (which sensor board: P1, P2, P3)
-    uint8_t side;          // 1-2 (which sensor on board: S1, S2)
-    uint16_t proximity;
-    uint16_t ambient;
-};
-
-// Sensor metadata structure
-struct SensorMetadata
-{
-    uint8_t position;
-    uint8_t pcb_id;
-    uint8_t side;
-    bool active;
-    String name; // "P1S1", "P2S2", etc.
 };
 
 class SensorManager

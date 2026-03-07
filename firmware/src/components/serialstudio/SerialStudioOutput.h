@@ -2,7 +2,7 @@
 #define SERIAL_STUDIO_OUTPUT_H
 
 #include <Arduino.h>
-#include "../sensor/SensorManager.h"
+#include "sensor_types.h"
 #include "../sensor/SensorConfiguration.h"
 #include "../detection/DirectionDetector.h"
 #include "../memory/PSRAMAllocator.h"

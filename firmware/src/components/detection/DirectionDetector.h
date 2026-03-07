@@ -3,7 +3,7 @@
 
 #include <Arduino.h>
 #include <vector>
-#include "../sensor/SensorManager.h"
+#include "sensor_types.h"
 #include "../calibration/CalibrationData.h"
 
 /**

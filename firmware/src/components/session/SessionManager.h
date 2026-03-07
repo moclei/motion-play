@@ -4,8 +4,10 @@
 #include <Arduino.h>
 #include <ArduinoJson.h>
 #include <vector>
-#include "../sensor/SensorManager.h"
+#include "sensor_types.h"
 #include "../interrupt/InterruptManager.h"
+
+struct SensorConfiguration;
 #include "../memory/PSRAMAllocator.h"
 
 enum SessionState
