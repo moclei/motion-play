@@ -117,10 +117,10 @@ void NetworkManager::checkConnection() {
     }
 }
 
-String NetworkManager::getDeviceId() {
+const String& NetworkManager::getDeviceId() const {
     return deviceId;
 }
 
-String NetworkManager::getApiEndpoint() {
+const String& NetworkManager::getApiEndpoint() const {
     return apiEndpoint;
 }

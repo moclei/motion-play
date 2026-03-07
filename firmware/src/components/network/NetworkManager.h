@@ -20,6 +20,6 @@ public:
     bool isConnected();
     WiFiClientSecure& getClient();
     void checkConnection();
-    String getDeviceId();
-    String getApiEndpoint();
+    const String& getDeviceId() const;
+    const String& getApiEndpoint() const;
 };
