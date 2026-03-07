@@ -15,11 +15,10 @@ static constexpr uint8_t  INT_TASK_PRIORITY        = 1;
 static constexpr uint8_t  INT_TASK_CORE            = 1;   // Core 1 (not the sensor core)
 static constexpr uint32_t MUX_MIN_SETTLE_US        = 50;
 static constexpr uint32_t MUX_DEBUG_SETTLE_US      = 200;
-static constexpr uint32_t TASK_POLL_INTERVAL_MS    = 10;
 static constexpr uint8_t  SENSOR_ID_UNKNOWN        = 255;
 static constexpr uint32_t DEBUG_POLL_INTERVAL_MS   = 2000;
 static constexpr uint32_t REGISTER_SETTLE_MS       = 5;
-static constexpr uint32_t TASK_EXIT_TIMEOUT_POLLS  = 50;  // 50 × TASK_POLL_INTERVAL_MS = 500ms
+static constexpr uint32_t TASK_EXIT_TIMEOUT_MS     = 500;
 static constexpr uint32_t SENSOR_DISABLE_SETTLE_MS = 2;
 
 // Singleton instance for ISR access
@@ -492,24 +491,21 @@ void InterruptManager::stopMonitoring()
     detachInterrupt(digitalPinToInterrupt(PIN_SENSOR_INT_2));
     detachInterrupt(digitalPinToInterrupt(PIN_SENSOR_INT_3));
 
-    // Wait for the processing task to exit on its own
-    // The task will self-delete when it sees _monitoring = false
+    // Wait for the processing task to exit via task notification
     if (_processingTask != nullptr)
     {
-        int timeout = TASK_EXIT_TIMEOUT_POLLS;
-        while (_processingTask != nullptr && timeout > 0)
-        {
-            delay(TASK_POLL_INTERVAL_MS);
-            timeout--;
-        }
+        _stopRequestor = xTaskGetCurrentTaskHandle();
 
-        // If task didn't exit gracefully, force delete (shouldn't happen)
-        if (_processingTask != nullptr)
+        uint32_t notified = ulTaskNotifyTake(pdTRUE, pdMS_TO_TICKS(TASK_EXIT_TIMEOUT_MS));
+
+        if (!notified)
         {
             Serial.println("  WARNING: Task didn't exit gracefully, force deleting");
             vTaskDelete(_processingTask);
-            _processingTask = nullptr;
         }
+
+        _processingTask = nullptr;
+        _stopRequestor = nullptr;
     }
 
     // Disable all sensors' interrupts
@@ -695,11 +691,14 @@ void InterruptManager::processingTaskFunc(void *param)
 
     Serial.println("InterruptManager: Processing task exiting");
 
-    // Clear the task handle BEFORE deleting ourselves
-    // This signals to stopMonitoring() that we're done
-    mgr->_processingTask = nullptr;
+    // Notify the task that requested the stop, completing the exit handshake
+    TaskHandle_t requestor = mgr->_stopRequestor;
+    if (requestor != nullptr)
+    {
+        xTaskNotifyGive(requestor);
+    }
 
-    // Self-delete - this function never returns
+    // Self-delete — the requestor is responsible for NULLing _processingTask
     vTaskDelete(NULL);
 }
 

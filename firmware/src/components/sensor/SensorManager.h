@@ -72,6 +72,7 @@ private:
     bool initialized = false;
     bool sensorsActive[NUM_SENSORS] = {false}; // Track which sensors initialized
     TaskHandle_t sensorTask = NULL;
+    TaskHandle_t stopRequestorTask = NULL;
     QueueHandle_t dataQueue = NULL;
     SensorConfiguration *activeConfig = nullptr; // Reference to active configuration
 

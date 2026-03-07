@@ -1034,10 +1034,14 @@ void SensorManager::sensorTaskFunction(void *parameter)
 
     Serial.println("Sensor task cleanup complete, exiting.");
 
-    // Mark task as NULL before deleting (atomic-ish on ESP32)
-    manager->sensorTask = NULL;
+    // Notify the task that requested the stop, completing the exit handshake
+    TaskHandle_t requestor = manager->stopRequestorTask;
+    if (requestor != NULL)
+    {
+        xTaskNotifyGive(requestor);
+    }
 
-    // Delete ourselves - this is the proper way to end a FreeRTOS task
+    // Self-delete — the requestor is responsible for NULLing sensorTask
     vTaskDelete(NULL);
 }
 
@@ -1088,38 +1092,30 @@ void SensorManager::stopCollection()
 
     Serial.println("Requesting sensor task to stop...");
 
+    // Register ourselves so the sensor task can notify us on exit
+    stopRequestorTask = xTaskGetCurrentTaskHandle();
+
     // Signal the task to stop gracefully
     stopRequested = true;
 
-    // Wait for task to finish with timeout (max 500ms)
-    // The task checks stopRequested frequently and will exit cleanly
-    unsigned long startWait = millis();
-    const unsigned long STOP_TIMEOUT_MS = 500;
+    // Block until the sensor task notifies us, or timeout
+    static constexpr uint32_t STOP_TIMEOUT_MS = 500;
+    uint32_t notified = ulTaskNotifyTake(pdTRUE, pdMS_TO_TICKS(STOP_TIMEOUT_MS));
 
-    while (sensorTask != NULL && (millis() - startWait) < STOP_TIMEOUT_MS)
-    {
-        // Feed watchdog while waiting
-        taskYIELD();
-        delay(10);
-    }
-
-    // Check if task stopped gracefully
-    if (sensorTask == NULL)
+    if (notified)
     {
         Serial.println("Sensor task stopped gracefully");
     }
     else
     {
-        // Task didn't stop in time - force delete as fallback
-        // This shouldn't happen normally, but provides safety
         Serial.println("WARNING: Sensor task did not stop in time, forcing deletion");
         vTaskDelete(sensorTask);
-        sensorTask = NULL;
-
-        // Clean up I2C bus since task couldn't do it
         cleanupI2CBus();
         Serial.println("I2C bus cleaned up after forced stop");
     }
+
+    sensorTask = NULL;
+    stopRequestorTask = NULL;
 
     Serial.println("Sensor collection stopped");
 }

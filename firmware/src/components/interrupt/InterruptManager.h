@@ -201,6 +201,7 @@ private:
     std::atomic<uint32_t> _isrCount{0};
     QueueHandle_t _eventQueue;
     TaskHandle_t _processingTask;
+    TaskHandle_t _stopRequestor = nullptr;
 
     // ISR tracking - volatile because accessed from ISR
     volatile uint32_t _lastIsrTime[MUX_NUM_BOARDS];
