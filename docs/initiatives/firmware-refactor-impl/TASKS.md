@@ -6,7 +6,7 @@ Each task is one compilable, flashable step. Tasks within a phase are ordered by
 
 Creates shared infrastructure. Mostly new files and include changes — low risk.
 
-- [ ] **1.1** Create `firmware/include/sensor_types.h` — extract `SensorReading`, `SensorMetadata`, `NUM_SENSORS`, `SAMPLE_RATE_HZ` from `SensorManager.h`. Update all includers.
+- [x] **1.1** Create `firmware/include/sensor_types.h` — extract `SensorReading`, `SensorMetadata`, `NUM_SENSORS`, `SAMPLE_RATE_HZ` from `SensorManager.h`. Update all includers.
 - [ ] **1.2** Create `firmware/include/detection_types.h` — extract `Direction`, `DetectionResult`, `DetectorConfig`, `WaveState`, `DetectorState` from `DirectionDetector.h`. Define `IDetector` interface.
 - [ ] **1.3** Create `firmware/include/interrupt_types.h` — extract `InterruptEventType`, `InterruptEvent`, `InterruptMode`, `InterruptConfig`, `InterruptSessionStats` from `InterruptManager.h`.
 - [ ] **1.4** Create `firmware/include/ring_buffer.h` — extract generic `RingBuffer<T,SIZE>` from `DirectionDetector.h`.
