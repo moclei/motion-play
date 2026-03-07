@@ -47,7 +47,9 @@ bool DataTransmitter::transmitBatch(const String &sessionId,
     doc["session_type"] = "proximity";           // Explicit session type
     doc["start_timestamp"] = startTime * 1000UL; // Convert session start from ms to us (consistent with reading timestamps)
     doc["duration_ms"] = duration;
-    doc["sample_rate"] = SAMPLE_RATE_HZ;
+    doc["sample_rate"] = (config != nullptr && config->actual_sample_rate_hz > 0)
+                             ? config->actual_sample_rate_hz
+                             : SAMPLE_RATE_HZ;
     doc["batch_offset"] = offset;
     doc["batch_size"] = count;
     doc["timestamp_unit"] = "us"; // Signal to Lambda that timestamps are in microseconds
@@ -188,12 +190,11 @@ bool DataTransmitter::transmitProximitySession(SessionManager &session, const Se
         size_t remaining = totalReadings - offset;
         size_t batchCount = (remaining > BATCH_SIZE) ? BATCH_SIZE : remaining;
 
-        // Pass sensor metadata and config only for first batch
+        // Sensor metadata only for first batch; config always passed for actual sample rate
         const std::vector<SensorMetadata> *metadataPtr = (offset == 0) ? &sensorMetadata : nullptr;
-        const SensorConfiguration *configPtr = (offset == 0) ? config : nullptr;
 
         if (!transmitBatch(sessionId, deviceId, startTime, duration,
-                           readings, offset, batchCount, metadataPtr, configPtr))
+                           readings, offset, batchCount, metadataPtr, config))
         {
             Serial.println("ERROR: Failed to transmit batch");
             return false;
@@ -439,7 +440,9 @@ String DataTransmitter::transmitLiveDebugCapture(
         doc["start_timestamp"] = startTime; // Microseconds (first reading timestamp)
         doc["duration_ms"] = durationMs;
         doc["timestamp_unit"] = "us"; // Signal to Lambda that timestamps are in microseconds
-        doc["sample_rate"] = SAMPLE_RATE_HZ;
+        doc["sample_rate"] = (config != nullptr && config->actual_sample_rate_hz > 0)
+                                 ? config->actual_sample_rate_hz
+                                 : SAMPLE_RATE_HZ;
         doc["batch_offset"] = offset;
         doc["batch_size"] = batchCount;
 
@@ -638,7 +641,9 @@ String DataTransmitter::transmitLiveDebugCaptureBinary(
     doc["start_timestamp"] = startTime;
     doc["duration_ms"] = durationMs;
     doc["timestamp_unit"] = "us";
-    doc["sample_rate"] = SAMPLE_RATE_HZ;
+    doc["sample_rate"] = (config != nullptr && config->actual_sample_rate_hz > 0)
+                             ? config->actual_sample_rate_hz
+                             : SAMPLE_RATE_HZ;
 
     // Capture metadata
     doc["capture_reason"] = captureReason;

@@ -29,7 +29,7 @@ Targeted fixes — a few lines each. No structural changes.
 - [x] **2.6** Fix `readSensor()` silent failure — return distinct error indicator on I2C failure.
 - [x] **2.7** Add null/overflow guards — guard `dataQueue`, add `doc.overflowed()` checks, make `DisplayManager::init()` return `bool`.
 - [x] **2.8** Fix VLA in `MQTTManager::messageCallback()` — replace `char message[length+1]` with fixed buffer + length check.
-- [ ] **2.9** Fix sample rate metadata — use `config->actual_sample_rate_hz` instead of `SAMPLE_RATE_HZ` macro.
+- [x] **2.9** Fix sample rate metadata — use `config->actual_sample_rate_hz` instead of `SAMPLE_RATE_HZ` macro.
 - [ ] **2.10** Initialize `MLDetector::lastResult_` — add default member initializers to `DetectionResult`.
 - [ ] **2.11** Remove dead code — all items listed in REPORT.md §9.
 - [ ] **2.12** Fix string accessor return types — `NetworkManager::getDeviceId()`, `getApiEndpoint()` return `const String&`.
