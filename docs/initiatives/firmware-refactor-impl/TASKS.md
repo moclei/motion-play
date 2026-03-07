@@ -41,7 +41,7 @@ Targeted fixes — a few lines each. No structural changes.
 File splits and class extractions. Each task is independent unless noted. Largest effort in the initiative.
 
 - [x] **3.1** Extract `ConfigLoader` — single class parses `/config.json` once. NetworkManager and MQTTManager receive config. *(Depends on 1.6 for `CONFIG_FILE_PATH` constant.)*
-- [ ] **3.2** Adopt MuxController in SensorManager — replace TCA9548A + inline PCA9546A with MuxController. *(High risk — read audit PLAN.md Batch 2 §10 risk notes before starting.)*
+- [x] **3.2** Adopt MuxController in SensorManager — replace TCA9548A + inline PCA9546A with MuxController. *(High risk — read audit PLAN.md Batch 2 §10 risk notes before starting.)*
 - [ ] **3.3** Adopt VCNL4040 driver in SensorManager — replace raw I2C with driver methods. Preserve verify-retry on LED current. *(High risk — depends on 3.2. Read audit PLAN.md Batch 2 §10.)*
 - [ ] **3.4** Extract JSON serialization helpers in DataTransmitter — `serializeCalibration()`, `serializeConfig()`, `serializeReadingsArray()`, `serializeSummary()`.
 - [ ] **3.5** Extract `BinarySerializer` from DataTransmitter — move `transmitLiveDebugCaptureBinary()` to own file.
