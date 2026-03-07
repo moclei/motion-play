@@ -18,7 +18,7 @@ public:
      */
     static void printMemoryStats()
     {
-        if (serialStudioEnabled)
+        if (!debugPrintEnabled())
             return;
         Serial.println("\n=== MEMORY STATISTICS ===");
 
@@ -130,7 +130,7 @@ public:
      */
     static void printCompactStatus()
     {
-        if (serialStudioEnabled)
+        if (!debugPrintEnabled())
             return;
         size_t freeHeap = getFreeHeap();
         size_t freePSRAM = getFreePSRAM();

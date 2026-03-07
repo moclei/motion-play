@@ -221,8 +221,7 @@ void SessionManager::clearBuffer()
     interruptBuffer.clear();
     state = IDLE;
     sessionType = SessionType::PROXIMITY; // Reset to default
-    if (!serialStudioEnabled)
-        Serial.println("Buffer cleared, session reset to IDLE");
+    DEBUG_LOG("Buffer cleared, session reset to IDLE\n");
 }
 
 void SessionManager::setSensorMetadata(const std::vector<SensorMetadata> &metadata)

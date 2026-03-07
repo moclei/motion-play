@@ -30,9 +30,8 @@ void DirectionDetector::addReading(const SensorReading &reading)
             sensor.baselineReady = true;
             recalculateThreshold(sensor, pos);
 
-            if (!serialStudioEnabled)
-                Serial.printf("[Detector] Sensor %d baseline ready (threshold=%.1f)\n",
-                              pos, sensor.threshold);
+            DEBUG_LOG("[Detector] Sensor %d baseline ready (threshold=%.1f)\n",
+                     pos, sensor.threshold);
         }
         else if (sensor.baselineReady &&
                  sensor.baselineUpdateCount % 50 == 0)
@@ -261,10 +260,9 @@ DetectionResult DirectionDetector::getResult()
     result.confidence = baseConfidence;
     _detectedModule = bestModule;
 
-    if (!serialStudioEnabled)
-        Serial.printf("[Detector] Detection on M%d (%d modules agree): %s conf=%.2f\n",
-                      bestModule + 1, modulesDetected,
-                      directionToString(result.direction), result.confidence);
+    DEBUG_LOG("[Detector] Detection on M%d (%d modules agree): %s conf=%.2f\n",
+             bestModule + 1, modulesDetected,
+             directionToString(result.direction), result.confidence);
 
     return result;
 }

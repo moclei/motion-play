@@ -52,8 +52,10 @@ public:
             throw std::bad_alloc();
         }
 
+#ifdef DEBUG_PSRAM
         Serial.printf("PSRAM allocated: %u bytes (%u items)\n",
                       n * sizeof(T), n);
+#endif
 
         return p;
     }
@@ -63,8 +65,10 @@ public:
         if (p)
         {
             heap_caps_free(p);
+#ifdef DEBUG_PSRAM
             Serial.printf("PSRAM freed: %u bytes (%u items)\n",
                           n * sizeof(T), n);
+#endif
         }
     }
 

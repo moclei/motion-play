@@ -893,8 +893,7 @@ void SensorManager::sensorTaskFunction(void *parameter)
 {
     SensorManager *manager = (SensorManager *)parameter;
 
-    if (!serialStudioEnabled)
-        Serial.println("Sensor task started on Core 0");
+    DEBUG_LOG("Sensor task started on Core 0\n");
 
     unsigned long lastSampleTime = micros();
     unsigned long lastErrorLog = 0;
@@ -980,14 +979,8 @@ void SensorManager::sensorTaskFunction(void *parameter)
                 // Log every 100 failures or first 3 failures
                 if (consecutiveFailures <= 3 || (millis() - lastErrorLog > 5000))
                 {
-                    if (!serialStudioEnabled)
-                    {
-                        Serial.print("WARNING: Sensor read failures: ");
-                        Serial.print(failedReads);
-                        Serial.print(" failed, ");
-                        Serial.print(successfulReads);
-                        Serial.println(" succeeded");
-                    }
+                    DEBUG_LOG("WARNING: Sensor read failures: %d failed, %d succeeded\n",
+                              failedReads, successfulReads);
                     lastErrorLog = millis();
                 }
             }
@@ -1078,8 +1071,7 @@ bool SensorManager::startCollection(QueueHandle_t queue, SessionSummary *summary
         0 // Core 0 (protocol CPU)
     );
 
-    if (!serialStudioEnabled)
-        Serial.println("Sensor collection started");
+    DEBUG_LOG("Sensor collection started\n");
     return true;
 }
 

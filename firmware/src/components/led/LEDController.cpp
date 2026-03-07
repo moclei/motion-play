@@ -14,8 +14,7 @@ bool LEDController::init()
     if (initialized)
         return true;
 
-    if (!serialStudioEnabled)
-        Serial.println("Initializing LED strip...");
+    DEBUG_LOG("Initializing LED strip...\n");
 
     FastLED.addLeds<WS2812B, PIN_LED_STRIP_DATA, GRB>(leds, LED_COUNT);
     FastLED.setBrightness(LED_DEFAULT_BRIGHTNESS);
@@ -25,8 +24,7 @@ bool LEDController::init()
     FastLED.show();
 
     initialized = true;
-    if (!serialStudioEnabled)
-        Serial.printf("LED strip initialized: %d LEDs on GPIO %d\n", LED_COUNT, PIN_LED_STRIP_DATA);
+    DEBUG_LOG("LED strip initialized: %d LEDs on GPIO %d\n", LED_COUNT, PIN_LED_STRIP_DATA);
 
     return true;
 }
@@ -55,8 +53,7 @@ void LEDController::showDirection(Direction direction, uint32_t duration)
         break;
     }
 
-    if (!serialStudioEnabled)
-        Serial.printf("LED: Showing %s for %dms\n", dirName, duration);
+    DEBUG_LOG("LED: Showing %s for %dms\n", dirName, duration);
 
     FastLED.setBrightness(LED_DEFAULT_BRIGHTNESS);
 

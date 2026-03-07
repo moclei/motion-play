@@ -17,6 +17,7 @@
 #include "components/calibration/CalibrationManager.h"
 #include "components/serialstudio/SerialStudioOutput.h"
 #include "constants.h"
+#include "debug_log.h"
 
 // Button pins for T-Display-S3
 #define BUTTON_1 0  // Left button (BOOT)
@@ -1132,8 +1133,7 @@ void handleCommand(const String &command, JsonDocument *doc)
             return;
         }
 
-        if (!serialStudioEnabled)
-            Serial.println("[LIVE_DEBUG] Missed event capture requested");
+        DEBUG_LOG("[LIVE_DEBUG] Missed event capture requested\n");
 
         // 1. Stop sensor polling
         sensorManager.stopCollection();
@@ -1172,9 +1172,8 @@ void handleCommand(const String &command, JsonDocument *doc)
                                           ? (buffer[actualBufferSize - 1].timestamp_us - buffer[startIdx].timestamp_us) / 1000
                                           : 0;
 
-        if (!serialStudioEnabled)
-            Serial.printf("[LIVE_DEBUG] Missed event: capturing %d readings (%lums)\n",
-                          captureCount, capDurationMs);
+        DEBUG_LOG("[LIVE_DEBUG] Missed event: capturing %d readings (%lums)\n",
+                 captureCount, capDurationMs);
 
         // 4. Session Confirmation: finalize summary for missed event capture
         {
@@ -1197,14 +1196,12 @@ void handleCommand(const String &command, JsonDocument *doc)
 
         if (captureSessionId.length() > 0)
         {
-            if (!serialStudioEnabled)
-                Serial.println("[LIVE_DEBUG] Missed event capture transmitted");
+            DEBUG_LOG("[LIVE_DEBUG] Missed event capture transmitted\n");
             mqttManager->publishStatus("live_debug_missed_captured");
         }
         else
         {
-            if (!serialStudioEnabled)
-                Serial.println("[LIVE_DEBUG] ERROR: Missed event capture failed!");
+            DEBUG_LOG("[LIVE_DEBUG] ERROR: Missed event capture failed!\n");
             mqttManager->publishStatus("live_debug_capture_failed");
         }
 
@@ -1216,8 +1213,7 @@ void handleCommand(const String &command, JsonDocument *doc)
         sessionManager.getSessionSummary().reset();
         sensorManager.startCollection(sessionManager.getQueue(), &sessionManager.getSessionSummary());
         display.showMessage("Ready", TFT_MAGENTA);
-        if (!serialStudioEnabled)
-            Serial.println("[LIVE_DEBUG] Resumed after missed event capture");
+        DEBUG_LOG("[LIVE_DEBUG] Resumed after missed event capture\n");
     }
     else if (command == "set_detection_mode")
     {
@@ -1439,9 +1435,8 @@ void loop()
             // Update LED animation (handles fade-out after detection)
             bool animating = ledController.update();
 
-            // Debug: log buffer status periodically (suppressed when Serial Studio active)
             static unsigned long lastPlayDebug = 0;
-            if (!serialStudioEnabled && millis() - lastPlayDebug > 2000)
+            if (debugPrintEnabled() && millis() - lastPlayDebug > 2000)
             {
                 lastPlayDebug = millis();
                 bool detectorReady = useMLDetection ? mlDetector.isReady() : directionDetector.isReady();
@@ -1485,11 +1480,10 @@ void loop()
                     serialStudioOutput.cacheDetection(result);
 
                     // Detection successful!
-                    if (!serialStudioEnabled)
-                        Serial.printf("DETECTION [%s]: %s (confidence: %.2f)\n",
-                                      useMLDetection ? "ML" : "heuristic",
-                                      directionToString(result.direction),
-                                      result.confidence);
+                    DEBUG_LOG("DETECTION [%s]: %s (confidence: %.2f)\n",
+                             useMLDetection ? "ML" : "heuristic",
+                             directionToString(result.direction),
+                             result.confidence);
 
                     // Show on LEDs
                     ledController.showDirection(result.direction, 3000);
@@ -1515,8 +1509,7 @@ void loop()
                     lastProcessedIndex = 0;
                     buffer.clear();
                     serialStudioOutput.resetIndex();
-                    if (!serialStudioEnabled)
-                        Serial.println("Detection complete, buffer cleared for next event");
+                    DEBUG_LOG("Detection complete, buffer cleared for next event\n");
                 }
 
                 // Limit buffer size to prevent memory issues in play mode.
@@ -1525,8 +1518,7 @@ void loop()
                 // and must NOT be reset here or they lose accumulated data.
                 if (bufferSize > 500)
                 {
-                    if (!serialStudioEnabled)
-                        Serial.printf("Buffer overflow prevention: clearing %d samples\n", bufferSize);
+                    DEBUG_LOG("Buffer overflow prevention: clearing %d samples\n", bufferSize);
                     if (!useMLDetection)
                         directionDetector.reset();
                     lastProcessedIndex = 0;
@@ -1549,9 +1541,8 @@ void loop()
             // Update LED animation (handles fade-out after detection)
             ledController.update();
 
-            // Debug: log buffer status periodically (suppressed when Serial Studio active)
             static unsigned long lastLiveDebugLog = 0;
-            if (!serialStudioEnabled && millis() - lastLiveDebugLog > 2000)
+            if (debugPrintEnabled() && millis() - lastLiveDebugLog > 2000)
             {
                 lastLiveDebugLog = millis();
                 bool detectorReady = useMLDetection ? mlDetector.isReady() : directionDetector.isReady();
@@ -1593,11 +1584,10 @@ void loop()
                     DetectionResult result = useMLDetection ? mlDetector.getResult() : directionDetector.getResult();
                     serialStudioOutput.cacheDetection(result);
 
-                    if (!serialStudioEnabled)
-                        Serial.printf("[LIVE_DEBUG] DETECTION [%s]: %s (confidence: %.2f)\n",
-                                      useMLDetection ? "ML" : "heuristic",
-                                      directionToString(result.direction),
-                                      result.confidence);
+                    DEBUG_LOG("[LIVE_DEBUG] DETECTION [%s]: %s (confidence: %.2f)\n",
+                             useMLDetection ? "ML" : "heuristic",
+                             directionToString(result.direction),
+                             result.confidence);
 
                     // LED feedback (same as Play)
                     ledController.showDirection(result.direction, 3000);
@@ -1614,8 +1604,7 @@ void loop()
 
                     // 1. Post-detection delay: keep collecting so we capture the trailing edge
                     //    Sensor task runs on Core 0, so delay() on Core 1 lets it continue
-                    if (!serialStudioEnabled)
-                        Serial.printf("[LIVE_DEBUG] Post-detection delay: %lums\n", POST_DETECTION_DELAY_MS);
+                    DEBUG_LOG("[LIVE_DEBUG] Post-detection delay: %lums\n", POST_DETECTION_DELAY_MS);
                     delay(POST_DETECTION_DELAY_MS);
 
                     // 2. Stop sensor polling
@@ -1653,9 +1642,8 @@ void loop()
                     }
 
                     size_t captureCount = actualBufferSize - startIdx;
-                    if (!serialStudioEnabled)
-                        Serial.printf("[LIVE_DEBUG] Capture: %d readings from idx %d (buffer has %d)\n",
-                                      captureCount, startIdx, actualBufferSize);
+                    DEBUG_LOG("[LIVE_DEBUG] Capture: %d readings from idx %d (buffer has %d)\n",
+                             captureCount, startIdx, actualBufferSize);
 
                     // 5. Session Confirmation: finalize summary for this capture
                     {
@@ -1689,14 +1677,12 @@ void loop()
 
                     if (captureSessionId.length() > 0)
                     {
-                        if (!serialStudioEnabled)
-                            Serial.println("[LIVE_DEBUG] Detection capture transmitted successfully");
+                        DEBUG_LOG("[LIVE_DEBUG] Detection capture transmitted successfully\n");
                         mqttManager->publishStatus("live_debug_detection_captured");
                     }
                     else
                     {
-                        if (!serialStudioEnabled)
-                            Serial.println("[LIVE_DEBUG] ERROR: Detection capture transmission failed!");
+                        DEBUG_LOG("[LIVE_DEBUG] ERROR: Detection capture transmission failed!\n");
                         mqttManager->publishStatus("live_debug_capture_failed");
                     }
 
@@ -1714,15 +1700,13 @@ void loop()
                     sessionManager.getSessionSummary().reset();
                     sensorManager.startCollection(sessionManager.getQueue(), &sessionManager.getSessionSummary());
                     display.showMessage("Ready", TFT_MAGENTA);
-                    if (!serialStudioEnabled)
-                        Serial.println("[LIVE_DEBUG] Resumed — waiting for next event");
+                    DEBUG_LOG("[LIVE_DEBUG] Resumed — waiting for next event\n");
                 }
 
                 // Buffer overflow prevention (higher cap than Play)
                 if (bufferSize > LIVE_DEBUG_BUFFER_CAP)
                 {
-                    if (!serialStudioEnabled)
-                        Serial.printf("[LIVE_DEBUG] Buffer overflow prevention: clearing %d samples\n", bufferSize);
+                    DEBUG_LOG("[LIVE_DEBUG] Buffer overflow prevention: clearing %d samples\n", bufferSize);
                     if (useMLDetection)
                         mlDetector.reset();
                     else
@@ -1807,16 +1791,15 @@ void loop()
                 int sampleCount = sessionManager.getDataCount();
                 display.updateSampleCount(sampleCount);
 
-                if (!serialStudioEnabled)
+                if (debugPrintEnabled())
                 {
                     Serial.printf("Samples: %d | ", sampleCount);
                     MemoryMonitor::printCompactStatus();
                 }
 
-                // Check memory health during collection
-                if (!MemoryMonitor::isMemoryHealthy() && !serialStudioEnabled)
+                if (!MemoryMonitor::isMemoryHealthy())
                 {
-                    Serial.println("WARNING: Memory getting low during collection!");
+                    DEBUG_LOG("WARNING: Memory getting low during collection!\n");
                 }
             }
         }
@@ -1830,7 +1813,7 @@ void loop()
         if (mqttManager->isConnected())
         {
             mqttManager->publishStatus("online");
-            if (!serialStudioEnabled)
+            if (debugPrintEnabled())
             {
                 Serial.print("Status update sent. Session state: ");
                 switch (sessionManager.getState())

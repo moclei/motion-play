@@ -15,7 +15,7 @@ bool NetworkManager::loadConfig() {
     }
     Serial.println("LittleFS mounted successfully!");
 
-    // List files in root directory
+#ifdef DEBUG_FILESYSTEM
     Serial.println("Listing files in LittleFS root:");
     File root = LittleFS.open("/");
     if (!root) {
@@ -31,6 +31,7 @@ bool NetworkManager::loadConfig() {
             file = root.openNextFile();
         }
     }
+#endif
 
     Serial.println("Attempting to open /config.json...");
     File configFile = LittleFS.open(CONFIG_FILE_PATH, "r");

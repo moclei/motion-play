@@ -34,7 +34,7 @@ Targeted fixes — a few lines each. No structural changes.
 - [x] **2.11** Remove dead code — all items listed in REPORT.md §9.
 - [x] **2.12** Fix string accessor return types — `NetworkManager::getDeviceId()`, `getApiEndpoint()` return `const String&`.
 - [x] **2.13** Guard calibrate/configure during monitoring — add `if (_monitoring) return false;` to InterruptManager.
-- [ ] **2.14** Conditional debug logging — gate PSRAMAllocator, InterruptManager debug, NetworkManager file listing with `#ifdef`. *(Also: adopt `DEBUG_LOG()` / `debugPrintEnabled()` from `debug_log.h` (created in 1.5) to replace ad-hoc `if (!serialStudioEnabled)` patterns in main.cpp, DirectionDetector, SessionManager, SensorManager, LEDController, MemoryMonitor.)*
+- [x] **2.14** Conditional debug logging — gate PSRAMAllocator, InterruptManager debug, NetworkManager file listing with `#ifdef`. *(Also: adopt `DEBUG_LOG()` / `debugPrintEnabled()` from `debug_log.h` (created in 1.5) to replace ad-hoc `if (!serialStudioEnabled)` patterns in main.cpp, DirectionDetector, SessionManager, SensorManager, LEDController, MemoryMonitor.)*
 
 ## Phase 3: Structural Decomposition
 

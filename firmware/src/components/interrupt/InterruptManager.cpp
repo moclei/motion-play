@@ -389,11 +389,12 @@ bool InterruptManager::configureSensor(uint8_t position)
 
     delay(REGISTER_SETTLE_MS);
 
+#ifdef DEBUG_INTERRUPTS
     uint16_t conf12 = sensor.readRegister(VCNL4040_PS_CONF1_2);
-    uint8_t psConf1 = conf12 & 0xFF;             // Low byte = PS_CONF1
-    uint8_t psConf2 = (conf12 >> 8) & 0xFF;      // High byte = PS_CONF2
-    uint8_t psIntBits = psConf2 & 0x03;          // Bits 1:0 = PS_INT
-    uint8_t psItBits = (psConf1 >> 1) & 0x07;    // Bits 3:1 = PS_IT
+    uint8_t psConf1 = conf12 & 0xFF;
+    uint8_t psConf2 = (conf12 >> 8) & 0xFF;
+    uint8_t psIntBits = psConf2 & 0x03;
+    uint8_t psItBits = (psConf1 >> 1) & 0x07;
 
     Serial.printf("    Sensor %d: PS_CONF1_2=0x%04X, PS_IT=%d, PS_INT=%d (%s) ✓\n",
                   position, conf12, psItBits,
@@ -407,11 +408,11 @@ bool InterruptManager::configureSensor(uint8_t position)
     Serial.printf("    Sensor %d: Verified thresholds: HIGH=%d, LOW=%d\n",
                   position, threshH, threshL);
 
-    // Read current proximity value (should be below threshold if no object)
     uint16_t proxValue = sensor.readProximity();
     uint16_t margin = (proxValue < threshH) ? (threshH - proxValue) : 0;
     Serial.printf("    Sensor %d: Current proximity=%d (margin to threshold: %d)\n",
                   position, proxValue, margin);
+#endif
 
     return true;
 }
@@ -640,7 +641,9 @@ void InterruptManager::processingTaskFunc(void *param)
 
     Serial.println("InterruptManager: Processing task started");
 
+#ifdef DEBUG_INTERRUPTS
     uint32_t lastDebugPoll = 0;
+#endif
 
     while (mgr->_monitoring)
     {
@@ -661,20 +664,18 @@ void InterruptManager::processingTaskFunc(void *param)
             }
         }
 
-        // DEBUG: Periodically poll sensors to check if they're detecting anything
+#ifdef DEBUG_INTERRUPTS
+        // Periodically poll sensors to check if they're detecting anything
         uint32_t now = millis();
         if (now - lastDebugPoll > DEBUG_POLL_INTERVAL_MS)
         {
             lastDebugPoll = now;
 
-            // Read GPIO states
             Serial.printf("[DEBUG] GPIO: INT1=%d, INT2=%d, INT3=%d | ",
                           digitalRead(PIN_SENSOR_INT_1),
                           digitalRead(PIN_SENSOR_INT_2),
                           digitalRead(PIN_SENSOR_INT_3));
 
-            // Find the first available sensor to poll
-            // NOTE: We only read proximity, NOT interrupt flags (reading flags clears them!)
             bool polledSensor = false;
             for (uint8_t pos = 0; pos < MUX_TOTAL_SENSORS && !polledSensor; pos++)
             {
@@ -691,6 +692,7 @@ void InterruptManager::processingTaskFunc(void *param)
                 Serial.println("No sensors available to poll");
             }
         }
+#endif
 
         // If nothing pending, yield briefly
         // Use minimal delay to maximize responsiveness for direction detection
