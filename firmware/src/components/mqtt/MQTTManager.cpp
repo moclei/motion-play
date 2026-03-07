@@ -250,6 +250,7 @@ bool MQTTManager::publishDataStreaming(const JsonDocument &data)
     if (!writeOk)
     {
         Serial.println("ERROR: streaming publish aborted due to write failure");
+        mqttClient.endPublish();
         return false;
     }
 
