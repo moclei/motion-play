@@ -113,7 +113,7 @@ public:
     {
         if (count < 2)
             return 0;
-        uint32_t variance = (sumSq - (sum * sum / count)) / (count - 1);
+        uint64_t variance = (sumSq - ((uint64_t)sum * sum / count)) / (count - 1);
         return (uint16_t)sqrt(variance);
     }
 
@@ -122,7 +122,7 @@ public:
 private:
     uint32_t count = 0;
     uint32_t sum = 0;
-    uint32_t sumSq = 0;
+    uint64_t sumSq = 0;
     uint16_t minVal = UINT16_MAX;
     uint16_t maxVal = 0;
 };
