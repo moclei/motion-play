@@ -5,7 +5,7 @@
 #include <ArduinoJson.h>
 #include <vector>
 #include "sensor_types.h"
-#include "../interrupt/InterruptManager.h"
+#include "interrupt_types.h"
 
 struct SensorConfiguration;
 #include "../memory/PSRAMAllocator.h"

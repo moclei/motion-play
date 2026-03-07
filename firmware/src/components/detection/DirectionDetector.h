@@ -2,7 +2,7 @@
 #define DIRECTION_DETECTOR_H
 
 #include <Arduino.h>
-#include <vector>
+#include "detection_types.h"
 #include "sensor_types.h"
 #include "../calibration/CalibrationData.h"
 
@@ -23,62 +23,6 @@
  * Layer 3 - Consensus: Multiple modules detecting the same direction boosts
  *   confidence. Disagreement lowers it.
  */
-
-enum class Direction
-{
-    UNKNOWN,
-    A_TO_B,
-    B_TO_A
-};
-
-enum class DetectorState
-{
-    ESTABLISHING_BASELINE,
-    READY,
-    DETECTING
-};
-
-enum class WaveState
-{
-    IDLE,
-    IN_WAVE,
-    COMPLETE
-};
-
-struct DetectionResult
-{
-    Direction direction;
-    float confidence;
-    uint32_t centerOfMassA;
-    uint32_t centerOfMassB;
-    uint32_t comGapMs;
-    uint16_t maxSignalA;
-    uint16_t maxSignalB;
-    uint32_t waveDurationA;
-    uint32_t waveDurationB;
-    float baselineA;
-    float baselineB;
-    float thresholdA;
-    float thresholdB;
-    uint8_t detectedModule;  // 1-3 for which module triggered, 0 for none
-    uint8_t modulesDetected; // how many modules corroborated
-};
-
-struct DetectorConfig
-{
-    uint16_t baselineReadings = 50;
-    float peakMultiplier = 1.5f;
-    uint16_t minRise = 10;
-
-    uint8_t smoothingWindow = 5;
-    uint32_t minWaveDurationMs = 8;
-    uint32_t maxWaveDurationMs = 200;
-    uint32_t maxPeakGapMs = 150;
-    float waveExitThreshold = 0.5f;
-
-    uint32_t minGapForConfidence = 5;
-    float minSignalForConfidence = 20;
-};
 
 /**
  * Ring buffer for smoothing and baseline tracking
@@ -245,7 +189,6 @@ public:
     WaveState getWaveStateA() const;
     WaveState getWaveStateB() const;
 
-    static const char *directionToString(Direction dir);
     void debugPrint() const;
 };
 

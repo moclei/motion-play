@@ -412,19 +412,6 @@ WaveState DirectionDetector::getWaveStateB() const
     return sensors[m * 2 + 1].waveState;
 }
 
-const char *DirectionDetector::directionToString(Direction dir)
-{
-    switch (dir)
-    {
-    case Direction::A_TO_B:
-        return "A_TO_B";
-    case Direction::B_TO_A:
-        return "B_TO_A";
-    default:
-        return "UNKNOWN";
-    }
-}
-
 void DirectionDetector::debugPrint() const
 {
     Serial.println("=== DirectionDetector State (Per-Sensor) ===");

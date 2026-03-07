@@ -2,7 +2,8 @@
 #define ML_DETECTOR_H
 
 #include <Arduino.h>
-#include "DirectionDetector.h" // Reuse Direction, DetectionResult, SensorReading
+#include "detection_types.h"
+#include "sensor_types.h"
 #include "tensorflow/lite/micro/micro_mutable_op_resolver.h"
 #include "tensorflow/lite/micro/micro_interpreter.h"
 #include "tensorflow/lite/schema/schema_generated.h"

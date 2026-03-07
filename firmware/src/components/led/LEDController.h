@@ -3,7 +3,7 @@
 
 #include <Arduino.h>
 #include <FastLED.h>
-#include "../detection/DirectionDetector.h"
+#include "detection_types.h"
 
 /**
  * LED Controller for Motion Play

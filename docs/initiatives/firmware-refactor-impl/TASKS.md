@@ -7,8 +7,8 @@ Each task is one compilable, flashable step. Tasks within a phase are ordered by
 Creates shared infrastructure. Mostly new files and include changes — low risk.
 
 - [x] **1.1** Create `firmware/include/sensor_types.h` — extract `SensorReading`, `SensorMetadata`, `NUM_SENSORS`, `SAMPLE_RATE_HZ` from `SensorManager.h`. Update all includers.
-- [ ] **1.2** Create `firmware/include/detection_types.h` — extract `Direction`, `DetectionResult`, `DetectorConfig`, `WaveState`, `DetectorState` from `DirectionDetector.h`. Define `IDetector` interface.
-- [ ] **1.3** Create `firmware/include/interrupt_types.h` — extract `InterruptEventType`, `InterruptEvent`, `InterruptMode`, `InterruptConfig`, `InterruptSessionStats` from `InterruptManager.h`.
+- [x] **1.2** Create `firmware/include/detection_types.h` — extract `Direction`, `DetectionResult`, `DetectorConfig`, `WaveState`, `DetectorState` from `DirectionDetector.h`. Define `IDetector` interface.
+- [x] **1.3** Create `firmware/include/interrupt_types.h` — extract `InterruptEventType`, `InterruptEvent`, `InterruptMode`, `InterruptConfig`, `InterruptSessionStats` from `InterruptManager.h`.
 - [ ] **1.4** Create `firmware/include/ring_buffer.h` — extract generic `RingBuffer<T,SIZE>` from `DirectionDetector.h`.
 - [ ] **1.5** Create `firmware/include/debug_log.h` — centralize `extern bool serialStudioEnabled` + `DEBUG_LOG(...)` macro. Replace 5 scattered `extern` declarations.
 - [ ] **1.6** Create `firmware/include/constants.h` — shared constants: `I2C_CLOCK_HZ`, `MUX_SETTLE_MS`, `DEFAULT_IR_DUTY_DENOMINATOR`, `CONFIG_JSON_CAPACITY`, `CONFIG_FILE_PATH`, memory thresholds.

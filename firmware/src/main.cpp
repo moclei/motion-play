@@ -1479,7 +1479,7 @@ void loop()
                     if (!serialStudioEnabled)
                         Serial.printf("DETECTION [%s]: %s (confidence: %.2f)\n",
                                       useMLDetection ? "ML" : "heuristic",
-                                      DirectionDetector::directionToString(result.direction),
+                                      directionToString(result.direction),
                                       result.confidence);
 
                     // Show on LEDs
@@ -1494,7 +1494,7 @@ void loop()
                         display.showMessage("Unknown", TFT_RED);
 
                     // Publish detection result
-                    String statusMsg = "detection_" + String(DirectionDetector::directionToString(result.direction));
+                    String statusMsg = "detection_" + String(directionToString(result.direction));
                     mqttManager->publishStatus(statusMsg.c_str());
 
                     // Reset for next detection (clear buffer without changing state)
@@ -1587,7 +1587,7 @@ void loop()
                     if (!serialStudioEnabled)
                         Serial.printf("[LIVE_DEBUG] DETECTION [%s]: %s (confidence: %.2f)\n",
                                       useMLDetection ? "ML" : "heuristic",
-                                      DirectionDetector::directionToString(result.direction),
+                                      directionToString(result.direction),
                                       result.confidence);
 
                     // LED feedback (same as Play)

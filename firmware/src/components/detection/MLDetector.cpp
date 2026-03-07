@@ -493,7 +493,7 @@ bool MLDetector::runInference()
     detectionReady_ = true;
 
     Serial.printf("[MLDetector] DETECTION: %s (confidence=%.3f)\n",
-                  DirectionDetector::directionToString(lastResult_.direction),
+                  directionToString(lastResult_.direction),
                   lastResult_.confidence);
 
     return true;

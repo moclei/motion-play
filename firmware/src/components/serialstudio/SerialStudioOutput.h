@@ -2,6 +2,7 @@
 #define SERIAL_STUDIO_OUTPUT_H
 
 #include <Arduino.h>
+#include <vector>
 #include "sensor_types.h"
 #include "../sensor/SensorConfiguration.h"
 #include "../detection/DirectionDetector.h"
