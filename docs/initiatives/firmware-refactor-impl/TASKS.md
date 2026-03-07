@@ -31,7 +31,7 @@ Targeted fixes — a few lines each. No structural changes.
 - [x] **2.8** Fix VLA in `MQTTManager::messageCallback()` — replace `char message[length+1]` with fixed buffer + length check.
 - [x] **2.9** Fix sample rate metadata — use `config->actual_sample_rate_hz` instead of `SAMPLE_RATE_HZ` macro.
 - [x] **2.10** Initialize `MLDetector::lastResult_` — add default member initializers to `DetectionResult`.
-- [ ] **2.11** Remove dead code — all items listed in REPORT.md §9.
+- [x] **2.11** Remove dead code — all items listed in REPORT.md §9.
 - [ ] **2.12** Fix string accessor return types — `NetworkManager::getDeviceId()`, `getApiEndpoint()` return `const String&`.
 - [ ] **2.13** Guard calibrate/configure during monitoring — add `if (_monitoring) return false;` to InterruptManager.
 - [ ] **2.14** Conditional debug logging — gate PSRAMAllocator, InterruptManager debug, NetworkManager file listing with `#ifdef`. *(Also: adopt `DEBUG_LOG()` / `debugPrintEnabled()` from `debug_log.h` (created in 1.5) to replace ad-hoc `if (!serialStudioEnabled)` patterns in main.cpp, DirectionDetector, SessionManager, SensorManager, LEDController, MemoryMonitor.)*

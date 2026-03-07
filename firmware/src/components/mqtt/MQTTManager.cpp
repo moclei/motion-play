@@ -39,7 +39,6 @@ bool MQTTManager::loadConfig()
     }
 
     mqttClient.setServer(broker.c_str(), port);
-    mqttClient.setCallback(messageCallback);
 
     // Set buffer size for data payloads (default is 256 bytes)
     // 32KB covers the largest JSON batch (200 readings at ~80 bytes each).
@@ -266,42 +265,6 @@ bool MQTTManager::publishDataStreaming(const JsonDocument &data)
     }
 
     return success;
-}
-
-void MQTTManager::messageCallback(char *topic, byte *payload, unsigned int length)
-{
-    Serial.print("Message received on topic: ");
-    Serial.println(topic);
-
-    if (length > MQTT_MAX_INCOMING_MSG) {
-        Serial.printf("MQTT message too large (%u bytes, max %u) — dropped\n",
-                      length, (unsigned)MQTT_MAX_INCOMING_MSG);
-        return;
-    }
-
-    char message[MQTT_MAX_INCOMING_MSG + 1];
-    memcpy(message, payload, length);
-    message[length] = '\0';
-
-    Serial.print("Payload: ");
-    Serial.println(message);
-
-    DynamicJsonDocument doc(256);
-    DeserializationError error = deserializeJson(doc, message);
-
-    if (!error)
-    {
-        String command = doc["command"].as<String>();
-        Serial.print("Command: ");
-        Serial.println(command);
-
-        // Handle commands here
-        if (command == "ping")
-        {
-            // Respond to ping
-            Serial.println("Received ping command");
-        }
-    }
 }
 
 void MQTTManager::setCallback(std::function<void(char *, byte *, unsigned int)> callback)

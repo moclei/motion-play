@@ -680,13 +680,6 @@ void CalibrationManager::saveSignalStats()
     _calibration.pcbs[pcbIndex].signal_mean = _signalStats.getMean();
 }
 
-bool CalibrationManager::configureSensorForCalibration(uint8_t position)
-{
-    // No configuration needed - SensorManager already has sensors configured
-    // This function is kept for compatibility but does nothing
-    return true;
-}
-
 uint8_t CalibrationManager::getPCBForState(CalibrationState state) const
 {
     switch (state)

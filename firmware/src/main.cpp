@@ -75,8 +75,6 @@ const unsigned long MISSED_EVENT_WINDOW_MS = 3000; // 3s of pre-button data to c
 unsigned long lastStatusUpdate = 0;
 const unsigned long STATUS_UPDATE_INTERVAL = 30000; // 30 seconds
 
-bool systemInitialized = false;
-
 // Global sensor configuration instance
 SensorConfiguration currentConfig;
 
@@ -459,7 +457,6 @@ void initializeSystem()
     display.setDetectionConfig(detectorConfig.peakMultiplier, detectorConfig.minRise,
                                detectorConfig.minWaveDurationMs, detectorConfig.smoothingWindow);
     display.showSessionScreen();
-    systemInitialized = true;
 }
 
 void handleCommand(const String &command, JsonDocument *doc)

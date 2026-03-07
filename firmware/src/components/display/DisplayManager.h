@@ -4,7 +4,6 @@
 
 // Forward declarations
 struct SensorConfiguration;
-enum class CalibrationState : uint8_t;
 
 // Initialization stages
 enum InitStage
@@ -46,7 +45,6 @@ private:
     DisplayMode currentMode = MODE_DEBUG; // Default to debug mode
     String errorMessage = "";
     int sampleCount = 0;
-    String configString = ""; // For displaying config during recording
 
     // Cached config values for display
     uint16_t cachedSampleRate = 1000;
@@ -104,14 +102,10 @@ public:
     void setDisplayState(DisplayState state);
     void updateSampleCount(int count);
     void showMessage(const String &message, uint16_t color = TFT_WHITE);
-    void setConfigString(const String &config);              // Legacy: Set config string for display
     void setSensorConfig(const SensorConfiguration *config);
     void setDetectionConfig(float peakMult, uint16_t minRise, uint32_t minWaveDurMs, uint8_t smoothWin);
     void setMode(DisplayMode mode);
 
-    // Legacy compatibility (for gradual migration)
-    void showBootScreen();
-    void updateStatus(const String &status, uint16_t color = TFT_WHITE);
     void showNetworkInfo(const String &ip, int rssi);
     void showMQTTStatus(bool connected);
     void clear();

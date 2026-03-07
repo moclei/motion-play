@@ -507,31 +507,6 @@ void DisplayManager::drawSessionStatus()
     }
 }
 
-// ============================================================================
-// LEGACY COMPATIBILITY METHODS
-// ============================================================================
-
-void DisplayManager::showBootScreen()
-{
-    showInitScreen();
-}
-
-void DisplayManager::updateStatus(const String &status, uint16_t color)
-{
-    showMessage(status, color);
-}
-
-void DisplayManager::setConfigString(const String &config)
-{
-    configString = config;
-
-    // Refresh display if we're currently recording
-    if (currentDisplayState == DISPLAY_RECORDING)
-    {
-        drawSessionStatus();
-    }
-}
-
 void DisplayManager::showNetworkInfo(const String &ip, int rssi)
 {
     showMessage("WiFi: " + ip + " (" + String(rssi) + " dBm)", TFT_GREEN);

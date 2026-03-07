@@ -266,7 +266,6 @@ private:
     bool readPCB(uint8_t pcbId, uint16_t &reading);
     void saveBaselineStats();
     void saveSignalStats();
-    bool configureSensorForCalibration(uint8_t position);
     uint8_t getPCBForState(CalibrationState state) const;
     CalibrationState getNextState() const;
 };

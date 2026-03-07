@@ -47,7 +47,6 @@ class SensorManager
 {
 private:
     TCA9548A mux;
-    Adafruit_VCNL4040 sensors[NUM_SENSORS];
 
     // PCA9546A multiplexers (one per sensor board, up to 3 boards)
     PCA9546A pca_instances[3] = {PCA9546A(0x74), PCA9546A(0x75), PCA9546A(0x76)};

@@ -26,7 +26,6 @@ private:
     String privateKey;
 
     bool loadCertificates();
-    static void messageCallback(char *topic, byte *payload, unsigned int length);
 
 public:
     MQTTManager(NetworkManager *netManager);

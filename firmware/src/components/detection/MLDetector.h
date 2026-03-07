@@ -134,7 +134,6 @@ private:
     size_t ringCount_ = 0;
 
     void pushFrame(const MLSensorFrame &frame);
-    size_t getFrameCount() const { return ringCount_; }
 
     // --- Current reading aggregation ---
     uint32_t currentTimestamp_ = 0;

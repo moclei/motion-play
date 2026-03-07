@@ -55,8 +55,6 @@ struct DetectorConfig
     uint32_t maxPeakGapMs = 150;
     float waveExitThreshold = 0.5f;
 
-    uint32_t minGapForConfidence = 5;
-    float minSignalForConfidence = 20;
 };
 
 inline const char *directionToString(Direction dir)
