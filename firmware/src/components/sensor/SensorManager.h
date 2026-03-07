@@ -1,6 +1,7 @@
 #pragma once
 
 #include <Arduino.h>
+#include <atomic>
 #include <vector>
 #include "../tca9548a/TCA9548A.h"
 #include <Adafruit_VCNL4040.h>
@@ -79,8 +80,8 @@ private:
     // cover window reflections and other constant offsets
     uint16_t baselineValues[NUM_SENSORS] = {0};
 
-    // Graceful shutdown flag - volatile because accessed from multiple cores
-    volatile bool stopRequested = false;
+    // Graceful shutdown flag — set on Core 1, read on Core 0
+    std::atomic<bool> stopRequested{false};
 
     // Session Confirmation: pointer to active session summary for counter updates
     // Set when collection starts, cleared when collection stops.

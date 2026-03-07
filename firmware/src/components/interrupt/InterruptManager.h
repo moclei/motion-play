@@ -34,6 +34,7 @@
 #pragma once
 
 #include <Arduino.h>
+#include <atomic>
 #include <freertos/FreeRTOS.h>
 #include <freertos/queue.h>
 #include <freertos/task.h>
@@ -130,7 +131,12 @@ public:
      * Get session statistics
      * @return Current session stats
      */
-    InterruptSessionStats getStats() const { return _stats; }
+    InterruptSessionStats getStats() const
+    {
+        InterruptSessionStats result = _stats;
+        result.isrCount = _isrCount.load();
+        return result;
+    }
 
     /**
      * Reset session statistics
@@ -191,7 +197,8 @@ private:
     // External calibration data (from CalibrationManager)
     const DeviceCalibration *_externalCalibration = nullptr;
 
-    volatile bool _monitoring;
+    std::atomic<bool> _monitoring;
+    std::atomic<uint32_t> _isrCount{0};
     QueueHandle_t _eventQueue;
     TaskHandle_t _processingTask;
 

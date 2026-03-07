@@ -530,7 +530,7 @@ void InterruptManager::stopMonitoring()
 
     Serial.println("InterruptManager: Monitoring stopped");
     Serial.printf("  Session stats: %lu events, %lu ISRs, %lu dropped\n",
-                  _stats.totalEvents, _stats.isrCount, _stats.droppedEvents);
+                  _stats.totalEvents, (unsigned long)_isrCount.load(), _stats.droppedEvents);
 }
 
 // ============================================================================
@@ -571,6 +571,7 @@ void InterruptManager::clearEvents()
 void InterruptManager::resetStats()
 {
     memset(&_stats, 0, sizeof(_stats));
+    _isrCount.store(0, std::memory_order_relaxed);
 }
 
 bool InterruptManager::queueEvent(const InterruptEvent &event)
@@ -618,7 +619,7 @@ void IRAM_ATTR InterruptManager::handleIsr(uint8_t board)
     // Keep ISR minimal - just record that something happened
     _instance->_lastIsrTime[board] = micros();
     _instance->_isrPending[board] = true;
-    _instance->_stats.isrCount++;
+    _instance->_isrCount.fetch_add(1, std::memory_order_relaxed);
 }
 
 // ============================================================================
