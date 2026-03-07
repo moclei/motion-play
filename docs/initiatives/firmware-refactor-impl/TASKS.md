@@ -24,7 +24,7 @@ Targeted fixes — a few lines each. No structural changes.
 - [x] **2.1** Fix `StatsAccumulator` overflow — change `sumSq` to `uint64_t`, cast `sum*sum` to `uint64_t` in `getStdDev()`. *(Highest priority — produces corrupt calibration data today.)*
 - [x] **2.2** Replace `volatile` with `std::atomic` — `SensorManager::stopRequested`, `InterruptManager::_monitoring`, `_stats.isrCount`. Do in one pass.
 - [x] **2.3** Fix task self-deletion races — use task notification for exit handshake in SensorManager and InterruptManager.
-- [ ] **2.4** Fix `const_cast` in `SessionManager::finalizeSessionSummary()`.
+- [x] **2.4** Fix `const_cast` in `SessionManager::finalizeSessionSummary()`.
 - [ ] **2.5** Fix streaming publish cleanup — call `endPublish()` after partial chunk-write failure in MQTTManager.
 - [ ] **2.6** Fix `readSensor()` silent failure — return distinct error indicator on I2C failure.
 - [ ] **2.7** Add null/overflow guards — guard `dataQueue`, add `doc.overflowed()` checks, make `DisplayManager::init()` return `bool`.

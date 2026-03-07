@@ -248,7 +248,7 @@ bool SessionManager::addInterruptEvent(const InterruptEvent &event)
     return true;
 }
 
-void SessionManager::finalizeSessionSummary(const SensorConfiguration *config, uint8_t numActiveSensors)
+void SessionManager::finalizeSessionSummary(SensorConfiguration *config, uint8_t numActiveSensors)
 {
     // Use caller-provided duration_ms if already set (Live Debug sets capture window duration),
     // otherwise fall back to the full session duration
@@ -276,8 +276,7 @@ void SessionManager::finalizeSessionSummary(const SensorConfiguration *config, u
         sessionSummary.theoretical_max_readings =
             (uint32_t)((float)sessionSummary.measured_cycle_rate_hz * (sessionSummary.duration_ms / 1000.0f) * numActiveSensors);
 
-        // Also populate actual_sample_rate_hz on the config (mutable cast — config is owned by main.cpp)
-        const_cast<SensorConfiguration *>(config)->actual_sample_rate_hz = sessionSummary.measured_cycle_rate_hz;
+        config->actual_sample_rate_hz = sessionSummary.measured_cycle_rate_hz;
     }
 
     // Log summary

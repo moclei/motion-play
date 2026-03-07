@@ -127,5 +127,5 @@ public:
     // Session Confirmation: pipeline integrity
     SessionSummary &getSessionSummary() { return sessionSummary; }
     const SessionSummary &getSessionSummary() const { return sessionSummary; }
-    void finalizeSessionSummary(const SensorConfiguration *config, uint8_t numActiveSensors);
+    void finalizeSessionSummary(SensorConfiguration *config, uint8_t numActiveSensors);
 };
