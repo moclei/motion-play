@@ -20,6 +20,14 @@ private:
     // Session Confirmation: pointer to active session summary for transmission counters
     SessionSummary *activeSummary = nullptr;
 
+    // JSON serialization helpers — DRY up repeated blocks across transmission methods
+    void serializeCalibration(JsonDocument &doc);
+    void serializeConfig(JsonDocument &doc, const SensorConfiguration *config);
+    void serializeReadingsArray(JsonArray &arr,
+                                std::vector<SensorReading, PSRAMAllocator<SensorReading>> &readings,
+                                size_t startIdx, size_t count);
+    void serializeSummary(JsonObject &summaryObj, const SessionSummary &summary);
+
 public:
     DataTransmitter(MQTTManager *mqtt);
 

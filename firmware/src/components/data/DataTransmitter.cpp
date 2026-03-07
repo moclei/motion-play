@@ -10,6 +10,95 @@ DataTransmitter::DataTransmitter(MQTTManager *mqtt) : mqttManager(mqtt)
 }
 
 // ============================================================================
+// JSON Serialization Helpers
+// ============================================================================
+
+void DataTransmitter::serializeCalibration(JsonDocument &doc)
+{
+    if (deviceCalibration.isValid())
+    {
+        JsonObject calObj = doc.createNestedObject("calibration");
+        calObj["valid"] = true;
+        calObj["timestamp"] = deviceCalibration.timestamp;
+        calObj["multi_pulse"] = deviceCalibration.multi_pulse;
+        calObj["integration_time"] = deviceCalibration.integration_time;
+
+        JsonArray thresholds = calObj.createNestedArray("thresholds");
+        for (int i = 0; i < CALIBRATION_NUM_PCBS; i++)
+        {
+            JsonObject pcbCal = thresholds.createNestedObject();
+            pcbCal["pcb"] = i + 1;
+            pcbCal["baseline_max"] = deviceCalibration.pcbs[i].baseline_max;
+            pcbCal["signal_min"] = deviceCalibration.pcbs[i].signal_min;
+            pcbCal["signal_max"] = deviceCalibration.pcbs[i].signal_max;
+            pcbCal["threshold"] = deviceCalibration.pcbs[i].threshold;
+        }
+    }
+    else
+    {
+        JsonObject calObj = doc.createNestedObject("calibration");
+        calObj["valid"] = false;
+    }
+}
+
+void DataTransmitter::serializeConfig(JsonDocument &doc, const SensorConfiguration *config)
+{
+    if (config == nullptr)
+        return;
+
+    JsonObject configObj = doc.createNestedObject("vcnl4040_config");
+    configObj["sample_rate_hz"] = config->sample_rate_hz;
+    configObj["led_current"] = config->led_current;
+    configObj["integration_time"] = config->integration_time;
+    configObj["duty_cycle"] = config->duty_cycle;
+    configObj["multi_pulse"] = config->multi_pulse;
+    configObj["high_resolution"] = config->high_resolution;
+    configObj["read_ambient"] = config->read_ambient;
+    configObj["i2c_clock_khz"] = config->i2c_clock_khz;
+    configObj["actual_sample_rate_hz"] = config->actual_sample_rate_hz;
+}
+
+void DataTransmitter::serializeReadingsArray(
+    JsonArray &arr,
+    std::vector<SensorReading, PSRAMAllocator<SensorReading>> &readings,
+    size_t startIdx, size_t count)
+{
+    for (size_t i = 0; i < count; i++)
+    {
+        SensorReading &reading = readings[startIdx + i];
+
+        JsonObject readingObj = arr.createNestedObject();
+        readingObj["ts"] = reading.timestamp_us;
+        readingObj["pos"] = reading.position;
+        readingObj["pcb"] = reading.pcb_id;
+        readingObj["side"] = reading.side;
+        readingObj["prox"] = reading.proximity;
+        readingObj["amb"] = reading.ambient;
+    }
+}
+
+void DataTransmitter::serializeSummary(JsonObject &summaryObj, const SessionSummary &summary)
+{
+    summaryObj["total_cycles"] = summary.total_cycles;
+    summaryObj["queue_drops"] = summary.queue_drops;
+    summaryObj["buffer_drops"] = summary.buffer_drops;
+    summaryObj["total_readings_transmitted"] = summary.total_readings_transmitted;
+    summaryObj["total_batches_transmitted"] = summary.total_batches_transmitted;
+    summaryObj["measured_cycle_rate_hz"] = summary.measured_cycle_rate_hz;
+    summaryObj["duration_ms"] = summary.duration_ms;
+    summaryObj["theoretical_max_readings"] = summary.theoretical_max_readings;
+    summaryObj["num_active_sensors"] = summary.num_active_sensors;
+
+    JsonArray collectedArr = summaryObj.createNestedArray("readings_collected");
+    JsonArray errorsArr = summaryObj.createNestedArray("i2c_errors");
+    for (int i = 0; i < NUM_SENSORS; i++)
+    {
+        collectedArr.add(summary.readings_collected[i]);
+        errorsArr.add(summary.i2c_errors[i]);
+    }
+}
+
+// ============================================================================
 // Main entry point - routes to correct transmission method
 // ============================================================================
 
@@ -70,63 +159,13 @@ bool DataTransmitter::transmitBatch(const String &sessionId,
             sensorObj["active"] = sensor.active;
         }
 
-        // Add VCNL4040 configuration parameters
-        if (config != nullptr)
-        {
-            JsonObject configObj = doc.createNestedObject("vcnl4040_config");
-            configObj["sample_rate_hz"] = config->sample_rate_hz;
-            configObj["led_current"] = config->led_current;
-            configObj["integration_time"] = config->integration_time;
-            configObj["duty_cycle"] = config->duty_cycle;
-            configObj["multi_pulse"] = config->multi_pulse;
-            configObj["high_resolution"] = config->high_resolution;
-            configObj["read_ambient"] = config->read_ambient;
-            configObj["i2c_clock_khz"] = config->i2c_clock_khz;
-            configObj["actual_sample_rate_hz"] = config->actual_sample_rate_hz;
-        }
-
-        // Add calibration metadata if available
-        if (deviceCalibration.isValid())
-        {
-            JsonObject calObj = doc.createNestedObject("calibration");
-            calObj["valid"] = true;
-            calObj["timestamp"] = deviceCalibration.timestamp;
-            calObj["multi_pulse"] = deviceCalibration.multi_pulse;
-            calObj["integration_time"] = deviceCalibration.integration_time;
-
-            JsonArray thresholds = calObj.createNestedArray("thresholds");
-            for (int i = 0; i < CALIBRATION_NUM_PCBS; i++)
-            {
-                JsonObject pcbCal = thresholds.createNestedObject();
-                pcbCal["pcb"] = i + 1;
-                pcbCal["baseline_max"] = deviceCalibration.pcbs[i].baseline_max;
-                pcbCal["signal_min"] = deviceCalibration.pcbs[i].signal_min;
-                pcbCal["signal_max"] = deviceCalibration.pcbs[i].signal_max;
-                pcbCal["threshold"] = deviceCalibration.pcbs[i].threshold;
-            }
-        }
-        else
-        {
-            JsonObject calObj = doc.createNestedObject("calibration");
-            calObj["valid"] = false;
-        }
+        serializeConfig(doc, config);
+        serializeCalibration(doc);
     }
 
     // Add readings array
     JsonArray readingsArray = doc.createNestedArray("readings");
-
-    for (size_t i = 0; i < count; i++)
-    {
-        SensorReading &reading = readings[offset + i];
-
-        JsonObject readingObj = readingsArray.createNestedObject();
-        readingObj["ts"] = reading.timestamp_us;
-        readingObj["pos"] = reading.position;
-        readingObj["pcb"] = reading.pcb_id;
-        readingObj["side"] = reading.side;
-        readingObj["prox"] = reading.proximity;
-        readingObj["amb"] = reading.ambient;
-    }
+    serializeReadingsArray(readingsArray, readings, offset, count);
 
     if (doc.overflowed())
     {
@@ -249,31 +288,7 @@ bool DataTransmitter::transmitInterruptBatch(const String &sessionId,
         intConfig["mode"] = config->interrupt_mode;
         intConfig["led_current"] = config->led_current;
 
-        // Add calibration metadata if available
-        if (deviceCalibration.isValid())
-        {
-            JsonObject calObj = doc.createNestedObject("calibration");
-            calObj["valid"] = true;
-            calObj["timestamp"] = deviceCalibration.timestamp;
-            calObj["multi_pulse"] = deviceCalibration.multi_pulse;
-            calObj["integration_time"] = deviceCalibration.integration_time;
-
-            JsonArray thresholds = calObj.createNestedArray("thresholds");
-            for (int i = 0; i < CALIBRATION_NUM_PCBS; i++)
-            {
-                JsonObject pcbCal = thresholds.createNestedObject();
-                pcbCal["pcb"] = i + 1;
-                pcbCal["baseline_max"] = deviceCalibration.pcbs[i].baseline_max;
-                pcbCal["signal_min"] = deviceCalibration.pcbs[i].signal_min;
-                pcbCal["signal_max"] = deviceCalibration.pcbs[i].signal_max;
-                pcbCal["threshold"] = deviceCalibration.pcbs[i].threshold;
-            }
-        }
-        else
-        {
-            JsonObject calObj = doc.createNestedObject("calibration");
-            calObj["valid"] = false;
-        }
+        serializeCalibration(doc);
     }
 
     // Add events array
@@ -457,57 +472,13 @@ String DataTransmitter::transmitLiveDebugCapture(
                 doc["detection_confidence"] = detectionConfidence;
             }
 
-            // Sensor configuration
-            if (config != nullptr)
-            {
-                JsonObject configObj = doc.createNestedObject("vcnl4040_config");
-                configObj["sample_rate_hz"] = config->sample_rate_hz;
-                configObj["led_current"] = config->led_current;
-                configObj["integration_time"] = config->integration_time;
-                configObj["duty_cycle"] = config->duty_cycle;
-                configObj["multi_pulse"] = config->multi_pulse;
-                configObj["high_resolution"] = config->high_resolution;
-                configObj["read_ambient"] = config->read_ambient;
-                configObj["i2c_clock_khz"] = config->i2c_clock_khz;
-                configObj["actual_sample_rate_hz"] = config->actual_sample_rate_hz;
-            }
-
-            // Calibration metadata
-            if (deviceCalibration.isValid())
-            {
-                JsonObject calObj = doc.createNestedObject("calibration");
-                calObj["valid"] = true;
-                calObj["timestamp"] = deviceCalibration.timestamp;
-                calObj["multi_pulse"] = deviceCalibration.multi_pulse;
-                calObj["integration_time"] = deviceCalibration.integration_time;
-
-                JsonArray thresholds = calObj.createNestedArray("thresholds");
-                for (int i = 0; i < CALIBRATION_NUM_PCBS; i++)
-                {
-                    JsonObject pcbCal = thresholds.createNestedObject();
-                    pcbCal["pcb"] = i + 1;
-                    pcbCal["baseline_max"] = deviceCalibration.pcbs[i].baseline_max;
-                    pcbCal["signal_min"] = deviceCalibration.pcbs[i].signal_min;
-                    pcbCal["signal_max"] = deviceCalibration.pcbs[i].signal_max;
-                    pcbCal["threshold"] = deviceCalibration.pcbs[i].threshold;
-                }
-            }
+            serializeConfig(doc, config);
+            serializeCalibration(doc);
         }
 
         // Add readings array
         JsonArray readingsArray = doc.createNestedArray("readings");
-        for (size_t i = 0; i < batchCount; i++)
-        {
-            SensorReading &reading = readings[startIdx + offset + i];
-
-            JsonObject readingObj = readingsArray.createNestedObject();
-            readingObj["ts"] = reading.timestamp_us;
-            readingObj["pos"] = reading.position;
-            readingObj["pcb"] = reading.pcb_id;
-            readingObj["side"] = reading.side;
-            readingObj["prox"] = reading.proximity;
-            readingObj["amb"] = reading.ambient;
-        }
+        serializeReadingsArray(readingsArray, readings, startIdx + offset, batchCount);
 
         // Check for ArduinoJson buffer overflow (silent data truncation)
         size_t actualReadingsInDoc = readingsArray.size();
@@ -658,62 +629,15 @@ String DataTransmitter::transmitLiveDebugCaptureBinary(
     doc["reading_count"] = count;
     doc["readings_b64"] = (const char *)base64Buf;
 
-    // Sensor configuration
-    if (config != nullptr)
-    {
-        JsonObject configObj = doc.createNestedObject("vcnl4040_config");
-        configObj["sample_rate_hz"] = config->sample_rate_hz;
-        configObj["led_current"] = config->led_current;
-        configObj["integration_time"] = config->integration_time;
-        configObj["duty_cycle"] = config->duty_cycle;
-        configObj["multi_pulse"] = config->multi_pulse;
-        configObj["high_resolution"] = config->high_resolution;
-        configObj["read_ambient"] = config->read_ambient;
-        configObj["i2c_clock_khz"] = config->i2c_clock_khz;
-        configObj["actual_sample_rate_hz"] = config->actual_sample_rate_hz;
-    }
-
-    // Calibration metadata
-    if (deviceCalibration.isValid())
-    {
-        JsonObject calObj = doc.createNestedObject("calibration");
-        calObj["valid"] = true;
-        calObj["timestamp"] = deviceCalibration.timestamp;
-        calObj["multi_pulse"] = deviceCalibration.multi_pulse;
-        calObj["integration_time"] = deviceCalibration.integration_time;
-
-        JsonArray thresholds = calObj.createNestedArray("thresholds");
-        for (int i = 0; i < CALIBRATION_NUM_PCBS; i++)
-        {
-            JsonObject pcbCal = thresholds.createNestedObject();
-            pcbCal["pcb"] = i + 1;
-            pcbCal["baseline_max"] = deviceCalibration.pcbs[i].baseline_max;
-            pcbCal["signal_min"] = deviceCalibration.pcbs[i].signal_min;
-            pcbCal["signal_max"] = deviceCalibration.pcbs[i].signal_max;
-            pcbCal["threshold"] = deviceCalibration.pcbs[i].threshold;
-        }
-    }
+    serializeConfig(doc, config);
+    serializeCalibration(doc);
 
     // Inline session summary — Lambda processes everything in one shot
     doc["type"] = "session_summary";
     JsonObject summaryObj = doc.createNestedObject("summary");
-    summaryObj["total_cycles"] = summary.total_cycles;
-    summaryObj["queue_drops"] = summary.queue_drops;
-    summaryObj["buffer_drops"] = summary.buffer_drops;
+    serializeSummary(summaryObj, summary);
     summaryObj["total_readings_transmitted"] = count;
     summaryObj["total_batches_transmitted"] = 1;
-    summaryObj["measured_cycle_rate_hz"] = summary.measured_cycle_rate_hz;
-    summaryObj["duration_ms"] = summary.duration_ms;
-    summaryObj["theoretical_max_readings"] = summary.theoretical_max_readings;
-    summaryObj["num_active_sensors"] = summary.num_active_sensors;
-
-    JsonArray collectedArr = summaryObj.createNestedArray("readings_collected");
-    JsonArray errorsArr = summaryObj.createNestedArray("i2c_errors");
-    for (int i = 0; i < NUM_SENSORS; i++)
-    {
-        collectedArr.add(summary.readings_collected[i]);
-        errorsArr.add(summary.i2c_errors[i]);
-    }
 
     if (doc.overflowed())
     {
@@ -752,24 +676,7 @@ bool DataTransmitter::transmitSessionSummary(const SessionSummary &summary,
     doc["device_id"] = deviceId;
 
     JsonObject summaryObj = doc.createNestedObject("summary");
-    summaryObj["total_cycles"] = summary.total_cycles;
-    summaryObj["queue_drops"] = summary.queue_drops;
-    summaryObj["buffer_drops"] = summary.buffer_drops;
-    summaryObj["total_readings_transmitted"] = summary.total_readings_transmitted;
-    summaryObj["total_batches_transmitted"] = summary.total_batches_transmitted;
-    summaryObj["measured_cycle_rate_hz"] = summary.measured_cycle_rate_hz;
-    summaryObj["duration_ms"] = summary.duration_ms;
-    summaryObj["theoretical_max_readings"] = summary.theoretical_max_readings;
-    summaryObj["num_active_sensors"] = summary.num_active_sensors;
-
-    // Per-sensor arrays
-    JsonArray collectedArr = summaryObj.createNestedArray("readings_collected");
-    JsonArray errorsArr = summaryObj.createNestedArray("i2c_errors");
-    for (int i = 0; i < NUM_SENSORS; i++)
-    {
-        collectedArr.add(summary.readings_collected[i]);
-        errorsArr.add(summary.i2c_errors[i]);
-    }
+    serializeSummary(summaryObj, summary);
 
     // Retry up to 3 times
     for (int attempt = 0; attempt < 3; attempt++)
