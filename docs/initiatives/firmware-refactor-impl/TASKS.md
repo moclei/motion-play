@@ -47,7 +47,7 @@ File splits and class extractions. Each task is independent unless noted. Larges
 - [x] **3.5** Extract `BinarySerializer` from DataTransmitter — move `transmitLiveDebugCaptureBinary()` to own file.
 - [x] **3.6** Extract `CalibrationScreen` from DisplayManager — move 8 calibration rendering methods (~320 lines).
 - [x] **3.7** Extract `CommandHandler` from main.cpp — all command parsing and dispatch. Do incrementally: one command group at a time. *(Largest single task — ~800 lines.)*
-- [ ] **3.8** Extract `CloudConfig` from main.cpp — `fetchConfigFromCloud()` + shared config-parsing helper.
+- [x] **3.8** Extract `CloudConfig` from main.cpp — `fetchConfigFromCloud()` + shared config-parsing helper.
 - [ ] **3.9** Create `DetectionController` — unify play-mode and live-debug detection loops using `IDetector` interface. *(Depends on 1.2 for IDetector.)*
 - [ ] **3.10** Extract `CollectionController` from main.cpp — start/stop orchestration for interrupt + polling modes.
 - [ ] **3.11** Extract `ButtonHandler` from main.cpp — button reading, debounce, long-press.
