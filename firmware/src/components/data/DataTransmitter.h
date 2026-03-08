@@ -34,6 +34,8 @@ private:
     static const unsigned long LIVE_DEBUG_BATCH_DELAY = 20;
     static constexpr unsigned long BATCH_DELAY_MS = 100;
     static constexpr unsigned long INT_BATCH_DELAY_MS = 50;
+    static constexpr uint8_t MAX_BATCH_RETRIES = 2;
+    static constexpr unsigned long RETRY_DELAY_MS = 500;
 
     SessionSummary *activeSummary = nullptr;
 
@@ -54,6 +56,7 @@ private:
     const SensorConfiguration *txConfig_ = nullptr;
     unsigned long txLastBatchTime_ = 0;
     unsigned long txBatchDelay_ = 0;
+    uint8_t txBatchRetries_ = 0;
     UploadContext txContext_;
 
     // Single-batch transmission (internal)

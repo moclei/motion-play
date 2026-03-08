@@ -69,7 +69,8 @@ TransmitState DataTransmitter::tick()
     if (txState_ != TransmitState::TRANSMITTING)
         return txState_;
 
-    if (txLastBatchTime_ > 0 && (millis() - txLastBatchTime_) < txBatchDelay_)
+    unsigned long requiredDelay = (txBatchRetries_ > 0) ? RETRY_DELAY_MS : txBatchDelay_;
+    if (txLastBatchTime_ > 0 && (millis() - txLastBatchTime_) < requiredDelay)
         return txState_;
 
     bool success;
@@ -93,11 +94,21 @@ TransmitState DataTransmitter::tick()
 
     if (!success)
     {
-        Serial.println("ERROR: Failed to transmit batch");
-        txState_ = TransmitState::FAILED;
+        txBatchRetries_++;
+        if (txBatchRetries_ > MAX_BATCH_RETRIES)
+        {
+            Serial.printf("ERROR: Batch at offset %d failed after %d attempts, aborting session\n",
+                          txOffset_, MAX_BATCH_RETRIES + 1);
+            txState_ = TransmitState::FAILED;
+            return txState_;
+        }
+        Serial.printf("WARNING: Batch at offset %d failed (attempt %d/%d), will retry\n",
+                      txOffset_, txBatchRetries_, MAX_BATCH_RETRIES + 1);
+        txLastBatchTime_ = millis();
         return txState_;
     }
 
+    txBatchRetries_ = 0;
     txOffset_ += batchCount;
     txLastBatchTime_ = millis();
 
@@ -122,6 +133,7 @@ void DataTransmitter::resetTransmission()
     txConfig_ = nullptr;
     txLastBatchTime_ = 0;
     txBatchDelay_ = 0;
+    txBatchRetries_ = 0;
     txContext_ = UploadContext{};
 }
 
