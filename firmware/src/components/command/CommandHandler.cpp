@@ -13,6 +13,7 @@
 #include "../sensor/SensorManager.h"
 #include "../data/DataTransmitter.h"
 #include "../data/BinarySerializer.h"
+#include "../cloud/CloudConfig.h"
 #include "../diagnostics/MemoryMonitor.h"
 #include "debug_log.h"
 
@@ -350,124 +351,31 @@ void CommandHandler::handleConfigureSensors(JsonDocument *doc)
     {
         JsonObject config = (*doc)["sensor_config"];
 
-        if (config.containsKey("sample_rate_hz"))
-        {
-            currentConfig_.sample_rate_hz = config["sample_rate_hz"];
-        }
-        else if (config.containsKey("sample_rate"))
-        {
-            currentConfig_.sample_rate_hz = config["sample_rate"];
-        }
-        else
-        {
-            currentConfig_.sample_rate_hz = 1000;
-        }
+        bool wasML = useMLDetection_;
 
-        currentConfig_.led_current = config["led_current"] | "200mA";
-        currentConfig_.integration_time = config["integration_time"] | "1T";
+        // Shared parsing for all common sensor_config fields
+        CloudConfig::applySensorConfig(config, currentConfig_, useMLDetection_,
+                                       detectorConfig_, serialStudioEnabled);
+
+        // CommandHandler-specific: duty_cycle (not present in cloud config)
         currentConfig_.duty_cycle = config["duty_cycle"] | "1/40";
-        currentConfig_.high_resolution = config["high_resolution"] | true;
-        currentConfig_.read_ambient = config["read_ambient"] | true;
 
-        if (config.containsKey("i2c_clock_khz"))
+        // CommandHandler-specific: init ML detector when switching modes at runtime
+        if (useMLDetection_ && !wasML)
         {
-            currentConfig_.i2c_clock_khz = config["i2c_clock_khz"];
-        }
-
-        if (config.containsKey("multi_pulse"))
-        {
-            currentConfig_.multi_pulse = config["multi_pulse"].as<String>();
-        }
-        else
-        {
-            currentConfig_.multi_pulse = "1";
-        }
-
-        if (config.containsKey("ball_diameter_mm"))
-            currentConfig_.ball_diameter_mm = config["ball_diameter_mm"];
-        if (config.containsKey("hoop_inner_diameter_mm"))
-            currentConfig_.hoop_inner_diameter_mm = config["hoop_inner_diameter_mm"];
-
-        if (config.containsKey("sensor_mode"))
-        {
-            String modeStr = config["sensor_mode"].as<String>();
-            if (modeStr == "interrupt")
+            if (!mlDetector_.isReady())
             {
-                currentConfig_.sensor_mode = SensorMode::INTERRUPT_MODE;
-                Serial.println("  Sensor mode: INTERRUPT");
-            }
-            else
-            {
-                currentConfig_.sensor_mode = SensorMode::POLLING_MODE;
-                Serial.println("  Sensor mode: POLLING");
-            }
-        }
-
-        if (config.containsKey("interrupt_threshold_margin"))
-        {
-            currentConfig_.interrupt_threshold_margin = config["interrupt_threshold_margin"];
-        }
-        if (config.containsKey("interrupt_hysteresis"))
-        {
-            currentConfig_.interrupt_hysteresis = config["interrupt_hysteresis"];
-        }
-        if (config.containsKey("interrupt_integration_time"))
-        {
-            currentConfig_.interrupt_integration_time = config["interrupt_integration_time"];
-        }
-        if (config.containsKey("interrupt_multi_pulse"))
-        {
-            currentConfig_.interrupt_multi_pulse = config["interrupt_multi_pulse"];
-        }
-        if (config.containsKey("interrupt_persistence"))
-        {
-            currentConfig_.interrupt_persistence = config["interrupt_persistence"];
-        }
-        if (config.containsKey("interrupt_smart_persistence"))
-        {
-            currentConfig_.interrupt_smart_persistence = config["interrupt_smart_persistence"];
-        }
-        if (config.containsKey("interrupt_mode"))
-        {
-            currentConfig_.interrupt_mode = config["interrupt_mode"].as<String>();
-        }
-
-        if (config.containsKey("detection_mode"))
-        {
-            String detMode = config["detection_mode"].as<String>();
-            bool wasML = useMLDetection_;
-            useMLDetection_ = (detMode == "ml");
-            if (useMLDetection_ && !wasML)
-            {
-                if (!mlDetector_.isReady())
+                Serial.println("  Initializing ML detector on config change...");
+                if (!mlDetector_.init())
                 {
-                    Serial.println("  Initializing ML detector on config change...");
-                    if (!mlDetector_.init())
-                    {
-                        Serial.println("  ML detector init failed, staying on heuristic");
-                        useMLDetection_ = false;
-                    }
+                    Serial.println("  ML detector init failed, staying on heuristic");
+                    useMLDetection_ = false;
                 }
             }
-            Serial.printf("  Detection Mode: %s\n", useMLDetection_ ? "ML" : "heuristic");
         }
 
-        if (config.containsKey("serial_studio_enabled"))
-        {
-            serialStudioEnabled = config["serial_studio_enabled"].as<bool>();
-            serialStudioOutput_.setEnabled(serialStudioEnabled);
-            Serial.printf("  Serial Studio: %s\n", serialStudioEnabled ? "enabled" : "disabled");
-        }
-
-        if (config.containsKey("peak_multiplier"))
-            detectorConfig_.peakMultiplier = config["peak_multiplier"].as<float>();
-        if (config.containsKey("min_rise"))
-            detectorConfig_.minRise = config["min_rise"];
-        if (config.containsKey("min_wave_duration_ms"))
-            detectorConfig_.minWaveDurationMs = config["min_wave_duration_ms"];
-        if (config.containsKey("smoothing_window"))
-            detectorConfig_.smoothingWindow = config["smoothing_window"];
-
+        // Apply side effects
+        serialStudioOutput_.setEnabled(serialStudioEnabled);
         directionDetector_.setConfig(detectorConfig_);
 
         Serial.println("Configuration updated:");
@@ -479,6 +387,7 @@ void CommandHandler::handleConfigureSensors(JsonDocument *doc)
         Serial.printf("  High Resolution: %s\n", currentConfig_.high_resolution ? "enabled" : "disabled");
         Serial.printf("  Read Ambient: %s\n", currentConfig_.read_ambient ? "enabled" : "disabled");
         Serial.printf("  I2C Clock: %d kHz\n", currentConfig_.i2c_clock_khz);
+        Serial.printf("  Detection Mode: %s\n", useMLDetection_ ? "ML" : "heuristic");
         Serial.printf("  Detection Config: peak=%.1fx, rise=%d, wave=%dms, smooth=%d\n",
                       detectorConfig_.peakMultiplier, detectorConfig_.minRise,
                       detectorConfig_.minWaveDurationMs, detectorConfig_.smoothingWindow);
