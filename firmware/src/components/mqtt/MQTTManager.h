@@ -26,7 +26,15 @@ private:
     String clientCert;
     String privateKey;
 
+    // Non-blocking reconnection state
+    uint32_t lastReconnectAttemptMs = 0;
+    uint8_t reconnectAttemptCount = 0;
+
+    static constexpr uint32_t MQTT_RECONNECT_BASE_MS = 1000;
+    static constexpr uint32_t MQTT_RECONNECT_MAX_MS  = 60000;
+
     bool loadCertificates();
+    uint32_t getReconnectBackoffMs() const;
 
 public:
     MQTTManager(NetworkManager *netManager);

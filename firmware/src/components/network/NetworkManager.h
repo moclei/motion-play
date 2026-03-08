@@ -12,7 +12,19 @@ private:
     String deviceId;
     String apiEndpoint;
     WiFiClientSecure wifiClient;
-    bool connected = false;
+
+    enum class WiFiState { DISCONNECTED, CONNECTING, CONNECTED };
+    WiFiState wifiState = WiFiState::DISCONNECTED;
+    uint32_t lastReconnectAttemptMs = 0;
+    uint8_t reconnectAttemptCount = 0;
+
+    static constexpr uint32_t WIFI_RECONNECT_BASE_MS = 1000;
+    static constexpr uint32_t WIFI_RECONNECT_MAX_MS  = 60000;
+    static constexpr uint32_t WIFI_CONNECT_TIMEOUT_MS = 15000;
+    static constexpr uint8_t  WIFI_MAX_BOOT_ATTEMPTS = 30;
+    static constexpr uint32_t WIFI_MODE_SETTLE_MS = 100;
+
+    uint32_t getReconnectBackoffMs() const;
 
 public:
     NetworkManager();

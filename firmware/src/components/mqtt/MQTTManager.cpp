@@ -132,9 +132,47 @@ void MQTTManager::loop()
 {
     if (!mqttClient.connected())
     {
-        connect();
+        if (!networkManager->isConnected()) return;
+
+        uint32_t backoff = getReconnectBackoffMs();
+        if (millis() - lastReconnectAttemptMs < backoff) return;
+
+        lastReconnectAttemptMs = millis();
+
+        Serial.printf("MQTT reconnecting (attempt %u, backoff %ums)...\n",
+                       reconnectAttemptCount + 1, backoff);
+
+        if (mqttClient.connect(clientId.c_str()))
+        {
+            Serial.println("MQTT reconnected!");
+            reconnectAttemptCount = 0;
+            mqttClient.subscribe(commandTopic.c_str());
+            publishStatus("online");
+        }
+        else
+        {
+            reconnectAttemptCount++;
+            Serial.printf("MQTT reconnect failed (rc=%d, next backoff %ums)\n",
+                           mqttClient.state(), getReconnectBackoffMs());
+            return;
+        }
     }
+    else
+    {
+        reconnectAttemptCount = 0;
+    }
+
     mqttClient.loop();
+}
+
+uint32_t MQTTManager::getReconnectBackoffMs() const
+{
+    uint32_t backoff = MQTT_RECONNECT_BASE_MS;
+    for (uint8_t i = 0; i < reconnectAttemptCount && backoff < MQTT_RECONNECT_MAX_MS; i++)
+    {
+        backoff *= 2;
+    }
+    return (backoff < MQTT_RECONNECT_MAX_MS) ? backoff : MQTT_RECONNECT_MAX_MS;
 }
 
 bool MQTTManager::publishStatus(const char *status)
