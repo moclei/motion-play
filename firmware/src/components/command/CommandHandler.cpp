@@ -654,31 +654,12 @@ void CommandHandler::handleStopCollection()
         sessionManager_.finalizeSessionSummary(&currentConfig_, activeSensorCount);
         dataTransmitter_->setSessionSummary(&sessionManager_.getSessionSummary());
 
-        if (dataTransmitter_->transmitSession(sessionManager_, &currentConfig_))
-        {
-            dataTransmitter_->transmitSessionSummary(
-                sessionManager_.getSessionSummary(),
-                sessionManager_.getSessionId(),
-                mqttManager_->getDeviceId());
+        UploadContext ctx;
+        ctx.sendSummary = true;
+        ctx.successStatus = "upload_complete";
+        ctx.displayDelayMs = 3000;
 
-            mqttManager_->publishStatus("upload_complete");
-            display_.setDisplayState(DISPLAY_SUCCESS);
-            delay(3000);
-            dataTransmitter_->setSessionSummary(nullptr);
-            sessionManager_.clearBuffer();
-            display_.setDisplayState(DISPLAY_IDLE);
-        }
-        else
-        {
-            Serial.println("ERROR: Session transmission failed!");
-            mqttManager_->publishStatus("upload_failed");
-            display_.setDisplayState(DISPLAY_ERROR);
-            display_.showMessage("Upload failed!", TFT_RED);
-            delay(3000);
-            dataTransmitter_->setSessionSummary(nullptr);
-            sessionManager_.clearBuffer();
-            display_.setDisplayState(DISPLAY_IDLE);
-        }
+        dataTransmitter_->beginTransmission(sessionManager_, &currentConfig_, ctx);
     }
 }
 

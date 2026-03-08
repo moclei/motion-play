@@ -122,22 +122,11 @@ void CollectionController::handleInterruptTimeout()
     sessionManager_.stopSession();
     display_.setDisplayState(DISPLAY_UPLOADING);
 
-    if (dataTransmitter_->transmitSession(sessionManager_, &currentConfig_))
-    {
-        mqttManager_->publishStatus("upload_complete_auto_stopped");
-        display_.setDisplayState(DISPLAY_SUCCESS);
-        delay(2000);
-        sessionManager_.clearBuffer();
-        display_.setDisplayState(DISPLAY_IDLE);
-    }
-    else
-    {
-        mqttManager_->publishStatus("upload_failed");
-        display_.setDisplayState(DISPLAY_ERROR);
-        delay(2000);
-        sessionManager_.clearBuffer();
-        display_.setDisplayState(DISPLAY_IDLE);
-    }
+    UploadContext ctx;
+    ctx.successStatus = "upload_complete_auto_stopped";
+    ctx.displayDelayMs = 2000;
+
+    dataTransmitter_->beginTransmission(sessionManager_, &currentConfig_, ctx);
 }
 
 void CollectionController::handleDebugTimeout()
@@ -161,30 +150,11 @@ void CollectionController::handleDebugTimeout()
         dataTransmitter_->setSessionSummary(&sessionManager_.getSessionSummary());
     }
 
-    if (dataTransmitter_->transmitSession(sessionManager_, &currentConfig_))
-    {
-        dataTransmitter_->transmitSessionSummary(
-            sessionManager_.getSessionSummary(),
-            sessionManager_.getSessionId(),
-            mqttManager_->getDeviceId());
+    UploadContext ctx;
+    ctx.sendSummary = true;
+    ctx.successStatus = "upload_complete_auto_stopped";
+    ctx.restartOnFailure = true;
+    ctx.displayDelayMs = 2000;
 
-        mqttManager_->publishStatus("upload_complete_auto_stopped");
-        display_.setDisplayState(DISPLAY_SUCCESS);
-        delay(2000);
-        dataTransmitter_->setSessionSummary(nullptr);
-        sessionManager_.clearBuffer();
-        display_.setDisplayState(DISPLAY_IDLE);
-    }
-    else
-    {
-        Serial.println("ERROR: Auto-stop session transmission failed!");
-        mqttManager_->publishStatus("upload_failed");
-        display_.setDisplayState(DISPLAY_ERROR);
-        display_.showMessage("Upload failed - Restarting...", TFT_RED);
-        delay(3000);
-        dataTransmitter_->setSessionSummary(nullptr);
-        sessionManager_.clearBuffer();
-
-        ESP.restart();
-    }
+    dataTransmitter_->beginTransmission(sessionManager_, &currentConfig_, ctx);
 }

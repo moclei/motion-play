@@ -361,6 +361,53 @@ void loop()
     {
         collectionController->update();
     }
+    else if (sessionManager.getState() == UPLOADING)
+    {
+        TransmitState txState = dataTransmitter->tick();
+
+        if (txState == TransmitState::SUCCEEDED)
+        {
+            const UploadContext &ctx = dataTransmitter->getUploadContext();
+
+            if (ctx.sendSummary)
+            {
+                dataTransmitter->transmitSessionSummary(
+                    sessionManager.getSessionSummary(),
+                    sessionManager.getSessionId(),
+                    mqttManager->getDeviceId());
+            }
+
+            mqttManager->publishStatus(ctx.successStatus);
+            display.setDisplayState(DISPLAY_SUCCESS);
+            delay(ctx.displayDelayMs);
+            dataTransmitter->setSessionSummary(nullptr);
+            dataTransmitter->resetTransmission();
+            sessionManager.clearBuffer();
+            display.setDisplayState(DISPLAY_IDLE);
+        }
+        else if (txState == TransmitState::FAILED)
+        {
+            const UploadContext &ctx = dataTransmitter->getUploadContext();
+
+            Serial.println("ERROR: Session transmission failed!");
+            mqttManager->publishStatus("upload_failed");
+            display.setDisplayState(DISPLAY_ERROR);
+            display.showMessage(ctx.restartOnFailure
+                                    ? "Upload failed - Restarting..."
+                                    : "Upload failed!",
+                                TFT_RED);
+            delay(ctx.restartOnFailure ? 3000 : ctx.displayDelayMs);
+            dataTransmitter->setSessionSummary(nullptr);
+            dataTransmitter->resetTransmission();
+            sessionManager.clearBuffer();
+
+            if (ctx.restartOnFailure)
+            {
+                ESP.restart();
+            }
+            display.setDisplayState(DISPLAY_IDLE);
+        }
+    }
 
     // Send periodic status updates
     if (millis() - lastStatusUpdate > STATUS_UPDATE_INTERVAL)

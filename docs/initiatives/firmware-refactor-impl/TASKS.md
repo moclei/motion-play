@@ -60,7 +60,7 @@ File splits and class extractions. Each task is independent unless noted. Larges
 Runtime behavior changes. Require testing beyond compilation.
 
 - [x] **4.1** Non-blocking WiFi/MQTT reconnection — replace `delay()` loops with state machines. Add exponential backoff.
-- [ ] **4.2** Non-blocking data transmission — cooperative batching with `loop()` re-entry between batches.
+- [x] **4.2** Non-blocking data transmission — cooperative batching with `loop()` re-entry between batches.
 - [ ] **4.3** Replace `taskYIELD()` with `xTaskNotifyFromISR()` in InterruptManager.
 - [ ] **4.4** Eliminate `delay()` in CalibrationManager — timer-based sub-states. *(Depends on 3.12.)*
 - [ ] **4.5** Add batch retry logic in DataTransmitter — per-batch retry (1-2 attempts) before failing session.

@@ -6,23 +6,127 @@
 DataTransmitter::DataTransmitter(MQTTManager *mqtt) : mqttManager(mqtt) {}
 
 // ============================================================================
-// Main entry point - routes to correct transmission method
+// Cooperative Transmission API
 // ============================================================================
 
-bool DataTransmitter::transmitSession(SessionManager &session, const SensorConfiguration *config)
+bool DataTransmitter::beginTransmission(SessionManager &session, const SensorConfiguration *config,
+                                        const UploadContext &context)
 {
-    if (session.getSessionType() == SessionType::INTERRUPT_BASED)
+    txContext_ = context;
+
+    if (txState_ == TransmitState::TRANSMITTING)
     {
-        return transmitInterruptSession(session, config);
+        Serial.println("ERROR: Transmission already in progress");
+        txState_ = TransmitState::FAILED;
+        return false;
+    }
+
+    if (!session.hasData())
+    {
+        Serial.println("No data to transmit");
+        txState_ = TransmitState::FAILED;
+        return false;
+    }
+
+    txSessionId_ = session.getSessionId();
+    txDeviceId_ = mqttManager->getDeviceId();
+    txStartTime_ = session.getStartTime();
+    txDuration_ = session.getDuration();
+    txConfig_ = config;
+    txOffset_ = 0;
+    txLastBatchTime_ = 0;
+    txSessionType_ = session.getSessionType();
+
+    if (txSessionType_ == SessionType::INTERRUPT_BASED)
+    {
+        txEvents_ = &session.getInterruptBuffer();
+        txTotalItems_ = txEvents_->size();
+        txBatchDelay_ = INT_BATCH_DELAY_MS;
+        txReadings_ = nullptr;
+        txSensorMetadata_ = nullptr;
+
+        Serial.printf("Transmitting interrupt session %s (%d events)\n",
+                      txSessionId_.c_str(), txTotalItems_);
     }
     else
     {
-        return transmitProximitySession(session, config);
+        txReadings_ = &session.getDataBuffer();
+        txSensorMetadata_ = &session.getSensorMetadata();
+        txTotalItems_ = txReadings_->size();
+        txBatchDelay_ = BATCH_DELAY_MS;
+        txEvents_ = nullptr;
+
+        Serial.printf("Transmitting proximity session %s (%d readings)\n",
+                      txSessionId_.c_str(), txTotalItems_);
     }
+
+    txState_ = TransmitState::TRANSMITTING;
+    return true;
+}
+
+TransmitState DataTransmitter::tick()
+{
+    if (txState_ != TransmitState::TRANSMITTING)
+        return txState_;
+
+    if (txLastBatchTime_ > 0 && (millis() - txLastBatchTime_) < txBatchDelay_)
+        return txState_;
+
+    bool success;
+    size_t remaining = txTotalItems_ - txOffset_;
+    size_t batchCount;
+
+    if (txSessionType_ == SessionType::INTERRUPT_BASED)
+    {
+        batchCount = (remaining > INT_BATCH_SIZE) ? INT_BATCH_SIZE : remaining;
+        bool isFirst = (txOffset_ == 0);
+        success = transmitInterruptBatch(txSessionId_, txDeviceId_, txStartTime_, txDuration_,
+                                         *txEvents_, txOffset_, batchCount, isFirst, txConfig_);
+    }
+    else
+    {
+        batchCount = (remaining > BATCH_SIZE) ? BATCH_SIZE : remaining;
+        const std::vector<SensorMetadata> *metaPtr = (txOffset_ == 0) ? txSensorMetadata_ : nullptr;
+        success = transmitBatch(txSessionId_, txDeviceId_, txStartTime_, txDuration_,
+                                *txReadings_, txOffset_, batchCount, metaPtr, txConfig_);
+    }
+
+    if (!success)
+    {
+        Serial.println("ERROR: Failed to transmit batch");
+        txState_ = TransmitState::FAILED;
+        return txState_;
+    }
+
+    txOffset_ += batchCount;
+    txLastBatchTime_ = millis();
+
+    if (txOffset_ >= txTotalItems_)
+    {
+        Serial.printf("%s session transmission complete!\n",
+                      txSessionType_ == SessionType::INTERRUPT_BASED ? "Interrupt" : "Proximity");
+        txState_ = TransmitState::SUCCEEDED;
+    }
+
+    return txState_;
+}
+
+void DataTransmitter::resetTransmission()
+{
+    txState_ = TransmitState::IDLE;
+    txReadings_ = nullptr;
+    txSensorMetadata_ = nullptr;
+    txEvents_ = nullptr;
+    txTotalItems_ = 0;
+    txOffset_ = 0;
+    txConfig_ = nullptr;
+    txLastBatchTime_ = 0;
+    txBatchDelay_ = 0;
+    txContext_ = UploadContext{};
 }
 
 // ============================================================================
-// Proximity Mode Transmission (existing implementation)
+// Proximity Batch Transmission (single batch)
 // ============================================================================
 
 bool DataTransmitter::transmitBatch(const String &sessionId,
@@ -106,58 +210,8 @@ bool DataTransmitter::transmitBatch(const String &sessionId,
     return success;
 }
 
-bool DataTransmitter::transmitProximitySession(SessionManager &session, const SensorConfiguration *config)
-{
-    if (!session.hasData())
-    {
-        Serial.println("No data to transmit");
-        return false;
-    }
-
-    String sessionId = session.getSessionId();
-    String deviceId = mqttManager->getDeviceId();
-    unsigned long startTime = session.getStartTime();
-    unsigned long duration = session.getDuration();
-
-    std::vector<SensorReading, PSRAMAllocator<SensorReading>> &readings = session.getDataBuffer();
-    const std::vector<SensorMetadata> &sensorMetadata = session.getSensorMetadata();
-    size_t totalReadings = readings.size();
-
-    Serial.print("Transmitting proximity session ");
-    Serial.print(sessionId);
-    Serial.print(" (");
-    Serial.print(totalReadings);
-    Serial.println(" readings)");
-
-    // Send in batches
-    size_t offset = 0;
-    while (offset < totalReadings)
-    {
-        size_t remaining = totalReadings - offset;
-        size_t batchCount = (remaining > BATCH_SIZE) ? BATCH_SIZE : remaining;
-
-        // Sensor metadata only for first batch; config always passed for actual sample rate
-        const std::vector<SensorMetadata> *metadataPtr = (offset == 0) ? &sensorMetadata : nullptr;
-
-        if (!transmitBatch(sessionId, deviceId, startTime, duration,
-                           readings, offset, batchCount, metadataPtr, config))
-        {
-            Serial.println("ERROR: Failed to transmit batch");
-            return false;
-        }
-
-        offset += batchCount;
-
-        // Small delay between batches to avoid overwhelming MQTT
-        delay(100);
-    }
-
-    Serial.println("Proximity session transmission complete!");
-    return true;
-}
-
 // ============================================================================
-// Interrupt Mode Transmission (new implementation)
+// Interrupt Batch Transmission (single batch)
 // ============================================================================
 
 bool DataTransmitter::transmitInterruptBatch(const String &sessionId,
@@ -255,56 +309,8 @@ bool DataTransmitter::transmitInterruptBatch(const String &sessionId,
     return success;
 }
 
-bool DataTransmitter::transmitInterruptSession(SessionManager &session, const SensorConfiguration *config)
-{
-    if (!session.hasData())
-    {
-        Serial.println("No interrupt events to transmit");
-        return false;
-    }
-
-    String sessionId = session.getSessionId();
-    String deviceId = mqttManager->getDeviceId();
-    unsigned long startTime = session.getStartTime();
-    unsigned long duration = session.getDuration();
-
-    const std::vector<InterruptEvent> &events = session.getInterruptBuffer();
-    size_t totalEvents = events.size();
-
-    Serial.print("Transmitting interrupt session ");
-    Serial.print(sessionId);
-    Serial.print(" (");
-    Serial.print(totalEvents);
-    Serial.println(" events)");
-
-    // Send in batches (interrupt events are smaller, can send more per batch)
-    size_t offset = 0;
-    while (offset < totalEvents)
-    {
-        size_t remaining = totalEvents - offset;
-        size_t batchCount = (remaining > INT_BATCH_SIZE) ? INT_BATCH_SIZE : remaining;
-
-        bool isFirstBatch = (offset == 0);
-
-        if (!transmitInterruptBatch(sessionId, deviceId, startTime, duration,
-                                    events, offset, batchCount, isFirstBatch, config))
-        {
-            Serial.println("ERROR: Failed to transmit interrupt batch");
-            return false;
-        }
-
-        offset += batchCount;
-
-        // Small delay between batches
-        delay(50);
-    }
-
-    Serial.println("Interrupt session transmission complete!");
-    return true;
-}
-
 // ============================================================================
-// Live Debug Capture Transmission
+// Live Debug Capture Transmission (legacy synchronous path)
 // ============================================================================
 
 String DataTransmitter::transmitLiveDebugCapture(
