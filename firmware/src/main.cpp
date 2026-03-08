@@ -21,13 +21,11 @@
 #include "components/command/CommandHandler.h"
 #include "components/collection/CollectionController.h"
 #include "components/cloud/CloudConfig.h"
+#include "components/button/ButtonHandler.h"
 #include "components/serialstudio/SerialStudioOutput.h"
+#include "pin_config.h"
 #include "constants.h"
 #include "debug_log.h"
-
-// Button pins for T-Display-S3
-#define BUTTON_1 0  // Left button (BOOT)
-#define BUTTON_2 14 // Right button
 
 // Managers
 NetworkManager networkManager;
@@ -52,6 +50,7 @@ DetectorConfig detectorConfig;
 // Serial Studio output: compile-time default from build flags, overridable via cloud config
 bool serialStudioEnabled = SERIAL_STUDIO_DEFAULT;
 InterruptManager interruptManager;
+ButtonHandler buttonHandler(PIN_BUTTON_2, PIN_BUTTON_1); // left=BOOT(GPIO0), right=GPIO14
 CommandHandler *commandHandler = nullptr;
 CollectionController *collectionController = nullptr;
 
@@ -93,8 +92,7 @@ void setup()
     Serial.println("Press RIGHT button (GPIO 14) to restart anytime");
     Serial.println("=================================\n");
 
-    pinMode(BUTTON_1, INPUT_PULLUP);
-    pinMode(BUTTON_2, INPUT_PULLUP);
+    buttonHandler.init();
 
     if (!display.init())
     {
@@ -289,13 +287,6 @@ void initializeSystem()
 
 void loop()
 {
-    static int buttonState2 = HIGH;
-    static unsigned long button1HoldStart = 0;
-    static bool button1WasPressed = false;
-
-    int currentButton1 = digitalRead(BUTTON_1);
-    int currentButton2 = digitalRead(BUTTON_2);
-
     // If calibration is active, handle it exclusively
     if (calibrationManager.isActive())
     {
@@ -324,62 +315,41 @@ void loop()
         return; // Skip normal loop during calibration
     }
 
-    // Check for LEFT button (BOOT) long-press to start calibration
-    if (currentButton1 == LOW)
+    ButtonEvent buttonEvent = buttonHandler.update();
+
+    if (buttonEvent == ButtonEvent::LEFT_LONG_PRESS)
     {
-        if (!button1WasPressed)
+        Serial.println("Button 1 held 3s - Starting calibration...");
+
+        if (sessionManager.getState() == IDLE)
         {
-            button1WasPressed = true;
-            button1HoldStart = millis();
+            uint8_t mp = currentConfig.multi_pulse.toInt();
+            if (mp == 0)
+                mp = 1;
+            uint8_t it = currentConfig.integration_time.substring(0, 1).toInt();
+            if (it == 0)
+                it = 1;
+            uint8_t led = currentConfig.led_current.toInt();
+            if (led == 0)
+                led = 200;
+            calibrationManager.setSensorConfig(mp, it, led);
+
+            calibrationManager.startCalibration();
         }
-        else if (millis() - button1HoldStart >= 3000)
+        else
         {
-            // 3 second hold - trigger calibration
-            Serial.println("Button 1 held 3s - Starting calibration...");
-
-            // Only start if not collecting
-            if (sessionManager.getState() == IDLE)
-            {
-                // Set sensor config before starting
-                uint8_t mp = currentConfig.multi_pulse.toInt();
-                if (mp == 0)
-                    mp = 1;
-                uint8_t it = currentConfig.integration_time.substring(0, 1).toInt();
-                if (it == 0)
-                    it = 1;
-                uint8_t led = currentConfig.led_current.toInt();
-                if (led == 0)
-                    led = 200;
-                calibrationManager.setSensorConfig(mp, it, led);
-
-                calibrationManager.startCalibration();
-            }
-            else
-            {
-                display.showMessage("Stop collection first!", TFT_RED);
-                delay(1500);
-                display.setDisplayState(DISPLAY_IDLE);
-            }
-
-            button1WasPressed = false; // Reset to prevent re-trigger
-            button1HoldStart = 0;
+            display.showMessage("Stop collection first!", TFT_RED);
+            delay(1500);
+            display.setDisplayState(DISPLAY_IDLE);
         }
     }
-    else
-    {
-        button1WasPressed = false;
-        button1HoldStart = 0;
-    }
-
-    // Check for RIGHT button press to restart anytime
-    if (currentButton2 == LOW && buttonState2 == HIGH)
+    else if (buttonEvent == ButtonEvent::RIGHT_PRESS)
     {
         Serial.println("RIGHT BUTTON - Restarting...");
         display.showMessage("Restarting...", TFT_YELLOW);
         delay(500);
         ESP.restart();
     }
-    buttonState2 = currentButton2;
 
     // Check network connection
     networkManager.checkConnection();
