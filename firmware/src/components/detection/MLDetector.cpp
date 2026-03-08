@@ -7,38 +7,7 @@
 
 MLDetector::MLDetector() {}
 
-MLDetector::~MLDetector()
-{
-    deinit();
-}
-
-// ============================================================================
-// Cleanup (safe to call multiple times or before first init)
-// ============================================================================
-
-void MLDetector::deinit()
-{
-    modelReady_ = false;
-    inputTensor_ = nullptr;
-    outputTensor_ = nullptr;
-
-    if (interpreter_)
-    {
-        delete interpreter_;
-        interpreter_ = nullptr;
-    }
-    if (resolver_)
-    {
-        delete resolver_;
-        resolver_ = nullptr;
-    }
-    if (tensorArena_)
-    {
-        free(tensorArena_);
-        tensorArena_ = nullptr;
-    }
-    model_ = nullptr;
-}
+MLDetector::~MLDetector() = default;
 
 // ============================================================================
 // Initialization
@@ -46,93 +15,15 @@ void MLDetector::deinit()
 
 bool MLDetector::init()
 {
-    // Clean up any previous (possibly failed) initialization
-    deinit();
+    Serial.println("[MLDetector] Initializing...");
 
-    Serial.println("[MLDetector] Initializing TFLite Micro...");
-
-    // Load model from flash
-    model_ = tflite::GetModel(direction_model_tflite);
-    if (model_ == nullptr)
+    if (!runtime_.init(direction_model_tflite, ML_TENSOR_ARENA_SIZE))
     {
-        Serial.println("[MLDetector] ERROR: Failed to load model");
+        Serial.println("[MLDetector] ERROR: TFLite runtime init failed");
         return false;
     }
 
-    if (model_->version() != TFLITE_SCHEMA_VERSION)
-    {
-        Serial.printf("[MLDetector] ERROR: Model schema version %lu != expected %d\n",
-                      model_->version(), TFLITE_SCHEMA_VERSION);
-        return false;
-    }
-    Serial.printf("[MLDetector] Model loaded (%u bytes, schema v%lu)\n",
-                  direction_model_tflite_len, model_->version());
-
-    // Allocate tensor arena in PSRAM
-    tensorArena_ = (uint8_t *)ps_malloc(ML_TENSOR_ARENA_SIZE);
-    if (tensorArena_ == nullptr)
-    {
-        Serial.println("[MLDetector] ERROR: Failed to allocate tensor arena in PSRAM");
-        // Fallback to regular malloc
-        tensorArena_ = (uint8_t *)malloc(ML_TENSOR_ARENA_SIZE);
-        if (tensorArena_ == nullptr)
-        {
-            Serial.println("[MLDetector] ERROR: Failed to allocate tensor arena");
-            return false;
-        }
-        Serial.println("[MLDetector] WARNING: Tensor arena allocated in SRAM (PSRAM unavailable)");
-    }
-    else
-    {
-        Serial.printf("[MLDetector] Tensor arena: %u bytes in PSRAM\n", ML_TENSOR_ARENA_SIZE);
-    }
-
-    // Register required ops (heap-allocated so init() is safely re-callable)
-    resolver_ = new tflite::MicroMutableOpResolver<8>();
-    resolver_->AddConv2D();
-    resolver_->AddMaxPool2D();
-    resolver_->AddReshape();
-    resolver_->AddFullyConnected();
-    resolver_->AddSoftmax();
-    resolver_->AddExpandDims();
-
-    // Create interpreter (heap-allocated for safe re-init)
-    interpreter_ = new tflite::MicroInterpreter(
-        model_, *resolver_, tensorArena_, ML_TENSOR_ARENA_SIZE);
-
-    // Allocate tensors
-    TfLiteStatus status = interpreter_->AllocateTensors();
-    if (status != kTfLiteOk)
-    {
-        Serial.println("[MLDetector] ERROR: AllocateTensors() failed");
-        deinit();
-        return false;
-    }
-
-    // Get input/output tensor pointers
-    inputTensor_ = interpreter_->input(0);
-    outputTensor_ = interpreter_->output(0);
-
-    Serial.printf("[MLDetector] Input tensor: dims=(%d",
-                  inputTensor_->dims->data[0]);
-    for (int i = 1; i < inputTensor_->dims->size; i++)
-    {
-        Serial.printf(", %d", inputTensor_->dims->data[i]);
-    }
-    Serial.printf("), type=%d\n", inputTensor_->type);
-
-    Serial.printf("[MLDetector] Output tensor: dims=(%d",
-                  outputTensor_->dims->data[0]);
-    for (int i = 1; i < outputTensor_->dims->size; i++)
-    {
-        Serial.printf(", %d", outputTensor_->dims->data[i]);
-    }
-    Serial.printf("), type=%d\n", outputTensor_->type);
-
-    Serial.printf("[MLDetector] Arena used: %u / %u bytes\n",
-                  interpreter_->arena_used_bytes(), ML_TENSOR_ARENA_SIZE);
-
-    modelReady_ = true;
+    Serial.printf("[MLDetector] Model data: %u bytes\n", direction_model_tflite_len);
 #ifdef ML_MODEL_VERSION
     Serial.printf("[MLDetector] Model version: %s\n", ML_MODEL_VERSION);
 #endif
@@ -268,7 +159,7 @@ void MLDetector::flushReading()
             {
                 waitingPostTrigger_ = false;
                 // Run inference
-                if (modelReady_ && ringCount_ >= 100) // need at least ~100 frames
+                if (runtime_.isReady() && ringCount_ >= 100)
                 {
                     unsigned long t0 = micros();
                     bool detected = runInference();
@@ -283,7 +174,7 @@ void MLDetector::flushReading()
                 else
                 {
                     Serial.printf("[MLDetector] Skipping inference: modelReady=%d, frames=%u\n",
-                                  modelReady_, ringCount_);
+                                  runtime_.isReady(), ringCount_);
                 }
                 // Return to READY (cooldown enforced in checkTrigger)
                 state_ = State::READY;
@@ -360,7 +251,7 @@ void MLDetector::prepareInput()
     // Strategy: take the most recent ML_WINDOW_MS worth of data,
     // resample to 1ms grid with forward-fill (matching training preprocessing).
 
-    float *input = inputTensor_->data.f;
+    float *input = runtime_.inputTensor()->data.f;
     const size_t totalElements = ML_WINDOW_MS * ML_NUM_POSITIONS;
     memset(input, 0, totalElements * sizeof(float));
 
@@ -429,14 +320,12 @@ void MLDetector::prepareInput()
 
 bool MLDetector::runInference()
 {
-    if (!modelReady_ || interpreter_ == nullptr)
+    if (!runtime_.isReady() || runtime_.interpreter() == nullptr)
         return false;
 
-    // Prepare input tensor
     prepareInput();
 
-    // Run inference
-    TfLiteStatus status = interpreter_->Invoke();
+    TfLiteStatus status = runtime_.interpreter()->Invoke();
     if (status != kTfLiteOk)
     {
         Serial.println("[MLDetector] ERROR: Inference failed");
@@ -444,7 +333,7 @@ bool MLDetector::runInference()
     }
 
     // Parse output: softmax [a_to_b, b_to_a, no_transit]
-    float *output = outputTensor_->data.f;
+    float *output = runtime_.outputTensor()->data.f;
     float confA2B = output[0];
     float confB2A = output[1];
     float confNoTransit = output[2];
@@ -555,13 +444,13 @@ void MLDetector::fullReset()
 
 bool MLDetector::isReady() const
 {
-    return modelReady_ && state_ != State::ESTABLISHING_BASELINE;
+    return runtime_.isReady() && state_ != State::ESTABLISHING_BASELINE;
 }
 
 void MLDetector::debugPrint() const
 {
     Serial.println("=== MLDetector State ===");
-    Serial.printf("Model ready: %s\n", modelReady_ ? "YES" : "NO");
+    Serial.printf("Model ready: %s\n", runtime_.isReady() ? "YES" : "NO");
     Serial.printf("State: %s\n",
                   state_ == State::ESTABLISHING_BASELINE ? "ESTABLISHING_BASELINE"
                   : state_ == State::READY               ? "READY"
@@ -570,9 +459,9 @@ void MLDetector::debugPrint() const
     Serial.printf("Threshold A: %.1f, B: %.1f\n", thresholdA_, thresholdB_);
     Serial.printf("Ring buffer: %u / %u frames\n", ringCount_, RING_BUFFER_SIZE);
     Serial.printf("Detection ready: %s\n", detectionReady_ ? "YES" : "NO");
-    if (interpreter_)
+    if (runtime_.isReady())
     {
         Serial.printf("Arena used: %u / %u bytes\n",
-                      interpreter_->arena_used_bytes(), ML_TENSOR_ARENA_SIZE);
+                      runtime_.arenaUsedBytes(), ML_TENSOR_ARENA_SIZE);
     }
 }
