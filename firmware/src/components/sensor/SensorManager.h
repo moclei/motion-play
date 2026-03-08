@@ -3,6 +3,7 @@
 #include <Arduino.h>
 #include <atomic>
 #include <vector>
+#include "../diagnostics/SensorDiagnostics.h"
 #include "../mux/MuxController.h"
 #include "../vcnl4040/VCNL4040.h"
 #include "SensorConfiguration.h"
@@ -16,6 +17,7 @@ class SensorManager
 private:
     MuxController muxController;
     VCNL4040 vcnl;
+    SensorDiagnostics diagnostics;
 
     bool initialized = false;
     TaskHandle_t sensorTask = NULL;
@@ -36,7 +38,6 @@ private:
     // Written only from Core 0 sensor task — no synchronization needed.
     struct SessionSummary *activeSummary = nullptr;
 
-    void debugI2CScan();  // Debug: scan I2C bus on each TCA channel
     static void sensorTaskFunction(void *parameter);
     bool calibrateSensorBaseline(uint8_t sensorIndex); // Calibrate single sensor PS_CANC
 
