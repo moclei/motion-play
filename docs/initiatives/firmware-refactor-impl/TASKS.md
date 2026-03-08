@@ -51,7 +51,7 @@ File splits and class extractions. Each task is independent unless noted. Larges
 - [x] **3.9** Create `DetectionController` — unify play-mode and live-debug detection loops using `IDetector` interface. *(Depends on 1.2 for IDetector.)*
 - [x] **3.10** Extract `CollectionController` from main.cpp — start/stop orchestration for interrupt + polling modes.
 - [x] **3.11** Extract `ButtonHandler` from main.cpp — button reading, debounce, long-press.
-- [ ] **3.12** Simplify CalibrationManager state enum — reduce 12 states to ~9 generic + `_currentPCB`. Replace `static` locals with instance members.
+- [x] **3.12** Simplify CalibrationManager state enum — reduce 12 states to ~9 generic + `_currentPCB`. Replace `static` locals with instance members.
 - [ ] **3.13** Extract SensorManager diagnostics — move `debugI2CScan()` and `dumpSensorConfiguration()` to diagnostic module.
 - [ ] **3.14** Extract TFLite runtime from MLDetector — move init, model loading, arena allocation into `TFLiteRuntime`.
 
