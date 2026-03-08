@@ -34,6 +34,7 @@
 #pragma once
 
 #include <Arduino.h>
+#include <atomic>
 #include <freertos/FreeRTOS.h>
 #include <freertos/queue.h>
 #include <freertos/task.h>
@@ -41,119 +42,16 @@
 #include "../vcnl4040/VCNL4040.h"
 #include "../calibration/CalibrationData.h"
 #include "pin_config.h"
+#include "interrupt_types.h"
 
 // ============================================================================
 // Configuration
 // ============================================================================
 
-// Event buffer size (number of events that can be queued)
-#define INT_EVENT_BUFFER_SIZE 256
-
-// Maximum time to wait for event processing (ms)
-#define INT_PROCESSING_TIMEOUT_MS 10
-
-// Default detection threshold (margin above/below calibrated baseline)
-// Based on actual measurements: objects at 250mm produce only 8-25 counts above baseline
-#define INT_DEFAULT_THRESHOLD_MARGIN 10 // Trigger when proximity increases by 10+ (very sensitive)
-#define INT_DEFAULT_HYSTERESIS 5        // Small gap to allow re-triggering
-
-// Calibration settings
-#define INT_CALIBRATION_DURATION_MS 1000      // Calibration duration per sensor (1 second)
-#define INT_CALIBRATION_SAMPLE_INTERVAL_MS 20 // Sample every 20ms (~50 samples per sensor)
-
-// ============================================================================
-// Data Types
-// ============================================================================
-
-/**
- * Type of interrupt event
- */
-enum class InterruptEventType : uint8_t
-{
-    CLOSE,  // Object approached (PS > high threshold)
-    AWAY,   // Object moved away (PS < low threshold)
-    UNKNOWN // Couldn't determine (e.g., flag already cleared)
-};
-
-/**
- * Interrupt event data
- * This is what gets stored when an interrupt fires
- */
-struct InterruptEvent
-{
-    uint32_t timestamp_us;   // Microseconds since start of session
-    uint8_t boardId;         // Which board triggered (1-3)
-    uint8_t sensorId;        // Which sensor triggered (0-5 position, or 255 if unknown)
-    InterruptEventType type; // CLOSE or AWAY
-    uint8_t rawFlags;        // Raw INT_FLAG register value for debugging
-
-    // Helper to get sensor name
-    String getSensorName() const
-    {
-        if (sensorId < 6)
-        {
-            uint8_t pcb = (sensorId / 2) + 1;
-            uint8_t side = (sensorId % 2) + 1;
-            return "P" + String(pcb) + "S" + String(side);
-        }
-        return "B" + String(boardId) + "?";
-    }
-};
-
-/**
- * Interrupt detection mode
- */
-enum class InterruptMode : uint8_t
-{
-    NORMAL,      // Standard interrupt mode - fires once per threshold crossing
-    LOGIC_OUTPUT // Logic mode - INT stays LOW while object present
-};
-
-/**
- * Interrupt configuration
- */
-struct InterruptConfig
-{
-    uint16_t thresholdMargin; // Detection margin above calibrated baseline
-    uint16_t hysteresis;      // Gap between high and low thresholds
-    uint8_t persistence;      // Consecutive hits before interrupt (1-4)
-    bool smartPersistence;    // Enable fast response mode
-    InterruptMode mode;       // NORMAL or LOGIC_OUTPUT
-    uint16_t ledCurrent;      // LED current in mA (50-200)
-    uint8_t integrationTime;  // Integration time (1, 2, 3, 4, or 8 for 1T-8T)
-    uint8_t multiPulse;       // Multi-pulse count (1, 2, 4, or 8) - more pulses = stronger signal
-    bool autoCalibrate;       // Whether to auto-calibrate on configure()
-
-    // Default configuration - optimized for maximum detection range
-    static InterruptConfig defaults()
-    {
-        return {
-            INT_DEFAULT_THRESHOLD_MARGIN,
-            INT_DEFAULT_HYSTERESIS,
-            1,    // 1 hit persistence
-            true, // Smart persistence enabled
-            InterruptMode::NORMAL,
-            200, // 200mA LED current (max)
-            8,   // 8T integration (max sensitivity)
-            8,   // 8 pulses (max signal strength)
-            true // Auto-calibrate enabled
-        };
-    }
-};
-
-/**
- * Session statistics
- */
-struct InterruptSessionStats
-{
-    uint32_t totalEvents;
-    uint32_t closeEvents;
-    uint32_t awayEvents;
-    uint32_t unknownEvents;
-    uint32_t droppedEvents;    // Events lost due to full buffer
-    uint32_t isrCount;         // Total ISR invocations
-    uint32_t sessionStartTime; // millis() when session started
-};
+static constexpr uint16_t INT_EVENT_BUFFER_SIZE           = 256;
+static constexpr uint32_t INT_PROCESSING_TIMEOUT_MS       = 10;   // Currently unused — kept for reference, removed in 2.11
+static constexpr uint32_t INT_CALIBRATION_DURATION_MS     = 1000;
+static constexpr uint32_t INT_CALIBRATION_SAMPLE_INTERVAL_MS = 20;
 
 // ============================================================================
 // InterruptManager Class
@@ -233,7 +131,12 @@ public:
      * Get session statistics
      * @return Current session stats
      */
-    InterruptSessionStats getStats() const { return _stats; }
+    InterruptSessionStats getStats() const
+    {
+        InterruptSessionStats result = _stats;
+        result.isrCount = _isrCount.load();
+        return result;
+    }
 
     /**
      * Reset session statistics
@@ -294,9 +197,11 @@ private:
     // External calibration data (from CalibrationManager)
     const DeviceCalibration *_externalCalibration = nullptr;
 
-    volatile bool _monitoring;
+    std::atomic<bool> _monitoring;
+    std::atomic<uint32_t> _isrCount{0};
     QueueHandle_t _eventQueue;
     TaskHandle_t _processingTask;
+    TaskHandle_t _stopRequestor = nullptr;
 
     // ISR tracking - volatile because accessed from ISR
     volatile uint32_t _lastIsrTime[MUX_NUM_BOARDS];

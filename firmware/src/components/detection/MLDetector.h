@@ -1,11 +1,9 @@
-#ifndef ML_DETECTOR_H
-#define ML_DETECTOR_H
+#pragma once
 
 #include <Arduino.h>
-#include "DirectionDetector.h" // Reuse Direction, DetectionResult, SensorReading
-#include "tensorflow/lite/micro/micro_mutable_op_resolver.h"
-#include "tensorflow/lite/micro/micro_interpreter.h"
-#include "tensorflow/lite/schema/schema_generated.h"
+#include "detection_types.h"
+#include "sensor_types.h"
+#include "TFLiteRuntime.h"
 
 /**
  * ML-based Direction Detection using TensorFlow Lite Micro.
@@ -62,11 +60,11 @@ enum class MLClass : uint8_t
     NO_TRANSIT = 2
 };
 
-class MLDetector
+class MLDetector : public IDetector
 {
 public:
     MLDetector();
-    ~MLDetector();
+    ~MLDetector() override;
 
     /**
      * Initialize TFLite interpreter and load model.
@@ -74,40 +72,13 @@ public:
      */
     bool init();
 
-    /**
-     * Add a new sensor reading (same interface as DirectionDetector).
-     */
-    void addReading(const SensorReading &reading);
-
-    /**
-     * Flush current aggregated reading and process it.
-     */
-    void flushReading();
-
-    /**
-     * Check if a detection result is ready.
-     */
-    bool hasDetection() const;
-
-    /**
-     * Get the detection result (call after hasDetection returns true).
-     */
-    DetectionResult getResult();
-
-    /**
-     * Reset detection state (keep baseline and model).
-     */
-    void reset();
-
-    /**
-     * Full reset including baseline.
-     */
-    void fullReset();
-
-    /**
-     * Check if baseline is established and model is ready.
-     */
-    bool isReady() const;
+    void addReading(const SensorReading &reading) override;
+    void flushReading() override;
+    bool hasDetection() const override;
+    DetectionResult getResult() override;
+    void reset() override;
+    void fullReset() override;
+    bool isReady() const override;
 
     /**
      * Debug print current state.
@@ -115,17 +86,7 @@ public:
     void debugPrint() const;
 
 private:
-    // --- TFLite members ---
-    const tflite::Model *model_ = nullptr;
-    tflite::MicroMutableOpResolver<8> *resolver_ = nullptr;
-    tflite::MicroInterpreter *interpreter_ = nullptr;
-    uint8_t *tensorArena_ = nullptr;
-    TfLiteTensor *inputTensor_ = nullptr;
-    TfLiteTensor *outputTensor_ = nullptr;
-    bool modelReady_ = false;
-
-    /** Clean up all TFLite resources (safe to call multiple times). */
-    void deinit();
+    TFLiteRuntime runtime_;
 
     // --- Ring buffer for sensor frames ---
     static constexpr size_t RING_BUFFER_SIZE = 512; // ~1.3s at ~2.7ms per frame
@@ -134,7 +95,6 @@ private:
     size_t ringCount_ = 0;
 
     void pushFrame(const MLSensorFrame &frame);
-    size_t getFrameCount() const { return ringCount_; }
 
     // --- Current reading aggregation ---
     uint32_t currentTimestamp_ = 0;
@@ -187,5 +147,3 @@ private:
     float getSmoothedA() const;
     float getSmoothedB() const;
 };
-
-#endif // ML_DETECTOR_H

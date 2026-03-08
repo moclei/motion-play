@@ -1,11 +1,9 @@
-#ifndef DISPLAY_MANAGER_H
-#define DISPLAY_MANAGER_H
+#pragma once
 
 #include <TFT_eSPI.h>
 
 // Forward declarations
 struct SensorConfiguration;
-enum class CalibrationState : uint8_t;
 
 // Initialization stages
 enum InitStage
@@ -47,7 +45,6 @@ private:
     DisplayMode currentMode = MODE_DEBUG; // Default to debug mode
     String errorMessage = "";
     int sampleCount = 0;
-    String configString = ""; // For displaying config during recording
 
     // Cached config values for display
     uint16_t cachedSampleRate = 1000;
@@ -93,7 +90,7 @@ private:
     void drawModeBadge();
 
 public:
-    void init();
+    bool init();
 
     // Initialization flow
     void showInitScreen();
@@ -105,27 +102,13 @@ public:
     void setDisplayState(DisplayState state);
     void updateSampleCount(int count);
     void showMessage(const String &message, uint16_t color = TFT_WHITE);
-    void setConfigString(const String &config);              // Legacy: Set config string for display
     void setSensorConfig(const SensorConfiguration *config);
     void setDetectionConfig(float peakMult, uint16_t minRise, uint32_t minWaveDurMs, uint8_t smoothWin);
     void setMode(DisplayMode mode);
 
-    // Legacy compatibility (for gradual migration)
-    void showBootScreen();
-    void updateStatus(const String &status, uint16_t color = TFT_WHITE);
     void showNetworkInfo(const String &ip, int rssi);
     void showMQTTStatus(bool connected);
     void clear();
 
-    // Calibration display
-    void showCalibrationIntro();
-    void showCalibrationBaseline(uint8_t pcbId, uint8_t progress);
-    void showCalibrationApproach(uint8_t pcbId, uint16_t currentReading, uint16_t threshold, uint8_t progress, uint32_t timeRemaining);
-    void showCalibrationSuccess(uint8_t pcbId);
-    void showCalibrationFailed(uint8_t pcbId, const String &reason = "Timeout");
-    void showCalibrationSummary(uint16_t threshold1, uint16_t threshold2, uint16_t threshold3, bool valid1 = true, bool valid2 = true, bool valid3 = true);
-    void showCalibrationComplete();
-    void showCalibrationCancelled();
+    TFT_eSPI &getTft() { return tft; }
 };
-
-#endif

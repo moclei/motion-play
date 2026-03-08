@@ -1,11 +1,11 @@
-#ifndef SESSION_MANAGER_H
-#define SESSION_MANAGER_H
+#pragma once
 
 #include <Arduino.h>
-#include <ArduinoJson.h>
 #include <vector>
-#include "../sensor/SensorManager.h"
-#include "../interrupt/InterruptManager.h"
+#include "sensor_types.h"
+#include "interrupt_types.h"
+
+struct SensorConfiguration;
 #include "../memory/PSRAMAllocator.h"
 
 enum SessionState
@@ -127,7 +127,5 @@ public:
     // Session Confirmation: pipeline integrity
     SessionSummary &getSessionSummary() { return sessionSummary; }
     const SessionSummary &getSessionSummary() const { return sessionSummary; }
-    void finalizeSessionSummary(const SensorConfiguration *config, uint8_t numActiveSensors);
+    void finalizeSessionSummary(SensorConfiguration *config, uint8_t numActiveSensors);
 };
-
-#endif

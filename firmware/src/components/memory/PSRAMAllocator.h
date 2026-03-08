@@ -1,5 +1,4 @@
-#ifndef PSRAM_ALLOCATOR_H
-#define PSRAM_ALLOCATOR_H
+#pragma once
 
 #include <Arduino.h>
 #include <cstddef>
@@ -53,8 +52,10 @@ public:
             throw std::bad_alloc();
         }
 
+#ifdef DEBUG_PSRAM
         Serial.printf("PSRAM allocated: %u bytes (%u items)\n",
                       n * sizeof(T), n);
+#endif
 
         return p;
     }
@@ -64,8 +65,10 @@ public:
         if (p)
         {
             heap_caps_free(p);
+#ifdef DEBUG_PSRAM
             Serial.printf("PSRAM freed: %u bytes (%u items)\n",
                           n * sizeof(T), n);
+#endif
         }
     }
 
@@ -94,5 +97,3 @@ bool operator!=(const PSRAMAllocator<T1> &, const PSRAMAllocator<T2> &) noexcept
 {
     return false;
 }
-
-#endif // PSRAM_ALLOCATOR_H

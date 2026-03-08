@@ -1,34 +1,25 @@
 #include "MQTTManager.h"
+#include "../network/NetworkManager.h"
+#include "../config/ConfigLoader.h"
+#include <LittleFS.h>
+#include "constants.h"
 
 MQTTManager::MQTTManager(NetworkManager *netManager) : networkManager(netManager)
 {
     mqttClient.setClient(networkManager->getClient());
 }
 
-bool MQTTManager::loadConfig()
+bool MQTTManager::applyConfig(const DeviceConfig& config)
 {
-    File configFile = LittleFS.open("/config.json", "r");
-    if (!configFile)
-        return false;
+    broker = config.mqttBroker;
+    port = config.mqttPort;
+    clientId = config.mqttClientId;
+    deviceId = config.deviceId;
 
-    DynamicJsonDocument doc(1024);
-    DeserializationError error = deserializeJson(doc, configFile);
-    configFile.close();
+    statusTopic = String(MQTT_TOPIC_PREFIX) + deviceId + "/status";
+    dataTopic = String(MQTT_TOPIC_PREFIX) + deviceId + "/data";
+    commandTopic = String(MQTT_TOPIC_PREFIX) + deviceId + "/commands";
 
-    if (error)
-        return false;
-
-    broker = doc["mqtt"]["broker"].as<String>();
-    port = doc["mqtt"]["port"];
-    clientId = doc["mqtt"]["client_id"].as<String>();
-    deviceId = doc["device_id"].as<String>();
-
-    // Set up topics
-    statusTopic = "motionplay/" + deviceId + "/status";
-    dataTopic = "motionplay/" + deviceId + "/data";
-    commandTopic = "motionplay/" + deviceId + "/commands";
-
-    // Load certificates
     if (!loadCertificates())
     {
         Serial.println("Failed to load certificates");
@@ -36,9 +27,7 @@ bool MQTTManager::loadConfig()
     }
 
     mqttClient.setServer(broker.c_str(), port);
-    mqttClient.setCallback(messageCallback);
 
-    // Set buffer size for data payloads (default is 256 bytes)
     // 32KB covers the largest JSON batch (200 readings at ~80 bytes each).
     // Binary-packed captures (~56KB) use the streaming publishData overload instead.
     mqttClient.setBufferSize(32768);
@@ -143,9 +132,47 @@ void MQTTManager::loop()
 {
     if (!mqttClient.connected())
     {
-        connect();
+        if (!networkManager->isConnected()) return;
+
+        uint32_t backoff = getReconnectBackoffMs();
+        if (millis() - lastReconnectAttemptMs < backoff) return;
+
+        lastReconnectAttemptMs = millis();
+
+        Serial.printf("MQTT reconnecting (attempt %u, backoff %ums)...\n",
+                       reconnectAttemptCount + 1, backoff);
+
+        if (mqttClient.connect(clientId.c_str()))
+        {
+            Serial.println("MQTT reconnected!");
+            reconnectAttemptCount = 0;
+            mqttClient.subscribe(commandTopic.c_str());
+            publishStatus("online");
+        }
+        else
+        {
+            reconnectAttemptCount++;
+            Serial.printf("MQTT reconnect failed (rc=%d, next backoff %ums)\n",
+                           mqttClient.state(), getReconnectBackoffMs());
+            return;
+        }
     }
+    else
+    {
+        reconnectAttemptCount = 0;
+    }
+
     mqttClient.loop();
+}
+
+uint32_t MQTTManager::getReconnectBackoffMs() const
+{
+    uint32_t backoff = MQTT_RECONNECT_BASE_MS;
+    for (uint8_t i = 0; i < reconnectAttemptCount && backoff < MQTT_RECONNECT_MAX_MS; i++)
+    {
+        backoff *= 2;
+    }
+    return (backoff < MQTT_RECONNECT_MAX_MS) ? backoff : MQTT_RECONNECT_MAX_MS;
 }
 
 bool MQTTManager::publishStatus(const char *status)
@@ -247,6 +274,7 @@ bool MQTTManager::publishDataStreaming(const JsonDocument &data)
     if (!writeOk)
     {
         Serial.println("ERROR: streaming publish aborted due to write failure");
+        mqttClient.endPublish();
         return false;
     }
 
@@ -262,37 +290,6 @@ bool MQTTManager::publishDataStreaming(const JsonDocument &data)
     }
 
     return success;
-}
-
-void MQTTManager::messageCallback(char *topic, byte *payload, unsigned int length)
-{
-    Serial.print("Message received on topic: ");
-    Serial.println(topic);
-
-    char message[length + 1];
-    memcpy(message, payload, length);
-    message[length] = '\0';
-
-    Serial.print("Payload: ");
-    Serial.println(message);
-
-    // Parse command
-    DynamicJsonDocument doc(256);
-    DeserializationError error = deserializeJson(doc, message);
-
-    if (!error)
-    {
-        String command = doc["command"].as<String>();
-        Serial.print("Command: ");
-        Serial.println(command);
-
-        // Handle commands here
-        if (command == "ping")
-        {
-            // Respond to ping
-            Serial.println("Received ping command");
-        }
-    }
 }
 
 void MQTTManager::setCallback(std::function<void(char *, byte *, unsigned int)> callback)

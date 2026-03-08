@@ -1,9 +1,9 @@
-#ifndef LED_CONTROLLER_H
-#define LED_CONTROLLER_H
+#pragma once
 
 #include <Arduino.h>
 #include <FastLED.h>
-#include "../detection/DirectionDetector.h"
+#include "detection_types.h"
+#include "pin_config.h"
 
 /**
  * LED Controller for Motion Play
@@ -16,15 +16,17 @@
  */
 
 // LED Configuration
-#define NUM_LEDS 72
-#define LED_PIN 16
-#define LED_TYPE WS2812B
-#define COLOR_ORDER GRB
-#define DEFAULT_BRIGHTNESS 128
+static constexpr uint8_t  LED_COUNT              = 72;
+static constexpr uint8_t  LED_DEFAULT_BRIGHTNESS  = 128;
+static constexpr uint32_t LED_FADE_DURATION_MS     = 500;
+static constexpr uint32_t LED_DEFAULT_DISPLAY_DURATION_MS = 3000;
+static constexpr uint8_t  LED_PULSE_MAX            = 50;
+static constexpr uint8_t  LED_PULSE_MIN            = 10;
+static constexpr uint8_t  LED_PULSE_STEP           = 2;
 
 class LEDController {
 private:
-    CRGB leds[NUM_LEDS];
+    CRGB leds[LED_COUNT];
     bool initialized = false;
     
     // Animation state
@@ -52,7 +54,7 @@ public:
      * @param direction The detected direction
      * @param duration How long to show the result in ms (default 3000)
      */
-    void showDirection(Direction direction, uint32_t duration = 3000);
+    void showDirection(Direction direction, uint32_t duration = LED_DEFAULT_DISPLAY_DURATION_MS);
     
     /**
      * Show ready/waiting state (subtle green pulse)
@@ -85,6 +87,4 @@ public:
      */
     bool isAnimating() const;
 };
-
-#endif
 

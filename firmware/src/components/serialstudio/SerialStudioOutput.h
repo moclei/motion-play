@@ -1,8 +1,8 @@
-#ifndef SERIAL_STUDIO_OUTPUT_H
-#define SERIAL_STUDIO_OUTPUT_H
+#pragma once
 
 #include <Arduino.h>
-#include "../sensor/SensorManager.h"
+#include <vector>
+#include "sensor_types.h"
 #include "../sensor/SensorConfiguration.h"
 #include "../detection/DirectionDetector.h"
 #include "../memory/PSRAMAllocator.h"
@@ -83,5 +83,3 @@ public:
      */
     void resetIndex();
 };
-
-#endif

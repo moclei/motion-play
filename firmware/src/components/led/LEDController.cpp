@@ -1,6 +1,5 @@
 #include "LEDController.h"
-
-extern bool serialStudioEnabled;
+#include "debug_log.h"
 
 // Define static colors
 const CRGB LEDController::COLOR_A_TO_B = CRGB(0, 100, 255); // Blue
@@ -15,20 +14,17 @@ bool LEDController::init()
     if (initialized)
         return true;
 
-    if (!serialStudioEnabled)
-        Serial.println("Initializing LED strip...");
+    DEBUG_LOG("Initializing LED strip...\n");
 
-    // Initialize FastLED
-    FastLED.addLeds<LED_TYPE, LED_PIN, COLOR_ORDER>(leds, NUM_LEDS);
-    FastLED.setBrightness(DEFAULT_BRIGHTNESS);
+    FastLED.addLeds<WS2812B, PIN_LED_STRIP_DATA, GRB>(leds, LED_COUNT);
+    FastLED.setBrightness(LED_DEFAULT_BRIGHTNESS);
 
     // Clear all LEDs
     FastLED.clear();
     FastLED.show();
 
     initialized = true;
-    if (!serialStudioEnabled)
-        Serial.printf("LED strip initialized: %d LEDs on GPIO %d\n", NUM_LEDS, LED_PIN);
+    DEBUG_LOG("LED strip initialized: %d LEDs on GPIO %d\n", LED_COUNT, PIN_LED_STRIP_DATA);
 
     return true;
 }
@@ -57,14 +53,11 @@ void LEDController::showDirection(Direction direction, uint32_t duration)
         break;
     }
 
-    if (!serialStudioEnabled)
-        Serial.printf("LED: Showing %s for %dms\n", dirName, duration);
+    DEBUG_LOG("LED: Showing %s for %dms\n", dirName, duration);
 
-    // Reset brightness to full (may have been dimmed by previous fade)
-    FastLED.setBrightness(DEFAULT_BRIGHTNESS);
+    FastLED.setBrightness(LED_DEFAULT_BRIGHTNESS);
 
-    // Set all LEDs to the color
-    fill_solid(leds, NUM_LEDS, color);
+    fill_solid(leds, LED_COUNT, color);
     FastLED.show();
 
     // Start animation timer
@@ -85,19 +78,19 @@ void LEDController::showReady()
 
     if (increasing)
     {
-        pulseValue += 2;
-        if (pulseValue >= 50)
+        pulseValue += LED_PULSE_STEP;
+        if (pulseValue >= LED_PULSE_MAX)
             increasing = false;
     }
     else
     {
-        pulseValue -= 2;
-        if (pulseValue <= 10)
+        pulseValue -= LED_PULSE_STEP;
+        if (pulseValue <= LED_PULSE_MIN)
             increasing = true;
     }
 
     CRGB color = CRGB(0, pulseValue, 0);
-    fill_solid(leds, NUM_LEDS, color);
+    fill_solid(leds, LED_COUNT, color);
     FastLED.show();
 }
 
@@ -116,7 +109,7 @@ void LEDController::setColor(CRGB color)
     if (!initialized)
         return;
 
-    fill_solid(leds, NUM_LEDS, color);
+    fill_solid(leds, LED_COUNT, color);
     FastLED.show();
 }
 
@@ -143,11 +136,10 @@ bool LEDController::update()
         return false;
     }
 
-    // Optional: Add fade-out effect in last 500ms
-    if (elapsed > animationDuration - 500)
+    if (elapsed > animationDuration - LED_FADE_DURATION_MS)
     {
-        float fadeProgress = (animationDuration - elapsed) / 500.0f;
-        uint8_t brightness = (uint8_t)(DEFAULT_BRIGHTNESS * fadeProgress);
+        float fadeProgress = (float)(animationDuration - elapsed) / LED_FADE_DURATION_MS;
+        uint8_t brightness = (uint8_t)(LED_DEFAULT_BRIGHTNESS * fadeProgress);
         FastLED.setBrightness(brightness);
         FastLED.show();
     }
