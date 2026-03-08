@@ -19,7 +19,7 @@ CalibrationManager calibrationManager;
 
 CalibrationManager::CalibrationManager()
     : _sensorMgr(nullptr),
-      _display(nullptr),
+      _calScreen(nullptr),
       _state(CalibrationState::IDLE),
       _currentPCB(0),
       _stateStartTime(0),
@@ -35,7 +35,7 @@ CalibrationManager::CalibrationManager()
     _calibration.reset();
 }
 
-bool CalibrationManager::begin(SensorManager *sensorMgr, DisplayManager *display)
+bool CalibrationManager::begin(SensorManager *sensorMgr, CalibrationScreen *calScreen)
 {
     if (sensorMgr == nullptr)
     {
@@ -44,7 +44,7 @@ bool CalibrationManager::begin(SensorManager *sensorMgr, DisplayManager *display
     }
 
     _sensorMgr = sensorMgr;
-    _display = display;
+    _calScreen = calScreen;
 
     // Initialize button pins
     pinMode(CAL_BUTTON_TRIGGER, INPUT_PULLUP);
@@ -127,9 +127,9 @@ void CalibrationManager::handleIntro()
     if (elapsed < 100 && !introRendered)
     {
         introRendered = true;
-        if (_display)
+        if (_calScreen)
         {
-            _display->showCalibrationIntro();
+            _calScreen->showIntro();
         }
     }
 
@@ -156,9 +156,9 @@ void CalibrationManager::handleBaseline()
     if (millis() - lastDisplayUpdate >= CAL_DISPLAY_UPDATE_INTERVAL_MS)
     {
         lastDisplayUpdate = millis();
-        if (_display)
+        if (_calScreen)
         {
-            _display->showCalibrationBaseline(_currentPCB, getPhaseProgress());
+            _calScreen->showBaseline(_currentPCB, getPhaseProgress());
         }
     }
 
@@ -255,9 +255,9 @@ void CalibrationManager::handleApproach()
                           _calibration.pcbs[pcbIndex].threshold);
 
             // Show success screen briefly
-            if (_display)
+            if (_calScreen)
             {
-                _display->showCalibrationSuccess(_currentPCB);
+                _calScreen->showSuccess(_currentPCB);
             }
             delay(CAL_SUCCESS_DISPLAY_MS);
 
@@ -284,11 +284,10 @@ void CalibrationManager::handleApproach()
     if (millis() - lastDisplayUpdate >= CAL_APPROACH_DISPLAY_INTERVAL_MS)
     {
         lastDisplayUpdate = millis();
-        if (_display)
+        if (_calScreen)
         {
-            // Show the threshold the user needs to exceed
             uint16_t displayThreshold = (uint16_t)threshold;
-            _display->showCalibrationApproach(_currentPCB, _currentReading, displayThreshold, getPhaseProgress(), getTimeRemaining());
+            _calScreen->showApproach(_currentPCB, _currentReading, displayThreshold, getPhaseProgress(), getTimeRemaining());
         }
     }
 
@@ -301,9 +300,9 @@ void CalibrationManager::handleApproach()
         _calibration.pcbs[pcbIndex].valid = false;
         
         // Show brief failure message
-        if (_display)
+        if (_calScreen)
         {
-            _display->showCalibrationFailed(_currentPCB, "Timeout - skipping");
+            _calScreen->showFailed(_currentPCB, "Timeout - skipping");
         }
         delay(CAL_TIMEOUT_SKIP_DISPLAY_MS);
         
@@ -321,9 +320,9 @@ void CalibrationManager::handleSummary()
     if (!summaryRendered)
     {
         summaryRendered = true;
-        if (_display)
+        if (_calScreen)
         {
-            _display->showCalibrationSummary(
+            _calScreen->showSummary(
                 _calibration.pcbs[0].threshold,
                 _calibration.pcbs[1].threshold,
                 _calibration.pcbs[2].threshold,
@@ -357,9 +356,9 @@ void CalibrationManager::handleComplete()
     _calibration.debugPrint();
 
     // Show complete message
-    if (_display)
+    if (_calScreen)
     {
-        _display->showCalibrationComplete();
+        _calScreen->showComplete();
     }
 
     // Return to idle
@@ -375,10 +374,10 @@ void CalibrationManager::handleFailed()
     if (!failedRendered)
     {
         failedRendered = true;
-        if (_display)
-        {
-            _display->showCalibrationFailed(_currentPCB, "Timeout - no approach detected");
-        }
+    if (_calScreen)
+    {
+        _calScreen->showFailed(_currentPCB, "Timeout - no approach detected");
+    }
     }
 
     // Wait for button press to acknowledge
@@ -395,9 +394,9 @@ void CalibrationManager::handleFailed()
 void CalibrationManager::handleCancelled()
 {
     // Show cancelled screen
-    if (_display)
+    if (_calScreen)
     {
-        _display->showCalibrationCancelled();
+        _calScreen->showCancelled();
     }
     
     delay(CAL_CANCELLED_DISPLAY_MS);

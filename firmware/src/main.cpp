@@ -17,6 +17,7 @@
 #include "components/led/LEDController.h"
 #include "components/interrupt/InterruptManager.h"
 #include "components/calibration/CalibrationManager.h"
+#include "components/display/CalibrationScreen.h"
 #include "components/serialstudio/SerialStudioOutput.h"
 #include "constants.h"
 #include "debug_log.h"
@@ -39,6 +40,7 @@ enum class DeviceMode
 NetworkManager networkManager;
 MQTTManager *mqttManager;
 DisplayManager display;
+CalibrationScreen calibrationScreen(display.getTft());
 SensorManager sensorManager;
 SessionManager sessionManager;
 DataTransmitter *dataTransmitter;
@@ -422,7 +424,7 @@ void initializeSystem()
 
     // CalibrationManager (just GPIO setup, no delay)
     Serial.println("Initializing CalibrationManager...");
-    if (!calibrationManager.begin(&sensorManager, &display))
+    if (!calibrationManager.begin(&sensorManager, &calibrationScreen))
     {
         Serial.println("WARNING: CalibrationManager init failed");
     }

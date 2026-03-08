@@ -45,7 +45,7 @@ File splits and class extractions. Each task is independent unless noted. Larges
 - [x] **3.3** Adopt VCNL4040 driver in SensorManager — replace raw I2C with driver methods. Preserve verify-retry on LED current. *(High risk — depends on 3.2. Read audit PLAN.md Batch 2 §10.)*
 - [x] **3.4** Extract JSON serialization helpers in DataTransmitter — `serializeCalibration()`, `serializeConfig()`, `serializeReadingsArray()`, `serializeSummary()`.
 - [x] **3.5** Extract `BinarySerializer` from DataTransmitter — move `transmitLiveDebugCaptureBinary()` to own file.
-- [ ] **3.6** Extract `CalibrationScreen` from DisplayManager — move 8 calibration rendering methods (~320 lines).
+- [x] **3.6** Extract `CalibrationScreen` from DisplayManager — move 8 calibration rendering methods (~320 lines).
 - [ ] **3.7** Extract `CommandHandler` from main.cpp — all command parsing and dispatch. Do incrementally: one command group at a time. *(Largest single task — ~800 lines.)*
 - [ ] **3.8** Extract `CloudConfig` from main.cpp — `fetchConfigFromCloud()` + shared config-parsing helper.
 - [ ] **3.9** Create `DetectionController` — unify play-mode and live-debug detection loops using `IDetector` interface. *(Depends on 1.2 for IDetector.)*

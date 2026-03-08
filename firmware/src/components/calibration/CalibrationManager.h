@@ -31,7 +31,7 @@
 #include <Arduino.h>
 #include "CalibrationData.h"
 #include "../sensor/SensorManager.h"
-#include "../display/DisplayManager.h"
+#include "../display/CalibrationScreen.h"
 #include "pin_config.h"
 
 // ============================================================================
@@ -139,10 +139,10 @@ public:
     /**
      * Initialize the calibration manager
      * @param sensorMgr Pointer to SensorManager for sensor reading
-     * @param display Pointer to DisplayManager for UI rendering (optional)
+     * @param calScreen Pointer to CalibrationScreen for UI rendering (optional)
      * @return true if successful
      */
-    bool begin(SensorManager *sensorMgr, DisplayManager *display = nullptr);
+    bool begin(SensorManager *sensorMgr, CalibrationScreen *calScreen = nullptr);
 
     /**
      * Update function - call every loop iteration
@@ -227,7 +227,7 @@ public:
 
 private:
     SensorManager *_sensorMgr;
-    DisplayManager *_display;
+    CalibrationScreen *_calScreen;
 
     CalibrationState _state;
     uint8_t _currentPCB;        // 1-3 during calibration
