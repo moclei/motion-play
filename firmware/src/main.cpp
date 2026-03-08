@@ -19,6 +19,7 @@
 #include "components/calibration/CalibrationManager.h"
 #include "components/display/CalibrationScreen.h"
 #include "components/command/CommandHandler.h"
+#include "components/collection/CollectionController.h"
 #include "components/cloud/CloudConfig.h"
 #include "components/serialstudio/SerialStudioOutput.h"
 #include "constants.h"
@@ -52,6 +53,7 @@ DetectorConfig detectorConfig;
 bool serialStudioEnabled = SERIAL_STUDIO_DEFAULT;
 InterruptManager interruptManager;
 CommandHandler *commandHandler = nullptr;
+CollectionController *collectionController = nullptr;
 
 // Current device mode
 DeviceMode currentMode = DeviceMode::DEBUG; // Default to debug for backwards compatibility
@@ -178,6 +180,12 @@ void initializeSystem()
         currentConfig, currentMode, useMLDetection, detectorConfig,
         playModeActive, liveDebugActive, lastDetectionTime);
 
+    collectionController = new CollectionController(
+        interruptManager, sessionManager, sensorManager,
+        serialStudioOutput, display, dataTransmitter, mqttManager,
+        detectionController, currentConfig, currentMode,
+        playModeActive, liveDebugActive);
+
     mqttManager->setCallback([](char *topic, byte *payload, unsigned int length)
                              {
         if (length > MQTT_MAX_INCOMING_MSG) {
@@ -282,7 +290,6 @@ void initializeSystem()
 void loop()
 {
     static int buttonState2 = HIGH;
-    static unsigned long lastSampleUpdate = 0;
     static unsigned long button1HoldStart = 0;
     static bool button1WasPressed = false;
 
@@ -380,158 +387,9 @@ void loop()
     // Handle MQTT
     mqttManager->loop();
 
-    // Process sensor data queue if collecting
     if (sessionManager.getState() == COLLECTING)
     {
-        // Check session type to determine processing method
-        bool isInterruptSession = (sessionManager.getSessionType() == SessionType::INTERRUPT_BASED);
-
-        if (isInterruptSession)
-        {
-            // INTERRUPT MODE: Drain events from InterruptManager
-            while (interruptManager.hasEvents())
-            {
-                InterruptEvent evt;
-                if (interruptManager.getNextEvent(evt))
-                {
-                    sessionManager.addInterruptEvent(evt);
-                }
-            }
-
-            // Update display periodically
-            static unsigned long lastIntUpdate = 0;
-            if (millis() - lastIntUpdate > 500)
-            {
-                lastIntUpdate = millis();
-                size_t eventCount = sessionManager.getInterruptEventCount();
-
-                // Log event count
-                Serial.printf("[INT] Events: %d\n", eventCount);
-            }
-
-            // Check for maximum session duration (30 seconds for interrupt too)
-            if (sessionManager.getDuration() >= 30000)
-            {
-                Serial.println("WARNING: Maximum interrupt session duration reached (30s), auto-stopping...");
-                display.showMessage("Max duration!", TFT_ORANGE);
-                delay(1000);
-
-                // Auto-stop
-                interruptManager.stopMonitoring();
-                sessionManager.stopSession();
-                display.setDisplayState(DISPLAY_UPLOADING);
-
-                if (dataTransmitter->transmitSession(sessionManager, &currentConfig))
-                {
-                    mqttManager->publishStatus("upload_complete_auto_stopped");
-                    display.setDisplayState(DISPLAY_SUCCESS);
-                    delay(2000);
-                    sessionManager.clearBuffer();
-                    display.setDisplayState(DISPLAY_IDLE);
-                }
-                else
-                {
-                    mqttManager->publishStatus("upload_failed");
-                    display.setDisplayState(DISPLAY_ERROR);
-                    delay(2000);
-                    sessionManager.clearBuffer();
-                    display.setDisplayState(DISPLAY_IDLE);
-                }
-            }
-        }
-        else
-        {
-            // POLLING MODE: Regular proximity processing
-            sessionManager.processQueue();
-
-            // Serial Studio: emit CSV frames for new readings
-            serialStudioOutput.update();
-        }
-
-        if ((playModeActive && currentMode == DeviceMode::PLAY) ||
-            (liveDebugActive && currentMode == DeviceMode::LIVE_DEBUG))
-        {
-            detectionController.update();
-        }
-        else
-        {
-            // DEBUG MODE: Standard collection behavior
-
-            // Check for maximum session duration (30 seconds safety limit)
-            if (sessionManager.getDuration() >= 30000) // 30 seconds in milliseconds
-            {
-                Serial.println("WARNING: Maximum session duration reached (30s), auto-stopping...");
-                display.showMessage("Max duration reached!", TFT_ORANGE);
-                delay(1000);
-
-                // Auto-stop collection
-                sensorManager.stopCollection();
-                sessionManager.stopSession();
-                display.setDisplayState(DISPLAY_UPLOADING);
-
-                // Session Confirmation: finalize summary
-                {
-                    uint8_t activeCnt = 0;
-                    for (const auto &m : sessionManager.getSensorMetadata())
-                    {
-                        if (m.active)
-                            activeCnt++;
-                    }
-                    sessionManager.finalizeSessionSummary(&currentConfig, activeCnt);
-                    dataTransmitter->setSessionSummary(&sessionManager.getSessionSummary());
-                }
-
-                // Transmit data
-                if (dataTransmitter->transmitSession(sessionManager, &currentConfig))
-                {
-                    // Session Confirmation: send summary
-                    dataTransmitter->transmitSessionSummary(
-                        sessionManager.getSessionSummary(),
-                        sessionManager.getSessionId(),
-                        mqttManager->getDeviceId());
-
-                    mqttManager->publishStatus("upload_complete_auto_stopped");
-                    display.setDisplayState(DISPLAY_SUCCESS);
-                    delay(2000);
-                    dataTransmitter->setSessionSummary(nullptr);
-                    sessionManager.clearBuffer();
-                    display.setDisplayState(DISPLAY_IDLE);
-                }
-                else
-                {
-                    Serial.println("ERROR: Auto-stop session transmission failed!");
-                    mqttManager->publishStatus("upload_failed");
-                    display.setDisplayState(DISPLAY_ERROR);
-                    display.showMessage("Upload failed - Restarting...", TFT_RED);
-                    delay(3000);
-                    dataTransmitter->setSessionSummary(nullptr);
-                    sessionManager.clearBuffer();
-
-                    // Restart device to recover from potential I2C/sensor issues
-                    Serial.println("Restarting device to recover from upload failure...");
-                    ESP.restart();
-                }
-            }
-
-            // Update sample count on display every second
-            if (millis() - lastSampleUpdate > 1000)
-            {
-                lastSampleUpdate = millis();
-                int sampleCount = sessionManager.getDataCount();
-                display.updateSampleCount(sampleCount);
-
-                if (debugPrintEnabled())
-                {
-                    Serial.printf("Samples: %d | ", sampleCount);
-                    MemoryMonitor::printCompactStatus();
-                }
-
-                if (!MemoryMonitor::isMemoryHealthy())
-                {
-                    DEBUG_LOG("WARNING: Memory getting low during collection!\n");
-                }
-            }
-        }
+        collectionController->update();
     }
 
     // Send periodic status updates
