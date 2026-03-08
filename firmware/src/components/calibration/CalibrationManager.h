@@ -7,9 +7,9 @@
  * 3. Calculates optimal thresholds for detection
  *
  * Calibration Flow:
- *   IDLE → INTRO → BASELINE_PCB1 → APPROACH_PCB1 →
- *                  BASELINE_PCB2 → APPROACH_PCB2 →
- *                  BASELINE_PCB3 → APPROACH_PCB3 → SUMMARY → COMPLETE
+ *   IDLE → INTRO → [BASELINE → APPROACH] × 3 PCBs → SUMMARY → COMPLETE
+ *
+ * The active PCB is tracked by _currentPCB (1-3), not encoded in the state.
  *
  * Triggers:
  *   - Frontend: SET_MODE command with CALIBRATE mode
@@ -61,18 +61,14 @@ static constexpr uint8_t  CAL_BUTTON_CANCEL           = PIN_BUTTON_1;  // Right 
 
 enum class CalibrationState : uint8_t
 {
-    IDLE,             // Not calibrating
-    INTRO,            // Showing intro screen
-    BASELINE_PCB1,    // Capturing baseline for PCB 1
-    APPROACH_PCB1,    // Waiting for approach on PCB 1
-    BASELINE_PCB2,    // Capturing baseline for PCB 2
-    APPROACH_PCB2,    // Waiting for approach on PCB 2
-    BASELINE_PCB3,    // Capturing baseline for PCB 3
-    APPROACH_PCB3,    // Waiting for approach on PCB 3
-    SUMMARY,          // Showing summary
-    COMPLETE,         // Calibration complete
-    FAILED,           // Calibration failed
-    CANCELLED         // User cancelled
+    IDLE,       // Not calibrating
+    INTRO,      // Showing intro screen
+    BASELINE,   // Capturing baseline for _currentPCB
+    APPROACH,   // Waiting for approach on _currentPCB
+    SUMMARY,    // Showing summary
+    COMPLETE,   // Calibration complete
+    FAILED,     // Calibration failed
+    CANCELLED   // User cancelled
 };
 
 // ============================================================================
@@ -240,6 +236,12 @@ private:
     uint32_t _buttonPressStart;
     bool _buttonWasPressed;
 
+    // Render-once and rate-limit state (reset on each state transition)
+    bool _phaseRendered;
+    uint32_t _lastDisplayUpdate;
+    uint32_t _lastReadFailLog;
+    uint32_t _lastReadingLog;
+
     // Statistics accumulators
     StatsAccumulator _baselineStats;
     StatsAccumulator _signalStats;
@@ -266,7 +268,6 @@ private:
     bool readPCB(uint8_t pcbId, uint16_t &reading);
     void saveBaselineStats();
     void saveSignalStats();
-    uint8_t getPCBForState(CalibrationState state) const;
     CalibrationState getNextState() const;
 };
 

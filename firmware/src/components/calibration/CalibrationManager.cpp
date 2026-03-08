@@ -13,6 +13,22 @@ static constexpr uint32_t CAL_CANCELLED_DISPLAY_MS         = 1500;
 DeviceCalibration deviceCalibration;
 CalibrationManager calibrationManager;
 
+static const char *stateToName(CalibrationState state)
+{
+    switch (state)
+    {
+    case CalibrationState::IDLE:      return "IDLE";
+    case CalibrationState::INTRO:     return "INTRO";
+    case CalibrationState::BASELINE:  return "BASELINE";
+    case CalibrationState::APPROACH:  return "APPROACH";
+    case CalibrationState::SUMMARY:   return "SUMMARY";
+    case CalibrationState::COMPLETE:  return "COMPLETE";
+    case CalibrationState::FAILED:    return "FAILED";
+    case CalibrationState::CANCELLED: return "CANCELLED";
+    default:                          return "UNKNOWN";
+    }
+}
+
 // ============================================================================
 // Constructor and Initialization
 // ============================================================================
@@ -28,6 +44,10 @@ CalibrationManager::CalibrationManager()
       _elevatedDetected(false),
       _buttonPressStart(0),
       _buttonWasPressed(false),
+      _phaseRendered(false),
+      _lastDisplayUpdate(0),
+      _lastReadFailLog(0),
+      _lastReadingLog(0),
       _multiPulse(1),
       _integrationTime(1),
       _ledCurrent(CAL_DEFAULT_LED_CURRENT)
@@ -70,22 +90,17 @@ void CalibrationManager::update()
     switch (_state)
     {
     case CalibrationState::IDLE:
-        // Nothing to do
         break;
 
     case CalibrationState::INTRO:
         handleIntro();
         break;
 
-    case CalibrationState::BASELINE_PCB1:
-    case CalibrationState::BASELINE_PCB2:
-    case CalibrationState::BASELINE_PCB3:
+    case CalibrationState::BASELINE:
         handleBaseline();
         break;
 
-    case CalibrationState::APPROACH_PCB1:
-    case CalibrationState::APPROACH_PCB2:
-    case CalibrationState::APPROACH_PCB3:
+    case CalibrationState::APPROACH:
         handleApproach();
         break;
 
@@ -122,11 +137,9 @@ void CalibrationManager::handleIntro()
 {
     uint32_t elapsed = millis() - _stateStartTime;
 
-    // Only render once at the start of the state
-    static bool introRendered = false;
-    if (elapsed < 100 && !introRendered)
+    if (!_phaseRendered)
     {
-        introRendered = true;
+        _phaseRendered = true;
         if (_calScreen)
         {
             _calScreen->showIntro();
@@ -135,8 +148,7 @@ void CalibrationManager::handleIntro()
 
     if (elapsed >= CAL_INTRO_DURATION_MS)
     {
-        introRendered = false; // Reset for next time
-        transitionTo(CalibrationState::BASELINE_PCB1);
+        transitionTo(getNextState());
     }
 }
 
@@ -144,7 +156,6 @@ void CalibrationManager::handleBaseline()
 {
     uint32_t elapsed = millis() - _stateStartTime;
 
-    // Read sensors and accumulate stats
     uint16_t reading;
     if (readPCB(_currentPCB, reading))
     {
@@ -152,17 +163,15 @@ void CalibrationManager::handleBaseline()
         _baselineStats.addSample(reading);
     }
 
-    static uint32_t lastDisplayUpdate = 0;
-    if (millis() - lastDisplayUpdate >= CAL_DISPLAY_UPDATE_INTERVAL_MS)
+    if (millis() - _lastDisplayUpdate >= CAL_DISPLAY_UPDATE_INTERVAL_MS)
     {
-        lastDisplayUpdate = millis();
+        _lastDisplayUpdate = millis();
         if (_calScreen)
         {
             _calScreen->showBaseline(_currentPCB, getPhaseProgress());
         }
     }
 
-    // Check if baseline capture is complete
     if (elapsed >= CAL_BASELINE_DURATION_MS)
     {
         saveBaselineStats();
@@ -183,34 +192,27 @@ void CalibrationManager::handleApproach()
 {
     uint32_t elapsed = millis() - _stateStartTime;
 
-    // Read sensors
     uint16_t reading;
     if (!readPCB(_currentPCB, reading))
     {
-        // Read failed - log periodically
-        static uint32_t lastReadFailLog = 0;
-        if (millis() - lastReadFailLog > CAL_READ_FAIL_LOG_INTERVAL_MS)
+        if (millis() - _lastReadFailLog > CAL_READ_FAIL_LOG_INTERVAL_MS)
         {
-            lastReadFailLog = millis();
+            _lastReadFailLog = millis();
             Serial.printf("[CalibrationManager] PCB%d: Read failed!\n", _currentPCB);
         }
         return;
     }
     _currentReading = reading;
 
-    // Get the baseline max for this PCB
     uint8_t pcbIndex = _currentPCB - 1;
     uint16_t baselineMax = _calibration.pcbs[pcbIndex].baseline_max;
 
-    // Check if reading is elevated (above threshold)
     float threshold = max((float)baselineMax * CAL_ELEVATED_MULTIPLIER,
                           (float)CAL_MIN_ELEVATED_READING);
 
-    // Log readings periodically for debugging
-    static uint32_t lastReadingLog = 0;
-    if (millis() - lastReadingLog > CAL_READING_LOG_INTERVAL_MS)
+    if (millis() - _lastReadingLog > CAL_READING_LOG_INTERVAL_MS)
     {
-        lastReadingLog = millis();
+        _lastReadingLog = millis();
         Serial.printf("[CalibrationManager] PCB%d: reading=%d, baseline_max=%d, threshold=%.0f\n",
                       _currentPCB, reading, baselineMax, threshold);
     }
@@ -221,7 +223,6 @@ void CalibrationManager::handleApproach()
     {
         if (!_elevatedDetected)
         {
-            // First elevated reading
             _elevatedDetected = true;
             _elevatedStartTime = millis();
             _signalStats.reset();
@@ -229,14 +230,11 @@ void CalibrationManager::handleApproach()
                           _currentPCB, reading, threshold);
         }
 
-        // Accumulate signal stats
         _signalStats.addSample(reading);
 
-        // Check if we have enough sustained elevated readings
         uint32_t elevatedDuration = millis() - _elevatedStartTime;
         if (elevatedDuration >= CAL_APPROACH_SUSTAIN_MS)
         {
-            // Success! We have enough data
             saveSignalStats();
 
             Serial.printf("[CalibrationManager] PCB%d signal captured: min=%d, max=%d, mean=%d (n=%lu)\n",
@@ -246,7 +244,6 @@ void CalibrationManager::handleApproach()
                           _signalStats.getMean(),
                           _signalStats.getCount());
 
-            // Calculate threshold for this PCB
             _calibration.pcbs[pcbIndex].calculateThreshold();
             _calibration.pcbs[pcbIndex].valid = true;
 
@@ -254,7 +251,6 @@ void CalibrationManager::handleApproach()
                           _currentPCB,
                           _calibration.pcbs[pcbIndex].threshold);
 
-            // Show success screen briefly
             if (_calScreen)
             {
                 _calScreen->showSuccess(_currentPCB);
@@ -267,11 +263,8 @@ void CalibrationManager::handleApproach()
     }
     else
     {
-        // Not elevated - reset if we were tracking
         if (_elevatedDetected)
         {
-            // Lost elevation - but don't reset stats, might come back
-            // Only reset if we drop significantly
             if (reading < baselineMax + CAL_OVERLAP_MARGIN)
             {
                 _elevatedDetected = false;
@@ -280,10 +273,9 @@ void CalibrationManager::handleApproach()
         }
     }
 
-    static uint32_t lastDisplayUpdate = 0;
-    if (millis() - lastDisplayUpdate >= CAL_APPROACH_DISPLAY_INTERVAL_MS)
+    if (millis() - _lastDisplayUpdate >= CAL_APPROACH_DISPLAY_INTERVAL_MS)
     {
-        lastDisplayUpdate = millis();
+        _lastDisplayUpdate = millis();
         if (_calScreen)
         {
             uint16_t displayThreshold = (uint16_t)threshold;
@@ -291,22 +283,18 @@ void CalibrationManager::handleApproach()
         }
     }
 
-    // Check for timeout
     if (elapsed >= CAL_APPROACH_TIMEOUT_MS)
     {
         Serial.printf("[CalibrationManager] PCB%d: Approach timeout - SKIPPING (continuing to next)\n", _currentPCB);
         
-        // Mark this PCB as invalid but continue
         _calibration.pcbs[pcbIndex].valid = false;
         
-        // Show brief failure message
         if (_calScreen)
         {
             _calScreen->showFailed(_currentPCB, "Timeout - skipping");
         }
         delay(CAL_TIMEOUT_SKIP_DISPLAY_MS);
         
-        // Continue to next state instead of aborting
         transitionTo(getNextState());
     }
 }
@@ -315,11 +303,9 @@ void CalibrationManager::handleSummary()
 {
     uint32_t elapsed = millis() - _stateStartTime;
 
-    // Render summary once
-    static bool summaryRendered = false;
-    if (!summaryRendered)
+    if (!_phaseRendered)
     {
-        summaryRendered = true;
+        _phaseRendered = true;
         if (_calScreen)
         {
             _calScreen->showSummary(
@@ -332,13 +318,10 @@ void CalibrationManager::handleSummary()
         }
     }
 
-    // Wait for minimum display time, then wait for button press
     if (elapsed >= CAL_SUMMARY_MIN_DISPLAY_MS)
     {
-        // Check for any button press to continue
         if (digitalRead(CAL_BUTTON_TRIGGER) == LOW || digitalRead(CAL_BUTTON_CANCEL) == LOW)
         {
-            summaryRendered = false; // Reset for next calibration
             transitionTo(CalibrationState::COMPLETE);
         }
     }
@@ -346,22 +329,18 @@ void CalibrationManager::handleSummary()
 
 void CalibrationManager::handleComplete()
 {
-    // Finalize calibration data
     _calibration.finalize();
 
-    // Copy to global instance
     deviceCalibration = _calibration;
 
     Serial.println("[CalibrationManager] Calibration complete!");
     _calibration.debugPrint();
 
-    // Show complete message
     if (_calScreen)
     {
         _calScreen->showComplete();
     }
 
-    // Return to idle
     _state = CalibrationState::IDLE;
 }
 
@@ -369,23 +348,19 @@ void CalibrationManager::handleFailed()
 {
     uint32_t elapsed = millis() - _stateStartTime;
 
-    // Render failure screen once
-    static bool failedRendered = false;
-    if (!failedRendered)
+    if (!_phaseRendered)
     {
-        failedRendered = true;
-    if (_calScreen)
-    {
-        _calScreen->showFailed(_currentPCB, "Timeout - no approach detected");
-    }
+        _phaseRendered = true;
+        if (_calScreen)
+        {
+            _calScreen->showFailed(_currentPCB, "Timeout - no approach detected");
+        }
     }
 
-    // Wait for button press to acknowledge
     if (elapsed >= CAL_FAILED_MIN_DISPLAY_MS)
     {
         if (digitalRead(CAL_BUTTON_TRIGGER) == LOW || digitalRead(CAL_BUTTON_CANCEL) == LOW)
         {
-            failedRendered = false; // Reset for next calibration
             _state = CalibrationState::IDLE;
         }
     }
@@ -393,7 +368,6 @@ void CalibrationManager::handleFailed()
 
 void CalibrationManager::handleCancelled()
 {
-    // Show cancelled screen
     if (_calScreen)
     {
         _calScreen->showCancelled();
@@ -401,7 +375,6 @@ void CalibrationManager::handleCancelled()
     
     delay(CAL_CANCELLED_DISPLAY_MS);
     
-    // Return to idle
     _state = CalibrationState::IDLE;
 }
 
@@ -425,11 +398,11 @@ bool CalibrationManager::startCalibration()
 
     Serial.println("[CalibrationManager] Starting calibration wizard");
 
-    // Reset calibration data
     _calibration.reset();
     _calibration.multi_pulse = _multiPulse;
     _calibration.integration_time = _integrationTime;
     _calibration.led_current = _ledCurrent;
+    _currentPCB = 0;
 
     transitionTo(CalibrationState::INTRO);
     return true;
@@ -446,35 +419,7 @@ void CalibrationManager::cancelCalibration()
 
 const char *CalibrationManager::getStateName() const
 {
-    switch (_state)
-    {
-    case CalibrationState::IDLE:
-        return "IDLE";
-    case CalibrationState::INTRO:
-        return "INTRO";
-    case CalibrationState::BASELINE_PCB1:
-        return "BASELINE_PCB1";
-    case CalibrationState::APPROACH_PCB1:
-        return "APPROACH_PCB1";
-    case CalibrationState::BASELINE_PCB2:
-        return "BASELINE_PCB2";
-    case CalibrationState::APPROACH_PCB2:
-        return "APPROACH_PCB2";
-    case CalibrationState::BASELINE_PCB3:
-        return "BASELINE_PCB3";
-    case CalibrationState::APPROACH_PCB3:
-        return "APPROACH_PCB3";
-    case CalibrationState::SUMMARY:
-        return "SUMMARY";
-    case CalibrationState::COMPLETE:
-        return "COMPLETE";
-    case CalibrationState::FAILED:
-        return "FAILED";
-    case CalibrationState::CANCELLED:
-        return "CANCELLED";
-    default:
-        return "UNKNOWN";
-    }
+    return stateToName(_state);
 }
 
 uint8_t CalibrationManager::getPhaseProgress() const
@@ -488,16 +433,11 @@ uint8_t CalibrationManager::getPhaseProgress() const
         duration = CAL_INTRO_DURATION_MS;
         break;
 
-    case CalibrationState::BASELINE_PCB1:
-    case CalibrationState::BASELINE_PCB2:
-    case CalibrationState::BASELINE_PCB3:
+    case CalibrationState::BASELINE:
         duration = CAL_BASELINE_DURATION_MS;
         break;
 
-    case CalibrationState::APPROACH_PCB1:
-    case CalibrationState::APPROACH_PCB2:
-    case CalibrationState::APPROACH_PCB3:
-        // For approach, show progress of sustained reading if elevated
+    case CalibrationState::APPROACH:
         if (_elevatedDetected)
         {
             uint32_t sustainedTime = millis() - _elevatedStartTime;
@@ -516,20 +456,13 @@ uint8_t CalibrationManager::getPhaseProgress() const
 
 uint32_t CalibrationManager::getTimeRemaining() const
 {
-    uint32_t elapsed = millis() - _stateStartTime;
-
-    switch (_state)
-    {
-    case CalibrationState::APPROACH_PCB1:
-    case CalibrationState::APPROACH_PCB2:
-    case CalibrationState::APPROACH_PCB3:
-        if (elapsed >= CAL_APPROACH_TIMEOUT_MS)
-            return 0;
-        return CAL_APPROACH_TIMEOUT_MS - elapsed;
-
-    default:
+    if (_state != CalibrationState::APPROACH)
         return 0;
-    }
+
+    uint32_t elapsed = millis() - _stateStartTime;
+    if (elapsed >= CAL_APPROACH_TIMEOUT_MS)
+        return 0;
+    return CAL_APPROACH_TIMEOUT_MS - elapsed;
 }
 
 bool CalibrationManager::checkButtonTrigger()
@@ -538,22 +471,18 @@ bool CalibrationManager::checkButtonTrigger()
 
     if (buttonPressed && !_buttonWasPressed)
     {
-        // Button just pressed
         _buttonPressStart = millis();
     }
     else if (buttonPressed && _buttonWasPressed)
     {
-        // Button held
         if (millis() - _buttonPressStart >= CAL_BUTTON_HOLD_MS)
         {
-            // Trigger calibration
-            _buttonWasPressed = false; // Reset to prevent re-trigger
+            _buttonWasPressed = false;
             return startCalibration();
         }
     }
     else if (!buttonPressed && _buttonWasPressed)
     {
-        // Button released before trigger
         _buttonPressStart = 0;
     }
 
@@ -567,48 +496,26 @@ bool CalibrationManager::checkButtonTrigger()
 
 void CalibrationManager::transitionTo(CalibrationState newState)
 {
-    Serial.printf("[CalibrationManager] State: %s -> %s\n",
-                  getStateName(), 
-                  // Temporarily set state to get new name
-                  [&]() { 
-                      CalibrationState old = _state;
-                      _state = newState;
-                      const char* name = getStateName();
-                      _state = old;
-                      return name;
-                  }());
+    Serial.printf("[CalibrationManager] %s -> %s\n",
+                  stateToName(_state), stateToName(newState));
 
     _state = newState;
     _stateStartTime = millis();
     _elevatedDetected = false;
     _elevatedStartTime = 0;
     _currentReading = 0;
+    _phaseRendered = false;
+    _lastDisplayUpdate = 0;
+    _lastReadFailLog = 0;
+    _lastReadingLog = 0;
 
-    // Reset stats at start of baseline phases
     switch (newState)
     {
-    case CalibrationState::BASELINE_PCB1:
-        _currentPCB = 1;
+    case CalibrationState::BASELINE:
+        _currentPCB++;
         _baselineStats.reset();
         break;
-    case CalibrationState::BASELINE_PCB2:
-        _currentPCB = 2;
-        _baselineStats.reset();
-        break;
-    case CalibrationState::BASELINE_PCB3:
-        _currentPCB = 3;
-        _baselineStats.reset();
-        break;
-    case CalibrationState::APPROACH_PCB1:
-        _currentPCB = 1;
-        _signalStats.reset();
-        break;
-    case CalibrationState::APPROACH_PCB2:
-        _currentPCB = 2;
-        _signalStats.reset();
-        break;
-    case CalibrationState::APPROACH_PCB3:
-        _currentPCB = 3;
+    case CalibrationState::APPROACH:
         _signalStats.reset();
         break;
     default:
@@ -621,15 +528,12 @@ bool CalibrationManager::readPCB(uint8_t pcbId, uint16_t &reading)
     if (pcbId < 1 || pcbId > 3 || _sensorMgr == nullptr)
         return false;
 
-    // PCB ID is 1-based, but sensor positions are 0-based
-    // Each PCB has 2 sensors: positions (pcbId-1)*2 and (pcbId-1)*2+1
-    uint8_t pos1 = (pcbId - 1) * 2;     // S1
-    uint8_t pos2 = (pcbId - 1) * 2 + 1; // S2
+    uint8_t pos1 = (pcbId - 1) * 2;
+    uint8_t pos2 = (pcbId - 1) * 2 + 1;
 
     uint16_t reading1 = 0, reading2 = 0;
     bool success1 = false, success2 = false;
 
-    // Use SensorManager to read sensors (already initialized and configured)
     SensorReading sr1, sr2;
     
     if (_sensorMgr->readSensor(pos1, sr1))
@@ -651,7 +555,6 @@ bool CalibrationManager::readPCB(uint8_t pcbId, uint16_t &reading)
         return false;
     }
 
-    // Aggregate readings (sum of both sensors)
     reading = reading1 + reading2;
     return true;
 }
@@ -679,46 +582,21 @@ void CalibrationManager::saveSignalStats()
     _calibration.pcbs[pcbIndex].signal_mean = _signalStats.getMean();
 }
 
-uint8_t CalibrationManager::getPCBForState(CalibrationState state) const
-{
-    switch (state)
-    {
-    case CalibrationState::BASELINE_PCB1:
-    case CalibrationState::APPROACH_PCB1:
-        return 1;
-    case CalibrationState::BASELINE_PCB2:
-    case CalibrationState::APPROACH_PCB2:
-        return 2;
-    case CalibrationState::BASELINE_PCB3:
-    case CalibrationState::APPROACH_PCB3:
-        return 3;
-    default:
-        return 0;
-    }
-}
-
 CalibrationState CalibrationManager::getNextState() const
 {
     switch (_state)
     {
     case CalibrationState::INTRO:
-        return CalibrationState::BASELINE_PCB1;
-    case CalibrationState::BASELINE_PCB1:
-        return CalibrationState::APPROACH_PCB1;
-    case CalibrationState::APPROACH_PCB1:
-        return CalibrationState::BASELINE_PCB2;
-    case CalibrationState::BASELINE_PCB2:
-        return CalibrationState::APPROACH_PCB2;
-    case CalibrationState::APPROACH_PCB2:
-        return CalibrationState::BASELINE_PCB3;
-    case CalibrationState::BASELINE_PCB3:
-        return CalibrationState::APPROACH_PCB3;
-    case CalibrationState::APPROACH_PCB3:
-        return CalibrationState::SUMMARY;
+        return CalibrationState::BASELINE;
+    case CalibrationState::BASELINE:
+        return CalibrationState::APPROACH;
+    case CalibrationState::APPROACH:
+        return (_currentPCB < CALIBRATION_NUM_PCBS)
+                   ? CalibrationState::BASELINE
+                   : CalibrationState::SUMMARY;
     case CalibrationState::SUMMARY:
         return CalibrationState::COMPLETE;
     default:
         return CalibrationState::IDLE;
     }
 }
-
