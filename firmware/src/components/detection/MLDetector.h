@@ -62,11 +62,11 @@ enum class MLClass : uint8_t
     NO_TRANSIT = 2
 };
 
-class MLDetector
+class MLDetector : public IDetector
 {
 public:
     MLDetector();
-    ~MLDetector();
+    ~MLDetector() override;
 
     /**
      * Initialize TFLite interpreter and load model.
@@ -74,40 +74,13 @@ public:
      */
     bool init();
 
-    /**
-     * Add a new sensor reading (same interface as DirectionDetector).
-     */
-    void addReading(const SensorReading &reading);
-
-    /**
-     * Flush current aggregated reading and process it.
-     */
-    void flushReading();
-
-    /**
-     * Check if a detection result is ready.
-     */
-    bool hasDetection() const;
-
-    /**
-     * Get the detection result (call after hasDetection returns true).
-     */
-    DetectionResult getResult();
-
-    /**
-     * Reset detection state (keep baseline and model).
-     */
-    void reset();
-
-    /**
-     * Full reset including baseline.
-     */
-    void fullReset();
-
-    /**
-     * Check if baseline is established and model is ready.
-     */
-    bool isReady() const;
+    void addReading(const SensorReading &reading) override;
+    void flushReading() override;
+    bool hasDetection() const override;
+    DetectionResult getResult() override;
+    void reset() override;
+    void fullReset() override;
+    bool isReady() const override;
 
     /**
      * Debug print current state.

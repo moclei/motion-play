@@ -72,7 +72,7 @@ struct SensorTracker
     }
 };
 
-class DirectionDetector
+class DirectionDetector : public IDetector
 {
 private:
     DetectorConfig config;
@@ -92,16 +92,16 @@ public:
     DirectionDetector();
     DirectionDetector(const DetectorConfig &cfg);
 
-    void addReading(const SensorReading &reading);
-    void flushReading();
+    void addReading(const SensorReading &reading) override;
+    void flushReading() override;
 
-    bool hasDetection() const;
-    DetectionResult getResult();
+    bool hasDetection() const override;
+    DetectionResult getResult() override;
 
-    void reset();
-    void fullReset();
+    void reset() override;
+    void fullReset() override;
 
-    bool isReady() const;
+    bool isReady() const override;
     DetectorState getState() const;
 
     void setConfig(const DetectorConfig &cfg);

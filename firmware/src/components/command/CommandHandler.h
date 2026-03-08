@@ -14,8 +14,10 @@ class MLDetector;
 class LEDController;
 class InterruptManager;
 class SerialStudioOutput;
+class DetectionController;
 struct SensorConfiguration;
 struct DetectorConfig;
+struct DetectionResult;
 
 enum class DeviceMode
 {
@@ -39,6 +41,7 @@ public:
                    LEDController &ledController,
                    InterruptManager &interruptManager,
                    SerialStudioOutput &serialStudioOutput,
+                   DetectionController &detectionController,
                    SensorConfiguration &currentConfig,
                    DeviceMode &currentMode,
                    bool &useMLDetection,
@@ -59,8 +62,16 @@ private:
     void handleStartCollection();
     void handleStopCollection();
     void handleCaptureMissedEvent();
+    void configurePlayDetection();
+    void configureLiveDebugDetection();
+    void performLiveDebugCapture(const DetectionResult &result);
+    void resumeAfterLiveDebugCapture();
 
     static constexpr unsigned long MISSED_EVENT_WINDOW_MS = 3000;
+    static constexpr size_t PLAY_BUFFER_CAP = 500;
+    static constexpr size_t LIVE_DEBUG_BUFFER_CAP = 18000;
+    static constexpr unsigned long DETECTION_WINDOW_MS = 500;
+    static constexpr unsigned long POST_DETECTION_DELAY_MS = 250;
 
     // Dependencies (all passed by reference/pointer from main.cpp)
     MQTTManager *mqttManager_;
@@ -74,6 +85,7 @@ private:
     LEDController &ledController_;
     InterruptManager &interruptManager_;
     SerialStudioOutput &serialStudioOutput_;
+    DetectionController &detectionController_;
     SensorConfiguration &currentConfig_;
 
     // Shared mutable state (references to main.cpp globals until full extraction)

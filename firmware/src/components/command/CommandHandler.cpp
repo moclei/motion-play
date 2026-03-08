@@ -3,6 +3,7 @@
 #include "../display/DisplayManager.h"
 #include "../detection/DirectionDetector.h"
 #include "../detection/MLDetector.h"
+#include "../detection/DetectionController.h"
 #include "../led/LEDController.h"
 #include "../interrupt/InterruptManager.h"
 #include "../serialstudio/SerialStudioOutput.h"
@@ -29,6 +30,7 @@ CommandHandler::CommandHandler(
     LEDController &ledController,
     InterruptManager &interruptManager,
     SerialStudioOutput &serialStudioOutput,
+    DetectionController &detectionController,
     SensorConfiguration &currentConfig,
     DeviceMode &currentMode,
     bool &useMLDetection,
@@ -47,6 +49,7 @@ CommandHandler::CommandHandler(
       ledController_(ledController),
       interruptManager_(interruptManager),
       serialStudioOutput_(serialStudioOutput),
+      detectionController_(detectionController),
       currentConfig_(currentConfig),
       currentMode_(currentMode),
       useMLDetection_(useMLDetection),
@@ -510,6 +513,7 @@ void CommandHandler::handleStartCollection()
                 directionDetector_.reset();
                 playModeActive_ = true;
                 lastDetectionTime_ = 0;
+                configurePlayDetection();
                 ledController_.showReady();
 
                 mqttManager_->publishStatus("play_started_interrupt");
@@ -547,6 +551,7 @@ void CommandHandler::handleStartCollection()
                 directionDetector_.reset();
                 playModeActive_ = true;
                 lastDetectionTime_ = 0;
+                configurePlayDetection();
                 ledController_.showReady();
 
                 mqttManager_->publishStatus("play_started");
@@ -561,6 +566,7 @@ void CommandHandler::handleStartCollection()
                 directionDetector_.reset();
                 liveDebugActive_ = true;
                 lastDetectionTime_ = 0;
+                configureLiveDebugDetection();
                 ledController_.showReady();
 
                 mqttManager_->publishStatus("live_debug_started");
@@ -615,6 +621,7 @@ void CommandHandler::handleStopCollection()
         playModeActive_ = false;
         directionDetector_.reset();
         ledController_.off();
+        detectionController_.reset();
 
         mqttManager_->publishStatus("play_stopped");
         display_.showMessage("Play mode stopped", TFT_YELLOW);
@@ -627,6 +634,7 @@ void CommandHandler::handleStopCollection()
         liveDebugActive_ = false;
         directionDetector_.reset();
         ledController_.off();
+        detectionController_.reset();
 
         mqttManager_->publishStatus("live_debug_stopped");
         display_.showMessage("Live Debug stopped", TFT_YELLOW);
@@ -751,9 +759,124 @@ void CommandHandler::handleCaptureMissedEvent()
 
     directionDetector_.reset();
     buffer.clear();
+    detectionController_.reset();
 
     sessionManager_.getSessionSummary().reset();
     sensorManager_.startCollection(sessionManager_.getQueue(), &sessionManager_.getSessionSummary());
     display_.showMessage("Ready", TFT_MAGENTA);
     DEBUG_LOG("[LIVE_DEBUG] Resumed after missed event capture\n");
+}
+
+void CommandHandler::configurePlayDetection()
+{
+    DetectionController::Config playCfg;
+    playCfg.bufferOverflowCap = PLAY_BUFFER_CAP;
+    playCfg.alwaysResetOnOverflow = false;
+    playCfg.modeLabel = "PLAY";
+    detectionController_.configure(playCfg);
+    detectionController_.setOnDetection([this](const DetectionResult &result)
+                                        {
+        String statusMsg = "detection_" + String(directionToString(result.direction));
+        mqttManager_->publishStatus(statusMsg.c_str()); });
+    detectionController_.setOnReset(nullptr);
+    detectionController_.reset();
+}
+
+void CommandHandler::configureLiveDebugDetection()
+{
+    DetectionController::Config liveDbgCfg;
+    liveDbgCfg.bufferOverflowCap = LIVE_DEBUG_BUFFER_CAP;
+    liveDbgCfg.alwaysResetOnOverflow = true;
+    liveDbgCfg.modeLabel = "LIVE_DEBUG";
+    detectionController_.configure(liveDbgCfg);
+    detectionController_.setOnDetection([this](const DetectionResult &result)
+                                        { performLiveDebugCapture(result); });
+    detectionController_.setOnReset([this]()
+                                    { resumeAfterLiveDebugCapture(); });
+    detectionController_.reset();
+}
+
+void CommandHandler::performLiveDebugCapture(const DetectionResult &result)
+{
+    DEBUG_LOG("[LIVE_DEBUG] Post-detection delay: %lums\n", POST_DETECTION_DELAY_MS);
+    delay(POST_DETECTION_DELAY_MS);
+
+    sensorManager_.stopCollection();
+    delay(50);
+
+    sessionManager_.processQueue();
+
+    display_.showMessage("Transmitting...", TFT_MAGENTA);
+
+    auto &buffer = sessionManager_.getDataBuffer();
+    size_t actualBufferSize = buffer.size();
+    size_t startIdx = 0;
+
+    if (actualBufferSize > 0)
+    {
+        unsigned long latestTs = buffer[actualBufferSize - 1].timestamp_us;
+        unsigned long totalWindowUs = (DETECTION_WINDOW_MS + POST_DETECTION_DELAY_MS) * 1000UL;
+        unsigned long cutoffTs = (latestTs > totalWindowUs) ? latestTs - totalWindowUs : 0;
+
+        size_t lo = 0, hi = actualBufferSize;
+        while (lo < hi)
+        {
+            size_t mid = lo + (hi - lo) / 2;
+            if (buffer[mid].timestamp_us < cutoffTs)
+                lo = mid + 1;
+            else
+                hi = mid;
+        }
+        startIdx = lo;
+    }
+
+    size_t captureCount = actualBufferSize - startIdx;
+    DEBUG_LOG("[LIVE_DEBUG] Capture: %d readings from idx %d (buffer has %d)\n",
+             captureCount, startIdx, actualBufferSize);
+
+    {
+        uint8_t activeCnt = 0;
+        for (const auto &m : sessionManager_.getSensorMetadata())
+        {
+            if (m.active)
+                activeCnt++;
+        }
+        unsigned long capDur = (captureCount > 0)
+                                   ? (buffer[actualBufferSize - 1].timestamp_us - buffer[startIdx].timestamp_us) / 1000
+                                   : 0;
+        sessionManager_.getSessionSummary().duration_ms = capDur;
+        sessionManager_.finalizeSessionSummary(&currentConfig_, activeCnt);
+    }
+
+    const char *dirStr;
+    if (result.direction == Direction::A_TO_B)
+        dirStr = "a_to_b";
+    else if (result.direction == Direction::B_TO_A)
+        dirStr = "b_to_a";
+    else
+        dirStr = "unknown";
+    String captureSessionId = binarySerializer_->transmitLiveDebugCaptureBinary(
+        buffer, startIdx, captureCount,
+        "detection", dirStr, result.confidence,
+        sessionManager_.getSessionSummary(),
+        &currentConfig_);
+
+    if (captureSessionId.length() > 0)
+    {
+        DEBUG_LOG("[LIVE_DEBUG] Detection capture transmitted successfully\n");
+        mqttManager_->publishStatus("live_debug_detection_captured");
+    }
+    else
+    {
+        DEBUG_LOG("[LIVE_DEBUG] ERROR: Detection capture transmission failed!\n");
+        mqttManager_->publishStatus("live_debug_capture_failed");
+    }
+}
+
+void CommandHandler::resumeAfterLiveDebugCapture()
+{
+    sessionManager_.getSessionSummary().reset();
+    sensorManager_.startCollection(sessionManager_.getQueue(), &sessionManager_.getSessionSummary());
+    display_.showMessage("Ready", TFT_MAGENTA);
+    DEBUG_LOG("[LIVE_DEBUG] Resumed — waiting for next event\n");
 }

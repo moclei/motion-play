@@ -13,6 +13,7 @@
 #include "components/diagnostics/MemoryMonitor.h"
 #include "components/detection/DirectionDetector.h"
 #include "components/detection/MLDetector.h"
+#include "components/detection/DetectionController.h"
 #include "components/led/LEDController.h"
 #include "components/interrupt/InterruptManager.h"
 #include "components/calibration/CalibrationManager.h"
@@ -60,13 +61,14 @@ bool playModeActive = false;
 unsigned long lastDetectionTime = 0;
 const unsigned long DETECTION_COOLDOWN = 500; // 500ms - prevents double-trigger, allows quick successive throws
 
+DetectionController detectionController(
+    directionDetector, mlDetector,
+    ledController, display,
+    serialStudioOutput, sessionManager,
+    useMLDetection, lastDetectionTime, DETECTION_COOLDOWN);
+
 // Live Debug mode state
 bool liveDebugActive = false;
-
-// Live Debug capture window constants
-const size_t LIVE_DEBUG_BUFFER_CAP = 18000;        // ~3 seconds buffer cap
-const unsigned long DETECTION_WINDOW_MS = 500;     // 0.5s of pre-detection data to capture
-const unsigned long POST_DETECTION_DELAY_MS = 250; // 0.25s of post-detection data (sensor task keeps collecting)
 
 // Timing
 unsigned long lastStatusUpdate = 0;
@@ -172,8 +174,8 @@ void initializeSystem()
     commandHandler = new CommandHandler(
         mqttManager, display, sensorManager, sessionManager,
         dataTransmitter, binarySerializer, directionDetector, mlDetector,
-        ledController, interruptManager, serialStudioOutput, currentConfig,
-        currentMode, useMLDetection, detectorConfig,
+        ledController, interruptManager, serialStudioOutput, detectionController,
+        currentConfig, currentMode, useMLDetection, detectorConfig,
         playModeActive, liveDebugActive, lastDetectionTime);
 
     mqttManager->setCallback([](char *topic, byte *payload, unsigned int length)
@@ -446,300 +448,10 @@ void loop()
             serialStudioOutput.update();
         }
 
-        // PLAY MODE: Run direction detection on collected data
-        if (playModeActive && currentMode == DeviceMode::PLAY)
+        if ((playModeActive && currentMode == DeviceMode::PLAY) ||
+            (liveDebugActive && currentMode == DeviceMode::LIVE_DEBUG))
         {
-            // Update LED animation (handles fade-out after detection)
-            bool animating = ledController.update();
-
-            static unsigned long lastPlayDebug = 0;
-            if (debugPrintEnabled() && millis() - lastPlayDebug > 2000)
-            {
-                lastPlayDebug = millis();
-                bool detectorReady = useMLDetection ? mlDetector.isReady() : directionDetector.isReady();
-                Serial.printf("[PLAY] Buffer: %d samples, Detector(%s): %s\n",
-                              sessionManager.getDataCount(),
-                              useMLDetection ? "ML" : "heuristic",
-                              detectorReady ? "READY" : "establishing baseline...");
-            }
-
-            // Check cooldown between detections
-            unsigned long now = millis();
-            bool inCooldown = (lastDetectionTime > 0) && (now - lastDetectionTime < DETECTION_COOLDOWN);
-
-            if (!inCooldown)
-            {
-                // Feed new readings to the detector
-                auto &buffer = sessionManager.getDataBuffer();
-                static size_t lastProcessedIndex = 0;
-
-                // Add new readings since last check
-                size_t bufferSize = buffer.size();
-                for (size_t i = lastProcessedIndex; i < bufferSize; i++)
-                {
-                    if (useMLDetection)
-                        mlDetector.addReading(buffer[i]);
-                    else
-                        directionDetector.addReading(buffer[i]);
-                }
-                // Flush the last reading to ensure it's processed
-                if (useMLDetection)
-                    mlDetector.flushReading();
-                else
-                    directionDetector.flushReading();
-                lastProcessedIndex = bufferSize;
-
-                // Check for detection
-                bool detected = useMLDetection ? mlDetector.hasDetection() : directionDetector.hasDetection();
-                if (detected)
-                {
-                    DetectionResult result = useMLDetection ? mlDetector.getResult() : directionDetector.getResult();
-                    serialStudioOutput.cacheDetection(result);
-
-                    // Detection successful!
-                    DEBUG_LOG("DETECTION [%s]: %s (confidence: %.2f)\n",
-                             useMLDetection ? "ML" : "heuristic",
-                             directionToString(result.direction),
-                             result.confidence);
-
-                    // Show on LEDs
-                    ledController.showDirection(result.direction, 3000);
-
-                    // Show on display
-                    if (result.direction == Direction::A_TO_B)
-                        display.showMessage("A -> B", TFT_BLUE);
-                    else if (result.direction == Direction::B_TO_A)
-                        display.showMessage("B -> A", TFT_ORANGE);
-                    else
-                        display.showMessage("Unknown", TFT_RED);
-
-                    // Publish detection result
-                    String statusMsg = "detection_" + String(directionToString(result.direction));
-                    mqttManager->publishStatus(statusMsg.c_str());
-
-                    // Reset for next detection (clear buffer without changing state)
-                    lastDetectionTime = now;
-                    if (useMLDetection)
-                        mlDetector.reset();
-                    else
-                        directionDetector.reset();
-                    lastProcessedIndex = 0;
-                    buffer.clear();
-                    serialStudioOutput.resetIndex();
-                    DEBUG_LOG("Detection complete, buffer cleared for next event\n");
-                }
-
-                // Limit buffer size to prevent memory issues in play mode.
-                // Only clear the session buffer — detectors maintain their own
-                // internal state (ring buffer for ML, wave state for heuristic)
-                // and must NOT be reset here or they lose accumulated data.
-                if (bufferSize > 500)
-                {
-                    DEBUG_LOG("Buffer overflow prevention: clearing %d samples\n", bufferSize);
-                    if (!useMLDetection)
-                        directionDetector.reset();
-                    lastProcessedIndex = 0;
-                    buffer.clear();
-                    serialStudioOutput.resetIndex();
-                }
-            }
-            else if (!ledController.isAnimating() &&
-                     (useMLDetection ? mlDetector.isReady() : directionDetector.isReady()))
-            {
-                ledController.showReady();
-            }
-
-            // No timeout in play mode - it runs until stopped
-        }
-        else if (liveDebugActive && currentMode == DeviceMode::LIVE_DEBUG)
-        {
-            // LIVE DEBUG MODE: Detection with event capture
-
-            // Update LED animation (handles fade-out after detection)
-            ledController.update();
-
-            static unsigned long lastLiveDebugLog = 0;
-            if (debugPrintEnabled() && millis() - lastLiveDebugLog > 2000)
-            {
-                lastLiveDebugLog = millis();
-                bool detectorReady = useMLDetection ? mlDetector.isReady() : directionDetector.isReady();
-                Serial.printf("[LIVE_DEBUG] Buffer: %d samples, Detector(%s): %s\n",
-                              sessionManager.getDataCount(),
-                              useMLDetection ? "ML" : "heuristic",
-                              detectorReady ? "READY" : "establishing baseline...");
-            }
-
-            // Check cooldown between detections
-            unsigned long now = millis();
-            bool inCooldown = (lastDetectionTime > 0) && (now - lastDetectionTime < DETECTION_COOLDOWN);
-
-            if (!inCooldown)
-            {
-                // Feed new readings to the detector
-                auto &buffer = sessionManager.getDataBuffer();
-                static size_t lastLiveDebugIndex = 0;
-
-                // Add new readings since last check
-                size_t bufferSize = buffer.size();
-                for (size_t i = lastLiveDebugIndex; i < bufferSize; i++)
-                {
-                    if (useMLDetection)
-                        mlDetector.addReading(buffer[i]);
-                    else
-                        directionDetector.addReading(buffer[i]);
-                }
-                if (useMLDetection)
-                    mlDetector.flushReading();
-                else
-                    directionDetector.flushReading();
-                lastLiveDebugIndex = bufferSize;
-
-                // Check for detection
-                bool detected = useMLDetection ? mlDetector.hasDetection() : directionDetector.hasDetection();
-                if (detected)
-                {
-                    DetectionResult result = useMLDetection ? mlDetector.getResult() : directionDetector.getResult();
-                    serialStudioOutput.cacheDetection(result);
-
-                    DEBUG_LOG("[LIVE_DEBUG] DETECTION [%s]: %s (confidence: %.2f)\n",
-                             useMLDetection ? "ML" : "heuristic",
-                             directionToString(result.direction),
-                             result.confidence);
-
-                    // LED feedback (same as Play)
-                    ledController.showDirection(result.direction, 3000);
-
-                    // Display feedback
-                    if (result.direction == Direction::A_TO_B)
-                        display.showMessage("A -> B", TFT_BLUE);
-                    else if (result.direction == Direction::B_TO_A)
-                        display.showMessage("B -> A", TFT_ORANGE);
-                    else
-                        display.showMessage("Unknown", TFT_RED);
-
-                    // === CAPTURE FLOW: Delay → Pause → Extract → Transmit → Resume ===
-
-                    // 1. Post-detection delay: keep collecting so we capture the trailing edge
-                    //    Sensor task runs on Core 0, so delay() on Core 1 lets it continue
-                    DEBUG_LOG("[LIVE_DEBUG] Post-detection delay: %lums\n", POST_DETECTION_DELAY_MS);
-                    delay(POST_DETECTION_DELAY_MS);
-
-                    // 2. Stop sensor polling
-                    sensorManager.stopCollection();
-                    delay(50); // Let queue drain
-
-                    // Process any remaining queued readings
-                    sessionManager.processQueue();
-
-                    // 3. Show transmitting status
-                    display.showMessage("Transmitting...", TFT_MAGENTA);
-
-                    // 4. Calculate window using actual timestamps in the buffer
-                    //    Capture from (detectionTime - DETECTION_WINDOW_MS) to end of buffer
-                    size_t actualBufferSize = buffer.size();
-                    size_t startIdx = 0;
-
-                    if (actualBufferSize > 0)
-                    {
-                        unsigned long latestTs = buffer[actualBufferSize - 1].timestamp_us;
-                        unsigned long totalWindowUs = (DETECTION_WINDOW_MS + POST_DETECTION_DELAY_MS) * 1000UL; // Convert ms to us
-                        unsigned long cutoffTs = (latestTs > totalWindowUs) ? latestTs - totalWindowUs : 0;
-
-                        // Binary search for the first reading at or after cutoffTs
-                        size_t lo = 0, hi = actualBufferSize;
-                        while (lo < hi)
-                        {
-                            size_t mid = lo + (hi - lo) / 2;
-                            if (buffer[mid].timestamp_us < cutoffTs)
-                                lo = mid + 1;
-                            else
-                                hi = mid;
-                        }
-                        startIdx = lo;
-                    }
-
-                    size_t captureCount = actualBufferSize - startIdx;
-                    DEBUG_LOG("[LIVE_DEBUG] Capture: %d readings from idx %d (buffer has %d)\n",
-                             captureCount, startIdx, actualBufferSize);
-
-                    // 5. Session Confirmation: finalize summary for this capture
-                    {
-                        uint8_t activeCnt = 0;
-                        for (const auto &m : sessionManager.getSensorMetadata())
-                        {
-                            if (m.active)
-                                activeCnt++;
-                        }
-                        // Use capture duration for summary, not full session duration
-                        unsigned long capDur = (captureCount > 0)
-                                                   ? (buffer[actualBufferSize - 1].timestamp_us - buffer[startIdx].timestamp_us) / 1000
-                                                   : 0;
-                        sessionManager.getSessionSummary().duration_ms = capDur;
-                        sessionManager.finalizeSessionSummary(&currentConfig, activeCnt);
-                    }
-
-                    // 6. Transmit the capture (binary-packed single message — data + summary)
-                    const char *dirStr;
-                    if (result.direction == Direction::A_TO_B)
-                        dirStr = "a_to_b";
-                    else if (result.direction == Direction::B_TO_A)
-                        dirStr = "b_to_a";
-                    else
-                        dirStr = "unknown";
-                    String captureSessionId = binarySerializer->transmitLiveDebugCaptureBinary(
-                        buffer, startIdx, captureCount,
-                        "detection", dirStr, result.confidence,
-                        sessionManager.getSessionSummary(),
-                        &currentConfig);
-
-                    if (captureSessionId.length() > 0)
-                    {
-                        DEBUG_LOG("[LIVE_DEBUG] Detection capture transmitted successfully\n");
-                        mqttManager->publishStatus("live_debug_detection_captured");
-                    }
-                    else
-                    {
-                        DEBUG_LOG("[LIVE_DEBUG] ERROR: Detection capture transmission failed!\n");
-                        mqttManager->publishStatus("live_debug_capture_failed");
-                    }
-
-                    // 7. Clear buffer and reset detector
-                    lastDetectionTime = millis();
-                    if (useMLDetection)
-                        mlDetector.reset();
-                    else
-                        directionDetector.reset();
-                    lastLiveDebugIndex = 0;
-                    buffer.clear();
-                    serialStudioOutput.resetIndex();
-
-                    // 8. Reset summary for next capture and resume sensor polling
-                    sessionManager.getSessionSummary().reset();
-                    sensorManager.startCollection(sessionManager.getQueue(), &sessionManager.getSessionSummary());
-                    display.showMessage("Ready", TFT_MAGENTA);
-                    DEBUG_LOG("[LIVE_DEBUG] Resumed — waiting for next event\n");
-                }
-
-                // Buffer overflow prevention (higher cap than Play)
-                if (bufferSize > LIVE_DEBUG_BUFFER_CAP)
-                {
-                    DEBUG_LOG("[LIVE_DEBUG] Buffer overflow prevention: clearing %d samples\n", bufferSize);
-                    if (useMLDetection)
-                        mlDetector.reset();
-                    else
-                        directionDetector.reset();
-                    lastLiveDebugIndex = 0;
-                    buffer.clear();
-                    serialStudioOutput.resetIndex();
-                }
-            }
-            else if (!ledController.isAnimating() &&
-                     (useMLDetection ? mlDetector.isReady() : directionDetector.isReady()))
-            {
-                ledController.showReady();
-            }
-
-            // No timeout in live debug mode - runs until stopped
+            detectionController.update();
         }
         else
         {
