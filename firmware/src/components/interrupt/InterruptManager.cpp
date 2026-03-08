@@ -504,10 +504,13 @@ void InterruptManager::stopMonitoring()
     detachInterrupt(digitalPinToInterrupt(PIN_SENSOR_INT_2));
     detachInterrupt(digitalPinToInterrupt(PIN_SENSOR_INT_3));
 
-    // Wait for the processing task to exit via task notification
+    // Wake the processing task so it can observe _monitoring == false and exit.
+    // Set _stopRequestor BEFORE the wake to avoid a race on multi-core: the
+    // processing task (Core 1) could exit and read _stopRequestor before we set it.
     if (_processingTask != nullptr)
     {
         _stopRequestor = xTaskGetCurrentTaskHandle();
+        xTaskNotifyGive(_processingTask);
 
         uint32_t notified = ulTaskNotifyTake(pdTRUE, pdMS_TO_TICKS(TASK_EXIT_TIMEOUT_MS));
 
@@ -624,11 +627,17 @@ void IRAM_ATTR InterruptManager::handleIsr(uint8_t board)
         return;
     }
 
-    // Record timestamp and set pending flag
-    // Keep ISR minimal - just record that something happened
     _instance->_lastIsrTime[board] = micros();
     _instance->_isrPending[board] = true;
     _instance->_isrCount.fetch_add(1, std::memory_order_relaxed);
+
+    // Wake the processing task immediately — zero-latency ISR→task handoff
+    BaseType_t xHigherPriorityTaskWoken = pdFALSE;
+    if (_instance->_processingTask != nullptr)
+    {
+        vTaskNotifyGiveFromISR(_instance->_processingTask, &xHigherPriorityTaskWoken);
+        portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
+    }
 }
 
 // ============================================================================
@@ -694,12 +703,15 @@ void InterruptManager::processingTaskFunc(void *param)
         }
 #endif
 
-        // If nothing pending, yield briefly
-        // Use minimal delay to maximize responsiveness for direction detection
         if (!anyPending)
         {
-            // Yield without delay - just let other tasks run briefly
-            taskYIELD();
+            // Sleep until notified by ISR or stopMonitoring() — zero CPU cost while idle,
+            // immediate wake on interrupt (vs taskYIELD which burns CPU and adds tick latency)
+#ifdef DEBUG_INTERRUPTS
+            ulTaskNotifyTake(pdTRUE, pdMS_TO_TICKS(DEBUG_POLL_INTERVAL_MS));
+#else
+            ulTaskNotifyTake(pdTRUE, portMAX_DELAY);
+#endif
         }
     }
 
