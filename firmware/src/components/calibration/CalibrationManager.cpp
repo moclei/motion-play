@@ -17,15 +17,17 @@ static const char *stateToName(CalibrationState state)
 {
     switch (state)
     {
-    case CalibrationState::IDLE:      return "IDLE";
-    case CalibrationState::INTRO:     return "INTRO";
-    case CalibrationState::BASELINE:  return "BASELINE";
-    case CalibrationState::APPROACH:  return "APPROACH";
-    case CalibrationState::SUMMARY:   return "SUMMARY";
-    case CalibrationState::COMPLETE:  return "COMPLETE";
-    case CalibrationState::FAILED:    return "FAILED";
-    case CalibrationState::CANCELLED: return "CANCELLED";
-    default:                          return "UNKNOWN";
+    case CalibrationState::IDLE:              return "IDLE";
+    case CalibrationState::INTRO:             return "INTRO";
+    case CalibrationState::BASELINE:          return "BASELINE";
+    case CalibrationState::APPROACH:          return "APPROACH";
+    case CalibrationState::APPROACH_SUCCESS:  return "APPROACH_SUCCESS";
+    case CalibrationState::APPROACH_TIMEOUT:  return "APPROACH_TIMEOUT";
+    case CalibrationState::SUMMARY:           return "SUMMARY";
+    case CalibrationState::COMPLETE:          return "COMPLETE";
+    case CalibrationState::FAILED:            return "FAILED";
+    case CalibrationState::CANCELLED:         return "CANCELLED";
+    default:                                  return "UNKNOWN";
     }
 }
 
@@ -102,6 +104,14 @@ void CalibrationManager::update()
 
     case CalibrationState::APPROACH:
         handleApproach();
+        break;
+
+    case CalibrationState::APPROACH_SUCCESS:
+        handleApproachSuccess();
+        break;
+
+    case CalibrationState::APPROACH_TIMEOUT:
+        handleApproachTimeout();
         break;
 
     case CalibrationState::SUMMARY:
@@ -251,13 +261,7 @@ void CalibrationManager::handleApproach()
                           _currentPCB,
                           _calibration.pcbs[pcbIndex].threshold);
 
-            if (_calScreen)
-            {
-                _calScreen->showSuccess(_currentPCB);
-            }
-            delay(CAL_SUCCESS_DISPLAY_MS);
-
-            transitionTo(getNextState());
+            transitionTo(CalibrationState::APPROACH_SUCCESS);
             return;
         }
     }
@@ -289,12 +293,40 @@ void CalibrationManager::handleApproach()
         
         _calibration.pcbs[pcbIndex].valid = false;
         
+        transitionTo(CalibrationState::APPROACH_TIMEOUT);
+    }
+}
+
+void CalibrationManager::handleApproachSuccess()
+{
+    if (!_phaseRendered)
+    {
+        _phaseRendered = true;
+        if (_calScreen)
+        {
+            _calScreen->showSuccess(_currentPCB);
+        }
+    }
+
+    if (millis() - _stateStartTime >= CAL_SUCCESS_DISPLAY_MS)
+    {
+        transitionTo(getNextState());
+    }
+}
+
+void CalibrationManager::handleApproachTimeout()
+{
+    if (!_phaseRendered)
+    {
+        _phaseRendered = true;
         if (_calScreen)
         {
             _calScreen->showFailed(_currentPCB, "Timeout - skipping");
         }
-        delay(CAL_TIMEOUT_SKIP_DISPLAY_MS);
-        
+    }
+
+    if (millis() - _stateStartTime >= CAL_TIMEOUT_SKIP_DISPLAY_MS)
+    {
         transitionTo(getNextState());
     }
 }
@@ -368,14 +400,19 @@ void CalibrationManager::handleFailed()
 
 void CalibrationManager::handleCancelled()
 {
-    if (_calScreen)
+    if (!_phaseRendered)
     {
-        _calScreen->showCancelled();
+        _phaseRendered = true;
+        if (_calScreen)
+        {
+            _calScreen->showCancelled();
+        }
     }
-    
-    delay(CAL_CANCELLED_DISPLAY_MS);
-    
-    _state = CalibrationState::IDLE;
+
+    if (millis() - _stateStartTime >= CAL_CANCELLED_DISPLAY_MS)
+    {
+        _state = CalibrationState::IDLE;
+    }
 }
 
 // ============================================================================
@@ -590,7 +627,8 @@ CalibrationState CalibrationManager::getNextState() const
         return CalibrationState::BASELINE;
     case CalibrationState::BASELINE:
         return CalibrationState::APPROACH;
-    case CalibrationState::APPROACH:
+    case CalibrationState::APPROACH_SUCCESS:
+    case CalibrationState::APPROACH_TIMEOUT:
         return (_currentPCB < CALIBRATION_NUM_PCBS)
                    ? CalibrationState::BASELINE
                    : CalibrationState::SUMMARY;

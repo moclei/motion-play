@@ -7,7 +7,7 @@
  * 3. Calculates optimal thresholds for detection
  *
  * Calibration Flow:
- *   IDLE → INTRO → [BASELINE → APPROACH] × 3 PCBs → SUMMARY → COMPLETE
+ *   IDLE → INTRO → [BASELINE → APPROACH → APPROACH_SUCCESS/TIMEOUT] × 3 PCBs → SUMMARY → COMPLETE
  *
  * The active PCB is tracked by _currentPCB (1-3), not encoded in the state.
  *
@@ -61,14 +61,16 @@ static constexpr uint8_t  CAL_BUTTON_CANCEL           = PIN_BUTTON_1;  // Right 
 
 enum class CalibrationState : uint8_t
 {
-    IDLE,       // Not calibrating
-    INTRO,      // Showing intro screen
-    BASELINE,   // Capturing baseline for _currentPCB
-    APPROACH,   // Waiting for approach on _currentPCB
-    SUMMARY,    // Showing summary
-    COMPLETE,   // Calibration complete
-    FAILED,     // Calibration failed
-    CANCELLED   // User cancelled
+    IDLE,               // Not calibrating
+    INTRO,              // Showing intro screen
+    BASELINE,           // Capturing baseline for _currentPCB
+    APPROACH,           // Waiting for approach on _currentPCB
+    APPROACH_SUCCESS,   // Displaying success result (timer-based)
+    APPROACH_TIMEOUT,   // Displaying timeout/skip message (timer-based)
+    SUMMARY,            // Showing summary
+    COMPLETE,           // Calibration complete
+    FAILED,             // Calibration failed
+    CANCELLED           // User cancelled (timer-based display)
 };
 
 // ============================================================================
@@ -258,6 +260,8 @@ private:
     void handleIntro();
     void handleBaseline();
     void handleApproach();
+    void handleApproachSuccess();
+    void handleApproachTimeout();
     void handleSummary();
     void handleComplete();
     void handleFailed();
