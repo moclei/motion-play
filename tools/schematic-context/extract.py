@@ -23,14 +23,55 @@ import shutil
 import subprocess
 import sys
 import tempfile
+import xml.etree.ElementTree as ET
+from dataclasses import dataclass, field
 from pathlib import Path
-from typing import List, Optional
+from typing import Dict, List, Optional, Tuple
 
 KICAD_CLI_CANDIDATES = [
     "/Applications/KiCad/KiCad.app/Contents/MacOS/kicad-cli",
     "kicad-cli",
 ]
 
+
+# ---------------------------------------------------------------------------
+# Data structures — intermediate representation between XML and JSON output
+# ---------------------------------------------------------------------------
+
+@dataclass
+class Pin:
+    number: str
+    name: str
+    type: str
+    net: str
+
+
+@dataclass
+class Component:
+    ref: str
+    part: str
+    value: str
+    footprint: str
+    lcsc: str
+    sheet: str
+    pins: List[Pin] = field(default_factory=list)
+
+
+@dataclass
+class NetConnection:
+    ref: str
+    pin: str
+
+
+@dataclass
+class Net:
+    name: str
+    connections: List[NetConnection] = field(default_factory=list)
+
+
+# ---------------------------------------------------------------------------
+# kicad-cli helpers
+# ---------------------------------------------------------------------------
 
 def find_kicad_cli() -> Optional[str]:
     """Locate the kicad-cli binary.
@@ -163,6 +204,146 @@ def resolve_output_path(schematic: Path, explicit_output: Optional[str]) -> Path
     return schematic.parent / "circuit-context.json"
 
 
+# ---------------------------------------------------------------------------
+# XML netlist parsing
+# ---------------------------------------------------------------------------
+
+def parse_netlist_xml(
+    xml_path: Path,
+) -> Tuple[Dict[str, Component], Dict[str, Net]]:
+    """Parse a kicad-cli XML netlist into component and net data structures.
+
+    Returns (components, nets) where:
+      - components: dict keyed by ref designator
+      - nets: dict keyed by net name (excludes unconnected-* stubs)
+
+    Pin data on each component is populated from the <nets> section,
+    which is the authoritative source for pin-level connectivity.
+    """
+    tree = ET.parse(str(xml_path))
+    root = tree.getroot()
+
+    components = _parse_components(root)
+    nets = _parse_nets(root, components)
+
+    for comp in components.values():
+        comp.pins.sort(key=lambda p: _pin_sort_key(p.number))
+
+    return components, nets
+
+
+def _parse_components(root: ET.Element) -> Dict[str, Component]:
+    """Extract components from the <components> section."""
+    components = {}  # type: Dict[str, Component]
+
+    comps_elem = root.find("components")
+    if comps_elem is None:
+        return components
+
+    for comp_elem in comps_elem.findall("comp"):
+        ref = comp_elem.get("ref", "")
+        if not ref:
+            continue
+
+        value = _text_or_empty(comp_elem, "value")
+        footprint = _text_or_empty(comp_elem, "footprint")
+
+        libsource = comp_elem.find("libsource")
+        part = libsource.get("part", "") if libsource is not None else ""
+
+        lcsc = _find_field(comp_elem, "LCSC Part")
+        sheet = _find_property(comp_elem, "Sheetfile")
+
+        components[ref] = Component(
+            ref=ref,
+            part=part,
+            value=value,
+            footprint=footprint,
+            lcsc=lcsc,
+            sheet=sheet,
+        )
+
+    return components
+
+
+def _parse_nets(
+    root: ET.Element,
+    components: Dict[str, Component],
+) -> Dict[str, Net]:
+    """Extract nets from the <nets> section and populate component pin lists.
+
+    Each <node> in a net contributes both a NetConnection to the net and
+    a Pin entry on the referenced component.
+    """
+    nets = {}  # type: Dict[str, Net]
+
+    nets_elem = root.find("nets")
+    if nets_elem is None:
+        return nets
+
+    for net_elem in nets_elem.findall("net"):
+        net_name = net_elem.get("name", "")
+        if not net_name or net_name.startswith("unconnected-"):
+            continue
+
+        net = Net(name=net_name)
+
+        for node_elem in net_elem.findall("node"):
+            ref = node_elem.get("ref", "")
+            pin_number = node_elem.get("pin", "")
+            pin_name = node_elem.get("pinfunction", "")
+            pin_type = node_elem.get("pintype", "")
+
+            if ref:
+                net.connections.append(NetConnection(ref=ref, pin=pin_number))
+
+            if ref in components:
+                components[ref].pins.append(Pin(
+                    number=pin_number,
+                    name=pin_name,
+                    type=pin_type,
+                    net=net_name,
+                ))
+
+        if net.connections:
+            nets[net_name] = net
+
+    return nets
+
+
+def _text_or_empty(parent: ET.Element, tag: str) -> str:
+    """Get text content of a child element, or empty string if absent."""
+    elem = parent.find(tag)
+    return (elem.text or "") if elem is not None else ""
+
+
+def _find_field(comp_elem: ET.Element, field_name: str) -> str:
+    """Find a named <field> inside a <comp>'s <fields> section."""
+    fields = comp_elem.find("fields")
+    if fields is None:
+        return ""
+    for f in fields.findall("field"):
+        if f.get("name") == field_name:
+            return f.text or ""
+    return ""
+
+
+def _find_property(comp_elem: ET.Element, prop_name: str) -> str:
+    """Find a named <property> on a <comp> element."""
+    for prop in comp_elem.findall("property"):
+        if prop.get("name") == prop_name:
+            return prop.get("value", "")
+    return ""
+
+
+def _pin_sort_key(pin_number: str) -> Tuple[int, str]:
+    """Sort key that orders numeric pins first, then alphabetical."""
+    try:
+        return (0, str(int(pin_number)).zfill(10))
+    except (ValueError, TypeError):
+        return (1, pin_number)
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(
         description="Extract circuit context from a KiCad schematic.",
@@ -206,7 +387,15 @@ def main() -> None:
         print(f"  OK — {xml_size:,} bytes", file=sys.stderr)
 
         # --- Step 2: Parse XML into data structures ---
-        # TODO(Phase 1a task 3): parse_netlist_xml(xml_path)
+        print("Parsing XML netlist...", file=sys.stderr)
+        components, nets = parse_netlist_xml(xml_path)
+        total_pins = sum(len(c.pins) for c in components.values())
+        sheets = sorted({c.sheet for c in components.values() if c.sheet})
+        print(
+            f"  {len(components)} components, {len(nets)} nets, "
+            f"{total_pins} pin assignments, {len(sheets)} sheets",
+            file=sys.stderr,
+        )
 
         # --- Step 3: Read kiutils data ---
         # TODO(Phase 1b): kiutils integration
@@ -215,14 +404,14 @@ def main() -> None:
         # TODO(Phase 1b): merge_previous_context(args.previous)
 
         # --- Step 5: Write circuit-context.json ---
-        # TODO(Phase 1a task 4): write_context_json(output_path)
+        # TODO(Phase 1a task 4): write_context_json(components, nets, output_path)
 
         print(
-            f"XML export complete. Output will be written to {output_path}",
+            f"Extraction complete. Output will be written to {output_path}",
             file=sys.stderr,
         )
         print(
-            "(Parsing and context file generation not yet implemented.)",
+            "(Context file JSON output not yet implemented.)",
             file=sys.stderr,
         )
 
