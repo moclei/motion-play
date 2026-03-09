@@ -19,10 +19,10 @@
 
 ## Phase 2: Annotation Tooling
 
-- [ ] Write `annotate.py` — accepts component ref + key=value pairs, writes `ai_` properties to the correct `.kicad_sch` file via kiutils (must resolve which sheet a component lives on)
-- [ ] Write `show.py` — reads current schematic state via kiutils, displays components grouped by annotation status (annotated vs unannotated), useful for guiding annotation sessions
-- [ ] Test annotation round-trip: write a property via `annotate.py`, re-extract via `extract.py`, confirm property appears in `circuit-context.json`
-- [ ] Commit, update TASKS.md, generate handoff prompt for next session. Note any unexpected issues or implementation decisions.
+- [x] Write `annotate.py` — accepts component ref + key=value pairs, writes `ai_` properties to the correct `.kicad_sch` file via kiutils (must resolve which sheet a component lives on)
+- [x] Write `show.py` — reads current schematic state via kiutils, displays components grouped by annotation status (annotated vs unannotated), useful for guiding annotation sessions
+- [x] Test annotation round-trip: write a property via `annotate.py`, re-extract via `extract.py`, confirm property appears in `circuit-context.json`
+- [x] Commit, update TASKS.md, generate handoff prompt for next session. Note any unexpected issues or implementation decisions.
 
 ## Phase 3a: Annotation Pass — Setup & First Blocks
 

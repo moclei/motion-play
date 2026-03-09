@@ -57,6 +57,9 @@ lambda/**/*.zip
 tools/ml-training/data/
 tools/ml-training/venv/
 tools/ml-training/__pycache__/
+
+# Schematic context tools
+tools/schematic-context/__pycache__/
 tools/ml-training/*.tflite
 tools/ml-training/*.h5
 tools/ml-training/output/
