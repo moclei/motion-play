@@ -1,0 +1,8 @@
+# Schematic Context System — extraction and annotation tools
+# Python 3.7+
+
+# KiCad schematic parsing and property writing
+kiutils>=1.4.8
+
+# YAML handling (for future annotation workflows)
+pyyaml>=6.0
