@@ -22,8 +22,8 @@
 # ──────────────────────────────────────────────
 
 hoop:
-  inner_diameter_mm: 445
-  inner_radius_mm: 222.5
+  inner_diameter_mm: 505
+  inner_radius_mm: 252.5
   bar_width_mm: 25.25       # the "flat" face — what PCBs sit on
   bar_thickness_mm: 4.0     # the "thin" edge — what the flex PCB wraps around
   material: steel_flat_bar
@@ -184,7 +184,7 @@ requirements:
 
 answered_questions:
   - q: "Is hoop radius measured to inner edge, outer edge, or bar centerline?"
-    a: "Inner edge. Inner diameter is 445mm, inner radius 222.5mm."
+    a: "Inner edge. Inner diameter is 505mm, inner radius 252.5mm."
 
   - q: "Exact PCB thickness (rigid)?"
     a: "1.6mm (FR4 board only, no components on underside)."
@@ -214,6 +214,6 @@ answered_questions:
 
   - q: "Exact clearance between adjacent sensor assemblies at 120° spacing — any risk of fouling?"
     a: >
-      No risk. Hoop circumference is ~1,398mm (π × 445mm). At 120° spacing,
-      assemblies are ~466mm apart along the arc. Each assembly is only ~33mm
-      along the circumference, leaving ~430mm of clear hoop between them.
+      No risk. Hoop circumference is ~1,586mm (π × 505mm). At 120° spacing,
+      assemblies are ~529mm apart along the arc. Each assembly is only ~33mm
+      along the circumference, leaving ~496mm of clear hoop between them.
