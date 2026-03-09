@@ -11,11 +11,11 @@
 
 ## Phase 1b: Extraction Pipeline — kiutils Integration & Merge
 
-- [ ] Add kiutils integration to `extract.py`: read each `.kicad_sch` file (root + children discovered via kiutils `sch.sheets`), extract all component properties including `ai_` prefixed custom properties
-- [ ] Add sheet hierarchy to `extract.py`: build `sheet_interfaces` section from hierarchical sheet pins (name, direction) and match to hierarchical labels in child schematics
-- [ ] Add previous-context merge to `extract.py`: if a previous `circuit-context.json` exists, carry forward net annotations and block definitions, flag new/removed items
-- [ ] End-to-end test: run full extraction on main PCB, verify kiutils properties and sheet interfaces appear correctly alongside XML-derived connectivity
-- [ ] Commit, update TASKS.md, generate handoff prompt for next session. Note any unexpected issues or implementation decisions.
+- [x] Add kiutils integration to `extract.py`: read each `.kicad_sch` file (root + children discovered via kiutils `sch.sheets`), extract all component properties including `ai_` prefixed custom properties
+- [x] Add sheet hierarchy to `extract.py`: build `sheet_interfaces` section from hierarchical sheet pins (name, direction) and match to hierarchical labels in child schematics
+- [x] Add previous-context merge to `extract.py`: if a previous `circuit-context.json` exists, carry forward net annotations and block definitions, flag new/removed items
+- [x] End-to-end test: run full extraction on main PCB, verify kiutils properties and sheet interfaces appear correctly alongside XML-derived connectivity
+- [x] Commit, update TASKS.md, generate handoff prompt for next session. Note any unexpected issues or implementation decisions.
 
 ## Phase 2: Annotation Tooling
 

@@ -8,7 +8,7 @@
       "tca9548A_subsystem.kicad_sch": "TCA9548A_Subsystem"
     },
     "source_hash": "5478765feff5",
-    "extracted_at": "2026-03-09T23:21:19.001465+00:00"
+    "extracted_at": "2026-03-09T23:29:45.170102+00:00"
   },
   "description": "",
   "blocks": {},
@@ -1265,5 +1265,96 @@
       "description": ""
     }
   },
-  "sheet_interfaces": {}
+  "sheet_interfaces": {
+    "led_controller.kicad_sch": {
+      "description": "",
+      "pins": [
+        {
+          "name": "+5V_IN",
+          "direction": "input",
+          "net": "+5V"
+        },
+        {
+          "name": "+5V_TO_LEDS",
+          "direction": "output",
+          "net": "/LED Controller/+5V_TO_LEDS"
+        },
+        {
+          "name": "DATA_IN",
+          "direction": "input",
+          "net": "/LED Controller/DATA_IN"
+        },
+        {
+          "name": "DATA_TO_LEDS",
+          "direction": "output",
+          "net": "/LED Controller/DATA_TO_LEDS"
+        },
+        {
+          "name": "GND",
+          "direction": "input",
+          "net": "GND"
+        }
+      ]
+    },
+    "tca9548A_subsystem.kicad_sch": {
+      "description": "",
+      "pins": [
+        {
+          "name": "CH0_SCL",
+          "direction": "output",
+          "net": "/TCA9548A_Subsystem/CH0_SCL"
+        },
+        {
+          "name": "CH0_SDA",
+          "direction": "output",
+          "net": "/TCA9548A_Subsystem/CH0_SDA"
+        },
+        {
+          "name": "CH1_SCL",
+          "direction": "output",
+          "net": "/TCA9548A_Subsystem/CH1_SCL"
+        },
+        {
+          "name": "CH1_SDA",
+          "direction": "output",
+          "net": "/TCA9548A_Subsystem/CH1_SDA"
+        },
+        {
+          "name": "CH2_SCL",
+          "direction": "output",
+          "net": "/TCA9548A_Subsystem/CH2_SCL"
+        },
+        {
+          "name": "CH2_SDA",
+          "direction": "output",
+          "net": "/TCA9548A_Subsystem/CH2_SDA"
+        },
+        {
+          "name": "GND",
+          "direction": "input",
+          "net": "GND"
+        },
+        {
+          "name": "I2C_SCL_IN",
+          "direction": "input",
+          "net": "/I2C_SCL"
+        },
+        {
+          "name": "I2C_SDA_IN",
+          "direction": "input",
+          "net": "/I2C_SDA"
+        },
+        {
+          "name": "TCA_RESET",
+          "direction": "input",
+          "net": "/TCA9548A_Subsystem/TCA_RESET"
+        },
+        {
+          "name": "VCC_3V3",
+          "direction": "input",
+          "net": "+3.3V"
+        }
+      ]
+    }
+  }
 }

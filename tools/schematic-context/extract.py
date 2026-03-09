@@ -29,7 +29,12 @@ import xml.etree.ElementTree as ET
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Dict, List, Optional, Tuple
+from typing import Dict, List, Optional, Set, Tuple
+
+try:
+    from kiutils.schematic import Schematic
+except ImportError:
+    Schematic = None
 
 KICAD_CLI_CANDIDATES = [
     "/Applications/KiCad/KiCad.app/Contents/MacOS/kicad-cli",
@@ -70,6 +75,19 @@ class NetConnection:
 class Net:
     name: str
     connections: List[NetConnection] = field(default_factory=list)
+
+
+@dataclass
+class SheetPin:
+    name: str
+    direction: str
+
+
+@dataclass
+class SheetInfo:
+    filename: str
+    display_name: str
+    pins: List[SheetPin] = field(default_factory=list)
 
 
 # ---------------------------------------------------------------------------
@@ -379,6 +397,248 @@ def _pin_sort_key(pin_number: str) -> Tuple[int, str]:
 
 
 # ---------------------------------------------------------------------------
+# kiutils integration — component properties and sheet hierarchy
+# ---------------------------------------------------------------------------
+
+AI_PROP_PREFIX = "ai_"
+AI_PROP_FIELDS = ("function", "block", "role", "critical_specs")
+
+
+def read_kiutils_properties(
+    schematic: Path,
+) -> Tuple[Dict[str, Dict[str, str]], List[SheetInfo]]:
+    """Read component ai_ properties and sheet hierarchy via kiutils.
+
+    Discovers child sheets from the root schematic's sheet objects,
+    then reads each .kicad_sch file for component properties.
+
+    Returns (component_props, sheet_infos) where:
+      - component_props: ref → {field: value} for ai_-prefixed properties
+        (e.g., {"function": "voltage regulator", "block": "power"})
+      - sheet_infos: list of SheetInfo with filename, display name, and
+        hierarchical pin interfaces
+    """
+    if Schematic is None:
+        print(
+            "Warning: kiutils not installed — skipping property extraction",
+            file=sys.stderr,
+        )
+        return {}, []
+
+    root_dir = schematic.parent
+    sch = Schematic.from_file(str(schematic))
+
+    component_props = {}  # type: Dict[str, Dict[str, str]]
+    sheet_infos = []  # type: List[SheetInfo]
+
+    _collect_ai_properties(sch, component_props)
+
+    for sheet in sch.sheets:
+        filename = sheet.fileName.value
+        display_name = sheet.sheetName.value
+        child_path = root_dir / filename
+
+        pins = [
+            SheetPin(name=pin.name, direction=pin.connectionType)
+            for pin in sheet.pins
+        ]
+        sheet_infos.append(SheetInfo(
+            filename=filename,
+            display_name=display_name,
+            pins=pins,
+        ))
+
+        if not child_path.exists():
+            print(
+                f"Warning: child sheet not found: {child_path}",
+                file=sys.stderr,
+            )
+            continue
+
+        child_sch = Schematic.from_file(str(child_path))
+        _collect_ai_properties(child_sch, component_props)
+
+    return component_props, sheet_infos
+
+
+def _collect_ai_properties(
+    sch: "Schematic",
+    out: Dict[str, Dict[str, str]],
+) -> None:
+    """Extract ai_-prefixed properties from all symbols in a schematic."""
+    for sym in sch.schematicSymbols:
+        ref = ""
+        for prop in sym.properties:
+            if prop.key == "Reference":
+                ref = prop.value
+                break
+
+        if not ref or ref.startswith("#"):
+            continue
+
+        ai_props = {}  # type: Dict[str, str]
+        for prop in sym.properties:
+            if prop.key.startswith(AI_PROP_PREFIX):
+                field_name = prop.key[len(AI_PROP_PREFIX):]
+                if field_name in AI_PROP_FIELDS and prop.value:
+                    ai_props[field_name] = prop.value
+
+        if ai_props:
+            out[ref] = ai_props
+
+
+# ---------------------------------------------------------------------------
+# Sheet interface resolution — match hierarchical pins to parent-side nets
+# ---------------------------------------------------------------------------
+
+def build_sheet_interfaces(
+    sheet_infos: List[SheetInfo],
+    nets: Dict[str, Net],
+) -> dict:
+    """Build the sheet_interfaces section from kiutils sheet data.
+
+    For each hierarchical sheet pin, attempts to resolve which net it
+    connects to on the parent side using name-based heuristics.
+    """
+    all_net_names = set(nets.keys())  # type: Set[str]
+    interfaces = {}  # type: dict
+
+    for info in sheet_infos:
+        pins_out = []
+        for pin in info.pins:
+            net = _resolve_pin_net(pin.name, info.display_name, all_net_names)
+            pins_out.append({
+                "name": pin.name,
+                "direction": pin.direction,
+                "net": net,
+            })
+
+        pins_out.sort(key=lambda p: p["name"])
+        interfaces[info.filename] = {
+            "description": "",
+            "pins": pins_out,
+        }
+
+    return interfaces
+
+
+_POWER_NET_ALIASES = {
+    "VCC_3V3": "+3.3V",
+    "VCC_5V": "+5V",
+    "VCC": "+3.3V",
+    "V3V3": "+3.3V",
+    "V5V": "+5V",
+}
+
+
+def _resolve_pin_net(
+    pin_name: str,
+    sheet_display_name: str,
+    all_net_names: Set[str],
+) -> str:
+    """Try to resolve which parent-side net a hierarchical sheet pin connects to.
+
+    Uses a series of name-matching heuristics since kiutils cannot trace
+    net connectivity. Returns empty string if unresolved.
+    """
+    scoped = "/{}/{}".format(sheet_display_name, pin_name)
+    if scoped in all_net_names:
+        return scoped
+
+    if pin_name in all_net_names:
+        return pin_name
+
+    rooted = "/{}".format(pin_name)
+    if rooted in all_net_names:
+        return rooted
+
+    for suffix in ("_IN", "_OUT"):
+        if pin_name.upper().endswith(suffix):
+            base = pin_name[:-len(suffix)]
+            if base in all_net_names:
+                return base
+            rooted_base = "/{}".format(base)
+            if rooted_base in all_net_names:
+                return rooted_base
+
+    alias = _POWER_NET_ALIASES.get(pin_name.upper())
+    if alias and alias in all_net_names:
+        return alias
+
+    return ""
+
+
+# ---------------------------------------------------------------------------
+# Previous-context merge — carry forward annotations across re-extractions
+# ---------------------------------------------------------------------------
+
+def merge_previous_context(
+    previous_path: Optional[str],
+    context: dict,
+) -> dict:
+    """Merge annotations from a previous circuit-context.json.
+
+    Carries forward:
+      - Block definitions (entire blocks section)
+      - Net annotations (type, protocol, direction, description)
+      - Top-level description
+    Reports new/removed components and nets to stderr.
+    """
+    if not previous_path:
+        return context
+
+    prev_file = Path(previous_path)
+    if not prev_file.exists():
+        print(
+            f"Warning: previous context not found: {prev_file}",
+            file=sys.stderr,
+        )
+        return context
+
+    with open(str(prev_file)) as f:
+        prev = json.load(f)
+
+    print("Merging annotations from previous context...", file=sys.stderr)
+
+    if prev.get("description") and not context.get("description"):
+        context["description"] = prev["description"]
+
+    for block_id, block_def in prev.get("blocks", {}).items():
+        if block_id not in context["blocks"]:
+            context["blocks"][block_id] = block_def
+
+    for net_name, prev_net in prev.get("nets", {}).items():
+        if net_name in context["nets"]:
+            for key in ("type", "protocol", "direction", "description"):
+                prev_val = prev_net.get(key, "")
+                if prev_val and not context["nets"][net_name].get(key):
+                    context["nets"][net_name][key] = prev_val
+
+    prev_refs = set(prev.get("components", {}).keys())
+    curr_refs = set(context.get("components", {}).keys())
+    new_refs = sorted(curr_refs - prev_refs)
+    removed_refs = sorted(prev_refs - curr_refs)
+
+    prev_nets = set(prev.get("nets", {}).keys())
+    curr_nets = set(context.get("nets", {}).keys())
+    new_nets = sorted(curr_nets - prev_nets)
+    removed_nets = sorted(prev_nets - curr_nets)
+
+    if new_refs:
+        print(f"  New components: {new_refs}", file=sys.stderr)
+    if removed_refs:
+        print(f"  Removed components: {removed_refs}", file=sys.stderr)
+    if new_nets:
+        print(f"  New nets: {new_nets}", file=sys.stderr)
+    if removed_nets:
+        print(f"  Removed nets: {removed_nets}", file=sys.stderr)
+    if not (new_refs or removed_refs or new_nets or removed_nets):
+        print("  No structural changes", file=sys.stderr)
+
+    return context
+
+
+# ---------------------------------------------------------------------------
 # Context file construction and output
 # ---------------------------------------------------------------------------
 
@@ -387,14 +647,20 @@ def build_context(
     nets: Dict[str, Net],
     sheet_map: Dict[str, str],
     schematic: Path,
+    component_props: Optional[Dict[str, Dict[str, str]]] = None,
+    sheet_infos: Optional[List[SheetInfo]] = None,
 ) -> dict:
     """Assemble the circuit-context.json structure from parsed data.
 
-    Annotation-only fields (block, function, role, critical_specs for
-    components; type, protocol, direction, description for nets) are
-    emitted as empty strings — they're populated during the annotation
-    pass in Phase 3.
+    Annotation fields for components are populated from kiutils ai_
+    properties when available; otherwise emitted as empty strings
+    (populated during the annotation pass in Phase 3).
     """
+    if component_props is None:
+        component_props = {}
+    if sheet_infos is None:
+        sheet_infos = []
+
     ref_list = sorted(components.keys())
     net_list = sorted(nets.keys())
     hash_input = json.dumps({"refs": ref_list, "nets": net_list}, sort_keys=True)
@@ -413,21 +679,22 @@ def build_context(
         "blocks": {},
         "components": {},
         "nets": {},
-        "sheet_interfaces": {},
+        "sheet_interfaces": build_sheet_interfaces(sheet_infos, nets),
     }
 
     for ref in sorted(components.keys()):
         comp = components[ref]
+        ai = component_props.get(ref, {})
         context["components"][ref] = {
             "part": comp.part,
             "value": comp.value,
             "footprint": comp.footprint,
             "lcsc": comp.lcsc,
             "sheet": comp.sheet,
-            "block": "",
-            "function": "",
-            "role": "",
-            "critical_specs": "",
+            "block": ai.get("block", ""),
+            "function": ai.get("function", ""),
+            "role": ai.get("role", ""),
+            "critical_specs": ai.get("critical_specs", ""),
             "pins": [
                 {
                     "number": p.number,
@@ -511,13 +778,26 @@ def main() -> None:
         )
 
         # --- Step 3: Read kiutils data ---
-        # TODO(Phase 1b): kiutils integration
+        print("Reading schematic properties via kiutils...", file=sys.stderr)
+        component_props, sheet_infos = read_kiutils_properties(schematic)
+        annotated = sum(1 for v in component_props.values() if v)
+        print(
+            f"  {len(sheet_infos)} child sheets, "
+            f"{annotated} components with ai_ properties",
+            file=sys.stderr,
+        )
 
-        # --- Step 4: Merge with previous context ---
-        # TODO(Phase 1b): merge_previous_context(args.previous)
+        # --- Step 4: Build context and merge ---
+        context = build_context(
+            components, nets, sheet_map, schematic,
+            component_props=component_props,
+            sheet_infos=sheet_infos,
+        )
+
+        if args.previous:
+            context = merge_previous_context(args.previous, context)
 
         # --- Step 5: Write circuit-context.json ---
-        context = build_context(components, nets, sheet_map, schematic)
         write_context_json(context, output_path)
         print(
             f"Wrote {output_path.name} "
