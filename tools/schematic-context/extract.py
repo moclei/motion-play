@@ -18,6 +18,8 @@ Environment:
 from __future__ import annotations
 
 import argparse
+import hashlib
+import json
 import os
 import shutil
 import subprocess
@@ -25,6 +27,7 @@ import sys
 import tempfile
 import xml.etree.ElementTree as ET
 from dataclasses import dataclass, field
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Dict, List, Optional, Tuple
 
@@ -210,12 +213,13 @@ def resolve_output_path(schematic: Path, explicit_output: Optional[str]) -> Path
 
 def parse_netlist_xml(
     xml_path: Path,
-) -> Tuple[Dict[str, Component], Dict[str, Net]]:
+) -> Tuple[Dict[str, Component], Dict[str, Net], Dict[str, str]]:
     """Parse a kicad-cli XML netlist into component and net data structures.
 
-    Returns (components, nets) where:
+    Returns (components, nets, sheet_map) where:
       - components: dict keyed by ref designator
       - nets: dict keyed by net name (excludes unconnected-* stubs)
+      - sheet_map: child sheet filename → display name
 
     Pin data on each component is populated from the <nets> section,
     which is the authoritative source for pin-level connectivity.
@@ -225,11 +229,12 @@ def parse_netlist_xml(
 
     components = _parse_components(root)
     nets = _parse_nets(root, components)
+    sheet_map = _parse_sheet_map(root)
 
     for comp in components.values():
         comp.pins.sort(key=lambda p: _pin_sort_key(p.number))
 
-    return components, nets
+    return components, nets, sheet_map
 
 
 def _parse_components(root: ET.Element) -> Dict[str, Component]:
@@ -311,6 +316,35 @@ def _parse_nets(
     return nets
 
 
+def _parse_sheet_map(root: ET.Element) -> Dict[str, str]:
+    """Build a child-sheet filename → display name mapping from <design>.
+
+    The root sheet (name="/") is excluded.
+    """
+    sheet_map = {}  # type: Dict[str, str]
+
+    design = root.find("design")
+    if design is None:
+        return sheet_map
+
+    for sheet_elem in design.findall("sheet"):
+        name = sheet_elem.get("name", "")
+        if name == "/":
+            continue
+
+        title_block = sheet_elem.find("title_block")
+        if title_block is None:
+            continue
+        source_elem = title_block.find("source")
+        if source_elem is None or not source_elem.text:
+            continue
+
+        display_name = name.strip("/")
+        sheet_map[source_elem.text] = display_name
+
+    return sheet_map
+
+
 def _text_or_empty(parent: ET.Element, tag: str) -> str:
     """Get text content of a child element, or empty string if absent."""
     elem = parent.find(tag)
@@ -342,6 +376,85 @@ def _pin_sort_key(pin_number: str) -> Tuple[int, str]:
         return (0, str(int(pin_number)).zfill(10))
     except (ValueError, TypeError):
         return (1, pin_number)
+
+
+# ---------------------------------------------------------------------------
+# Context file construction and output
+# ---------------------------------------------------------------------------
+
+def build_context(
+    components: Dict[str, Component],
+    nets: Dict[str, Net],
+    sheet_map: Dict[str, str],
+    schematic: Path,
+) -> dict:
+    """Assemble the circuit-context.json structure from parsed data.
+
+    Annotation-only fields (block, function, role, critical_specs for
+    components; type, protocol, direction, description for nets) are
+    emitted as empty strings — they're populated during the annotation
+    pass in Phase 3.
+    """
+    ref_list = sorted(components.keys())
+    net_list = sorted(nets.keys())
+    hash_input = json.dumps({"refs": ref_list, "nets": net_list}, sort_keys=True)
+    source_hash = hashlib.md5(hash_input.encode()).hexdigest()[:12]
+
+    context = {
+        "schema_version": "1.0",
+        "project": schematic.stem,
+        "source": {
+            "root": schematic.name,
+            "sheets": sheet_map,
+            "source_hash": source_hash,
+            "extracted_at": datetime.now(timezone.utc).isoformat(),
+        },
+        "description": "",
+        "blocks": {},
+        "components": {},
+        "nets": {},
+        "sheet_interfaces": {},
+    }
+
+    for ref in sorted(components.keys()):
+        comp = components[ref]
+        context["components"][ref] = {
+            "part": comp.part,
+            "value": comp.value,
+            "footprint": comp.footprint,
+            "lcsc": comp.lcsc,
+            "sheet": comp.sheet,
+            "block": "",
+            "function": "",
+            "role": "",
+            "critical_specs": "",
+            "pins": [
+                {
+                    "number": p.number,
+                    "name": p.name,
+                    "type": p.type,
+                    "net": p.net,
+                }
+                for p in comp.pins
+            ],
+        }
+
+    for net_name in sorted(nets.keys()):
+        context["nets"][net_name] = {
+            "type": "",
+            "protocol": "",
+            "direction": "",
+            "description": "",
+        }
+
+    return context
+
+
+def write_context_json(context: dict, output_path: Path) -> None:
+    """Write the context dictionary to a JSON file."""
+    with open(str(output_path), "w") as f:
+        json.dump(context, f, indent=2)
+        f.write("\n")
 
 
 def main() -> None:
@@ -388,12 +501,12 @@ def main() -> None:
 
         # --- Step 2: Parse XML into data structures ---
         print("Parsing XML netlist...", file=sys.stderr)
-        components, nets = parse_netlist_xml(xml_path)
+        components, nets, sheet_map = parse_netlist_xml(xml_path)
         total_pins = sum(len(c.pins) for c in components.values())
-        sheets = sorted({c.sheet for c in components.values() if c.sheet})
         print(
             f"  {len(components)} components, {len(nets)} nets, "
-            f"{total_pins} pin assignments, {len(sheets)} sheets",
+            f"{total_pins} pin assignments, "
+            f"{len(sheet_map) + 1} sheets",
             file=sys.stderr,
         )
 
@@ -404,14 +517,11 @@ def main() -> None:
         # TODO(Phase 1b): merge_previous_context(args.previous)
 
         # --- Step 5: Write circuit-context.json ---
-        # TODO(Phase 1a task 4): write_context_json(components, nets, output_path)
-
+        context = build_context(components, nets, sheet_map, schematic)
+        write_context_json(context, output_path)
         print(
-            f"Extraction complete. Output will be written to {output_path}",
-            file=sys.stderr,
-        )
-        print(
-            "(Context file JSON output not yet implemented.)",
+            f"Wrote {output_path.name} "
+            f"({output_path.stat().st_size:,} bytes)",
             file=sys.stderr,
         )
 
