@@ -4,10 +4,10 @@
 
 - [x] Create `tools/schematic-context/` directory and `requirements.txt` (kiutils, pyyaml)
 - [x] Write `extract.py` — kicad-cli invocation: call kicad-cli to export XML netlist from a given root `.kicad_sch`, handle path resolution and error cases
-- [ ] Write `extract.py` — XML netlist parsing: parse the exported XML into component, pin, and net data structures (ref, value, footprint, LCSC part, pin names, pin types, net assignments, sheet paths)
-- [ ] Write `extract.py` — basic context file output: produce a `circuit-context.json` with components, pins, and nets from the XML data alone (no kiutils yet, no annotations, no blocks)
-- [ ] Test on main PCB: run extraction, verify all components and nets from all sheets appear correctly in the output
-- [ ] Commit, update TASKS.md, generate handoff prompt for next session. Note any unexpected issues or implementation decisions.
+- [x] Write `extract.py` — XML netlist parsing: parse the exported XML into component, pin, and net data structures (ref, value, footprint, LCSC part, pin names, pin types, net assignments, sheet paths)
+- [x] Write `extract.py` — basic context file output: produce a `circuit-context.json` with components, pins, and nets from the XML data alone (no kiutils yet, no annotations, no blocks)
+- [x] Test on main PCB: run extraction, verify all components and nets from all sheets appear correctly in the output
+- [x] Commit, update TASKS.md, generate handoff prompt for next session. Note any unexpected issues or implementation decisions.
 
 ## Phase 1b: Extraction Pipeline — kiutils Integration & Merge
 

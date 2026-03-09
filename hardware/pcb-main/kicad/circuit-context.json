@@ -1,0 +1,1269 @@
+{
+  "schema_version": "1.0",
+  "project": "motion-play-main",
+  "source": {
+    "root": "motion-play-main.kicad_sch",
+    "sheets": {
+      "led_controller.kicad_sch": "LED Controller",
+      "tca9548A_subsystem.kicad_sch": "TCA9548A_Subsystem"
+    },
+    "source_hash": "5478765feff5",
+    "extracted_at": "2026-03-09T23:21:19.001465+00:00"
+  },
+  "description": "",
+  "blocks": {},
+  "components": {
+    "C1": {
+      "part": "C",
+      "value": "1\u00b5F",
+      "footprint": "Capacitor_SMD:C_0603_1608Metric",
+      "lcsc": "C15849",
+      "sheet": "motion-play-main.kicad_sch",
+      "block": "",
+      "function": "",
+      "role": "",
+      "critical_specs": "",
+      "pins": [
+        {
+          "number": "1",
+          "name": "",
+          "type": "passive",
+          "net": "GND"
+        },
+        {
+          "number": "2",
+          "name": "",
+          "type": "passive",
+          "net": "+5V"
+        }
+      ]
+    },
+    "C10": {
+      "part": "C",
+      "value": "10uF",
+      "footprint": "Capacitor_SMD:C_0603_1608Metric",
+      "lcsc": "C19702",
+      "sheet": "tca9548A_subsystem.kicad_sch",
+      "block": "",
+      "function": "",
+      "role": "",
+      "critical_specs": "",
+      "pins": [
+        {
+          "number": "1",
+          "name": "",
+          "type": "passive",
+          "net": "GND"
+        },
+        {
+          "number": "2",
+          "name": "",
+          "type": "passive",
+          "net": "+3.3V"
+        }
+      ]
+    },
+    "C2": {
+      "part": "C",
+      "value": "2.2\u00b5F",
+      "footprint": "Capacitor_SMD:C_0603_1608Metric",
+      "lcsc": "C23630",
+      "sheet": "motion-play-main.kicad_sch",
+      "block": "",
+      "function": "",
+      "role": "",
+      "critical_specs": "",
+      "pins": [
+        {
+          "number": "1",
+          "name": "",
+          "type": "passive",
+          "net": "GND"
+        },
+        {
+          "number": "2",
+          "name": "",
+          "type": "passive",
+          "net": "+3.3V"
+        }
+      ]
+    },
+    "C7": {
+      "part": "C",
+      "value": "100nF",
+      "footprint": "Capacitor_SMD:C_0603_1608Metric",
+      "lcsc": "C14663",
+      "sheet": "led_controller.kicad_sch",
+      "block": "",
+      "function": "",
+      "role": "",
+      "critical_specs": "",
+      "pins": [
+        {
+          "number": "1",
+          "name": "",
+          "type": "passive",
+          "net": "GND"
+        },
+        {
+          "number": "2",
+          "name": "",
+          "type": "passive",
+          "net": "Net-(C7-Pad2)"
+        }
+      ]
+    },
+    "C8": {
+      "part": "C",
+      "value": "10uF",
+      "footprint": "Capacitor_SMD:C_0603_1608Metric",
+      "lcsc": "C19702",
+      "sheet": "led_controller.kicad_sch",
+      "block": "",
+      "function": "",
+      "role": "",
+      "critical_specs": "",
+      "pins": [
+        {
+          "number": "1",
+          "name": "",
+          "type": "passive",
+          "net": "GND"
+        },
+        {
+          "number": "2",
+          "name": "",
+          "type": "passive",
+          "net": "/LED Controller/+5V_TO_LEDS"
+        }
+      ]
+    },
+    "C9": {
+      "part": "C",
+      "value": "100nF",
+      "footprint": "Capacitor_SMD:C_0603_1608Metric",
+      "lcsc": "C14663",
+      "sheet": "tca9548A_subsystem.kicad_sch",
+      "block": "",
+      "function": "",
+      "role": "",
+      "critical_specs": "",
+      "pins": [
+        {
+          "number": "1",
+          "name": "",
+          "type": "passive",
+          "net": "GND"
+        },
+        {
+          "number": "2",
+          "name": "",
+          "type": "passive",
+          "net": "+3.3V"
+        }
+      ]
+    },
+    "D1": {
+      "part": "D_Schottky",
+      "value": "D_Schottky",
+      "footprint": "Diode_SMD:D_SMC",
+      "lcsc": "C5204950",
+      "sheet": "motion-play-main.kicad_sch",
+      "block": "",
+      "function": "",
+      "role": "",
+      "critical_specs": "",
+      "pins": [
+        {
+          "number": "1",
+          "name": "K",
+          "type": "passive",
+          "net": "+5V"
+        },
+        {
+          "number": "2",
+          "name": "A",
+          "type": "passive",
+          "net": "Net-(D1-A)"
+        }
+      ]
+    },
+    "F1": {
+      "part": "Fuse",
+      "value": "3A",
+      "footprint": "Fuse:Fuse_1206_3216Metric",
+      "lcsc": "C354897",
+      "sheet": "led_controller.kicad_sch",
+      "block": "",
+      "function": "",
+      "role": "",
+      "critical_specs": "",
+      "pins": [
+        {
+          "number": "1",
+          "name": "",
+          "type": "passive",
+          "net": "+5V"
+        },
+        {
+          "number": "2",
+          "name": "",
+          "type": "passive",
+          "net": "Net-(C7-Pad2)"
+        }
+      ]
+    },
+    "IC1": {
+      "part": "SN74AHCT125PWR",
+      "value": "SN74AHCT125PWR",
+      "footprint": "motion-play-footprints:SOP65P640X120-14N",
+      "lcsc": "C36365",
+      "sheet": "led_controller.kicad_sch",
+      "block": "",
+      "function": "",
+      "role": "",
+      "critical_specs": "",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1~{OE}",
+          "type": "passive",
+          "net": "GND"
+        },
+        {
+          "number": "2",
+          "name": "1A",
+          "type": "passive",
+          "net": "/LED Controller/DATA_IN"
+        },
+        {
+          "number": "3",
+          "name": "1Y",
+          "type": "passive",
+          "net": "/LED Controller/DATA_TO_LEDS"
+        },
+        {
+          "number": "7",
+          "name": "GND",
+          "type": "passive",
+          "net": "GND"
+        },
+        {
+          "number": "14",
+          "name": "VCC",
+          "type": "passive",
+          "net": "/LED Controller/+5V_TO_LEDS"
+        }
+      ]
+    },
+    "J2": {
+      "part": "USBC_Power_Module",
+      "value": "DWEII Power Module",
+      "footprint": "motion-play-footprints:USBC_Power_Module",
+      "lcsc": "",
+      "sheet": "motion-play-main.kicad_sch",
+      "block": "",
+      "function": "",
+      "role": "",
+      "critical_specs": "",
+      "pins": [
+        {
+          "number": "1",
+          "name": "GND",
+          "type": "passive",
+          "net": "GND"
+        },
+        {
+          "number": "2",
+          "name": "5V",
+          "type": "power_out",
+          "net": "Net-(D1-A)"
+        }
+      ]
+    },
+    "J3": {
+      "part": "Conn_01x03",
+      "value": "LED_Strip",
+      "footprint": "Connector_JST:JST_PH_S3B-PH-SM4-TB_1x03-1MP_P2.00mm_Horizontal",
+      "lcsc": "C265101",
+      "sheet": "motion-play-main.kicad_sch",
+      "block": "",
+      "function": "",
+      "role": "",
+      "critical_specs": "",
+      "pins": [
+        {
+          "number": "1",
+          "name": "Pin_1",
+          "type": "passive",
+          "net": "/LED Controller/+5V_TO_LEDS"
+        },
+        {
+          "number": "2",
+          "name": "Pin_2",
+          "type": "passive",
+          "net": "/LED Controller/DATA_TO_LEDS"
+        },
+        {
+          "number": "3",
+          "name": "Pin_3",
+          "type": "passive",
+          "net": "GND"
+        }
+      ]
+    },
+    "J4": {
+      "part": "Conn_01x05",
+      "value": "Conn_01x05",
+      "footprint": "Connector_JST:JST_SH_SM05B-SRSS-TB_1x05-1MP_P1.00mm_Horizontal",
+      "lcsc": "C160403",
+      "sheet": "motion-play-main.kicad_sch",
+      "block": "",
+      "function": "",
+      "role": "",
+      "critical_specs": "",
+      "pins": [
+        {
+          "number": "1",
+          "name": "Pin_1",
+          "type": "passive",
+          "net": "+3.3V"
+        },
+        {
+          "number": "2",
+          "name": "Pin_2",
+          "type": "passive",
+          "net": "GND"
+        },
+        {
+          "number": "3",
+          "name": "Pin_3",
+          "type": "passive",
+          "net": "/TCA9548A_Subsystem/CH0_SDA"
+        },
+        {
+          "number": "4",
+          "name": "Pin_4",
+          "type": "passive",
+          "net": "/TCA9548A_Subsystem/CH0_SCL"
+        },
+        {
+          "number": "5",
+          "name": "Pin_5",
+          "type": "passive",
+          "net": "/INT1"
+        }
+      ]
+    },
+    "J5": {
+      "part": "Conn_01x05",
+      "value": "Conn_01x05",
+      "footprint": "Connector_JST:JST_SH_SM05B-SRSS-TB_1x05-1MP_P1.00mm_Horizontal",
+      "lcsc": "C160403",
+      "sheet": "motion-play-main.kicad_sch",
+      "block": "",
+      "function": "",
+      "role": "",
+      "critical_specs": "",
+      "pins": [
+        {
+          "number": "1",
+          "name": "Pin_1",
+          "type": "passive",
+          "net": "+3.3V"
+        },
+        {
+          "number": "2",
+          "name": "Pin_2",
+          "type": "passive",
+          "net": "GND"
+        },
+        {
+          "number": "3",
+          "name": "Pin_3",
+          "type": "passive",
+          "net": "/TCA9548A_Subsystem/CH1_SDA"
+        },
+        {
+          "number": "4",
+          "name": "Pin_4",
+          "type": "passive",
+          "net": "/TCA9548A_Subsystem/CH1_SCL"
+        },
+        {
+          "number": "5",
+          "name": "Pin_5",
+          "type": "passive",
+          "net": "/INT2"
+        }
+      ]
+    },
+    "J6": {
+      "part": "Conn_01x05",
+      "value": "Conn_01x05",
+      "footprint": "Connector_JST:JST_SH_SM05B-SRSS-TB_1x05-1MP_P1.00mm_Horizontal",
+      "lcsc": "C160403",
+      "sheet": "motion-play-main.kicad_sch",
+      "block": "",
+      "function": "",
+      "role": "",
+      "critical_specs": "",
+      "pins": [
+        {
+          "number": "1",
+          "name": "Pin_1",
+          "type": "passive",
+          "net": "+3.3V"
+        },
+        {
+          "number": "2",
+          "name": "Pin_2",
+          "type": "passive",
+          "net": "GND"
+        },
+        {
+          "number": "3",
+          "name": "Pin_3",
+          "type": "passive",
+          "net": "/TCA9548A_Subsystem/CH2_SDA"
+        },
+        {
+          "number": "4",
+          "name": "Pin_4",
+          "type": "passive",
+          "net": "/TCA9548A_Subsystem/CH2_SCL"
+        },
+        {
+          "number": "5",
+          "name": "Pin_5",
+          "type": "passive",
+          "net": "/INT3"
+        }
+      ]
+    },
+    "R27": {
+      "part": "R",
+      "value": "0.1R",
+      "footprint": "Resistor_SMD:R_2512_6332Metric",
+      "lcsc": "C500724",
+      "sheet": "led_controller.kicad_sch",
+      "block": "",
+      "function": "",
+      "role": "",
+      "critical_specs": "",
+      "pins": [
+        {
+          "number": "1",
+          "name": "",
+          "type": "passive",
+          "net": "Net-(C7-Pad2)"
+        },
+        {
+          "number": "2",
+          "name": "",
+          "type": "passive",
+          "net": "/LED Controller/+5V_TO_LEDS"
+        }
+      ]
+    },
+    "R28": {
+      "part": "R",
+      "value": "2.2k\u03a9",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "lcsc": "C114662",
+      "sheet": "tca9548A_subsystem.kicad_sch",
+      "block": "",
+      "function": "",
+      "role": "",
+      "critical_specs": "",
+      "pins": [
+        {
+          "number": "1",
+          "name": "",
+          "type": "passive",
+          "net": "/I2C_SDA"
+        },
+        {
+          "number": "2",
+          "name": "",
+          "type": "passive",
+          "net": "+3.3V"
+        }
+      ]
+    },
+    "R29": {
+      "part": "R",
+      "value": "2.2k\u03a9",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "lcsc": "C114662",
+      "sheet": "tca9548A_subsystem.kicad_sch",
+      "block": "",
+      "function": "",
+      "role": "",
+      "critical_specs": "",
+      "pins": [
+        {
+          "number": "1",
+          "name": "",
+          "type": "passive",
+          "net": "/I2C_SCL"
+        },
+        {
+          "number": "2",
+          "name": "",
+          "type": "passive",
+          "net": "+3.3V"
+        }
+      ]
+    },
+    "R6": {
+      "part": "R",
+      "value": "10k\u03a9",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "lcsc": "C25804",
+      "sheet": "tca9548A_subsystem.kicad_sch",
+      "block": "",
+      "function": "",
+      "role": "",
+      "critical_specs": "",
+      "pins": [
+        {
+          "number": "1",
+          "name": "",
+          "type": "passive",
+          "net": "/TCA9548A_Subsystem/TCA_RESET"
+        },
+        {
+          "number": "2",
+          "name": "",
+          "type": "passive",
+          "net": "+3.3V"
+        }
+      ]
+    },
+    "TPIO1": {
+      "part": "TestPoint",
+      "value": "TestPoint",
+      "footprint": "TestPoint:TestPoint_Pad_D2.0mm",
+      "lcsc": "",
+      "sheet": "motion-play-main.kicad_sch",
+      "block": "",
+      "function": "",
+      "role": "",
+      "critical_specs": "",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "Net-(U2-1)"
+        }
+      ]
+    },
+    "TPIO10": {
+      "part": "TestPoint",
+      "value": "TestPoint",
+      "footprint": "TestPoint:TestPoint_Pad_D2.0mm",
+      "lcsc": "",
+      "sheet": "motion-play-main.kicad_sch",
+      "block": "",
+      "function": "",
+      "role": "",
+      "critical_specs": "",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "/TCA9548A_Subsystem/TCA_RESET"
+        }
+      ]
+    },
+    "TPIO11": {
+      "part": "TestPoint",
+      "value": "TestPoint",
+      "footprint": "TestPoint:TestPoint_Pad_D2.0mm",
+      "lcsc": "",
+      "sheet": "motion-play-main.kicad_sch",
+      "block": "",
+      "function": "",
+      "role": "",
+      "critical_specs": "",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "/INT3"
+        }
+      ]
+    },
+    "TPIO12": {
+      "part": "TestPoint",
+      "value": "TestPoint",
+      "footprint": "TestPoint:TestPoint_Pad_D2.0mm",
+      "lcsc": "",
+      "sheet": "motion-play-main.kicad_sch",
+      "block": "",
+      "function": "",
+      "role": "",
+      "critical_specs": "",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "/INT2"
+        }
+      ]
+    },
+    "TPIO13": {
+      "part": "TestPoint",
+      "value": "TestPoint",
+      "footprint": "TestPoint:TestPoint_Pad_D2.0mm",
+      "lcsc": "",
+      "sheet": "motion-play-main.kicad_sch",
+      "block": "",
+      "function": "",
+      "role": "",
+      "critical_specs": "",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "/INT1"
+        }
+      ]
+    },
+    "TPIO16": {
+      "part": "TestPoint",
+      "value": "TestPoint",
+      "footprint": "TestPoint:TestPoint_Pad_D2.0mm",
+      "lcsc": "",
+      "sheet": "motion-play-main.kicad_sch",
+      "block": "",
+      "function": "",
+      "role": "",
+      "critical_specs": "",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "/LED Controller/DATA_IN"
+        }
+      ]
+    },
+    "TPIO17": {
+      "part": "TestPoint",
+      "value": "TestPoint",
+      "footprint": "TestPoint:TestPoint_Pad_D2.0mm",
+      "lcsc": "",
+      "sheet": "motion-play-main.kicad_sch",
+      "block": "",
+      "function": "",
+      "role": "",
+      "critical_specs": "",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "Net-(U2-17)"
+        }
+      ]
+    },
+    "TPIO18": {
+      "part": "TestPoint",
+      "value": "TestPoint",
+      "footprint": "TestPoint:TestPoint_Pad_D2.0mm",
+      "lcsc": "",
+      "sheet": "motion-play-main.kicad_sch",
+      "block": "",
+      "function": "",
+      "role": "",
+      "critical_specs": "",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "Net-(U2-18)"
+        }
+      ]
+    },
+    "TPIO2": {
+      "part": "TestPoint",
+      "value": "TestPoint",
+      "footprint": "TestPoint:TestPoint_Pad_D2.0mm",
+      "lcsc": "",
+      "sheet": "motion-play-main.kicad_sch",
+      "block": "",
+      "function": "",
+      "role": "",
+      "critical_specs": "",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "Net-(U2-2)"
+        }
+      ]
+    },
+    "TPIO21": {
+      "part": "TestPoint",
+      "value": "TestPoint",
+      "footprint": "TestPoint:TestPoint_Pad_D2.0mm",
+      "lcsc": "",
+      "sheet": "motion-play-main.kicad_sch",
+      "block": "",
+      "function": "",
+      "role": "",
+      "critical_specs": "",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "Net-(U2-21)"
+        }
+      ]
+    },
+    "TPIO3": {
+      "part": "TestPoint",
+      "value": "TestPoint",
+      "footprint": "TestPoint:TestPoint_Pad_D2.0mm",
+      "lcsc": "",
+      "sheet": "motion-play-main.kicad_sch",
+      "block": "",
+      "function": "",
+      "role": "",
+      "critical_specs": "",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "Net-(U2-3)"
+        }
+      ]
+    },
+    "TPIO43": {
+      "part": "TestPoint",
+      "value": "TestPoint",
+      "footprint": "TestPoint:TestPoint_Pad_D2.0mm",
+      "lcsc": "",
+      "sheet": "motion-play-main.kicad_sch",
+      "block": "",
+      "function": "",
+      "role": "",
+      "critical_specs": "",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "/I2C_SDA"
+        }
+      ]
+    },
+    "TPIO44": {
+      "part": "TestPoint",
+      "value": "TestPoint",
+      "footprint": "TestPoint:TestPoint_Pad_D2.0mm",
+      "lcsc": "",
+      "sheet": "motion-play-main.kicad_sch",
+      "block": "",
+      "function": "",
+      "role": "",
+      "critical_specs": "",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "/I2C_SCL"
+        }
+      ]
+    },
+    "TP_3V1": {
+      "part": "TestPoint",
+      "value": "TestPoint",
+      "footprint": "TestPoint:TestPoint_Pad_D2.0mm",
+      "lcsc": "",
+      "sheet": "motion-play-main.kicad_sch",
+      "block": "",
+      "function": "",
+      "role": "",
+      "critical_specs": "",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "+3.3V"
+        }
+      ]
+    },
+    "TP_5V1": {
+      "part": "TestPoint",
+      "value": "TestPoint",
+      "footprint": "TestPoint:TestPoint_Pad_D2.0mm",
+      "lcsc": "",
+      "sheet": "motion-play-main.kicad_sch",
+      "block": "",
+      "function": "",
+      "role": "",
+      "critical_specs": "",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "+5V"
+        }
+      ]
+    },
+    "TP_GND1": {
+      "part": "TestPoint",
+      "value": "TestPoint",
+      "footprint": "TestPoint:TestPoint_Pad_D2.0mm",
+      "lcsc": "",
+      "sheet": "motion-play-main.kicad_sch",
+      "block": "",
+      "function": "",
+      "role": "",
+      "critical_specs": "",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "GND"
+        }
+      ]
+    },
+    "U1": {
+      "part": "AP2112K-3.3TRG1",
+      "value": "AP2112K-3.3TRG1",
+      "footprint": "motion-play-footprints:SOT95P285X140-5N",
+      "lcsc": "C51118",
+      "sheet": "motion-play-main.kicad_sch",
+      "block": "",
+      "function": "",
+      "role": "",
+      "critical_specs": "",
+      "pins": [
+        {
+          "number": "1",
+          "name": "VIN",
+          "type": "power_in",
+          "net": "+5V"
+        },
+        {
+          "number": "2",
+          "name": "GND",
+          "type": "power_in",
+          "net": "GND"
+        },
+        {
+          "number": "3",
+          "name": "EN",
+          "type": "input",
+          "net": "+5V"
+        },
+        {
+          "number": "5",
+          "name": "VOUT",
+          "type": "power_in",
+          "net": "+3.3V"
+        }
+      ]
+    },
+    "U2": {
+      "part": "T-Display-S3",
+      "value": "T-Display-S3",
+      "footprint": "motion-play-footprints:T-Display-S3",
+      "lcsc": "",
+      "sheet": "motion-play-main.kicad_sch",
+      "block": "",
+      "function": "",
+      "role": "",
+      "critical_specs": "",
+      "pins": [
+        {
+          "number": "2",
+          "name": "1",
+          "type": "bidirectional",
+          "net": "Net-(U2-1)"
+        },
+        {
+          "number": "3",
+          "name": "2",
+          "type": "bidirectional",
+          "net": "Net-(U2-2)"
+        },
+        {
+          "number": "4",
+          "name": "3",
+          "type": "bidirectional",
+          "net": "Net-(U2-3)"
+        },
+        {
+          "number": "5",
+          "name": "10",
+          "type": "bidirectional",
+          "net": "/TCA9548A_Subsystem/TCA_RESET"
+        },
+        {
+          "number": "6",
+          "name": "11",
+          "type": "bidirectional",
+          "net": "/INT3"
+        },
+        {
+          "number": "7",
+          "name": "12",
+          "type": "bidirectional",
+          "net": "/INT2"
+        },
+        {
+          "number": "8",
+          "name": "13",
+          "type": "bidirectional",
+          "net": "/INT1"
+        },
+        {
+          "number": "11",
+          "name": "GND",
+          "type": "power_in",
+          "net": "GND"
+        },
+        {
+          "number": "12",
+          "name": "5V",
+          "type": "power_in",
+          "net": "+5V"
+        },
+        {
+          "number": "13",
+          "name": "GND",
+          "type": "power_in",
+          "net": "GND"
+        },
+        {
+          "number": "14",
+          "name": "GND",
+          "type": "power_in",
+          "net": "GND"
+        },
+        {
+          "number": "15",
+          "name": "43",
+          "type": "bidirectional",
+          "net": "/I2C_SDA"
+        },
+        {
+          "number": "16",
+          "name": "44",
+          "type": "bidirectional",
+          "net": "/I2C_SCL"
+        },
+        {
+          "number": "17",
+          "name": "18",
+          "type": "bidirectional",
+          "net": "Net-(U2-18)"
+        },
+        {
+          "number": "18",
+          "name": "17",
+          "type": "bidirectional",
+          "net": "Net-(U2-17)"
+        },
+        {
+          "number": "19",
+          "name": "21",
+          "type": "bidirectional",
+          "net": "Net-(U2-21)"
+        },
+        {
+          "number": "20",
+          "name": "16",
+          "type": "bidirectional",
+          "net": "/LED Controller/DATA_IN"
+        },
+        {
+          "number": "22",
+          "name": "GND",
+          "type": "power_in",
+          "net": "GND"
+        },
+        {
+          "number": "23",
+          "name": "GND",
+          "type": "power_in",
+          "net": "GND"
+        }
+      ]
+    },
+    "U4": {
+      "part": "TCA9548APWR",
+      "value": "TCA9548APWR",
+      "footprint": "motion-play-footprints:SOP65P640X120-24N",
+      "lcsc": "C130026",
+      "sheet": "tca9548A_subsystem.kicad_sch",
+      "block": "",
+      "function": "",
+      "role": "",
+      "critical_specs": "",
+      "pins": [
+        {
+          "number": "1",
+          "name": "A0",
+          "type": "input",
+          "net": "GND"
+        },
+        {
+          "number": "2",
+          "name": "A1",
+          "type": "input",
+          "net": "GND"
+        },
+        {
+          "number": "3",
+          "name": "~{RESET}",
+          "type": "input",
+          "net": "/TCA9548A_Subsystem/TCA_RESET"
+        },
+        {
+          "number": "4",
+          "name": "SD0",
+          "type": "bidirectional",
+          "net": "/TCA9548A_Subsystem/CH0_SDA"
+        },
+        {
+          "number": "5",
+          "name": "SC0",
+          "type": "bidirectional",
+          "net": "/TCA9548A_Subsystem/CH0_SCL"
+        },
+        {
+          "number": "6",
+          "name": "SD1",
+          "type": "bidirectional",
+          "net": "/TCA9548A_Subsystem/CH1_SDA"
+        },
+        {
+          "number": "7",
+          "name": "SC1",
+          "type": "bidirectional",
+          "net": "/TCA9548A_Subsystem/CH1_SCL"
+        },
+        {
+          "number": "8",
+          "name": "SD2",
+          "type": "bidirectional",
+          "net": "/TCA9548A_Subsystem/CH2_SDA"
+        },
+        {
+          "number": "9",
+          "name": "SC2",
+          "type": "bidirectional",
+          "net": "/TCA9548A_Subsystem/CH2_SCL"
+        },
+        {
+          "number": "12",
+          "name": "GND",
+          "type": "power_in",
+          "net": "GND"
+        },
+        {
+          "number": "21",
+          "name": "A2",
+          "type": "input",
+          "net": "GND"
+        },
+        {
+          "number": "22",
+          "name": "SCL",
+          "type": "input",
+          "net": "/I2C_SCL"
+        },
+        {
+          "number": "23",
+          "name": "SDA",
+          "type": "bidirectional",
+          "net": "/I2C_SDA"
+        },
+        {
+          "number": "24",
+          "name": "VCC",
+          "type": "power_in",
+          "net": "+3.3V"
+        }
+      ]
+    }
+  },
+  "nets": {
+    "+3.3V": {
+      "type": "",
+      "protocol": "",
+      "direction": "",
+      "description": ""
+    },
+    "+5V": {
+      "type": "",
+      "protocol": "",
+      "direction": "",
+      "description": ""
+    },
+    "/I2C_SCL": {
+      "type": "",
+      "protocol": "",
+      "direction": "",
+      "description": ""
+    },
+    "/I2C_SDA": {
+      "type": "",
+      "protocol": "",
+      "direction": "",
+      "description": ""
+    },
+    "/INT1": {
+      "type": "",
+      "protocol": "",
+      "direction": "",
+      "description": ""
+    },
+    "/INT2": {
+      "type": "",
+      "protocol": "",
+      "direction": "",
+      "description": ""
+    },
+    "/INT3": {
+      "type": "",
+      "protocol": "",
+      "direction": "",
+      "description": ""
+    },
+    "/LED Controller/+5V_TO_LEDS": {
+      "type": "",
+      "protocol": "",
+      "direction": "",
+      "description": ""
+    },
+    "/LED Controller/DATA_IN": {
+      "type": "",
+      "protocol": "",
+      "direction": "",
+      "description": ""
+    },
+    "/LED Controller/DATA_TO_LEDS": {
+      "type": "",
+      "protocol": "",
+      "direction": "",
+      "description": ""
+    },
+    "/TCA9548A_Subsystem/CH0_SCL": {
+      "type": "",
+      "protocol": "",
+      "direction": "",
+      "description": ""
+    },
+    "/TCA9548A_Subsystem/CH0_SDA": {
+      "type": "",
+      "protocol": "",
+      "direction": "",
+      "description": ""
+    },
+    "/TCA9548A_Subsystem/CH1_SCL": {
+      "type": "",
+      "protocol": "",
+      "direction": "",
+      "description": ""
+    },
+    "/TCA9548A_Subsystem/CH1_SDA": {
+      "type": "",
+      "protocol": "",
+      "direction": "",
+      "description": ""
+    },
+    "/TCA9548A_Subsystem/CH2_SCL": {
+      "type": "",
+      "protocol": "",
+      "direction": "",
+      "description": ""
+    },
+    "/TCA9548A_Subsystem/CH2_SDA": {
+      "type": "",
+      "protocol": "",
+      "direction": "",
+      "description": ""
+    },
+    "/TCA9548A_Subsystem/TCA_RESET": {
+      "type": "",
+      "protocol": "",
+      "direction": "",
+      "description": ""
+    },
+    "GND": {
+      "type": "",
+      "protocol": "",
+      "direction": "",
+      "description": ""
+    },
+    "Net-(C7-Pad2)": {
+      "type": "",
+      "protocol": "",
+      "direction": "",
+      "description": ""
+    },
+    "Net-(D1-A)": {
+      "type": "",
+      "protocol": "",
+      "direction": "",
+      "description": ""
+    },
+    "Net-(U2-1)": {
+      "type": "",
+      "protocol": "",
+      "direction": "",
+      "description": ""
+    },
+    "Net-(U2-17)": {
+      "type": "",
+      "protocol": "",
+      "direction": "",
+      "description": ""
+    },
+    "Net-(U2-18)": {
+      "type": "",
+      "protocol": "",
+      "direction": "",
+      "description": ""
+    },
+    "Net-(U2-2)": {
+      "type": "",
+      "protocol": "",
+      "direction": "",
+      "description": ""
+    },
+    "Net-(U2-21)": {
+      "type": "",
+      "protocol": "",
+      "direction": "",
+      "description": ""
+    },
+    "Net-(U2-3)": {
+      "type": "",
+      "protocol": "",
+      "direction": "",
+      "description": ""
+    }
+  },
+  "sheet_interfaces": {}
+}
