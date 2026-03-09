@@ -3,6 +3,7 @@
 Standard minimums and tolerances for FDM-printed parts in this project. Referenced by build123d scripts when setting wall thicknesses, clearances, boss sizes, and other print-sensitive dimensions.
 
 **Printer:** Prusa Core One (0.4mm nozzle)
+**Build plate:** 250 × 220mm
 **Slicer:** PrusaSlicer
 **Materials:** PLA (prototyping), PETG (final)
 
