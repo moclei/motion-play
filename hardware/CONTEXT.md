@@ -71,6 +71,8 @@ Polyimide flex PCB that bends to angle sensors outward:
 | IC1, IC2 | VCNL4040M3OE | Proximity sensors |
 | C4, C8 | 2.2µF | LED anode capacitors |
 | C6, C7 | 0.1µF | VDD bypass capacitors |
+| R10, R11 | 22Ω | VDD series filter resistors (one per sensor) |
+| FPC1 | FPC_Tail_10P | FPC tail connector (mates with ZIF on rigid base) |
 
 Connected to rigid base via ZIF FPC connector (C132510, 1.0mm pitch, top contact, slide lock, 0.3mm FPC):
 
