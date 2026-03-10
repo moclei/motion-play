@@ -26,17 +26,16 @@
 
 ## Phase 3a: Annotation Pass — Setup & First Blocks
 
-- [ ] Define 5-10 test questions about the main PCB schematic that an AI should be able to answer from the context file alone (include questions that have previously gotten poor answers)
-- [ ] Run initial extraction on main PCB to produce baseline `circuit-context.json`
-- [ ] Interactive annotation session: annotate power subsystem components (DWEII module, voltage regulation, decoupling caps) — `ai_function`, `ai_block`, `ai_critical_specs`
-- [ ] Interactive annotation session: annotate MCU block (T-Display-S3, GPIO assignments) and I2C mux block (TCA9548A, pull-ups)
-- [ ] Re-extract to capture annotations written so far
-- [ ] Commit, update TASKS.md, generate handoff prompt for next session. Note any unexpected issues or implementation decisions.
+- [x] Define 10 test questions about the main PCB schematic — saved in `docs/initiatives/schematic-context/TEST_QUESTIONS.md`
+- [x] Run initial extraction on main PCB to produce baseline `circuit-context.json` (37 components, 26 nets, all empty)
+- [x] Interactive annotation session: annotate power subsystem (J2, D1, U1, C1, C2, TP_5V1, TP_3V1, TP_GND1) — 8 components
+- [x] Interactive annotation session: annotate MCU block (U2 + 14 test points), I2C mux block (U4, R6, R28, R29, C9, C10), and sensor connectors (J4, J5, J6) — 23 components
+- [x] Re-extract to capture annotations — 31/37 components annotated (84%), remaining 6 are LED controller block (Phase 3b)
+- [x] Commit, update TASKS.md, generate handoff prompt for next session. Note any unexpected issues or implementation decisions.
 
 ## Phase 3b: Annotation Pass — Remaining Blocks & Nets
 
-- [ ] Interactive annotation session: annotate LED controller block (SN74AHCT125 level shifter, fuse, connectors)
-- [ ] Interactive annotation session: annotate sensor connector block (JST-SH connectors, test points, remaining passives)
+- [ ] Interactive annotation session: annotate LED controller block (IC1 level shifter, F1 fuse, R27 sense resistor, C7, C8 caps, J3 LED strip connector) — 6 remaining components
 - [ ] Add net annotations to `circuit-context.json` — type, protocol, direction, description for all non-trivial nets
 - [ ] Define functional blocks in `circuit-context.json` with descriptions, component membership, and design intent notes
 - [ ] Commit, update TASKS.md, generate handoff prompt for next session. Note any unexpected issues or implementation decisions.

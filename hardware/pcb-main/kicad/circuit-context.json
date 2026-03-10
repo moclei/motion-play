@@ -8,7 +8,7 @@
       "tca9548A_subsystem.kicad_sch": "TCA9548A_Subsystem"
     },
     "source_hash": "5478765feff5",
-    "extracted_at": "2026-03-09T23:36:56.037722+00:00"
+    "extracted_at": "2026-03-09T23:52:32.317261+00:00"
   },
   "description": "",
   "blocks": {},
@@ -19,10 +19,10 @@
       "footprint": "Capacitor_SMD:C_0603_1608Metric",
       "lcsc": "C15849",
       "sheet": "motion-play-main.kicad_sch",
-      "block": "",
-      "function": "",
-      "role": "",
-      "critical_specs": "",
+      "block": "power",
+      "function": "Input bypass capacitor for U1 voltage regulator",
+      "role": "decoupling",
+      "critical_specs": "1uF, 0603",
       "pins": [
         {
           "number": "1",
@@ -44,10 +44,10 @@
       "footprint": "Capacitor_SMD:C_0603_1608Metric",
       "lcsc": "C19702",
       "sheet": "tca9548A_subsystem.kicad_sch",
-      "block": "",
-      "function": "",
-      "role": "",
-      "critical_specs": "",
+      "block": "i2c_mux",
+      "function": "Bulk decoupling capacitor for TCA9548A",
+      "role": "decoupling",
+      "critical_specs": "10uF, 0603",
       "pins": [
         {
           "number": "1",
@@ -69,10 +69,10 @@
       "footprint": "Capacitor_SMD:C_0603_1608Metric",
       "lcsc": "C23630",
       "sheet": "motion-play-main.kicad_sch",
-      "block": "",
-      "function": "",
-      "role": "",
-      "critical_specs": "",
+      "block": "power",
+      "function": "Output stabilization capacitor for U1 voltage regulator",
+      "role": "decoupling",
+      "critical_specs": "2.2uF, 0603, required for LDO stability",
       "pins": [
         {
           "number": "1",
@@ -144,10 +144,10 @@
       "footprint": "Capacitor_SMD:C_0603_1608Metric",
       "lcsc": "C14663",
       "sheet": "tca9548A_subsystem.kicad_sch",
-      "block": "",
-      "function": "",
-      "role": "",
-      "critical_specs": "",
+      "block": "i2c_mux",
+      "function": "High-frequency decoupling capacitor for TCA9548A",
+      "role": "decoupling",
+      "critical_specs": "100nF, 0603, placed close to VCC pin",
       "pins": [
         {
           "number": "1",
@@ -169,10 +169,10 @@
       "footprint": "Diode_SMD:D_SMC",
       "lcsc": "C5204950",
       "sheet": "motion-play-main.kicad_sch",
-      "block": "",
-      "function": "",
-      "role": "",
-      "critical_specs": "",
+      "block": "power",
+      "function": "Reverse-polarity protection diode between power module and +5V rail",
+      "role": "protection",
+      "critical_specs": "Schottky, low Vf (~0.3V), handles full system current",
       "pins": [
         {
           "number": "1",
@@ -262,10 +262,10 @@
       "footprint": "motion-play-footprints:USBC_Power_Module",
       "lcsc": "",
       "sheet": "motion-play-main.kicad_sch",
-      "block": "",
-      "function": "",
+      "block": "power",
+      "function": "USB-C power input module with battery charging, provides 5V to system",
       "role": "",
-      "critical_specs": "",
+      "critical_specs": "5V output, ~2.4A max, includes battery charging circuit",
       "pins": [
         {
           "number": "1",
@@ -318,10 +318,10 @@
       "footprint": "Connector_JST:JST_SH_SM05B-SRSS-TB_1x05-1MP_P1.00mm_Horizontal",
       "lcsc": "C160403",
       "sheet": "motion-play-main.kicad_sch",
-      "block": "",
-      "function": "",
-      "role": "",
-      "critical_specs": "",
+      "block": "sensor_connectors",
+      "function": "JST-SH connector to sensor module 1 (M1, 6 oclock position), carries I2C CH0 + INT1",
+      "role": "connector",
+      "critical_specs": "5-pin: 3.3V, GND, CH0_SDA, CH0_SCL, INT1",
       "pins": [
         {
           "number": "1",
@@ -361,10 +361,10 @@
       "footprint": "Connector_JST:JST_SH_SM05B-SRSS-TB_1x05-1MP_P1.00mm_Horizontal",
       "lcsc": "C160403",
       "sheet": "motion-play-main.kicad_sch",
-      "block": "",
-      "function": "",
-      "role": "",
-      "critical_specs": "",
+      "block": "sensor_connectors",
+      "function": "JST-SH connector to sensor module 2 (M2, 9 oclock position), carries I2C CH1 + INT2",
+      "role": "connector",
+      "critical_specs": "5-pin: 3.3V, GND, CH1_SDA, CH1_SCL, INT2",
       "pins": [
         {
           "number": "1",
@@ -404,10 +404,10 @@
       "footprint": "Connector_JST:JST_SH_SM05B-SRSS-TB_1x05-1MP_P1.00mm_Horizontal",
       "lcsc": "C160403",
       "sheet": "motion-play-main.kicad_sch",
-      "block": "",
-      "function": "",
-      "role": "",
-      "critical_specs": "",
+      "block": "sensor_connectors",
+      "function": "JST-SH connector to sensor module 3 (M3, 3 oclock position), carries I2C CH2 + INT3",
+      "role": "connector",
+      "critical_specs": "5-pin: 3.3V, GND, CH2_SDA, CH2_SCL, INT3",
       "pins": [
         {
           "number": "1",
@@ -472,10 +472,10 @@
       "footprint": "Resistor_SMD:R_0603_1608Metric",
       "lcsc": "C114662",
       "sheet": "tca9548A_subsystem.kicad_sch",
-      "block": "",
-      "function": "",
-      "role": "",
-      "critical_specs": "",
+      "block": "i2c_mux",
+      "function": "I2C SDA pull-up on upstream bus between MCU and TCA9548A",
+      "role": "pull_up",
+      "critical_specs": "2.2k to +3.3V, sized for 400kHz operation",
       "pins": [
         {
           "number": "1",
@@ -497,10 +497,10 @@
       "footprint": "Resistor_SMD:R_0603_1608Metric",
       "lcsc": "C114662",
       "sheet": "tca9548A_subsystem.kicad_sch",
-      "block": "",
-      "function": "",
-      "role": "",
-      "critical_specs": "",
+      "block": "i2c_mux",
+      "function": "I2C SCL pull-up on upstream bus between MCU and TCA9548A",
+      "role": "pull_up",
+      "critical_specs": "2.2k to +3.3V, sized for 400kHz operation",
       "pins": [
         {
           "number": "1",
@@ -522,10 +522,10 @@
       "footprint": "Resistor_SMD:R_0603_1608Metric",
       "lcsc": "C25804",
       "sheet": "tca9548A_subsystem.kicad_sch",
-      "block": "",
-      "function": "",
-      "role": "",
-      "critical_specs": "",
+      "block": "i2c_mux",
+      "function": "Active-low reset pull-up for TCA9548A, keeps mux out of reset by default",
+      "role": "pull_up",
+      "critical_specs": "10k to +3.3V",
       "pins": [
         {
           "number": "1",
@@ -547,9 +547,9 @@
       "footprint": "TestPoint:TestPoint_Pad_D2.0mm",
       "lcsc": "",
       "sheet": "motion-play-main.kicad_sch",
-      "block": "",
-      "function": "",
-      "role": "",
+      "block": "mcu",
+      "function": "GPIO 1 breakout test point (unused)",
+      "role": "test_point",
       "critical_specs": "",
       "pins": [
         {
@@ -566,9 +566,9 @@
       "footprint": "TestPoint:TestPoint_Pad_D2.0mm",
       "lcsc": "",
       "sheet": "motion-play-main.kicad_sch",
-      "block": "",
-      "function": "",
-      "role": "",
+      "block": "mcu",
+      "function": "TCA9548A reset signal test point",
+      "role": "test_point",
       "critical_specs": "",
       "pins": [
         {
@@ -585,9 +585,9 @@
       "footprint": "TestPoint:TestPoint_Pad_D2.0mm",
       "lcsc": "",
       "sheet": "motion-play-main.kicad_sch",
-      "block": "",
-      "function": "",
-      "role": "",
+      "block": "mcu",
+      "function": "Sensor module 3 interrupt test point",
+      "role": "test_point",
       "critical_specs": "",
       "pins": [
         {
@@ -604,9 +604,9 @@
       "footprint": "TestPoint:TestPoint_Pad_D2.0mm",
       "lcsc": "",
       "sheet": "motion-play-main.kicad_sch",
-      "block": "",
-      "function": "",
-      "role": "",
+      "block": "mcu",
+      "function": "Sensor module 2 interrupt test point",
+      "role": "test_point",
       "critical_specs": "",
       "pins": [
         {
@@ -623,9 +623,9 @@
       "footprint": "TestPoint:TestPoint_Pad_D2.0mm",
       "lcsc": "",
       "sheet": "motion-play-main.kicad_sch",
-      "block": "",
-      "function": "",
-      "role": "",
+      "block": "mcu",
+      "function": "Sensor module 1 interrupt test point",
+      "role": "test_point",
       "critical_specs": "",
       "pins": [
         {
@@ -642,9 +642,9 @@
       "footprint": "TestPoint:TestPoint_Pad_D2.0mm",
       "lcsc": "",
       "sheet": "motion-play-main.kicad_sch",
-      "block": "",
-      "function": "",
-      "role": "",
+      "block": "mcu",
+      "function": "LED data output (GPIO 16) test point",
+      "role": "test_point",
       "critical_specs": "",
       "pins": [
         {
@@ -661,9 +661,9 @@
       "footprint": "TestPoint:TestPoint_Pad_D2.0mm",
       "lcsc": "",
       "sheet": "motion-play-main.kicad_sch",
-      "block": "",
-      "function": "",
-      "role": "",
+      "block": "mcu",
+      "function": "GPIO 17 breakout test point (unused)",
+      "role": "test_point",
       "critical_specs": "",
       "pins": [
         {
@@ -680,9 +680,9 @@
       "footprint": "TestPoint:TestPoint_Pad_D2.0mm",
       "lcsc": "",
       "sheet": "motion-play-main.kicad_sch",
-      "block": "",
-      "function": "",
-      "role": "",
+      "block": "mcu",
+      "function": "GPIO 18 breakout test point (unused)",
+      "role": "test_point",
       "critical_specs": "",
       "pins": [
         {
@@ -699,9 +699,9 @@
       "footprint": "TestPoint:TestPoint_Pad_D2.0mm",
       "lcsc": "",
       "sheet": "motion-play-main.kicad_sch",
-      "block": "",
-      "function": "",
-      "role": "",
+      "block": "mcu",
+      "function": "GPIO 2 breakout test point (unused)",
+      "role": "test_point",
       "critical_specs": "",
       "pins": [
         {
@@ -718,9 +718,9 @@
       "footprint": "TestPoint:TestPoint_Pad_D2.0mm",
       "lcsc": "",
       "sheet": "motion-play-main.kicad_sch",
-      "block": "",
-      "function": "",
-      "role": "",
+      "block": "mcu",
+      "function": "GPIO 21 breakout test point (unused)",
+      "role": "test_point",
       "critical_specs": "",
       "pins": [
         {
@@ -737,9 +737,9 @@
       "footprint": "TestPoint:TestPoint_Pad_D2.0mm",
       "lcsc": "",
       "sheet": "motion-play-main.kicad_sch",
-      "block": "",
-      "function": "",
-      "role": "",
+      "block": "mcu",
+      "function": "GPIO 3 breakout test point (unused)",
+      "role": "test_point",
       "critical_specs": "",
       "pins": [
         {
@@ -756,9 +756,9 @@
       "footprint": "TestPoint:TestPoint_Pad_D2.0mm",
       "lcsc": "",
       "sheet": "motion-play-main.kicad_sch",
-      "block": "",
-      "function": "",
-      "role": "",
+      "block": "mcu",
+      "function": "I2C SDA (GPIO 43) test point",
+      "role": "test_point",
       "critical_specs": "",
       "pins": [
         {
@@ -775,9 +775,9 @@
       "footprint": "TestPoint:TestPoint_Pad_D2.0mm",
       "lcsc": "",
       "sheet": "motion-play-main.kicad_sch",
-      "block": "",
-      "function": "",
-      "role": "",
+      "block": "mcu",
+      "function": "I2C SCL (GPIO 44) test point",
+      "role": "test_point",
       "critical_specs": "",
       "pins": [
         {
@@ -794,9 +794,9 @@
       "footprint": "TestPoint:TestPoint_Pad_D2.0mm",
       "lcsc": "",
       "sheet": "motion-play-main.kicad_sch",
-      "block": "",
-      "function": "",
-      "role": "",
+      "block": "power",
+      "function": "Test point for +3.3V power rail",
+      "role": "test_point",
       "critical_specs": "",
       "pins": [
         {
@@ -813,9 +813,9 @@
       "footprint": "TestPoint:TestPoint_Pad_D2.0mm",
       "lcsc": "",
       "sheet": "motion-play-main.kicad_sch",
-      "block": "",
-      "function": "",
-      "role": "",
+      "block": "power",
+      "function": "Test point for +5V power rail",
+      "role": "test_point",
       "critical_specs": "",
       "pins": [
         {
@@ -832,9 +832,9 @@
       "footprint": "TestPoint:TestPoint_Pad_D2.0mm",
       "lcsc": "",
       "sheet": "motion-play-main.kicad_sch",
-      "block": "",
-      "function": "",
-      "role": "",
+      "block": "power",
+      "function": "Test point for ground rail",
+      "role": "test_point",
       "critical_specs": "",
       "pins": [
         {
@@ -851,10 +851,10 @@
       "footprint": "motion-play-footprints:SOT95P285X140-5N",
       "lcsc": "C51118",
       "sheet": "motion-play-main.kicad_sch",
-      "block": "",
-      "function": "",
-      "role": "",
-      "critical_specs": "",
+      "block": "power",
+      "function": "3.3V LDO regulator for sensor and I2C bus power",
+      "role": "voltage_regulator",
+      "critical_specs": "3.3V output, 600mA max, dropout ~250mV, input from +5V",
       "pins": [
         {
           "number": "1",
@@ -888,10 +888,10 @@
       "footprint": "motion-play-footprints:T-Display-S3",
       "lcsc": "",
       "sheet": "motion-play-main.kicad_sch",
-      "block": "",
-      "function": "",
-      "role": "",
-      "critical_specs": "",
+      "block": "mcu",
+      "function": "Main system controller (LilyGO T-Display-S3 ESP32-S3 dev board with LCD), runs sensor acquisition on Core 0 and networking on Core 1",
+      "role": "controller",
+      "critical_specs": "ESP32-S3, dual-core 240MHz, WiFi+BT, built-in 1.9in LCD, PSRAM",
       "pins": [
         {
           "number": "2",
@@ -1015,10 +1015,10 @@
       "footprint": "motion-play-footprints:SOP65P640X120-24N",
       "lcsc": "C130026",
       "sheet": "tca9548A_subsystem.kicad_sch",
-      "block": "",
-      "function": "",
-      "role": "",
-      "critical_specs": "",
+      "block": "i2c_mux",
+      "function": "TCA9548A 8-channel I2C multiplexer, routes MCU I2C bus to 3 sensor board channels",
+      "role": "multiplexer",
+      "critical_specs": "Address 0x70 (A0=A1=A2=GND), 3 channels used of 8, 400kHz capable",
       "pins": [
         {
           "number": "1",
