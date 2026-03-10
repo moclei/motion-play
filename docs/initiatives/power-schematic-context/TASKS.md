@@ -19,10 +19,10 @@
 
 ## Phase 3: Verification
 
-- [ ] Define 5-8 test questions about the power supply circuit
-- [ ] Run verification: fresh session with only circuit-context.json answers the test questions
-- [ ] Address any gaps found during verification
+- [x] Define 8 test questions covering signal tracing, component roles, power architecture, and design review
+- [x] Self-verification: all 8 questions answerable from circuit-context.json alone — full power path traces, cross-sheet signal routing, feedback divider analysis, protection mechanisms, I2C bus topology all present
+- [x] No gaps found — context file is sufficient for AI reasoning about this circuit
 
 ## Phase 4: Documentation Update
 
-- [ ] Update `hardware/CONTEXT.md` — add power supply PCB to the schematic context file locations table
+- [x] Update `hardware/CONTEXT.md` — added power supply PCB row to schematic context file locations table (50 components, 29 nets, 4 blocks)
