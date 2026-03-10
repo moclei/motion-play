@@ -1,0 +1,472 @@
+{
+  "schema_version": "1.0",
+  "project": "sensor-flex",
+  "source": {
+    "root": "sensor-flex.kicad_sch",
+    "sheets": {},
+    "source_hash": "9e67c2379276",
+    "extracted_at": "2026-03-10T02:31:20.298682+00:00"
+  },
+  "description": "Polyimide flex sensor strip with 2x VCNL4040 proximity/ambient light sensors, individual VDD filtering, IR LED bypass caps, and FPC tail connector to rigid base. Bends at center to angle sensors ~2 degrees outward for direction discrimination.",
+  "blocks": {
+    "sensor_1": {
+      "description": "VCNL4040 proximity sensor 1 (Side A) with VDD supply filtering",
+      "sheet": "sensor-flex.kicad_sch",
+      "components": [
+        "IC1",
+        "R11",
+        "C7"
+      ],
+      "notes": "Side A faces the back of the hoop (-2 degrees). VDD supplied through R11 (22 ohm series filter) with C7 (0.1uF) local bypass. I2C and INT routed to FPC1 pins 2-4 (channel 1). All VCNL4040 share address 0x60 \u2014 isolated by PCA9546A mux on rigid base."
+    },
+    "sensor_2": {
+      "description": "VCNL4040 proximity sensor 2 (Side B) with VDD supply filtering",
+      "sheet": "sensor-flex.kicad_sch",
+      "components": [
+        "IC2",
+        "R10",
+        "C6"
+      ],
+      "notes": "Side B faces the front of the hoop (+2 degrees). VDD supplied through R10 (22 ohm series filter) with C6 (0.1uF) local bypass. I2C and INT routed to FPC1 pins 6-8 (channel 2)."
+    },
+    "power": {
+      "description": "IR LED supply bypass capacitors on 3.3V rail",
+      "sheet": "sensor-flex.kicad_sch",
+      "components": [
+        "C4",
+        "C8"
+      ],
+      "notes": "Each 2.2uF cap handles pulsed current draw from VCNL4040 IR LED emission. Placed on the 3.3V rail near the LED anode pin (pin A) of each sensor."
+    },
+    "connector": {
+      "description": "FPC tail connector for mating with ZIF connector on rigid base",
+      "sheet": "sensor-flex.kicad_sch",
+      "components": [
+        "FPC1"
+      ],
+      "notes": "10-pin FPC tail with 1.0mm pitch. Pins 1-4: power + sensor 1 I2C/INT. Pin 5: GND shield. Pins 6-8: sensor 2 I2C/INT. Pins 9-10: GND mechanical."
+    }
+  },
+  "components": {
+    "C4": {
+      "part": "C",
+      "value": "2.2\u00b5F",
+      "footprint": "Capacitor_SMD:C_0603_1608Metric",
+      "lcsc": "C23630",
+      "sheet": "sensor-flex.kicad_sch",
+      "block": "power",
+      "function": "IR LED supply bypass capacitor for sensor 1",
+      "role": "bypass",
+      "critical_specs": "2.2\u00b5F, 0603",
+      "pins": [
+        {
+          "number": "1",
+          "name": "",
+          "type": "passive",
+          "net": "GND"
+        },
+        {
+          "number": "2",
+          "name": "",
+          "type": "passive",
+          "net": "+3.3V"
+        }
+      ]
+    },
+    "C6": {
+      "part": "C",
+      "value": "0.1\u00b5F",
+      "footprint": "Capacitor_SMD:C_0603_1608Metric",
+      "lcsc": "C14663",
+      "sheet": "sensor-flex.kicad_sch",
+      "block": "sensor_2",
+      "function": "VDD bypass capacitor for sensor 2",
+      "role": "bypass",
+      "critical_specs": "0.1\u00b5F, 0603",
+      "pins": [
+        {
+          "number": "1",
+          "name": "",
+          "type": "passive",
+          "net": "Net-(IC2-VDD)"
+        },
+        {
+          "number": "2",
+          "name": "",
+          "type": "passive",
+          "net": "GND"
+        }
+      ]
+    },
+    "C7": {
+      "part": "C",
+      "value": "0.1\u00b5F",
+      "footprint": "Capacitor_SMD:C_0603_1608Metric",
+      "lcsc": "C14663",
+      "sheet": "sensor-flex.kicad_sch",
+      "block": "sensor_1",
+      "function": "VDD bypass capacitor for sensor 1",
+      "role": "bypass",
+      "critical_specs": "0.1\u00b5F, 0603",
+      "pins": [
+        {
+          "number": "1",
+          "name": "",
+          "type": "passive",
+          "net": "Net-(IC1-VDD)"
+        },
+        {
+          "number": "2",
+          "name": "",
+          "type": "passive",
+          "net": "GND"
+        }
+      ]
+    },
+    "C8": {
+      "part": "C",
+      "value": "2.2\u00b5F",
+      "footprint": "Capacitor_SMD:C_0603_1608Metric",
+      "lcsc": "C23630",
+      "sheet": "sensor-flex.kicad_sch",
+      "block": "power",
+      "function": "IR LED supply bypass capacitor for sensor 2",
+      "role": "bypass",
+      "critical_specs": "2.2\u00b5F, 0603",
+      "pins": [
+        {
+          "number": "1",
+          "name": "",
+          "type": "passive",
+          "net": "GND"
+        },
+        {
+          "number": "2",
+          "name": "",
+          "type": "passive",
+          "net": "+3.3V"
+        }
+      ]
+    },
+    "FPC1": {
+      "part": "FPC_Tail_10P",
+      "value": "FPC_Tail_10P",
+      "footprint": "motion-play-footprints:FPC_Tail_10P_1.0mm_TopContact",
+      "lcsc": "",
+      "sheet": "sensor-flex.kicad_sch",
+      "block": "connector",
+      "function": "FPC tail connector mating with ZIF on rigid base \u2014 carries 2x I2C, 2x INT, power",
+      "role": "connector",
+      "critical_specs": "10-pin, 1.0mm pitch, top contact",
+      "pins": [
+        {
+          "number": "1",
+          "name": "3.3V",
+          "type": "power_in",
+          "net": "+3.3V"
+        },
+        {
+          "number": "2",
+          "name": "SCL1",
+          "type": "bidirectional",
+          "net": "Net-(FPC1-SCL1)"
+        },
+        {
+          "number": "3",
+          "name": "SDA1",
+          "type": "bidirectional",
+          "net": "Net-(FPC1-SDA1)"
+        },
+        {
+          "number": "4",
+          "name": "INT1",
+          "type": "output",
+          "net": "Net-(FPC1-INT1)"
+        },
+        {
+          "number": "5",
+          "name": "GND",
+          "type": "power_in",
+          "net": "GND"
+        },
+        {
+          "number": "6",
+          "name": "SCL2",
+          "type": "bidirectional",
+          "net": "Net-(FPC1-SCL2)"
+        },
+        {
+          "number": "7",
+          "name": "SDA2",
+          "type": "bidirectional",
+          "net": "Net-(FPC1-SDA2)"
+        },
+        {
+          "number": "8",
+          "name": "INT2",
+          "type": "output",
+          "net": "Net-(FPC1-INT2)"
+        },
+        {
+          "number": "9",
+          "name": "GND",
+          "type": "power_in",
+          "net": "GND"
+        },
+        {
+          "number": "10",
+          "name": "GND",
+          "type": "power_in",
+          "net": "GND"
+        }
+      ]
+    },
+    "IC1": {
+      "part": "VCNL4040M3OE",
+      "value": "VCNL4040M3OE",
+      "footprint": "motion-play-footprints:VCNL4040M3OE",
+      "lcsc": "C142526",
+      "sheet": "sensor-flex.kicad_sch",
+      "block": "sensor_1",
+      "function": "Proximity and ambient light sensor 1 (Side A)",
+      "role": "sensor",
+      "critical_specs": "VCNL4040M3OE, I2C 0x60, 400kHz",
+      "pins": [
+        {
+          "number": "1",
+          "name": "GND",
+          "type": "passive",
+          "net": "GND"
+        },
+        {
+          "number": "2",
+          "name": "K(SENSOR)",
+          "type": "passive",
+          "net": "Net-(IC1-K(LED))"
+        },
+        {
+          "number": "3",
+          "name": "VDD",
+          "type": "passive",
+          "net": "Net-(IC1-VDD)"
+        },
+        {
+          "number": "4",
+          "name": "A",
+          "type": "passive",
+          "net": "+3.3V"
+        },
+        {
+          "number": "5",
+          "name": "K(LED)",
+          "type": "passive",
+          "net": "Net-(IC1-K(LED))"
+        },
+        {
+          "number": "6",
+          "name": "INT",
+          "type": "passive",
+          "net": "Net-(FPC1-INT1)"
+        },
+        {
+          "number": "7",
+          "name": "SDAT",
+          "type": "passive",
+          "net": "Net-(FPC1-SDA1)"
+        },
+        {
+          "number": "8",
+          "name": "SCLK",
+          "type": "passive",
+          "net": "Net-(FPC1-SCL1)"
+        }
+      ]
+    },
+    "IC2": {
+      "part": "VCNL4040M3OE",
+      "value": "VCNL4040M3OE",
+      "footprint": "motion-play-footprints:VCNL4040M3OE",
+      "lcsc": "C142526",
+      "sheet": "sensor-flex.kicad_sch",
+      "block": "sensor_2",
+      "function": "Proximity and ambient light sensor 2 (Side B)",
+      "role": "sensor",
+      "critical_specs": "VCNL4040M3OE, I2C 0x60, 400kHz",
+      "pins": [
+        {
+          "number": "1",
+          "name": "GND",
+          "type": "passive",
+          "net": "GND"
+        },
+        {
+          "number": "2",
+          "name": "K(SENSOR)",
+          "type": "passive",
+          "net": "Net-(IC2-K(LED))"
+        },
+        {
+          "number": "3",
+          "name": "VDD",
+          "type": "passive",
+          "net": "Net-(IC2-VDD)"
+        },
+        {
+          "number": "4",
+          "name": "A",
+          "type": "passive",
+          "net": "+3.3V"
+        },
+        {
+          "number": "5",
+          "name": "K(LED)",
+          "type": "passive",
+          "net": "Net-(IC2-K(LED))"
+        },
+        {
+          "number": "6",
+          "name": "INT",
+          "type": "passive",
+          "net": "Net-(FPC1-INT2)"
+        },
+        {
+          "number": "7",
+          "name": "SDAT",
+          "type": "passive",
+          "net": "Net-(FPC1-SDA2)"
+        },
+        {
+          "number": "8",
+          "name": "SCLK",
+          "type": "passive",
+          "net": "Net-(FPC1-SCL2)"
+        }
+      ]
+    },
+    "R10": {
+      "part": "R",
+      "value": "22\u03a9",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "lcsc": "C23345",
+      "sheet": "sensor-flex.kicad_sch",
+      "block": "sensor_2",
+      "function": "VDD series filter resistor for sensor 2",
+      "role": "filter",
+      "critical_specs": "22\u03a9, 0603",
+      "pins": [
+        {
+          "number": "1",
+          "name": "",
+          "type": "passive",
+          "net": "+3.3V"
+        },
+        {
+          "number": "2",
+          "name": "",
+          "type": "passive",
+          "net": "Net-(IC2-VDD)"
+        }
+      ]
+    },
+    "R11": {
+      "part": "R",
+      "value": "22\u03a9",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "lcsc": "C23345",
+      "sheet": "sensor-flex.kicad_sch",
+      "block": "sensor_1",
+      "function": "VDD series filter resistor for sensor 1",
+      "role": "filter",
+      "critical_specs": "22\u03a9, 0603",
+      "pins": [
+        {
+          "number": "1",
+          "name": "",
+          "type": "passive",
+          "net": "+3.3V"
+        },
+        {
+          "number": "2",
+          "name": "",
+          "type": "passive",
+          "net": "Net-(IC1-VDD)"
+        }
+      ]
+    }
+  },
+  "nets": {
+    "+3.3V": {
+      "type": "power",
+      "protocol": "",
+      "direction": "",
+      "description": "3.3V power rail from rigid base via FPC1 pin 1"
+    },
+    "GND": {
+      "type": "power",
+      "protocol": "",
+      "direction": "",
+      "description": "Ground reference via FPC1 pins 5, 9, 10"
+    },
+    "Net-(FPC1-INT1)": {
+      "type": "signal",
+      "protocol": "",
+      "direction": "output",
+      "description": "Interrupt output from sensor 1 (IC1) to FPC1 pin 4"
+    },
+    "Net-(FPC1-INT2)": {
+      "type": "signal",
+      "protocol": "",
+      "direction": "output",
+      "description": "Interrupt output from sensor 2 (IC2) to FPC1 pin 8"
+    },
+    "Net-(FPC1-SCL1)": {
+      "type": "clock",
+      "protocol": "I2C",
+      "direction": "bidirectional",
+      "description": "I2C clock for sensor 1 (IC1 SCLK to FPC1 pin 2)"
+    },
+    "Net-(FPC1-SCL2)": {
+      "type": "clock",
+      "protocol": "I2C",
+      "direction": "bidirectional",
+      "description": "I2C clock for sensor 2 (IC2 SCLK to FPC1 pin 6)"
+    },
+    "Net-(FPC1-SDA1)": {
+      "type": "signal",
+      "protocol": "I2C",
+      "direction": "bidirectional",
+      "description": "I2C data for sensor 1 (IC1 SDAT to FPC1 pin 3)"
+    },
+    "Net-(FPC1-SDA2)": {
+      "type": "signal",
+      "protocol": "I2C",
+      "direction": "bidirectional",
+      "description": "I2C data for sensor 2 (IC2 SDAT to FPC1 pin 7)"
+    },
+    "Net-(IC1-K(LED))": {
+      "type": "analog",
+      "protocol": "",
+      "direction": "",
+      "description": "Sensor 1 internal connection between LED cathode (K(LED)) and photodiode cathode (K(SENSOR))"
+    },
+    "Net-(IC1-VDD)": {
+      "type": "power",
+      "protocol": "",
+      "direction": "",
+      "description": "Filtered VDD supply for sensor 1 \u2014 after R11 (22 ohm) series filter, bypassed by C7"
+    },
+    "Net-(IC2-K(LED))": {
+      "type": "analog",
+      "protocol": "",
+      "direction": "",
+      "description": "Sensor 2 internal connection between LED cathode (K(LED)) and photodiode cathode (K(SENSOR))"
+    },
+    "Net-(IC2-VDD)": {
+      "type": "power",
+      "protocol": "",
+      "direction": "",
+      "description": "Filtered VDD supply for sensor 2 \u2014 after R10 (22 ohm) series filter, bypassed by C6"
+    }
+  },
+  "sheet_interfaces": {}
+}
