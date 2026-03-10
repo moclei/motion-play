@@ -18,7 +18,7 @@ Motion Play is primarily an engineering project — the goal is to design and bu
 
 ## Current Project Status
 
-**Hardware:** ✅ Custom PCBs operational with dual-MUX architecture (TCA→PCA→Sensors)
+**Hardware:** ✅ Custom PCBs operational with dual-MUX architecture (TCA→PCA→Sensors). AI-optimized `circuit-context.json` available for main PCB.
 **Firmware:** ✅ Full data collection pipeline (1000 Hz, PSRAM buffering, MQTT transmission)
 **Backend:** ✅ AWS IoT Core + Lambda + DynamoDB + API Gateway
 **Frontend:** ✅ React web interface with real-time visualization and device control
@@ -56,6 +56,7 @@ motion-play/
 │   └── references/        # Hardware datasheets and component docs
 ├── tools/                 # Diagnostic and ML tools
 │   ├── ml-training/       # Python ML pipeline (download, preprocess, train, export TFLite)
+│   ├── schematic-context/ # KiCad → circuit-context.json extraction and annotation  ← has README
 │   ├── serial-studio/     # Serial Studio dashboard files
 │   └── transit-calculator.py
 ├── scripts/               # Utility shell scripts
@@ -69,7 +70,7 @@ motion-play/
 | Aspect | CONTEXT.md | Covers |
 |--------|------------|--------|
 | **Firmware** | `firmware/CONTEXT.md` | Dual-core architecture, pin config, power management, Serial Studio, build config, data collection flow |
-| **Hardware** | `hardware/CONTEXT.md` | PCB designs (main + sensor rigid + flex), physical architecture, I2C mux chain, annotated netlist spec, component nicknames |
+| **Hardware** | `hardware/CONTEXT.md` | PCB designs (main + sensor rigid + flex), physical architecture, I2C mux chain, schematic context system, component nicknames |
 | **Infrastructure** | `infrastructure/CONTEXT.md` | AWS architecture, IoT Core, Lambda functions, DynamoDB schema (composite key!), API endpoints, MQTT message formats, data flow |
 | **Frontend** | `frontend/CONTEXT.md` | React app architecture, tech stack, what it does, relationship to cloud infrastructure |
 | **Mechanical** | `mechanical/CONTEXT.md` | Enclosure design process, build123d tooling, coordinate conventions, folder structure, FDM design rules |
@@ -80,7 +81,7 @@ These folders have README.md files or are self-explanatory:
 
 - **`lambda/`** — Lambda function source code. Has its own `README.md` with deployment guides. Closely related to `infrastructure/`.
 - **`docs/`** — Organized per [WORKFLOW.md](./WORKFLOW.md). Explorations are single-file analyses; initiatives follow BRIEF/PLAN/TASKS.
-- **`tools/`** — `ml-training/` has its own README. `serial-studio/` dashboard files are documented in `firmware/CONTEXT.md`.
+- **`tools/`** — `ml-training/` has its own README. `schematic-context/` has a README covering the extraction/annotation pipeline. `serial-studio/` dashboard files are documented in `firmware/CONTEXT.md`.
 - **`scripts/`** — Utility scripts with `README.md`.
 - **`session_data/`** — Labeled sensor data for ML training.
 
@@ -140,4 +141,4 @@ Standard terms used across code, docs, and conversation.
 
 ---
 
-*Last Updated: March 4, 2026*
+*Last Updated: March 9, 2026*

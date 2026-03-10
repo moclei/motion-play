@@ -51,8 +51,8 @@
 
 ## Phase 4: Documentation & Cleanup
 
-- [ ] Update `hardware/CONTEXT.md` — replace annotated netlist references with circuit-context.json guidance, remove YAML annotation workflow, add instructions for AI sessions to use the context file
-- [ ] Update `.context/PROJECT.md` — mention schematic context system under hardware section
-- [ ] Remove or mark as deprecated: existing netlist JSON files and annotation YAML files that are superseded
-- [ ] Add a brief README in `tools/schematic-context/` documenting script usage for future sessions
-- [ ] Commit, update TASKS.md, generate handoff prompt (or mark initiative complete).
+- [x] Update `hardware/CONTEXT.md` — replaced "Annotated Netlist Specification" section with "Schematic Context System" section pointing to `circuit-context.json`, new tooling table, updated workflow, and deprecation note for old files
+- [x] Update `.context/PROJECT.md` — added schematic context mention to hardware status, project structure tree, aspect table, and tools description
+- [x] Mark as deprecated: added `DEPRECATED.md` in `hardware/pcb-main/kicad/netlists/` and `hardware/pcb-sensor/kicad/netlist/` explaining these files are superseded by the schematic context system
+- [x] Add a brief README in `tools/schematic-context/` documenting all three scripts (extract.py, annotate.py, show.py), prerequisites, typical workflow, and output locations
+- [x] Commit, update TASKS.md — initiative complete.
