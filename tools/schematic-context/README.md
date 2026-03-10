@@ -82,8 +82,8 @@ python tools/schematic-context/show.py hardware/pcb-main/kicad/motion-play-main.
 | PCB | Context File |
 |-----|-------------|
 | Main PCB | `hardware/pcb-main/kicad/circuit-context.json` |
-| Sensor Rigid (future) | `hardware/sensor-rigid/circuit-context.json` |
-| Sensor Flex (future) | `hardware/sensor-flex/circuit-context.json` |
+| Sensor Rigid | `hardware/sensor-rigid/circuit-context.json` |
+| Sensor Flex | `hardware/sensor-flex/circuit-context.json` |
 
 ## Design Details
 

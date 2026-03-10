@@ -71,6 +71,8 @@ Polyimide flex PCB that bends to angle sensors outward:
 | IC1, IC2 | VCNL4040M3OE | Proximity sensors |
 | C4, C8 | 2.2µF | LED anode capacitors |
 | C6, C7 | 0.1µF | VDD bypass capacitors |
+| R10, R11 | 22Ω | VDD series filter resistors (one per sensor) |
+| FPC1 | FPC_Tail_10P | FPC tail connector (mates with ZIF on rigid base) |
 
 Connected to rigid base via ZIF FPC connector (C132510, 1.0mm pitch, top contact, slide lock, 0.3mm FPC):
 
@@ -122,8 +124,8 @@ Raw KiCad schematic files are difficult for AI assistants to interpret. The **sc
 | PCB | Context File | Status |
 |-----|-------------|--------|
 | Main PCB | `hardware/pcb-main/kicad/circuit-context.json` | Complete — 37 components, 26 nets, 5 functional blocks |
-| Sensor Rigid Base | `hardware/sensor-rigid/circuit-context.json` | Future — same tools, separate pass |
-| Sensor Flex Strip | `hardware/sensor-flex/circuit-context.json` | Future — same tools, separate pass |
+| Sensor Rigid Base | `hardware/sensor-rigid/circuit-context.json` | Complete — 27 components, 16 nets, 6 functional blocks |
+| Sensor Flex Strip | `hardware/sensor-flex/circuit-context.json` | Complete — 9 components, 12 nets, 4 functional blocks |
 
 ### What's in circuit-context.json
 

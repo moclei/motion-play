@@ -18,7 +18,7 @@ Motion Play is primarily an engineering project — the goal is to design and bu
 
 ## Current Project Status
 
-**Hardware:** ✅ Custom PCBs operational with dual-MUX architecture (TCA→PCA→Sensors). AI-optimized `circuit-context.json` available for main PCB.
+**Hardware:** ✅ Custom PCBs operational with dual-MUX architecture (TCA→PCA→Sensors). AI-optimized `circuit-context.json` available for all three PCBs (main, sensor-rigid, sensor-flex).
 **Firmware:** ✅ Full data collection pipeline (1000 Hz, PSRAM buffering, MQTT transmission)
 **Backend:** ✅ AWS IoT Core + Lambda + DynamoDB + API Gateway
 **Frontend:** ✅ React web interface with real-time visualization and device control
@@ -125,6 +125,8 @@ Standard terms used across code, docs, and conversation.
 - **IDE**: Cursor (VSCode-based)
 - **Version Control**: GitHub
 - **Laptop**: MacBook Pro
+- **PCB Fabrication**: JLCPCB (PCB + assembly)
+- **Component Sourcing**: LCSC — `@jlcpcb/mcp` MCP server configured in `.cursor/mcp.json` for in-chat component search, stock checks, and pricing
 
 ## Development Roadmap
 
