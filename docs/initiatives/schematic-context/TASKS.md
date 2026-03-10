@@ -35,10 +35,12 @@
 
 ## Phase 3b: Annotation Pass — Remaining Blocks & Nets
 
-- [ ] Interactive annotation session: annotate LED controller block (IC1 level shifter, F1 fuse, R27 sense resistor, C7, C8 caps, J3 LED strip connector) — 6 remaining components
-- [ ] Add net annotations to `circuit-context.json` — type, protocol, direction, description for all non-trivial nets
-- [ ] Define functional blocks in `circuit-context.json` with descriptions, component membership, and design intent notes
-- [ ] Commit, update TASKS.md, generate handoff prompt for next session. Note any unexpected issues or implementation decisions.
+- [x] Interactive annotation session: annotate LED controller block (IC1 level shifter, F1 fuse, R27 sense resistor, C7, C8 caps, J3 LED strip connector) — 6 remaining components
+- [x] Add net annotations to `circuit-context.json` — type, protocol, direction, description for all 26 nets
+- [x] Define functional blocks in `circuit-context.json` — 5 blocks (power, mcu, i2c_mux, sensor_connectors, led_controller) with descriptions, component membership, and design intent notes
+- [x] Add top-level description and sheet_interface descriptions to `circuit-context.json`
+- [x] Re-extract with `--previous` to merge component annotations (from .kicad_sch) with net/block annotations (from JSON) — 37/37 components, 26/26 nets, 5 blocks
+- [x] Commit, update TASKS.md, generate handoff prompt for next session. Note any unexpected issues or implementation decisions.
 
 ## Phase 3c: Verification
 

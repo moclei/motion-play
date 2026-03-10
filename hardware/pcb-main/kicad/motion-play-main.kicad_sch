@@ -3059,7 +3059,7 @@
 			)
 		)
 		(property "Description" "SS54 SMD -- 150A 40V Independent 550mV@5A 5A SMC Single Diodes ROHS"
-			(at 55.88 27.94 0)
+			(at 56.134 27.178 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3080,7 +3080,6 @@
 				(font
 					(size 1.27 1.27)
 				)
-				(hide yes)
 			)
 		)
 		(property "ai_critical_specs" "Schottky, low Vf (~0.3V), handles full system current"
@@ -3089,7 +3088,6 @@
 				(font
 					(size 1.27 1.27)
 				)
-				(hide yes)
 			)
 		)
 		(property "ai_function" "Reverse-polarity protection diode between power module and +5V rail"
@@ -3098,7 +3096,6 @@
 				(font
 					(size 1.27 1.27)
 				)
-				(hide yes)
 			)
 		)
 		(property "ai_role" "protection"
@@ -3107,7 +3104,6 @@
 				(font
 					(size 1.27 1.27)
 				)
-				(hide yes)
 			)
 		)
 		(pin "1"
@@ -3631,7 +3627,6 @@
 				(font
 					(size 1.27 1.27)
 				)
-				(hide yes)
 			)
 		)
 		(property "ai_critical_specs" "5-pin: 3.3V, GND, CH0_SDA, CH0_SCL, INT1"
@@ -3640,7 +3635,6 @@
 				(font
 					(size 1.27 1.27)
 				)
-				(hide yes)
 			)
 		)
 		(property "ai_function" "JST-SH connector to sensor module 1 (M1, 6 oclock position), carries I2C CH0 + INT1"
@@ -3649,7 +3643,6 @@
 				(font
 					(size 1.27 1.27)
 				)
-				(hide yes)
 			)
 		)
 		(property "ai_role" "connector"
@@ -3658,7 +3651,6 @@
 				(font
 					(size 1.27 1.27)
 				)
-				(hide yes)
 			)
 		)
 		(pin "5"
@@ -3812,7 +3804,6 @@
 				(font
 					(size 1.27 1.27)
 				)
-				(hide yes)
 			)
 		)
 		(property "ai_critical_specs" "2.2uF, 0603, required for LDO stability"
@@ -3821,7 +3812,6 @@
 				(font
 					(size 1.27 1.27)
 				)
-				(hide yes)
 			)
 		)
 		(property "ai_function" "Output stabilization capacitor for U1 voltage regulator"
@@ -3830,7 +3820,6 @@
 				(font
 					(size 1.27 1.27)
 				)
-				(hide yes)
 			)
 		)
 		(property "ai_role" "decoupling"
@@ -3839,7 +3828,6 @@
 				(font
 					(size 1.27 1.27)
 				)
-				(hide yes)
 			)
 		)
 		(pin "2"
@@ -3914,7 +3902,6 @@
 				(font
 					(size 1.27 1.27)
 				)
-				(hide yes)
 			)
 		)
 		(property "ai_function" "Sensor module 3 interrupt test point"
@@ -3923,7 +3910,6 @@
 				(font
 					(size 1.27 1.27)
 				)
-				(hide yes)
 			)
 		)
 		(property "ai_role" "test_point"
@@ -3932,7 +3918,6 @@
 				(font
 					(size 1.27 1.27)
 				)
-				(hide yes)
 			)
 		)
 		(pin "1"
@@ -4004,7 +3989,6 @@
 				(font
 					(size 1.27 1.27)
 				)
-				(hide yes)
 			)
 		)
 		(property "ai_function" "GPIO 1 breakout test point (unused)"
@@ -4013,7 +3997,6 @@
 				(font
 					(size 1.27 1.27)
 				)
-				(hide yes)
 			)
 		)
 		(property "ai_role" "test_point"
@@ -4022,7 +4005,6 @@
 				(font
 					(size 1.27 1.27)
 				)
-				(hide yes)
 			)
 		)
 		(pin "1"
@@ -4221,7 +4203,6 @@
 				(font
 					(size 1.27 1.27)
 				)
-				(hide yes)
 			)
 		)
 		(property "ai_function" "Test point for +3.3V power rail"
@@ -4230,7 +4211,6 @@
 				(font
 					(size 1.27 1.27)
 				)
-				(hide yes)
 			)
 		)
 		(property "ai_role" "test_point"
@@ -4239,7 +4219,6 @@
 				(font
 					(size 1.27 1.27)
 				)
-				(hide yes)
 			)
 		)
 		(pin "1"
@@ -4311,7 +4290,6 @@
 				(font
 					(size 1.27 1.27)
 				)
-				(hide yes)
 			)
 		)
 		(property "ai_function" "Sensor module 2 interrupt test point"
@@ -4320,7 +4298,6 @@
 				(font
 					(size 1.27 1.27)
 				)
-				(hide yes)
 			)
 		)
 		(property "ai_role" "test_point"
@@ -4329,7 +4306,6 @@
 				(font
 					(size 1.27 1.27)
 				)
-				(hide yes)
 			)
 		)
 		(pin "1"
@@ -4401,7 +4377,6 @@
 				(font
 					(size 1.27 1.27)
 				)
-				(hide yes)
 			)
 		)
 		(property "ai_function" "I2C SDA (GPIO 43) test point"
@@ -4410,7 +4385,6 @@
 				(font
 					(size 1.27 1.27)
 				)
-				(hide yes)
 			)
 		)
 		(property "ai_role" "test_point"
@@ -4419,7 +4393,6 @@
 				(font
 					(size 1.27 1.27)
 				)
-				(hide yes)
 			)
 		)
 		(pin "1"
@@ -4499,7 +4472,6 @@
 				(font
 					(size 1.27 1.27)
 				)
-				(hide yes)
 			)
 		)
 		(property "ai_critical_specs" "1uF, 0603"
@@ -4508,7 +4480,6 @@
 				(font
 					(size 1.27 1.27)
 				)
-				(hide yes)
 			)
 		)
 		(property "ai_function" "Input bypass capacitor for U1 voltage regulator"
@@ -4517,7 +4488,6 @@
 				(font
 					(size 1.27 1.27)
 				)
-				(hide yes)
 			)
 		)
 		(property "ai_role" "decoupling"
@@ -4526,7 +4496,6 @@
 				(font
 					(size 1.27 1.27)
 				)
-				(hide yes)
 			)
 		)
 		(pin "1"
@@ -4601,7 +4570,6 @@
 				(font
 					(size 1.27 1.27)
 				)
-				(hide yes)
 			)
 		)
 		(property "ai_function" "Sensor module 1 interrupt test point"
@@ -4610,7 +4578,6 @@
 				(font
 					(size 1.27 1.27)
 				)
-				(hide yes)
 			)
 		)
 		(property "ai_role" "test_point"
@@ -4619,7 +4586,6 @@
 				(font
 					(size 1.27 1.27)
 				)
-				(hide yes)
 			)
 		)
 		(pin "1"
@@ -4708,7 +4674,6 @@
 				(font
 					(size 1.27 1.27)
 				)
-				(hide yes)
 			)
 		)
 		(property "ai_critical_specs" "5-pin: 3.3V, GND, CH1_SDA, CH1_SCL, INT2"
@@ -4717,7 +4682,6 @@
 				(font
 					(size 1.27 1.27)
 				)
-				(hide yes)
 			)
 		)
 		(property "ai_function" "JST-SH connector to sensor module 2 (M2, 9 oclock position), carries I2C CH1 + INT2"
@@ -4726,7 +4690,6 @@
 				(font
 					(size 1.27 1.27)
 				)
-				(hide yes)
 			)
 		)
 		(property "ai_role" "connector"
@@ -4735,7 +4698,6 @@
 				(font
 					(size 1.27 1.27)
 				)
-				(hide yes)
 			)
 		)
 		(pin "5"
@@ -5005,7 +4967,6 @@
 				(font
 					(size 1.27 1.27)
 				)
-				(hide yes)
 			)
 		)
 		(property "ai_function" "GPIO 18 breakout test point (unused)"
@@ -5014,7 +4975,6 @@
 				(font
 					(size 1.27 1.27)
 				)
-				(hide yes)
 			)
 		)
 		(property "ai_role" "test_point"
@@ -5023,7 +4983,6 @@
 				(font
 					(size 1.27 1.27)
 				)
-				(hide yes)
 			)
 		)
 		(pin "1"
@@ -5093,7 +5052,6 @@
 				(font
 					(size 1.27 1.27)
 				)
-				(hide yes)
 			)
 		)
 		(property "ai_function" "Test point for ground rail"
@@ -5102,7 +5060,6 @@
 				(font
 					(size 1.27 1.27)
 				)
-				(hide yes)
 			)
 		)
 		(property "ai_role" "test_point"
@@ -5111,7 +5068,6 @@
 				(font
 					(size 1.27 1.27)
 				)
-				(hide yes)
 			)
 		)
 		(pin "1"
@@ -5306,7 +5262,6 @@
 				(font
 					(size 1.27 1.27)
 				)
-				(hide yes)
 			)
 		)
 		(property "ai_function" "GPIO 21 breakout test point (unused)"
@@ -5315,7 +5270,6 @@
 				(font
 					(size 1.27 1.27)
 				)
-				(hide yes)
 			)
 		)
 		(property "ai_role" "test_point"
@@ -5324,7 +5278,6 @@
 				(font
 					(size 1.27 1.27)
 				)
-				(hide yes)
 			)
 		)
 		(pin "1"
@@ -5458,7 +5411,6 @@
 				(font
 					(size 1.27 1.27)
 				)
-				(hide yes)
 			)
 		)
 		(property "ai_function" "GPIO 3 breakout test point (unused)"
@@ -5467,7 +5419,6 @@
 				(font
 					(size 1.27 1.27)
 				)
-				(hide yes)
 			)
 		)
 		(property "ai_role" "test_point"
@@ -5476,7 +5427,6 @@
 				(font
 					(size 1.27 1.27)
 				)
-				(hide yes)
 			)
 		)
 		(pin "1"
@@ -5548,7 +5498,6 @@
 				(font
 					(size 1.27 1.27)
 				)
-				(hide yes)
 			)
 		)
 		(property "ai_function" "GPIO 17 breakout test point (unused)"
@@ -5557,7 +5506,6 @@
 				(font
 					(size 1.27 1.27)
 				)
-				(hide yes)
 			)
 		)
 		(property "ai_role" "test_point"
@@ -5566,7 +5514,6 @@
 				(font
 					(size 1.27 1.27)
 				)
-				(hide yes)
 			)
 		)
 		(pin "1"
@@ -5638,7 +5585,6 @@
 				(font
 					(size 1.27 1.27)
 				)
-				(hide yes)
 			)
 		)
 		(property "ai_critical_specs" "5V output, ~2.4A max, includes battery charging circuit"
@@ -5647,7 +5593,6 @@
 				(font
 					(size 1.27 1.27)
 				)
-				(hide yes)
 			)
 		)
 		(property "ai_function" "USB-C power input module with battery charging, provides 5V to system"
@@ -5656,7 +5601,6 @@
 				(font
 					(size 1.27 1.27)
 				)
-				(hide yes)
 			)
 		)
 		(pin "2"
@@ -5791,7 +5735,6 @@
 				(font
 					(size 1.27 1.27)
 				)
-				(hide yes)
 			)
 		)
 		(property "ai_function" "LED data output (GPIO 16) test point"
@@ -5800,7 +5743,6 @@
 				(font
 					(size 1.27 1.27)
 				)
-				(hide yes)
 			)
 		)
 		(property "ai_role" "test_point"
@@ -5809,7 +5751,6 @@
 				(font
 					(size 1.27 1.27)
 				)
-				(hide yes)
 			)
 		)
 		(pin "1"
@@ -5941,7 +5882,6 @@
 				(font
 					(size 1.27 1.27)
 				)
-				(hide yes)
 			)
 		)
 		(property "ai_function" "Test point for +5V power rail"
@@ -5950,7 +5890,6 @@
 				(font
 					(size 1.27 1.27)
 				)
-				(hide yes)
 			)
 		)
 		(property "ai_role" "test_point"
@@ -5959,7 +5898,6 @@
 				(font
 					(size 1.27 1.27)
 				)
-				(hide yes)
 			)
 		)
 		(pin "1"
@@ -6031,7 +5969,6 @@
 				(font
 					(size 1.27 1.27)
 				)
-				(hide yes)
 			)
 		)
 		(property "ai_function" "I2C SCL (GPIO 44) test point"
@@ -6040,7 +5977,6 @@
 				(font
 					(size 1.27 1.27)
 				)
-				(hide yes)
 			)
 		)
 		(property "ai_role" "test_point"
@@ -6049,7 +5985,6 @@
 				(font
 					(size 1.27 1.27)
 				)
-				(hide yes)
 			)
 		)
 		(pin "1"
@@ -6281,7 +6216,6 @@
 				(font
 					(size 1.27 1.27)
 				)
-				(hide yes)
 			)
 		)
 		(property "ai_critical_specs" "3.3V output, 600mA max, dropout ~250mV, input from +5V"
@@ -6290,7 +6224,6 @@
 				(font
 					(size 1.27 1.27)
 				)
-				(hide yes)
 			)
 		)
 		(property "ai_function" "3.3V LDO regulator for sensor and I2C bus power"
@@ -6299,7 +6232,6 @@
 				(font
 					(size 1.27 1.27)
 				)
-				(hide yes)
 			)
 		)
 		(property "ai_role" "voltage_regulator"
@@ -6308,7 +6240,6 @@
 				(font
 					(size 1.27 1.27)
 				)
-				(hide yes)
 			)
 		)
 		(pin "5"
@@ -6389,7 +6320,6 @@
 				(font
 					(size 1.27 1.27)
 				)
-				(hide yes)
 			)
 		)
 		(property "ai_function" "TCA9548A reset signal test point"
@@ -6398,7 +6328,6 @@
 				(font
 					(size 1.27 1.27)
 				)
-				(hide yes)
 			)
 		)
 		(property "ai_role" "test_point"
@@ -6407,7 +6336,6 @@
 				(font
 					(size 1.27 1.27)
 				)
-				(hide yes)
 			)
 		)
 		(pin "1"
@@ -6543,6 +6471,42 @@
 				(font
 					(size 1.27 1.27)
 				)
+			)
+		)
+		(property "ai_block" "led_controller"
+			(at 0 0 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "ai_critical_specs" "3-pin: +5V_TO_LEDS, DATA_TO_LEDS, GND"
+			(at 0 0 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "ai_function" "JST-PH connector to WS2812B LED strip (72 LEDs, 1.2m), carries power and data"
+			(at 0 0 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "ai_role" "connector"
+			(at 0 0 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
 			)
 		)
 		(pin "1"
@@ -6825,7 +6789,6 @@
 				(font
 					(size 1.27 1.27)
 				)
-				(hide yes)
 			)
 		)
 		(property "ai_critical_specs" "5-pin: 3.3V, GND, CH2_SDA, CH2_SCL, INT3"
@@ -6834,7 +6797,6 @@
 				(font
 					(size 1.27 1.27)
 				)
-				(hide yes)
 			)
 		)
 		(property "ai_function" "JST-SH connector to sensor module 3 (M3, 3 oclock position), carries I2C CH2 + INT3"
@@ -6843,7 +6805,6 @@
 				(font
 					(size 1.27 1.27)
 				)
-				(hide yes)
 			)
 		)
 		(property "ai_role" "connector"
@@ -6852,7 +6813,6 @@
 				(font
 					(size 1.27 1.27)
 				)
-				(hide yes)
 			)
 		)
 		(pin "5"
@@ -6935,7 +6895,6 @@
 				(font
 					(size 1.27 1.27)
 				)
-				(hide yes)
 			)
 		)
 		(property "ai_critical_specs" "ESP32-S3, dual-core 240MHz, WiFi+BT, built-in 1.9in LCD, PSRAM"
@@ -6944,7 +6903,6 @@
 				(font
 					(size 1.27 1.27)
 				)
-				(hide yes)
 			)
 		)
 		(property "ai_function" "Main system controller (LilyGO T-Display-S3 ESP32-S3 dev board with LCD), runs sensor acquisition on Core 0 and networking on Core 1"
@@ -6953,7 +6911,6 @@
 				(font
 					(size 1.27 1.27)
 				)
-				(hide yes)
 			)
 		)
 		(property "ai_role" "controller"
@@ -6962,7 +6919,6 @@
 				(font
 					(size 1.27 1.27)
 				)
-				(hide yes)
 			)
 		)
 		(pin "14"
@@ -7103,7 +7059,6 @@
 				(font
 					(size 1.27 1.27)
 				)
-				(hide yes)
 			)
 		)
 		(property "ai_function" "GPIO 2 breakout test point (unused)"
@@ -7112,7 +7067,6 @@
 				(font
 					(size 1.27 1.27)
 				)
-				(hide yes)
 			)
 		)
 		(property "ai_role" "test_point"
@@ -7121,7 +7075,6 @@
 				(font
 					(size 1.27 1.27)
 				)
-				(hide yes)
 			)
 		)
 		(pin "1"
