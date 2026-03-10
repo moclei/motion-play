@@ -1,0 +1,11 @@
+{
+    "mcpServers": {
+        "jlcpcb": {
+            "command": "npx",
+            "args": [
+                "-y",
+                "jlc-mcp@latest"
+            ]
+        }
+    }
+}
