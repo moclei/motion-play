@@ -111,58 +111,50 @@ See `hardware/sensor-flex/FLEX_PCB_SETUP.md` for flex PCB manufacturing notes.
 | Voltage Regulator | AP2112K-3.3 | 3.3V regulator | `apk` |
 | Power Module | DWEII USB-C | USB-C power input | `dweii` or `power module` |
 
-## Annotated Netlist Specification
+## Schematic Context System
 
-Raw KiCad schematic files are difficult for AI assistants to interpret. The **annotated netlist** system provides machine-readable circuit data with human-written context.
+Raw KiCad schematic files are difficult for AI assistants to interpret. The **schematic context system** extracts circuit data and combines it with human-confirmed semantic annotations into a single `circuit-context.json` file per PCB project.
 
-**Always use annotated netlists** (`*.json` + `*.annotations.yaml`) instead of `.kicad_sch` files when understanding hardware designs.
+**Always use `circuit-context.json`** instead of `.kicad_sch` files when reasoning about hardware designs.
 
 ### File Locations
 
-| PCB | Netlist | Annotations |
-|-----|---------|-------------|
-| Main PCB | `hardware/pcb-main/kicad/netlists/*.json` | `hardware/pcb-main/kicad/netlists/*.annotations.yaml` |
-| Sensor Rigid Base | `hardware/sensor-rigid/sensor-rigid.json` | `hardware/sensor-rigid/sensor-rigid.annotations.yaml` |
-| Sensor Flex Strip | `hardware/sensor-flex/sensor-flex.json` | `hardware/sensor-flex/sensor-flex.annotations.yaml` |
-| Sensor Legacy (deprecated) | `hardware/pcb-sensor/kicad/netlist/*.json` | N/A — use rigid+flex instead |
+| PCB | Context File | Status |
+|-----|-------------|--------|
+| Main PCB | `hardware/pcb-main/kicad/circuit-context.json` | Complete — 37 components, 26 nets, 5 functional blocks |
+| Sensor Rigid Base | `hardware/sensor-rigid/circuit-context.json` | Future — same tools, separate pass |
+| Sensor Flex Strip | `hardware/sensor-flex/circuit-context.json` | Future — same tools, separate pass |
 
-### Annotation File Format
+### What's in circuit-context.json
 
-```yaml
-_meta:
-  description: "Brief description of the PCB"
-  version: "4.0"
-  last_synced: "2025-12-15T14:30:00"
-  netlist_hash: "abc123"
+- **Components** — every part with value, footprint, LCSC number, pin-level connectivity, and AI annotations (function, block membership, role, critical specs)
+- **Nets** — all named nets with type (power/signal/clock), protocol, direction, and description
+- **Functional blocks** — logical groupings (power, mcu, i2c_mux, sensor_connectors, led_controller) with descriptions and design intent notes
+- **Sheet interfaces** — hierarchical pin mappings showing signal flow between parent and child schematics
+- **Source metadata** — schema version, source hash, and extraction timestamp for staleness detection
 
-_status:
-  missing_annotations: []
-  archived_count: 0
+### Tooling
 
-components:
-  IC1:
-    nickname: "sensor1"
-    purpose: "Front-facing proximity sensor"
-  R5:
-    purpose: "8.2kΩ pull-up for combined INT line"
+Scripts live in `tools/schematic-context/` (see that folder's README for full usage):
 
-nets:
-  "Net-(D2-A)":
-    nickname: "INT_COMBINED"
-    purpose: "Combined interrupt line from both sensors via wired-OR diodes"
-    connects_to: "Main PCB GPIO via J1 Pin 5"
-
-_archived:
-  # Components removed from schematic (kept for reference)
-```
+| Script | Purpose |
+|--------|---------|
+| `extract.py` | Runs kicad-cli + kiutils to produce `circuit-context.json` from a root `.kicad_sch` |
+| `annotate.py` | Writes `ai_` properties to components in `.kicad_sch` files via kiutils |
+| `show.py` | Displays annotation coverage — useful during interactive annotation sessions |
 
 ### Workflow
 
 1. Edit schematic in KiCad
-2. Export netlist via KiCad (runs `firmware/tools/convert_netlist_to_json.py`)
-3. Plugin generates/updates `*.json` and `*.annotations.yaml` (preserves existing annotations)
-4. Check `_status.missing_annotations` for new items needing description
-5. Fill in annotations for new components/nets
+2. Run `extract.py` on the root `.kicad_sch` — uses `--previous` to merge forward existing net/block annotations
+3. If new components appeared, run an interactive annotation session with AI (propose annotations → confirm → write via `annotate.py`)
+4. Re-extract to produce the final context file with all annotations merged
+
+Component annotations (`ai_function`, `ai_block`, `ai_role`, `ai_critical_specs`) are stored as custom properties in the `.kicad_sch` file — they survive schematic edits. Net and block annotations are stored in `circuit-context.json` and carried forward via the `--previous` merge.
+
+### Deprecated: Old Netlist + Annotation System
+
+The previous system used `convert_netlist_to_json.py` to produce JSON netlists with separate YAML annotation files. This has been fully replaced by the schematic context system. Old files in `hardware/pcb-main/kicad/netlists/` and `hardware/pcb-sensor/kicad/netlist/` are retained for reference but should not be used.
 
 ## VCNL4040 Sensor Capabilities
 
@@ -186,4 +178,4 @@ All VCNL4040 sensors share address 0x60. The TCA→PCA dual-MUX chain provides i
 
 ---
 
-*Last Updated: March 4, 2026*
+*Last Updated: March 9, 2026*

@@ -1,0 +1,58 @@
+# Schematic Context System — Tasks
+
+## Phase 1a: Extraction Pipeline — XML Parsing
+
+- [x] Create `tools/schematic-context/` directory and `requirements.txt` (kiutils, pyyaml)
+- [x] Write `extract.py` — kicad-cli invocation: call kicad-cli to export XML netlist from a given root `.kicad_sch`, handle path resolution and error cases
+- [x] Write `extract.py` — XML netlist parsing: parse the exported XML into component, pin, and net data structures (ref, value, footprint, LCSC part, pin names, pin types, net assignments, sheet paths)
+- [x] Write `extract.py` — basic context file output: produce a `circuit-context.json` with components, pins, and nets from the XML data alone (no kiutils yet, no annotations, no blocks)
+- [x] Test on main PCB: run extraction, verify all components and nets from all sheets appear correctly in the output
+- [x] Commit, update TASKS.md, generate handoff prompt for next session. Note any unexpected issues or implementation decisions.
+
+## Phase 1b: Extraction Pipeline — kiutils Integration & Merge
+
+- [x] Add kiutils integration to `extract.py`: read each `.kicad_sch` file (root + children discovered via kiutils `sch.sheets`), extract all component properties including `ai_` prefixed custom properties
+- [x] Add sheet hierarchy to `extract.py`: build `sheet_interfaces` section from hierarchical sheet pins (name, direction) and match to hierarchical labels in child schematics
+- [x] Add previous-context merge to `extract.py`: if a previous `circuit-context.json` exists, carry forward net annotations and block definitions, flag new/removed items
+- [x] End-to-end test: run full extraction on main PCB, verify kiutils properties and sheet interfaces appear correctly alongside XML-derived connectivity
+- [x] Commit, update TASKS.md, generate handoff prompt for next session. Note any unexpected issues or implementation decisions.
+
+## Phase 2: Annotation Tooling
+
+- [x] Write `annotate.py` — accepts component ref + key=value pairs, writes `ai_` properties to the correct `.kicad_sch` file via kiutils (must resolve which sheet a component lives on)
+- [x] Write `show.py` — reads current schematic state via kiutils, displays components grouped by annotation status (annotated vs unannotated), useful for guiding annotation sessions
+- [x] Test annotation round-trip: write a property via `annotate.py`, re-extract via `extract.py`, confirm property appears in `circuit-context.json`
+- [x] Commit, update TASKS.md, generate handoff prompt for next session. Note any unexpected issues or implementation decisions.
+
+## Phase 3a: Annotation Pass — Setup & First Blocks
+
+- [x] Define 10 test questions about the main PCB schematic — saved in `docs/initiatives/schematic-context/TEST_QUESTIONS.md`
+- [x] Run initial extraction on main PCB to produce baseline `circuit-context.json` (37 components, 26 nets, all empty)
+- [x] Interactive annotation session: annotate power subsystem (J2, D1, U1, C1, C2, TP_5V1, TP_3V1, TP_GND1) — 8 components
+- [x] Interactive annotation session: annotate MCU block (U2 + 14 test points), I2C mux block (U4, R6, R28, R29, C9, C10), and sensor connectors (J4, J5, J6) — 23 components
+- [x] Re-extract to capture annotations — 31/37 components annotated (84%), remaining 6 are LED controller block (Phase 3b)
+- [x] Commit, update TASKS.md, generate handoff prompt for next session. Note any unexpected issues or implementation decisions.
+
+## Phase 3b: Annotation Pass — Remaining Blocks & Nets
+
+- [x] Interactive annotation session: annotate LED controller block (IC1 level shifter, F1 fuse, R27 sense resistor, C7, C8 caps, J3 LED strip connector) — 6 remaining components
+- [x] Add net annotations to `circuit-context.json` — type, protocol, direction, description for all 26 nets
+- [x] Define functional blocks in `circuit-context.json` — 5 blocks (power, mcu, i2c_mux, sensor_connectors, led_controller) with descriptions, component membership, and design intent notes
+- [x] Add top-level description and sheet_interface descriptions to `circuit-context.json`
+- [x] Re-extract with `--previous` to merge component annotations (from .kicad_sch) with net/block annotations (from JSON) — 37/37 components, 26/26 nets, 5 blocks
+- [x] Commit, update TASKS.md, generate handoff prompt for next session. Note any unexpected issues or implementation decisions.
+
+## Phase 3c: Verification
+
+- [x] Run verification quiz: fresh session with only `circuit-context.json` and `hardware/CONTEXT.md`, answered all 10 test questions from Phase 3a — all 10 passed
+- [x] Gap assessment: no gaps found. All signal traces, component roles, power paths, functional groupings, and design modification questions answerable from context alone. Minor note: unconnected TCA9548A pins (CH3-CH7) not in file by design, but pattern is inferable.
+- [x] No re-extraction needed — context file from Phase 3b was already complete (37/37 components, 26/26 nets, 5 blocks)
+- [x] Commit, update TASKS.md, generate handoff prompt for next session.
+
+## Phase 4: Documentation & Cleanup
+
+- [x] Update `hardware/CONTEXT.md` — replaced "Annotated Netlist Specification" section with "Schematic Context System" section pointing to `circuit-context.json`, new tooling table, updated workflow, and deprecation note for old files
+- [x] Update `.context/PROJECT.md` — added schematic context mention to hardware status, project structure tree, aspect table, and tools description
+- [x] Mark as deprecated: added `DEPRECATED.md` in `hardware/pcb-main/kicad/netlists/` and `hardware/pcb-sensor/kicad/netlist/` explaining these files are superseded by the schematic context system
+- [x] Add a brief README in `tools/schematic-context/` documenting all three scripts (extract.py, annotate.py, show.py), prerequisites, typical workflow, and output locations
+- [x] Commit, update TASKS.md — initiative complete.

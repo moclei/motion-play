@@ -1,0 +1,1433 @@
+{
+  "schema_version": "1.0",
+  "project": "motion-play-main",
+  "source": {
+    "root": "motion-play-main.kicad_sch",
+    "sheets": {
+      "led_controller.kicad_sch": "LED Controller",
+      "tca9548A_subsystem.kicad_sch": "TCA9548A_Subsystem"
+    },
+    "source_hash": "5478765feff5",
+    "extracted_at": "2026-03-10T01:14:28.458900+00:00"
+  },
+  "description": "ESP32-S3 based sensor controller main PCB with USB-C power input, 3.3V regulation, I2C multiplexer for 3 sensor modules, and WS2812B LED strip driver with level shifting",
+  "blocks": {
+    "power": {
+      "description": "Power supply subsystem: USB-C input, reverse-polarity protection, 3.3V LDO regulation",
+      "sheet": "motion-play-main.kicad_sch",
+      "components": [
+        "J2",
+        "D1",
+        "U1",
+        "C1",
+        "C2",
+        "TP_5V1",
+        "TP_3V1",
+        "TP_GND1"
+      ],
+      "notes": "DWEII power module is a temporary development solution with battery charging. Long-term plan is custom USB-C + buck regulator. D1 Schottky provides reverse-polarity protection with ~0.3V drop."
+    },
+    "mcu": {
+      "description": "Main system controller (ESP32-S3) and GPIO breakout test points",
+      "sheet": "motion-play-main.kicad_sch",
+      "components": [
+        "U2",
+        "TPIO1",
+        "TPIO2",
+        "TPIO3",
+        "TPIO10",
+        "TPIO11",
+        "TPIO12",
+        "TPIO13",
+        "TPIO16",
+        "TPIO17",
+        "TPIO18",
+        "TPIO21",
+        "TPIO43",
+        "TPIO44"
+      ],
+      "notes": "T-Display-S3 dev board used temporarily. Long-term plan is bare ESP32-S3 integrated into main PCB. GPIO 1-3, 17, 18, 21 are unused breakouts for future expansion."
+    },
+    "i2c_mux": {
+      "description": "TCA9548A I2C multiplexer subsystem with pull-ups and decoupling",
+      "sheet": "tca9548A_subsystem.kicad_sch",
+      "components": [
+        "U4",
+        "R6",
+        "R28",
+        "R29",
+        "C9",
+        "C10"
+      ],
+      "notes": "Routes single upstream I2C bus to 3 downstream channels for sensor boards. Address 0x70 (all address pins grounded). R28/R29 are upstream pull-ups; downstream pull-ups are on sensor boards."
+    },
+    "sensor_connectors": {
+      "description": "JST-SH connectors carrying I2C and interrupt signals to three sensor modules",
+      "sheet": "motion-play-main.kicad_sch",
+      "components": [
+        "J4",
+        "J5",
+        "J6"
+      ],
+      "notes": "Each 5-pin connector provides 3.3V power, GND, I2C SDA/SCL (from TCA9548A channel), and interrupt. Wired to sensor rigid base PCBs which have PCA9546A local muxes."
+    },
+    "led_controller": {
+      "description": "LED strip driver with level shifting, power protection, and current sensing",
+      "sheet": "led_controller.kicad_sch",
+      "components": [
+        "IC1",
+        "F1",
+        "R27",
+        "C7",
+        "C8",
+        "J3"
+      ],
+      "notes": "Drives 72-LED WS2812B strip. SN74AHCT125 shifts 3.3V data to 5V. Power path: +5V -> F1 (3A fuse) -> R27 (0.1 ohm sense) -> +5V_TO_LEDS. J3 is on root sheet but functionally part of this block."
+    }
+  },
+  "components": {
+    "C1": {
+      "part": "C",
+      "value": "1\u00b5F",
+      "footprint": "Capacitor_SMD:C_0603_1608Metric",
+      "lcsc": "C15849",
+      "sheet": "motion-play-main.kicad_sch",
+      "block": "power",
+      "function": "Input bypass capacitor for U1 voltage regulator",
+      "role": "decoupling",
+      "critical_specs": "1uF, 0603",
+      "pins": [
+        {
+          "number": "1",
+          "name": "",
+          "type": "passive",
+          "net": "GND"
+        },
+        {
+          "number": "2",
+          "name": "",
+          "type": "passive",
+          "net": "+5V"
+        }
+      ]
+    },
+    "C10": {
+      "part": "C",
+      "value": "10uF",
+      "footprint": "Capacitor_SMD:C_0603_1608Metric",
+      "lcsc": "C19702",
+      "sheet": "tca9548A_subsystem.kicad_sch",
+      "block": "i2c_mux",
+      "function": "Bulk decoupling capacitor for TCA9548A",
+      "role": "decoupling",
+      "critical_specs": "10uF, 0603",
+      "pins": [
+        {
+          "number": "1",
+          "name": "",
+          "type": "passive",
+          "net": "GND"
+        },
+        {
+          "number": "2",
+          "name": "",
+          "type": "passive",
+          "net": "+3.3V"
+        }
+      ]
+    },
+    "C2": {
+      "part": "C",
+      "value": "2.2\u00b5F",
+      "footprint": "Capacitor_SMD:C_0603_1608Metric",
+      "lcsc": "C23630",
+      "sheet": "motion-play-main.kicad_sch",
+      "block": "power",
+      "function": "Output stabilization capacitor for U1 voltage regulator",
+      "role": "decoupling",
+      "critical_specs": "2.2uF, 0603, required for LDO stability",
+      "pins": [
+        {
+          "number": "1",
+          "name": "",
+          "type": "passive",
+          "net": "GND"
+        },
+        {
+          "number": "2",
+          "name": "",
+          "type": "passive",
+          "net": "+3.3V"
+        }
+      ]
+    },
+    "C7": {
+      "part": "C",
+      "value": "100nF",
+      "footprint": "Capacitor_SMD:C_0603_1608Metric",
+      "lcsc": "C14663",
+      "sheet": "led_controller.kicad_sch",
+      "block": "led_controller",
+      "function": "High-frequency bypass capacitor on intermediate LED power node (between fuse F1 and sense resistor R27)",
+      "role": "decoupling",
+      "critical_specs": "100nF, 0603",
+      "pins": [
+        {
+          "number": "1",
+          "name": "",
+          "type": "passive",
+          "net": "GND"
+        },
+        {
+          "number": "2",
+          "name": "",
+          "type": "passive",
+          "net": "Net-(C7-Pad2)"
+        }
+      ]
+    },
+    "C8": {
+      "part": "C",
+      "value": "10uF",
+      "footprint": "Capacitor_SMD:C_0603_1608Metric",
+      "lcsc": "C19702",
+      "sheet": "led_controller.kicad_sch",
+      "block": "led_controller",
+      "function": "Bulk decoupling capacitor on +5V_TO_LEDS rail, stabilizes LED strip power",
+      "role": "decoupling",
+      "critical_specs": "10uF, 0603, placed near IC1 VCC and LED strip connector",
+      "pins": [
+        {
+          "number": "1",
+          "name": "",
+          "type": "passive",
+          "net": "GND"
+        },
+        {
+          "number": "2",
+          "name": "",
+          "type": "passive",
+          "net": "/LED Controller/+5V_TO_LEDS"
+        }
+      ]
+    },
+    "C9": {
+      "part": "C",
+      "value": "100nF",
+      "footprint": "Capacitor_SMD:C_0603_1608Metric",
+      "lcsc": "C14663",
+      "sheet": "tca9548A_subsystem.kicad_sch",
+      "block": "i2c_mux",
+      "function": "High-frequency decoupling capacitor for TCA9548A",
+      "role": "decoupling",
+      "critical_specs": "100nF, 0603, placed close to VCC pin",
+      "pins": [
+        {
+          "number": "1",
+          "name": "",
+          "type": "passive",
+          "net": "GND"
+        },
+        {
+          "number": "2",
+          "name": "",
+          "type": "passive",
+          "net": "+3.3V"
+        }
+      ]
+    },
+    "D1": {
+      "part": "D_Schottky",
+      "value": "D_Schottky",
+      "footprint": "Diode_SMD:D_SMC",
+      "lcsc": "C5204950",
+      "sheet": "motion-play-main.kicad_sch",
+      "block": "power",
+      "function": "Reverse-polarity protection diode between power module and +5V rail",
+      "role": "protection",
+      "critical_specs": "Schottky, low Vf (~0.3V), handles full system current",
+      "pins": [
+        {
+          "number": "1",
+          "name": "K",
+          "type": "passive",
+          "net": "+5V"
+        },
+        {
+          "number": "2",
+          "name": "A",
+          "type": "passive",
+          "net": "Net-(D1-A)"
+        }
+      ]
+    },
+    "F1": {
+      "part": "Fuse",
+      "value": "3A",
+      "footprint": "Fuse:Fuse_1206_3216Metric",
+      "lcsc": "C354897",
+      "sheet": "led_controller.kicad_sch",
+      "block": "led_controller",
+      "function": "Overcurrent protection fuse on +5V LED strip power path",
+      "role": "protection",
+      "critical_specs": "3A rated, 1206 package, protects against LED strip short circuit",
+      "pins": [
+        {
+          "number": "1",
+          "name": "",
+          "type": "passive",
+          "net": "+5V"
+        },
+        {
+          "number": "2",
+          "name": "",
+          "type": "passive",
+          "net": "Net-(C7-Pad2)"
+        }
+      ]
+    },
+    "IC1": {
+      "part": "SN74AHCT125PWR",
+      "value": "SN74AHCT125PWR",
+      "footprint": "motion-play-footprints:SOP65P640X120-14N",
+      "lcsc": "C36365",
+      "sheet": "led_controller.kicad_sch",
+      "block": "led_controller",
+      "function": "Quad bus buffer/level shifter, shifts LED data signal from 3.3V MCU logic to 5V WS2812B logic",
+      "role": "level_shifter",
+      "critical_specs": "AHCT family (3.3V input compatible with 5V VCC), only 1 of 4 buffers used (1A->1Y)",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1~{OE}",
+          "type": "passive",
+          "net": "GND"
+        },
+        {
+          "number": "2",
+          "name": "1A",
+          "type": "passive",
+          "net": "/LED Controller/DATA_IN"
+        },
+        {
+          "number": "3",
+          "name": "1Y",
+          "type": "passive",
+          "net": "/LED Controller/DATA_TO_LEDS"
+        },
+        {
+          "number": "7",
+          "name": "GND",
+          "type": "passive",
+          "net": "GND"
+        },
+        {
+          "number": "14",
+          "name": "VCC",
+          "type": "passive",
+          "net": "/LED Controller/+5V_TO_LEDS"
+        }
+      ]
+    },
+    "J2": {
+      "part": "USBC_Power_Module",
+      "value": "DWEII Power Module",
+      "footprint": "motion-play-footprints:USBC_Power_Module",
+      "lcsc": "",
+      "sheet": "motion-play-main.kicad_sch",
+      "block": "power",
+      "function": "USB-C power input module with battery charging, provides 5V to system",
+      "role": "",
+      "critical_specs": "5V output, ~2.4A max, includes battery charging circuit",
+      "pins": [
+        {
+          "number": "1",
+          "name": "GND",
+          "type": "passive",
+          "net": "GND"
+        },
+        {
+          "number": "2",
+          "name": "5V",
+          "type": "power_out",
+          "net": "Net-(D1-A)"
+        }
+      ]
+    },
+    "J3": {
+      "part": "Conn_01x03",
+      "value": "LED_Strip",
+      "footprint": "Connector_JST:JST_PH_S3B-PH-SM4-TB_1x03-1MP_P2.00mm_Horizontal",
+      "lcsc": "C265101",
+      "sheet": "motion-play-main.kicad_sch",
+      "block": "led_controller",
+      "function": "JST-PH connector to WS2812B LED strip (72 LEDs, 1.2m), carries power and data",
+      "role": "connector",
+      "critical_specs": "3-pin: +5V_TO_LEDS, DATA_TO_LEDS, GND",
+      "pins": [
+        {
+          "number": "1",
+          "name": "Pin_1",
+          "type": "passive",
+          "net": "/LED Controller/+5V_TO_LEDS"
+        },
+        {
+          "number": "2",
+          "name": "Pin_2",
+          "type": "passive",
+          "net": "/LED Controller/DATA_TO_LEDS"
+        },
+        {
+          "number": "3",
+          "name": "Pin_3",
+          "type": "passive",
+          "net": "GND"
+        }
+      ]
+    },
+    "J4": {
+      "part": "Conn_01x05",
+      "value": "Conn_01x05",
+      "footprint": "Connector_JST:JST_SH_SM05B-SRSS-TB_1x05-1MP_P1.00mm_Horizontal",
+      "lcsc": "C160403",
+      "sheet": "motion-play-main.kicad_sch",
+      "block": "sensor_connectors",
+      "function": "JST-SH connector to sensor module 1 (M1, 6 oclock position), carries I2C CH0 + INT1",
+      "role": "connector",
+      "critical_specs": "5-pin: 3.3V, GND, CH0_SDA, CH0_SCL, INT1",
+      "pins": [
+        {
+          "number": "1",
+          "name": "Pin_1",
+          "type": "passive",
+          "net": "+3.3V"
+        },
+        {
+          "number": "2",
+          "name": "Pin_2",
+          "type": "passive",
+          "net": "GND"
+        },
+        {
+          "number": "3",
+          "name": "Pin_3",
+          "type": "passive",
+          "net": "/TCA9548A_Subsystem/CH0_SDA"
+        },
+        {
+          "number": "4",
+          "name": "Pin_4",
+          "type": "passive",
+          "net": "/TCA9548A_Subsystem/CH0_SCL"
+        },
+        {
+          "number": "5",
+          "name": "Pin_5",
+          "type": "passive",
+          "net": "/INT1"
+        }
+      ]
+    },
+    "J5": {
+      "part": "Conn_01x05",
+      "value": "Conn_01x05",
+      "footprint": "Connector_JST:JST_SH_SM05B-SRSS-TB_1x05-1MP_P1.00mm_Horizontal",
+      "lcsc": "C160403",
+      "sheet": "motion-play-main.kicad_sch",
+      "block": "sensor_connectors",
+      "function": "JST-SH connector to sensor module 2 (M2, 9 oclock position), carries I2C CH1 + INT2",
+      "role": "connector",
+      "critical_specs": "5-pin: 3.3V, GND, CH1_SDA, CH1_SCL, INT2",
+      "pins": [
+        {
+          "number": "1",
+          "name": "Pin_1",
+          "type": "passive",
+          "net": "+3.3V"
+        },
+        {
+          "number": "2",
+          "name": "Pin_2",
+          "type": "passive",
+          "net": "GND"
+        },
+        {
+          "number": "3",
+          "name": "Pin_3",
+          "type": "passive",
+          "net": "/TCA9548A_Subsystem/CH1_SDA"
+        },
+        {
+          "number": "4",
+          "name": "Pin_4",
+          "type": "passive",
+          "net": "/TCA9548A_Subsystem/CH1_SCL"
+        },
+        {
+          "number": "5",
+          "name": "Pin_5",
+          "type": "passive",
+          "net": "/INT2"
+        }
+      ]
+    },
+    "J6": {
+      "part": "Conn_01x05",
+      "value": "Conn_01x05",
+      "footprint": "Connector_JST:JST_SH_SM05B-SRSS-TB_1x05-1MP_P1.00mm_Horizontal",
+      "lcsc": "C160403",
+      "sheet": "motion-play-main.kicad_sch",
+      "block": "sensor_connectors",
+      "function": "JST-SH connector to sensor module 3 (M3, 3 oclock position), carries I2C CH2 + INT3",
+      "role": "connector",
+      "critical_specs": "5-pin: 3.3V, GND, CH2_SDA, CH2_SCL, INT3",
+      "pins": [
+        {
+          "number": "1",
+          "name": "Pin_1",
+          "type": "passive",
+          "net": "+3.3V"
+        },
+        {
+          "number": "2",
+          "name": "Pin_2",
+          "type": "passive",
+          "net": "GND"
+        },
+        {
+          "number": "3",
+          "name": "Pin_3",
+          "type": "passive",
+          "net": "/TCA9548A_Subsystem/CH2_SDA"
+        },
+        {
+          "number": "4",
+          "name": "Pin_4",
+          "type": "passive",
+          "net": "/TCA9548A_Subsystem/CH2_SCL"
+        },
+        {
+          "number": "5",
+          "name": "Pin_5",
+          "type": "passive",
+          "net": "/INT3"
+        }
+      ]
+    },
+    "R27": {
+      "part": "R",
+      "value": "0.1R",
+      "footprint": "Resistor_SMD:R_2512_6332Metric",
+      "lcsc": "C500724",
+      "sheet": "led_controller.kicad_sch",
+      "block": "led_controller",
+      "function": "Current sense resistor in LED strip +5V power path, enables measuring LED strip current draw",
+      "role": "current_sense",
+      "critical_specs": "0.1 ohm, 2512 package (high power), 1A = 0.1V drop",
+      "pins": [
+        {
+          "number": "1",
+          "name": "",
+          "type": "passive",
+          "net": "Net-(C7-Pad2)"
+        },
+        {
+          "number": "2",
+          "name": "",
+          "type": "passive",
+          "net": "/LED Controller/+5V_TO_LEDS"
+        }
+      ]
+    },
+    "R28": {
+      "part": "R",
+      "value": "2.2k\u03a9",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "lcsc": "C114662",
+      "sheet": "tca9548A_subsystem.kicad_sch",
+      "block": "i2c_mux",
+      "function": "I2C SDA pull-up on upstream bus between MCU and TCA9548A",
+      "role": "pull_up",
+      "critical_specs": "2.2k to +3.3V, sized for 400kHz operation",
+      "pins": [
+        {
+          "number": "1",
+          "name": "",
+          "type": "passive",
+          "net": "/I2C_SDA"
+        },
+        {
+          "number": "2",
+          "name": "",
+          "type": "passive",
+          "net": "+3.3V"
+        }
+      ]
+    },
+    "R29": {
+      "part": "R",
+      "value": "2.2k\u03a9",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "lcsc": "C114662",
+      "sheet": "tca9548A_subsystem.kicad_sch",
+      "block": "i2c_mux",
+      "function": "I2C SCL pull-up on upstream bus between MCU and TCA9548A",
+      "role": "pull_up",
+      "critical_specs": "2.2k to +3.3V, sized for 400kHz operation",
+      "pins": [
+        {
+          "number": "1",
+          "name": "",
+          "type": "passive",
+          "net": "/I2C_SCL"
+        },
+        {
+          "number": "2",
+          "name": "",
+          "type": "passive",
+          "net": "+3.3V"
+        }
+      ]
+    },
+    "R6": {
+      "part": "R",
+      "value": "10k\u03a9",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "lcsc": "C25804",
+      "sheet": "tca9548A_subsystem.kicad_sch",
+      "block": "i2c_mux",
+      "function": "Active-low reset pull-up for TCA9548A, keeps mux out of reset by default",
+      "role": "pull_up",
+      "critical_specs": "10k to +3.3V",
+      "pins": [
+        {
+          "number": "1",
+          "name": "",
+          "type": "passive",
+          "net": "/TCA9548A_Subsystem/TCA_RESET"
+        },
+        {
+          "number": "2",
+          "name": "",
+          "type": "passive",
+          "net": "+3.3V"
+        }
+      ]
+    },
+    "TPIO1": {
+      "part": "TestPoint",
+      "value": "TestPoint",
+      "footprint": "TestPoint:TestPoint_Pad_D2.0mm",
+      "lcsc": "",
+      "sheet": "motion-play-main.kicad_sch",
+      "block": "mcu",
+      "function": "GPIO 1 breakout test point (unused)",
+      "role": "test_point",
+      "critical_specs": "",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "Net-(U2-1)"
+        }
+      ]
+    },
+    "TPIO10": {
+      "part": "TestPoint",
+      "value": "TestPoint",
+      "footprint": "TestPoint:TestPoint_Pad_D2.0mm",
+      "lcsc": "",
+      "sheet": "motion-play-main.kicad_sch",
+      "block": "mcu",
+      "function": "TCA9548A reset signal test point",
+      "role": "test_point",
+      "critical_specs": "",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "/TCA9548A_Subsystem/TCA_RESET"
+        }
+      ]
+    },
+    "TPIO11": {
+      "part": "TestPoint",
+      "value": "TestPoint",
+      "footprint": "TestPoint:TestPoint_Pad_D2.0mm",
+      "lcsc": "",
+      "sheet": "motion-play-main.kicad_sch",
+      "block": "mcu",
+      "function": "Sensor module 3 interrupt test point",
+      "role": "test_point",
+      "critical_specs": "",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "/INT3"
+        }
+      ]
+    },
+    "TPIO12": {
+      "part": "TestPoint",
+      "value": "TestPoint",
+      "footprint": "TestPoint:TestPoint_Pad_D2.0mm",
+      "lcsc": "",
+      "sheet": "motion-play-main.kicad_sch",
+      "block": "mcu",
+      "function": "Sensor module 2 interrupt test point",
+      "role": "test_point",
+      "critical_specs": "",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "/INT2"
+        }
+      ]
+    },
+    "TPIO13": {
+      "part": "TestPoint",
+      "value": "TestPoint",
+      "footprint": "TestPoint:TestPoint_Pad_D2.0mm",
+      "lcsc": "",
+      "sheet": "motion-play-main.kicad_sch",
+      "block": "mcu",
+      "function": "Sensor module 1 interrupt test point",
+      "role": "test_point",
+      "critical_specs": "",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "/INT1"
+        }
+      ]
+    },
+    "TPIO16": {
+      "part": "TestPoint",
+      "value": "TestPoint",
+      "footprint": "TestPoint:TestPoint_Pad_D2.0mm",
+      "lcsc": "",
+      "sheet": "motion-play-main.kicad_sch",
+      "block": "mcu",
+      "function": "LED data output (GPIO 16) test point",
+      "role": "test_point",
+      "critical_specs": "",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "/LED Controller/DATA_IN"
+        }
+      ]
+    },
+    "TPIO17": {
+      "part": "TestPoint",
+      "value": "TestPoint",
+      "footprint": "TestPoint:TestPoint_Pad_D2.0mm",
+      "lcsc": "",
+      "sheet": "motion-play-main.kicad_sch",
+      "block": "mcu",
+      "function": "GPIO 17 breakout test point (unused)",
+      "role": "test_point",
+      "critical_specs": "",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "Net-(U2-17)"
+        }
+      ]
+    },
+    "TPIO18": {
+      "part": "TestPoint",
+      "value": "TestPoint",
+      "footprint": "TestPoint:TestPoint_Pad_D2.0mm",
+      "lcsc": "",
+      "sheet": "motion-play-main.kicad_sch",
+      "block": "mcu",
+      "function": "GPIO 18 breakout test point (unused)",
+      "role": "test_point",
+      "critical_specs": "",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "Net-(U2-18)"
+        }
+      ]
+    },
+    "TPIO2": {
+      "part": "TestPoint",
+      "value": "TestPoint",
+      "footprint": "TestPoint:TestPoint_Pad_D2.0mm",
+      "lcsc": "",
+      "sheet": "motion-play-main.kicad_sch",
+      "block": "mcu",
+      "function": "GPIO 2 breakout test point (unused)",
+      "role": "test_point",
+      "critical_specs": "",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "Net-(U2-2)"
+        }
+      ]
+    },
+    "TPIO21": {
+      "part": "TestPoint",
+      "value": "TestPoint",
+      "footprint": "TestPoint:TestPoint_Pad_D2.0mm",
+      "lcsc": "",
+      "sheet": "motion-play-main.kicad_sch",
+      "block": "mcu",
+      "function": "GPIO 21 breakout test point (unused)",
+      "role": "test_point",
+      "critical_specs": "",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "Net-(U2-21)"
+        }
+      ]
+    },
+    "TPIO3": {
+      "part": "TestPoint",
+      "value": "TestPoint",
+      "footprint": "TestPoint:TestPoint_Pad_D2.0mm",
+      "lcsc": "",
+      "sheet": "motion-play-main.kicad_sch",
+      "block": "mcu",
+      "function": "GPIO 3 breakout test point (unused)",
+      "role": "test_point",
+      "critical_specs": "",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "Net-(U2-3)"
+        }
+      ]
+    },
+    "TPIO43": {
+      "part": "TestPoint",
+      "value": "TestPoint",
+      "footprint": "TestPoint:TestPoint_Pad_D2.0mm",
+      "lcsc": "",
+      "sheet": "motion-play-main.kicad_sch",
+      "block": "mcu",
+      "function": "I2C SDA (GPIO 43) test point",
+      "role": "test_point",
+      "critical_specs": "",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "/I2C_SDA"
+        }
+      ]
+    },
+    "TPIO44": {
+      "part": "TestPoint",
+      "value": "TestPoint",
+      "footprint": "TestPoint:TestPoint_Pad_D2.0mm",
+      "lcsc": "",
+      "sheet": "motion-play-main.kicad_sch",
+      "block": "mcu",
+      "function": "I2C SCL (GPIO 44) test point",
+      "role": "test_point",
+      "critical_specs": "",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "/I2C_SCL"
+        }
+      ]
+    },
+    "TP_3V1": {
+      "part": "TestPoint",
+      "value": "TestPoint",
+      "footprint": "TestPoint:TestPoint_Pad_D2.0mm",
+      "lcsc": "",
+      "sheet": "motion-play-main.kicad_sch",
+      "block": "power",
+      "function": "Test point for +3.3V power rail",
+      "role": "test_point",
+      "critical_specs": "",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "+3.3V"
+        }
+      ]
+    },
+    "TP_5V1": {
+      "part": "TestPoint",
+      "value": "TestPoint",
+      "footprint": "TestPoint:TestPoint_Pad_D2.0mm",
+      "lcsc": "",
+      "sheet": "motion-play-main.kicad_sch",
+      "block": "power",
+      "function": "Test point for +5V power rail",
+      "role": "test_point",
+      "critical_specs": "",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "+5V"
+        }
+      ]
+    },
+    "TP_GND1": {
+      "part": "TestPoint",
+      "value": "TestPoint",
+      "footprint": "TestPoint:TestPoint_Pad_D2.0mm",
+      "lcsc": "",
+      "sheet": "motion-play-main.kicad_sch",
+      "block": "power",
+      "function": "Test point for ground rail",
+      "role": "test_point",
+      "critical_specs": "",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "GND"
+        }
+      ]
+    },
+    "U1": {
+      "part": "AP2112K-3.3TRG1",
+      "value": "AP2112K-3.3TRG1",
+      "footprint": "motion-play-footprints:SOT95P285X140-5N",
+      "lcsc": "C51118",
+      "sheet": "motion-play-main.kicad_sch",
+      "block": "power",
+      "function": "3.3V LDO regulator for sensor and I2C bus power",
+      "role": "voltage_regulator",
+      "critical_specs": "3.3V output, 600mA max, dropout ~250mV, input from +5V",
+      "pins": [
+        {
+          "number": "1",
+          "name": "VIN",
+          "type": "power_in",
+          "net": "+5V"
+        },
+        {
+          "number": "2",
+          "name": "GND",
+          "type": "power_in",
+          "net": "GND"
+        },
+        {
+          "number": "3",
+          "name": "EN",
+          "type": "input",
+          "net": "+5V"
+        },
+        {
+          "number": "5",
+          "name": "VOUT",
+          "type": "power_in",
+          "net": "+3.3V"
+        }
+      ]
+    },
+    "U2": {
+      "part": "T-Display-S3",
+      "value": "T-Display-S3",
+      "footprint": "motion-play-footprints:T-Display-S3",
+      "lcsc": "",
+      "sheet": "motion-play-main.kicad_sch",
+      "block": "mcu",
+      "function": "Main system controller (LilyGO T-Display-S3 ESP32-S3 dev board with LCD), runs sensor acquisition on Core 0 and networking on Core 1",
+      "role": "controller",
+      "critical_specs": "ESP32-S3, dual-core 240MHz, WiFi+BT, built-in 1.9in LCD, PSRAM",
+      "pins": [
+        {
+          "number": "2",
+          "name": "1",
+          "type": "bidirectional",
+          "net": "Net-(U2-1)"
+        },
+        {
+          "number": "3",
+          "name": "2",
+          "type": "bidirectional",
+          "net": "Net-(U2-2)"
+        },
+        {
+          "number": "4",
+          "name": "3",
+          "type": "bidirectional",
+          "net": "Net-(U2-3)"
+        },
+        {
+          "number": "5",
+          "name": "10",
+          "type": "bidirectional",
+          "net": "/TCA9548A_Subsystem/TCA_RESET"
+        },
+        {
+          "number": "6",
+          "name": "11",
+          "type": "bidirectional",
+          "net": "/INT3"
+        },
+        {
+          "number": "7",
+          "name": "12",
+          "type": "bidirectional",
+          "net": "/INT2"
+        },
+        {
+          "number": "8",
+          "name": "13",
+          "type": "bidirectional",
+          "net": "/INT1"
+        },
+        {
+          "number": "11",
+          "name": "GND",
+          "type": "power_in",
+          "net": "GND"
+        },
+        {
+          "number": "12",
+          "name": "5V",
+          "type": "power_in",
+          "net": "+5V"
+        },
+        {
+          "number": "13",
+          "name": "GND",
+          "type": "power_in",
+          "net": "GND"
+        },
+        {
+          "number": "14",
+          "name": "GND",
+          "type": "power_in",
+          "net": "GND"
+        },
+        {
+          "number": "15",
+          "name": "43",
+          "type": "bidirectional",
+          "net": "/I2C_SDA"
+        },
+        {
+          "number": "16",
+          "name": "44",
+          "type": "bidirectional",
+          "net": "/I2C_SCL"
+        },
+        {
+          "number": "17",
+          "name": "18",
+          "type": "bidirectional",
+          "net": "Net-(U2-18)"
+        },
+        {
+          "number": "18",
+          "name": "17",
+          "type": "bidirectional",
+          "net": "Net-(U2-17)"
+        },
+        {
+          "number": "19",
+          "name": "21",
+          "type": "bidirectional",
+          "net": "Net-(U2-21)"
+        },
+        {
+          "number": "20",
+          "name": "16",
+          "type": "bidirectional",
+          "net": "/LED Controller/DATA_IN"
+        },
+        {
+          "number": "22",
+          "name": "GND",
+          "type": "power_in",
+          "net": "GND"
+        },
+        {
+          "number": "23",
+          "name": "GND",
+          "type": "power_in",
+          "net": "GND"
+        }
+      ]
+    },
+    "U4": {
+      "part": "TCA9548APWR",
+      "value": "TCA9548APWR",
+      "footprint": "motion-play-footprints:SOP65P640X120-24N",
+      "lcsc": "C130026",
+      "sheet": "tca9548A_subsystem.kicad_sch",
+      "block": "i2c_mux",
+      "function": "TCA9548A 8-channel I2C multiplexer, routes MCU I2C bus to 3 sensor board channels",
+      "role": "multiplexer",
+      "critical_specs": "Address 0x70 (A0=A1=A2=GND), 3 channels used of 8, 400kHz capable",
+      "pins": [
+        {
+          "number": "1",
+          "name": "A0",
+          "type": "input",
+          "net": "GND"
+        },
+        {
+          "number": "2",
+          "name": "A1",
+          "type": "input",
+          "net": "GND"
+        },
+        {
+          "number": "3",
+          "name": "~{RESET}",
+          "type": "input",
+          "net": "/TCA9548A_Subsystem/TCA_RESET"
+        },
+        {
+          "number": "4",
+          "name": "SD0",
+          "type": "bidirectional",
+          "net": "/TCA9548A_Subsystem/CH0_SDA"
+        },
+        {
+          "number": "5",
+          "name": "SC0",
+          "type": "bidirectional",
+          "net": "/TCA9548A_Subsystem/CH0_SCL"
+        },
+        {
+          "number": "6",
+          "name": "SD1",
+          "type": "bidirectional",
+          "net": "/TCA9548A_Subsystem/CH1_SDA"
+        },
+        {
+          "number": "7",
+          "name": "SC1",
+          "type": "bidirectional",
+          "net": "/TCA9548A_Subsystem/CH1_SCL"
+        },
+        {
+          "number": "8",
+          "name": "SD2",
+          "type": "bidirectional",
+          "net": "/TCA9548A_Subsystem/CH2_SDA"
+        },
+        {
+          "number": "9",
+          "name": "SC2",
+          "type": "bidirectional",
+          "net": "/TCA9548A_Subsystem/CH2_SCL"
+        },
+        {
+          "number": "12",
+          "name": "GND",
+          "type": "power_in",
+          "net": "GND"
+        },
+        {
+          "number": "21",
+          "name": "A2",
+          "type": "input",
+          "net": "GND"
+        },
+        {
+          "number": "22",
+          "name": "SCL",
+          "type": "input",
+          "net": "/I2C_SCL"
+        },
+        {
+          "number": "23",
+          "name": "SDA",
+          "type": "bidirectional",
+          "net": "/I2C_SDA"
+        },
+        {
+          "number": "24",
+          "name": "VCC",
+          "type": "power_in",
+          "net": "+3.3V"
+        }
+      ]
+    }
+  },
+  "nets": {
+    "+3.3V": {
+      "type": "power",
+      "protocol": "",
+      "direction": "",
+      "description": "Regulated 3.3V rail from AP2112K LDO, powers sensors and I2C bus"
+    },
+    "+5V": {
+      "type": "power",
+      "protocol": "",
+      "direction": "",
+      "description": "Main 5V rail from DWEII power module (via D1 Schottky), powers MCU, LDO input, and LED controller"
+    },
+    "/I2C_SCL": {
+      "type": "signal",
+      "protocol": "I2C",
+      "direction": "bidirectional",
+      "description": "Upstream I2C clock line between MCU (GPIO 44) and TCA9548A"
+    },
+    "/I2C_SDA": {
+      "type": "signal",
+      "protocol": "I2C",
+      "direction": "bidirectional",
+      "description": "Upstream I2C data line between MCU (GPIO 43) and TCA9548A"
+    },
+    "/INT1": {
+      "type": "signal",
+      "protocol": "",
+      "direction": "input",
+      "description": "Interrupt line from sensor module 1 (M1) to MCU GPIO 13"
+    },
+    "/INT2": {
+      "type": "signal",
+      "protocol": "",
+      "direction": "input",
+      "description": "Interrupt line from sensor module 2 (M2) to MCU GPIO 12"
+    },
+    "/INT3": {
+      "type": "signal",
+      "protocol": "",
+      "direction": "input",
+      "description": "Interrupt line from sensor module 3 (M3) to MCU GPIO 11"
+    },
+    "/LED Controller/+5V_TO_LEDS": {
+      "type": "power",
+      "protocol": "",
+      "direction": "",
+      "description": "Fused and sense-resistored +5V for LED strip, from F1->R27 chain"
+    },
+    "/LED Controller/DATA_IN": {
+      "type": "signal",
+      "protocol": "WS2812B",
+      "direction": "output",
+      "description": "LED data signal at 3.3V logic from MCU GPIO 16 to level shifter input"
+    },
+    "/LED Controller/DATA_TO_LEDS": {
+      "type": "signal",
+      "protocol": "WS2812B",
+      "direction": "output",
+      "description": "LED data signal at 5V logic from level shifter output to LED strip"
+    },
+    "/TCA9548A_Subsystem/CH0_SCL": {
+      "type": "signal",
+      "protocol": "I2C",
+      "direction": "bidirectional",
+      "description": "TCA9548A channel 0 SCL to sensor module 1 (J4)"
+    },
+    "/TCA9548A_Subsystem/CH0_SDA": {
+      "type": "signal",
+      "protocol": "I2C",
+      "direction": "bidirectional",
+      "description": "TCA9548A channel 0 SDA to sensor module 1 (J4)"
+    },
+    "/TCA9548A_Subsystem/CH1_SCL": {
+      "type": "signal",
+      "protocol": "I2C",
+      "direction": "bidirectional",
+      "description": "TCA9548A channel 1 SCL to sensor module 2 (J5)"
+    },
+    "/TCA9548A_Subsystem/CH1_SDA": {
+      "type": "signal",
+      "protocol": "I2C",
+      "direction": "bidirectional",
+      "description": "TCA9548A channel 1 SDA to sensor module 2 (J5)"
+    },
+    "/TCA9548A_Subsystem/CH2_SCL": {
+      "type": "signal",
+      "protocol": "I2C",
+      "direction": "bidirectional",
+      "description": "TCA9548A channel 2 SCL to sensor module 3 (J6)"
+    },
+    "/TCA9548A_Subsystem/CH2_SDA": {
+      "type": "signal",
+      "protocol": "I2C",
+      "direction": "bidirectional",
+      "description": "TCA9548A channel 2 SDA to sensor module 3 (J6)"
+    },
+    "/TCA9548A_Subsystem/TCA_RESET": {
+      "type": "signal",
+      "protocol": "",
+      "direction": "output",
+      "description": "Active-low reset for TCA9548A, driven by MCU GPIO 10, held high by R6 pull-up"
+    },
+    "GND": {
+      "type": "power",
+      "protocol": "",
+      "direction": "",
+      "description": "System ground reference"
+    },
+    "Net-(C7-Pad2)": {
+      "type": "power",
+      "protocol": "",
+      "direction": "",
+      "description": "Intermediate node in LED power path between fuse F1 and sense resistor R27"
+    },
+    "Net-(D1-A)": {
+      "type": "power",
+      "protocol": "",
+      "direction": "",
+      "description": "Raw 5V from DWEII power module before Schottky diode D1"
+    },
+    "Net-(U2-1)": {
+      "type": "signal",
+      "protocol": "",
+      "direction": "",
+      "description": "MCU GPIO 1 breakout (unused, test point only)"
+    },
+    "Net-(U2-17)": {
+      "type": "signal",
+      "protocol": "",
+      "direction": "",
+      "description": "MCU GPIO 17 breakout (unused, test point only)"
+    },
+    "Net-(U2-18)": {
+      "type": "signal",
+      "protocol": "",
+      "direction": "",
+      "description": "MCU GPIO 18 breakout (unused, test point only)"
+    },
+    "Net-(U2-2)": {
+      "type": "signal",
+      "protocol": "",
+      "direction": "",
+      "description": "MCU GPIO 2 breakout (unused, test point only)"
+    },
+    "Net-(U2-21)": {
+      "type": "signal",
+      "protocol": "",
+      "direction": "",
+      "description": "MCU GPIO 21 breakout (unused, test point only)"
+    },
+    "Net-(U2-3)": {
+      "type": "signal",
+      "protocol": "",
+      "direction": "",
+      "description": "MCU GPIO 3 breakout (unused, test point only)"
+    }
+  },
+  "sheet_interfaces": {
+    "led_controller.kicad_sch": {
+      "description": "Level-shifted LED strip driver with overcurrent protection and current sensing",
+      "pins": [
+        {
+          "name": "+5V_IN",
+          "direction": "input",
+          "net": "+5V"
+        },
+        {
+          "name": "+5V_TO_LEDS",
+          "direction": "output",
+          "net": "/LED Controller/+5V_TO_LEDS"
+        },
+        {
+          "name": "DATA_IN",
+          "direction": "input",
+          "net": "/LED Controller/DATA_IN"
+        },
+        {
+          "name": "DATA_TO_LEDS",
+          "direction": "output",
+          "net": "/LED Controller/DATA_TO_LEDS"
+        },
+        {
+          "name": "GND",
+          "direction": "input",
+          "net": "GND"
+        }
+      ]
+    },
+    "tca9548A_subsystem.kicad_sch": {
+      "description": "TCA9548A 8-channel I2C multiplexer with upstream pull-ups, routes MCU I2C bus to 3 sensor channels",
+      "pins": [
+        {
+          "name": "CH0_SCL",
+          "direction": "output",
+          "net": "/TCA9548A_Subsystem/CH0_SCL"
+        },
+        {
+          "name": "CH0_SDA",
+          "direction": "output",
+          "net": "/TCA9548A_Subsystem/CH0_SDA"
+        },
+        {
+          "name": "CH1_SCL",
+          "direction": "output",
+          "net": "/TCA9548A_Subsystem/CH1_SCL"
+        },
+        {
+          "name": "CH1_SDA",
+          "direction": "output",
+          "net": "/TCA9548A_Subsystem/CH1_SDA"
+        },
+        {
+          "name": "CH2_SCL",
+          "direction": "output",
+          "net": "/TCA9548A_Subsystem/CH2_SCL"
+        },
+        {
+          "name": "CH2_SDA",
+          "direction": "output",
+          "net": "/TCA9548A_Subsystem/CH2_SDA"
+        },
+        {
+          "name": "GND",
+          "direction": "input",
+          "net": "GND"
+        },
+        {
+          "name": "I2C_SCL_IN",
+          "direction": "input",
+          "net": "/I2C_SCL"
+        },
+        {
+          "name": "I2C_SDA_IN",
+          "direction": "input",
+          "net": "/I2C_SDA"
+        },
+        {
+          "name": "TCA_RESET",
+          "direction": "input",
+          "net": "/TCA9548A_Subsystem/TCA_RESET"
+        },
+        {
+          "name": "VCC_3V3",
+          "direction": "input",
+          "net": "+3.3V"
+        }
+      ]
+    }
+  }
+}
