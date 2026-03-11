@@ -28,6 +28,7 @@ What's in:
 - Test points on key voltage rails
 - Removal of DWEII module footprint and Schottky diode from main PCB
 - Datasheet sourcing for BQ24195, selected boost converter, and INA219
+- Scripted schematic generation via kiutils — Python tooling to programmatically create the power management schematic sheet from the structured spec, reducing manual KiCad entry and transcription errors
 
 What's out:
 - USB PD negotiation (STUSB4500 removed; basic USB-C 5V is sufficient for V1)
