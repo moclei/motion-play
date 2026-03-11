@@ -32,16 +32,23 @@ Full specification in `SCHEMATIC_SPEC.md` (51 components, 30+ nets, 4 functional
 - Compensation network: 22kΩ / 4.7nF / 100pF (from TPS61088 EVM scaling, bench-tunable)
 - PMID capacitance: 2× 10µF (20µF, meeting datasheet minimum)
 
-## Phase 3: KiCad Implementation + Review
+## Phase 3: Scripted Schematic Generation
 
-- [ ] User creates new hierarchical sheet for power management in KiCad
-- [ ] User implements schematic per change spec
-- [ ] User runs ERC (Electrical Rules Check)
+- [ ] Proof-of-concept: generate a minimal `.kicad_sch` (1 resistor + net label) via kiutils, verify KiCad 9 opens it without errors
+- [ ] Convert `SCHEMATIC_SPEC.md` to `spec.json` — structured JSON with component definitions (ref, value, footprint, LCSC, symbol), pin-to-net mappings, and block layout positions
+- [ ] Collect symbol definitions: extract from existing project schematics (BQ24195, passives, connectors), install TPS61088 and INA219 symbols via JLCPCB MCP `library_install`
+- [ ] Build `generate_power_sheet.py` — reads `spec.json`, places components in a grid by block, attaches net labels to pins, adds hierarchical sheet labels for interface signals
+- [ ] Generate `power_management.kicad_sch`, open in KiCad, run ERC, iterate on script until clean
+- [ ] User: manually edit root sheet in KiCad (delete J2/D1, add hierarchical sheet reference, wire GPIO 21 to CHRG_INT)
+- [ ] Run full ERC on complete design (root + power management sheet), fix any remaining issues
+
+## Phase 4: KiCad Review + Annotation
+
 - [ ] User re-extracts `circuit-context.json` via `extract.py --previous`
-- [ ] AI reviews extracted context against change spec — verify all connections, flag discrepancies
+- [ ] AI reviews extracted context against schematic spec — verify all connections, flag discrepancies
 - [ ] Annotation session for new components (ai_function, ai_block, ai_role, ai_critical_specs)
 
-## Phase 4: Layout and Ordering
+## Phase 5: Layout and Ordering
 
 - [ ] PCB layout: boost converter + inductor + diode placed close together, thermal copper pours under BQ24195 and boost IC
 - [ ] Power path trace widths sized for 3A+ (minimum 1mm for main 5V traces, wider preferred)
@@ -49,7 +56,7 @@ Full specification in `SCHEMATIC_SPEC.md` (51 components, 30+ nets, 4 functional
 - [ ] Review JLCPCB assembly capability for selected components (package types, extended vs basic)
 - [ ] Order PCB + assembly from JLCPCB
 
-## Phase 5: Build and Test
+## Phase 6: Build and Test
 
 - [ ] Bench test power path: USB → Protected_VBUS → BQ24195 → VSYS → boost → +5V → AP2112K → +3.3V
 - [ ] Verify all rail voltages with multimeter on test points

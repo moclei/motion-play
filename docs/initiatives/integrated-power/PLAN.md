@@ -73,11 +73,23 @@ The ~1-1.5A boot-time limit is adequate — system draws well under 1A before LE
 
 The `.kicad_sch` files are 7000+ lines. Reading them into AI context degrades session quality. Instead:
 
-1. **AI produces a schematic change specification** — structured document listing every component (ref, part, value, footprint, LCSC#), every net, and pin-by-pin connections, organized by functional block.
-2. **User implements in KiCad GUI** — new power management circuitry as a hierarchical sheet.
-3. **User re-extracts `circuit-context.json`** — via `tools/schematic-context/extract.py --previous`.
-4. **AI reviews extracted context** — verifies changes match spec.
-5. **Annotation session** — AI proposes `ai_function`, `ai_block`, `ai_role`, `ai_critical_specs` for new components, written via `annotate.py`.
+1. **AI produces a schematic change specification** — structured document listing every component (ref, part, value, footprint, LCSC#), every net, and pin-by-pin connections, organized by functional block. *(Phase 2 — complete)*
+2. **AI converts spec to structured JSON** — `spec.json` with component definitions, pin-to-net mappings, and block layout positions.
+3. **AI builds Python generation scripts** — using `kiutils` to programmatically create the new `power_management.kicad_sch` hierarchical sheet. Components placed in a grid by block, connected via net labels (no drawn wires). This eliminates manual transcription errors.
+4. **User performs minimal root sheet edits** — delete DWEII module (J2) and Schottky diode (D1), add hierarchical sheet reference for `power_management.kicad_sch`, re-wire GPIO 21 to `CHRG_INT`. These changes are small enough to do manually in KiCad.
+5. **User opens generated schematic in KiCad** — runs ERC, reports issues, AI iterates on the generation script until clean.
+6. **User re-extracts `circuit-context.json`** — via `tools/schematic-context/extract.py --previous`.
+7. **AI reviews extracted context** — verifies changes match spec.
+8. **Annotation session** — AI proposes `ai_function`, `ai_block`, `ai_role`, `ai_critical_specs` for new components, written via `annotate.py`.
+
+#### kiutils Strategy
+
+`kiutils 1.4.8` is already installed in the project (`tools/schematic-context/requirements.txt`). It can read KiCad 9 schematics, but roundtrip writes lose ~12% of KiCad 9 formatting. The mitigation strategy:
+
+- **New files only**: Use kiutils to *generate* `power_management.kicad_sch` from scratch (no roundtrip loss, since the file starts empty).
+- **No modification of existing files**: The root sheet (`pcb-main.kicad_sch`) is edited manually by the user, not by script.
+- **Net labels instead of wires**: Components are connected via named net labels placed at pins, avoiding complex wire routing geometry. KiCad resolves connectivity via matching label names. Visually messy but electrically correct — the user can tidy layout afterward.
+- **Symbol sourcing**: Symbols for parts already in the project are extracted from existing schematics. New IC symbols (TPS61088, INA219) are installed via the JLCPCB MCP server's `library_install` tool.
 
 ### Tooling
 
