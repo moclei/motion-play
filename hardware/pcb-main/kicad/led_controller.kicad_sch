@@ -41,6 +41,7 @@
 					(font
 						(size 1.27 1.27)
 					)
+					(hide yes)
 				)
 			)
 			(property "Datasheet" "~"
@@ -49,6 +50,7 @@
 					(font
 						(size 1.27 1.27)
 					)
+					(hide yes)
 				)
 			)
 			(property "Description" "Unpolarized capacitor"
@@ -57,6 +59,7 @@
 					(font
 						(size 1.27 1.27)
 					)
+					(hide yes)
 				)
 			)
 			(property "ki_keywords" "cap capacitor"
@@ -172,6 +175,7 @@
 					(font
 						(size 1.27 1.27)
 					)
+					(hide yes)
 				)
 			)
 			(property "Datasheet" "~"
@@ -180,6 +184,7 @@
 					(font
 						(size 1.27 1.27)
 					)
+					(hide yes)
 				)
 			)
 			(property "Description" "Fuse"
@@ -188,6 +193,7 @@
 					(font
 						(size 1.27 1.27)
 					)
+					(hide yes)
 				)
 			)
 			(property "ki_keywords" "fuse"
@@ -302,6 +308,7 @@
 					(font
 						(size 1.27 1.27)
 					)
+					(hide yes)
 				)
 			)
 			(property "Datasheet" "~"
@@ -310,6 +317,7 @@
 					(font
 						(size 1.27 1.27)
 					)
+					(hide yes)
 				)
 			)
 			(property "Description" "Resistor"
@@ -318,6 +326,7 @@
 					(font
 						(size 1.27 1.27)
 					)
+					(hide yes)
 				)
 			)
 			(property "ki_keywords" "R res resistor"
@@ -420,6 +429,7 @@
 						(size 1.27 1.27)
 					)
 					(justify left top)
+					(hide yes)
 				)
 			)
 			(property "Datasheet" "http://www.ti.com/lit/gpn/sn74ahct125"
@@ -429,6 +439,7 @@
 						(size 1.27 1.27)
 					)
 					(justify left top)
+					(hide yes)
 				)
 			)
 			(property "Description" "Quadruple Bus Buffer Gates With 3-State Outputs"
@@ -437,6 +448,7 @@
 					(font
 						(size 1.27 1.27)
 					)
+					(hide yes)
 				)
 			)
 			(property "Height" "1.2"
@@ -446,6 +458,7 @@
 						(size 1.27 1.27)
 					)
 					(justify left top)
+					(hide yes)
 				)
 			)
 			(property "Mouser Part Number" "595-SN74AHCT125PWR"
@@ -455,6 +468,7 @@
 						(size 1.27 1.27)
 					)
 					(justify left top)
+					(hide yes)
 				)
 			)
 			(property "Mouser Price/Stock" "https://www.mouser.co.uk/ProductDetail/Texas-Instruments/SN74AHCT125PWR?qs=Tv815z3GeNSFP3h%252B2vFnHA%3D%3D"
@@ -464,6 +478,7 @@
 						(size 1.27 1.27)
 					)
 					(justify left top)
+					(hide yes)
 				)
 			)
 			(property "Manufacturer_Name" "Texas Instruments"
@@ -473,6 +488,7 @@
 						(size 1.27 1.27)
 					)
 					(justify left top)
+					(hide yes)
 				)
 			)
 			(property "Manufacturer_Part_Number" "SN74AHCT125PWR"
@@ -482,6 +498,7 @@
 						(size 1.27 1.27)
 					)
 					(justify left top)
+					(hide yes)
 				)
 			)
 			(symbol "SN74AHCT125PWR_1_1"
@@ -781,6 +798,7 @@
 					(font
 						(size 1.27 1.27)
 					)
+					(hide yes)
 				)
 			)
 			(property "Datasheet" ""
@@ -789,6 +807,7 @@
 					(font
 						(size 1.27 1.27)
 					)
+					(hide yes)
 				)
 			)
 			(property "Description" "Power symbol creates a global label with name \"GND\" , ground"
@@ -797,6 +816,7 @@
 					(font
 						(size 1.27 1.27)
 					)
+					(hide yes)
 				)
 			)
 			(property "ki_keywords" "global power"
@@ -1156,6 +1176,7 @@
 				(font
 					(size 1.27 1.27)
 				)
+				(hide yes)
 			)
 		)
 		(property "Datasheet" "~"
@@ -1164,6 +1185,7 @@
 				(font
 					(size 1.27 1.27)
 				)
+				(hide yes)
 			)
 		)
 		(property "Description" "LED Fuse"
@@ -1172,6 +1194,7 @@
 				(font
 					(size 1.27 1.27)
 				)
+				(hide yes)
 			)
 		)
 		(property "LCSC Part No" "C354897"
@@ -1180,6 +1203,7 @@
 				(font
 					(size 1.27 1.27)
 				)
+				(hide yes)
 			)
 		)
 		(property "LCSC Part" "C354897"
@@ -1188,6 +1212,7 @@
 				(font
 					(size 1.27 1.27)
 				)
+				(hide yes)
 			)
 		)
 		(property "ai_block" "led_controller"
@@ -1273,6 +1298,7 @@
 				(font
 					(size 1.27 1.27)
 				)
+				(hide yes)
 			)
 		)
 		(property "Datasheet" "~"
@@ -1281,6 +1307,7 @@
 				(font
 					(size 1.27 1.27)
 				)
+				(hide yes)
 			)
 		)
 		(property "Description" "Current Sensing Resistor"
@@ -1289,6 +1316,7 @@
 				(font
 					(size 1.27 1.27)
 				)
+				(hide yes)
 			)
 		)
 		(property "LCSC Part No" "C500724"
@@ -1297,6 +1325,7 @@
 				(font
 					(size 1.27 1.27)
 				)
+				(hide yes)
 			)
 		)
 		(property "LCSC Part" "C500724"
@@ -1305,6 +1334,7 @@
 				(font
 					(size 1.27 1.27)
 				)
+				(hide yes)
 			)
 		)
 		(property "ai_block" "led_controller"
@@ -1391,6 +1421,7 @@
 				(font
 					(size 1.27 1.27)
 				)
+				(hide yes)
 			)
 		)
 		(property "Datasheet" ""
@@ -1399,6 +1430,7 @@
 				(font
 					(size 1.27 1.27)
 				)
+				(hide yes)
 			)
 		)
 		(property "Description" "Power symbol creates a global label with name \"GND\" , ground"
@@ -1407,6 +1439,7 @@
 				(font
 					(size 1.27 1.27)
 				)
+				(hide yes)
 			)
 		)
 		(pin "1"
@@ -1452,6 +1485,7 @@
 				(font
 					(size 1.27 1.27)
 				)
+				(hide yes)
 			)
 		)
 		(property "Datasheet" "~"
@@ -1460,6 +1494,7 @@
 				(font
 					(size 1.27 1.27)
 				)
+				(hide yes)
 			)
 		)
 		(property "Description" "10uF capacitor"
@@ -1468,6 +1503,7 @@
 				(font
 					(size 1.27 1.27)
 				)
+				(hide yes)
 			)
 		)
 		(property "LCSC Part No" "C19702"
@@ -1476,6 +1512,7 @@
 				(font
 					(size 1.27 1.27)
 				)
+				(hide yes)
 			)
 		)
 		(property "LCSC Part" "C19702"
@@ -1484,6 +1521,7 @@
 				(font
 					(size 1.27 1.27)
 				)
+				(hide yes)
 			)
 		)
 		(property "ai_block" "led_controller"
@@ -1569,6 +1607,7 @@
 				(font
 					(size 1.27 1.27)
 				)
+				(hide yes)
 			)
 		)
 		(property "Datasheet" ""
@@ -1577,6 +1616,7 @@
 				(font
 					(size 1.27 1.27)
 				)
+				(hide yes)
 			)
 		)
 		(property "Description" "Power symbol creates a global label with name \"GND\" , ground"
@@ -1585,6 +1625,7 @@
 				(font
 					(size 1.27 1.27)
 				)
+				(hide yes)
 			)
 		)
 		(pin "1"
@@ -1632,6 +1673,7 @@
 					(size 1.27 1.27)
 				)
 				(justify left top)
+				(hide yes)
 			)
 		)
 		(property "Datasheet" "http://www.ti.com/lit/gpn/sn74ahct125"
@@ -1641,6 +1683,7 @@
 					(size 1.27 1.27)
 				)
 				(justify left top)
+				(hide yes)
 			)
 		)
 		(property "Description" "Quadruple Bus Buffer Gates With 3-State Outputs"
@@ -1649,6 +1692,7 @@
 				(font
 					(size 1.27 1.27)
 				)
+				(hide yes)
 			)
 		)
 		(property "Height" "1.2"
@@ -1658,6 +1702,7 @@
 					(size 1.27 1.27)
 				)
 				(justify left top)
+				(hide yes)
 			)
 		)
 		(property "Mouser Part Number" "595-SN74AHCT125PWR"
@@ -1667,6 +1712,7 @@
 					(size 1.27 1.27)
 				)
 				(justify left top)
+				(hide yes)
 			)
 		)
 		(property "Mouser Price/Stock" "https://www.mouser.co.uk/ProductDetail/Texas-Instruments/SN74AHCT125PWR?qs=Tv815z3GeNSFP3h%252B2vFnHA%3D%3D"
@@ -1676,6 +1722,7 @@
 					(size 1.27 1.27)
 				)
 				(justify left top)
+				(hide yes)
 			)
 		)
 		(property "Manufacturer_Name" "Texas Instruments"
@@ -1685,6 +1732,7 @@
 					(size 1.27 1.27)
 				)
 				(justify left top)
+				(hide yes)
 			)
 		)
 		(property "Manufacturer_Part_Number" "SN74AHCT125PWR"
@@ -1694,6 +1742,7 @@
 					(size 1.27 1.27)
 				)
 				(justify left top)
+				(hide yes)
 			)
 		)
 		(property "LCSC Part" "C36365"
@@ -1702,6 +1751,7 @@
 				(font
 					(size 1.27 1.27)
 				)
+				(hide yes)
 			)
 		)
 		(property "ai_block" "led_controller"
@@ -1824,6 +1874,7 @@
 				(font
 					(size 1.27 1.27)
 				)
+				(hide yes)
 			)
 		)
 		(property "Datasheet" ""
@@ -1832,6 +1883,7 @@
 				(font
 					(size 1.27 1.27)
 				)
+				(hide yes)
 			)
 		)
 		(property "Description" "Power symbol creates a global label with name \"GND\" , ground"
@@ -1840,6 +1892,7 @@
 				(font
 					(size 1.27 1.27)
 				)
+				(hide yes)
 			)
 		)
 		(pin "1"
@@ -1886,6 +1939,7 @@
 				(font
 					(size 1.27 1.27)
 				)
+				(hide yes)
 			)
 		)
 		(property "Datasheet" ""
@@ -1894,6 +1948,7 @@
 				(font
 					(size 1.27 1.27)
 				)
+				(hide yes)
 			)
 		)
 		(property "Description" "Power symbol creates a global label with name \"GND\" , ground"
@@ -1902,6 +1957,7 @@
 				(font
 					(size 1.27 1.27)
 				)
+				(hide yes)
 			)
 		)
 		(pin "1"
@@ -1949,6 +2005,7 @@
 				(font
 					(size 1.27 1.27)
 				)
+				(hide yes)
 			)
 		)
 		(property "Datasheet" "~"
@@ -1957,6 +2014,7 @@
 				(font
 					(size 1.27 1.27)
 				)
+				(hide yes)
 			)
 		)
 		(property "Description" "100nF Capacitor"
@@ -1965,6 +2023,7 @@
 				(font
 					(size 1.27 1.27)
 				)
+				(hide yes)
 			)
 		)
 		(property "LCSC Part No" "C14663"
@@ -1973,6 +2032,7 @@
 				(font
 					(size 1.27 1.27)
 				)
+				(hide yes)
 			)
 		)
 		(property "LCSC Part" "C14663"
@@ -1981,6 +2041,7 @@
 				(font
 					(size 1.27 1.27)
 				)
+				(hide yes)
 			)
 		)
 		(property "ai_block" "led_controller"
@@ -2066,6 +2127,7 @@
 				(font
 					(size 1.27 1.27)
 				)
+				(hide yes)
 			)
 		)
 		(property "Datasheet" ""
@@ -2074,6 +2136,7 @@
 				(font
 					(size 1.27 1.27)
 				)
+				(hide yes)
 			)
 		)
 		(property "Description" "Power symbol creates a global label with name \"GND\" , ground"
@@ -2082,6 +2145,7 @@
 				(font
 					(size 1.27 1.27)
 				)
+				(hide yes)
 			)
 		)
 		(pin "1"

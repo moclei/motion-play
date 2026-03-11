@@ -829,6 +829,10 @@
       "LED Controller"
     ],
     [
+      "6b585d97-461f-477c-8d0a-cc1010f5954b",
+      "Power Management"
+    ],
+    [
       "bfeba651-d961-4d9b-b09b-91dbbe05d3fa",
       "TCA9548A_Subsystem"
     ]
