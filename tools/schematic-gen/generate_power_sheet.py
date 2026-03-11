@@ -216,7 +216,8 @@ def make_property(key: str, value: str, pos: Position, hide: bool = False, prop_
 def make_symbol(
     comp: dict,
     lib_symbols: dict,
-    sheet_uuid: str,
+    root_uuid: str,
+    sheet_ref_uuid: str,
 ) -> SchematicSymbol:
     """Create a placed SchematicSymbol from a spec component entry."""
     sym = SchematicSymbol()
@@ -235,9 +236,11 @@ def make_symbol(
     footprint = comp["footprint"]
     lcsc = comp.get("lcsc") or ""
 
+    hide_ref = ref.startswith("#")
     sym.properties = [
         make_property("Reference", ref,
-                       Position(X=round(x + 2.54, 2), Y=round(y - 1.27, 2), angle=angle)),
+                       Position(X=round(x + 2.54, 2), Y=round(y - 1.27, 2), angle=angle),
+                       hide=hide_ref),
         make_property("Value", value,
                        Position(X=x, Y=round(y + 2.54, 2), angle=angle)),
         make_property("Footprint", footprint,
@@ -262,7 +265,7 @@ def make_symbol(
             name=PROJECT_NAME,
             paths=[
                 SymbolProjectPath(
-                    sheetInstancePath=f"/{sheet_uuid}",
+                    sheetInstancePath=f"/{root_uuid}/{sheet_ref_uuid}",
                     reference=ref,
                     unit=1,
                 )
@@ -337,11 +340,14 @@ def generate(output_path: Path) -> None:
     spec = load_spec()
     lib_symbols = extract_all_lib_symbols(spec)
 
+    meta = spec["meta"]
+    root_uuid = meta["root_sheet_uuid"]
+    sheet_ref_uuid = meta["hierarchical_sheet_uuid"]
+
     sch = Schematic.create_new()
     sch.version = KICAD9_VERSION
     sch.generator = "eeschema"
     sch.uuid = new_uuid()
-    sheet_uuid = sch.uuid
 
     used_lib_ids = set()
     for comp in spec["components"]:
@@ -360,7 +366,7 @@ def generate(output_path: Path) -> None:
         if not isinstance(comp, dict) or "ref" not in comp:
             continue
 
-        sym = make_symbol(comp, lib_symbols, sheet_uuid)
+        sym = make_symbol(comp, lib_symbols, root_uuid, sheet_ref_uuid)
         sch.schematicSymbols.append(sym)
 
         lib_sym = lib_symbols[comp["lib_id"]]
