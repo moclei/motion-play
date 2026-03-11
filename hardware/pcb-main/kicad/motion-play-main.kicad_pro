@@ -740,6 +740,36 @@
           "label": "Check_prices",
           "name": "Check_prices",
           "show": false
+        },
+        {
+          "group_by": false,
+          "label": "ai_block",
+          "name": "ai_block",
+          "show": true
+        },
+        {
+          "group_by": false,
+          "label": "ai_critical_specs",
+          "name": "ai_critical_specs",
+          "show": true
+        },
+        {
+          "group_by": false,
+          "label": "ai_function",
+          "name": "ai_function",
+          "show": true
+        },
+        {
+          "group_by": false,
+          "label": "ai_role",
+          "name": "ai_role",
+          "show": true
+        },
+        {
+          "group_by": false,
+          "label": "DigiKey_Part_Number",
+          "name": "DigiKey_Part_Number",
+          "show": false
         }
       ],
       "filter_string": "",
@@ -747,7 +777,7 @@
       "include_excluded_from_bom": false,
       "name": "",
       "sort_asc": true,
-      "sort_field": "LCSC Part No"
+      "sort_field": "ai_block"
     },
     "connection_grid_size": 50.0,
     "drawing": {
