@@ -14,15 +14,23 @@
 - [x] Validate battery-absent operation: BQ24195 confirms instant-on support. VSYS ~3.65V from VBUS. Viable with revised ILIM/OTG settings.
 - [x] **CRITICAL FINDING:** Reference design 2.7kΩ ILIM gives only 100mA boot current — changed to 330Ω + OTG HIGH. See `COMPONENT_SELECTION.md`.
 
-## Phase 2: Schematic Change Specification
+## Phase 2: Schematic Change Specification ✅
 
-- [ ] Produce change spec for main PCB root sheet: remove DWEII (J2), remove Schottky (D1), add new hierarchical sheet pin connections
-- [ ] Produce change spec for new power management hierarchical sheet: USB-C input block (connector, fuse, CC pull-downs, decoupling)
-- [ ] Produce change spec for battery management block (BQ24195, PMOS, NTC, inductor, all support passives)
-- [ ] Produce change spec for boost converter block (selected IC, feedback divider, inductor, Schottky diode, capacitors)
-- [ ] Produce change spec for power monitoring block (INA219, shunt resistor)
-- [ ] Produce change spec for signal routing: BQ24195 I2C + INT GPIO, INA219 I2C, test points
-- [ ] Review complete spec for consistency — net names, pin assignments, address conflicts
+Full specification in `SCHEMATIC_SPEC.md` (51 components, 30+ nets, 4 functional blocks).
+
+- [x] Root sheet changes: remove DWEII (J2), Schottky (D1); add Power Management hierarchical sheet with 6 interface pins (+5V, GND, +3.3V, I2C_SDA, I2C_SCL, CHRG_INT)
+- [x] USB-C input block: J7 (TYPE-C-31-M-12), F2 (3A fuse), R30/R31 (5.1kΩ CC pull-downs), C20-C22 (decoupling)
+- [x] Battery management block: U5 (BQ24195RGER), Q2 (PMOS), L1 (2.2µH), J8 (JST PH), TH1 (NTC), R32 (330Ω ILIM), R35 (OTG pull-up), R36/R37 (NTC biasing from REGN), all support caps
+- [x] Boost converter block: U6 (TPS61088RHLR), L2 (2.2µH/10A), R39/R40 (180kΩ/56kΩ FB divider → 5.07V), R43/C38/C39 (22kΩ/4.7nF/100pF compensation from EVM scaling), C34-C36 (3×22µF output)
+- [x] Power monitoring block: U7 (INA219AIDCNR), R44 (10mΩ 2512 shunt on VSYS), C40 (VS bypass)
+- [x] Signal routing: BQ24195 I2C (0x6B) + INT→GPIO21 via R38 pull-up, INA219 I2C (0x40), 4 test points (VSYS, VBAT, PVBUS, PGND)
+- [x] Consistency review: net names verified, no I2C address conflicts (0x40/0x6B/0x70), all pin assignments cross-checked against datasheets
+
+**Phase 2 design decisions resolved:**
+- CE pin: tied LOW (GND) — charging controlled via I2C
+- NTC biasing: REGN → 5.6kΩ → TS → (10kΩ NTC ‖ 30kΩ) → GND
+- Compensation network: 22kΩ / 4.7nF / 100pF (from TPS61088 EVM scaling, bench-tunable)
+- PMID capacitance: 2× 10µF (20µF, meeting datasheet minimum)
 
 ## Phase 3: KiCad Implementation + Review
 

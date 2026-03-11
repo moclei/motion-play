@@ -105,6 +105,8 @@ If the server is not connected, restart Cursor or re-enable it. The server name 
 
 ## Open Questions
 
-- Compensation network values for TPS61088 at 5V output — use EVM/WEBENCH values in Phase 2.
-- PMID capacitance: reference design has 10µF, datasheet says 20µF min. Increasing to 2× 10µF.
-- CE pin connection: reference design connects CE to PG output. May want GPIO control or tie LOW for always-enabled charging. Decide in Phase 2.
+All Phase 2 questions resolved — see `SCHEMATIC_SPEC.md` for full details.
+
+- ~~Compensation network values for TPS61088 at 5V output~~ **Resolved:** R_COMP=22kΩ, C_COMP1=4.7nF, C_COMP2=100pF. Derived from TPS61088 EVM (SLVUAF2) and scaled for 5V/2.2MHz. Bench-tunable during Phase 5.
+- ~~PMID capacitance~~ **Resolved:** 2× 10µF (C25+C26 = 20µF total), meeting datasheet minimum.
+- ~~CE pin connection~~ **Resolved:** Tied to GND (always LOW = charging hardware-enabled). Firmware controls charging via I2C REG01. Simpler and more reliable than reference design's CE→PG connection.
