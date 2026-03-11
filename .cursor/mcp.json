@@ -1,10 +1,9 @@
 {
     "mcpServers": {
         "jlcpcb": {
-            "command": "npx",
+            "command": "node",
             "args": [
-                "-y",
-                "jlc-mcp@latest"
+                "/Users/marcocleirigh/.local/jlcpcb-mcp/node_modules/@jlcpcb/mcp/dist/index.js"
             ]
         }
     }

@@ -1,17 +1,18 @@
 # Integrated Power Management — Tasks
 
-## Phase 1: Component Selection, Datasheet Review + Validation
+## Phase 1: Component Selection, Datasheet Review + Validation ✅
 
-- [ ] Search LCSC for boost converter candidates (8-10A switch class, SOT/QFN preferred)
-- [ ] Evaluate candidates: output current, package size, LCSC stock/pricing, basic vs extended part, thermal resistance
-- [ ] Select boost converter and source datasheet — extract text-only reference to `docs/references/<part>/`
-- [ ] Source BQ24195 datasheet — verify ILIM resistor-to-current mapping, battery-absent VSYS behavior, power-on sequence, I2C register defaults. Save to `docs/references/bq24195/`
-- [ ] Source INA219 datasheet — determine shunt resistor value for VSYS current range (~0.5-6A), confirm I2C address config, verify max bus voltage. Save to `docs/references/ina219/`
-- [ ] Rough board area estimate: sum component footprints for new power block, compare to available PCB area
-- [ ] Thermal validation: check boost converter + BQ24195 dissipation (~4-5W) against thermal resistance specs and available copper pour
-- [ ] Confirm all passive values: ILIM resistor, boost feedback divider, capacitors, inductors
-- [ ] Allocate GPIO for BQ24195 INT (from unused: 1, 2, 3, 17, 18, 21)
-- [ ] Validate battery-absent operation scenario against BQ24195 datasheet
+- [x] Search LCSC for boost converter candidates (8-10A switch class, SOT/QFN preferred)
+- [x] Evaluate candidates: output current, package size, LCSC stock/pricing, basic vs extended part, thermal resistance
+- [x] Select boost converter and source datasheet — extract text-only reference to `docs/references/tps61088/DATASHEET_REFERENCE.md`
+- [x] Source BQ24195 datasheet — verify ILIM resistor-to-current mapping, battery-absent VSYS behavior, power-on sequence, I2C register defaults. Saved to `docs/references/bq24195/DATASHEET_REFERENCE.md`
+- [x] Source INA219 datasheet — determine shunt resistor value (10mΩ, PGA /2), confirm I2C address (0x40), verify max bus voltage (26V >> 4.5V). Saved to `docs/references/ina219/DATASHEET_REFERENCE.md`
+- [x] Rough board area estimate: ~830mm² power block fits on 85×45mm board (tight). May need 90×50mm.
+- [x] Thermal validation: TPS61088 ~1.5W + BQ24195 ~1-2W = ~3W typical. RθJA 29.7°C/W → Tj ~85°C at 40°C ambient. OK.
+- [x] Confirm all passive values: ILIM changed to **330Ω** (from 2.7kΩ), feedback divider 180kΩ/56kΩ, inductor 2.2µH/10A Isat, shunt 10mΩ. Full BOM in `COMPONENT_SELECTION.md`.
+- [x] Allocate GPIO for BQ24195 INT → **GPIO 21** (preserves GPIO 1-3 and 17-18 for future)
+- [x] Validate battery-absent operation: BQ24195 confirms instant-on support. VSYS ~3.65V from VBUS. Viable with revised ILIM/OTG settings.
+- [x] **CRITICAL FINDING:** Reference design 2.7kΩ ILIM gives only 100mA boot current — changed to 330Ω + OTG HIGH. See `COMPONENT_SELECTION.md`.
 
 ## Phase 2: Schematic Change Specification
 
