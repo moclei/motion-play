@@ -1,3 +1,9 @@
 (fp_lib_table
   (version 7)
+  (lib (name "TPS61088RHLR")(type "KiCad")(uri "${KIPRJMOD}/../resources/TPS61088RHLR/TPS61088RHLR.pretty")(options "")(descr "TPS61088RHLR boost converter footprint"))
+  (lib (name "INA219AIDCNR")(type "KiCad")(uri "${KIPRJMOD}/../resources/INA219AIDCNR/INA219AIDCNR.pretty")(options "")(descr "INA219AIDCNR power monitor footprint"))
+  (lib (name "FXL0630-2R2-M")(type "KiCad")(uri "${KIPRJMOD}/../resources/FXL0630-2R2-M/FXL0630-2R2-M.pretty")(options "")(descr "FXL0630-2R2-M inductor footprint"))
+  (lib (name "FNR6028S")(type "KiCad")(uri "${KIPRJMOD}/../resources/FNR6028S/FNR6028S.pretty")(options "")(descr "FNR6028S inductor footprint"))
+  (lib (name "BQ24195RGET")(type "KiCad")(uri "${KIPRJMOD}/../resources/BQ24195RGET/BQ24195RGET.pretty")(options "")(descr "BQ24195RGET charger IC footprint"))
+  (lib (name "TYPE-C-31-M-12")(type "KiCad")(uri "${KIPRJMOD}/../resources/TYPE-C-31-M-12/TYPE-C-31-M-12.pretty")(options "")(descr "TYPE-C-31-M-12 USB-C connector footprint"))
 )

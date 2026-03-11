@@ -478,6 +478,7 @@
 					(font
 						(size 1.27 1.27)
 					)
+				hide
 				)
 			)
 			(property "ki_keywords" "MP2393GTL-P"
@@ -752,6 +753,7 @@
 					(font
 						(size 1.27 1.27)
 					)
+				hide
 				)
 			)
 			(property "ki_keywords" "SRN5040-3R3M"
@@ -2278,6 +2280,7 @@
 					(italic yes)
 				)
 				(justify right)
+			hide
 			)
 		)
 	)
@@ -2310,6 +2313,7 @@
 					(italic yes)
 				)
 				(justify left)
+			hide
 			)
 		)
 	)
@@ -2331,6 +2335,7 @@
 					(italic yes)
 				)
 				(justify right)
+			hide
 			)
 		)
 	)
