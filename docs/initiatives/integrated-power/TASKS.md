@@ -35,7 +35,7 @@ Full specification in `SCHEMATIC_SPEC.md` (51 components, 30+ nets, 4 functional
 ## Phase 3: Scripted Schematic Generation
 
 - [x] Proof-of-concept: generate a minimal `.kicad_sch` via kiutils, verify KiCad 9 opens it without errors. **Validated:** 2 resistors + net labels, zero ERC errors. Key learnings: wire stubs needed for label-pin connectivity, Y-negation transform correct, lib symbols extractable from existing schematics. Script: `tools/schematic-gen/poc_generate.py`
-- [ ] Convert `SCHEMATIC_SPEC.md` to `spec.json` — structured JSON with component definitions (ref, value, footprint, LCSC, symbol), pin-to-net mappings, and block layout positions
+- [x] Convert `SCHEMATIC_SPEC.md` to `spec.json` — structured JSON with component definitions (ref, value, footprint, LCSC, symbol), pin-to-net mappings, and block layout positions. **Validated:** 51 components, 31 nets, 154 pin-to-net mappings, all cross-verified. Script: `tools/schematic-gen/spec.json`
 - [ ] Collect symbol definitions: extract from existing project schematics (BQ24195, passives, connectors), install TPS61088 and INA219 symbols via JLCPCB MCP `library_install`
 - [ ] Build `generate_power_sheet.py` — reads `spec.json`, places components in a grid by block, attaches net labels to pins, adds hierarchical sheet labels for interface signals
 - [ ] Generate `power_management.kicad_sch`, open in KiCad, run ERC, iterate on script until clean
