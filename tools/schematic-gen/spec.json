@@ -198,7 +198,7 @@
     {
       "ref": "R30",
       "lib_id": "Device:R",
-      "value": "5.1k\u03a9",
+      "value": "5.1kΩ",
       "footprint": "Resistor_SMD:R_0603_1608Metric",
       "lcsc": "C23186",
       "block": "usb_c_input",
@@ -214,7 +214,7 @@
     {
       "ref": "R31",
       "lib_id": "Device:R",
-      "value": "5.1k\u03a9",
+      "value": "5.1kΩ",
       "footprint": "Resistor_SMD:R_0603_1608Metric",
       "lcsc": "C23186",
       "block": "usb_c_input",
@@ -230,7 +230,7 @@
     {
       "ref": "C20",
       "lib_id": "Device:C",
-      "value": "1\u00b5F",
+      "value": "1µF",
       "footprint": "Capacitor_SMD:C_0603_1608Metric",
       "lcsc": "C15849",
       "block": "usb_c_input",
@@ -246,7 +246,7 @@
     {
       "ref": "C21",
       "lib_id": "Device:C",
-      "value": "4.7\u00b5F",
+      "value": "4.7µF",
       "footprint": "Capacitor_SMD:C_0603_1608Metric",
       "lcsc": "C19666",
       "block": "usb_c_input",
@@ -262,7 +262,7 @@
     {
       "ref": "C22",
       "lib_id": "Device:C_Polarized_Small_US",
-      "value": "47\u00b5F 16V",
+      "value": "47µF 16V",
       "footprint": "Capacitor_SMD:C_Elec_6.3x5.4",
       "lcsc": "C2836440",
       "block": "usb_c_input",
@@ -340,7 +340,7 @@
       "lib_id": "Simulation_SPICE:PMOS",
       "value": "PMOS",
       "footprint": "Package_TO_SOT_SMD:SOT-23",
-      "lcsc": "C3040193",
+      "lcsc": "C15127",
       "block": "battery_management",
       "position": [
         101.6,
@@ -355,7 +355,7 @@
     {
       "ref": "L1",
       "lib_id": "Device:L",
-      "value": "2.2\u00b5H",
+      "value": "2.2µH",
       "footprint": "Inductor_SMD:L_Changjiang_FNR6028S",
       "lcsc": "C266426",
       "block": "battery_management",
@@ -371,7 +371,7 @@
     {
       "ref": "TH1",
       "lib_id": "Device:Thermistor_NTC",
-      "value": "10k\u03a9 NTC",
+      "value": "10kΩ NTC",
       "footprint": "Resistor_SMD:R_0603_1608Metric",
       "lcsc": "C13564",
       "block": "battery_management",
@@ -387,7 +387,7 @@
     {
       "ref": "R32",
       "lib_id": "Device:R",
-      "value": "330\u03a9",
+      "value": "330Ω",
       "footprint": "Resistor_SMD:R_0603_1608Metric",
       "lcsc": "C23138",
       "block": "battery_management",
@@ -403,9 +403,9 @@
     {
       "ref": "R33",
       "lib_id": "Device:R",
-      "value": "100k\u03a9",
+      "value": "100kΩ",
       "footprint": "Resistor_SMD:R_0603_1608Metric",
-      "lcsc": "C14675",
+      "lcsc": "C25803",
       "block": "battery_management",
       "position": [
         101.6,
@@ -419,9 +419,9 @@
     {
       "ref": "R34",
       "lib_id": "Device:R",
-      "value": "100k\u03a9",
+      "value": "100kΩ",
       "footprint": "Resistor_SMD:R_0603_1608Metric",
-      "lcsc": "C14675",
+      "lcsc": "C25803",
       "block": "battery_management",
       "position": [
         101.6,
@@ -435,7 +435,7 @@
     {
       "ref": "R35",
       "lib_id": "Device:R",
-      "value": "10k\u03a9",
+      "value": "10kΩ",
       "footprint": "Resistor_SMD:R_0603_1608Metric",
       "lcsc": "C25804",
       "block": "battery_management",
@@ -451,7 +451,7 @@
     {
       "ref": "R36",
       "lib_id": "Device:R",
-      "value": "5.6k\u03a9",
+      "value": "5.6kΩ",
       "footprint": "Resistor_SMD:R_0603_1608Metric",
       "lcsc": "C23189",
       "block": "battery_management",
@@ -467,7 +467,7 @@
     {
       "ref": "R37",
       "lib_id": "Device:R",
-      "value": "30k\u03a9",
+      "value": "30kΩ",
       "footprint": "Resistor_SMD:R_0603_1608Metric",
       "lcsc": "C22984",
       "block": "battery_management",
@@ -483,7 +483,7 @@
     {
       "ref": "R38",
       "lib_id": "Device:R",
-      "value": "10k\u03a9",
+      "value": "10kΩ",
       "footprint": "Resistor_SMD:R_0603_1608Metric",
       "lcsc": "C25804",
       "block": "battery_management",
@@ -501,7 +501,7 @@
       "lib_id": "Device:C",
       "value": "47nF",
       "footprint": "Capacitor_SMD:C_0603_1608Metric",
-      "lcsc": "C107093",
+      "lcsc": "C1622",
       "block": "battery_management",
       "position": [
         152.4,
@@ -515,7 +515,7 @@
     {
       "ref": "C24",
       "lib_id": "Device:C",
-      "value": "4.7\u00b5F",
+      "value": "4.7µF",
       "footprint": "Capacitor_SMD:C_0603_1608Metric",
       "lcsc": "C19666",
       "block": "battery_management",
@@ -531,7 +531,7 @@
     {
       "ref": "C25",
       "lib_id": "Device:C",
-      "value": "10\u00b5F",
+      "value": "10µF",
       "footprint": "Capacitor_SMD:C_0603_1608Metric",
       "lcsc": "C96446",
       "block": "battery_management",
@@ -547,7 +547,7 @@
     {
       "ref": "C26",
       "lib_id": "Device:C",
-      "value": "10\u00b5F",
+      "value": "10µF",
       "footprint": "Capacitor_SMD:C_0603_1608Metric",
       "lcsc": "C96446",
       "block": "battery_management",
@@ -563,7 +563,7 @@
     {
       "ref": "C27",
       "lib_id": "Device:C",
-      "value": "10\u00b5F",
+      "value": "10µF",
       "footprint": "Capacitor_SMD:C_0603_1608Metric",
       "lcsc": "C96446",
       "block": "battery_management",
@@ -579,7 +579,7 @@
     {
       "ref": "C28",
       "lib_id": "Device:C",
-      "value": "10\u00b5F",
+      "value": "10µF",
       "footprint": "Capacitor_SMD:C_0603_1608Metric",
       "lcsc": "C96446",
       "block": "battery_management",
@@ -595,7 +595,7 @@
     {
       "ref": "C29",
       "lib_id": "Device:C_Polarized_Small_US",
-      "value": "220\u00b5F 10V",
+      "value": "220µF 10V",
       "footprint": "Capacitor_SMD:CP_Elec_6.3x7.7",
       "lcsc": "C3342",
       "block": "battery_management",
@@ -611,7 +611,7 @@
     {
       "ref": "C30",
       "lib_id": "Device:C_Polarized_Small_US",
-      "value": "47\u00b5F 10V",
+      "value": "47µF 10V",
       "footprint": "Capacitor_SMD:C_Elec_6.3x5.4",
       "lcsc": "C2836440",
       "block": "battery_management",
@@ -667,7 +667,7 @@
     {
       "ref": "L2",
       "lib_id": "Device:L",
-      "value": "2.2\u00b5H 10A",
+      "value": "2.2µH 10A",
       "footprint": "FXL0630-2R2-M:IND-SMD_L7.0-W6.6",
       "lcsc": "C167218",
       "block": "boost_converter",
@@ -683,7 +683,7 @@
     {
       "ref": "R39",
       "lib_id": "Device:R",
-      "value": "180k\u03a9",
+      "value": "180kΩ",
       "footprint": "Resistor_SMD:R_0603_1608Metric",
       "lcsc": "C22827",
       "block": "boost_converter",
@@ -699,7 +699,7 @@
     {
       "ref": "R40",
       "lib_id": "Device:R",
-      "value": "56k\u03a9",
+      "value": "56kΩ",
       "footprint": "Resistor_SMD:R_0603_1608Metric",
       "lcsc": "C23206",
       "block": "boost_converter",
@@ -715,9 +715,9 @@
     {
       "ref": "R41",
       "lib_id": "Device:R",
-      "value": "100k\u03a9",
+      "value": "100kΩ",
       "footprint": "Resistor_SMD:R_0603_1608Metric",
-      "lcsc": "C14675",
+      "lcsc": "C25803",
       "block": "boost_converter",
       "position": [
         241.3,
@@ -731,9 +731,9 @@
     {
       "ref": "R42",
       "lib_id": "Device:R",
-      "value": "100k\u03a9",
+      "value": "100kΩ",
       "footprint": "Resistor_SMD:R_0603_1608Metric",
-      "lcsc": "C14675",
+      "lcsc": "C25803",
       "block": "boost_converter",
       "position": [
         241.3,
@@ -747,7 +747,7 @@
     {
       "ref": "R43",
       "lib_id": "Device:R",
-      "value": "22k\u03a9",
+      "value": "22kΩ",
       "footprint": "Resistor_SMD:R_0603_1608Metric",
       "lcsc": "C31850",
       "block": "boost_converter",
@@ -763,7 +763,7 @@
     {
       "ref": "C31",
       "lib_id": "Device:C",
-      "value": "0.1\u00b5F",
+      "value": "0.1µF",
       "footprint": "Capacitor_SMD:C_0603_1608Metric",
       "lcsc": "C14663",
       "block": "boost_converter",
@@ -779,7 +779,7 @@
     {
       "ref": "C32",
       "lib_id": "Device:C",
-      "value": "0.1\u00b5F",
+      "value": "0.1µF",
       "footprint": "Capacitor_SMD:C_0603_1608Metric",
       "lcsc": "C14663",
       "block": "boost_converter",
@@ -795,7 +795,7 @@
     {
       "ref": "C33",
       "lib_id": "Device:C",
-      "value": "2.2\u00b5F",
+      "value": "2.2µF",
       "footprint": "Capacitor_SMD:C_0603_1608Metric",
       "lcsc": "C23630",
       "block": "boost_converter",
@@ -811,9 +811,9 @@
     {
       "ref": "C34",
       "lib_id": "Device:C",
-      "value": "22\u00b5F",
+      "value": "22µF",
       "footprint": "Capacitor_SMD:C_0805_2012Metric",
-      "lcsc": "C59461",
+      "lcsc": "C45783",
       "block": "boost_converter",
       "position": [
         266.7,
@@ -827,9 +827,9 @@
     {
       "ref": "C35",
       "lib_id": "Device:C",
-      "value": "22\u00b5F",
+      "value": "22µF",
       "footprint": "Capacitor_SMD:C_0805_2012Metric",
-      "lcsc": "C59461",
+      "lcsc": "C45783",
       "block": "boost_converter",
       "position": [
         266.7,
@@ -843,9 +843,9 @@
     {
       "ref": "C36",
       "lib_id": "Device:C",
-      "value": "22\u00b5F",
+      "value": "22µF",
       "footprint": "Capacitor_SMD:C_0805_2012Metric",
-      "lcsc": "C59461",
+      "lcsc": "C45783",
       "block": "boost_converter",
       "position": [
         266.7,
@@ -861,7 +861,7 @@
       "lib_id": "Device:C",
       "value": "47nF",
       "footprint": "Capacitor_SMD:C_0603_1608Metric",
-      "lcsc": "C107093",
+      "lcsc": "C1622",
       "block": "boost_converter",
       "position": [
         266.7,
@@ -877,7 +877,7 @@
       "lib_id": "Device:C",
       "value": "4.7nF",
       "footprint": "Capacitor_SMD:C_0603_1608Metric",
-      "lcsc": "C1621",
+      "lcsc": "C53987",
       "block": "boost_converter",
       "position": [
         241.3,
@@ -907,7 +907,7 @@
     {
       "ref": "C41",
       "lib_id": "Device:C",
-      "value": "10\u00b5F",
+      "value": "10µF",
       "footprint": "Capacitor_SMD:C_0805_2012Metric",
       "lcsc": "C15850",
       "block": "boost_converter",
@@ -948,7 +948,7 @@
     {
       "ref": "R44",
       "lib_id": "Device:R",
-      "value": "10m\u03a9",
+      "value": "10mΩ",
       "footprint": "Resistor_SMD:R_2512_6332Metric",
       "lcsc": "C1322424",
       "block": "power_monitoring",
@@ -964,7 +964,7 @@
     {
       "ref": "C40",
       "lib_id": "Device:C",
-      "value": "0.1\u00b5F",
+      "value": "0.1µF",
       "footprint": "Capacitor_SMD:C_0603_1608Metric",
       "lcsc": "C14663",
       "block": "power_monitoring",
@@ -1152,79 +1152,79 @@
     },
     "I2C_SDA": {
       "type": "signal",
-      "description": "I2C data \u2014 U5 pin 6, U7 pin 6, sheet pin"
+      "description": "I2C data — U5 pin 6, U7 pin 6, sheet pin"
     },
     "I2C_SCL": {
       "type": "signal",
-      "description": "I2C clock \u2014 U5 pin 5, U7 pin 5, sheet pin"
+      "description": "I2C clock — U5 pin 5, U7 pin 5, sheet pin"
     },
     "CHRG_INT": {
       "type": "signal",
-      "description": "BQ24195 INT (active-low) \u2192 GPIO 21 via sheet pin"
+      "description": "BQ24195 INT (active-low) → GPIO 21 via sheet pin"
     },
     "CC1": {
       "type": "signal",
-      "description": "USB-C CC1 \u2192 R30 pull-down"
+      "description": "USB-C CC1 → R30 pull-down"
     },
     "CC2": {
       "type": "signal",
-      "description": "USB-C CC2 \u2192 R31 pull-down"
+      "description": "USB-C CC2 → R31 pull-down"
     },
     "BQ_SW": {
       "type": "internal",
-      "description": "BQ24195 switching node \u2192 L1, C23"
+      "description": "BQ24195 switching node → L1, C23"
     },
     "BQ_BTST": {
       "type": "internal",
-      "description": "BQ24195 bootstrap \u2014 C23 to BQ_SW"
+      "description": "BQ24195 bootstrap — C23 to BQ_SW"
     },
     "BQ_ILIM": {
       "type": "internal",
-      "description": "BQ24195 ILIM pin \u2192 R32 to GND"
+      "description": "BQ24195 ILIM pin → R32 to GND"
     },
     "BQ_TS": {
       "type": "internal",
-      "description": "BQ24195 TS thermistor node \u2014 TH1, R36, R37"
+      "description": "BQ24195 TS thermistor node — TH1, R36, R37"
     },
     "OTG_BIAS": {
       "type": "internal",
-      "description": "BQ24195 OTG pin \u2192 R35 pull-up to +3.3V"
+      "description": "BQ24195 OTG pin → R35 pull-up to +3.3V"
     },
     "PMOS_GATE": {
       "type": "internal",
-      "description": "Q2 gate \u2014 R33 to VBAT, R34 to BAT_RAW"
+      "description": "Q2 gate — R33 to VBAT, R34 to BAT_RAW"
     },
     "BOOST_SW": {
       "type": "internal",
-      "description": "TPS61088 SW pins \u2192 L2, C32, R41"
+      "description": "TPS61088 SW pins → L2, C32, R41"
     },
     "BOOST_BOOT": {
       "type": "internal",
-      "description": "TPS61088 BOOT \u2014 C32 to BOOST_SW"
+      "description": "TPS61088 BOOT — C32 to BOOST_SW"
     },
     "BOOST_VCC": {
       "type": "internal",
-      "description": "TPS61088 internal LDO \u2014 C33 bypass"
+      "description": "TPS61088 internal LDO — C33 bypass"
     },
     "BOOST_FSW": {
       "type": "internal",
-      "description": "TPS61088 FSW \u2192 R41 to BOOST_SW"
+      "description": "TPS61088 FSW → R41 to BOOST_SW"
     },
     "BOOST_SS": {
       "type": "internal",
-      "description": "TPS61088 soft-start \u2014 C37 to GND"
+      "description": "TPS61088 soft-start — C37 to GND"
     },
     "BOOST_FB": {
       "type": "internal",
-      "description": "TPS61088 feedback \u2014 R39/R40 divider midpoint"
+      "description": "TPS61088 feedback — R39/R40 divider midpoint"
     },
     "BOOST_COMP": {
       "type": "internal",
-      "description": "TPS61088 compensation \u2014 R43, C39"
+      "description": "TPS61088 compensation — R43, C39"
     },
     "BOOST_ILIM": {
       "type": "internal",
-      "description": "TPS61088 ILIM \u2192 R42 to GND"
+      "description": "TPS61088 ILIM → R42 to GND"
     },
     "COMP_MID": {
       "type": "internal",

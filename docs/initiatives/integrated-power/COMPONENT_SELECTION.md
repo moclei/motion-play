@@ -99,7 +99,7 @@ Carried forward from the reference power supply PCB (`hardware/pcb-power-supply/
 | **R_ILIM** | **330Ω 1% 0603** | **C23138** | **ILIM resistor (~1.5A)** | **CHANGED from 2.7kΩ** |
 | R_PMOS1 | 100kΩ 0603 | C14675 | PMOS gate bias (VBAT side) | Same |
 | R_PMOS2 | 100kΩ 0603 | C14675 | PMOS gate bias (raw battery side) | Same |
-| Q_PMOS | SOT-23 PMOS | C3040193 | Battery reverse polarity protection | Same |
+| Q_PMOS | AO3401A SOT-23 PMOS | **C15127** | Battery reverse polarity protection | **CHANGED — C3040193 OOS (3 units), swapped to AO3401A (904K stock, basic)** |
 | TH_NTC | 10kΩ NTC 0603 | C13564 | Battery temperature monitoring | Same |
 
 ### Bootstrap Cap Discrepancy

@@ -50,11 +50,14 @@ Full specification in `SCHEMATIC_SPEC.md` (51 components, 30+ nets, 4 functional
 
 ## Phase 5: Layout and Ordering
 
-- [ ] PCB layout: boost converter + inductor + diode placed close together, thermal copper pours under BQ24195 and boost IC
-- [ ] Power path trace widths sized for 3A+ (minimum 1mm for main 5V traces, wider preferred)
-- [ ] Generate BOM, verify all parts available on LCSC
-- [ ] Review JLCPCB assembly capability for selected components (package types, extended vs basic)
-- [ ] Order PCB + assembly from JLCPCB
+- [x] Generate BOM, verify all parts available on LCSC — 47 physical components, 30 unique LCSC parts verified. **3 issues found and resolved:** Q2 PMOS swapped C3040193→C15127 (OOS→904K stock, basic), output caps C34-C36 swapped C59461→C45783 (0603→0805 footprint fix, 6.3V→25V), BQ24195 C90862 low stock (24 units) flagged. 5 additional cost optimization swaps (extended→basic). See `BOM_VERIFICATION.md`
+- [x] Review JLCPCB assembly capability — all packages standard SMT (QFN, SOT-23, 0603, 0805, 2512, SMD connectors/electrolytics/inductors). 13 extended + 17 basic unique parts. $39 extended surcharge. No BGA, through-hole, or problematic packages. See `BOM_VERIFICATION.md` §4
+- [x] Update `spec.json` LCSC numbers — 11 component LCSC fields updated with verified/optimized part numbers
+- [x] PCB layout guide — thermal pour requirements, trace width table, component placement priorities, ground plane strategy. See `LAYOUT_GUIDE.md`
+- [ ] PCB layout in KiCad: boost converter + inductor placed close together, thermal copper pours under BQ24195 and TPS61088
+- [ ] Power path trace widths sized per LAYOUT_GUIDE.md (≥1.0mm for main 5V, VSYS; ≥1.5mm for BOOST_SW)
+- [ ] Export Gerbers, BOM CSV, CPL from KiCad
+- [ ] Order PCB + assembly from JLCPCB (verify BQ24195 stock at order time)
 
 ## Phase 6: Build and Test
 
