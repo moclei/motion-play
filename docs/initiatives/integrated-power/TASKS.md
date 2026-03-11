@@ -36,11 +36,11 @@ Full specification in `SCHEMATIC_SPEC.md` (51 components, 30+ nets, 4 functional
 
 - [x] Proof-of-concept: generate a minimal `.kicad_sch` via kiutils, verify KiCad 9 opens it without errors. **Validated:** 2 resistors + net labels, zero ERC errors. Key learnings: wire stubs needed for label-pin connectivity, Y-negation transform correct, lib symbols extractable from existing schematics. Script: `tools/schematic-gen/poc_generate.py`
 - [x] Convert `SCHEMATIC_SPEC.md` to `spec.json` — structured JSON with component definitions (ref, value, footprint, LCSC, symbol), pin-to-net mappings, and block layout positions. **Validated:** 51 components, 31 nets, 154 pin-to-net mappings, all cross-verified. Script: `tools/schematic-gen/spec.json`
-- [ ] Collect symbol definitions: extract from existing project schematics (BQ24195, passives, connectors), install TPS61088 and INA219 symbols via JLCPCB MCP `library_install`
-- [ ] Build `generate_power_sheet.py` — reads `spec.json`, places components in a grid by block, attaches net labels to pins, adds hierarchical sheet labels for interface signals
-- [ ] Generate `power_management.kicad_sch`, open in KiCad, run ERC, iterate on script until clean
-- [ ] User: manually edit root sheet in KiCad (delete J2/D1, add hierarchical sheet reference, wire GPIO 21 to CHRG_INT)
-- [ ] Run full ERC on complete design (root + power management sheet), fix any remaining issues
+- [x] Collect symbol definitions: extract from existing project schematics (BQ24195, passives, connectors), install TPS61088 and INA219 symbols via JLCPCB MCP `library_install`. Installed via `easyeda2kicad` into `hardware/pcb-main/resources/`, registered in `sym-lib-table` and `fp-lib-table`
+- [x] Build `generate_power_sheet.py` — reads `spec.json`, places components in a grid by block, attaches net labels to pins, adds hierarchical sheet labels for interface signals. Key fixes during development: `lib_id` format must be `LibName:SymName` for KiCad 9, wire stubs must extend *away* from component body (pin angle + 180°), components need ≥15.24mm vertical spacing to avoid stub collisions
+- [x] Generate `power_management.kicad_sch`, open in KiCad, run ERC, iterate on script until clean. Result: 51 components, 163 wire stubs + net labels, 8 no-connect flags, 6 hierarchical labels. Also hid `ai_*` and `Footprint` property labels across all existing schematic sheets for visual clarity
+- [x] User: manually edit root sheet in KiCad (delete J2/D1, add hierarchical sheet reference, wire GPIO 21 to CHRG_INT). Deleted J2 (DWEII module) and D1 (Schottky), added hierarchical sheet reference, wired all 6 interface pins (+5V, GND, +3.3V, I2C_SDA, I2C_SCL, CHRG_INT), connected CHRG_INT to GPIO 21
+- [x] Run full ERC on complete design (root + power management sheet), fix any remaining issues — Added 4 PWR_FLAG symbols (#FLG05–#FLG08) to resolve `power_pin_not_driven` errors on VBUS_RAW, Protected_VBUS, VBAT, and VSYS nets. Regenerated schematic: 55 components, 167 wire stubs + net labels, 14 unique lib symbols. Remaining: ~27 `pin_to_pin` type mismatch warnings from easyeda2kicad-generated symbols (cosmetic, fixable by editing `.kicad_sym` pin types but low priority)
 
 ## Phase 4: KiCad Review + Annotation
 

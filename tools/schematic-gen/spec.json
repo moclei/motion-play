@@ -7,7 +7,9 @@
     "project": "motion-play-main",
     "kicad_version": "20250114",
     "source_doc": "docs/initiatives/integrated-power/SCHEMATIC_SPEC.md",
-    "total_components": 51,
+    "root_sheet_uuid": "6e095bf3-d8d5-4f67-b79f-a2965409c7a9",
+    "hierarchical_sheet_uuid": "6b585d97-461f-477c-8d0a-cc1010f5954b",
+    "total_components": 55,
     "units": {
       "position": "mm, KiCad schematic coordinates (origin top-left, Y increases downward)",
       "angle": "degrees, 0=default orientation"
@@ -91,6 +93,9 @@
       "extract_from": "hardware/pcb-main/resources/INA219AIDCNR/INA219AIDCNR.kicad_sym",
       "source_type": "kicad_sym",
       "note": "Installed via easyeda2kicad from LCSC C87469"
+    },
+    "power:PWR_FLAG": {
+      "extract_from": "hardware/pcb-main/kicad/motion-play-main.kicad_sch"
     }
   },
   "blocks": {
@@ -127,6 +132,13 @@
       "origin": [
         101.6,
         177.8
+      ]
+    },
+    "pwr_flags": {
+      "name": "Power Flags (ERC)",
+      "origin": [
+        50.8,
+        195.58
       ]
     }
   },
@@ -1026,6 +1038,69 @@
       ],
       "pins": {
         "1": "GND"
+      }
+    },
+    {
+      "_comment": "=== PWR_FLAG symbols (4 — resolve power_pin_not_driven ERC errors) ==="
+    },
+    {
+      "ref": "#FLG05",
+      "lib_id": "power:PWR_FLAG",
+      "value": "PWR_FLAG",
+      "footprint": "",
+      "lcsc": null,
+      "block": "pwr_flags",
+      "position": [
+        50.8,
+        195.58
+      ],
+      "pins": {
+        "1": "VBUS_RAW"
+      }
+    },
+    {
+      "ref": "#FLG06",
+      "lib_id": "power:PWR_FLAG",
+      "value": "PWR_FLAG",
+      "footprint": "",
+      "lcsc": null,
+      "block": "pwr_flags",
+      "position": [
+        66.04,
+        195.58
+      ],
+      "pins": {
+        "1": "Protected_VBUS"
+      }
+    },
+    {
+      "ref": "#FLG07",
+      "lib_id": "power:PWR_FLAG",
+      "value": "PWR_FLAG",
+      "footprint": "",
+      "lcsc": null,
+      "block": "pwr_flags",
+      "position": [
+        81.28,
+        195.58
+      ],
+      "pins": {
+        "1": "VBAT"
+      }
+    },
+    {
+      "ref": "#FLG08",
+      "lib_id": "power:PWR_FLAG",
+      "value": "PWR_FLAG",
+      "footprint": "",
+      "lcsc": null,
+      "block": "pwr_flags",
+      "position": [
+        96.52,
+        195.58
+      ],
+      "pins": {
+        "1": "VSYS"
       }
     }
   ],
