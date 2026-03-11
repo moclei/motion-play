@@ -42,11 +42,11 @@ Full specification in `SCHEMATIC_SPEC.md` (51 components, 30+ nets, 4 functional
 - [x] User: manually edit root sheet in KiCad (delete J2/D1, add hierarchical sheet reference, wire GPIO 21 to CHRG_INT). Deleted J2 (DWEII module) and D1 (Schottky), added hierarchical sheet reference, wired all 6 interface pins (+5V, GND, +3.3V, I2C_SDA, I2C_SCL, CHRG_INT), connected CHRG_INT to GPIO 21
 - [x] Run full ERC on complete design (root + power management sheet), fix any remaining issues — Added 4 PWR_FLAG symbols (#FLG05–#FLG08) to resolve `power_pin_not_driven` errors on VBUS_RAW, Protected_VBUS, VBAT, and VSYS nets. Regenerated schematic: 55 components, 167 wire stubs + net labels, 14 unique lib symbols. Remaining: ~27 `pin_to_pin` type mismatch warnings from easyeda2kicad-generated symbols (cosmetic, fixable by editing `.kicad_sym` pin types but low priority)
 
-## Phase 4: KiCad Review + Annotation
+## Phase 4: KiCad Review + Annotation ✅
 
-- [ ] User re-extracts `circuit-context.json` via `extract.py --previous`
-- [ ] AI reviews extracted context against schematic spec — verify all connections, flag discrepancies
-- [ ] Annotation session for new components (ai_function, ai_block, ai_role, ai_critical_specs)
+- [x] User re-extracts `circuit-context.json` via `extract.py --previous` — 86 components, 50 nets, 4 sheets. 51 new power management components detected, D1/J2 correctly removed.
+- [x] AI reviews extracted context against schematic spec — pin-by-pin verification of all 3 ICs (U5/U6/U7), all passives, all net connections. Zero discrepancies found. All 51 physical components + 4 PWR_FLAGs match spec.json and SCHEMATIC_SPEC.md.
+- [x] Annotation session for new components — batch Python script wrote ai_function, ai_block, ai_role, ai_critical_specs for all 51 new components + updated TPIO21. 86/86 components annotated (100% coverage). Added 6 new block definitions (usb_c_input, battery_mgmt, boost_5v, power_monitor, power_test_points + updated power block). Annotated all 26 new nets. Updated stale descriptions (+5V net, power block, MCU block notes).
 
 ## Phase 5: Layout and Ordering
 

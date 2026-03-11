@@ -5,19 +5,18 @@
     "root": "motion-play-main.kicad_sch",
     "sheets": {
       "led_controller.kicad_sch": "LED Controller",
+      "power_management.kicad_sch": "Power Management",
       "tca9548A_subsystem.kicad_sch": "TCA9548A_Subsystem"
     },
-    "source_hash": "5478765feff5",
-    "extracted_at": "2026-03-10T01:14:28.458900+00:00"
+    "source_hash": "cd4df6380950",
+    "extracted_at": "2026-03-11T21:53:01.031634+00:00"
   },
-  "description": "ESP32-S3 based sensor controller main PCB with USB-C power input, 3.3V regulation, I2C multiplexer for 3 sensor modules, and WS2812B LED strip driver with level shifting",
+  "description": "ESP32-S3 based sensor controller main PCB with integrated power management (USB-C input, BQ24195 battery charger, TPS61088 5V boost, INA219 power monitor), AP2112K 3.3V LDO, TCA9548A I2C multiplexer for 3 sensor modules, and WS2812B LED strip driver with level shifting",
   "blocks": {
     "power": {
-      "description": "Power supply subsystem: USB-C input, reverse-polarity protection, 3.3V LDO regulation",
+      "description": "3.3V LDO regulation on root sheet, fed from +5V boost output",
       "sheet": "motion-play-main.kicad_sch",
       "components": [
-        "J2",
-        "D1",
         "U1",
         "C1",
         "C2",
@@ -25,7 +24,93 @@
         "TP_3V1",
         "TP_GND1"
       ],
-      "notes": "DWEII power module is a temporary development solution with battery charging. Long-term plan is custom USB-C + buck regulator. D1 Schottky provides reverse-polarity protection with ~0.3V drop."
+      "notes": "AP2112K 3.3V LDO fed from +5V (TPS61088 boost converter output via power management sheet). Powers sensors, I2C bus, and logic."
+    },
+    "usb_c_input": {
+      "description": "USB-C 5V power input with fuse protection and CC pull-downs for UFP sink role",
+      "sheet": "power_management.kicad_sch",
+      "components": [
+        "J7",
+        "F2",
+        "R30",
+        "R31",
+        "C20",
+        "C21",
+        "C22"
+      ],
+      "notes": "Sink-only USB-C (no PD, no data lines). 3A fuse on VBUS, 5.1k CC pull-downs. No STUSB4500 or USBLC6 for V1 simplicity."
+    },
+    "battery_mgmt": {
+      "description": "BQ24195 battery charger/power path manager with PMOS reverse polarity protection, NTC monitoring, and support passives",
+      "sheet": "power_management.kicad_sch",
+      "components": [
+        "U5",
+        "J8",
+        "Q2",
+        "L1",
+        "TH1",
+        "R32",
+        "R33",
+        "R34",
+        "R35",
+        "R36",
+        "R37",
+        "R38",
+        "C23",
+        "C24",
+        "C25",
+        "C26",
+        "C27",
+        "C28",
+        "C29",
+        "C30"
+      ],
+      "notes": "BQ24195 at I2C 0x6B. ILIM=330R (~1.5A ceiling), OTG pulled HIGH for 500mA SDP boot. CE tied LOW (charging controlled via I2C). PMOS Q2 provides battery reverse polarity protection. NTC biased from REGN via R36/R37 divider."
+    },
+    "boost_5v": {
+      "description": "TPS61088 synchronous boost converter, VSYS (3.0-4.5V) to +5V for entire system",
+      "sheet": "power_management.kicad_sch",
+      "components": [
+        "U6",
+        "L2",
+        "R39",
+        "R40",
+        "R41",
+        "R42",
+        "R43",
+        "C31",
+        "C32",
+        "C33",
+        "C34",
+        "C35",
+        "C36",
+        "C37",
+        "C38",
+        "C39",
+        "C41"
+      ],
+      "notes": "TPS61088 at 2.2MHz, 5.07V output via 180k/56k feedback divider. PFM mode for battery efficiency. Compensation: 22k/4.7nF/100pF (bench-tunable). 66uF output capacitance (3x 22uF)."
+    },
+    "power_monitor": {
+      "description": "INA219 I2C power monitor on VSYS rail with 10mR shunt",
+      "sheet": "power_management.kicad_sch",
+      "components": [
+        "U7",
+        "R44",
+        "C40"
+      ],
+      "notes": "INA219 at I2C 0x40. PGA /2 mode (+/-80mV), 1mA/LSB resolution, 8A max measurable current. Shunt between VSYS and VSYS_SENSE (boost converter input). Kelvin connection recommended for R44."
+    },
+    "power_test_points": {
+      "description": "Test points on power management sheet for VSYS, VBAT, Protected_VBUS, and power ground",
+      "sheet": "power_management.kicad_sch",
+      "components": [
+        "TP1",
+        "TP2",
+        "TP3",
+        "TP4"
+      ],
+      "notes": "1.5mm pads for probing power rails during bench testing. Root sheet has separate test points for +5V, +3.3V, and GND."
     },
     "mcu": {
       "description": "Main system controller (ESP32-S3) and GPIO breakout test points",
@@ -46,7 +131,7 @@
         "TPIO43",
         "TPIO44"
       ],
-      "notes": "T-Display-S3 dev board used temporarily. Long-term plan is bare ESP32-S3 integrated into main PCB. GPIO 1-3, 17, 18, 21 are unused breakouts for future expansion."
+      "notes": "T-Display-S3 dev board used temporarily. Long-term plan is bare ESP32-S3 integrated into main PCB. GPIO 21 is BQ24195 CHRG_INT. GPIO 1-3, 17, 18 are unused breakouts for future expansion."
     },
     "i2c_mux": {
       "description": "TCA9548A I2C multiplexer subsystem with pull-ups and decoupling",
@@ -161,6 +246,556 @@
         }
       ]
     },
+    "C20": {
+      "part": "C",
+      "value": "1\u00b5F",
+      "footprint": "Capacitor_SMD:C_0603_1608Metric",
+      "lcsc": "C15849",
+      "sheet": "power_management.kicad_sch",
+      "block": "usb_c_input",
+      "function": "High-frequency bypass on Protected_VBUS, close to U5 VBUS pins",
+      "role": "decoupling",
+      "critical_specs": "1uF X7R, place within 3mm of U5",
+      "pins": [
+        {
+          "number": "1",
+          "name": "",
+          "type": "passive",
+          "net": "/Power Management/Protected_VBUS"
+        },
+        {
+          "number": "2",
+          "name": "",
+          "type": "passive",
+          "net": "GND"
+        }
+      ]
+    },
+    "C21": {
+      "part": "C",
+      "value": "4.7\u00b5F",
+      "footprint": "Capacitor_SMD:C_0603_1608Metric",
+      "lcsc": "C19666",
+      "sheet": "power_management.kicad_sch",
+      "block": "usb_c_input",
+      "function": "Ceramic decoupling on Protected_VBUS rail",
+      "role": "decoupling",
+      "critical_specs": "4.7uF X5R",
+      "pins": [
+        {
+          "number": "1",
+          "name": "",
+          "type": "passive",
+          "net": "/Power Management/Protected_VBUS"
+        },
+        {
+          "number": "2",
+          "name": "",
+          "type": "passive",
+          "net": "GND"
+        }
+      ]
+    },
+    "C22": {
+      "part": "C_Polarized_Small_US",
+      "value": "47\u00b5F 16V",
+      "footprint": "Capacitor_SMD:C_Elec_6.3x5.4",
+      "lcsc": "C2836440",
+      "sheet": "power_management.kicad_sch",
+      "block": "usb_c_input",
+      "function": "Bulk decoupling on Protected_VBUS rail",
+      "role": "decoupling",
+      "critical_specs": "47uF 16V electrolytic",
+      "pins": [
+        {
+          "number": "1",
+          "name": "",
+          "type": "passive",
+          "net": "/Power Management/Protected_VBUS"
+        },
+        {
+          "number": "2",
+          "name": "",
+          "type": "passive",
+          "net": "GND"
+        }
+      ]
+    },
+    "C23": {
+      "part": "C",
+      "value": "47nF",
+      "footprint": "Capacitor_SMD:C_0603_1608Metric",
+      "lcsc": "C107093",
+      "sheet": "power_management.kicad_sch",
+      "block": "battery_mgmt",
+      "function": "BQ24195 bootstrap capacitor (BTST to SW)",
+      "role": "bootstrap",
+      "critical_specs": "47nF per datasheet",
+      "pins": [
+        {
+          "number": "1",
+          "name": "",
+          "type": "passive",
+          "net": "/Power Management/BQ_BTST"
+        },
+        {
+          "number": "2",
+          "name": "",
+          "type": "passive",
+          "net": "/Power Management/BQ_SW"
+        }
+      ]
+    },
+    "C24": {
+      "part": "C",
+      "value": "4.7\u00b5F",
+      "footprint": "Capacitor_SMD:C_0603_1608Metric",
+      "lcsc": "C19666",
+      "sheet": "power_management.kicad_sch",
+      "block": "battery_mgmt",
+      "function": "BQ24195 REGN internal LDO bypass",
+      "role": "decoupling",
+      "critical_specs": "4.7uF",
+      "pins": [
+        {
+          "number": "1",
+          "name": "",
+          "type": "passive",
+          "net": "/Power Management/BQ_REGN"
+        },
+        {
+          "number": "2",
+          "name": "",
+          "type": "passive",
+          "net": "GND"
+        }
+      ]
+    },
+    "C25": {
+      "part": "C",
+      "value": "10\u00b5F",
+      "footprint": "Capacitor_SMD:C_0603_1608Metric",
+      "lcsc": "C96446",
+      "sheet": "power_management.kicad_sch",
+      "block": "battery_mgmt",
+      "function": "BQ24195 PMID bypass capacitor",
+      "role": "decoupling",
+      "critical_specs": "10uF, C25+C26=20uF meets datasheet minimum",
+      "pins": [
+        {
+          "number": "1",
+          "name": "",
+          "type": "passive",
+          "net": "/Power Management/BQ_PMID"
+        },
+        {
+          "number": "2",
+          "name": "",
+          "type": "passive",
+          "net": "GND"
+        }
+      ]
+    },
+    "C26": {
+      "part": "C",
+      "value": "10\u00b5F",
+      "footprint": "Capacitor_SMD:C_0603_1608Metric",
+      "lcsc": "C96446",
+      "sheet": "power_management.kicad_sch",
+      "block": "battery_mgmt",
+      "function": "BQ24195 PMID bypass capacitor",
+      "role": "decoupling",
+      "critical_specs": "10uF, C25+C26=20uF meets datasheet minimum",
+      "pins": [
+        {
+          "number": "1",
+          "name": "",
+          "type": "passive",
+          "net": "/Power Management/BQ_PMID"
+        },
+        {
+          "number": "2",
+          "name": "",
+          "type": "passive",
+          "net": "GND"
+        }
+      ]
+    },
+    "C27": {
+      "part": "C",
+      "value": "10\u00b5F",
+      "footprint": "Capacitor_SMD:C_0603_1608Metric",
+      "lcsc": "C96446",
+      "sheet": "power_management.kicad_sch",
+      "block": "battery_mgmt",
+      "function": "VSYS rail ceramic decoupling",
+      "role": "decoupling",
+      "critical_specs": "10uF",
+      "pins": [
+        {
+          "number": "1",
+          "name": "",
+          "type": "passive",
+          "net": "/Power Management/VSYS"
+        },
+        {
+          "number": "2",
+          "name": "",
+          "type": "passive",
+          "net": "GND"
+        }
+      ]
+    },
+    "C28": {
+      "part": "C",
+      "value": "10\u00b5F",
+      "footprint": "Capacitor_SMD:C_0603_1608Metric",
+      "lcsc": "C96446",
+      "sheet": "power_management.kicad_sch",
+      "block": "battery_mgmt",
+      "function": "VSYS rail ceramic decoupling",
+      "role": "decoupling",
+      "critical_specs": "10uF",
+      "pins": [
+        {
+          "number": "1",
+          "name": "",
+          "type": "passive",
+          "net": "/Power Management/VSYS"
+        },
+        {
+          "number": "2",
+          "name": "",
+          "type": "passive",
+          "net": "GND"
+        }
+      ]
+    },
+    "C29": {
+      "part": "C_Polarized_Small_US",
+      "value": "220\u00b5F 10V",
+      "footprint": "Capacitor_SMD:CP_Elec_6.3x7.7",
+      "lcsc": "C3342",
+      "sheet": "power_management.kicad_sch",
+      "block": "battery_mgmt",
+      "function": "VSYS rail bulk output capacitor",
+      "role": "decoupling",
+      "critical_specs": "220uF 10V electrolytic",
+      "pins": [
+        {
+          "number": "1",
+          "name": "",
+          "type": "passive",
+          "net": "/Power Management/VSYS"
+        },
+        {
+          "number": "2",
+          "name": "",
+          "type": "passive",
+          "net": "GND"
+        }
+      ]
+    },
+    "C30": {
+      "part": "C_Polarized_Small_US",
+      "value": "47\u00b5F 10V",
+      "footprint": "Capacitor_SMD:C_Elec_6.3x5.4",
+      "lcsc": "C2836440",
+      "sheet": "power_management.kicad_sch",
+      "block": "battery_mgmt",
+      "function": "Battery terminal bulk capacitor",
+      "role": "decoupling",
+      "critical_specs": "47uF 10V electrolytic",
+      "pins": [
+        {
+          "number": "1",
+          "name": "",
+          "type": "passive",
+          "net": "/Power Management/BAT_RAW"
+        },
+        {
+          "number": "2",
+          "name": "",
+          "type": "passive",
+          "net": "GND"
+        }
+      ]
+    },
+    "C31": {
+      "part": "C",
+      "value": "0.1\u00b5F",
+      "footprint": "Capacitor_SMD:C_0603_1608Metric",
+      "lcsc": "C14663",
+      "sheet": "power_management.kicad_sch",
+      "block": "boost_5v",
+      "function": "VIN pin bypass capacitor, close to U6 pin 9",
+      "role": "decoupling",
+      "critical_specs": "0.1uF X7R, place within 3mm of U6",
+      "pins": [
+        {
+          "number": "1",
+          "name": "",
+          "type": "passive",
+          "net": "/Power Management/VSYS_SENSE"
+        },
+        {
+          "number": "2",
+          "name": "",
+          "type": "passive",
+          "net": "GND"
+        }
+      ]
+    },
+    "C32": {
+      "part": "C",
+      "value": "0.1\u00b5F",
+      "footprint": "Capacitor_SMD:C_0603_1608Metric",
+      "lcsc": "C14663",
+      "sheet": "power_management.kicad_sch",
+      "block": "boost_5v",
+      "function": "Bootstrap capacitor (BOOT to SW)",
+      "role": "bootstrap",
+      "critical_specs": "0.1uF",
+      "pins": [
+        {
+          "number": "1",
+          "name": "",
+          "type": "passive",
+          "net": "/Power Management/BOOST_BOOT"
+        },
+        {
+          "number": "2",
+          "name": "",
+          "type": "passive",
+          "net": "/Power Management/BOOST_SW"
+        }
+      ]
+    },
+    "C33": {
+      "part": "C",
+      "value": "2.2\u00b5F",
+      "footprint": "Capacitor_SMD:C_0603_1608Metric",
+      "lcsc": "C23630",
+      "sheet": "power_management.kicad_sch",
+      "block": "boost_5v",
+      "function": "VCC internal LDO decoupling",
+      "role": "decoupling",
+      "critical_specs": "2.2uF",
+      "pins": [
+        {
+          "number": "1",
+          "name": "",
+          "type": "passive",
+          "net": "/Power Management/BOOST_VCC"
+        },
+        {
+          "number": "2",
+          "name": "",
+          "type": "passive",
+          "net": "GND"
+        }
+      ]
+    },
+    "C34": {
+      "part": "C",
+      "value": "22\u00b5F",
+      "footprint": "Capacitor_SMD:C_0805_2012Metric",
+      "lcsc": "C59461",
+      "sheet": "power_management.kicad_sch",
+      "block": "boost_5v",
+      "function": "Boost output capacitor",
+      "role": "decoupling",
+      "critical_specs": "22uF 0805, 3x parallel = 66uF total",
+      "pins": [
+        {
+          "number": "1",
+          "name": "",
+          "type": "passive",
+          "net": "+5V"
+        },
+        {
+          "number": "2",
+          "name": "",
+          "type": "passive",
+          "net": "GND"
+        }
+      ]
+    },
+    "C35": {
+      "part": "C",
+      "value": "22\u00b5F",
+      "footprint": "Capacitor_SMD:C_0805_2012Metric",
+      "lcsc": "C59461",
+      "sheet": "power_management.kicad_sch",
+      "block": "boost_5v",
+      "function": "Boost output capacitor",
+      "role": "decoupling",
+      "critical_specs": "22uF 0805, 3x parallel = 66uF total",
+      "pins": [
+        {
+          "number": "1",
+          "name": "",
+          "type": "passive",
+          "net": "+5V"
+        },
+        {
+          "number": "2",
+          "name": "",
+          "type": "passive",
+          "net": "GND"
+        }
+      ]
+    },
+    "C36": {
+      "part": "C",
+      "value": "22\u00b5F",
+      "footprint": "Capacitor_SMD:C_0805_2012Metric",
+      "lcsc": "C59461",
+      "sheet": "power_management.kicad_sch",
+      "block": "boost_5v",
+      "function": "Boost output capacitor",
+      "role": "decoupling",
+      "critical_specs": "22uF 0805, 3x parallel = 66uF total",
+      "pins": [
+        {
+          "number": "1",
+          "name": "",
+          "type": "passive",
+          "net": "+5V"
+        },
+        {
+          "number": "2",
+          "name": "",
+          "type": "passive",
+          "net": "GND"
+        }
+      ]
+    },
+    "C37": {
+      "part": "C",
+      "value": "47nF",
+      "footprint": "Capacitor_SMD:C_0603_1608Metric",
+      "lcsc": "C107093",
+      "sheet": "power_management.kicad_sch",
+      "block": "boost_5v",
+      "function": "Soft-start timing capacitor (~11ms ramp)",
+      "role": "timing",
+      "critical_specs": "47nF",
+      "pins": [
+        {
+          "number": "1",
+          "name": "",
+          "type": "passive",
+          "net": "/Power Management/BOOST_SS"
+        },
+        {
+          "number": "2",
+          "name": "",
+          "type": "passive",
+          "net": "GND"
+        }
+      ]
+    },
+    "C38": {
+      "part": "C",
+      "value": "4.7nF",
+      "footprint": "Capacitor_SMD:C_0603_1608Metric",
+      "lcsc": "C1621",
+      "sheet": "power_management.kicad_sch",
+      "block": "boost_5v",
+      "function": "Compensation capacitor C_COMP1 (series with R43)",
+      "role": "compensation",
+      "critical_specs": "4.7nF, bench-tunable 2.2-10nF",
+      "pins": [
+        {
+          "number": "1",
+          "name": "",
+          "type": "passive",
+          "net": "/Power Management/COMP_MID"
+        },
+        {
+          "number": "2",
+          "name": "",
+          "type": "passive",
+          "net": "GND"
+        }
+      ]
+    },
+    "C39": {
+      "part": "C",
+      "value": "100pF",
+      "footprint": "Capacitor_SMD:C_0603_1608Metric",
+      "lcsc": "C14858",
+      "sheet": "power_management.kicad_sch",
+      "block": "boost_5v",
+      "function": "Compensation capacitor C_COMP2 (HF pole)",
+      "role": "compensation",
+      "critical_specs": "100pF C0G, remove if causing issues",
+      "pins": [
+        {
+          "number": "1",
+          "name": "",
+          "type": "passive",
+          "net": "/Power Management/BOOST_COMP"
+        },
+        {
+          "number": "2",
+          "name": "",
+          "type": "passive",
+          "net": "GND"
+        }
+      ]
+    },
+    "C40": {
+      "part": "C",
+      "value": "0.1\u00b5F",
+      "footprint": "Capacitor_SMD:C_0603_1608Metric",
+      "lcsc": "C14663",
+      "sheet": "power_management.kicad_sch",
+      "block": "power_monitor",
+      "function": "INA219 VS supply bypass, close to U7 pin 4",
+      "role": "decoupling",
+      "critical_specs": "0.1uF, place within 3mm of U7",
+      "pins": [
+        {
+          "number": "1",
+          "name": "",
+          "type": "passive",
+          "net": "+3.3V"
+        },
+        {
+          "number": "2",
+          "name": "",
+          "type": "passive",
+          "net": "GND"
+        }
+      ]
+    },
+    "C41": {
+      "part": "C",
+      "value": "10\u00b5F",
+      "footprint": "Capacitor_SMD:C_0805_2012Metric",
+      "lcsc": "C15850",
+      "sheet": "power_management.kicad_sch",
+      "block": "boost_5v",
+      "function": "VIN power stage bulk input capacitor",
+      "role": "decoupling",
+      "critical_specs": "10uF 0805",
+      "pins": [
+        {
+          "number": "1",
+          "name": "",
+          "type": "passive",
+          "net": "/Power Management/VSYS_SENSE"
+        },
+        {
+          "number": "2",
+          "name": "",
+          "type": "passive",
+          "net": "GND"
+        }
+      ]
+    },
     "C7": {
       "part": "C",
       "value": "100nF",
@@ -236,31 +871,6 @@
         }
       ]
     },
-    "D1": {
-      "part": "D_Schottky",
-      "value": "D_Schottky",
-      "footprint": "Diode_SMD:D_SMC",
-      "lcsc": "C5204950",
-      "sheet": "motion-play-main.kicad_sch",
-      "block": "power",
-      "function": "Reverse-polarity protection diode between power module and +5V rail",
-      "role": "protection",
-      "critical_specs": "Schottky, low Vf (~0.3V), handles full system current",
-      "pins": [
-        {
-          "number": "1",
-          "name": "K",
-          "type": "passive",
-          "net": "+5V"
-        },
-        {
-          "number": "2",
-          "name": "A",
-          "type": "passive",
-          "net": "Net-(D1-A)"
-        }
-      ]
-    },
     "F1": {
       "part": "Fuse",
       "value": "3A",
@@ -283,6 +893,31 @@
           "name": "",
           "type": "passive",
           "net": "Net-(C7-Pad2)"
+        }
+      ]
+    },
+    "F2": {
+      "part": "Fuse",
+      "value": "3A",
+      "footprint": "Fuse:Fuse_1206_3216Metric",
+      "lcsc": "C2897466",
+      "sheet": "power_management.kicad_sch",
+      "block": "usb_c_input",
+      "function": "VBUS overcurrent protection fuse",
+      "role": "protection",
+      "critical_specs": "3A rated, 1206 package",
+      "pins": [
+        {
+          "number": "1",
+          "name": "",
+          "type": "passive",
+          "net": "/Power Management/VBUS_RAW"
+        },
+        {
+          "number": "2",
+          "name": "",
+          "type": "passive",
+          "net": "/Power Management/Protected_VBUS"
         }
       ]
     },
@@ -326,31 +961,6 @@
           "name": "VCC",
           "type": "passive",
           "net": "/LED Controller/+5V_TO_LEDS"
-        }
-      ]
-    },
-    "J2": {
-      "part": "USBC_Power_Module",
-      "value": "DWEII Power Module",
-      "footprint": "motion-play-footprints:USBC_Power_Module",
-      "lcsc": "",
-      "sheet": "motion-play-main.kicad_sch",
-      "block": "power",
-      "function": "USB-C power input module with battery charging, provides 5V to system",
-      "role": "",
-      "critical_specs": "5V output, ~2.4A max, includes battery charging circuit",
-      "pins": [
-        {
-          "number": "1",
-          "name": "GND",
-          "type": "passive",
-          "net": "GND"
-        },
-        {
-          "number": "2",
-          "name": "5V",
-          "type": "power_out",
-          "net": "Net-(D1-A)"
         }
       ]
     },
@@ -514,6 +1124,191 @@
         }
       ]
     },
+    "J7": {
+      "part": "TYPE-C-31-M-12",
+      "value": "TYPE-C-31-M-12",
+      "footprint": "TYPE-C-31-M-12:USB-C_SMD-TYPE-C-31-M-12_1",
+      "lcsc": "C165948",
+      "sheet": "power_management.kicad_sch",
+      "block": "usb_c_input",
+      "function": "USB-C power input connector, 5V sink-only (no data)",
+      "role": "connector",
+      "critical_specs": "TYPE-C-31-M-12, 5.1k CC pull-downs for UFP sink role",
+      "pins": [
+        {
+          "number": "0",
+          "name": "SH",
+          "type": "passive",
+          "net": "GND"
+        },
+        {
+          "number": "A1",
+          "name": "GND",
+          "type": "passive",
+          "net": "GND"
+        },
+        {
+          "number": "A12",
+          "name": "GND",
+          "type": "passive",
+          "net": "GND"
+        },
+        {
+          "number": "A4",
+          "name": "VBUS",
+          "type": "power_in",
+          "net": "/Power Management/VBUS_RAW"
+        },
+        {
+          "number": "A5",
+          "name": "CC1",
+          "type": "input",
+          "net": "/Power Management/CC1"
+        },
+        {
+          "number": "A9",
+          "name": "VBUS",
+          "type": "power_in",
+          "net": "/Power Management/VBUS_RAW"
+        },
+        {
+          "number": "B1",
+          "name": "GND",
+          "type": "passive",
+          "net": "GND"
+        },
+        {
+          "number": "B12",
+          "name": "GND",
+          "type": "passive",
+          "net": "GND"
+        },
+        {
+          "number": "B4",
+          "name": "VBUS",
+          "type": "power_in",
+          "net": "/Power Management/VBUS_RAW"
+        },
+        {
+          "number": "B5",
+          "name": "CC2",
+          "type": "input",
+          "net": "/Power Management/CC2"
+        },
+        {
+          "number": "B9",
+          "name": "VBUS",
+          "type": "power_in",
+          "net": "/Power Management/VBUS_RAW"
+        }
+      ]
+    },
+    "J8": {
+      "part": "Conn_01x02",
+      "value": "JST_PH_2pin",
+      "footprint": "Connector_JST:JST_PH_S2B-PH-SM4-TB_1x02-1MP_P2.00mm_Horizontal",
+      "lcsc": "C18221575",
+      "sheet": "power_management.kicad_sch",
+      "block": "battery_mgmt",
+      "function": "Battery connector for single-cell Li-ion (Samsung 30Q)",
+      "role": "connector",
+      "critical_specs": "JST PH 2-pin, reverse polarity protected by Q2",
+      "pins": [
+        {
+          "number": "1",
+          "name": "Pin_1",
+          "type": "passive",
+          "net": "/Power Management/BAT_RAW"
+        },
+        {
+          "number": "2",
+          "name": "Pin_2",
+          "type": "passive",
+          "net": "GND"
+        }
+      ]
+    },
+    "L1": {
+      "part": "L",
+      "value": "2.2\u00b5H",
+      "footprint": "Inductor_SMD:L_Changjiang_FNR6028S",
+      "lcsc": "C266426",
+      "sheet": "power_management.kicad_sch",
+      "block": "battery_mgmt",
+      "function": "BQ24195 buck switching inductor",
+      "role": "inductor",
+      "critical_specs": "2.2uH, FNR6028S",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "/Power Management/BQ_SW"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "/Power Management/VSYS"
+        }
+      ]
+    },
+    "L2": {
+      "part": "L",
+      "value": "2.2\u00b5H 10A",
+      "footprint": "FXL0630-2R2-M:IND-SMD_L7.0-W6.6",
+      "lcsc": "C167218",
+      "sheet": "power_management.kicad_sch",
+      "block": "boost_5v",
+      "function": "Boost converter power inductor",
+      "role": "inductor",
+      "critical_specs": "2.2uH 10A Isat, FXL0630-2R2-M, minimize trace to U6 SW/VIN",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "/Power Management/BOOST_SW"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "/Power Management/VSYS_SENSE"
+        }
+      ]
+    },
+    "Q2": {
+      "part": "PMOS",
+      "value": "PMOS",
+      "footprint": "Package_TO_SOT_SMD:SOT-23",
+      "lcsc": "C3040193",
+      "sheet": "power_management.kicad_sch",
+      "block": "battery_mgmt",
+      "function": "Battery reverse polarity protection MOSFET",
+      "role": "protection",
+      "critical_specs": "PMOS SOT-23, D=BAT_RAW S=VBAT, biased by R33/R34 divider",
+      "pins": [
+        {
+          "number": "1",
+          "name": "D",
+          "type": "passive",
+          "net": "/Power Management/BAT_RAW"
+        },
+        {
+          "number": "2",
+          "name": "G",
+          "type": "input",
+          "net": "/Power Management/PMOS_GATE"
+        },
+        {
+          "number": "3",
+          "name": "S",
+          "type": "passive",
+          "net": "/Power Management/VBAT"
+        }
+      ]
+    },
     "R27": {
       "part": "R",
       "value": "0.1R",
@@ -589,6 +1384,381 @@
         }
       ]
     },
+    "R30": {
+      "part": "R",
+      "value": "5.1k\u03a9",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "lcsc": "C23186",
+      "sheet": "power_management.kicad_sch",
+      "block": "usb_c_input",
+      "function": "USB-C CC1 pull-down for UFP sink detection",
+      "role": "pull_down",
+      "critical_specs": "5.1k, required by USB-C spec for sink role",
+      "pins": [
+        {
+          "number": "1",
+          "name": "",
+          "type": "passive",
+          "net": "/Power Management/CC1"
+        },
+        {
+          "number": "2",
+          "name": "",
+          "type": "passive",
+          "net": "GND"
+        }
+      ]
+    },
+    "R31": {
+      "part": "R",
+      "value": "5.1k\u03a9",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "lcsc": "C23186",
+      "sheet": "power_management.kicad_sch",
+      "block": "usb_c_input",
+      "function": "USB-C CC2 pull-down for UFP sink detection",
+      "role": "pull_down",
+      "critical_specs": "5.1k, required by USB-C spec for sink role",
+      "pins": [
+        {
+          "number": "1",
+          "name": "",
+          "type": "passive",
+          "net": "/Power Management/CC2"
+        },
+        {
+          "number": "2",
+          "name": "",
+          "type": "passive",
+          "net": "GND"
+        }
+      ]
+    },
+    "R32": {
+      "part": "R",
+      "value": "330\u03a9",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "lcsc": "C23138",
+      "sheet": "power_management.kicad_sch",
+      "block": "battery_mgmt",
+      "function": "BQ24195 ILIM resistor, sets hardware input current ceiling",
+      "role": "current_limit",
+      "critical_specs": "330R (not 2.7k from reference), ~1.5A ceiling",
+      "pins": [
+        {
+          "number": "1",
+          "name": "",
+          "type": "passive",
+          "net": "/Power Management/BQ_ILIM"
+        },
+        {
+          "number": "2",
+          "name": "",
+          "type": "passive",
+          "net": "GND"
+        }
+      ]
+    },
+    "R33": {
+      "part": "R",
+      "value": "100k\u03a9",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "lcsc": "C14675",
+      "sheet": "power_management.kicad_sch",
+      "block": "battery_mgmt",
+      "function": "PMOS gate bias resistor to VBAT (keeps Q2 on when battery present)",
+      "role": "bias",
+      "critical_specs": "100k",
+      "pins": [
+        {
+          "number": "1",
+          "name": "",
+          "type": "passive",
+          "net": "/Power Management/VBAT"
+        },
+        {
+          "number": "2",
+          "name": "",
+          "type": "passive",
+          "net": "/Power Management/PMOS_GATE"
+        }
+      ]
+    },
+    "R34": {
+      "part": "R",
+      "value": "100k\u03a9",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "lcsc": "C14675",
+      "sheet": "power_management.kicad_sch",
+      "block": "battery_mgmt",
+      "function": "PMOS gate bias resistor to BAT_RAW (turns Q2 off if reverse polarity)",
+      "role": "bias",
+      "critical_specs": "100k",
+      "pins": [
+        {
+          "number": "1",
+          "name": "",
+          "type": "passive",
+          "net": "/Power Management/PMOS_GATE"
+        },
+        {
+          "number": "2",
+          "name": "",
+          "type": "passive",
+          "net": "/Power Management/BAT_RAW"
+        }
+      ]
+    },
+    "R35": {
+      "part": "R",
+      "value": "10k\u03a9",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "lcsc": "C25804",
+      "sheet": "power_management.kicad_sch",
+      "block": "battery_mgmt",
+      "function": "OTG pin pull-up to +3.3V, sets 500mA SDP boot-time current",
+      "role": "pull_up",
+      "critical_specs": "10k to +3.3V, critical for USB-only boot",
+      "pins": [
+        {
+          "number": "1",
+          "name": "",
+          "type": "passive",
+          "net": "/Power Management/OTG_BIAS"
+        },
+        {
+          "number": "2",
+          "name": "",
+          "type": "passive",
+          "net": "+3.3V"
+        }
+      ]
+    },
+    "R36": {
+      "part": "R",
+      "value": "5.6k\u03a9",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "lcsc": "C23189",
+      "sheet": "power_management.kicad_sch",
+      "block": "battery_mgmt",
+      "function": "NTC bias top resistor (REGN to TS), part of temperature monitoring divider",
+      "role": "bias",
+      "critical_specs": "5.6k from BQ_REGN",
+      "pins": [
+        {
+          "number": "1",
+          "name": "",
+          "type": "passive",
+          "net": "/Power Management/BQ_REGN"
+        },
+        {
+          "number": "2",
+          "name": "",
+          "type": "passive",
+          "net": "/Power Management/BQ_TS"
+        }
+      ]
+    },
+    "R37": {
+      "part": "R",
+      "value": "30k\u03a9",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "lcsc": "C22984",
+      "sheet": "power_management.kicad_sch",
+      "block": "battery_mgmt",
+      "function": "NTC bias bottom resistor (TS to GND), parallel with TH1",
+      "role": "bias",
+      "critical_specs": "30k, replace with 10k if TH1 not populated",
+      "pins": [
+        {
+          "number": "1",
+          "name": "",
+          "type": "passive",
+          "net": "/Power Management/BQ_TS"
+        },
+        {
+          "number": "2",
+          "name": "",
+          "type": "passive",
+          "net": "GND"
+        }
+      ]
+    },
+    "R38": {
+      "part": "R",
+      "value": "10k\u03a9",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "lcsc": "C25804",
+      "sheet": "power_management.kicad_sch",
+      "block": "battery_mgmt",
+      "function": "BQ24195 INT pull-up to +3.3V",
+      "role": "pull_up",
+      "critical_specs": "10k to +3.3V, active-low open-drain output",
+      "pins": [
+        {
+          "number": "1",
+          "name": "",
+          "type": "passive",
+          "net": "/Power Management/CHRG_INT"
+        },
+        {
+          "number": "2",
+          "name": "",
+          "type": "passive",
+          "net": "+3.3V"
+        }
+      ]
+    },
+    "R39": {
+      "part": "R",
+      "value": "180k\u03a9",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "lcsc": "C22827",
+      "sheet": "power_management.kicad_sch",
+      "block": "boost_5v",
+      "function": "Feedback divider top resistor (sets 5.07V output)",
+      "role": "voltage_divider",
+      "critical_specs": "180k 1%, VOUT=1.204*(1+180/56)",
+      "pins": [
+        {
+          "number": "1",
+          "name": "",
+          "type": "passive",
+          "net": "+5V"
+        },
+        {
+          "number": "2",
+          "name": "",
+          "type": "passive",
+          "net": "/Power Management/BOOST_FB"
+        }
+      ]
+    },
+    "R40": {
+      "part": "R",
+      "value": "56k\u03a9",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "lcsc": "C23206",
+      "sheet": "power_management.kicad_sch",
+      "block": "boost_5v",
+      "function": "Feedback divider bottom resistor",
+      "role": "voltage_divider",
+      "critical_specs": "56k 1%",
+      "pins": [
+        {
+          "number": "1",
+          "name": "",
+          "type": "passive",
+          "net": "/Power Management/BOOST_FB"
+        },
+        {
+          "number": "2",
+          "name": "",
+          "type": "passive",
+          "net": "GND"
+        }
+      ]
+    },
+    "R41": {
+      "part": "R",
+      "value": "100k\u03a9",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "lcsc": "C14675",
+      "sheet": "power_management.kicad_sch",
+      "block": "boost_5v",
+      "function": "Switching frequency set resistor (FSW to SW)",
+      "role": "frequency_set",
+      "critical_specs": "100k, ~2.2MHz",
+      "pins": [
+        {
+          "number": "1",
+          "name": "",
+          "type": "passive",
+          "net": "/Power Management/BOOST_FSW"
+        },
+        {
+          "number": "2",
+          "name": "",
+          "type": "passive",
+          "net": "/Power Management/BOOST_SW"
+        }
+      ]
+    },
+    "R42": {
+      "part": "R",
+      "value": "100k\u03a9",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "lcsc": "C14675",
+      "sheet": "power_management.kicad_sch",
+      "block": "boost_5v",
+      "function": "Peak current limit set resistor (ILIM to GND)",
+      "role": "current_limit",
+      "critical_specs": "100k, ~11.9A peak",
+      "pins": [
+        {
+          "number": "1",
+          "name": "",
+          "type": "passive",
+          "net": "/Power Management/BOOST_ILIM"
+        },
+        {
+          "number": "2",
+          "name": "",
+          "type": "passive",
+          "net": "GND"
+        }
+      ]
+    },
+    "R43": {
+      "part": "R",
+      "value": "22k\u03a9",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "lcsc": "C31850",
+      "sheet": "power_management.kicad_sch",
+      "block": "boost_5v",
+      "function": "Compensation network resistor",
+      "role": "compensation",
+      "critical_specs": "22k, bench-tunable 10-47k",
+      "pins": [
+        {
+          "number": "1",
+          "name": "",
+          "type": "passive",
+          "net": "/Power Management/BOOST_COMP"
+        },
+        {
+          "number": "2",
+          "name": "",
+          "type": "passive",
+          "net": "/Power Management/COMP_MID"
+        }
+      ]
+    },
+    "R44": {
+      "part": "R",
+      "value": "10m\u03a9",
+      "footprint": "Resistor_SMD:R_2512_6332Metric",
+      "lcsc": "C1322424",
+      "sheet": "power_management.kicad_sch",
+      "block": "power_monitor",
+      "function": "VSYS current sense shunt resistor between VSYS and VSYS_SENSE",
+      "role": "current_sense",
+      "critical_specs": "10mR 1% 1W 2512, Kelvin connection recommended",
+      "pins": [
+        {
+          "number": "1",
+          "name": "",
+          "type": "passive",
+          "net": "/Power Management/VSYS"
+        },
+        {
+          "number": "2",
+          "name": "",
+          "type": "passive",
+          "net": "/Power Management/VSYS_SENSE"
+        }
+      ]
+    },
     "R6": {
       "part": "R",
       "value": "10k\u03a9",
@@ -611,6 +1781,107 @@
           "name": "",
           "type": "passive",
           "net": "+3.3V"
+        }
+      ]
+    },
+    "TH1": {
+      "part": "Thermistor_NTC",
+      "value": "10k\u03a9 NTC",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "lcsc": "C13564",
+      "sheet": "power_management.kicad_sch",
+      "block": "battery_mgmt",
+      "function": "Battery temperature monitoring NTC for BQ24195 TS input",
+      "role": "sensor",
+      "critical_specs": "10k NTC, biased by R36/R37 divider from REGN",
+      "pins": [
+        {
+          "number": "1",
+          "name": "",
+          "type": "passive",
+          "net": "/Power Management/BQ_TS"
+        },
+        {
+          "number": "2",
+          "name": "",
+          "type": "passive",
+          "net": "GND"
+        }
+      ]
+    },
+    "TP1": {
+      "part": "TestPoint",
+      "value": "VSYS",
+      "footprint": "TestPoint:TestPoint_Pad_D1.5mm",
+      "lcsc": "",
+      "sheet": "power_management.kicad_sch",
+      "block": "power_test_points",
+      "function": "VSYS rail test point (BQ24195 system output, 3.0-4.5V)",
+      "role": "test_point",
+      "critical_specs": "",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "/Power Management/VSYS"
+        }
+      ]
+    },
+    "TP2": {
+      "part": "TestPoint",
+      "value": "VBAT",
+      "footprint": "TestPoint:TestPoint_Pad_D1.5mm",
+      "lcsc": "",
+      "sheet": "power_management.kicad_sch",
+      "block": "power_test_points",
+      "function": "VBAT rail test point (battery voltage after PMOS)",
+      "role": "test_point",
+      "critical_specs": "",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "/Power Management/VBAT"
+        }
+      ]
+    },
+    "TP3": {
+      "part": "TestPoint",
+      "value": "PVBUS",
+      "footprint": "TestPoint:TestPoint_Pad_D1.5mm",
+      "lcsc": "",
+      "sheet": "power_management.kicad_sch",
+      "block": "power_test_points",
+      "function": "Protected_VBUS test point (USB VBUS after fuse)",
+      "role": "test_point",
+      "critical_specs": "",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "/Power Management/Protected_VBUS"
+        }
+      ]
+    },
+    "TP4": {
+      "part": "TestPoint",
+      "value": "PGND",
+      "footprint": "TestPoint:TestPoint_Pad_D1.5mm",
+      "lcsc": "",
+      "sheet": "power_management.kicad_sch",
+      "block": "power_test_points",
+      "function": "Power ground test point",
+      "role": "test_point",
+      "critical_specs": "",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "GND"
         }
       ]
     },
@@ -729,7 +2000,7 @@
       ]
     },
     "TPIO17": {
-      "part": "TestPoint",
+      "part": "TestPoint_1",
       "value": "TestPoint",
       "footprint": "TestPoint:TestPoint_Pad_D2.0mm",
       "lcsc": "",
@@ -786,13 +2057,13 @@
       ]
     },
     "TPIO21": {
-      "part": "TestPoint",
+      "part": "TestPoint_2",
       "value": "TestPoint",
       "footprint": "TestPoint:TestPoint_Pad_D2.0mm",
       "lcsc": "",
       "sheet": "motion-play-main.kicad_sch",
       "block": "mcu",
-      "function": "GPIO 21 breakout test point (unused)",
+      "function": "BQ24195 interrupt (CHRG_INT) test point, GPIO 21 active-low",
       "role": "test_point",
       "critical_specs": "",
       "pins": [
@@ -800,7 +2071,7 @@
           "number": "1",
           "name": "1",
           "type": "passive",
-          "net": "Net-(U2-21)"
+          "net": "/Power Management/CHRG_INT"
         }
       ]
     },
@@ -1060,7 +2331,7 @@
           "number": "19",
           "name": "21",
           "type": "bidirectional",
-          "net": "Net-(U2-21)"
+          "net": "/Power Management/CHRG_INT"
         },
         {
           "number": "20",
@@ -1178,6 +2449,357 @@
           "net": "+3.3V"
         }
       ]
+    },
+    "U5": {
+      "part": "BQ24195RGET",
+      "value": "BQ24195RGER",
+      "footprint": "BQ24195RGET:VQFN-24_L4.0-W4.0-P0.50-TL-EP2.8",
+      "lcsc": "C90862",
+      "sheet": "power_management.kicad_sch",
+      "block": "battery_mgmt",
+      "function": "Battery charger and power path manager, provides VSYS from USB or battery",
+      "role": "charger_pmic",
+      "critical_specs": "BQ24195RGER, I2C 0x6B, 4.2V charge, ILIM 330R for ~1.5A ceiling, OTG HIGH for 500mA SDP boot",
+      "pins": [
+        {
+          "number": "1",
+          "name": "VBUS1",
+          "type": "power_in",
+          "net": "/Power Management/Protected_VBUS"
+        },
+        {
+          "number": "2",
+          "name": "D+",
+          "type": "input",
+          "net": "GND"
+        },
+        {
+          "number": "3",
+          "name": "D-",
+          "type": "input",
+          "net": "GND"
+        },
+        {
+          "number": "5",
+          "name": "SCL",
+          "type": "input",
+          "net": "/I2C_SCL"
+        },
+        {
+          "number": "6",
+          "name": "SDA",
+          "type": "bidirectional",
+          "net": "/I2C_SDA"
+        },
+        {
+          "number": "7",
+          "name": "INT",
+          "type": "output",
+          "net": "/Power Management/CHRG_INT"
+        },
+        {
+          "number": "8",
+          "name": "OTG",
+          "type": "input",
+          "net": "/Power Management/OTG_BIAS"
+        },
+        {
+          "number": "9",
+          "name": "CE",
+          "type": "input",
+          "net": "GND"
+        },
+        {
+          "number": "10",
+          "name": "ILIM",
+          "type": "input",
+          "net": "/Power Management/BQ_ILIM"
+        },
+        {
+          "number": "11",
+          "name": "TS1",
+          "type": "input",
+          "net": "/Power Management/BQ_TS"
+        },
+        {
+          "number": "12",
+          "name": "TS2",
+          "type": "input",
+          "net": "/Power Management/BQ_TS"
+        },
+        {
+          "number": "13",
+          "name": "BAT1",
+          "type": "power_in",
+          "net": "/Power Management/VBAT"
+        },
+        {
+          "number": "14",
+          "name": "BAT2",
+          "type": "power_in",
+          "net": "/Power Management/VBAT"
+        },
+        {
+          "number": "15",
+          "name": "SYS1",
+          "type": "power_in",
+          "net": "/Power Management/VSYS"
+        },
+        {
+          "number": "16",
+          "name": "SYS2",
+          "type": "power_in",
+          "net": "/Power Management/VSYS"
+        },
+        {
+          "number": "17",
+          "name": "PGND1",
+          "type": "passive",
+          "net": "GND"
+        },
+        {
+          "number": "18",
+          "name": "PGND2",
+          "type": "passive",
+          "net": "GND"
+        },
+        {
+          "number": "19",
+          "name": "SW1",
+          "type": "output",
+          "net": "/Power Management/BQ_SW"
+        },
+        {
+          "number": "20",
+          "name": "SW2",
+          "type": "passive",
+          "net": "/Power Management/BQ_SW"
+        },
+        {
+          "number": "21",
+          "name": "BTST",
+          "type": "bidirectional",
+          "net": "/Power Management/BQ_BTST"
+        },
+        {
+          "number": "22",
+          "name": "REGN",
+          "type": "bidirectional",
+          "net": "/Power Management/BQ_REGN"
+        },
+        {
+          "number": "23",
+          "name": "PMID",
+          "type": "bidirectional",
+          "net": "/Power Management/BQ_PMID"
+        },
+        {
+          "number": "24",
+          "name": "VBUS2",
+          "type": "power_in",
+          "net": "/Power Management/Protected_VBUS"
+        },
+        {
+          "number": "25",
+          "name": "GND",
+          "type": "passive",
+          "net": "GND"
+        }
+      ]
+    },
+    "U6": {
+      "part": "TPS61088RHLR",
+      "value": "TPS61088RHLR",
+      "footprint": "TPS61088RHLR:VQFN-20_L4.6-W3.6-P0.50-BL",
+      "lcsc": "C87357",
+      "sheet": "power_management.kicad_sch",
+      "block": "boost_5v",
+      "function": "Synchronous boost converter, VSYS to +5V for entire system",
+      "role": "voltage_regulator",
+      "critical_specs": "TPS61088RHLR, 10A switch, 5.07V output, 2.2MHz, PFM mode",
+      "pins": [
+        {
+          "number": "1",
+          "name": "VCC",
+          "type": "unspecified",
+          "net": "/Power Management/BOOST_VCC"
+        },
+        {
+          "number": "2",
+          "name": "EN",
+          "type": "unspecified",
+          "net": "/Power Management/VSYS_SENSE"
+        },
+        {
+          "number": "3",
+          "name": "FSW",
+          "type": "unspecified",
+          "net": "/Power Management/BOOST_FSW"
+        },
+        {
+          "number": "4",
+          "name": "SW",
+          "type": "unspecified",
+          "net": "/Power Management/BOOST_SW"
+        },
+        {
+          "number": "5",
+          "name": "SW",
+          "type": "unspecified",
+          "net": "/Power Management/BOOST_SW"
+        },
+        {
+          "number": "6",
+          "name": "SW",
+          "type": "unspecified",
+          "net": "/Power Management/BOOST_SW"
+        },
+        {
+          "number": "7",
+          "name": "SW",
+          "type": "unspecified",
+          "net": "/Power Management/BOOST_SW"
+        },
+        {
+          "number": "8",
+          "name": "BOOT",
+          "type": "unspecified",
+          "net": "/Power Management/BOOST_BOOT"
+        },
+        {
+          "number": "9",
+          "name": "VIN",
+          "type": "unspecified",
+          "net": "/Power Management/VSYS_SENSE"
+        },
+        {
+          "number": "10",
+          "name": "SS",
+          "type": "unspecified",
+          "net": "/Power Management/BOOST_SS"
+        },
+        {
+          "number": "11",
+          "name": "NC",
+          "type": "unspecified",
+          "net": "GND"
+        },
+        {
+          "number": "12",
+          "name": "NC",
+          "type": "unspecified",
+          "net": "GND"
+        },
+        {
+          "number": "14",
+          "name": "VOUT",
+          "type": "unspecified",
+          "net": "+5V"
+        },
+        {
+          "number": "15",
+          "name": "VOUT",
+          "type": "unspecified",
+          "net": "+5V"
+        },
+        {
+          "number": "16",
+          "name": "VOUT",
+          "type": "unspecified",
+          "net": "+5V"
+        },
+        {
+          "number": "17",
+          "name": "FB",
+          "type": "unspecified",
+          "net": "/Power Management/BOOST_FB"
+        },
+        {
+          "number": "18",
+          "name": "COMP",
+          "type": "unspecified",
+          "net": "/Power Management/BOOST_COMP"
+        },
+        {
+          "number": "19",
+          "name": "ILIM",
+          "type": "unspecified",
+          "net": "/Power Management/BOOST_ILIM"
+        },
+        {
+          "number": "20",
+          "name": "AGND",
+          "type": "unspecified",
+          "net": "GND"
+        },
+        {
+          "number": "21",
+          "name": "PGND",
+          "type": "unspecified",
+          "net": "GND"
+        }
+      ]
+    },
+    "U7": {
+      "part": "INA219AIDCNR",
+      "value": "INA219AIDCNR",
+      "footprint": "INA219AIDCNR:SOT-23-8_L3.0-W1.7-P0.65-LS2.8-BR",
+      "lcsc": "C87469",
+      "sheet": "power_management.kicad_sch",
+      "block": "power_monitor",
+      "function": "I2C power monitor on VSYS rail, measures voltage and current",
+      "role": "power_monitor",
+      "critical_specs": "INA219AIDCNR, I2C 0x40, PGA /2 (+/-80mV), 1mA/LSB, 8A max",
+      "pins": [
+        {
+          "number": "1",
+          "name": "IN+",
+          "type": "unspecified",
+          "net": "/Power Management/VSYS"
+        },
+        {
+          "number": "2",
+          "name": "IN-",
+          "type": "unspecified",
+          "net": "/Power Management/VSYS_SENSE"
+        },
+        {
+          "number": "3",
+          "name": "GND",
+          "type": "unspecified",
+          "net": "GND"
+        },
+        {
+          "number": "4",
+          "name": "VS",
+          "type": "unspecified",
+          "net": "+3.3V"
+        },
+        {
+          "number": "5",
+          "name": "SCL",
+          "type": "unspecified",
+          "net": "/I2C_SCL"
+        },
+        {
+          "number": "6",
+          "name": "SDA",
+          "type": "unspecified",
+          "net": "/I2C_SDA"
+        },
+        {
+          "number": "7",
+          "name": "A0",
+          "type": "unspecified",
+          "net": "GND"
+        },
+        {
+          "number": "8",
+          "name": "A1",
+          "type": "unspecified",
+          "net": "GND"
+        }
+      ]
     }
   },
   "nets": {
@@ -1191,7 +2813,7 @@
       "type": "power",
       "protocol": "",
       "direction": "",
-      "description": "Main 5V rail from DWEII power module (via D1 Schottky), powers MCU, LDO input, and LED controller"
+      "description": "Main 5V rail from TPS61088 boost converter (power management sheet), powers MCU, AP2112K LDO input, and LED controller"
     },
     "/I2C_SCL": {
       "type": "signal",
@@ -1240,6 +2862,162 @@
       "protocol": "WS2812B",
       "direction": "output",
       "description": "LED data signal at 5V logic from level shifter output to LED strip"
+    },
+    "/Power Management/BAT_RAW": {
+      "type": "power",
+      "protocol": "",
+      "direction": "",
+      "description": "Battery+ before PMOS protection, from J8 connector"
+    },
+    "/Power Management/BOOST_BOOT": {
+      "type": "internal",
+      "protocol": "",
+      "direction": "",
+      "description": "TPS61088 BOOT pin, C32 to BOOST_SW"
+    },
+    "/Power Management/BOOST_COMP": {
+      "type": "internal",
+      "protocol": "",
+      "direction": "",
+      "description": "TPS61088 compensation pin, R43 and C39"
+    },
+    "/Power Management/BOOST_FB": {
+      "type": "internal",
+      "protocol": "",
+      "direction": "",
+      "description": "TPS61088 feedback divider midpoint, R39/R40 (180k/56k = 5.07V)"
+    },
+    "/Power Management/BOOST_FSW": {
+      "type": "internal",
+      "protocol": "",
+      "direction": "",
+      "description": "TPS61088 FSW pin, R41 (100k) to BOOST_SW sets ~2.2MHz"
+    },
+    "/Power Management/BOOST_ILIM": {
+      "type": "internal",
+      "protocol": "",
+      "direction": "",
+      "description": "TPS61088 ILIM pin, R42 (100k) to GND sets ~11.9A peak"
+    },
+    "/Power Management/BOOST_SS": {
+      "type": "internal",
+      "protocol": "",
+      "direction": "",
+      "description": "TPS61088 soft-start pin, C37 (47nF) to GND (~11ms ramp)"
+    },
+    "/Power Management/BOOST_SW": {
+      "type": "internal",
+      "protocol": "",
+      "direction": "",
+      "description": "TPS61088 switching node, L2/C32/R41 connected"
+    },
+    "/Power Management/BOOST_VCC": {
+      "type": "internal",
+      "protocol": "",
+      "direction": "",
+      "description": "TPS61088 internal LDO output, C33 (2.2uF) bypass"
+    },
+    "/Power Management/BQ_BTST": {
+      "type": "internal",
+      "protocol": "",
+      "direction": "",
+      "description": "BQ24195 bootstrap pin, C23 (47nF) to BQ_SW"
+    },
+    "/Power Management/BQ_ILIM": {
+      "type": "internal",
+      "protocol": "",
+      "direction": "",
+      "description": "BQ24195 ILIM pin, R32 (330R) to GND sets ~1.5A ceiling"
+    },
+    "/Power Management/BQ_PMID": {
+      "type": "power",
+      "protocol": "",
+      "direction": "",
+      "description": "BQ24195 PMID (internal power mux output), C25+C26 = 20uF"
+    },
+    "/Power Management/BQ_REGN": {
+      "type": "power",
+      "protocol": "",
+      "direction": "",
+      "description": "BQ24195 internal 5V LDO output, C24 bypass, R36 NTC bias source"
+    },
+    "/Power Management/BQ_SW": {
+      "type": "internal",
+      "protocol": "",
+      "direction": "",
+      "description": "BQ24195 switching node, L1 and C23 connected"
+    },
+    "/Power Management/BQ_TS": {
+      "type": "internal",
+      "protocol": "",
+      "direction": "",
+      "description": "BQ24195 TS thermistor node, TH1/R36/R37 divider from REGN"
+    },
+    "/Power Management/CC1": {
+      "type": "signal",
+      "protocol": "USB-C",
+      "direction": "",
+      "description": "USB-C CC1 pin to R30 (5.1k) pull-down for UFP sink"
+    },
+    "/Power Management/CC2": {
+      "type": "signal",
+      "protocol": "USB-C",
+      "direction": "",
+      "description": "USB-C CC2 pin to R31 (5.1k) pull-down for UFP sink"
+    },
+    "/Power Management/CHRG_INT": {
+      "type": "signal",
+      "protocol": "",
+      "direction": "output",
+      "description": "BQ24195 INT (active-low, open-drain), R38 pull-up to +3.3V, routed to GPIO 21"
+    },
+    "/Power Management/COMP_MID": {
+      "type": "internal",
+      "protocol": "",
+      "direction": "",
+      "description": "R43-C38 series junction in TPS61088 compensation network"
+    },
+    "/Power Management/OTG_BIAS": {
+      "type": "internal",
+      "protocol": "",
+      "direction": "",
+      "description": "BQ24195 OTG pin, R35 (10k) pull-up to +3.3V for 500mA SDP boot"
+    },
+    "/Power Management/PMOS_GATE": {
+      "type": "internal",
+      "protocol": "",
+      "direction": "",
+      "description": "Q2 gate, R33 (100k) to VBAT / R34 (100k) to BAT_RAW divider"
+    },
+    "/Power Management/Protected_VBUS": {
+      "type": "power",
+      "protocol": "",
+      "direction": "",
+      "description": "VBUS after 3A fuse F2, BQ24195 input, C20/C21/C22 decoupled"
+    },
+    "/Power Management/VBAT": {
+      "type": "power",
+      "protocol": "",
+      "direction": "",
+      "description": "Battery+ after PMOS Q2, BQ24195 BAT pins"
+    },
+    "/Power Management/VBUS_RAW": {
+      "type": "power",
+      "protocol": "",
+      "direction": "",
+      "description": "USB-C VBUS before fuse F2"
+    },
+    "/Power Management/VSYS": {
+      "type": "power",
+      "protocol": "",
+      "direction": "",
+      "description": "BQ24195 system output (3.0-4.5V), C27/C28/C29 decoupled, INA219 IN+ side"
+    },
+    "/Power Management/VSYS_SENSE": {
+      "type": "power",
+      "protocol": "",
+      "direction": "",
+      "description": "VSYS after INA219 shunt R44, TPS61088 VIN/EN input, C31/C41 decoupled"
     },
     "/TCA9548A_Subsystem/CH0_SCL": {
       "type": "signal",
@@ -1295,12 +3073,6 @@
       "direction": "",
       "description": "Intermediate node in LED power path between fuse F1 and sense resistor R27"
     },
-    "Net-(D1-A)": {
-      "type": "power",
-      "protocol": "",
-      "direction": "",
-      "description": "Raw 5V from DWEII power module before Schottky diode D1"
-    },
     "Net-(U2-1)": {
       "type": "signal",
       "protocol": "",
@@ -1325,12 +3097,6 @@
       "direction": "",
       "description": "MCU GPIO 2 breakout (unused, test point only)"
     },
-    "Net-(U2-21)": {
-      "type": "signal",
-      "protocol": "",
-      "direction": "",
-      "description": "MCU GPIO 21 breakout (unused, test point only)"
-    },
     "Net-(U2-3)": {
       "type": "signal",
       "protocol": "",
@@ -1340,7 +3106,7 @@
   },
   "sheet_interfaces": {
     "led_controller.kicad_sch": {
-      "description": "Level-shifted LED strip driver with overcurrent protection and current sensing",
+      "description": "",
       "pins": [
         {
           "name": "+5V_IN",
@@ -1369,8 +3135,43 @@
         }
       ]
     },
+    "power_management.kicad_sch": {
+      "description": "",
+      "pins": [
+        {
+          "name": "+3.3V",
+          "direction": "input",
+          "net": "+3.3V"
+        },
+        {
+          "name": "+5V",
+          "direction": "output",
+          "net": "+5V"
+        },
+        {
+          "name": "CHRG_INT",
+          "direction": "output",
+          "net": "/Power Management/CHRG_INT"
+        },
+        {
+          "name": "GND",
+          "direction": "bidirectional",
+          "net": "GND"
+        },
+        {
+          "name": "I2C_SCL",
+          "direction": "bidirectional",
+          "net": "/I2C_SCL"
+        },
+        {
+          "name": "I2C_SDA",
+          "direction": "bidirectional",
+          "net": "/I2C_SDA"
+        }
+      ]
+    },
     "tca9548A_subsystem.kicad_sch": {
-      "description": "TCA9548A 8-channel I2C multiplexer with upstream pull-ups, routes MCU I2C bus to 3 sensor channels",
+      "description": "",
       "pins": [
         {
           "name": "CH0_SCL",
