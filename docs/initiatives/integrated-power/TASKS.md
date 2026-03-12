@@ -54,8 +54,11 @@ Full specification in `SCHEMATIC_SPEC.md` (51 components, 30+ nets, 4 functional
 - [x] Review JLCPCB assembly capability — all packages standard SMT (QFN, SOT-23, 0603, 0805, 2512, SMD connectors/electrolytics/inductors). 13 extended + 17 basic unique parts. $39 extended surcharge. No BGA, through-hole, or problematic packages. See `BOM_VERIFICATION.md` §4
 - [x] Update `spec.json` LCSC numbers — 11 component LCSC fields updated with verified/optimized part numbers
 - [x] PCB layout guide — thermal pour requirements, trace width table, component placement priorities, ground plane strategy. See `LAYOUT_GUIDE.md`
-- [ ] PCB layout in KiCad: boost converter + inductor placed close together, thermal copper pours under BQ24195 and TPS61088
+- [ ] PCB layout in KiCad — **in progress.** Board resized to 101.4×40mm (was 86.4×35). Extended 15mm left + 5mm down. 8 major components rough-placed (J7, U5, L1, J8, R44, U7, U6, L2). Next: verify critical distances (U5↔L1, U6↔L2 <5mm), place support passives, add Q2 near J8. See `pcb-layout-context.json` for current positions.
+- [ ] Thermal vias: add 4-6 via arrays (0.3mm drill) under U5 and U6 exposed pads, ensure unbroken ground pour beneath both QFNs
+- [ ] Place support passives around each IC (bypass caps close to power pins, FB divider close to U6 pin 17, comp network close to U6 pin 18)
 - [ ] Power path trace widths sized per LAYOUT_GUIDE.md (≥1.0mm for main 5V, VSYS; ≥1.5mm for BOOST_SW)
+- [ ] Re-route J4/J5/J6 sensor connectors (traces deleted during board resize)
 - [ ] Export Gerbers, BOM CSV, CPL from KiCad
 - [ ] Order PCB + assembly from JLCPCB (verify BQ24195 stock at order time)
 
