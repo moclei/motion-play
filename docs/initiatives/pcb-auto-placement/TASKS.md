@@ -2,13 +2,13 @@
 
 ## Phase 1: Extract Enhancement
 
-- [ ] Add `--pads` CLI flag to `extract.py` that includes a `pads` array per component
-- [ ] Implement global pad position transform: `gx = fp_x + lx*cos(θ) + ly*sin(θ)`, `gy = fp_y - lx*sin(θ) + ly*cos(θ)` (KiCad Y-down convention, verified for U5/U6)
-- [ ] Each pad entry: `number`, `x`, `y` (global), `size_x`, `size_y`, `net`, `shape`
-- [ ] Fix bbox sanity threshold: if courtyard-based bbox < ~1mm in either dimension, fall through to `_bbox_from_pads` (fixes U5, U6, U7, J7, L2 showing 0.06×0.06mm)
-- [ ] Run extraction with `--pads` on current PCB, verify pad positions for U5 and U6 against known pin locations (pin 1 positions, SW pin clusters, exposed pads)
-- [ ] Verify fixed bboxes are reasonable (U5 ~4.6mm, U6 ~5mm, U7 ~3mm, J7 ~9mm, L2 ~7mm)
-- [ ] Commit
+- [x] Add `--pads` CLI flag to `extract.py` that includes a `pads` array per component
+- [x] Implement global pad position transform: `gx = fp_x + lx*cos(θ) + ly*sin(θ)`, `gy = fp_y - lx*sin(θ) + ly*cos(θ)` (KiCad Y-down convention, verified for U5/U6)
+- [x] Each pad entry: `number`, `x`, `y` (global), `size_x`, `size_y`, `net`, `shape`
+- [x] Fix bbox sanity threshold: if courtyard-based bbox < ~1mm in either dimension, fall through to `_bbox_from_pads` (fixes U5, U6, U7, J7, L2 showing 0.06×0.06mm)
+- [x] Run extraction with `--pads` on current PCB, verify pad positions for U5 and U6 against known pin locations — U5 pin 1 (Protected_VBUS) at (79.22, 119.4), U6 SW pins (4-7) at x=67.82
+- [x] Verify fixed bboxes: U5 4.88×4.9mm, U6 4.16×5.06mm, U7 3.71×2.32mm, J7 9.86×6.49mm, L2 8.4×3.2mm — all pad-based, reasonable
+- [x] Commit
 
 ## Phase 2: Placement Script
 
