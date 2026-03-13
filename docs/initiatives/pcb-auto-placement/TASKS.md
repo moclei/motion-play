@@ -12,17 +12,17 @@
 
 ## Phase 2: Placement Script
 
-- [ ] Create `tools/pcb-context/place_power.py` — CLI that accepts PCB path, reads `pcb-layout-context.json` and `spec.json`
-- [ ] Build anchor detection: identify anchor components (U5, U6, J7, J8, L1, R44) from the extract, lock their positions
-- [ ] Build net-to-pad resolver: for a given net name + anchor ref, find the anchor's pad(s) on that net (using enriched pad data)
-- [ ] Implement tiered placement engine: iterate components in tier order, compute position relative to target anchor pad, check constraints
-- [ ] Implement collision detection: bbox intersection check with clearance margin against all placed components
-- [ ] Implement board boundary enforcement: all placed component bboxes must fit within (62.6–164, 101–141)
-- [ ] Handle U6 rotation: rotate from -90° to +90° (SW pins face right), recompute L2 position adjacent to new SW pin locations
-- [ ] Place test points (TP1-TP4) along board edge (bottom or left) for probe access
-- [ ] Implement `--dry-run` mode: output proposed positions as JSON without writing to PCB
-- [ ] Implement PCB write: open `.kicad_pcb` via kiutils, set position/rotation for each placed component, save
-- [ ] Commit
+- [x] Create `tools/pcb-context/place_power.py` — CLI that accepts PCB path, reads `pcb-layout-context.json` and `spec.json`
+- [x] Build anchor detection: identify anchor components (U5, U6, J7, J8, L1, R44) from the extract, lock their positions
+- [x] Build net-to-pad resolver: for a given net name + anchor ref, find the anchor's pad(s) on that net (using enriched pad data) — net names normalized by stripping hierarchical path prefix
+- [x] Implement tiered placement engine: 41 components across 4 tiers + 4 test points, all 46 placed successfully in dry-run
+- [x] Implement collision detection: bbox intersection with 0.3mm clearance margin, expanding ring search with direction preference
+- [x] Implement board boundary enforcement: board bounds (62.6–164, 101–141) + power section x<105 constraint with relaxation fallback
+- [x] Handle U6 rotation: -90° → +90° via 180° pad mirror around IC center, SW pins now face board interior for L2 clearance
+- [x] Place test points (TP1-TP4) along bottom edge for probe access
+- [x] Implement `--dry-run` mode: outputs full placement report as JSON with old/new positions, tier info, and warnings
+- [x] Implement PCB write: kiutils Board.from_file → set position.X/Y/angle per footprint → to_file — also writes placement-report.json
+- [x] Commit
 
 ## Phase 3: Validation
 

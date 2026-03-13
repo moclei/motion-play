@@ -1,7 +1,7 @@
 {
   "meta": {
     "source_file": "hardware/pcb-main/kicad/motion-play-main.kicad_pcb",
-    "extracted_at": "2026-03-13T03:58:07.985175+00:00",
+    "extracted_at": "2026-03-13T04:12:04.922494+00:00",
     "board_area_mm2": 4056.0,
     "schematic_context": "circuit-context.json"
   },
@@ -15,92 +15,482 @@
     "height": 40
   },
   "placed_components": [
-    {"ref": "C1", "value": "1µF", "footprint": "C_0603_1608Metric", "x": 105.35, "y": 122, "rotation": -90, "side": "front", "bbox": {"width": 1.46, "height": 2.96}},
-    {"ref": "C2", "value": "2.2µF", "footprint": "C_0603_1608Metric", "x": 107.1, "y": 121.975, "rotation": -90, "side": "front", "bbox": {"width": 1.46, "height": 2.96}},
-    {"ref": "C7", "value": "100nF", "footprint": "C_0603_1608Metric", "x": 113.35, "y": 122.475, "rotation": 90, "side": "front", "bbox": {"width": 1.46, "height": 2.96}},
-    {"ref": "C8", "value": "10uF", "footprint": "C_0603_1608Metric", "x": 126.6, "y": 113.25, "rotation": 90, "side": "front", "bbox": {"width": 1.46, "height": 2.96}},
-    {"ref": "C9", "value": "100nF", "footprint": "C_0603_1608Metric", "x": 128.425, "y": 132.4, "rotation": 0, "side": "front", "bbox": {"width": 2.96, "height": 1.46}},
-    {"ref": "C10", "value": "10uF", "footprint": "C_0603_1608Metric", "x": 125.175, "y": 132.4, "rotation": 0, "side": "front", "bbox": {"width": 2.96, "height": 1.46}},
-    {"ref": "C20", "value": "1µF", "footprint": "C_0603_1608Metric", "x": 94, "y": 107.1, "rotation": 0, "side": "front", "bbox": {"width": 2.96, "height": 1.46}},
-    {"ref": "C21", "value": "4.7µF", "footprint": "C_0603_1608Metric", "x": 94.025, "y": 108.6, "rotation": 0, "side": "front", "bbox": {"width": 2.96, "height": 1.46}},
-    {"ref": "C22", "value": "47µF 16V", "footprint": "C_Elec_6.3x5.4", "x": 103.662, "y": 105.6, "rotation": 0, "side": "front", "bbox": {"width": 8.9, "height": 7.1}},
-    {"ref": "C23", "value": "47nF", "footprint": "C_0603_1608Metric", "x": 82.325, "y": 117.3, "rotation": 180, "side": "front", "bbox": {"width": 2.96, "height": 1.46}},
-    {"ref": "C24", "value": "4.7µF", "footprint": "C_0603_1608Metric", "x": 80.1, "y": 116.525, "rotation": 90, "side": "front", "bbox": {"width": 1.46, "height": 2.96}},
-    {"ref": "C25", "value": "10µF", "footprint": "C_0603_1608Metric", "x": 77.1, "y": 115.9, "rotation": 90, "side": "front", "bbox": {"width": 1.46, "height": 2.96}},
-    {"ref": "C26", "value": "10µF", "footprint": "C_0603_1608Metric", "x": 78.6, "y": 115.925, "rotation": 90, "side": "front", "bbox": {"width": 1.46, "height": 2.96}},
-    {"ref": "C27", "value": "10µF", "footprint": "C_0603_1608Metric", "x": 86.184, "y": 116.5, "rotation": 0, "side": "front", "bbox": {"width": 2.96, "height": 1.46}},
-    {"ref": "C28", "value": "10µF", "footprint": "C_0603_1608Metric", "x": 86.175, "y": 118.1, "rotation": 0, "side": "front", "bbox": {"width": 2.96, "height": 1.46}},
-    {"ref": "C29", "value": "220µF 10V", "footprint": "CP_Elec_6.3x7.7", "x": 92.1, "y": 114.5, "rotation": 0, "side": "front", "bbox": {"width": 9.4, "height": 7.1}},
-    {"ref": "C30", "value": "47µF 10V", "footprint": "C_Elec_6.3x5.4", "x": 100.7, "y": 115.463, "rotation": 90, "side": "front", "bbox": {"width": 7.1, "height": 8.9}},
-    {"ref": "C31", "value": "0.1µF", "footprint": "C_0603_1608Metric", "x": 67.3, "y": 131.225, "rotation": 90, "side": "front", "bbox": {"width": 1.46, "height": 2.96}},
-    {"ref": "C32", "value": "0.1µF", "footprint": "C_0603_1608Metric", "x": 71.975, "y": 132.2, "rotation": 0, "side": "front", "bbox": {"width": 2.96, "height": 1.46}},
-    {"ref": "C33", "value": "2.2µF", "footprint": "C_0603_1608Metric", "x": 69.5, "y": 131.2, "rotation": 90, "side": "front", "bbox": {"width": 1.46, "height": 2.96}},
-    {"ref": "C34", "value": "22µF", "footprint": "C_0805_2012Metric", "x": 74.5, "y": 134.6, "rotation": 0, "side": "front", "bbox": {"width": 3.4, "height": 1.96}},
-    {"ref": "C35", "value": "22µF", "footprint": "C_0805_2012Metric", "x": 74.5, "y": 136.6, "rotation": 0, "side": "front", "bbox": {"width": 3.4, "height": 1.96}},
-    {"ref": "C36", "value": "22µF", "footprint": "C_0805_2012Metric", "x": 74.5, "y": 138.6, "rotation": 0, "side": "front", "bbox": {"width": 3.4, "height": 1.96}},
-    {"ref": "C37", "value": "47nF", "footprint": "C_0603_1608Metric", "x": 66.925, "y": 139.3, "rotation": 180, "side": "front", "bbox": {"width": 2.96, "height": 1.46}},
-    {"ref": "C38", "value": "4.7nF", "footprint": "C_0603_1608Metric", "x": 93.625, "y": 131.14, "rotation": 0, "side": "front", "bbox": {"width": 2.96, "height": 1.46}},
-    {"ref": "C39", "value": "100pF", "footprint": "C_0603_1608Metric", "x": 93.675, "y": 132.65, "rotation": 0, "side": "front", "bbox": {"width": 2.96, "height": 1.46}},
-    {"ref": "C40", "value": "0.1µF", "footprint": "C_0603_1608Metric", "x": 88.7, "y": 138.1, "rotation": 90, "side": "front", "bbox": {"width": 1.46, "height": 2.96}},
-    {"ref": "C41", "value": "10µF", "footprint": "C_0805_2012Metric", "x": 65.5, "y": 131.15, "rotation": 90, "side": "front", "bbox": {"width": 1.96, "height": 3.4}},
-    {"ref": "F1", "value": "3A", "footprint": "Fuse_1206_3216Metric", "x": 106.95, "y": 118.25, "rotation": 0, "side": "front", "bbox": {"width": 4.56, "height": 2.26}},
-    {"ref": "F2", "value": "3A", "footprint": "Fuse_1206_3216Metric", "x": 89.1, "y": 107.3, "rotation": 0, "side": "front", "bbox": {"width": 4.56, "height": 2.26}},
-    {"ref": "IC1", "value": "SN74AHCT125PWR", "footprint": "SOP65P640X120-14N", "x": 127.912, "y": 108.7, "rotation": 180, "side": "front", "bbox": {"width": 7.85, "height": 5.6}},
-    {"ref": "J3", "value": "LED_Strip", "footprint": "JST_PH_S3B-PH-SM4-TB_1x03-1MP_P2.00mm_Horizontal", "x": 117.25, "y": 105.5, "rotation": 180, "side": "front", "bbox": {"width": 11.2, "height": 10.2}},
-    {"ref": "J4", "value": "Conn_01x05", "footprint": "JST_SH_SM05B-SRSS-TB_1x05-1MP_P1.00mm_Horizontal", "x": 119.8, "y": 138.4, "rotation": 0, "side": "front", "bbox": {"width": 8.8, "height": 6.56}},
-    {"ref": "J5", "value": "Conn_01x05", "footprint": "JST_SH_SM05B-SRSS-TB_1x05-1MP_P1.00mm_Horizontal", "x": 110.6, "y": 138.4, "rotation": 0, "side": "front", "bbox": {"width": 8.8, "height": 6.56}},
-    {"ref": "J6", "value": "Conn_01x05", "footprint": "JST_SH_SM05B-SRSS-TB_1x05-1MP_P1.00mm_Horizontal", "x": 101.35, "y": 138.4, "rotation": 0, "side": "front", "bbox": {"width": 8.8, "height": 6.56}},
-    {"ref": "J7", "value": "TYPE-C-31-M-12", "footprint": "USB-C_SMD-TYPE-C-31-M-12_1", "x": 80.67, "y": 106.17, "rotation": 180, "side": "front", "bbox": {"width": 9.86, "height": 6.49}},
-    {"ref": "J8", "value": "JST_PH_2pin", "footprint": "JST_PH_S2B-PH-SM4-TB_1x02-1MP_P2.00mm_Horizontal", "x": 67.15, "y": 119, "rotation": -90, "side": "front", "bbox": {"width": 10.2, "height": 9.2}},
-    {"ref": "L1", "value": "2.2µH", "footprint": "L_Changjiang_FNR6028S", "x": 92.6, "y": 121.9, "rotation": 0, "side": "front", "bbox": {"width": 6.7, "height": 6.5}},
-    {"ref": "L2", "value": "2.2µH 10A", "footprint": "IND-SMD_L7.0-W6.6", "x": 81.8, "y": 136.4, "rotation": 0, "side": "front", "bbox": {"width": 8.4, "height": 3.2}},
-    {"ref": "Q2", "value": "PMOS", "footprint": "SOT-23", "x": 73.838, "y": 115.25, "rotation": 0, "side": "front", "bbox": {"width": 3.86, "height": 3.4}},
-    {"ref": "R6", "value": "10kΩ", "footprint": "R_0603_1608Metric", "x": 133.8, "y": 121.1, "rotation": 0, "side": "front", "bbox": {"width": 2.96, "height": 1.46}},
-    {"ref": "R27", "value": "0.1R", "footprint": "R_2512_6332Metric", "x": 117.638, "y": 115.75, "rotation": 0, "side": "front", "bbox": {"width": 7.66, "height": 3.86}},
-    {"ref": "R28", "value": "2.2kΩ", "footprint": "R_0603_1608Metric", "x": 131.8, "y": 133.412, "rotation": -90, "side": "front", "bbox": {"width": 1.46, "height": 2.96}},
-    {"ref": "R29", "value": "2.2kΩ", "footprint": "R_0603_1608Metric", "x": 132.9, "y": 126.375, "rotation": 90, "side": "front", "bbox": {"width": 1.46, "height": 2.96}},
-    {"ref": "R30", "value": "5.1kΩ", "footprint": "R_0603_1608Metric", "x": 82, "y": 111.425, "rotation": -90, "side": "front", "bbox": {"width": 1.46, "height": 2.96}},
-    {"ref": "R31", "value": "5.1kΩ", "footprint": "R_0603_1608Metric", "x": 79.1, "y": 111.4, "rotation": -90, "side": "front", "bbox": {"width": 1.46, "height": 2.96}},
-    {"ref": "R32", "value": "330Ω", "footprint": "R_0603_1608Metric", "x": 81.5, "y": 125.1, "rotation": -90, "side": "front", "bbox": {"width": 1.46, "height": 2.96}},
-    {"ref": "R33", "value": "100kΩ", "footprint": "R_0603_1608Metric", "x": 73.675, "y": 112.6, "rotation": 0, "side": "front", "bbox": {"width": 2.96, "height": 1.46}},
-    {"ref": "R34", "value": "100kΩ", "footprint": "R_0603_1608Metric", "x": 73.675, "y": 111.1, "rotation": 0, "side": "front", "bbox": {"width": 2.96, "height": 1.46}},
-    {"ref": "R35", "value": "10kΩ", "footprint": "R_0603_1608Metric", "x": 80, "y": 125.125, "rotation": -90, "side": "front", "bbox": {"width": 1.46, "height": 2.96}},
-    {"ref": "R36", "value": "5.6kΩ", "footprint": "R_0603_1608Metric", "x": 86.075, "y": 119.9, "rotation": 0, "side": "front", "bbox": {"width": 2.96, "height": 1.46}},
-    {"ref": "R37", "value": "30kΩ", "footprint": "R_0603_1608Metric", "x": 86.9, "y": 122.225, "rotation": -90, "side": "front", "bbox": {"width": 1.46, "height": 2.96}},
-    {"ref": "R38", "value": "10kΩ", "footprint": "R_0603_1608Metric", "x": 78.3, "y": 124.875, "rotation": -90, "side": "front", "bbox": {"width": 1.46, "height": 2.96}},
-    {"ref": "R39", "value": "180kΩ", "footprint": "R_0603_1608Metric", "x": 87.8, "y": 129, "rotation": 90, "side": "front", "bbox": {"width": 1.46, "height": 2.96}},
-    {"ref": "R40", "value": "56kΩ", "footprint": "R_0603_1608Metric", "x": 89.3, "y": 128.975, "rotation": 90, "side": "front", "bbox": {"width": 1.46, "height": 2.96}},
-    {"ref": "R41", "value": "100kΩ", "footprint": "R_0603_1608Metric", "x": 65.275, "y": 134.995, "rotation": 0, "side": "front", "bbox": {"width": 2.96, "height": 1.46}},
-    {"ref": "R42", "value": "100kΩ", "footprint": "R_0603_1608Metric", "x": 75.2, "y": 132.4, "rotation": 0, "side": "front", "bbox": {"width": 2.96, "height": 1.46}},
-    {"ref": "R43", "value": "22kΩ", "footprint": "R_0603_1608Metric", "x": 91.1, "y": 131.925, "rotation": 90, "side": "front", "bbox": {"width": 1.46, "height": 2.96}},
-    {"ref": "R44", "value": "10mΩ", "footprint": "R_2512_6332Metric", "x": 81.737, "y": 130.9, "rotation": 0, "side": "front", "bbox": {"width": 7.66, "height": 3.86}},
-    {"ref": "TH1", "value": "10kΩ NTC", "footprint": "R_0603_1608Metric", "x": 86.425, "y": 125.7, "rotation": 0, "side": "front", "bbox": {"width": 2.96, "height": 1.46}},
-    {"ref": "TP1", "value": "VSYS", "footprint": "TestPoint_Pad_D1.5mm", "x": 55.1, "y": 133.2, "rotation": 0, "side": "front", "bbox": {"width": 2.5, "height": 2.5}},
-    {"ref": "TP2", "value": "VBAT", "footprint": "TestPoint_Pad_D1.5mm", "x": 55.2, "y": 125.4, "rotation": 0, "side": "front", "bbox": {"width": 2.5, "height": 2.5}},
-    {"ref": "TP3", "value": "PVBUS", "footprint": "TestPoint_Pad_D1.5mm", "x": 55.3, "y": 130.3, "rotation": 0, "side": "front", "bbox": {"width": 2.5, "height": 2.5}},
-    {"ref": "TP4", "value": "PGND", "footprint": "TestPoint_Pad_D1.5mm", "x": 55.2, "y": 136.9, "rotation": 0, "side": "front", "bbox": {"width": 2.5, "height": 2.5}},
-    {"ref": "TPIO1", "value": "TestPoint", "footprint": "TestPoint_Pad_D2.0mm", "x": 133.75, "y": 103.01, "rotation": 0, "side": "front", "bbox": {"width": 3.0, "height": 3.0}},
-    {"ref": "TPIO2", "value": "TestPoint", "footprint": "TestPoint_Pad_D2.0mm", "x": 137.25, "y": 103.02, "rotation": 0, "side": "front", "bbox": {"width": 3.0, "height": 3.0}},
-    {"ref": "TPIO3", "value": "TestPoint", "footprint": "TestPoint_Pad_D2.0mm", "x": 140.5, "y": 103, "rotation": 0, "side": "front", "bbox": {"width": 3.0, "height": 3.0}},
-    {"ref": "TPIO10", "value": "TestPoint", "footprint": "TestPoint_Pad_D2.0mm", "x": 143.75, "y": 103, "rotation": 0, "side": "front", "bbox": {"width": 3.0, "height": 3.0}},
-    {"ref": "TPIO11", "value": "TestPoint", "footprint": "TestPoint_Pad_D2.0mm", "x": 147, "y": 103, "rotation": 0, "side": "front", "bbox": {"width": 3.0, "height": 3.0}},
-    {"ref": "TPIO12", "value": "TestPoint", "footprint": "TestPoint_Pad_D2.0mm", "x": 150.25, "y": 103, "rotation": 0, "side": "front", "bbox": {"width": 3.0, "height": 3.0}},
-    {"ref": "TPIO13", "value": "TestPoint", "footprint": "TestPoint_Pad_D2.0mm", "x": 153.5, "y": 103, "rotation": 0, "side": "front", "bbox": {"width": 3.0, "height": 3.0}},
-    {"ref": "TPIO16", "value": "TestPoint", "footprint": "TestPoint_Pad_D2.0mm", "x": 155.8, "y": 133.8, "rotation": 0, "side": "front", "bbox": {"width": 3.0, "height": 3.0}},
-    {"ref": "TPIO17", "value": "TestPoint", "footprint": "TestPoint_Pad_D2.0mm", "x": 149.5, "y": 133.75, "rotation": 0, "side": "front", "bbox": {"width": 3.0, "height": 3.0}},
-    {"ref": "TPIO18", "value": "TestPoint", "footprint": "TestPoint_Pad_D2.0mm", "x": 146.25, "y": 133.75, "rotation": 0, "side": "front", "bbox": {"width": 3.0, "height": 3.0}},
-    {"ref": "TPIO21", "value": "TestPoint", "footprint": "TestPoint_Pad_D2.0mm", "x": 152.75, "y": 133.75, "rotation": 0, "side": "front", "bbox": {"width": 3.0, "height": 3.0}},
-    {"ref": "TPIO43", "value": "TestPoint", "footprint": "TestPoint_Pad_D2.0mm", "x": 139.1, "y": 133.4, "rotation": 0, "side": "front", "bbox": {"width": 3.0, "height": 3.0}},
-    {"ref": "TPIO44", "value": "TestPoint", "footprint": "TestPoint_Pad_D2.0mm", "x": 142.7, "y": 133.5, "rotation": 0, "side": "front", "bbox": {"width": 3.0, "height": 3.0}},
-    {"ref": "TP_3V1", "value": "TestPoint", "footprint": "TestPoint_Pad_D2.0mm", "x": 112.3, "y": 125.9, "rotation": 0, "side": "front", "bbox": {"width": 3.0, "height": 3.0}},
-    {"ref": "TP_5V1", "value": "TestPoint", "footprint": "TestPoint_Pad_D2.0mm", "x": 127.5, "y": 103, "rotation": 0, "side": "front", "bbox": {"width": 3.0, "height": 3.0}},
-    {"ref": "TP_GND1", "value": "TestPoint", "footprint": "TestPoint_Pad_D2.0mm", "x": 124.4, "y": 103, "rotation": 0, "side": "front", "bbox": {"width": 3.0, "height": 3.0}},
-    {"ref": "U1", "value": "AP2112K-3.3TRG1", "footprint": "SOT95P285X140-5N", "x": 106.535, "y": 125.55, "rotation": 0, "side": "front", "bbox": {"width": 4.22, "height": 3.6}},
-    {"ref": "U2", "value": "T-Display-S3", "footprint": "T-Display-S3", "x": 167.25, "y": 107.5, "rotation": 90, "side": "front", "bbox": {"width": 29.94, "height": 24.862}},
-    {"ref": "U4", "value": "TCA9548APWR", "footprint": "SOP65P640X120-24N", "x": 127.625, "y": 127.57, "rotation": -90, "side": "front", "bbox": {"width": 8.3, "height": 7.81}},
-    {"ref": "U5", "value": "BQ24195RGER", "footprint": "VQFN-24_L4.0-W4.0-P0.50-TL-EP2.8", "x": 81.26, "y": 120.65, "rotation": 0, "side": "front", "bbox": {"width": 4.88, "height": 4.9}},
-    {"ref": "U6", "value": "TPS61088RHLR", "footprint": "VQFN-20_L4.6-W3.6-P0.50-BL", "x": 69.55, "y": 135.92, "rotation": -90, "side": "front", "bbox": {"width": 4.16, "height": 5.06}},
-    {"ref": "U7", "value": "INA219AIDCNR", "footprint": "SOT-23-8_L3.0-W1.7-P0.65-LS2.8-BR", "x": 91.67, "y": 136.92, "rotation": 180, "side": "front", "bbox": {"width": 3.71, "height": 2.32}}
+    {"ref": "C1", "value": "1µF", "footprint": "C_0603_1608Metric", "x": 105.35, "y": 122, "rotation": -90, "side": "front", "bbox": {"width": 1.46, "height": 2.96}, "pads": [
+        {"number": "1", "x": 105.35, "y": 121.225, "size_x": 0.9, "size_y": 0.95, "net": "GND", "shape": "roundrect"},
+        {"number": "2", "x": 105.35, "y": 122.775, "size_x": 0.9, "size_y": 0.95, "net": "+5V", "shape": "roundrect"}
+      ]},
+    {"ref": "C2", "value": "2.2µF", "footprint": "C_0603_1608Metric", "x": 107.1, "y": 121.975, "rotation": -90, "side": "front", "bbox": {"width": 1.46, "height": 2.96}, "pads": [
+        {"number": "1", "x": 107.1, "y": 121.2, "size_x": 0.9, "size_y": 0.95, "net": "GND", "shape": "roundrect"},
+        {"number": "2", "x": 107.1, "y": 122.75, "size_x": 0.9, "size_y": 0.95, "net": "+3.3V", "shape": "roundrect"}
+      ]},
+    {"ref": "C7", "value": "100nF", "footprint": "C_0603_1608Metric", "x": 113.35, "y": 122.475, "rotation": 90, "side": "front", "bbox": {"width": 1.46, "height": 2.96}, "pads": [
+        {"number": "1", "x": 113.35, "y": 123.25, "size_x": 0.9, "size_y": 0.95, "net": "GND", "shape": "roundrect"},
+        {"number": "2", "x": 113.35, "y": 121.7, "size_x": 0.9, "size_y": 0.95, "net": "Net-(C7-Pad2)", "shape": "roundrect"}
+      ]},
+    {"ref": "C8", "value": "10uF", "footprint": "C_0603_1608Metric", "x": 126.6, "y": 113.25, "rotation": 90, "side": "front", "bbox": {"width": 1.46, "height": 2.96}, "pads": [
+        {"number": "1", "x": 126.6, "y": 114.025, "size_x": 0.9, "size_y": 0.95, "net": "GND", "shape": "roundrect"},
+        {"number": "2", "x": 126.6, "y": 112.475, "size_x": 0.9, "size_y": 0.95, "net": "/LED Controller/+5V_TO_LEDS", "shape": "roundrect"}
+      ]},
+    {"ref": "C9", "value": "100nF", "footprint": "C_0603_1608Metric", "x": 128.425, "y": 132.4, "rotation": 0, "side": "front", "bbox": {"width": 2.96, "height": 1.46}, "pads": [
+        {"number": "1", "x": 127.65, "y": 132.4, "size_x": 0.9, "size_y": 0.95, "net": "GND", "shape": "roundrect"},
+        {"number": "2", "x": 129.2, "y": 132.4, "size_x": 0.9, "size_y": 0.95, "net": "+3.3V", "shape": "roundrect"}
+      ]},
+    {"ref": "C10", "value": "10uF", "footprint": "C_0603_1608Metric", "x": 125.175, "y": 132.4, "rotation": 0, "side": "front", "bbox": {"width": 2.96, "height": 1.46}, "pads": [
+        {"number": "1", "x": 124.4, "y": 132.4, "size_x": 0.9, "size_y": 0.95, "net": "GND", "shape": "roundrect"},
+        {"number": "2", "x": 125.95, "y": 132.4, "size_x": 0.9, "size_y": 0.95, "net": "+3.3V", "shape": "roundrect"}
+      ]},
+    {"ref": "C20", "value": "1µF", "footprint": "C_0603_1608Metric", "x": 94, "y": 107.1, "rotation": 0, "side": "front", "bbox": {"width": 2.96, "height": 1.46}, "pads": [
+        {"number": "1", "x": 93.225, "y": 107.1, "size_x": 0.9, "size_y": 0.95, "net": "/Power Management/Protected_VBUS", "shape": "roundrect"},
+        {"number": "2", "x": 94.775, "y": 107.1, "size_x": 0.9, "size_y": 0.95, "net": "GND", "shape": "roundrect"}
+      ]},
+    {"ref": "C21", "value": "4.7µF", "footprint": "C_0603_1608Metric", "x": 94.025, "y": 108.6, "rotation": 0, "side": "front", "bbox": {"width": 2.96, "height": 1.46}, "pads": [
+        {"number": "1", "x": 93.25, "y": 108.6, "size_x": 0.9, "size_y": 0.95, "net": "/Power Management/Protected_VBUS", "shape": "roundrect"},
+        {"number": "2", "x": 94.8, "y": 108.6, "size_x": 0.9, "size_y": 0.95, "net": "GND", "shape": "roundrect"}
+      ]},
+    {"ref": "C22", "value": "47µF 16V", "footprint": "C_Elec_6.3x5.4", "x": 103.662, "y": 105.6, "rotation": 0, "side": "front", "bbox": {"width": 8.9, "height": 7.1}, "pads": [
+        {"number": "1", "x": 101.125, "y": 105.6, "size_x": 3.325, "size_y": 1.6, "net": "/Power Management/Protected_VBUS", "shape": "roundrect"},
+        {"number": "2", "x": 106.2, "y": 105.6, "size_x": 3.325, "size_y": 1.6, "net": "GND", "shape": "roundrect"}
+      ]},
+    {"ref": "C23", "value": "47nF", "footprint": "C_0603_1608Metric", "x": 82.325, "y": 117.3, "rotation": 180, "side": "front", "bbox": {"width": 2.96, "height": 1.46}, "pads": [
+        {"number": "1", "x": 83.1, "y": 117.3, "size_x": 0.9, "size_y": 0.95, "net": "/Power Management/BQ_BTST", "shape": "roundrect"},
+        {"number": "2", "x": 81.55, "y": 117.3, "size_x": 0.9, "size_y": 0.95, "net": "/Power Management/BQ_SW", "shape": "roundrect"}
+      ]},
+    {"ref": "C24", "value": "4.7µF", "footprint": "C_0603_1608Metric", "x": 80.1, "y": 116.525, "rotation": 90, "side": "front", "bbox": {"width": 1.46, "height": 2.96}, "pads": [
+        {"number": "1", "x": 80.1, "y": 117.3, "size_x": 0.9, "size_y": 0.95, "net": "/Power Management/BQ_REGN", "shape": "roundrect"},
+        {"number": "2", "x": 80.1, "y": 115.75, "size_x": 0.9, "size_y": 0.95, "net": "GND", "shape": "roundrect"}
+      ]},
+    {"ref": "C25", "value": "10µF", "footprint": "C_0603_1608Metric", "x": 77.1, "y": 115.9, "rotation": 90, "side": "front", "bbox": {"width": 1.46, "height": 2.96}, "pads": [
+        {"number": "1", "x": 77.1, "y": 116.675, "size_x": 0.9, "size_y": 0.95, "net": "/Power Management/BQ_PMID", "shape": "roundrect"},
+        {"number": "2", "x": 77.1, "y": 115.125, "size_x": 0.9, "size_y": 0.95, "net": "GND", "shape": "roundrect"}
+      ]},
+    {"ref": "C26", "value": "10µF", "footprint": "C_0603_1608Metric", "x": 78.6, "y": 115.925, "rotation": 90, "side": "front", "bbox": {"width": 1.46, "height": 2.96}, "pads": [
+        {"number": "1", "x": 78.6, "y": 116.7, "size_x": 0.9, "size_y": 0.95, "net": "/Power Management/BQ_PMID", "shape": "roundrect"},
+        {"number": "2", "x": 78.6, "y": 115.15, "size_x": 0.9, "size_y": 0.95, "net": "GND", "shape": "roundrect"}
+      ]},
+    {"ref": "C27", "value": "10µF", "footprint": "C_0603_1608Metric", "x": 86.184, "y": 116.5, "rotation": 0, "side": "front", "bbox": {"width": 2.96, "height": 1.46}, "pads": [
+        {"number": "1", "x": 85.409, "y": 116.5, "size_x": 0.9, "size_y": 0.95, "net": "/Power Management/VSYS", "shape": "roundrect"},
+        {"number": "2", "x": 86.96, "y": 116.5, "size_x": 0.9, "size_y": 0.95, "net": "GND", "shape": "roundrect"}
+      ]},
+    {"ref": "C28", "value": "10µF", "footprint": "C_0603_1608Metric", "x": 86.175, "y": 118.1, "rotation": 0, "side": "front", "bbox": {"width": 2.96, "height": 1.46}, "pads": [
+        {"number": "1", "x": 85.4, "y": 118.1, "size_x": 0.9, "size_y": 0.95, "net": "/Power Management/VSYS", "shape": "roundrect"},
+        {"number": "2", "x": 86.95, "y": 118.1, "size_x": 0.9, "size_y": 0.95, "net": "GND", "shape": "roundrect"}
+      ]},
+    {"ref": "C29", "value": "220µF 10V", "footprint": "CP_Elec_6.3x7.7", "x": 92.1, "y": 114.5, "rotation": 0, "side": "front", "bbox": {"width": 9.4, "height": 7.1}, "pads": [
+        {"number": "1", "x": 89.4, "y": 114.5, "size_x": 3.5, "size_y": 1.6, "net": "/Power Management/VSYS", "shape": "roundrect"},
+        {"number": "2", "x": 94.8, "y": 114.5, "size_x": 3.5, "size_y": 1.6, "net": "GND", "shape": "roundrect"}
+      ]},
+    {"ref": "C30", "value": "47µF 10V", "footprint": "C_Elec_6.3x5.4", "x": 100.7, "y": 115.463, "rotation": 90, "side": "front", "bbox": {"width": 7.1, "height": 8.9}, "pads": [
+        {"number": "1", "x": 100.7, "y": 118.0, "size_x": 3.325, "size_y": 1.6, "net": "/Power Management/BAT_RAW", "shape": "roundrect"},
+        {"number": "2", "x": 100.7, "y": 112.925, "size_x": 3.325, "size_y": 1.6, "net": "GND", "shape": "roundrect"}
+      ]},
+    {"ref": "C31", "value": "0.1µF", "footprint": "C_0603_1608Metric", "x": 67.3, "y": 131.225, "rotation": 90, "side": "front", "bbox": {"width": 1.46, "height": 2.96}, "pads": [
+        {"number": "1", "x": 67.3, "y": 132.0, "size_x": 0.9, "size_y": 0.95, "net": "/Power Management/VSYS_SENSE", "shape": "roundrect"},
+        {"number": "2", "x": 67.3, "y": 130.45, "size_x": 0.9, "size_y": 0.95, "net": "GND", "shape": "roundrect"}
+      ]},
+    {"ref": "C32", "value": "0.1µF", "footprint": "C_0603_1608Metric", "x": 71.975, "y": 132.2, "rotation": 0, "side": "front", "bbox": {"width": 2.96, "height": 1.46}, "pads": [
+        {"number": "1", "x": 71.2, "y": 132.2, "size_x": 0.9, "size_y": 0.95, "net": "/Power Management/BOOST_BOOT", "shape": "roundrect"},
+        {"number": "2", "x": 72.75, "y": 132.2, "size_x": 0.9, "size_y": 0.95, "net": "/Power Management/BOOST_SW", "shape": "roundrect"}
+      ]},
+    {"ref": "C33", "value": "2.2µF", "footprint": "C_0603_1608Metric", "x": 69.5, "y": 131.2, "rotation": 90, "side": "front", "bbox": {"width": 1.46, "height": 2.96}, "pads": [
+        {"number": "1", "x": 69.5, "y": 131.975, "size_x": 0.9, "size_y": 0.95, "net": "/Power Management/BOOST_VCC", "shape": "roundrect"},
+        {"number": "2", "x": 69.5, "y": 130.425, "size_x": 0.9, "size_y": 0.95, "net": "GND", "shape": "roundrect"}
+      ]},
+    {"ref": "C34", "value": "22µF", "footprint": "C_0805_2012Metric", "x": 74.5, "y": 134.6, "rotation": 0, "side": "front", "bbox": {"width": 3.4, "height": 1.96}, "pads": [
+        {"number": "1", "x": 73.55, "y": 134.6, "size_x": 1, "size_y": 1.45, "net": "+5V", "shape": "roundrect"},
+        {"number": "2", "x": 75.45, "y": 134.6, "size_x": 1, "size_y": 1.45, "net": "GND", "shape": "roundrect"}
+      ]},
+    {"ref": "C35", "value": "22µF", "footprint": "C_0805_2012Metric", "x": 74.5, "y": 136.6, "rotation": 0, "side": "front", "bbox": {"width": 3.4, "height": 1.96}, "pads": [
+        {"number": "1", "x": 73.55, "y": 136.6, "size_x": 1, "size_y": 1.45, "net": "+5V", "shape": "roundrect"},
+        {"number": "2", "x": 75.45, "y": 136.6, "size_x": 1, "size_y": 1.45, "net": "GND", "shape": "roundrect"}
+      ]},
+    {"ref": "C36", "value": "22µF", "footprint": "C_0805_2012Metric", "x": 74.5, "y": 138.6, "rotation": 0, "side": "front", "bbox": {"width": 3.4, "height": 1.96}, "pads": [
+        {"number": "1", "x": 73.55, "y": 138.6, "size_x": 1, "size_y": 1.45, "net": "+5V", "shape": "roundrect"},
+        {"number": "2", "x": 75.45, "y": 138.6, "size_x": 1, "size_y": 1.45, "net": "GND", "shape": "roundrect"}
+      ]},
+    {"ref": "C37", "value": "47nF", "footprint": "C_0603_1608Metric", "x": 66.925, "y": 139.3, "rotation": 180, "side": "front", "bbox": {"width": 2.96, "height": 1.46}, "pads": [
+        {"number": "1", "x": 67.7, "y": 139.3, "size_x": 0.9, "size_y": 0.95, "net": "/Power Management/BOOST_SS", "shape": "roundrect"},
+        {"number": "2", "x": 66.15, "y": 139.3, "size_x": 0.9, "size_y": 0.95, "net": "GND", "shape": "roundrect"}
+      ]},
+    {"ref": "C38", "value": "4.7nF", "footprint": "C_0603_1608Metric", "x": 93.625, "y": 131.14, "rotation": 0, "side": "front", "bbox": {"width": 2.96, "height": 1.46}, "pads": [
+        {"number": "1", "x": 92.85, "y": 131.14, "size_x": 0.9, "size_y": 0.95, "net": "/Power Management/COMP_MID", "shape": "roundrect"},
+        {"number": "2", "x": 94.4, "y": 131.14, "size_x": 0.9, "size_y": 0.95, "net": "GND", "shape": "roundrect"}
+      ]},
+    {"ref": "C39", "value": "100pF", "footprint": "C_0603_1608Metric", "x": 93.675, "y": 132.65, "rotation": 0, "side": "front", "bbox": {"width": 2.96, "height": 1.46}, "pads": [
+        {"number": "1", "x": 92.9, "y": 132.65, "size_x": 0.9, "size_y": 0.95, "net": "/Power Management/BOOST_COMP", "shape": "roundrect"},
+        {"number": "2", "x": 94.45, "y": 132.65, "size_x": 0.9, "size_y": 0.95, "net": "GND", "shape": "roundrect"}
+      ]},
+    {"ref": "C40", "value": "0.1µF", "footprint": "C_0603_1608Metric", "x": 88.7, "y": 138.1, "rotation": 90, "side": "front", "bbox": {"width": 1.46, "height": 2.96}, "pads": [
+        {"number": "1", "x": 88.7, "y": 138.875, "size_x": 0.9, "size_y": 0.95, "net": "+3.3V", "shape": "roundrect"},
+        {"number": "2", "x": 88.7, "y": 137.325, "size_x": 0.9, "size_y": 0.95, "net": "GND", "shape": "roundrect"}
+      ]},
+    {"ref": "C41", "value": "10µF", "footprint": "C_0805_2012Metric", "x": 65.5, "y": 131.15, "rotation": 90, "side": "front", "bbox": {"width": 1.96, "height": 3.4}, "pads": [
+        {"number": "1", "x": 65.5, "y": 132.1, "size_x": 1, "size_y": 1.45, "net": "/Power Management/VSYS_SENSE", "shape": "roundrect"},
+        {"number": "2", "x": 65.5, "y": 130.2, "size_x": 1, "size_y": 1.45, "net": "GND", "shape": "roundrect"}
+      ]},
+    {"ref": "F1", "value": "3A", "footprint": "Fuse_1206_3216Metric", "x": 106.95, "y": 118.25, "rotation": 0, "side": "front", "bbox": {"width": 4.56, "height": 2.26}, "pads": [
+        {"number": "1", "x": 105.55, "y": 118.25, "size_x": 1.25, "size_y": 1.75, "net": "+5V", "shape": "roundrect"},
+        {"number": "2", "x": 108.35, "y": 118.25, "size_x": 1.25, "size_y": 1.75, "net": "Net-(C7-Pad2)", "shape": "roundrect"}
+      ]},
+    {"ref": "F2", "value": "3A", "footprint": "Fuse_1206_3216Metric", "x": 89.1, "y": 107.3, "rotation": 0, "side": "front", "bbox": {"width": 4.56, "height": 2.26}, "pads": [
+        {"number": "1", "x": 87.7, "y": 107.3, "size_x": 1.25, "size_y": 1.75, "net": "/Power Management/VBUS_RAW", "shape": "roundrect"},
+        {"number": "2", "x": 90.5, "y": 107.3, "size_x": 1.25, "size_y": 1.75, "net": "/Power Management/Protected_VBUS", "shape": "roundrect"}
+      ]},
+    {"ref": "IC1", "value": "SN74AHCT125PWR", "footprint": "SOP65P640X120-14N", "x": 127.912, "y": 108.7, "rotation": 180, "side": "front", "bbox": {"width": 7.85, "height": 5.6}, "pads": [
+        {"number": "1", "x": 130.85, "y": 110.65, "size_x": 0.45, "size_y": 1.475, "net": "GND", "shape": "rect"},
+        {"number": "2", "x": 130.85, "y": 110.0, "size_x": 0.45, "size_y": 1.475, "net": "/LED Controller/DATA_IN", "shape": "rect"},
+        {"number": "3", "x": 130.85, "y": 109.35, "size_x": 0.45, "size_y": 1.475, "net": "/LED Controller/DATA_TO_LEDS", "shape": "rect"},
+        {"number": "4", "x": 130.85, "y": 108.7, "size_x": 0.45, "size_y": 1.475, "net": "unconnected-(IC1-2~{OE}-Pad4)", "shape": "rect"},
+        {"number": "5", "x": 130.85, "y": 108.05, "size_x": 0.45, "size_y": 1.475, "net": "unconnected-(IC1-2A-Pad5)", "shape": "rect"},
+        {"number": "6", "x": 130.85, "y": 107.4, "size_x": 0.45, "size_y": 1.475, "net": "unconnected-(IC1-2Y-Pad6)", "shape": "rect"},
+        {"number": "7", "x": 130.85, "y": 106.75, "size_x": 0.45, "size_y": 1.475, "net": "GND", "shape": "rect"},
+        {"number": "8", "x": 124.974, "y": 106.75, "size_x": 0.45, "size_y": 1.475, "net": "unconnected-(IC1-3Y-Pad8)", "shape": "rect"},
+        {"number": "9", "x": 124.974, "y": 107.4, "size_x": 0.45, "size_y": 1.475, "net": "unconnected-(IC1-3A-Pad9)", "shape": "rect"},
+        {"number": "10", "x": 124.974, "y": 108.05, "size_x": 0.45, "size_y": 1.475, "net": "unconnected-(IC1-3~{OE}-Pad10)", "shape": "rect"},
+        {"number": "11", "x": 124.974, "y": 108.7, "size_x": 0.45, "size_y": 1.475, "net": "unconnected-(IC1-4Y-Pad11)", "shape": "rect"},
+        {"number": "12", "x": 124.974, "y": 109.35, "size_x": 0.45, "size_y": 1.475, "net": "unconnected-(IC1-4A-Pad12)", "shape": "rect"},
+        {"number": "13", "x": 124.974, "y": 110.0, "size_x": 0.45, "size_y": 1.475, "net": "unconnected-(IC1-4~{OE}-Pad13)", "shape": "rect"},
+        {"number": "14", "x": 124.974, "y": 110.65, "size_x": 0.45, "size_y": 1.475, "net": "/LED Controller/+5V_TO_LEDS", "shape": "rect"}
+      ]},
+    {"ref": "J3", "value": "LED_Strip", "footprint": "JST_PH_S3B-PH-SM4-TB_1x03-1MP_P2.00mm_Horizontal", "x": 117.25, "y": 105.5, "rotation": 180, "side": "front", "bbox": {"width": 11.2, "height": 10.2}, "pads": [
+        {"number": "1", "x": 119.25, "y": 108.35, "size_x": 1, "size_y": 3.5, "net": "/LED Controller/+5V_TO_LEDS", "shape": "roundrect"},
+        {"number": "2", "x": 117.25, "y": 108.35, "size_x": 1, "size_y": 3.5, "net": "/LED Controller/DATA_TO_LEDS", "shape": "roundrect"},
+        {"number": "3", "x": 115.25, "y": 108.35, "size_x": 1, "size_y": 3.5, "net": "GND", "shape": "roundrect"},
+        {"number": "MP", "x": 121.6, "y": 102.6, "size_x": 1.5, "size_y": 3.4, "net": "", "shape": "roundrect"},
+        {"number": "MP", "x": 112.9, "y": 102.6, "size_x": 1.5, "size_y": 3.4, "net": "", "shape": "roundrect"}
+      ]},
+    {"ref": "J4", "value": "Conn_01x05", "footprint": "JST_SH_SM05B-SRSS-TB_1x05-1MP_P1.00mm_Horizontal", "x": 119.8, "y": 138.4, "rotation": 0, "side": "front", "bbox": {"width": 8.8, "height": 6.56}, "pads": [
+        {"number": "1", "x": 117.8, "y": 136.4, "size_x": 0.6, "size_y": 1.55, "net": "+3.3V", "shape": "roundrect"},
+        {"number": "2", "x": 118.8, "y": 136.4, "size_x": 0.6, "size_y": 1.55, "net": "GND", "shape": "roundrect"},
+        {"number": "3", "x": 119.8, "y": 136.4, "size_x": 0.6, "size_y": 1.55, "net": "/TCA9548A_Subsystem/CH0_SDA", "shape": "roundrect"},
+        {"number": "4", "x": 120.8, "y": 136.4, "size_x": 0.6, "size_y": 1.55, "net": "/TCA9548A_Subsystem/CH0_SCL", "shape": "roundrect"},
+        {"number": "5", "x": 121.8, "y": 136.4, "size_x": 0.6, "size_y": 1.55, "net": "/INT1", "shape": "roundrect"},
+        {"number": "MP", "x": 116.5, "y": 140.275, "size_x": 1.2, "size_y": 1.8, "net": "", "shape": "roundrect"},
+        {"number": "MP", "x": 123.1, "y": 140.275, "size_x": 1.2, "size_y": 1.8, "net": "", "shape": "roundrect"}
+      ]},
+    {"ref": "J5", "value": "Conn_01x05", "footprint": "JST_SH_SM05B-SRSS-TB_1x05-1MP_P1.00mm_Horizontal", "x": 110.6, "y": 138.4, "rotation": 0, "side": "front", "bbox": {"width": 8.8, "height": 6.56}, "pads": [
+        {"number": "1", "x": 108.6, "y": 136.4, "size_x": 0.6, "size_y": 1.55, "net": "+3.3V", "shape": "roundrect"},
+        {"number": "2", "x": 109.6, "y": 136.4, "size_x": 0.6, "size_y": 1.55, "net": "GND", "shape": "roundrect"},
+        {"number": "3", "x": 110.6, "y": 136.4, "size_x": 0.6, "size_y": 1.55, "net": "/TCA9548A_Subsystem/CH1_SDA", "shape": "roundrect"},
+        {"number": "4", "x": 111.6, "y": 136.4, "size_x": 0.6, "size_y": 1.55, "net": "/TCA9548A_Subsystem/CH1_SCL", "shape": "roundrect"},
+        {"number": "5", "x": 112.6, "y": 136.4, "size_x": 0.6, "size_y": 1.55, "net": "/INT2", "shape": "roundrect"},
+        {"number": "MP", "x": 107.3, "y": 140.275, "size_x": 1.2, "size_y": 1.8, "net": "", "shape": "roundrect"},
+        {"number": "MP", "x": 113.9, "y": 140.275, "size_x": 1.2, "size_y": 1.8, "net": "", "shape": "roundrect"}
+      ]},
+    {"ref": "J6", "value": "Conn_01x05", "footprint": "JST_SH_SM05B-SRSS-TB_1x05-1MP_P1.00mm_Horizontal", "x": 101.35, "y": 138.4, "rotation": 0, "side": "front", "bbox": {"width": 8.8, "height": 6.56}, "pads": [
+        {"number": "1", "x": 99.35, "y": 136.4, "size_x": 0.6, "size_y": 1.55, "net": "+3.3V", "shape": "roundrect"},
+        {"number": "2", "x": 100.35, "y": 136.4, "size_x": 0.6, "size_y": 1.55, "net": "GND", "shape": "roundrect"},
+        {"number": "3", "x": 101.35, "y": 136.4, "size_x": 0.6, "size_y": 1.55, "net": "/TCA9548A_Subsystem/CH2_SDA", "shape": "roundrect"},
+        {"number": "4", "x": 102.35, "y": 136.4, "size_x": 0.6, "size_y": 1.55, "net": "/TCA9548A_Subsystem/CH2_SCL", "shape": "roundrect"},
+        {"number": "5", "x": 103.35, "y": 136.4, "size_x": 0.6, "size_y": 1.55, "net": "/INT3", "shape": "roundrect"},
+        {"number": "MP", "x": 98.05, "y": 140.275, "size_x": 1.2, "size_y": 1.8, "net": "", "shape": "roundrect"},
+        {"number": "MP", "x": 104.65, "y": 140.275, "size_x": 1.2, "size_y": 1.8, "net": "", "shape": "roundrect"}
+      ]},
+    {"ref": "J7", "value": "TYPE-C-31-M-12", "footprint": "USB-C_SMD-TYPE-C-31-M-12_1", "x": 80.67, "y": 106.17, "rotation": 180, "side": "front", "bbox": {"width": 9.86, "height": 6.49}, "pads": [
+        {"number": "", "x": 83.57, "y": 107.38, "size_x": 0.75, "size_y": 0.75, "net": "", "shape": "circle"},
+        {"number": "", "x": 77.77, "y": 107.38, "size_x": 0.75, "size_y": 0.75, "net": "", "shape": "circle"},
+        {"number": "1", "x": 76.34, "y": 107.88, "size_x": 1.2, "size_y": 2, "net": "", "shape": "oval"},
+        {"number": "2", "x": 76.34, "y": 103.7, "size_x": 1.2, "size_y": 1.8, "net": "", "shape": "oval"},
+        {"number": "3", "x": 85.0, "y": 103.7, "size_x": 1.2, "size_y": 1.8, "net": "", "shape": "oval"},
+        {"number": "4", "x": 85.0, "y": 107.88, "size_x": 1.2, "size_y": 2, "net": "", "shape": "oval"},
+        {"number": "A1B12", "x": 83.87, "y": 108.64, "size_x": 0.01, "size_y": 0.01, "net": "", "shape": "custom"},
+        {"number": "A4B9", "x": 83.07, "y": 108.64, "size_x": 0.01, "size_y": 0.01, "net": "", "shape": "custom"},
+        {"number": "A5", "x": 81.92, "y": 108.64, "size_x": 0.3, "size_y": 1.3, "net": "/Power Management/CC1", "shape": "rect"},
+        {"number": "A6", "x": 80.92, "y": 108.64, "size_x": 0.3, "size_y": 1.3, "net": "unconnected-(J7-DP1-PadA6)", "shape": "rect"},
+        {"number": "A7", "x": 80.42, "y": 108.64, "size_x": 0.3, "size_y": 1.3, "net": "unconnected-(J7-DN1-PadA7)", "shape": "rect"},
+        {"number": "A8", "x": 79.42, "y": 108.64, "size_x": 0.3, "size_y": 1.3, "net": "unconnected-(J7-SBU1-PadA8)", "shape": "rect"},
+        {"number": "B1A12", "x": 77.47, "y": 108.64, "size_x": 0.01, "size_y": 0.01, "net": "", "shape": "custom"},
+        {"number": "B4A9", "x": 78.27, "y": 108.64, "size_x": 0.01, "size_y": 0.01, "net": "", "shape": "custom"},
+        {"number": "B5", "x": 78.92, "y": 108.64, "size_x": 0.3, "size_y": 1.3, "net": "/Power Management/CC2", "shape": "rect"},
+        {"number": "B6", "x": 79.92, "y": 108.64, "size_x": 0.3, "size_y": 1.3, "net": "unconnected-(J7-DP2-PadB6)", "shape": "rect"},
+        {"number": "B7", "x": 81.42, "y": 108.64, "size_x": 0.3, "size_y": 1.3, "net": "unconnected-(J7-DN2-PadB7)", "shape": "rect"},
+        {"number": "B8", "x": 82.42, "y": 108.64, "size_x": 0.3, "size_y": 1.3, "net": "unconnected-(J7-SBU2-PadB8)", "shape": "rect"}
+      ]},
+    {"ref": "J8", "value": "JST_PH_2pin", "footprint": "JST_PH_S2B-PH-SM4-TB_1x02-1MP_P2.00mm_Horizontal", "x": 67.15, "y": 119, "rotation": -90, "side": "front", "bbox": {"width": 10.2, "height": 9.2}, "pads": [
+        {"number": "1", "x": 70.0, "y": 118.0, "size_x": 1, "size_y": 3.5, "net": "/Power Management/BAT_RAW", "shape": "roundrect"},
+        {"number": "2", "x": 70.0, "y": 120.0, "size_x": 1, "size_y": 3.5, "net": "GND", "shape": "roundrect"},
+        {"number": "MP", "x": 64.25, "y": 115.65, "size_x": 1.5, "size_y": 3.4, "net": "", "shape": "roundrect"},
+        {"number": "MP", "x": 64.25, "y": 122.35, "size_x": 1.5, "size_y": 3.4, "net": "", "shape": "roundrect"}
+      ]},
+    {"ref": "L1", "value": "2.2µH", "footprint": "L_Changjiang_FNR6028S", "x": 92.6, "y": 121.9, "rotation": 0, "side": "front", "bbox": {"width": 6.7, "height": 6.5}, "pads": [
+        {"number": "1", "x": 90.35, "y": 121.9, "size_x": 1.7, "size_y": 5.7, "net": "/Power Management/BQ_SW", "shape": "roundrect"},
+        {"number": "2", "x": 94.85, "y": 121.9, "size_x": 1.7, "size_y": 5.7, "net": "/Power Management/VSYS", "shape": "roundrect"}
+      ]},
+    {"ref": "L2", "value": "2.2µH 10A", "footprint": "IND-SMD_L7.0-W6.6", "x": 81.8, "y": 136.4, "rotation": 0, "side": "front", "bbox": {"width": 8.4, "height": 3.2}, "pads": [
+        {"number": "1", "x": 78.8, "y": 136.4, "size_x": 2.4, "size_y": 3.2, "net": "/Power Management/BOOST_SW", "shape": "rect"},
+        {"number": "2", "x": 84.8, "y": 136.4, "size_x": 2.4, "size_y": 3.2, "net": "/Power Management/VSYS_SENSE", "shape": "rect"}
+      ]},
+    {"ref": "Q2", "value": "PMOS", "footprint": "SOT-23", "x": 73.838, "y": 115.25, "rotation": 0, "side": "front", "bbox": {"width": 3.86, "height": 3.4}, "pads": [
+        {"number": "1", "x": 72.9, "y": 114.3, "size_x": 1.475, "size_y": 0.6, "net": "/Power Management/BAT_RAW", "shape": "roundrect"},
+        {"number": "2", "x": 72.9, "y": 116.2, "size_x": 1.475, "size_y": 0.6, "net": "/Power Management/PMOS_GATE", "shape": "roundrect"},
+        {"number": "3", "x": 74.775, "y": 115.25, "size_x": 1.475, "size_y": 0.6, "net": "/Power Management/VBAT", "shape": "roundrect"}
+      ]},
+    {"ref": "R6", "value": "10kΩ", "footprint": "R_0603_1608Metric", "x": 133.8, "y": 121.1, "rotation": 0, "side": "front", "bbox": {"width": 2.96, "height": 1.46}, "pads": [
+        {"number": "1", "x": 132.975, "y": 121.1, "size_x": 0.8, "size_y": 0.95, "net": "/TCA9548A_Subsystem/TCA_RESET", "shape": "roundrect"},
+        {"number": "2", "x": 134.625, "y": 121.1, "size_x": 0.8, "size_y": 0.95, "net": "+3.3V", "shape": "roundrect"}
+      ]},
+    {"ref": "R27", "value": "0.1R", "footprint": "R_2512_6332Metric", "x": 117.638, "y": 115.75, "rotation": 0, "side": "front", "bbox": {"width": 7.66, "height": 3.86}, "pads": [
+        {"number": "1", "x": 114.675, "y": 115.75, "size_x": 1.225, "size_y": 3.35, "net": "Net-(C7-Pad2)", "shape": "roundrect"},
+        {"number": "2", "x": 120.6, "y": 115.75, "size_x": 1.225, "size_y": 3.35, "net": "/LED Controller/+5V_TO_LEDS", "shape": "roundrect"}
+      ]},
+    {"ref": "R28", "value": "2.2kΩ", "footprint": "R_0603_1608Metric", "x": 131.8, "y": 133.412, "rotation": -90, "side": "front", "bbox": {"width": 1.46, "height": 2.96}, "pads": [
+        {"number": "1", "x": 131.8, "y": 132.588, "size_x": 0.8, "size_y": 0.95, "net": "/I2C_SDA", "shape": "roundrect"},
+        {"number": "2", "x": 131.8, "y": 134.237, "size_x": 0.8, "size_y": 0.95, "net": "+3.3V", "shape": "roundrect"}
+      ]},
+    {"ref": "R29", "value": "2.2kΩ", "footprint": "R_0603_1608Metric", "x": 132.9, "y": 126.375, "rotation": 90, "side": "front", "bbox": {"width": 1.46, "height": 2.96}, "pads": [
+        {"number": "1", "x": 132.9, "y": 127.2, "size_x": 0.8, "size_y": 0.95, "net": "/I2C_SCL", "shape": "roundrect"},
+        {"number": "2", "x": 132.9, "y": 125.55, "size_x": 0.8, "size_y": 0.95, "net": "+3.3V", "shape": "roundrect"}
+      ]},
+    {"ref": "R30", "value": "5.1kΩ", "footprint": "R_0603_1608Metric", "x": 82, "y": 111.425, "rotation": -90, "side": "front", "bbox": {"width": 1.46, "height": 2.96}, "pads": [
+        {"number": "1", "x": 82.0, "y": 110.6, "size_x": 0.8, "size_y": 0.95, "net": "/Power Management/CC1", "shape": "roundrect"},
+        {"number": "2", "x": 82.0, "y": 112.25, "size_x": 0.8, "size_y": 0.95, "net": "GND", "shape": "roundrect"}
+      ]},
+    {"ref": "R31", "value": "5.1kΩ", "footprint": "R_0603_1608Metric", "x": 79.1, "y": 111.4, "rotation": -90, "side": "front", "bbox": {"width": 1.46, "height": 2.96}, "pads": [
+        {"number": "1", "x": 79.1, "y": 110.575, "size_x": 0.8, "size_y": 0.95, "net": "/Power Management/CC2", "shape": "roundrect"},
+        {"number": "2", "x": 79.1, "y": 112.225, "size_x": 0.8, "size_y": 0.95, "net": "GND", "shape": "roundrect"}
+      ]},
+    {"ref": "R32", "value": "330Ω", "footprint": "R_0603_1608Metric", "x": 81.5, "y": 125.1, "rotation": -90, "side": "front", "bbox": {"width": 1.46, "height": 2.96}, "pads": [
+        {"number": "1", "x": 81.5, "y": 124.275, "size_x": 0.8, "size_y": 0.95, "net": "/Power Management/BQ_ILIM", "shape": "roundrect"},
+        {"number": "2", "x": 81.5, "y": 125.925, "size_x": 0.8, "size_y": 0.95, "net": "GND", "shape": "roundrect"}
+      ]},
+    {"ref": "R33", "value": "100kΩ", "footprint": "R_0603_1608Metric", "x": 73.675, "y": 112.6, "rotation": 0, "side": "front", "bbox": {"width": 2.96, "height": 1.46}, "pads": [
+        {"number": "1", "x": 72.85, "y": 112.6, "size_x": 0.8, "size_y": 0.95, "net": "/Power Management/VBAT", "shape": "roundrect"},
+        {"number": "2", "x": 74.5, "y": 112.6, "size_x": 0.8, "size_y": 0.95, "net": "/Power Management/PMOS_GATE", "shape": "roundrect"}
+      ]},
+    {"ref": "R34", "value": "100kΩ", "footprint": "R_0603_1608Metric", "x": 73.675, "y": 111.1, "rotation": 0, "side": "front", "bbox": {"width": 2.96, "height": 1.46}, "pads": [
+        {"number": "1", "x": 72.85, "y": 111.1, "size_x": 0.8, "size_y": 0.95, "net": "/Power Management/PMOS_GATE", "shape": "roundrect"},
+        {"number": "2", "x": 74.5, "y": 111.1, "size_x": 0.8, "size_y": 0.95, "net": "/Power Management/BAT_RAW", "shape": "roundrect"}
+      ]},
+    {"ref": "R35", "value": "10kΩ", "footprint": "R_0603_1608Metric", "x": 80, "y": 125.125, "rotation": -90, "side": "front", "bbox": {"width": 1.46, "height": 2.96}, "pads": [
+        {"number": "1", "x": 80.0, "y": 124.3, "size_x": 0.8, "size_y": 0.95, "net": "/Power Management/OTG_BIAS", "shape": "roundrect"},
+        {"number": "2", "x": 80.0, "y": 125.95, "size_x": 0.8, "size_y": 0.95, "net": "+3.3V", "shape": "roundrect"}
+      ]},
+    {"ref": "R36", "value": "5.6kΩ", "footprint": "R_0603_1608Metric", "x": 86.075, "y": 119.9, "rotation": 0, "side": "front", "bbox": {"width": 2.96, "height": 1.46}, "pads": [
+        {"number": "1", "x": 85.25, "y": 119.9, "size_x": 0.8, "size_y": 0.95, "net": "/Power Management/BQ_REGN", "shape": "roundrect"},
+        {"number": "2", "x": 86.9, "y": 119.9, "size_x": 0.8, "size_y": 0.95, "net": "/Power Management/BQ_TS", "shape": "roundrect"}
+      ]},
+    {"ref": "R37", "value": "30kΩ", "footprint": "R_0603_1608Metric", "x": 86.9, "y": 122.225, "rotation": -90, "side": "front", "bbox": {"width": 1.46, "height": 2.96}, "pads": [
+        {"number": "1", "x": 86.9, "y": 121.4, "size_x": 0.8, "size_y": 0.95, "net": "/Power Management/BQ_TS", "shape": "roundrect"},
+        {"number": "2", "x": 86.9, "y": 123.05, "size_x": 0.8, "size_y": 0.95, "net": "GND", "shape": "roundrect"}
+      ]},
+    {"ref": "R38", "value": "10kΩ", "footprint": "R_0603_1608Metric", "x": 78.3, "y": 124.875, "rotation": -90, "side": "front", "bbox": {"width": 1.46, "height": 2.96}, "pads": [
+        {"number": "1", "x": 78.3, "y": 124.05, "size_x": 0.8, "size_y": 0.95, "net": "/Power Management/CHRG_INT", "shape": "roundrect"},
+        {"number": "2", "x": 78.3, "y": 125.7, "size_x": 0.8, "size_y": 0.95, "net": "+3.3V", "shape": "roundrect"}
+      ]},
+    {"ref": "R39", "value": "180kΩ", "footprint": "R_0603_1608Metric", "x": 87.8, "y": 129, "rotation": 90, "side": "front", "bbox": {"width": 1.46, "height": 2.96}, "pads": [
+        {"number": "1", "x": 87.8, "y": 129.825, "size_x": 0.8, "size_y": 0.95, "net": "+5V", "shape": "roundrect"},
+        {"number": "2", "x": 87.8, "y": 128.175, "size_x": 0.8, "size_y": 0.95, "net": "/Power Management/BOOST_FB", "shape": "roundrect"}
+      ]},
+    {"ref": "R40", "value": "56kΩ", "footprint": "R_0603_1608Metric", "x": 89.3, "y": 128.975, "rotation": 90, "side": "front", "bbox": {"width": 1.46, "height": 2.96}, "pads": [
+        {"number": "1", "x": 89.3, "y": 129.8, "size_x": 0.8, "size_y": 0.95, "net": "/Power Management/BOOST_FB", "shape": "roundrect"},
+        {"number": "2", "x": 89.3, "y": 128.15, "size_x": 0.8, "size_y": 0.95, "net": "GND", "shape": "roundrect"}
+      ]},
+    {"ref": "R41", "value": "100kΩ", "footprint": "R_0603_1608Metric", "x": 65.275, "y": 134.995, "rotation": 0, "side": "front", "bbox": {"width": 2.96, "height": 1.46}, "pads": [
+        {"number": "1", "x": 64.45, "y": 134.995, "size_x": 0.8, "size_y": 0.95, "net": "/Power Management/BOOST_FSW", "shape": "roundrect"},
+        {"number": "2", "x": 66.1, "y": 134.995, "size_x": 0.8, "size_y": 0.95, "net": "/Power Management/BOOST_SW", "shape": "roundrect"}
+      ]},
+    {"ref": "R42", "value": "100kΩ", "footprint": "R_0603_1608Metric", "x": 75.2, "y": 132.4, "rotation": 0, "side": "front", "bbox": {"width": 2.96, "height": 1.46}, "pads": [
+        {"number": "1", "x": 74.375, "y": 132.4, "size_x": 0.8, "size_y": 0.95, "net": "/Power Management/BOOST_ILIM", "shape": "roundrect"},
+        {"number": "2", "x": 76.025, "y": 132.4, "size_x": 0.8, "size_y": 0.95, "net": "GND", "shape": "roundrect"}
+      ]},
+    {"ref": "R43", "value": "22kΩ", "footprint": "R_0603_1608Metric", "x": 91.1, "y": 131.925, "rotation": 90, "side": "front", "bbox": {"width": 1.46, "height": 2.96}, "pads": [
+        {"number": "1", "x": 91.1, "y": 132.75, "size_x": 0.8, "size_y": 0.95, "net": "/Power Management/BOOST_COMP", "shape": "roundrect"},
+        {"number": "2", "x": 91.1, "y": 131.1, "size_x": 0.8, "size_y": 0.95, "net": "/Power Management/COMP_MID", "shape": "roundrect"}
+      ]},
+    {"ref": "R44", "value": "10mΩ", "footprint": "R_2512_6332Metric", "x": 81.737, "y": 130.9, "rotation": 0, "side": "front", "bbox": {"width": 7.66, "height": 3.86}, "pads": [
+        {"number": "1", "x": 78.775, "y": 130.9, "size_x": 1.225, "size_y": 3.35, "net": "/Power Management/VSYS", "shape": "roundrect"},
+        {"number": "2", "x": 84.7, "y": 130.9, "size_x": 1.225, "size_y": 3.35, "net": "/Power Management/VSYS_SENSE", "shape": "roundrect"}
+      ]},
+    {"ref": "TH1", "value": "10kΩ NTC", "footprint": "R_0603_1608Metric", "x": 86.425, "y": 125.7, "rotation": 0, "side": "front", "bbox": {"width": 2.96, "height": 1.46}, "pads": [
+        {"number": "1", "x": 85.6, "y": 125.7, "size_x": 0.8, "size_y": 0.95, "net": "/Power Management/BQ_TS", "shape": "roundrect"},
+        {"number": "2", "x": 87.25, "y": 125.7, "size_x": 0.8, "size_y": 0.95, "net": "GND", "shape": "roundrect"}
+      ]},
+    {"ref": "TP1", "value": "VSYS", "footprint": "TestPoint_Pad_D1.5mm", "x": 55.1, "y": 133.2, "rotation": 0, "side": "front", "bbox": {"width": 2.5, "height": 2.5}, "pads": [
+        {"number": "1", "x": 55.1, "y": 133.2, "size_x": 1.5, "size_y": 1.5, "net": "/Power Management/VSYS", "shape": "circle"}
+      ]},
+    {"ref": "TP2", "value": "VBAT", "footprint": "TestPoint_Pad_D1.5mm", "x": 55.2, "y": 125.4, "rotation": 0, "side": "front", "bbox": {"width": 2.5, "height": 2.5}, "pads": [
+        {"number": "1", "x": 55.2, "y": 125.4, "size_x": 1.5, "size_y": 1.5, "net": "/Power Management/VBAT", "shape": "circle"}
+      ]},
+    {"ref": "TP3", "value": "PVBUS", "footprint": "TestPoint_Pad_D1.5mm", "x": 55.3, "y": 130.3, "rotation": 0, "side": "front", "bbox": {"width": 2.5, "height": 2.5}, "pads": [
+        {"number": "1", "x": 55.3, "y": 130.3, "size_x": 1.5, "size_y": 1.5, "net": "/Power Management/Protected_VBUS", "shape": "circle"}
+      ]},
+    {"ref": "TP4", "value": "PGND", "footprint": "TestPoint_Pad_D1.5mm", "x": 55.2, "y": 136.9, "rotation": 0, "side": "front", "bbox": {"width": 2.5, "height": 2.5}, "pads": [
+        {"number": "1", "x": 55.2, "y": 136.9, "size_x": 1.5, "size_y": 1.5, "net": "GND", "shape": "circle"}
+      ]},
+    {"ref": "TPIO1", "value": "TestPoint", "footprint": "TestPoint_Pad_D2.0mm", "x": 133.75, "y": 103.01, "rotation": 0, "side": "front", "bbox": {"width": 3.0, "height": 3.0}, "pads": [
+        {"number": "1", "x": 133.75, "y": 103.01, "size_x": 2, "size_y": 2, "net": "Net-(U2-1)", "shape": "circle"}
+      ]},
+    {"ref": "TPIO2", "value": "TestPoint", "footprint": "TestPoint_Pad_D2.0mm", "x": 137.25, "y": 103.02, "rotation": 0, "side": "front", "bbox": {"width": 3.0, "height": 3.0}, "pads": [
+        {"number": "1", "x": 137.25, "y": 103.02, "size_x": 2, "size_y": 2, "net": "Net-(U2-2)", "shape": "circle"}
+      ]},
+    {"ref": "TPIO3", "value": "TestPoint", "footprint": "TestPoint_Pad_D2.0mm", "x": 140.5, "y": 103, "rotation": 0, "side": "front", "bbox": {"width": 3.0, "height": 3.0}, "pads": [
+        {"number": "1", "x": 140.5, "y": 103.0, "size_x": 2, "size_y": 2, "net": "Net-(U2-3)", "shape": "circle"}
+      ]},
+    {"ref": "TPIO10", "value": "TestPoint", "footprint": "TestPoint_Pad_D2.0mm", "x": 143.75, "y": 103, "rotation": 0, "side": "front", "bbox": {"width": 3.0, "height": 3.0}, "pads": [
+        {"number": "1", "x": 143.75, "y": 103.0, "size_x": 2, "size_y": 2, "net": "/TCA9548A_Subsystem/TCA_RESET", "shape": "circle"}
+      ]},
+    {"ref": "TPIO11", "value": "TestPoint", "footprint": "TestPoint_Pad_D2.0mm", "x": 147, "y": 103, "rotation": 0, "side": "front", "bbox": {"width": 3.0, "height": 3.0}, "pads": [
+        {"number": "1", "x": 147.0, "y": 103.0, "size_x": 2, "size_y": 2, "net": "/INT3", "shape": "circle"}
+      ]},
+    {"ref": "TPIO12", "value": "TestPoint", "footprint": "TestPoint_Pad_D2.0mm", "x": 150.25, "y": 103, "rotation": 0, "side": "front", "bbox": {"width": 3.0, "height": 3.0}, "pads": [
+        {"number": "1", "x": 150.25, "y": 103.0, "size_x": 2, "size_y": 2, "net": "/INT2", "shape": "circle"}
+      ]},
+    {"ref": "TPIO13", "value": "TestPoint", "footprint": "TestPoint_Pad_D2.0mm", "x": 153.5, "y": 103, "rotation": 0, "side": "front", "bbox": {"width": 3.0, "height": 3.0}, "pads": [
+        {"number": "1", "x": 153.5, "y": 103.0, "size_x": 2, "size_y": 2, "net": "/INT1", "shape": "circle"}
+      ]},
+    {"ref": "TPIO16", "value": "TestPoint", "footprint": "TestPoint_Pad_D2.0mm", "x": 155.8, "y": 133.8, "rotation": 0, "side": "front", "bbox": {"width": 3.0, "height": 3.0}, "pads": [
+        {"number": "1", "x": 155.8, "y": 133.8, "size_x": 2, "size_y": 2, "net": "/LED Controller/DATA_IN", "shape": "circle"}
+      ]},
+    {"ref": "TPIO17", "value": "TestPoint", "footprint": "TestPoint_Pad_D2.0mm", "x": 149.5, "y": 133.75, "rotation": 0, "side": "front", "bbox": {"width": 3.0, "height": 3.0}, "pads": [
+        {"number": "1", "x": 149.5, "y": 133.75, "size_x": 2, "size_y": 2, "net": "Net-(U2-17)", "shape": "circle"}
+      ]},
+    {"ref": "TPIO18", "value": "TestPoint", "footprint": "TestPoint_Pad_D2.0mm", "x": 146.25, "y": 133.75, "rotation": 0, "side": "front", "bbox": {"width": 3.0, "height": 3.0}, "pads": [
+        {"number": "1", "x": 146.25, "y": 133.75, "size_x": 2, "size_y": 2, "net": "Net-(U2-18)", "shape": "circle"}
+      ]},
+    {"ref": "TPIO21", "value": "TestPoint", "footprint": "TestPoint_Pad_D2.0mm", "x": 152.75, "y": 133.75, "rotation": 0, "side": "front", "bbox": {"width": 3.0, "height": 3.0}, "pads": [
+        {"number": "1", "x": 152.75, "y": 133.75, "size_x": 2, "size_y": 2, "net": "/Power Management/CHRG_INT", "shape": "circle"}
+      ]},
+    {"ref": "TPIO43", "value": "TestPoint", "footprint": "TestPoint_Pad_D2.0mm", "x": 139.1, "y": 133.4, "rotation": 0, "side": "front", "bbox": {"width": 3.0, "height": 3.0}, "pads": [
+        {"number": "1", "x": 139.1, "y": 133.4, "size_x": 2, "size_y": 2, "net": "/I2C_SDA", "shape": "circle"}
+      ]},
+    {"ref": "TPIO44", "value": "TestPoint", "footprint": "TestPoint_Pad_D2.0mm", "x": 142.7, "y": 133.5, "rotation": 0, "side": "front", "bbox": {"width": 3.0, "height": 3.0}, "pads": [
+        {"number": "1", "x": 142.7, "y": 133.5, "size_x": 2, "size_y": 2, "net": "/I2C_SCL", "shape": "circle"}
+      ]},
+    {"ref": "TP_3V1", "value": "TestPoint", "footprint": "TestPoint_Pad_D2.0mm", "x": 112.3, "y": 125.9, "rotation": 0, "side": "front", "bbox": {"width": 3.0, "height": 3.0}, "pads": [
+        {"number": "1", "x": 112.3, "y": 125.9, "size_x": 2, "size_y": 2, "net": "+3.3V", "shape": "circle"}
+      ]},
+    {"ref": "TP_5V1", "value": "TestPoint", "footprint": "TestPoint_Pad_D2.0mm", "x": 127.5, "y": 103, "rotation": 0, "side": "front", "bbox": {"width": 3.0, "height": 3.0}, "pads": [
+        {"number": "1", "x": 127.5, "y": 103.0, "size_x": 2, "size_y": 2, "net": "+5V", "shape": "circle"}
+      ]},
+    {"ref": "TP_GND1", "value": "TestPoint", "footprint": "TestPoint_Pad_D2.0mm", "x": 124.4, "y": 103, "rotation": 0, "side": "front", "bbox": {"width": 3.0, "height": 3.0}, "pads": [
+        {"number": "1", "x": 124.4, "y": 103.0, "size_x": 2, "size_y": 2, "net": "GND", "shape": "circle"}
+      ]},
+    {"ref": "U1", "value": "AP2112K-3.3TRG1", "footprint": "SOT95P285X140-5N", "x": 106.535, "y": 125.55, "rotation": 0, "side": "front", "bbox": {"width": 4.22, "height": 3.6}, "pads": [
+        {"number": "1", "x": 105.35, "y": 124.6, "size_x": 1.35, "size_y": 0.6, "net": "+5V", "shape": "roundrect"},
+        {"number": "2", "x": 105.35, "y": 125.55, "size_x": 1.35, "size_y": 0.6, "net": "GND", "shape": "roundrect"},
+        {"number": "3", "x": 105.35, "y": 126.5, "size_x": 1.35, "size_y": 0.6, "net": "+5V", "shape": "roundrect"},
+        {"number": "4", "x": 107.72, "y": 126.5, "size_x": 1.35, "size_y": 0.6, "net": "", "shape": "roundrect"},
+        {"number": "5", "x": 107.72, "y": 124.6, "size_x": 1.35, "size_y": 0.6, "net": "+3.3V", "shape": "roundrect"}
+      ]},
+    {"ref": "U2", "value": "T-Display-S3", "footprint": "T-Display-S3", "x": 167.25, "y": 107.5, "rotation": 90, "side": "front", "bbox": {"width": 29.94, "height": 24.862}, "pads": [
+        {"number": "1", "x": 134.23, "y": 107.5, "size_x": 2, "size_y": 2, "net": "unconnected-(U2-3v-Pad1)", "shape": "circle"},
+        {"number": "2", "x": 136.77, "y": 107.5, "size_x": 2, "size_y": 2, "net": "Net-(U2-1)", "shape": "circle"},
+        {"number": "3", "x": 139.31, "y": 107.5, "size_x": 2, "size_y": 2, "net": "Net-(U2-2)", "shape": "circle"},
+        {"number": "4", "x": 141.85, "y": 107.5, "size_x": 2, "size_y": 2, "net": "Net-(U2-3)", "shape": "circle"},
+        {"number": "5", "x": 144.39, "y": 107.5, "size_x": 2, "size_y": 2, "net": "/TCA9548A_Subsystem/TCA_RESET", "shape": "circle"},
+        {"number": "6", "x": 146.93, "y": 107.5, "size_x": 2, "size_y": 2, "net": "/INT3", "shape": "circle"},
+        {"number": "7", "x": 149.47, "y": 107.5, "size_x": 2, "size_y": 2, "net": "/INT2", "shape": "circle"},
+        {"number": "8", "x": 152.01, "y": 107.5, "size_x": 2, "size_y": 2, "net": "/INT1", "shape": "circle"},
+        {"number": "9", "x": 154.55, "y": 107.5, "size_x": 2, "size_y": 2, "net": "unconnected-(U2-NC-Pad9)", "shape": "circle"},
+        {"number": "10", "x": 157.09, "y": 107.5, "size_x": 2, "size_y": 2, "net": "unconnected-(U2-NC-Pad10)", "shape": "circle"},
+        {"number": "11", "x": 159.63, "y": 107.5, "size_x": 2, "size_y": 2, "net": "GND", "shape": "circle"},
+        {"number": "12", "x": 162.17, "y": 107.5, "size_x": 2, "size_y": 2, "net": "+5V", "shape": "circle"},
+        {"number": "13", "x": 134.23, "y": 130.362, "size_x": 2, "size_y": 2, "net": "GND", "shape": "circle"},
+        {"number": "14", "x": 136.77, "y": 130.362, "size_x": 2, "size_y": 2, "net": "GND", "shape": "circle"},
+        {"number": "15", "x": 139.31, "y": 130.362, "size_x": 2, "size_y": 2, "net": "/I2C_SDA", "shape": "circle"},
+        {"number": "16", "x": 141.85, "y": 130.362, "size_x": 2, "size_y": 2, "net": "/I2C_SCL", "shape": "circle"},
+        {"number": "17", "x": 144.39, "y": 130.362, "size_x": 2, "size_y": 2, "net": "Net-(U2-18)", "shape": "circle"},
+        {"number": "18", "x": 146.93, "y": 130.362, "size_x": 2, "size_y": 2, "net": "Net-(U2-17)", "shape": "circle"},
+        {"number": "19", "x": 149.47, "y": 130.362, "size_x": 2, "size_y": 2, "net": "/Power Management/CHRG_INT", "shape": "circle"},
+        {"number": "20", "x": 152.01, "y": 130.362, "size_x": 2, "size_y": 2, "net": "/LED Controller/DATA_IN", "shape": "circle"},
+        {"number": "21", "x": 154.55, "y": 130.362, "size_x": 2, "size_y": 2, "net": "unconnected-(U2-NC-Pad21)", "shape": "circle"},
+        {"number": "22", "x": 157.09, "y": 130.362, "size_x": 2, "size_y": 2, "net": "GND", "shape": "circle"},
+        {"number": "23", "x": 159.63, "y": 130.362, "size_x": 2, "size_y": 2, "net": "GND", "shape": "circle"},
+        {"number": "24", "x": 162.17, "y": 130.362, "size_x": 2, "size_y": 2, "net": "unconnected-(U2-3v-Pad24)", "shape": "circle"}
+      ]},
+    {"ref": "U4", "value": "TCA9548APWR", "footprint": "SOP65P640X120-24N", "x": 127.625, "y": 127.57, "rotation": -90, "side": "front", "bbox": {"width": 8.3, "height": 7.81}, "pads": [
+        {"number": "1", "x": 131.2, "y": 124.7, "size_x": 1.57, "size_y": 0.41, "net": "GND", "shape": "roundrect"},
+        {"number": "2", "x": 130.55, "y": 124.7, "size_x": 1.57, "size_y": 0.41, "net": "GND", "shape": "roundrect"},
+        {"number": "3", "x": 129.9, "y": 124.7, "size_x": 1.57, "size_y": 0.41, "net": "/TCA9548A_Subsystem/TCA_RESET", "shape": "roundrect"},
+        {"number": "4", "x": 129.25, "y": 124.7, "size_x": 1.57, "size_y": 0.41, "net": "/TCA9548A_Subsystem/CH0_SDA", "shape": "roundrect"},
+        {"number": "5", "x": 128.6, "y": 124.7, "size_x": 1.57, "size_y": 0.41, "net": "/TCA9548A_Subsystem/CH0_SCL", "shape": "roundrect"},
+        {"number": "6", "x": 127.95, "y": 124.7, "size_x": 1.57, "size_y": 0.41, "net": "/TCA9548A_Subsystem/CH1_SDA", "shape": "roundrect"},
+        {"number": "7", "x": 127.3, "y": 124.7, "size_x": 1.57, "size_y": 0.41, "net": "/TCA9548A_Subsystem/CH1_SCL", "shape": "roundrect"},
+        {"number": "8", "x": 126.65, "y": 124.7, "size_x": 1.57, "size_y": 0.41, "net": "/TCA9548A_Subsystem/CH2_SDA", "shape": "roundrect"},
+        {"number": "9", "x": 126.0, "y": 124.7, "size_x": 1.57, "size_y": 0.41, "net": "/TCA9548A_Subsystem/CH2_SCL", "shape": "roundrect"},
+        {"number": "10", "x": 125.35, "y": 124.7, "size_x": 1.57, "size_y": 0.41, "net": "unconnected-(U4-SD3-Pad10)", "shape": "roundrect"},
+        {"number": "11", "x": 124.7, "y": 124.7, "size_x": 1.57, "size_y": 0.41, "net": "unconnected-(U4-SC3-Pad11)", "shape": "roundrect"},
+        {"number": "12", "x": 124.05, "y": 124.7, "size_x": 1.57, "size_y": 0.41, "net": "GND", "shape": "roundrect"},
+        {"number": "13", "x": 124.05, "y": 130.44, "size_x": 1.57, "size_y": 0.41, "net": "unconnected-(U4-SD4-Pad13)", "shape": "roundrect"},
+        {"number": "14", "x": 124.7, "y": 130.44, "size_x": 1.57, "size_y": 0.41, "net": "unconnected-(U4-SC4-Pad14)", "shape": "roundrect"},
+        {"number": "15", "x": 125.35, "y": 130.44, "size_x": 1.57, "size_y": 0.41, "net": "unconnected-(U4-SD5-Pad15)", "shape": "roundrect"},
+        {"number": "16", "x": 126.0, "y": 130.44, "size_x": 1.57, "size_y": 0.41, "net": "unconnected-(U4-SC5-Pad16)", "shape": "roundrect"},
+        {"number": "17", "x": 126.65, "y": 130.44, "size_x": 1.57, "size_y": 0.41, "net": "unconnected-(U4-SD6-Pad17)", "shape": "roundrect"},
+        {"number": "18", "x": 127.3, "y": 130.44, "size_x": 1.57, "size_y": 0.41, "net": "unconnected-(U4-SC6-Pad18)", "shape": "roundrect"},
+        {"number": "19", "x": 127.95, "y": 130.44, "size_x": 1.57, "size_y": 0.41, "net": "unconnected-(U4-SD7-Pad19)", "shape": "roundrect"},
+        {"number": "20", "x": 128.6, "y": 130.44, "size_x": 1.57, "size_y": 0.41, "net": "unconnected-(U4-SC7-Pad20)", "shape": "roundrect"},
+        {"number": "21", "x": 129.25, "y": 130.44, "size_x": 1.57, "size_y": 0.41, "net": "GND", "shape": "roundrect"},
+        {"number": "22", "x": 129.9, "y": 130.44, "size_x": 1.57, "size_y": 0.41, "net": "/I2C_SCL", "shape": "roundrect"},
+        {"number": "23", "x": 130.55, "y": 130.44, "size_x": 1.57, "size_y": 0.41, "net": "/I2C_SDA", "shape": "roundrect"},
+        {"number": "24", "x": 131.2, "y": 130.44, "size_x": 1.57, "size_y": 0.41, "net": "+3.3V", "shape": "roundrect"}
+      ]},
+    {"ref": "U5", "value": "BQ24195RGER", "footprint": "VQFN-24_L4.0-W4.0-P0.50-TL-EP2.8", "x": 81.26, "y": 120.65, "rotation": 0, "side": "front", "bbox": {"width": 4.88, "height": 4.9}, "pads": [
+        {"number": "1", "x": 79.22, "y": 119.4, "size_x": 0.8, "size_y": 0.3, "net": "/Power Management/Protected_VBUS", "shape": "rect"},
+        {"number": "2", "x": 79.22, "y": 119.9, "size_x": 0.8, "size_y": 0.3, "net": "GND", "shape": "rect"},
+        {"number": "3", "x": 79.22, "y": 120.4, "size_x": 0.8, "size_y": 0.3, "net": "GND", "shape": "rect"},
+        {"number": "4", "x": 79.22, "y": 120.9, "size_x": 0.8, "size_y": 0.3, "net": "unconnected-(U5-STAT-Pad4)", "shape": "rect"},
+        {"number": "5", "x": 79.22, "y": 121.4, "size_x": 0.8, "size_y": 0.3, "net": "/I2C_SCL", "shape": "rect"},
+        {"number": "6", "x": 79.22, "y": 121.9, "size_x": 0.8, "size_y": 0.3, "net": "/I2C_SDA", "shape": "rect"},
+        {"number": "7", "x": 80.01, "y": 122.7, "size_x": 0.3, "size_y": 0.8, "net": "/Power Management/CHRG_INT", "shape": "rect"},
+        {"number": "8", "x": 80.51, "y": 122.7, "size_x": 0.3, "size_y": 0.8, "net": "/Power Management/OTG_BIAS", "shape": "rect"},
+        {"number": "9", "x": 81.01, "y": 122.7, "size_x": 0.3, "size_y": 0.8, "net": "GND", "shape": "rect"},
+        {"number": "10", "x": 81.51, "y": 122.7, "size_x": 0.3, "size_y": 0.8, "net": "/Power Management/BQ_ILIM", "shape": "rect"},
+        {"number": "11", "x": 82.01, "y": 122.7, "size_x": 0.3, "size_y": 0.8, "net": "/Power Management/BQ_TS", "shape": "rect"},
+        {"number": "12", "x": 82.51, "y": 122.7, "size_x": 0.3, "size_y": 0.8, "net": "/Power Management/BQ_TS", "shape": "rect"},
+        {"number": "13", "x": 83.3, "y": 121.9, "size_x": 0.8, "size_y": 0.3, "net": "/Power Management/VBAT", "shape": "rect"},
+        {"number": "14", "x": 83.3, "y": 121.4, "size_x": 0.8, "size_y": 0.3, "net": "/Power Management/VBAT", "shape": "rect"},
+        {"number": "15", "x": 83.3, "y": 120.9, "size_x": 0.8, "size_y": 0.3, "net": "/Power Management/VSYS", "shape": "rect"},
+        {"number": "16", "x": 83.3, "y": 120.4, "size_x": 0.8, "size_y": 0.3, "net": "/Power Management/VSYS", "shape": "rect"},
+        {"number": "17", "x": 83.3, "y": 119.9, "size_x": 0.8, "size_y": 0.3, "net": "GND", "shape": "rect"},
+        {"number": "18", "x": 83.3, "y": 119.4, "size_x": 0.8, "size_y": 0.3, "net": "GND", "shape": "rect"},
+        {"number": "19", "x": 82.51, "y": 118.6, "size_x": 0.3, "size_y": 0.8, "net": "/Power Management/BQ_SW", "shape": "rect"},
+        {"number": "20", "x": 82.01, "y": 118.6, "size_x": 0.3, "size_y": 0.8, "net": "/Power Management/BQ_SW", "shape": "rect"},
+        {"number": "21", "x": 81.51, "y": 118.6, "size_x": 0.3, "size_y": 0.8, "net": "/Power Management/BQ_BTST", "shape": "rect"},
+        {"number": "22", "x": 81.01, "y": 118.6, "size_x": 0.3, "size_y": 0.8, "net": "/Power Management/BQ_REGN", "shape": "rect"},
+        {"number": "23", "x": 80.51, "y": 118.6, "size_x": 0.3, "size_y": 0.8, "net": "/Power Management/BQ_PMID", "shape": "rect"},
+        {"number": "24", "x": 80.01, "y": 118.6, "size_x": 0.3, "size_y": 0.8, "net": "/Power Management/Protected_VBUS", "shape": "rect"},
+        {"number": "25", "x": 81.26, "y": 120.65, "size_x": 2.8, "size_y": 2.8, "net": "GND", "shape": "rect"}
+      ]},
+    {"ref": "U6", "value": "TPS61088RHLR", "footprint": "VQFN-20_L4.6-W3.6-P0.50-BL", "x": 69.55, "y": 135.92, "rotation": -90, "side": "front", "bbox": {"width": 4.16, "height": 5.06}, "pads": [
+        {"number": "", "x": 69.55, "y": 134.65, "size_x": 0.4, "size_y": 0.4, "net": "", "shape": "circle"},
+        {"number": "", "x": 70.32, "y": 135.4, "size_x": 0.4, "size_y": 0.4, "net": "", "shape": "circle"},
+        {"number": "", "x": 69.55, "y": 135.4, "size_x": 0.4, "size_y": 0.4, "net": "", "shape": "circle"},
+        {"number": "", "x": 68.78, "y": 135.4, "size_x": 0.4, "size_y": 0.4, "net": "", "shape": "circle"},
+        {"number": "", "x": 70.32, "y": 136.45, "size_x": 0.4, "size_y": 0.4, "net": "", "shape": "circle"},
+        {"number": "", "x": 69.55, "y": 136.45, "size_x": 0.4, "size_y": 0.4, "net": "", "shape": "circle"},
+        {"number": "", "x": 68.78, "y": 136.45, "size_x": 0.4, "size_y": 0.4, "net": "", "shape": "circle"},
+        {"number": "", "x": 69.55, "y": 137.2, "size_x": 0.4, "size_y": 0.4, "net": "", "shape": "circle"},
+        {"number": "1", "x": 68.8, "y": 133.74, "size_x": 0.7, "size_y": 0.24, "net": "/Power Management/BOOST_VCC", "shape": "rect"},
+        {"number": "2", "x": 67.82, "y": 134.17, "size_x": 0.24, "size_y": 0.7, "net": "/Power Management/VSYS_SENSE", "shape": "rect"},
+        {"number": "3", "x": 67.82, "y": 134.67, "size_x": 0.24, "size_y": 0.7, "net": "/Power Management/BOOST_FSW", "shape": "rect"},
+        {"number": "4", "x": 67.82, "y": 135.17, "size_x": 0.24, "size_y": 0.7, "net": "/Power Management/BOOST_SW", "shape": "rect"},
+        {"number": "5", "x": 67.82, "y": 135.67, "size_x": 0.24, "size_y": 0.7, "net": "/Power Management/BOOST_SW", "shape": "rect"},
+        {"number": "6", "x": 67.82, "y": 136.17, "size_x": 0.24, "size_y": 0.7, "net": "/Power Management/BOOST_SW", "shape": "rect"},
+        {"number": "7", "x": 67.82, "y": 136.67, "size_x": 0.24, "size_y": 0.7, "net": "/Power Management/BOOST_SW", "shape": "rect"},
+        {"number": "8", "x": 67.82, "y": 137.17, "size_x": 0.24, "size_y": 0.7, "net": "/Power Management/BOOST_BOOT", "shape": "rect"},
+        {"number": "9", "x": 67.82, "y": 137.67, "size_x": 0.24, "size_y": 0.7, "net": "/Power Management/VSYS_SENSE", "shape": "rect"},
+        {"number": "10", "x": 68.8, "y": 138.1, "size_x": 0.7, "size_y": 0.24, "net": "/Power Management/BOOST_SS", "shape": "rect"},
+        {"number": "11", "x": 70.3, "y": 138.1, "size_x": 0.7, "size_y": 0.24, "net": "GND", "shape": "rect"},
+        {"number": "12", "x": 71.28, "y": 137.67, "size_x": 0.24, "size_y": 0.7, "net": "GND", "shape": "rect"},
+        {"number": "13", "x": 71.28, "y": 137.17, "size_x": 0.24, "size_y": 0.7, "net": "unconnected-(U6-MODE-Pad13)", "shape": "rect"},
+        {"number": "14", "x": 71.28, "y": 136.67, "size_x": 0.24, "size_y": 0.7, "net": "+5V", "shape": "rect"},
+        {"number": "15", "x": 71.28, "y": 136.17, "size_x": 0.24, "size_y": 0.7, "net": "+5V", "shape": "rect"},
+        {"number": "16", "x": 71.28, "y": 135.67, "size_x": 0.24, "size_y": 0.7, "net": "+5V", "shape": "rect"},
+        {"number": "17", "x": 71.28, "y": 135.17, "size_x": 0.24, "size_y": 0.7, "net": "/Power Management/BOOST_FB", "shape": "rect"},
+        {"number": "18", "x": 71.28, "y": 134.67, "size_x": 0.24, "size_y": 0.7, "net": "/Power Management/BOOST_COMP", "shape": "rect"},
+        {"number": "19", "x": 71.28, "y": 134.17, "size_x": 0.24, "size_y": 0.7, "net": "/Power Management/BOOST_ILIM", "shape": "rect"},
+        {"number": "20", "x": 70.3, "y": 133.74, "size_x": 0.7, "size_y": 0.24, "net": "GND", "shape": "rect"},
+        {"number": "21", "x": 69.55, "y": 135.92, "size_x": 0.01, "size_y": 0.01, "net": "GND", "shape": "custom"}
+      ]},
+    {"ref": "U7", "value": "INA219AIDCNR", "footprint": "SOT-23-8_L3.0-W1.7-P0.65-LS2.8-BR", "x": 91.67, "y": 136.92, "rotation": 180, "side": "front", "bbox": {"width": 3.71, "height": 2.32}, "pads": [
+        {"number": "1", "x": 90.44, "y": 135.94, "size_x": 1.25, "size_y": 0.36, "net": "/Power Management/VSYS", "shape": "oval"},
+        {"number": "2", "x": 90.44, "y": 136.59, "size_x": 1.25, "size_y": 0.36, "net": "/Power Management/VSYS_SENSE", "shape": "oval"},
+        {"number": "3", "x": 90.44, "y": 137.24, "size_x": 1.25, "size_y": 0.36, "net": "GND", "shape": "oval"},
+        {"number": "4", "x": 90.44, "y": 137.9, "size_x": 1.25, "size_y": 0.36, "net": "+3.3V", "shape": "oval"},
+        {"number": "5", "x": 92.9, "y": 137.9, "size_x": 1.25, "size_y": 0.36, "net": "/I2C_SCL", "shape": "oval"},
+        {"number": "6", "x": 92.9, "y": 137.24, "size_x": 1.25, "size_y": 0.36, "net": "/I2C_SDA", "shape": "oval"},
+        {"number": "7", "x": 92.9, "y": 136.59, "size_x": 1.25, "size_y": 0.36, "net": "GND", "shape": "oval"},
+        {"number": "8", "x": 92.9, "y": 135.94, "size_x": 1.25, "size_y": 0.36, "net": "GND", "shape": "oval"}
+      ]}
   ],
   "unplaced_components": [
   ],
