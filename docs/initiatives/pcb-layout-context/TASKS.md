@@ -1,18 +1,18 @@
 # PCB Layout Context Extraction — Tasks
 
-## Phase 1: Build Extraction Script
+## Phase 1: Build Extraction Script ✅
 
-- [ ] Review kiutils PCB parsing API — understand `Board`, `Footprint`, `GraphicItem` classes for accessing outline, component positions, and courtyard/fab layers
-- [ ] Create `tools/pcb-context/extract.py` — argument parsing, load `.kicad_pcb` via kiutils
-- [ ] Extract board outline from `Edge.Cuts` layer graphic items (lines/arcs → bounding rectangle or polygon vertices)
-- [ ] Extract placed components: ref, value, footprint lib name, position, rotation, side (front/back)
-- [ ] Compute bounding boxes from courtyard → fab → pad fallback chain
-- [ ] Handle axis-aligned bbox for rotated components
-- [ ] Extract unplaced components (position at origin or flagged as not-placed)
-- [ ] Compute summary stats (total, placed, unplaced, board utilization estimate)
-- [ ] Write JSON output to `pcb-layout-context.json` alongside the input PCB file
-- [ ] Test on `hardware/pcb-main/kicad/motion-play-main.kicad_pcb` — verify output is accurate and compact
-- [ ] Commit and update TASKS.md
+- [x] Review kiutils PCB parsing API — understand `Board`, `Footprint`, `GraphicItem` classes for accessing outline, component positions, and courtyard/fab layers
+- [x] Create `tools/pcb-context/extract.py` — argument parsing, load `.kicad_pcb` via kiutils
+- [x] Extract board outline from `Edge.Cuts` layer graphic items (GrRect or line/arc segments → bounding rectangle)
+- [x] Extract placed components: ref, value, footprint lib name, position, rotation, side (front/back)
+- [x] Compute bounding boxes from courtyard → fab → pad fallback chain
+- [x] Handle axis-aligned bbox for rotated components
+- [x] Extract unplaced components via cross-reference with `circuit-context.json` (components in schematic but not yet in PCB)
+- [x] Compute summary stats (total, placed, unplaced, board utilization estimate)
+- [x] Write compact JSON output to `pcb-layout-context.json` alongside the input PCB file (115 lines)
+- [x] Test on `hardware/pcb-main/kicad/motion-play-main.kicad_pcb` — 37 placed, 51 unplaced, 88 total, 64.6% utilization
+- [ ] Commit
 
 ## Phase 2: Validate & Use in Layout Session
 

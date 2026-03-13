@@ -519,25 +519,48 @@ def run_placement(comp_index: Dict[str, CompInfo],
 
 def write_placements_to_pcb(pcb_path: Path,
                             placements: List[Placement]) -> None:
-    """Update component positions/rotations in the .kicad_pcb file."""
-    from kiutils.board import Board
+    """Update component positions/rotations in the .kicad_pcb file.
 
-    board = Board.from_file(str(pcb_path))
+    Uses text-based replacement to preserve KiCad 9 file formatting.
+    kiutils v1.4.8 rewrites uuid→tstamp and reformats the whole file,
+    so we avoid its write path entirely.
+    """
+    import re
+
+    text = pcb_path.read_text()
     placement_map = {p.ref: p for p in placements}
     updated = 0
 
-    for fp in board.footprints:
-        ref = fp.properties.get("Reference", "")
-        if ref not in placement_map:
+    for ref, p in placement_map.items():
+        pattern = re.compile(
+            r'(\(property\s+"Reference"\s+"' + re.escape(ref) + r'")'
+        )
+        match = pattern.search(text)
+        if match is None:
+            print(f"  WARNING: {ref} not found in PCB file", file=sys.stderr)
             continue
 
-        p = placement_map[ref]
-        fp.position.X = p.x
-        fp.position.Y = p.y
-        fp.position.angle = p.rotation
+        ref_pos = match.start()
+        block_start = text.rfind("(footprint", 0, ref_pos)
+        if block_start == -1:
+            print(f"  WARNING: no footprint block for {ref}", file=sys.stderr)
+            continue
+
+        at_pattern = re.compile(r'\(at\s+[\d.\-]+\s+[\d.\-]+(?:\s+[\d.\-]+)?\)')
+        at_match = at_pattern.search(text, block_start, ref_pos)
+        if at_match is None:
+            print(f"  WARNING: no (at ...) for {ref}", file=sys.stderr)
+            continue
+
+        if p.rotation == 0:
+            new_at = f"(at {p.x} {p.y})"
+        else:
+            new_at = f"(at {p.x} {p.y} {p.rotation})"
+
+        text = text[:at_match.start()] + new_at + text[at_match.end():]
         updated += 1
 
-    board.to_file(str(pcb_path))
+    pcb_path.write_text(text)
     print(f"\nWrote {updated} component positions to {pcb_path.name}",
           file=sys.stderr)
 
