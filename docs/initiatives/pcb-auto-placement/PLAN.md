@@ -130,7 +130,7 @@ Outline: (62.6, 101) to (164, 141)       ← KiCad coordinates (Y-down)
 └────────────────────────┴────────────────────────────┘
 ```
 
-U5 (BQ24195) at ~(81, 121) — SW pins 19-20 on top edge. L1 goes above.
+U5 (BQ24195) at ~(83, 122) — SW pins 19-20 on top edge. L1 (83, 114) 2mm above with 2.1mm gap for C23.
 U6 (TPS61088) at ~(70, 136) — needs rotation to +90° so SW pins face right.
 J7 (USB-C) at ~(81, 106) — top-left area, board edge.
 J8 (battery) at ~(67, 119) — left edge.
@@ -156,4 +156,4 @@ All resolved during implementation:
 ## Resolved During Validation
 
 - **kiutils KiCad 9 incompatibility:** kiutils v1.4.8 rewrites the entire file, converting `uuid` → `tstamp` (KiCad 7/8 format) and reformatting all s-expressions. The `group` element's `uuid` field becomes an empty `(id )` causing parse failures on re-read. **Fix:** `write_placements_to_pcb` now uses text-based regex replacement instead of kiutils Board.to_file, preserving KiCad 9 formatting.
-- **C23 BTST bridging cap:** L1 (6.5×6.7mm inductor) sits 0.1mm above U5, physically blocking the BTST pin area. C23 placed at 4.5mm to U5's right — best achievable without moving L1. Manual tweak candidate.
+- **C23 BTST bridging cap:** L1 shifted up 2mm (y 116.35→114.35) to open a 2.1mm gap between L1 bottom and U5 top. C23 now places at 3.0mm from BTST — within Tier 1 constraint, no relaxation needed. Previous position was 4.5mm (relaxed) when L1 sat 0.1mm above U5.

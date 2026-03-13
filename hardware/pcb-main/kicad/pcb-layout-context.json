@@ -1,7 +1,7 @@
 {
   "meta": {
     "source_file": "hardware/pcb-main/kicad/motion-play-main.kicad_pcb",
-    "extracted_at": "2026-03-13T04:24:52.584541+00:00",
+    "extracted_at": "2026-03-13T04:35:54.479684+00:00",
     "board_area_mm2": 4056.0,
     "schematic_context": "circuit-context.json"
   },
@@ -211,9 +211,9 @@
         {"number": "MP", "x": 64.25, "y": 115.65, "size_x": 1.5, "size_y": 3.4, "net": "", "shape": "roundrect"},
         {"number": "MP", "x": 64.25, "y": 122.35, "size_x": 1.5, "size_y": 3.4, "net": "", "shape": "roundrect"}
       ]},
-    {"ref": "L1", "value": "2.2µH", "footprint": "L_Changjiang_FNR6028S", "x": 83.1, "y": 116.35, "rotation": 90, "side": "front", "bbox": {"width": 6.5, "height": 6.7}, "pads": [
-        {"number": "1", "x": 83.1, "y": 118.6, "size_x": 1.7, "size_y": 5.7, "net": "/Power Management/BQ_SW", "shape": "roundrect"},
-        {"number": "2", "x": 83.1, "y": 114.1, "size_x": 1.7, "size_y": 5.7, "net": "/Power Management/VSYS", "shape": "roundrect"}
+    {"ref": "L1", "value": "2.2µH", "footprint": "L_Changjiang_FNR6028S", "x": 83.1, "y": 114.35, "rotation": 90, "side": "front", "bbox": {"width": 6.5, "height": 6.7}, "pads": [
+        {"number": "1", "x": 83.1, "y": 116.6, "size_x": 1.7, "size_y": 5.7, "net": "/Power Management/BQ_SW", "shape": "roundrect"},
+        {"number": "2", "x": 83.1, "y": 112.1, "size_x": 1.7, "size_y": 5.7, "net": "/Power Management/VSYS", "shape": "roundrect"}
       ]},
     {"ref": "L2", "value": "2.2µH 10A", "footprint": "IND-SMD_L7.0-W6.6", "x": 76.474, "y": 136.456, "rotation": 0, "side": "front", "bbox": {"width": 8.4, "height": 3.2}, "pads": [
         {"number": "1", "x": 73.474, "y": 136.456, "size_x": 2.4, "size_y": 3.2, "net": "/Power Management/BOOST_SW", "shape": "rect"},

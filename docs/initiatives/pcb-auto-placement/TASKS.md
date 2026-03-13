@@ -28,8 +28,9 @@
 
 - [x] Run full workflow: extract `--pads` → `place_power.py` → open in KiCad — 46 components placed, 0 failures, 4 relaxed
 - [x] Fix kiutils KiCad 9 incompatibility: replaced kiutils Board.to_file (converts uuid→tstamp, reformats entire file) with text-based position replacement that preserves KiCad 9 formatting
-- [x] Verify critical distances: L2 edge↔U6 SW 0.8mm (excellent), C32↔U6 BOOT 2.5mm, C34-C36↔U6 +5V 2.5-3.5mm, C23↔U5 BTST 4.5mm (relaxed — L1 blocks ideal position, 0.1mm gap between L1 bottom and U5 top)
+- [x] Verify critical distances: L2 edge↔U6 SW 0.8mm (excellent), C32↔U6 BOOT 2.5mm, C34-C36↔U6 +5V 2.5-3.5mm
+- [x] Shift L1 up 2mm (y 116.35→114.35) to open 2.1mm gap between L1 and U5 for C23 BTST bridging — re-extract and re-place improved C23 from 4.5mm (relaxed) to 3.0mm (within tier 1)
 - [x] Update `docs/initiatives/integrated-power/TASKS.md` to reflect tooling-assisted placement workflow
-- [ ] Visual review in KiCad: verify no overlaps, reasonable grouping around ICs, switching loop components tight
-- [ ] Run KiCad DRC, document any violations — known items: C23 may need manual tweak (4.5mm from BTST vs 3mm target), F2/C22 placed relative to J7 center (VBUS/GND pads have no net), C26 PMID cap at 5.5mm (vs 5mm target)
-- [ ] Commit
+- [x] Visual review in KiCad: 46 components placed, 0 overlaps, grouping reasonable, switching loop components tight around U5/U6
+- [x] Run KiCad DRC: 84 violations, 137 unconnected (expected pre-routing). Breakdown: 56 from J7/U6 footprint imports (easyeda2kicad thermal vias, PTH clearances), 17 silkscreen overlaps (cosmetic), 9 dangling tracks (pre-existing), 2 R42 edge clearance (pad 0.35mm from board edge vs 0.5mm min — only placement-caused issue). F2/C22 placed relative to J7 center (VBUS/GND pads unassigned in footprint). No component-to-component overlap violations.
+- [x] Commit
