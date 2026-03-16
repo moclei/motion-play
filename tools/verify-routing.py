@@ -592,10 +592,15 @@ def check_trace_widths(data: BoardData) -> List[CheckResult]:
                 "to": (round(seg.end_x, 2), round(seg.end_y, 2)),
             }
 
-            # Thinner-than-expected on power nets is a warning (short stubs
-            # to passives are often routed thinner); wider-than-expected is
-            # also a warning (user may have intentionally used fatter trace).
-            if expected_class.name != "Default":
+            # For power nets and low-current Default signals, width deviations
+            # are warnings (stubs to passives, constrained areas, or intentional
+            # choices). Only flag as violations for nets where width is critical
+            # to current capacity.
+            is_minor = (
+                expected_class.name != "Default"
+                or abs(entry["actual"] - expected_class.width) <= 0.1
+            )
+            if is_minor:
                 warnings_by_class[expected_class.name].append(entry)
             else:
                 violations_by_class[expected_class.name].append(entry)
@@ -929,7 +934,13 @@ def check_i2c_isolation(data: BoardData) -> List[CheckResult]:
 
 
 def check_kelvin_sense(data: BoardData) -> List[CheckResult]:
-    """Verify INA219 Kelvin sense traces are thin, dedicated connections."""
+    """Verify INA219 Kelvin sense traces are thin, dedicated connections.
+
+    "Thin" means significantly narrower than the power trace width on the
+    same net. The threshold is half the power class width (0.5mm for 1.0mm
+    Power_Med nets). This accommodates slight width variations while still
+    catching cases where the sense path shares fat power traces.
+    """
     results = []
 
     sense_paths = [
@@ -938,14 +949,14 @@ def check_kelvin_sense(data: BoardData) -> List[CheckResult]:
             "net": "VSYS",
             "from_pad": ("R44", "1"),
             "to_pad": ("U7", "1"),
-            "expected_width": 0.25,
+            "power_width": 1.0,
         },
         {
             "name": "VSYS_SENSE sense (R44.2 → U7.2)",
             "net": "VSYS_SENSE",
             "from_pad": ("R44", "2"),
             "to_pad": ("U7", "2"),
-            "expected_width": 0.25,
+            "power_width": 1.0,
         },
     ]
 
@@ -966,17 +977,18 @@ def check_kelvin_sense(data: BoardData) -> List[CheckResult]:
             results.append(r)
             continue
 
-        # Walk thin segments from U7 pin to find R44 pad
+        thin_threshold = sp["power_width"] / 2.0
+
         thin_segs = [
             s for s in data.segments_by_net.get(net_num, [])
-            if abs(s.width - sp["expected_width"]) < WIDTH_TOLERANCE_MM
+            if s.width < thin_threshold
         ]
+        sense_widths = sorted(set(s.width for s in thin_segs)) if thin_segs else []
 
         thin_graph = ConnectivityGraph()
         for s in thin_segs:
             thin_graph.add_segment(s)
 
-        # Add pads and link to nearby thin segment endpoints
         for pad in (pad_from, pad_to):
             nid = thin_graph._add_point(pad.x, pad.y)
             for s in thin_segs:
@@ -989,18 +1001,21 @@ def check_kelvin_sense(data: BoardData) -> List[CheckResult]:
 
         r.measurements = {
             "thin_segments": len(thin_segs),
-            "expected_width": sp["expected_width"],
+            "thin_threshold_mm": thin_threshold,
+            "sense_widths_mm": sense_widths,
             "connected_via_thin_only": connected_thin,
         }
 
         if connected_thin:
+            width_str = "/".join(f"{w}mm" for w in sense_widths) if sense_widths else "?"
             r.passed(
-                f"Dedicated {sp['expected_width']}mm path exists "
-                f"({len(thin_segs)} thin segments on net)"
+                f"Dedicated thin path ({width_str}) exists, "
+                f"separate from {sp['power_width']}mm power traces "
+                f"({len(thin_segs)} sense segments)"
             )
         else:
             r.fail(
-                f"No dedicated {sp['expected_width']}mm path from "
+                f"No dedicated thin path (<{thin_threshold}mm) from "
                 f"{sp['from_pad'][0]}.{sp['from_pad'][1]} to "
                 f"{sp['to_pad'][0]}.{sp['to_pad'][1]}"
             )

@@ -6,4 +6,5 @@
   (lib (name "FNR6028S")(type "KiCad")(uri "${KIPRJMOD}/../resources/FNR6028S/FNR6028S.pretty")(options "")(descr "FNR6028S inductor footprint"))
   (lib (name "BQ24195RGET")(type "KiCad")(uri "${KIPRJMOD}/../resources/BQ24195RGET/BQ24195RGET.pretty")(options "")(descr "BQ24195RGET charger IC footprint"))
   (lib (name "TYPE-C-31-M-12")(type "KiCad")(uri "${KIPRJMOD}/../resources/TYPE-C-31-M-12/TYPE-C-31-M-12.pretty")(options "")(descr "TYPE-C-31-M-12 USB-C connector footprint"))
+  (lib (name "JLC-MCP")(type "KiCad")(uri "${KIPRJMOD}/libraries/footprints/JLC-MCP.pretty")(options "")(descr "JLC-MCP Component Library (LCSC/EasyEDA)"))
 )
