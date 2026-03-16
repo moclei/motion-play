@@ -5,41 +5,30 @@
       "x": 85.619,
       "y": 118.737,
       "rotation": 180,
-      "old_x": 87.387,
-      "old_y": 121.201,
+      "old_x": 85.619,
+      "old_y": 118.737,
       "old_rotation": 180,
       "tier": 1,
       "note": "near U5 BQ_BTST, 3.0mm"
     },
     {
       "ref": "C32",
-      "x": 73.797,
-      "y": 133.714,
+      "x": 72.619,
+      "y": 131.916,
       "rotation": 0,
       "old_x": 73.797,
       "old_y": 133.714,
       "old_rotation": 0,
       "tier": 1,
-      "note": "near U6 BOOST_BOOT, 2.5mm"
-    },
-    {
-      "ref": "L2",
-      "x": 76.474,
-      "y": 136.456,
-      "rotation": 0,
-      "old_x": 76.474,
-      "old_y": 136.456,
-      "old_rotation": 0,
-      "tier": 1,
-      "note": "near U6 BOOST_SW, 5.0mm"
+      "note": "near U6 BOOST_BOOT, 3.0mm"
     },
     {
       "ref": "C20",
       "x": 78.371,
       "y": 119.364,
       "rotation": 0,
-      "old_x": 78.116,
-      "old_y": 120.854,
+      "old_x": 78.371,
+      "old_y": 119.364,
       "old_rotation": 0,
       "tier": 2,
       "note": "near U5 Protected_VBUS, 3.0mm"
@@ -49,8 +38,8 @@
       "x": 78.202,
       "y": 121.356,
       "rotation": 0,
-      "old_x": 78.053,
-      "old_y": 118.887,
+      "old_x": 78.202,
+      "old_y": 121.356,
       "old_rotation": 0,
       "tier": 2,
       "note": "near U5 Protected_VBUS, 3.0mm"
@@ -60,8 +49,8 @@
       "x": 77.896,
       "y": 117.344,
       "rotation": 180,
-      "old_x": 78.482,
-      "old_y": 123.006,
+      "old_x": 77.896,
+      "old_y": 117.344,
       "old_rotation": 180,
       "tier": 2,
       "note": "near U5 BQ_PMID, 5.0mm"
@@ -71,22 +60,22 @@
       "x": 78.206,
       "y": 123.457,
       "rotation": 180,
-      "old_x": 78.067,
-      "old_y": 116.355,
+      "old_x": 78.206,
+      "old_y": 123.457,
       "old_rotation": 180,
       "tier": 2,
       "note": "near U5 BQ_PMID, 5.0mm"
     },
     {
       "ref": "C31",
-      "x": 70.996,
-      "y": 131.478,
+      "x": 69.763,
+      "y": 131.261,
       "rotation": 90,
       "old_x": 70.996,
       "old_y": 131.478,
       "old_rotation": 90,
       "tier": 2,
-      "note": "near U6 VSYS_SENSE, 4.5mm"
+      "note": "near U6 VSYS_SENSE, 5.0mm"
     },
     {
       "ref": "C34",
@@ -123,22 +112,22 @@
     },
     {
       "ref": "C41",
-      "x": 73.576,
-      "y": 130.857,
+      "x": 75.774,
+      "y": 131.053,
       "rotation": 90,
       "old_x": 73.576,
       "old_y": 130.857,
       "old_rotation": 90,
       "tier": 2,
-      "note": "near U6 VSYS_SENSE, 5.5mm"
+      "note": "near U6 VSYS_SENSE, 6.5mm"
     },
     {
       "ref": "C24",
       "x": 86.972,
       "y": 120.704,
       "rotation": 180,
-      "old_x": 87.199,
-      "old_y": 123.058,
+      "old_x": 86.972,
+      "old_y": 120.704,
       "old_rotation": 180,
       "tier": 3,
       "note": "near U5 BQ_REGN, 4.5mm"
@@ -148,8 +137,8 @@
       "x": 87.239,
       "y": 122.753,
       "rotation": 0,
-      "old_x": 87.029,
-      "old_y": 124.94,
+      "old_x": 87.239,
+      "old_y": 122.753,
       "old_rotation": 0,
       "tier": 3,
       "note": "near U5 VSYS, 2.5mm"
@@ -159,33 +148,33 @@
       "x": 87.397,
       "y": 124.586,
       "rotation": 0,
-      "old_x": 83.554,
-      "old_y": 126.054,
+      "old_x": 87.397,
+      "old_y": 124.586,
       "old_rotation": 0,
       "tier": 3,
       "note": "near U5 VSYS, 3.5mm"
     },
     {
       "ref": "C33",
-      "x": 68.892,
-      "y": 131.322,
+      "x": 67.325,
+      "y": 130.253,
       "rotation": 90,
       "old_x": 68.892,
       "old_y": 131.322,
       "old_rotation": 90,
       "tier": 3,
-      "note": "near U6 BOOST_VCC, 7.0mm"
+      "note": "near U6 BOOST_VCC, 8.5mm"
     },
     {
       "ref": "C37",
-      "x": 70.773,
-      "y": 128.776,
+      "x": 72.472,
+      "y": 129.716,
       "rotation": 180,
       "old_x": 70.773,
       "old_y": 128.776,
       "old_rotation": 180,
       "tier": 3,
-      "note": "near U6 BOOST_SS, 5.0mm"
+      "note": "near U6 BOOST_SS, 4.5mm"
     },
     {
       "ref": "C38",
@@ -214,8 +203,8 @@
       "x": 77.246,
       "y": 111.097,
       "rotation": 0,
-      "old_x": 82.407,
-      "old_y": 110.859,
+      "old_x": 77.246,
+      "old_y": 111.097,
       "old_rotation": 0,
       "tier": 3,
       "note": "near J7 VBUS_RAW, 6.0mm"
@@ -225,8 +214,8 @@
       "x": 74.702,
       "y": 114.273,
       "rotation": 0,
-      "old_x": 71.854,
-      "old_y": 112.294,
+      "old_x": 74.702,
+      "old_y": 114.273,
       "old_rotation": 0,
       "tier": 3,
       "note": "near J8 BAT_RAW, 6.0mm"
@@ -236,8 +225,8 @@
       "x": 86.894,
       "y": 109.146,
       "rotation": -90,
-      "old_x": 78.738,
-      "old_y": 111.822,
+      "old_x": 86.894,
+      "old_y": 109.146,
       "old_rotation": -90,
       "tier": 3,
       "note": "near J7 CC1, 5.0mm"
@@ -247,8 +236,8 @@
       "x": 74.448,
       "y": 108.136,
       "rotation": -90,
-      "old_x": 76.883,
-      "old_y": 111.487,
+      "old_x": 74.448,
+      "old_y": 108.136,
       "old_rotation": -90,
       "tier": 3,
       "note": "near J7 CC2, 4.5mm"
@@ -258,66 +247,66 @@
       "x": 83.379,
       "y": 126.771,
       "rotation": -90,
-      "old_x": 80.963,
-      "old_y": 127.147,
+      "old_x": 83.379,
+      "old_y": 126.771,
       "old_rotation": -90,
       "tier": 3,
       "note": "near U5 BQ_ILIM, 2.5mm"
     },
     {
       "ref": "R39",
-      "x": 66.664,
-      "y": 130.347,
+      "x": 64.987,
+      "y": 130.401,
       "rotation": 90,
       "old_x": 66.664,
       "old_y": 130.347,
       "old_rotation": 90,
       "tier": 3,
-      "note": "near U6 BOOST_FB, 6.5mm"
+      "note": "near U6 BOOST_FB, 7.0mm"
     },
     {
       "ref": "R40",
-      "x": 64.004,
-      "y": 130.378,
+      "x": 69.163,
+      "y": 127.77,
       "rotation": 90,
       "old_x": 64.004,
       "old_y": 130.378,
       "old_rotation": 90,
       "tier": 3,
-      "note": "near U6 BOOST_FB, 7.5mm"
+      "note": "near U6 BOOST_FB, 9.0mm"
     },
     {
       "ref": "R41",
-      "x": 72.368,
-      "y": 139.544,
+      "x": 73.369,
+      "y": 127.886,
       "rotation": 0,
       "old_x": 72.368,
       "old_y": 139.544,
       "old_rotation": 0,
       "tier": 3,
-      "note": "near U6 BOOST_FSW, 2.5mm"
+      "note": "near U6 BOOST_FSW, 9.5mm"
     },
     {
       "ref": "R42",
-      "x": 75.648,
-      "y": 140.172,
+      "x": 64.462,
+      "y": 127.828,
       "rotation": 0,
       "old_x": 75.648,
       "old_y": 140.172,
       "old_rotation": 0,
       "tier": 3,
-      "note": "near U6 BOOST_ILIM, 8.0mm"
+      "note": "near U6 BOOST_ILIM, 10.5mm"
     },
     {
       "ref": "R43",
-      "x": 76.487,
-      "y": 132.854,
+      "x": 67.289,
+      "y": 126.226,
       "rotation": 90,
       "old_x": 76.487,
       "old_y": 132.854,
       "old_rotation": 90,
       "tier": 3,
-      "note": "near U6 BOOST_COMP, 9.5mm"
+      "note": "near U6 BOOST_COMP, 11.0mm"
     },
     {
       "ref": "U7",
@@ -335,7 +324,7 @@
       "x": 92.67,
       "y": 106.17,
       "rotation": 0,
-      "old_x": 90.67,
+      "old_x": 92.67,
       "old_y": 106.17,
       "old_rotation": 0,
       "tier": 4,
@@ -346,8 +335,8 @@
       "x": 94.29,
       "y": 122.25,
       "rotation": 0,
-      "old_x": 91.539,
-      "old_y": 116.296,
+      "old_x": 94.29,
+      "old_y": 122.25,
       "old_rotation": 0,
       "tier": 4,
       "note": "near U5 VSYS, 9.5mm"
@@ -357,30 +346,30 @@
       "x": 68.745,
       "y": 109.593,
       "rotation": 90,
-      "old_x": 71.621,
-      "old_y": 105.606,
+      "old_x": 68.745,
+      "old_y": 109.593,
       "old_rotation": 90,
       "tier": 4,
       "note": "near J8 BAT_RAW, 8.5mm"
     },
     {
       "ref": "C40",
-      "x": 76.289,
-      "y": 129.22,
+      "x": 76.632,
+      "y": 127.523,
       "rotation": 90,
       "old_x": 76.289,
       "old_y": 129.22,
       "old_rotation": 90,
       "tier": 4,
-      "note": "near R44 VSYS, 3.0mm"
+      "note": "near R44 VSYS, 4.0mm"
     },
     {
       "ref": "R33",
       "x": 86.159,
       "y": 126.471,
       "rotation": 0,
-      "old_x": 87.596,
-      "old_y": 126.768,
+      "old_x": 86.159,
+      "old_y": 126.471,
       "old_rotation": 0,
       "tier": 4,
       "note": "near U5 VBAT, 3.5mm"
@@ -390,8 +379,8 @@
       "x": 74.472,
       "y": 117.496,
       "rotation": 0,
-      "old_x": 74.247,
-      "old_y": 116.514,
+      "old_x": 74.472,
+      "old_y": 117.496,
       "old_rotation": 0,
       "tier": 4,
       "note": "near J8 BAT_RAW, 4.5mm"
@@ -401,8 +390,8 @@
       "x": 81.373,
       "y": 126.72,
       "rotation": -90,
-      "old_x": 78.948,
-      "old_y": 126.013,
+      "old_x": 81.373,
+      "old_y": 126.72,
       "old_rotation": -90,
       "tier": 4,
       "note": "near U5 OTG_BIAS, 2.5mm"
@@ -412,49 +401,49 @@
       "x": 87.504,
       "y": 128.32,
       "rotation": 0,
-      "old_x": 89.323,
-      "old_y": 128.536,
+      "old_x": 87.504,
+      "old_y": 128.32,
       "old_rotation": 0,
       "tier": 4,
       "note": "near U5 BQ_TS, 5.5mm"
     },
     {
       "ref": "R37",
-      "x": 78.705,
-      "y": 126.491,
-      "rotation": 0,
-      "old_x": 90.732,
-      "old_y": 124.805,
-      "old_rotation": 0,
-      "tier": 4,
-      "note": "near U5 BQ_TS, 5.5mm"
-    },
-    {
-      "ref": "R38",
-      "x": 75.631,
-      "y": 125.547,
-      "rotation": -90,
-      "old_x": 76.729,
-      "old_y": 125.797,
-      "old_rotation": -90,
-      "tier": 4,
-      "note": "near U5 CHRG_INT, 6.0mm"
-    },
-    {
-      "ref": "TH1",
       "x": 90.989,
       "y": 127.706,
       "rotation": 0,
-      "old_x": 91.1,
-      "old_y": 122.806,
+      "old_x": 78.705,
+      "old_y": 126.491,
       "old_rotation": 0,
       "tier": 4,
       "note": "near U5 BQ_TS, 8.0mm"
     },
     {
+      "ref": "R38",
+      "x": 79.014,
+      "y": 125.98,
+      "rotation": -90,
+      "old_x": 75.631,
+      "old_y": 125.547,
+      "old_rotation": -90,
+      "tier": 4,
+      "note": "near U5 CHRG_INT, 3.0mm"
+    },
+    {
+      "ref": "TH1",
+      "x": 89.797,
+      "y": 117.634,
+      "rotation": 0,
+      "old_x": 90.989,
+      "old_y": 127.706,
+      "old_rotation": 0,
+      "tier": 4,
+      "note": "near U5 BQ_TS, 9.0mm"
+    },
+    {
       "ref": "TP1",
-      "x": 64.149,
-      "y": 127.33,
+      "x": 64.263,
+      "y": 125.261,
       "rotation": 0,
       "old_x": 64.149,
       "old_y": 127.33,
@@ -486,8 +475,8 @@
     },
     {
       "ref": "TP4",
-      "x": 79.433,
-      "y": 139.75,
+      "x": 85.5,
+      "y": 139.5,
       "rotation": 0,
       "old_x": 79.433,
       "old_y": 139.75,
@@ -497,14 +486,15 @@
     }
   ],
   "warnings": [
-    "L2: relaxed to 6mm / full board",
     "C41: relaxed to 10mm / full board",
     "F2: no pads matching ['VBUS_RAW'] on J7, using center",
+    "R42: relaxed to 20mm / full board",
+    "R43: relaxed to 20mm / full board",
     "C22: no pads matching ['VBUS_RAW'] on J7, using center"
   ],
   "summary": {
-    "placed": 45,
+    "placed": 44,
     "failed": 0,
-    "relaxed": 2
+    "relaxed": 3
   }
 }

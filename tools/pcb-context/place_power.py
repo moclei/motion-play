@@ -32,7 +32,7 @@ from typing import Any, Dict, List, Optional, Tuple
 # Configuration
 # ---------------------------------------------------------------------------
 
-ANCHOR_REFS = frozenset({"U5", "U6", "J7", "J8", "L1", "R44"})
+ANCHOR_REFS = frozenset({"U5", "U6", "J7", "J8", "L1", "L2", "R44"})
 
 BOARD_MIN_X, BOARD_MIN_Y = 62.6, 101.0
 BOARD_MAX_X, BOARD_MAX_Y = 164.0, 141.0
@@ -43,7 +43,6 @@ CLEARANCE = 0.3  # mm minimum gap between component bboxes
 # target_nets are spec.json net names used to locate the specific anchor pad(s)
 TIER_MAP: Dict[str, Tuple[int, float, str, List[str]]] = {
     # Tier 1 — Critical: switching loop area minimization
-    "L2":  (1, 3.0, "U6", ["BOOST_SW"]),
     "C23": (1, 3.0, "U5", ["BQ_BTST"]),
     "C32": (1, 3.0, "U6", ["BOOST_BOOT"]),
 

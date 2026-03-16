@@ -114,6 +114,26 @@ def _outline_from_segments(items) -> Dict[str, Any]:
 
 _BBOX_MIN_DIMENSION_MM = 1.0
 
+_INDUCTOR_DIM_RE = None  # lazy-compiled regex
+
+
+def _parse_inductor_dims_from_name(name: str) -> Optional[Tuple[float, float]]:
+    """Parse physical body dimensions from an inductor footprint name.
+
+    Matches patterns like 'IND-SMD_L7.0-W6.6' → (7.0, 6.6).
+    L = body length (along pad axis), W = body width (perpendicular).
+    Returns (length, width) or None.
+    """
+    import re
+    global _INDUCTOR_DIM_RE
+    if _INDUCTOR_DIM_RE is None:
+        _INDUCTOR_DIM_RE = re.compile(r'L(\d+(?:\.\d+)?)-W(\d+(?:\.\d+)?)')
+
+    m = _INDUCTOR_DIM_RE.search(name)
+    if m is None:
+        return None
+    return (float(m.group(1)), float(m.group(2)))
+
 
 def compute_footprint_bbox(fp) -> Optional[Dict[str, float]]:
     """Compute a footprint's bounding box using courtyard → fab → pad fallback.
@@ -124,6 +144,11 @@ def compute_footprint_bbox(fp) -> Optional[Dict[str, float]]:
     easyeda2kicad-imported footprints often have tiny courtyard layers
     (e.g. 0.06×0.06mm). If either dimension is below the sanity threshold,
     discard the layer-based bbox and fall through to pad-based calculation.
+
+    For inductors with pads only on two sides (height < width/2), the
+    pad-based bbox drastically underestimates the body height. If the
+    footprint name contains "L{X}-W{Y}" dimensions, those are merged
+    with the pad bbox using max() per axis.
     """
     for layer_pattern in ("CrtYd", "Fab"):
         bbox = _bbox_from_layer(fp.graphicItems, layer_pattern)
@@ -131,7 +156,19 @@ def compute_footprint_bbox(fp) -> Optional[Dict[str, float]]:
             if bbox["width"] >= _BBOX_MIN_DIMENSION_MM and bbox["height"] >= _BBOX_MIN_DIMENSION_MM:
                 return bbox
 
-    return _bbox_from_pads(fp.pads)
+    bbox = _bbox_from_pads(fp.pads)
+    if bbox is None:
+        return None
+
+    if bbox["height"] < bbox["width"] / 2:
+        fp_name = extract_footprint_name(fp)
+        dims = _parse_inductor_dims_from_name(fp_name)
+        if dims is not None:
+            body_l, body_w = dims
+            bbox["width"] = round(max(bbox["width"], body_l), 3)
+            bbox["height"] = round(max(bbox["height"], body_w), 3)
+
+    return bbox
 
 
 def _bbox_from_layer(
