@@ -9,167 +9,10 @@
       "tca9548A_subsystem.kicad_sch": "TCA9548A_Subsystem"
     },
     "source_hash": "cd4df6380950",
-    "extracted_at": "2026-03-11T21:53:01.031634+00:00"
+    "extracted_at": "2026-03-16T21:26:26.861774+00:00"
   },
-  "description": "ESP32-S3 based sensor controller main PCB with integrated power management (USB-C input, BQ24195 battery charger, TPS61088 5V boost, INA219 power monitor), AP2112K 3.3V LDO, TCA9548A I2C multiplexer for 3 sensor modules, and WS2812B LED strip driver with level shifting",
-  "blocks": {
-    "power": {
-      "description": "3.3V LDO regulation on root sheet, fed from +5V boost output",
-      "sheet": "motion-play-main.kicad_sch",
-      "components": [
-        "U1",
-        "C1",
-        "C2",
-        "TP_5V1",
-        "TP_3V1",
-        "TP_GND1"
-      ],
-      "notes": "AP2112K 3.3V LDO fed from +5V (TPS61088 boost converter output via power management sheet). Powers sensors, I2C bus, and logic."
-    },
-    "usb_c_input": {
-      "description": "USB-C 5V power input with fuse protection and CC pull-downs for UFP sink role",
-      "sheet": "power_management.kicad_sch",
-      "components": [
-        "J7",
-        "F2",
-        "R30",
-        "R31",
-        "C20",
-        "C21",
-        "C22"
-      ],
-      "notes": "Sink-only USB-C (no PD, no data lines). 3A fuse on VBUS, 5.1k CC pull-downs. No STUSB4500 or USBLC6 for V1 simplicity."
-    },
-    "battery_mgmt": {
-      "description": "BQ24195 battery charger/power path manager with PMOS reverse polarity protection, NTC monitoring, and support passives",
-      "sheet": "power_management.kicad_sch",
-      "components": [
-        "U5",
-        "J8",
-        "Q2",
-        "L1",
-        "TH1",
-        "R32",
-        "R33",
-        "R34",
-        "R35",
-        "R36",
-        "R37",
-        "R38",
-        "C23",
-        "C24",
-        "C25",
-        "C26",
-        "C27",
-        "C28",
-        "C29",
-        "C30"
-      ],
-      "notes": "BQ24195 at I2C 0x6B. ILIM=330R (~1.5A ceiling), OTG pulled HIGH for 500mA SDP boot. CE tied LOW (charging controlled via I2C). PMOS Q2 provides battery reverse polarity protection. NTC biased from REGN via R36/R37 divider."
-    },
-    "boost_5v": {
-      "description": "TPS61088 synchronous boost converter, VSYS (3.0-4.5V) to +5V for entire system",
-      "sheet": "power_management.kicad_sch",
-      "components": [
-        "U6",
-        "L2",
-        "R39",
-        "R40",
-        "R41",
-        "R42",
-        "R43",
-        "C31",
-        "C32",
-        "C33",
-        "C34",
-        "C35",
-        "C36",
-        "C37",
-        "C38",
-        "C39",
-        "C41"
-      ],
-      "notes": "TPS61088 at 2.2MHz, 5.07V output via 180k/56k feedback divider. PFM mode for battery efficiency. Compensation: 22k/4.7nF/100pF (bench-tunable). 66uF output capacitance (3x 22uF)."
-    },
-    "power_monitor": {
-      "description": "INA219 I2C power monitor on VSYS rail with 10mR shunt",
-      "sheet": "power_management.kicad_sch",
-      "components": [
-        "U7",
-        "R44",
-        "C40"
-      ],
-      "notes": "INA219 at I2C 0x40. PGA /2 mode (+/-80mV), 1mA/LSB resolution, 8A max measurable current. Shunt between VSYS and VSYS_SENSE (boost converter input). Kelvin connection recommended for R44."
-    },
-    "power_test_points": {
-      "description": "Test points on power management sheet for VSYS, VBAT, Protected_VBUS, and power ground",
-      "sheet": "power_management.kicad_sch",
-      "components": [
-        "TP1",
-        "TP2",
-        "TP3",
-        "TP4"
-      ],
-      "notes": "1.5mm pads for probing power rails during bench testing. Root sheet has separate test points for +5V, +3.3V, and GND."
-    },
-    "mcu": {
-      "description": "Main system controller (ESP32-S3) and GPIO breakout test points",
-      "sheet": "motion-play-main.kicad_sch",
-      "components": [
-        "U2",
-        "TPIO1",
-        "TPIO2",
-        "TPIO3",
-        "TPIO10",
-        "TPIO11",
-        "TPIO12",
-        "TPIO13",
-        "TPIO16",
-        "TPIO17",
-        "TPIO18",
-        "TPIO21",
-        "TPIO43",
-        "TPIO44"
-      ],
-      "notes": "T-Display-S3 dev board used temporarily. Long-term plan is bare ESP32-S3 integrated into main PCB. GPIO 21 is BQ24195 CHRG_INT. GPIO 1-3, 17, 18 are unused breakouts for future expansion."
-    },
-    "i2c_mux": {
-      "description": "TCA9548A I2C multiplexer subsystem with pull-ups and decoupling",
-      "sheet": "tca9548A_subsystem.kicad_sch",
-      "components": [
-        "U4",
-        "R6",
-        "R28",
-        "R29",
-        "C9",
-        "C10"
-      ],
-      "notes": "Routes single upstream I2C bus to 3 downstream channels for sensor boards. Address 0x70 (all address pins grounded). R28/R29 are upstream pull-ups; downstream pull-ups are on sensor boards."
-    },
-    "sensor_connectors": {
-      "description": "JST-SH connectors carrying I2C and interrupt signals to three sensor modules",
-      "sheet": "motion-play-main.kicad_sch",
-      "components": [
-        "J4",
-        "J5",
-        "J6"
-      ],
-      "notes": "Each 5-pin connector provides 3.3V power, GND, I2C SDA/SCL (from TCA9548A channel), and interrupt. Wired to sensor rigid base PCBs which have PCA9546A local muxes."
-    },
-    "led_controller": {
-      "description": "LED strip driver with level shifting, power protection, and current sensing",
-      "sheet": "led_controller.kicad_sch",
-      "components": [
-        "IC1",
-        "F1",
-        "R27",
-        "C7",
-        "C8",
-        "J3"
-      ],
-      "notes": "Drives 72-LED WS2812B strip. SN74AHCT125 shifts 3.3V data to 5V. Power path: +5V -> F1 (3A fuse) -> R27 (0.1 ohm sense) -> +5V_TO_LEDS. J3 is on root sheet but functionally part of this block."
-    }
-  },
+  "description": "",
+  "blocks": {},
   "components": {
     "C1": {
       "part": "C",
@@ -300,7 +143,7 @@
       "part": "C_Polarized_Small_US",
       "value": "47\u00b5F 16V",
       "footprint": "Capacitor_SMD:C_Elec_6.3x5.4",
-      "lcsc": "C2836440",
+      "lcsc": "C7469958",
       "sheet": "power_management.kicad_sch",
       "block": "usb_c_input",
       "function": "Bulk decoupling on Protected_VBUS rail",
@@ -500,7 +343,7 @@
       "part": "C_Polarized_Small_US",
       "value": "47\u00b5F 10V",
       "footprint": "Capacitor_SMD:C_Elec_6.3x5.4",
-      "lcsc": "C2836440",
+      "lcsc": "C7469958",
       "sheet": "power_management.kicad_sch",
       "block": "battery_mgmt",
       "function": "Battery terminal bulk capacitor",
@@ -600,7 +443,7 @@
       "part": "C",
       "value": "22\u00b5F",
       "footprint": "Capacitor_SMD:C_0805_2012Metric",
-      "lcsc": "C59461",
+      "lcsc": "C109314",
       "sheet": "power_management.kicad_sch",
       "block": "boost_5v",
       "function": "Boost output capacitor",
@@ -625,7 +468,7 @@
       "part": "C",
       "value": "22\u00b5F",
       "footprint": "Capacitor_SMD:C_0805_2012Metric",
-      "lcsc": "C59461",
+      "lcsc": "C109314",
       "sheet": "power_management.kicad_sch",
       "block": "boost_5v",
       "function": "Boost output capacitor",
@@ -650,7 +493,7 @@
       "part": "C",
       "value": "22\u00b5F",
       "footprint": "Capacitor_SMD:C_0805_2012Metric",
-      "lcsc": "C59461",
+      "lcsc": "C109314",
       "sheet": "power_management.kicad_sch",
       "block": "boost_5v",
       "function": "Boost output capacitor",
@@ -1029,12 +872,6 @@
           "name": "Pin_4",
           "type": "passive",
           "net": "/TCA9548A_Subsystem/CH0_SCL"
-        },
-        {
-          "number": "5",
-          "name": "Pin_5",
-          "type": "passive",
-          "net": "/INT1"
         }
       ]
     },
@@ -1072,12 +909,6 @@
           "name": "Pin_4",
           "type": "passive",
           "net": "/TCA9548A_Subsystem/CH1_SCL"
-        },
-        {
-          "number": "5",
-          "name": "Pin_5",
-          "type": "passive",
-          "net": "/INT2"
         }
       ]
     },
@@ -1115,12 +946,6 @@
           "name": "Pin_4",
           "type": "passive",
           "net": "/TCA9548A_Subsystem/CH2_SCL"
-        },
-        {
-          "number": "5",
-          "name": "Pin_5",
-          "type": "passive",
-          "net": "/INT3"
         }
       ]
     },
@@ -1142,19 +967,13 @@
           "net": "GND"
         },
         {
-          "number": "A1",
+          "number": "A1B12",
           "name": "GND",
           "type": "passive",
           "net": "GND"
         },
         {
-          "number": "A12",
-          "name": "GND",
-          "type": "passive",
-          "net": "GND"
-        },
-        {
-          "number": "A4",
+          "number": "A4B9",
           "name": "VBUS",
           "type": "power_in",
           "net": "/Power Management/VBUS_RAW"
@@ -1166,25 +985,13 @@
           "net": "/Power Management/CC1"
         },
         {
-          "number": "A9",
-          "name": "VBUS",
-          "type": "power_in",
-          "net": "/Power Management/VBUS_RAW"
-        },
-        {
-          "number": "B1",
+          "number": "B1A12",
           "name": "GND",
           "type": "passive",
           "net": "GND"
         },
         {
-          "number": "B12",
-          "name": "GND",
-          "type": "passive",
-          "net": "GND"
-        },
-        {
-          "number": "B4",
+          "number": "B4A9",
           "name": "VBUS",
           "type": "power_in",
           "net": "/Power Management/VBUS_RAW"
@@ -1194,12 +1001,6 @@
           "name": "CC2",
           "type": "input",
           "net": "/Power Management/CC2"
-        },
-        {
-          "number": "B9",
-          "name": "VBUS",
-          "type": "power_in",
-          "net": "/Power Management/VBUS_RAW"
         }
       ]
     },
@@ -2804,304 +2605,304 @@
   },
   "nets": {
     "+3.3V": {
-      "type": "power",
+      "type": "",
       "protocol": "",
       "direction": "",
-      "description": "Regulated 3.3V rail from AP2112K LDO, powers sensors and I2C bus"
+      "description": ""
     },
     "+5V": {
-      "type": "power",
+      "type": "",
       "protocol": "",
       "direction": "",
-      "description": "Main 5V rail from TPS61088 boost converter (power management sheet), powers MCU, AP2112K LDO input, and LED controller"
+      "description": ""
     },
     "/I2C_SCL": {
-      "type": "signal",
-      "protocol": "I2C",
-      "direction": "bidirectional",
-      "description": "Upstream I2C clock line between MCU (GPIO 44) and TCA9548A"
+      "type": "",
+      "protocol": "",
+      "direction": "",
+      "description": ""
     },
     "/I2C_SDA": {
-      "type": "signal",
-      "protocol": "I2C",
-      "direction": "bidirectional",
-      "description": "Upstream I2C data line between MCU (GPIO 43) and TCA9548A"
+      "type": "",
+      "protocol": "",
+      "direction": "",
+      "description": ""
     },
     "/INT1": {
-      "type": "signal",
+      "type": "",
       "protocol": "",
-      "direction": "input",
-      "description": "Interrupt line from sensor module 1 (M1) to MCU GPIO 13"
+      "direction": "",
+      "description": ""
     },
     "/INT2": {
-      "type": "signal",
+      "type": "",
       "protocol": "",
-      "direction": "input",
-      "description": "Interrupt line from sensor module 2 (M2) to MCU GPIO 12"
+      "direction": "",
+      "description": ""
     },
     "/INT3": {
-      "type": "signal",
+      "type": "",
       "protocol": "",
-      "direction": "input",
-      "description": "Interrupt line from sensor module 3 (M3) to MCU GPIO 11"
+      "direction": "",
+      "description": ""
     },
     "/LED Controller/+5V_TO_LEDS": {
-      "type": "power",
+      "type": "",
       "protocol": "",
       "direction": "",
-      "description": "Fused and sense-resistored +5V for LED strip, from F1->R27 chain"
+      "description": ""
     },
     "/LED Controller/DATA_IN": {
-      "type": "signal",
-      "protocol": "WS2812B",
-      "direction": "output",
-      "description": "LED data signal at 3.3V logic from MCU GPIO 16 to level shifter input"
+      "type": "",
+      "protocol": "",
+      "direction": "",
+      "description": ""
     },
     "/LED Controller/DATA_TO_LEDS": {
-      "type": "signal",
-      "protocol": "WS2812B",
-      "direction": "output",
-      "description": "LED data signal at 5V logic from level shifter output to LED strip"
+      "type": "",
+      "protocol": "",
+      "direction": "",
+      "description": ""
     },
     "/Power Management/BAT_RAW": {
-      "type": "power",
+      "type": "",
       "protocol": "",
       "direction": "",
-      "description": "Battery+ before PMOS protection, from J8 connector"
+      "description": ""
     },
     "/Power Management/BOOST_BOOT": {
-      "type": "internal",
+      "type": "",
       "protocol": "",
       "direction": "",
-      "description": "TPS61088 BOOT pin, C32 to BOOST_SW"
+      "description": ""
     },
     "/Power Management/BOOST_COMP": {
-      "type": "internal",
+      "type": "",
       "protocol": "",
       "direction": "",
-      "description": "TPS61088 compensation pin, R43 and C39"
+      "description": ""
     },
     "/Power Management/BOOST_FB": {
-      "type": "internal",
+      "type": "",
       "protocol": "",
       "direction": "",
-      "description": "TPS61088 feedback divider midpoint, R39/R40 (180k/56k = 5.07V)"
+      "description": ""
     },
     "/Power Management/BOOST_FSW": {
-      "type": "internal",
+      "type": "",
       "protocol": "",
       "direction": "",
-      "description": "TPS61088 FSW pin, R41 (100k) to BOOST_SW sets ~2.2MHz"
+      "description": ""
     },
     "/Power Management/BOOST_ILIM": {
-      "type": "internal",
+      "type": "",
       "protocol": "",
       "direction": "",
-      "description": "TPS61088 ILIM pin, R42 (100k) to GND sets ~11.9A peak"
+      "description": ""
     },
     "/Power Management/BOOST_SS": {
-      "type": "internal",
+      "type": "",
       "protocol": "",
       "direction": "",
-      "description": "TPS61088 soft-start pin, C37 (47nF) to GND (~11ms ramp)"
+      "description": ""
     },
     "/Power Management/BOOST_SW": {
-      "type": "internal",
+      "type": "",
       "protocol": "",
       "direction": "",
-      "description": "TPS61088 switching node, L2/C32/R41 connected"
+      "description": ""
     },
     "/Power Management/BOOST_VCC": {
-      "type": "internal",
+      "type": "",
       "protocol": "",
       "direction": "",
-      "description": "TPS61088 internal LDO output, C33 (2.2uF) bypass"
+      "description": ""
     },
     "/Power Management/BQ_BTST": {
-      "type": "internal",
+      "type": "",
       "protocol": "",
       "direction": "",
-      "description": "BQ24195 bootstrap pin, C23 (47nF) to BQ_SW"
+      "description": ""
     },
     "/Power Management/BQ_ILIM": {
-      "type": "internal",
+      "type": "",
       "protocol": "",
       "direction": "",
-      "description": "BQ24195 ILIM pin, R32 (330R) to GND sets ~1.5A ceiling"
+      "description": ""
     },
     "/Power Management/BQ_PMID": {
-      "type": "power",
+      "type": "",
       "protocol": "",
       "direction": "",
-      "description": "BQ24195 PMID (internal power mux output), C25+C26 = 20uF"
+      "description": ""
     },
     "/Power Management/BQ_REGN": {
-      "type": "power",
+      "type": "",
       "protocol": "",
       "direction": "",
-      "description": "BQ24195 internal 5V LDO output, C24 bypass, R36 NTC bias source"
+      "description": ""
     },
     "/Power Management/BQ_SW": {
-      "type": "internal",
+      "type": "",
       "protocol": "",
       "direction": "",
-      "description": "BQ24195 switching node, L1 and C23 connected"
+      "description": ""
     },
     "/Power Management/BQ_TS": {
-      "type": "internal",
+      "type": "",
       "protocol": "",
       "direction": "",
-      "description": "BQ24195 TS thermistor node, TH1/R36/R37 divider from REGN"
+      "description": ""
     },
     "/Power Management/CC1": {
-      "type": "signal",
-      "protocol": "USB-C",
+      "type": "",
+      "protocol": "",
       "direction": "",
-      "description": "USB-C CC1 pin to R30 (5.1k) pull-down for UFP sink"
+      "description": ""
     },
     "/Power Management/CC2": {
-      "type": "signal",
-      "protocol": "USB-C",
+      "type": "",
+      "protocol": "",
       "direction": "",
-      "description": "USB-C CC2 pin to R31 (5.1k) pull-down for UFP sink"
+      "description": ""
     },
     "/Power Management/CHRG_INT": {
-      "type": "signal",
+      "type": "",
       "protocol": "",
-      "direction": "output",
-      "description": "BQ24195 INT (active-low, open-drain), R38 pull-up to +3.3V, routed to GPIO 21"
+      "direction": "",
+      "description": ""
     },
     "/Power Management/COMP_MID": {
-      "type": "internal",
+      "type": "",
       "protocol": "",
       "direction": "",
-      "description": "R43-C38 series junction in TPS61088 compensation network"
+      "description": ""
     },
     "/Power Management/OTG_BIAS": {
-      "type": "internal",
+      "type": "",
       "protocol": "",
       "direction": "",
-      "description": "BQ24195 OTG pin, R35 (10k) pull-up to +3.3V for 500mA SDP boot"
+      "description": ""
     },
     "/Power Management/PMOS_GATE": {
-      "type": "internal",
+      "type": "",
       "protocol": "",
       "direction": "",
-      "description": "Q2 gate, R33 (100k) to VBAT / R34 (100k) to BAT_RAW divider"
+      "description": ""
     },
     "/Power Management/Protected_VBUS": {
-      "type": "power",
+      "type": "",
       "protocol": "",
       "direction": "",
-      "description": "VBUS after 3A fuse F2, BQ24195 input, C20/C21/C22 decoupled"
+      "description": ""
     },
     "/Power Management/VBAT": {
-      "type": "power",
+      "type": "",
       "protocol": "",
       "direction": "",
-      "description": "Battery+ after PMOS Q2, BQ24195 BAT pins"
+      "description": ""
     },
     "/Power Management/VBUS_RAW": {
-      "type": "power",
+      "type": "",
       "protocol": "",
       "direction": "",
-      "description": "USB-C VBUS before fuse F2"
+      "description": ""
     },
     "/Power Management/VSYS": {
-      "type": "power",
+      "type": "",
       "protocol": "",
       "direction": "",
-      "description": "BQ24195 system output (3.0-4.5V), C27/C28/C29 decoupled, INA219 IN+ side"
+      "description": ""
     },
     "/Power Management/VSYS_SENSE": {
-      "type": "power",
+      "type": "",
       "protocol": "",
       "direction": "",
-      "description": "VSYS after INA219 shunt R44, TPS61088 VIN/EN input, C31/C41 decoupled"
+      "description": ""
     },
     "/TCA9548A_Subsystem/CH0_SCL": {
-      "type": "signal",
-      "protocol": "I2C",
-      "direction": "bidirectional",
-      "description": "TCA9548A channel 0 SCL to sensor module 1 (J4)"
+      "type": "",
+      "protocol": "",
+      "direction": "",
+      "description": ""
     },
     "/TCA9548A_Subsystem/CH0_SDA": {
-      "type": "signal",
-      "protocol": "I2C",
-      "direction": "bidirectional",
-      "description": "TCA9548A channel 0 SDA to sensor module 1 (J4)"
+      "type": "",
+      "protocol": "",
+      "direction": "",
+      "description": ""
     },
     "/TCA9548A_Subsystem/CH1_SCL": {
-      "type": "signal",
-      "protocol": "I2C",
-      "direction": "bidirectional",
-      "description": "TCA9548A channel 1 SCL to sensor module 2 (J5)"
+      "type": "",
+      "protocol": "",
+      "direction": "",
+      "description": ""
     },
     "/TCA9548A_Subsystem/CH1_SDA": {
-      "type": "signal",
-      "protocol": "I2C",
-      "direction": "bidirectional",
-      "description": "TCA9548A channel 1 SDA to sensor module 2 (J5)"
+      "type": "",
+      "protocol": "",
+      "direction": "",
+      "description": ""
     },
     "/TCA9548A_Subsystem/CH2_SCL": {
-      "type": "signal",
-      "protocol": "I2C",
-      "direction": "bidirectional",
-      "description": "TCA9548A channel 2 SCL to sensor module 3 (J6)"
+      "type": "",
+      "protocol": "",
+      "direction": "",
+      "description": ""
     },
     "/TCA9548A_Subsystem/CH2_SDA": {
-      "type": "signal",
-      "protocol": "I2C",
-      "direction": "bidirectional",
-      "description": "TCA9548A channel 2 SDA to sensor module 3 (J6)"
+      "type": "",
+      "protocol": "",
+      "direction": "",
+      "description": ""
     },
     "/TCA9548A_Subsystem/TCA_RESET": {
-      "type": "signal",
+      "type": "",
       "protocol": "",
-      "direction": "output",
-      "description": "Active-low reset for TCA9548A, driven by MCU GPIO 10, held high by R6 pull-up"
+      "direction": "",
+      "description": ""
     },
     "GND": {
-      "type": "power",
+      "type": "",
       "protocol": "",
       "direction": "",
-      "description": "System ground reference"
+      "description": ""
     },
     "Net-(C7-Pad2)": {
-      "type": "power",
+      "type": "",
       "protocol": "",
       "direction": "",
-      "description": "Intermediate node in LED power path between fuse F1 and sense resistor R27"
+      "description": ""
     },
     "Net-(U2-1)": {
-      "type": "signal",
+      "type": "",
       "protocol": "",
       "direction": "",
-      "description": "MCU GPIO 1 breakout (unused, test point only)"
+      "description": ""
     },
     "Net-(U2-17)": {
-      "type": "signal",
+      "type": "",
       "protocol": "",
       "direction": "",
-      "description": "MCU GPIO 17 breakout (unused, test point only)"
+      "description": ""
     },
     "Net-(U2-18)": {
-      "type": "signal",
+      "type": "",
       "protocol": "",
       "direction": "",
-      "description": "MCU GPIO 18 breakout (unused, test point only)"
+      "description": ""
     },
     "Net-(U2-2)": {
-      "type": "signal",
+      "type": "",
       "protocol": "",
       "direction": "",
-      "description": "MCU GPIO 2 breakout (unused, test point only)"
+      "description": ""
     },
     "Net-(U2-3)": {
-      "type": "signal",
+      "type": "",
       "protocol": "",
       "direction": "",
-      "description": "MCU GPIO 3 breakout (unused, test point only)"
+      "description": ""
     }
   },
   "sheet_interfaces": {

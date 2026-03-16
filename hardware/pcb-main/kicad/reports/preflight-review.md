@@ -1,8 +1,8 @@
 # JLCPCB Manufacturing Pre-Flight Review
 
-**Board:** motion-play-main (2-layer, KiCad 9)
+**Board:** motion-play-main (4-layer, KiCad 9)
 **Date:** 2026-03-16
-**Branch:** `power-switch`
+**Branch:** `manufacturing-preflight`
 **Reviewer:** AI (Cursor agent session)
 
 ---
@@ -13,9 +13,9 @@
 |------|--------|---------|
 | ERC | PASS (warnings only) | 0 errors, 30 benign warnings |
 | DRC | CONDITIONAL PASS | 0 unconnected nets, 33 violations — all within JLCPCB manufacturing capability |
-| BOM | PASS (fixed) | J4-J6 LCSC# corrected, R27 and Q2 substituted |
+| BOM | PASS (fixed) | J4-J6 corrected, R27/Q2 substituted, 3 assembly-OOS parts substituted |
 | CPL | PASS | 66 components, all top layer, counts match BOM |
-| Stock | PASS (1 advisory) | R27/Q2 substituted; U5 BQ24195 low stock (22 units) — order promptly |
+| Stock | PASS (1 advisory) | All substitutions done in schematics; U5 BQ24195 low stock (22 units) |
 
 ---
 
@@ -69,7 +69,7 @@ All in the power management section around U6/U5. Sorted by severity:
 | 0.196mm | 0.200mm | BOOST_SS track ↔ C31 pad | Low |
 | *+6 more* | | *Similar tight clearances around U6/U5* | Low |
 
-**Assessment:** All 16 violations are between 0.150mm and 0.196mm against a 0.200mm design rule. JLCPCB's standard 2-layer manufacturing capability is 0.127mm (5mil) clearance minimum. Every violation exceeds this threshold, so **the board will manufacture without issue**. The violations reflect tight routing in the power section (expected for a dense boost converter layout) but do not pose a manufacturing risk.
+**Assessment:** All 16 violations are between 0.150mm and 0.196mm against a 0.200mm design rule. JLCPCB's standard 4-layer manufacturing capability is 0.127mm (5mil) clearance minimum. Every violation exceeds this threshold, so **the board will manufacture without issue**. The violations reflect tight routing in the power section (expected for a dense boost converter layout) but do not pose a manufacturing risk.
 
 **Recommendation:** Accept as-is for this prototype run. Consider widening clearances in a future revision if reworking the U6 area.
 
@@ -122,27 +122,39 @@ Updated in: schematic, PCB, circuit-context.json, BOM.
 | Library type | Extended ($3 fee) | **Basic** (no fee — saves $3) |
 | Change impact | None — same SOT-23 footprint, same pinout (DGS), compatible specs. | |
 
-### 3d. WARNING — Package Size Mismatch
+#### JLCPCB Assembly Stock Substitutions
 
-| Designators | BOM Footprint | LCSC Part (C59461) | Concern |
-|-------------|---------------|---------------------|---------|
-| C34, C35, C36 | 0805 | 0603 (22µF 6.3V) | JLCPCB may flag DFM; 0603 part on 0805 pads will solder but is not ideal |
+During JLCPCB order checkout, three parts showed zero assembly stock despite LCSC catalog availability. These were substituted in the schematics:
 
-This has been in the design since schematic capture. The 0603 Samsung CL10A226MQ8NRNC will physically fit on 0805 pads — the solder paste stencil may over-apply but assembly will likely succeed. Consider swapping to an 0805 22µF cap (e.g., search LCSC for "0805 22uF") in a future revision.
+| Designators | Original LCSC | Problem | Final LCSC | Final Part | Type |
+|-------------|---------------|---------|------------|------------|------|
+| C7, C9, C31, C32, C40 | C14663 (100nF 0603) | Assembly OOS (temporary) | **C14663** | YAGEO CC0603KRX7R9BB104 (100nF 50V X7R 0603) — restocked | Basic |
+| C22, C30 | C2836440 (47µF elec) | Assembly OOS | **C7469958** | FOSAN FVH035ADA470M0654 (47µF 35V, 6.3×5.4mm) | Extended |
+| C34, C35, C36 | C59461 (22µF 0603) | Assembly OOS + package mismatch | **C109314** | YAGEO CC0805MKX5R6BB226 (22µF 10V X5R **0805**) | Extended |
+
+**Notes:**
+- C14663 was temporarily OOS in JLCPCB assembly but restocked by order time. Original part retained (Basic, 50V).
+- C7469958 is 35V, exact D6.3×5.4mm footprint match. Available for Economic PCBA (unlike C72521/C3344 which were Standard Only or OOS).
+- C109314 is actually 0805 package, which **resolves the 0603-in-0805 footprint mismatch** that existed with C59461.
+- C59461 was a Basic part; C109314 is Extended. C2836440 and C7469958 are both Extended (no change).
+- JLCPCB assembly stock is separate from LCSC general catalog stock. Parts may show millions in LCSC but zero in JLCPCB assembly. Always verify at checkout.
+
+### 3d. Package Size Mismatch — RESOLVED
+
+~~C34/C35/C36 had a 0603 part (C59461) on 0805 pads.~~ Resolved by substituting C109314 (YAGEO 22µF 0805), which matches the footprint exactly.
 
 ### 3e. Basic vs Extended Parts Breakdown
 
-**Basic Parts (16 unique — no per-part setup fee):**
+**Basic Parts (15 unique — no per-part setup fee):**
 
 | LCSC | Value | Package | Designators | Qty |
 |------|-------|---------|-------------|-----|
+| C14663 | 100nF | 0603 | C7, C9, C31, C32, C40 | 5 |
 | C15849 | 1µF | 0603 | C1, C20 | 2 |
 | C19702 | 10µF | 0603 | C8, C10 | 2 |
 | C23630 | 2.2µF | 0603 | C2, C33 | 2 |
 | C19666 | 4.7µF | 0603 | C21, C24 | 2 |
 | C96446 | 10µF 25V | 0603 | C25–C28 | 4 |
-| C14663 | 100nF | 0603 | C7, C9, C31, C32, C40 | 5 |
-| C59461 | 22µF | 0603* | C34–C36 | 3 |
 | C14858 | 100pF C0G | 0603 | C39 | 1 |
 | C15850 | 10µF | 0805 | C41 | 1 |
 | C25804 | 10kΩ | 0603 | R6, R35, R38 | 3 |
@@ -153,7 +165,7 @@ This has been in the design since schematic capture. The 0603 Samsung CL10A226MQ
 | C23206 | 56kΩ | 0603 | R40 | 1 |
 | C31850 | 22kΩ | 0603 | R43 | 1 |
 
-**Extended Parts (25 unique — ~$3 setup fee each = ~$75 total extended fee):**
+**Extended Parts (26 unique — ~$3 setup fee each = ~$78 total extended fee):**
 
 | LCSC | Component | Designators | Qty | Stock | Price/ea |
 |------|-----------|-------------|-----|-------|----------|
@@ -172,7 +184,8 @@ This has been in the design since schematic capture. The 0603 Samsung CL10A226MQ
 | C167218 | FXL0630-2R2-M | L2 | 1 | 97,869 | $0.10 |
 | C2903476 | 0.1Ω 3W 2512 | R27 | 1 | 94,464 | $0.09 |
 | C1322424 | 10mΩ 2512 | R44 | 1 | 4,440 | $0.08 |
-| C2836440 | 47µF SMD elec | C22, C30 | 2 | 188,192 | $0.03 |
+| C7469958 | 47µF 35V SMD elec (FOSAN) | C22, C30 | 2 | 21,021 | $0.04 |
+| C109314 | 22µF 10V X5R 0805 | C34–C36 | 3 | 83,745 | $0.04 |
 | C3342 | 220µF SMD elec | C29 | 1 | 86,763 | $0.03 |
 | C107093 | 47nF | C23, C37 | 2 | 293,008 | $0.003 |
 | C1621 | 4.7nF | C38 | 1 | 661,165 | $0.005 |
@@ -183,7 +196,7 @@ This has been in the design since schematic capture. The 0603 Samsung CL10A226MQ
 | C22827 | 180kΩ | R39 | 1 | 86,784 | $0.002 |
 | C13564 | 10kΩ NTC | TH1 | 1 | 427,342 | $0.04 |
 
-*\*C136657 replaces incorrect C160403 — see §3c*
+*\*C136657 replaces incorrect C160403 — see §3c. C7469958/C109314 replace assembly-OOS parts — see §3c.*
 
 ### 3f. Hand-Assembly Components
 
@@ -229,9 +242,17 @@ Test points (17) are correctly excluded from the CPL — they are bare copper pa
 |------|------|------------|-------|----------|--------|
 | C90862 | BQ24195RGER | U5 | **22** | LOW STOCK | Battery charger/PMIC — order promptly, no drop-in substitute |
 
+### JLCPCB Assembly Stock Substitutions
+
+| LCSC (old → new) | Part | Designators | Resolution |
+|-------------------|------|-------------|------------|
+| C14663 → **C14663** | 100nF 50V X7R 0603 | C7, C9, C31, C32, C40 | Restocked in JLCPCB assembly — original part retained |
+| C2836440 → **C7469958** | 47µF 35V electrolytic (FOSAN) | C22, C30 | Assembly OOS — same D6.3×5.4mm footprint, Economic PCBA compatible |
+| C59461 → **C109314** | 22µF 10V X5R 0805 | C34, C35, C36 | Assembly OOS + fixes 0603→0805 package mismatch |
+
 ### All Other Parts — Adequate Stock
 
-All remaining 39 unique LCSC parts have stock >700 units, most >10,000. No concerns.
+All remaining unique LCSC parts have stock >700 units, most >10,000. No concerns.
 
 ---
 
@@ -242,29 +263,24 @@ All remaining 39 unique LCSC parts have stock >700 units, most >10,000. No conce
 ~~1. J4/J5/J6 LCSC#~~ — Fixed: C160403 → C136657
 ~~2. R27 out-of-stock~~ — Substituted: C500724 → C2903476 (0.1Ω 3W 2512, 94k stock)
 ~~3. Q2 near-OOS~~ — Substituted: C3040193 → C15127 (AO3401A, 1.45M stock, Basic)
+~~4. Assembly OOS~~ — C14663 restocked, C2836440 → C7469958, C59461 → C109314
+~~5. C34-C36 package mismatch~~ — Resolved: C109314 is 0805, matches footprint
 
-### HIGH PRIORITY (act before uploading)
+### ORDER PLACED — 2026-03-16
 
-4. **Verify BQ24195 (C90862) availability**
-   - Only 22 units in stock — may sell out before order processes
-   - Consider placing order immediately, or check if JLCPCB has incoming stock
-   - No drop-in substitute exists (BQ24195 is the specific PMIC for this design)
-
-5. **Re-export BOM via Fabrication Toolkit**
-   - LCSC fields were updated in schematics and PCB, but the BOM CSV was patched manually
-   - For full consistency, re-export from KiCad after opening the project
+Order submitted to JLCPCB with Economic PCBA. Final BOM substitutions made at checkout:
+- 100nF caps: C14663 (original, restocked)
+- 47µF electrolytics: C7469958 (FOSAN, selected at checkout)
+- 22µF caps: C109314 (YAGEO 0805, resolves package mismatch)
+- Schematics updated post-order to match. Run Update PCB from Schematic + Fabrication Toolkit re-export for consistency.
 
 ### ADVISORY (can proceed but note)
 
-5. **C34/C35/C36 package mismatch** (0603 part in 0805 footprint)
-   - Will likely assemble fine, but JLCPCB DFM may flag it
-   - If flagged, approve manually or swap to 0805 22µF cap
-
-6. **DRC clearance violations**
+4. **DRC clearance violations**
    - All 16 routing violations exceed JLCPCB manufacturing minimums
    - No action needed for this prototype run
 
-7. **U2 (T-Display-S3) in CPL but not BOM-assembled**
+5. **U2 (T-Display-S3) in CPL but not BOM-assembled**
    - JLCPCB will skip it automatically — no action needed
    - Hand-solder after boards arrive
 
@@ -274,11 +290,11 @@ All remaining 39 unique LCSC parts have stock >700 units, most >10,000. No conce
 
 | Category | Unique Parts | Setup Fee | Component Cost (×5 boards) |
 |----------|-------------|-----------|---------------------------|
-| Basic parts | 17 | $0 | ~$1.50 |
-| Extended parts | 24 | ~$72 | ~$14.50 |
-| **Total** | **41** | **~$72** | **~$16.00** |
+| Basic parts | 15 | $0 | ~$1.40 |
+| Extended parts | 26 | ~$78 | ~$15.50 |
+| **Total** | **41** | **~$78** | **~$16.90** |
 
-*Extended part fee is per-unique-part, typically $3/part. Actual fee may vary. Component costs are approximate for a 5-board run. Q2 substitution (C15127 AO3401A) moved from Extended to Basic, saving ~$3.*
+*Extended part fee is per-unique-part, typically $3/part. Actual fee may vary. Component costs are approximate for a 5-board run. C14663 restored to Basic (restocked); C59461 moved to Extended (C109314). Q2 moved from Extended to Basic. Order placed 2026-03-16.*
 
 ---
 
@@ -301,7 +317,8 @@ All remaining 39 unique LCSC parts have stock >700 units, most >10,000. No conce
 | C167218 | FXL0630-2R2-M 2.2µH 10A | 97,869 | Ext | $0.10 |
 | C2903476 | 0.1Ω 3W 2512 | 94,464 | Ext | $0.09 |
 | C1322424 | 10mΩ 1W 2512 | 4,440 | Ext | $0.08 |
-| C2836440 | 47µF SMD electrolytic | 188,192 | Ext | $0.03 |
+| C7469958 | 47µF 35V SMD electrolytic (FOSAN) | 21,021 | Ext | $0.04 |
+| C109314 | 22µF 10V X5R 0805 (YAGEO) | 83,745 | Ext | $0.04 |
 | C3342 | 220µF SMD electrolytic | 86,763 | Ext | $0.03 |
 | C107093 | 47nF 0603 | 293,008 | Ext | $0.003 |
 | C1621 | 4.7nF 0603 | 661,165 | Ext | $0.005 |
@@ -316,8 +333,8 @@ All remaining 39 unique LCSC parts have stock >700 units, most >10,000. No conce
 | C23630 | 2.2µF 0603 | 5,595,177 | Basic | $0.006 |
 | C19666 | 4.7µF 0603 | 6,503,123 | Basic | $0.010 |
 | C96446 | 10µF 25V 0603 | 12,866,406 | Basic | $0.017 |
-| C14663 | 100nF 0603 | 46,340,708 | Basic | $0.003 |
-| C59461 | 22µF 0603 | 20,124,287 | Basic | $0.009 |
+| C14663 | 100nF 0603 (YAGEO) | 47,586,589 | Basic | $0.003 |
+| ~~C59461~~ | ~~22µF 0603~~ | ~~Assembly OOS~~ | ~~Basic~~ | — replaced by C109314 |
 | C14858 | 100pF C0G 0603 | 6,905,557 | Basic | $0.004 |
 | C15850 | 10µF 0805 | 5,886,252 | Basic | $0.020 |
 | C25804 | 10kΩ 0603 | 27,514,040 | Basic | $0.001 |
