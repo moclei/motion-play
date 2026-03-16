@@ -1,4 +1,4 @@
-ERC report (2026-03-11T12:14:44-0700, Encoding UTF8)
+ERC report (2026-03-16T10:20:14-0700, Encoding UTF8)
 
 ***** Sheet /
 [lib_symbol_issues]: The current configuration does not include the symbol library 'USB-C_SMD-TYPE-C-31-M-12'
@@ -7,9 +7,6 @@ ERC report (2026-03-11T12:14:44-0700, Encoding UTF8)
 [lib_symbol_issues]: The current configuration does not include the symbol library 'BQ24195RGET'
     ; warning
     @(5000 mils, 2500 mils): Symbol U5 [BQ24195RGET]
-[lib_symbol_mismatch]: Symbol 'Thermistor_NTC' doesn't match copy in library 'Device'
-    ; warning
-    @(6000 mils, 5700 mils): Symbol TH1 [Thermistor_NTC]
 
 ***** Sheet /LED Controller/
 
@@ -129,4 +126,4 @@ ERC report (2026-03-11T12:14:44-0700, Encoding UTF8)
 
 ***** Sheet /TCA9548A_Subsystem/
 
- ** ERC messages: 31  Errors 0  Warnings 31
+ ** ERC messages: 30  Errors 0  Warnings 30

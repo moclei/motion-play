@@ -1319,7 +1319,7 @@
 				(hide yes)
 			)
 		)
-		(property "LCSC Part No" "C500724"
+		(property "LCSC Part No" "C2903476"
 			(at 171.45 58.42 0)
 			(effects
 				(font
@@ -1328,7 +1328,7 @@
 				(hide yes)
 			)
 		)
-		(property "LCSC Part" "C500724"
+		(property "LCSC Part" "C2903476"
 			(at 171.45 58.42 90)
 			(effects
 				(font
