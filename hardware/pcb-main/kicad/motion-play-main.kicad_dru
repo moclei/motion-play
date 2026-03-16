@@ -7,5 +7,15 @@
 
 (rule "USB_Connectors"
     (constraint edge_clearance (min 0.1mm))
-    (condition "(A.Reference == 'U2' || A.Reference == 'J2') && A.Type == 'pad'")
+    (condition "(A.Reference == 'U2' || A.Reference == 'J2' || A.Reference == 'J7') && A.Type == 'pad'")
+)
+
+(rule "switching_node_to_sensitive_clearance"
+   (condition "A.NetClass == 'Power_High' && B.NetClass == 'Sensetive'")
+   (constraint clearance (min 1.0mm))
+)
+
+(rule "power_high_to_signal_clearance"
+   (condition "A.NetClass == 'Power_High' && B.NetClass == 'Default'")
+   (constraint clearance (min 0.4mm))
 )
