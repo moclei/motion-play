@@ -1,263 +1,60 @@
 {
   "meta": {
     "source_file": "motion-play-main.kicad_pcb",
-    "sha256": "6c893ac56a2de4c50b6da9137a0a5dba3c90a1ed3f1a638ff826689ca7b97242",
-    "generated_at": "2026-03-16T02:34:00.658392+00:00",
+    "sha256": "94f079cce6bba778f6ec4d66637ed3db4ec8921d4d04c7e8994144a31db87b4d",
+    "generated_at": "2026-03-16T03:03:53.831593+00:00",
     "board_summary": {
       "nets": 85,
       "footprints": 83,
       "pads": 301,
-      "segments": 641,
+      "segments": 650,
       "vias": 156,
-      "zones": 6
+      "zones": 7
     }
   },
   "summary": {
     "total_checks": 20,
-    "pass": 16,
-    "fail": 4,
-    "warning": 0,
+    "pass": 19,
+    "fail": 0,
+    "warning": 1,
     "skip": 0
   },
   "checks": [
     {
       "name": "Trace Width Compliance",
       "category": "trace_widths",
-      "status": "FAIL",
-      "summary": "15 violations, 102 warnings",
+      "status": "WARNING",
+      "summary": "111 power-net width deviations across 5 net classes (review recommended)",
       "details": [
-        "  /Power Management/BOOST_VCC on F.Cu: expected 0.25mm, got 0.2mm at (84.35, 135.99)\u2192(86.38, 138.02)",
-        "  /Power Management/BOOST_VCC on F.Cu: expected 0.25mm, got 0.2mm at (86.38, 138.02)\u2192(86.38, 138.5)",
-        "  /Power Management/BOOST_VCC on F.Cu: expected 0.25mm, got 0.2mm at (84.35, 135.58)\u2192(84.35, 135.99)",
-        "  /Power Management/BOOST_SS on F.Cu: expected 0.25mm, got 0.2mm at (81.85, 128.97)\u2192(81.85, 128.2)",
-        "  /Power Management/BOOST_SS on F.Cu: expected 0.25mm, got 0.2mm at (84.35, 130.6)\u2192(83.99, 130.24)",
-        "  /Power Management/BOOST_SS on F.Cu: expected 0.25mm, got 0.2mm at (83.99, 130.24)\u2192(83.11, 130.24)",
-        "  /Power Management/BOOST_SS on F.Cu: expected 0.25mm, got 0.2mm at (84.35, 131.22)\u2192(84.35, 130.6)",
-        "  /Power Management/BOOST_SS on F.Cu: expected 0.25mm, got 0.2mm at (83.11, 130.24)\u2192(81.85, 128.97)",
         "  /Power Management/CC2 on F.Cu: expected 0.25mm, got 0.15mm at (92.5, 108.61)\u2192(92.51, 108.62)",
         "  /Power Management/CC2 on F.Cu: expected 0.25mm, got 0.15mm at (92.5, 107.68)\u2192(92.5, 108.61)",
         "  /Power Management/BOOST_FSW on F.Cu: expected 0.25mm, got 0.15mm at (84.55, 128.7)\u2192(84.55, 128.38)",
         "  /Power Management/BOOST_FSW on F.Cu: expected 0.25mm, got 0.15mm at (84.55, 128.38)\u2192(85.22, 127.7)",
-        "  /Power Management/BOOST_FSW on B.Cu: expected 0.25mm, got 0.15mm at (85.33, 134.65)\u2192(85.33, 132.23)",
-        "  /Power Management/BOOST_FSW on B.Cu: expected 0.25mm, got 0.15mm at (84.55, 131.46)\u2192(84.55, 128.7)",
-        "  /Power Management/BOOST_FSW on B.Cu: expected 0.25mm, got 0.15mm at (85.33, 132.23)\u2192(84.55, 131.46)"
+        "  /Power Management/BOOST_FSW on B.Cu: expected 0.25mm, got 0.2mm at (85.33, 134.65)\u2192(85.33, 132.23)",
+        "  ... and 2 more in Default",
+        "  +3.3V on F.Cu: expected 0.5mm, got 0.25mm at (135.28, 122.78)\u2192(135.3, 122.8)",
+        "  +3.3V on F.Cu: expected 0.5mm, got 0.25mm at (151.5, 134)\u2192(151.5, 133.5)",
+        "  +3.3V on F.Cu: expected 0.5mm, got 0.25mm at (123.7, 123.4)\u2192(123.7, 122.86)",
+        "  +3.3V on F.Cu: expected 0.5mm, got 0.25mm at (122.8, 124.1)\u2192(123, 124.1)",
+        "  +3.3V on F.Cu: expected 0.5mm, got 0.25mm at (151.5, 134)\u2192(153.1, 134)",
+        "  ... and 13 more in Power_3V3",
+        "  +5V on F.Cu: expected 1.5mm, got 0.75mm at (115.4, 124.2)\u2192(114.8, 123.6)",
+        "  /Power Management/BQ_REGN on F.Cu: expected 0.75mm, got 0.25mm at (102.13, 118.78)\u2192(102.62, 118.78)",
+        "  /Power Management/BQ_REGN on F.Cu: expected 0.75mm, got 0.25mm at (103.4, 118.0)\u2192(103.4, 115.08)",
+        "  /Power Management/BQ_REGN on F.Cu: expected 0.75mm, got 0.25mm at (96.09, 119.19)\u2192(96.09, 120.18)",
+        "  /Power Management/BQ_REGN on F.Cu: expected 0.75mm, got 0.25mm at (96.07, 119.17)\u2192(96.09, 119.19)",
+        "  /Power Management/BQ_REGN on F.Cu: expected 0.75mm, got 0.25mm at (96.07, 118.8)\u2192(96.07, 119.17)",
+        "  ... and 6 more in Power_Low",
+        "  /Power Management/Protected_VBUS on F.Cu: expected 1.0mm, got 0.75mm at (93.03, 121.34)\u2192(94.2, 120.16)",
+        "  /Power Management/Protected_VBUS on F.Cu: expected 1.0mm, got 1.5mm at (103.76, 110.28)\u2192(104.7, 109.34)",
+        "  /Power Management/Protected_VBUS on F.Cu: expected 1.0mm, got 1.5mm at (104.7, 109)\u2192(109.9, 103.8)",
+        "  /Power Management/Protected_VBUS on F.Cu: expected 1.0mm, got 0.75mm at (99.17, 110.61)\u2192(93.59, 110.61)",
+        "  /Power Management/Protected_VBUS on F.Cu: expected 1.0mm, got 0.75mm at (92.4, 119.78)\u2192(93.82, 119.78)",
+        "  ... and 69 more in Power_Med"
       ],
       "measurements": {
-        "segments_checked": 470,
-        "violations": {
-          "Default": [
-            {
-              "net": "/Power Management/BOOST_VCC",
-              "expected": 0.25,
-              "actual": 0.2,
-              "layer": "F.Cu",
-              "from": [
-                84.35,
-                135.99
-              ],
-              "to": [
-                86.38,
-                138.02
-              ]
-            },
-            {
-              "net": "/Power Management/BOOST_VCC",
-              "expected": 0.25,
-              "actual": 0.2,
-              "layer": "F.Cu",
-              "from": [
-                86.38,
-                138.02
-              ],
-              "to": [
-                86.38,
-                138.5
-              ]
-            },
-            {
-              "net": "/Power Management/BOOST_VCC",
-              "expected": 0.25,
-              "actual": 0.2,
-              "layer": "F.Cu",
-              "from": [
-                84.35,
-                135.58
-              ],
-              "to": [
-                84.35,
-                135.99
-              ]
-            },
-            {
-              "net": "/Power Management/BOOST_SS",
-              "expected": 0.25,
-              "actual": 0.2,
-              "layer": "F.Cu",
-              "from": [
-                81.85,
-                128.97
-              ],
-              "to": [
-                81.85,
-                128.2
-              ]
-            },
-            {
-              "net": "/Power Management/BOOST_SS",
-              "expected": 0.25,
-              "actual": 0.2,
-              "layer": "F.Cu",
-              "from": [
-                84.35,
-                130.6
-              ],
-              "to": [
-                83.99,
-                130.24
-              ]
-            },
-            {
-              "net": "/Power Management/BOOST_SS",
-              "expected": 0.25,
-              "actual": 0.2,
-              "layer": "F.Cu",
-              "from": [
-                83.99,
-                130.24
-              ],
-              "to": [
-                83.11,
-                130.24
-              ]
-            },
-            {
-              "net": "/Power Management/BOOST_SS",
-              "expected": 0.25,
-              "actual": 0.2,
-              "layer": "F.Cu",
-              "from": [
-                84.35,
-                131.22
-              ],
-              "to": [
-                84.35,
-                130.6
-              ]
-            },
-            {
-              "net": "/Power Management/BOOST_SS",
-              "expected": 0.25,
-              "actual": 0.2,
-              "layer": "F.Cu",
-              "from": [
-                83.11,
-                130.24
-              ],
-              "to": [
-                81.85,
-                128.97
-              ]
-            },
-            {
-              "net": "/Power Management/CC2",
-              "expected": 0.25,
-              "actual": 0.15,
-              "layer": "F.Cu",
-              "from": [
-                92.5,
-                108.61
-              ],
-              "to": [
-                92.51,
-                108.62
-              ]
-            },
-            {
-              "net": "/Power Management/CC2",
-              "expected": 0.25,
-              "actual": 0.15,
-              "layer": "F.Cu",
-              "from": [
-                92.5,
-                107.68
-              ],
-              "to": [
-                92.5,
-                108.61
-              ]
-            },
-            {
-              "net": "/Power Management/BOOST_FSW",
-              "expected": 0.25,
-              "actual": 0.15,
-              "layer": "F.Cu",
-              "from": [
-                84.55,
-                128.7
-              ],
-              "to": [
-                84.55,
-                128.38
-              ]
-            },
-            {
-              "net": "/Power Management/BOOST_FSW",
-              "expected": 0.25,
-              "actual": 0.15,
-              "layer": "F.Cu",
-              "from": [
-                84.55,
-                128.38
-              ],
-              "to": [
-                85.22,
-                127.7
-              ]
-            },
-            {
-              "net": "/Power Management/BOOST_FSW",
-              "expected": 0.25,
-              "actual": 0.15,
-              "layer": "B.Cu",
-              "from": [
-                85.33,
-                134.65
-              ],
-              "to": [
-                85.33,
-                132.23
-              ]
-            },
-            {
-              "net": "/Power Management/BOOST_FSW",
-              "expected": 0.25,
-              "actual": 0.15,
-              "layer": "B.Cu",
-              "from": [
-                84.55,
-                131.46
-              ],
-              "to": [
-                84.55,
-                128.7
-              ]
-            },
-            {
-              "net": "/Power Management/BOOST_FSW",
-              "expected": 0.25,
-              "actual": 0.15,
-              "layer": "B.Cu",
-              "from": [
-                85.33,
-                132.23
-              ],
-              "to": [
-                84.55,
-                131.46
-              ]
-            }
-          ]
-        },
+        "segments_checked": 479,
+        "violations": {},
         "warnings": {
           "Power_Med": [
             {
@@ -770,20 +567,6 @@
               "actual": 0.3,
               "layer": "F.Cu",
               "from": [
-                100.75,
-                129.65
-              ],
-              "to": [
-                99.76,
-                130.64
-              ]
-            },
-            {
-              "net": "/Power Management/VSYS",
-              "expected": 1.0,
-              "actual": 0.3,
-              "layer": "F.Cu",
-              "from": [
                 102.87,
                 129.65
               ],
@@ -803,6 +586,20 @@
               ],
               "to": [
                 97.6,
+                130.64
+              ]
+            },
+            {
+              "net": "/Power Management/VSYS",
+              "expected": 1.0,
+              "actual": 0.3,
+              "layer": "F.Cu",
+              "from": [
+                100.75,
+                129.65
+              ],
+              "to": [
+                99.76,
                 130.64
               ]
             },
@@ -1348,6 +1145,34 @@
               "actual": 0.25,
               "layer": "F.Cu",
               "from": [
+                123.7,
+                123.4
+              ],
+              "to": [
+                123.7,
+                122.86
+              ]
+            },
+            {
+              "net": "+3.3V",
+              "expected": 0.5,
+              "actual": 0.25,
+              "layer": "F.Cu",
+              "from": [
+                122.8,
+                124.1
+              ],
+              "to": [
+                123,
+                124.1
+              ]
+            },
+            {
+              "net": "+3.3V",
+              "expected": 0.5,
+              "actual": 0.25,
+              "layer": "F.Cu",
+              "from": [
                 151.5,
                 134
               ],
@@ -1362,26 +1187,12 @@
               "actual": 0.25,
               "layer": "F.Cu",
               "from": [
-                123,
-                123.6
+                123.56,
+                122.86
               ],
               "to": [
                 123.7,
-                122.9
-              ]
-            },
-            {
-              "net": "+3.3V",
-              "expected": 0.5,
-              "actual": 0.25,
-              "layer": "F.Cu",
-              "from": [
-                123.2,
-                122.8
-              ],
-              "to": [
-                123.5,
-                122.8
+                122.86
               ]
             },
             {
@@ -1418,12 +1229,12 @@
               "actual": 0.25,
               "layer": "F.Cu",
               "from": [
-                123.56,
-                122.86
+                129.25,
+                120.25
               ],
               "to": [
-                123.7,
-                122.86
+                129.3,
+                120.2
               ]
             },
             {
@@ -1432,12 +1243,12 @@
               "actual": 0.25,
               "layer": "F.Cu",
               "from": [
-                129.25,
-                120.25
+                123.5,
+                122.8
               ],
               "to": [
-                129.3,
-                120.2
+                123.56,
+                122.86
               ]
             },
             {
@@ -1488,20 +1299,6 @@
               "actual": 0.25,
               "layer": "F.Cu",
               "from": [
-                123.7,
-                122.9
-              ],
-              "to": [
-                123.7,
-                122.86
-              ]
-            },
-            {
-              "net": "+3.3V",
-              "expected": 0.5,
-              "actual": 0.25,
-              "layer": "F.Cu",
-              "from": [
                 139.4,
                 116.1
               ],
@@ -1516,12 +1313,40 @@
               "actual": 0.25,
               "layer": "F.Cu",
               "from": [
-                123.5,
+                123,
+                124.1
+              ],
+              "to": [
+                123.7,
+                123.4
+              ]
+            },
+            {
+              "net": "+3.3V",
+              "expected": 0.5,
+              "actual": 0.25,
+              "layer": "F.Cu",
+              "from": [
+                123.2,
                 122.8
               ],
               "to": [
-                123.56,
-                122.86
+                123.5,
+                122.8
+              ]
+            },
+            {
+              "net": "+3.3V",
+              "expected": 0.5,
+              "actual": 0.25,
+              "layer": "F.Cu",
+              "from": [
+                122.8,
+                123.2
+              ],
+              "to": [
+                123.2,
+                122.8
               ]
             },
             {
@@ -1694,6 +1519,106 @@
                 118.8
               ]
             }
+          ],
+          "Default": [
+            {
+              "net": "/Power Management/CC2",
+              "expected": 0.25,
+              "actual": 0.15,
+              "layer": "F.Cu",
+              "from": [
+                92.5,
+                108.61
+              ],
+              "to": [
+                92.51,
+                108.62
+              ]
+            },
+            {
+              "net": "/Power Management/CC2",
+              "expected": 0.25,
+              "actual": 0.15,
+              "layer": "F.Cu",
+              "from": [
+                92.5,
+                107.68
+              ],
+              "to": [
+                92.5,
+                108.61
+              ]
+            },
+            {
+              "net": "/Power Management/BOOST_FSW",
+              "expected": 0.25,
+              "actual": 0.15,
+              "layer": "F.Cu",
+              "from": [
+                84.55,
+                128.7
+              ],
+              "to": [
+                84.55,
+                128.38
+              ]
+            },
+            {
+              "net": "/Power Management/BOOST_FSW",
+              "expected": 0.25,
+              "actual": 0.15,
+              "layer": "F.Cu",
+              "from": [
+                84.55,
+                128.38
+              ],
+              "to": [
+                85.22,
+                127.7
+              ]
+            },
+            {
+              "net": "/Power Management/BOOST_FSW",
+              "expected": 0.25,
+              "actual": 0.2,
+              "layer": "B.Cu",
+              "from": [
+                85.33,
+                134.65
+              ],
+              "to": [
+                85.33,
+                132.23
+              ]
+            },
+            {
+              "net": "/Power Management/BOOST_FSW",
+              "expected": 0.25,
+              "actual": 0.2,
+              "layer": "B.Cu",
+              "from": [
+                84.55,
+                131.46
+              ],
+              "to": [
+                84.55,
+                128.7
+              ]
+            },
+            {
+              "net": "/Power Management/BOOST_FSW",
+              "expected": 0.25,
+              "actual": 0.2,
+              "layer": "B.Cu",
+              "from": [
+                85.33,
+                132.23
+              ],
+              "to": [
+                84.55,
+                131.46
+              ]
+            }
           ]
         }
       }
@@ -1725,7 +1650,7 @@
       "summary": "+5V distribution plane \u2014 zone exists and has fill",
       "measurements": {
         "polygon_count": 2,
-        "total_vertices": 5001
+        "total_vertices": 4963
       }
     },
     {
@@ -1735,14 +1660,18 @@
       "summary": "Primary ground return plane \u2014 zone exists and has fill",
       "measurements": {
         "polygon_count": 1,
-        "total_vertices": 4770
+        "total_vertices": 4786
       }
     },
     {
       "name": "Zone: GND on B.Cu",
       "category": "zone_existence",
-      "status": "FAIL",
-      "summary": "Bottom ground fill \u2014 zone NOT FOUND on B.Cu"
+      "status": "PASS",
+      "summary": "Bottom ground fill \u2014 zone exists and has fill",
+      "measurements": {
+        "polygon_count": 1,
+        "total_vertices": 4324
+      }
     },
     {
       "name": "Zone: +3.3V on In2.Cu",
@@ -1751,7 +1680,7 @@
       "summary": "Logic area 3.3V zone \u2014 zone exists and has fill",
       "measurements": {
         "polygon_count": 1,
-        "total_vertices": 1959
+        "total_vertices": 1952
       }
     },
     {
@@ -1862,12 +1791,12 @@
     {
       "name": "I2C length match: Main trunk",
       "category": "i2c_length",
-      "status": "FAIL",
-      "summary": "SDA=76.8mm, SCL=88.1mm, diff=11.3mm (>10mm)",
+      "status": "PASS",
+      "summary": "SDA=82.0mm, SCL=86.6mm, diff=4.5mm",
       "measurements": {
-        "sda_length_mm": 76.75,
-        "scl_length_mm": 88.07,
-        "difference_mm": 11.32
+        "sda_length_mm": 82.04,
+        "scl_length_mm": 86.58,
+        "difference_mm": 4.54
       }
     },
     {
@@ -1907,9 +1836,9 @@
       "name": "I2C isolation from switching nodes",
       "category": "i2c_isolation",
       "status": "PASS",
-      "summary": "All 96 I2C segments clear of 4 exclusion zones",
+      "summary": "All 102 I2C segments clear of 4 exclusion zones",
       "measurements": {
-        "segments_checked": 96,
+        "segments_checked": 102,
         "exclusion_zones": 4,
         "violations": []
       }
@@ -1917,22 +1846,30 @@
     {
       "name": "Kelvin: VSYS sense (R44.1 \u2192 U7.1)",
       "category": "kelvin_sense",
-      "status": "FAIL",
-      "summary": "No dedicated 0.25mm path from R44.1 to U7.1",
+      "status": "PASS",
+      "summary": "Dedicated thin path (0.25mm/0.3mm) exists, separate from 1.0mm power traces (17 sense segments)",
       "measurements": {
-        "thin_segments": 14,
-        "expected_width": 0.25,
-        "connected_via_thin_only": false
+        "thin_segments": 17,
+        "thin_threshold_mm": 0.5,
+        "sense_widths_mm": [
+          0.25,
+          0.3
+        ],
+        "connected_via_thin_only": true
       }
     },
     {
       "name": "Kelvin: VSYS_SENSE sense (R44.2 \u2192 U7.2)",
       "category": "kelvin_sense",
       "status": "PASS",
-      "summary": "Dedicated 0.25mm path exists (6 thin segments on net)",
+      "summary": "Dedicated thin path (0.25mm/0.3mm) exists, separate from 1.0mm power traces (11 sense segments)",
       "measurements": {
-        "thin_segments": 6,
-        "expected_width": 0.25,
+        "thin_segments": 11,
+        "thin_threshold_mm": 0.5,
+        "sense_widths_mm": [
+          0.25,
+          0.3
+        ],
         "connected_via_thin_only": true
       }
     },

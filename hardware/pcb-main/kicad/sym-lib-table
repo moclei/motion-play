@@ -2,4 +2,5 @@
   (version 7)
   (lib (name "TPS61088RHLR")(type "KiCad")(uri "${KIPRJMOD}/../resources/TPS61088RHLR/TPS61088RHLR.kicad_sym")(options "")(descr "TPS61088RHLR boost converter (easyeda2kicad)"))
   (lib (name "INA219AIDCNR")(type "KiCad")(uri "${KIPRJMOD}/../resources/INA219AIDCNR/INA219AIDCNR.kicad_sym")(options "")(descr "INA219AIDCNR power monitor (easyeda2kicad)"))
+  (lib (name "JLC-MCP")(type "KiCad")(uri "${KIPRJMOD}/libraries/symbols/JLC-MCP-Misc.kicad_sym")(options "")(descr "JLC-MCP Component Library (LCSC/EasyEDA)"))
 )

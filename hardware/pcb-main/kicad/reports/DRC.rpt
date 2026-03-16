@@ -1,7 +1,7 @@
 ** Drc report for motion-play-main.kicad_pcb **
-** Created on 2026-03-15T19:05:01-0700 **
+** Created on 2026-03-15T19:54:02-0700 **
 
-** Found 24 DRC violations **
+** Found 32 DRC violations **
 [annular_width]: Annular width (board setup constraints min annular width 0.1300 mm; actual 0.0962 mm)
     Rule: board setup constraints; error
     @(83.5960 mm, 134.6700 mm): PTH pad [GND] of U6
@@ -32,14 +32,46 @@
 [annular_width]: Annular width (board setup constraints min annular width 0.1300 mm; actual -0.0032 mm)
     Rule: board setup constraints; error
     @(91.3560 mm, 107.3600 mm): PTH pad [<no net>] of J7
-[clearance]: Clearance violation (netclass 'Power_Med' clearance 0.2000 mm; actual 0.1500 mm)
+[clearance]: Clearance violation (netclass 'Power_Med' clearance 0.2000 mm; actual 0.1804 mm)
     Rule: netclass 'Power_Med'; error
-    @(85.3260 mm, 135.1500 mm): Pad 2 [/Power Management/VSYS_SENSE] of U6 on F.Cu
-    @(85.3260 mm, 134.6500 mm): Via [/Power Management/BOOST_FSW] on F.Cu - B.Cu
+    @(83.1149 mm, 130.2370 mm): Track [/Power Management/BOOST_SS] on F.Cu, length 1.7888 mm
+    @(83.5890 mm, 129.4860 mm): Pad 1 [/Power Management/VSYS_SENSE] of C31 on F.Cu
+[clearance]: Clearance violation (netclass 'Default' clearance 0.2000 mm; actual 0.1950 mm)
+    Rule: netclass 'Default'; error
+    @(83.5960 mm, 133.4000 mm): Pad 21 [GND] of U6 on F.Cu
+    @(84.3460 mm, 131.2200 mm): Track [/Power Management/BOOST_SS] on F.Cu, length 0.6240 mm
+[clearance]: Clearance violation (netclass 'Power_Med' clearance 0.2000 mm; actual 0.1760 mm)
+    Rule: netclass 'Power_Med'; error
+    @(83.9870 mm, 130.2370 mm): Track [/Power Management/BOOST_SS] on F.Cu, length 0.8721 mm
+    @(83.5890 mm, 129.4860 mm): Pad 1 [/Power Management/VSYS_SENSE] of C31 on F.Cu
+[clearance]: Clearance violation (netclass 'Power_Med' clearance 0.2000 mm; actual 0.1964 mm)
+    Rule: netclass 'Power_Med'; error
+    @(84.3460 mm, 130.5960 mm): Track [/Power Management/BOOST_SS] on F.Cu, length 0.5077 mm
+    @(83.5890 mm, 129.4860 mm): Pad 1 [/Power Management/VSYS_SENSE] of C31 on F.Cu
+[clearance]: Clearance violation (netclass 'Default' clearance 0.2000 mm; actual 0.1950 mm)
+    Rule: netclass 'Default'; error
+    @(84.3460 mm, 135.5800 mm): Track [/Power Management/BOOST_VCC] on F.Cu, length 0.4088 mm
+    @(83.5960 mm, 133.4000 mm): Pad 21 [GND] of U6 on F.Cu
+[clearance]: Clearance violation (netclass 'Power_Med' clearance 0.2000 mm; actual 0.1760 mm)
+    Rule: netclass 'Power_Med'; error
+    @(86.0400 mm, 136.5500 mm): Track [/Power Management/VSYS_SENSE] on F.Cu, length 4.7600 mm
+    @(84.3460 mm, 135.9888 mm): Track [/Power Management/BOOST_VCC] on F.Cu, length 2.8694 mm
+[clearance]: Clearance violation (netclass 'Power_Med' clearance 0.2000 mm; actual 0.1900 mm)
+    Rule: netclass 'Power_Med'; error
+    @(85.3400 mm, 131.1500 mm): Track [/Power Management/VSYS_SENSE] on B.Cu, length 4.4000 mm
+    @(84.5500 mm, 131.4574 mm): Track [/Power Management/BOOST_FSW] on B.Cu, length 2.7574 mm
 [clearance]: Clearance violation (netclass 'Power_Med' clearance 0.2000 mm; actual 0.1950 mm)
     Rule: netclass 'Power_Med'; error
     @(97.0860 mm, 120.1800 mm): Pad 20 [/Power Management/BQ_SW] of U5 on F.Cu
     @(96.7605 mm, 119.3929 mm): Via [/Power Management/BQ_BTST] on F.Cu - B.Cu
+[clearance]: Clearance violation (netclass 'Power_5V' clearance 0.2000 mm; actual 0.1500 mm)
+    Rule: netclass 'Power_5V'; error
+    @(85.3260 mm, 134.6500 mm): Via [/Power Management/BOOST_FSW] on F.Cu - B.Cu
+    @(85.3260 mm, 134.1500 mm): Pad 4 [/Power Management/BOOST_SW] of U6 on F.Cu
+[clearance]: Clearance violation (netclass 'Power_Med' clearance 0.2000 mm; actual 0.1760 mm)
+    Rule: netclass 'Power_Med'; error
+    @(85.3400 mm, 131.1500 mm): Track [/Power Management/VSYS_SENSE] on B.Cu, length 4.4000 mm
+    @(85.3260 mm, 132.2334 mm): Track [/Power Management/BOOST_FSW] on B.Cu, length 1.0974 mm
 [clearance]: Clearance violation (netclass 'Default' clearance 0.2000 mm; actual 0.1684 mm)
     Rule: netclass 'Default'; error
     @(84.3460 mm, 135.5800 mm): Pad 1 [/Power Management/BOOST_VCC] of U6 on F.Cu
@@ -48,22 +80,22 @@
     Rule: netclass 'Default'; error
     @(84.3460 mm, 131.2200 mm): Pad 10 [/Power Management/BOOST_SS] of U6 on F.Cu
     @(83.5960 mm, 133.4000 mm): Pad 21 [GND] of U6 on F.Cu
-[clearance]: Clearance violation (netclass 'Default' clearance 0.2000 mm; actual 0.1850 mm)
-    Rule: netclass 'Default'; error
-    @(97.1560 mm, 107.3600 mm): PTH pad [<no net>] of J7
-    @(97.4560 mm, 108.6200 mm): Pad A1B12 [GND] of J7 on F.Cu
 [hole_clearance]: Hole clearance violation (board setup constraints hole clearance 0.2500 mm; actual 0.2170 mm)
     Rule: board setup constraints hole; error
     @(97.1560 mm, 107.3600 mm): PTH pad [<no net>] of J7
     @(96.6560 mm, 108.6200 mm): Pad A4B9 [/Power Management/VBUS_RAW] of J7 on F.Cu
-[hole_clearance]: Hole clearance violation (board setup constraints hole clearance 0.2500 mm; actual 0.2170 mm)
-    Rule: board setup constraints hole; error
-    @(91.3560 mm, 107.3600 mm): PTH pad [<no net>] of J7
-    @(91.8560 mm, 108.6200 mm): Pad B4A9 [/Power Management/VBUS_RAW] of J7 on F.Cu
+[clearance]: Clearance violation (netclass 'Default' clearance 0.2000 mm; actual 0.1850 mm)
+    Rule: netclass 'Default'; error
+    @(97.1560 mm, 107.3600 mm): PTH pad [<no net>] of J7
+    @(97.4560 mm, 108.6200 mm): Pad A1B12 [GND] of J7 on F.Cu
 [clearance]: Clearance violation (netclass 'Default' clearance 0.2000 mm; actual 0.1850 mm)
     Rule: netclass 'Default'; error
     @(91.3560 mm, 107.3600 mm): PTH pad [<no net>] of J7
     @(91.0560 mm, 108.6200 mm): Pad B1A12 [GND] of J7 on F.Cu
+[hole_clearance]: Hole clearance violation (board setup constraints hole clearance 0.2500 mm; actual 0.2170 mm)
+    Rule: board setup constraints hole; error
+    @(91.3560 mm, 107.3600 mm): PTH pad [<no net>] of J7
+    @(91.8560 mm, 108.6200 mm): Pad B4A9 [/Power Management/VBUS_RAW] of J7 on F.Cu
 [clearance]: Clearance violation (netclass 'Default' clearance 0.2000 mm; actual 0.1800 mm)
     Rule: netclass 'Default'; error
     @(89.9260 mm, 107.8600 mm): PTH pad 1 [<no net>] of J7
