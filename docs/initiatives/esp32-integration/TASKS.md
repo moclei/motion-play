@@ -9,23 +9,23 @@
 - [x] Verify AMS1117-3.3 LCSC part — **C6186** (Advanced Monolithic Systems), 1M+ stock, $0.22, **basic** part
 - [x] Install KiCad symbol + footprint for WROOM-1 via JLC-MCP — `JLC-MCP-MCUs:ESP32-S3-WROOM-1_N16R8_`
 - [x] Install KiCad symbol + footprint for AMS1117-3.3 via JLC-MCP — `JLC-MCP-Power:AMS1117-3_3`
-- [ ] Verify AMS1117 capacitor LCSC parts — 22µF ceramic (input), 22µF tantalum (output, required for AMS1117 stability)
-- [ ] Find or create KiCad symbol and footprint for power slide switch (SPDT, >= 3A rated, LCSC stocked)
-- [ ] Find or create KiCad symbol and footprint for tactile switches (boot + reset buttons)
-- [ ] Find or create KiCad symbol and footprint for USBLC6-2SC6 (USB ESD protection, LCSC C7519)
-- [ ] Select status LED — WS2812B-mini (addressable, shares GPIO16) or simple LED + resistor (dedicated GPIO). Find LCSC part.
+- [x] Verify AMS1117 capacitor LCSC parts — 22µF ceramic (input), 22µF tantalum (output, required for AMS1117 stability)
+- [x] Find or create KiCad symbol and footprint for power slide switch (SPDT, >= 3A rated, LCSC stocked)
+- [x] Find or create KiCad symbol and footprint for tactile switches (boot + reset buttons)
+- [x] Find or create KiCad symbol and footprint for USBLC6-2SC6 (USB ESD protection, LCSC C7519)
+- [x] Select status LED — WS2812B-mini (addressable, shares GPIO16) or simple LED + resistor (dedicated GPIO). Find LCSC part.
 
 ### 1b. Tooling — `tools/schematic-modify/`
 
 New toolkit for programmatic modification of existing KiCad schematics via kiutils. Separate from `schematic-gen` (creates new sheets) and `schematic-context` (reads/annotates existing).
 
-- [ ] Create `tools/schematic-modify/CONTEXT.md` — purpose, usage, relationship to schematic-gen and schematic-context
-- [ ] Create `tools/schematic-modify/modify.py` — core helpers: `add_component()`, `remove_component()`, `add_hierarchical_label()`, `add_sheet_reference()`, etc.
+- [x] Create `tools/schematic-modify/CONTEXT.md` — purpose, usage, relationship to schematic-gen and schematic-context
+- [x] Create `tools/schematic-modify/modify.py` — core helpers: `add_component()`, `remove_component()`, `add_hierarchical_label()`, `add_sheet_reference()`, etc.
   - Components placed at specified offset (off to one side, user arranges in KiCad)
   - Net labels on wire stubs at every connected pin
   - Footprint, LCSC part, and all standard properties set
   - `ai_*` annotation handled by calling `tools/schematic-context/annotate.py` after placement (annotation logic lives in one place)
-- [ ] Create `tools/schematic-modify/esp32_integration.py` — this initiative's specific modifications (uses modify.py helpers)
+- [x] Create `tools/schematic-modify/esp32_integration.py` — this initiative's specific modifications (uses modify.py helpers)
 
 ### 1c. New ESP32-S3 Schematic Sheet
 
