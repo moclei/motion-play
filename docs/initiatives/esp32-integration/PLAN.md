@@ -10,10 +10,30 @@ The core principle is like-for-like: every signal that currently connects to U2 
 
 ### Module: ESP32-S3-WROOM-1-N16R8
 
+- LCSC **C2913202**, installed as `JLC-MCP-MCUs:ESP32-S3-WROOM-1_N16R8_`
 - 16MB flash, 8MB octal PSRAM, built-in PCB antenna
 - 25.5mm x 18mm, 41 pins (40 edge + 1 ground pad)
 - GPIO33-37 consumed by PSRAM bus — none of these are used in our design
 - Reflow-solderable, JLCPCB assembly compatible
+
+**Confirmed pin mapping (from installed JLC-MCP symbol):**
+
+| Signal | GPIO | WROOM-1 Pin # | Symbol Pin Name |
+|--------|------|---------------|-----------------|
+| I2C SDA | 43 | 37 | TXD0 |
+| I2C SCL | 44 | 36 | RXD0 |
+| TCA_RESET | 10 | 18 | IO10 |
+| INT1 | 13 | 21 | IO13 |
+| INT2 | 12 | 20 | IO12 |
+| INT3 | 11 | 19 | IO11 |
+| LED_DATA | 16 | 9 | IO16 |
+| CHRG_INT | 21 | 23 | IO21 |
+| USB D- | 19 | 13 | IO19 |
+| USB D+ | 20 | 14 | IO20 |
+| BOOT | 0 | 27 | IO0 |
+| EN/Reset | — | 3 | EN |
+| 3V3 (power) | — | 2 | 3V3 |
+| GND | — | 1, 40, 41 | GND |
 
 ### Schematic Changes
 
@@ -29,10 +49,13 @@ The core principle is like-for-like: every signal that currently connects to U2 
 - Add D+/D- net connections from the TYPE-C-31-M-12 connector pads to the new ESP32 sheet
 - BQ24195 D+/D- remain tied to GND (unchanged)
 
-**U1 replacement** (motion-play-main.kicad_sch):
-- AP2112K-3.3 (SOT-23-5, 600mA) → AMS1117-3.3 (SOT-223, 1A)
-- Different footprint — requires new symbol/footprint and updated land pattern
-- Input/output caps may need adjustment per AMS1117 datasheet (typically 22uF tantalum or ceramic on output)
+**LDO replacement** (moved to power_management.kicad_sch — all power components in one sheet):
+- AP2112K-3.3 (U1, SOT-23-5, 600mA) removed from root sheet → AMS1117-3.3 (SOT-223, 1A) added to power_management
+- LCSC **C6186** (Advanced Monolithic Systems, basic part), installed as `JLC-MCP-Power:AMS1117-3_3`
+- AMS1117 pin mapping: Pin 1=GND, Pin 2=VOUT, Pin 3=VIN, Pin 4=VOUT (tab/heatsink)
+- Input cap: 22µF ceramic (replaces C1 1µF)
+- Output cap: 22µF tantalum (replaces C2 2.2µF) — required for AMS1117 stability (narrow ESR window, pure MLCC can cause oscillation)
+- The `+3.3V` hierarchical pin on power_management changes from input to output
 
 **Power switch** (power_management.kicad_sch):
 - SPDT slide switch rated >= 3A, placed in the VSYS power path between the BQ24195 output (VSYS) and the downstream regulators (TPS61088 boost, AMS1117 LDO)
@@ -80,9 +103,32 @@ Consult during schematic work:
 - [Unexpected Maker ESP32-S3 KiCad designs](https://github.com/UnexpectedMaker/esp32s3) — compact layout reference
 - [FrWA14 KiCad 8 WROOM-1 DevBoard](https://github.com/FrWA14/KiCad8_ESP32S3_DevModule_wroom-1_DevelopementBoard) — JLCPCB-oriented
 
+## Tooling Approach
+
+Schematic changes use three complementary tools in `tools/`:
+
+| Tool | Purpose |
+|------|---------|
+| `schematic-gen/` | Create new sheets from spec.json (used for `esp32_s3.kicad_sch`) |
+| `schematic-modify/` | Programmatically append/remove components on existing sheets via kiutils |
+| `schematic-context/` | Extract circuit-context.json and annotate components with `ai_*` properties |
+
+**Key principle:** `schematic-modify` places components with correct nets, footprints, and LCSC numbers, but delegates `ai_*` annotation to `schematic-context/annotate.py`. Annotation logic lives in one place.
+
+**Workflow for modifying existing sheets:**
+1. `schematic-modify/esp32_integration.py` places new components off to one side of the sheet
+2. `schematic-context/annotate.py` adds `ai_*` properties to the new components
+3. User opens in KiCad, moves components into position, connects wires
+4. `schematic-context/extract.py --previous` produces updated circuit-context.json
+
+## Resolved Questions
+
+- **AMS1117-3.3 output cap:** Tantalum required. 22µF tantalum on output, 22µF ceramic on input. LCSC availability TBD.
+- **WROOM-1-N16R8 LCSC:** Confirmed **C2913202**, 31k stock, $5.71, extended part.
+- **LDO sheet placement:** Moved from root sheet to `power_management.kicad_sch` — groups all power components together.
+
 ## Open Questions
 
-- AMS1117-3.3 output capacitor requirements — datasheet specifies tantalum on output for stability. Verify if ceramic is acceptable (some AMS1117 variants are ceramic-stable). If tantalum required, confirm JLCPCB availability.
-- WROOM-1-N16R8 LCSC part number and JLCPCB assembly stock — verify before schematic finalization.
 - Board outline: keep current dimensions or shrink? Deferred to PCB layout phase.
 - Whether to keep TPIO43/TPIO44 (I2C SDA/SCL test points) and TPIO10-13 (TCA_RESET, INT1-3 test points) or consolidate. These connect to active signals and are useful for debugging — likely keep.
+- Auto-download circuit: confirm DTR/RTS signals are available from USB CDC (native USB uses GPIO19/20 directly — the classic DTR/RTS auto-download may need adaptation for USB CDC vs UART bridge). Review Espressif DevKitC-1 reference.
