@@ -18,22 +18,21 @@ Exploration: `docs/explorations/esp32-integration.md`
 ## Scope
 
 What's in:
-- ESP32-S3-WROOM-1-N16R8 module integration with support circuitry (EN/reset, boot, auto-download, decoupling)
-- USB D+/D- data routing added to J7
+- ESP32-S3-WROOM-1-N16R8 module integration with support circuitry (EN/reset, boot, decoupling)
+- USB D+/D- data routing added to J7, with ESD protection (USBLC6-2SC6)
 - AP2112K replaced with AMS1117-3.3 (or equivalent 1A LDO)
 - T-Display-S3 footprint and associated nets/test points removed
 - Physical slide switch for system on/off (in the power path, rated for system current)
+- On-board status LED (replaces display as visual feedback — power, WiFi, errors)
+- Unpopulated GPIO breakout header (spare pins exposed for debug/future expansion, zero BOM cost)
 - PCB relayout of the MCU area (module placement, antenna keepout)
 - Firmware adaptation (board definition, DisplayManager removal, pin_config cleanup)
 - JLCPCB manufacturing review (BOM, CPL, DRC, stock check)
 
 What's out:
-- New features, GPIO breakouts, or additional peripherals beyond the power switch — this is a like-for-like replacement
 - Board outline resize (evaluate during layout but not a goal of this revision)
 - Enclosure redesign (if the board shrinks, enclosure updates are a separate effort)
 - Power management changes beyond the LDO swap (BQ24195, TPS61088, INA219 circuits are unchanged)
-
-If a low-risk, compelling addition presents itself during layout, it can be considered — but the default is no scope creep.
 
 ## Constraints
 
