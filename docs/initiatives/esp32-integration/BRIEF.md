@@ -12,6 +12,7 @@ Exploration: `docs/explorations/esp32-integration.md`
 - Single USB-C port (J7) for both power and programming
 - Same electrical functionality as v6 — all sensor, networking, detection, and ML capabilities preserved
 - 3.3V LDO upgraded to handle ESP32 directly (AMS1117-3.3 or equivalent, 1A)
+- Physical on/off power switch on the PCB (slide switch, previously blocked by space constraints in v6)
 - Firmware builds and runs on the new hardware with no functional regression
 
 ## Scope
@@ -21,12 +22,13 @@ What's in:
 - USB D+/D- data routing added to J7
 - AP2112K replaced with AMS1117-3.3 (or equivalent 1A LDO)
 - T-Display-S3 footprint and associated nets/test points removed
+- Physical slide switch for system on/off (in the power path, rated for system current)
 - PCB relayout of the MCU area (module placement, antenna keepout)
 - Firmware adaptation (board definition, DisplayManager removal, pin_config cleanup)
 - JLCPCB manufacturing review (BOM, CPL, DRC, stock check)
 
 What's out:
-- New features, GPIO breakouts, or additional peripherals — this is a like-for-like replacement
+- New features, GPIO breakouts, or additional peripherals beyond the power switch — this is a like-for-like replacement
 - Board outline resize (evaluate during layout but not a goal of this revision)
 - Enclosure redesign (if the board shrinks, enclosure updates are a separate effort)
 - Power management changes beyond the LDO swap (BQ24195, TPS61088, INA219 circuits are unchanged)

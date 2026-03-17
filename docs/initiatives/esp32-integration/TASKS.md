@@ -9,6 +9,8 @@
 - [ ] Create new schematic sheet for ESP32-S3 module and support circuitry (EN/reset, boot, auto-download, decoupling)
 - [ ] Add USB D+/D- routing from J7 to ESP32 sheet (modify power_management.kicad_sch or root sheet)
 - [ ] Replace U1 AP2112K with AMS1117-3.3 — update symbol, footprint, decoupling caps per datasheet
+- [ ] Find or create KiCad symbol and footprint for power slide switch (SPDT, >= 3A rated, LCSC stocked)
+- [ ] Add power switch to schematic in VSYS path between BQ24195 output and downstream regulators
 - [ ] Remove U2 (T-Display-S3) symbol, footprint, and unused nets/test points (TPIO1, TPIO2, TPIO3, TPIO17, TPIO18)
 - [ ] Remove +5V connection to old U2 pin 12 — WROOM-1 takes 3.3V from LDO
 - [ ] Run ERC — resolve any new errors
@@ -19,6 +21,7 @@
 
 - [ ] Place WROOM-1 module at board edge with antenna keepout zone
 - [ ] Place AMS1117-3.3 with thermal copper pour
+- [ ] Place power slide switch at board edge (accessible from enclosure)
 - [ ] Place boot/reset buttons in accessible location
 - [ ] Place auto-download transistors and USB series resistors near module
 - [ ] Route all new connections

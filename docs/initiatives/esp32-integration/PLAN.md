@@ -4,7 +4,7 @@
 
 The work is split into four phases: schematic design, PCB layout, firmware adaptation, and fabrication/validation. Phases 1-2 are hardware (KiCad), Phase 3 is firmware (PlatformIO), and Phase 4 is manufacturing and bring-up. Schematic work begins now on a git branch; fabrication is gated on v6 board validation.
 
-The core principle is like-for-like: every signal that currently connects to U2 continues to connect to the WROOM-1 module on the same GPIO numbers. The I2C bus, sensor interrupts, LED data, and charge interrupt are all unchanged. What changes is the physical module, the power path (3.3V LDO upgrade), the USB routing (data lines added to J7), and the removal of the display.
+The core principle is like-for-like: every signal that currently connects to U2 continues to connect to the WROOM-1 module on the same GPIO numbers. The I2C bus, sensor interrupts, LED data, and charge interrupt are all unchanged. What changes is the physical module, the power path (3.3V LDO upgrade + physical power switch), the USB routing (data lines added to J7), and the removal of the display.
 
 ## Technical Notes
 
@@ -33,6 +33,13 @@ The core principle is like-for-like: every signal that currently connects to U2 
 - AP2112K-3.3 (SOT-23-5, 600mA) → AMS1117-3.3 (SOT-223, 1A)
 - Different footprint — requires new symbol/footprint and updated land pattern
 - Input/output caps may need adjustment per AMS1117 datasheet (typically 22uF tantalum or ceramic on output)
+
+**Power switch** (power_management.kicad_sch):
+- SPDT slide switch rated >= 3A, placed in the VSYS power path between the BQ24195 output (VSYS) and the downstream regulators (TPS61088 boost, AMS1117 LDO)
+- Switch cuts all power when off — no quiescent draw from any regulator or the ESP32
+- When off, BQ24195 can still charge the battery from USB (VSYS remains powered from its output side for charging, the switch isolates the load side)
+- Part selection: look for a compact through-hole or SMD slide switch (e.g., SS-12D00, MSS22D18, or similar LCSC-stocked, 3A+ rated, SPDT/DPDT)
+- Needs to be accessible from outside the enclosure — place at board edge
 
 **Removals:**
 - U2 (T-Display-S3) symbol and footprint
