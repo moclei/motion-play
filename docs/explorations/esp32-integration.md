@@ -186,6 +186,6 @@ This should be scoped as an initiative (`docs/initiatives/esp32-integration/`) o
 
 **Status: Decided**
 
-Proceeding with Option A: direct ESP32-S3-WROOM-1-N16R8 integration. Schematic work begins now on a branch, in parallel with v6 board validation. Firmware changes (DisplayManager removal, board definition) are part of the same initiative, phased after hardware.
+Proceeding with Option A: direct ESP32-S3-WROOM-1-N16R8 integration. Schematic work begins now on a branch, in parallel with v6 board validation. Firmware changes (DisplayManager removal, board definition) are part of the same initiative, phased after hardware. A physical on/off slide switch (>= 3A) is also included in the scope, enabled by freed board space.
 
 See initiative: `docs/initiatives/esp32-integration/`
