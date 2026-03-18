@@ -9,8 +9,8 @@
       "tca9548A_subsystem.kicad_sch": "TCA9548A_Subsystem",
       "esp32_s3.kicad_sch": "ESP32_S3"
     },
-    "source_hash": "84d3854a7a60",
-    "extracted_at": "2026-03-18T20:33:03.456508+00:00"
+    "source_hash": "2835255ba395",
+    "extracted_at": "2026-03-18T22:30:45.213016+00:00"
   },
   "description": "",
   "blocks": {},
@@ -541,7 +541,7 @@
       ]
     },
     "C40": {
-      "part": "C",
+      "part": "C_1",
       "value": "0.1\u00b5F",
       "footprint": "Capacitor_SMD:C_0603_1608Metric",
       "lcsc": "C14663",
@@ -661,7 +661,7 @@
           "number": "2",
           "name": "",
           "type": "passive",
-          "net": "/ESP32_S3/GND"
+          "net": "GND"
         }
       ]
     },
@@ -680,13 +680,13 @@
           "number": "1",
           "name": "",
           "type": "passive",
-          "net": "/ESP32_S3/+3.3V"
+          "net": "+3.3V"
         },
         {
           "number": "2",
           "name": "",
           "type": "passive",
-          "net": "/ESP32_S3/GND"
+          "net": "GND"
         }
       ]
     },
@@ -705,13 +705,13 @@
           "number": "1",
           "name": "",
           "type": "passive",
-          "net": "/ESP32_S3/+3.3V"
+          "net": "+3.3V"
         },
         {
           "number": "2",
           "name": "",
           "type": "passive",
-          "net": "/ESP32_S3/GND"
+          "net": "GND"
         }
       ]
     },
@@ -730,13 +730,13 @@
           "number": "1",
           "name": "",
           "type": "passive",
-          "net": "/ESP32_S3/+3.3V"
+          "net": "+3.3V"
         },
         {
           "number": "2",
           "name": "",
           "type": "passive",
-          "net": "/ESP32_S3/GND"
+          "net": "GND"
         }
       ]
     },
@@ -755,13 +755,13 @@
           "number": "1",
           "name": "",
           "type": "passive",
-          "net": "/ESP32_S3/+3.3V"
+          "net": "+3.3V"
         },
         {
           "number": "2",
           "name": "",
           "type": "passive",
-          "net": "/ESP32_S3/GND"
+          "net": "GND"
         }
       ]
     },
@@ -780,13 +780,13 @@
           "number": "1",
           "name": "",
           "type": "passive",
-          "net": "/ESP32_S3/+3.3V"
+          "net": "+3.3V"
         },
         {
           "number": "2",
           "name": "",
           "type": "passive",
-          "net": "/ESP32_S3/GND"
+          "net": "GND"
         }
       ]
     },
@@ -880,13 +880,13 @@
           "number": "1",
           "name": "DIN",
           "type": "unspecified",
-          "net": "/ESP32_S3/LED_DATA"
+          "net": "/LED_DATA"
         },
         {
           "number": "2",
           "name": "VDD",
           "type": "unspecified",
-          "net": "/ESP32_S3/+5V"
+          "net": "+5V"
         },
         {
           "number": "3",
@@ -898,7 +898,7 @@
           "number": "4",
           "name": "GND",
           "type": "unspecified",
-          "net": "/ESP32_S3/GND"
+          "net": "GND"
         }
       ]
     },
@@ -973,7 +973,7 @@
           "number": "2",
           "name": "1A",
           "type": "passive",
-          "net": "/LED Controller/DATA_IN"
+          "net": "/LED_DATA"
         },
         {
           "number": "3",
@@ -1173,6 +1173,18 @@
           "net": "/Power Management/CC1"
         },
         {
+          "number": "A6",
+          "name": "DP1",
+          "type": "unspecified",
+          "net": "/USB_DP"
+        },
+        {
+          "number": "A7",
+          "name": "DN1",
+          "type": "unspecified",
+          "net": "/USB_DN"
+        },
+        {
           "number": "B1A12",
           "name": "GND",
           "type": "passive",
@@ -1189,6 +1201,18 @@
           "name": "CC2",
           "type": "input",
           "net": "/Power Management/CC2"
+        },
+        {
+          "number": "B6",
+          "name": "DP2",
+          "type": "unspecified",
+          "net": "/USB_DP"
+        },
+        {
+          "number": "B7",
+          "name": "DN2",
+          "type": "unspecified",
+          "net": "/USB_DN"
         }
       ]
     },
@@ -1399,7 +1423,7 @@
       ]
     },
     "R31": {
-      "part": "R",
+      "part": "R_1",
       "value": "5.1k\u03a9",
       "footprint": "Resistor_SMD:R_0603_1608Metric",
       "lcsc": "C23186",
@@ -1588,7 +1612,7 @@
           "number": "1",
           "name": "",
           "type": "passive",
-          "net": "/Power Management/CHRG_INT"
+          "net": "/CHRG_INT"
         },
         {
           "number": "2",
@@ -1724,7 +1748,7 @@
       ]
     },
     "R44": {
-      "part": "R",
+      "part": "R_2",
       "value": "10m\u03a9",
       "footprint": "Resistor_SMD:R_2512_6332Metric",
       "lcsc": "C1322424",
@@ -1738,7 +1762,7 @@
           "number": "1",
           "name": "",
           "type": "passive",
-          "net": "/Power Management/VSYS"
+          "net": "/Power Management/VSYS_SW"
         },
         {
           "number": "2",
@@ -1763,7 +1787,7 @@
           "number": "1",
           "name": "",
           "type": "passive",
-          "net": "/ESP32_S3/+3.3V"
+          "net": "+3.3V"
         },
         {
           "number": "2",
@@ -1788,7 +1812,7 @@
           "number": "1",
           "name": "",
           "type": "passive",
-          "net": "/ESP32_S3/+3.3V"
+          "net": "+3.3V"
         },
         {
           "number": "2",
@@ -1813,7 +1837,7 @@
           "number": "1",
           "name": "",
           "type": "passive",
-          "net": "/ESP32_S3/USB_DN"
+          "net": "/USB_DN"
         },
         {
           "number": "2",
@@ -1838,7 +1862,7 @@
           "number": "1",
           "name": "",
           "type": "passive",
-          "net": "/ESP32_S3/USB_DP"
+          "net": "/USB_DP"
         },
         {
           "number": "2",
@@ -1863,7 +1887,7 @@
           "number": "1",
           "name": "",
           "type": "passive",
-          "net": "/TCA9548A_Subsystem/TCA_RESET"
+          "net": "/TCA_RESET"
         },
         {
           "number": "2",
@@ -1919,7 +1943,7 @@
           "number": "2",
           "name": "2",
           "type": "unspecified",
-          "net": "/ESP32_S3/GND"
+          "net": "GND"
         }
       ]
     },
@@ -1944,7 +1968,7 @@
           "number": "2",
           "name": "2",
           "type": "unspecified",
-          "net": "/ESP32_S3/GND"
+          "net": "GND"
         }
       ]
     },
@@ -1993,7 +2017,7 @@
       ]
     },
     "TP2": {
-      "part": "TestPoint",
+      "part": "TestPoint_3",
       "value": "VBAT",
       "footprint": "TestPoint:TestPoint_Pad_D1.5mm",
       "lcsc": "",
@@ -2012,7 +2036,7 @@
       ]
     },
     "TP3": {
-      "part": "TestPoint",
+      "part": "TestPoint_1",
       "value": "PVBUS",
       "footprint": "TestPoint:TestPoint_Pad_D1.5mm",
       "lcsc": "",
@@ -2031,7 +2055,7 @@
       ]
     },
     "TP4": {
-      "part": "TestPoint",
+      "part": "TestPoint_2",
       "value": "PGND",
       "footprint": "TestPoint:TestPoint_Pad_D1.5mm",
       "lcsc": "",
@@ -2064,45 +2088,9 @@
           "number": "1",
           "name": "1",
           "type": "passive",
-          "net": "/TCA9548A_Subsystem/TCA_RESET"
+          "net": "/TCA_RESET"
         }
       ]
-    },
-    "TPIO11": {
-      "part": "TestPoint",
-      "value": "TestPoint",
-      "footprint": "TestPoint:TestPoint_Pad_D2.0mm",
-      "lcsc": "",
-      "sheet": "motion-play-main.kicad_sch",
-      "block": "mcu",
-      "function": "Sensor module 3 interrupt test point",
-      "role": "test_point",
-      "critical_specs": "",
-      "pins": []
-    },
-    "TPIO12": {
-      "part": "TestPoint",
-      "value": "TestPoint",
-      "footprint": "TestPoint:TestPoint_Pad_D2.0mm",
-      "lcsc": "",
-      "sheet": "motion-play-main.kicad_sch",
-      "block": "mcu",
-      "function": "Sensor module 2 interrupt test point",
-      "role": "test_point",
-      "critical_specs": "",
-      "pins": []
-    },
-    "TPIO13": {
-      "part": "TestPoint",
-      "value": "TestPoint",
-      "footprint": "TestPoint:TestPoint_Pad_D2.0mm",
-      "lcsc": "",
-      "sheet": "motion-play-main.kicad_sch",
-      "block": "mcu",
-      "function": "Sensor module 1 interrupt test point",
-      "role": "test_point",
-      "critical_specs": "",
-      "pins": []
     },
     "TPIO16": {
       "part": "TestPoint_3",
@@ -2119,7 +2107,7 @@
           "number": "1",
           "name": "1",
           "type": "passive",
-          "net": "/LED Controller/DATA_IN"
+          "net": "/LED_DATA"
         }
       ]
     },
@@ -2138,12 +2126,12 @@
           "number": "1",
           "name": "1",
           "type": "passive",
-          "net": "/Power Management/CHRG_INT"
+          "net": "/CHRG_INT"
         }
       ]
     },
     "TPIO43": {
-      "part": "TestPoint",
+      "part": "TestPoint_8",
       "value": "TestPoint",
       "footprint": "TestPoint:TestPoint_Pad_D2.0mm",
       "lcsc": "",
@@ -2195,13 +2183,13 @@
           "number": "1",
           "name": "GND",
           "type": "unspecified",
-          "net": "/ESP32_S3/GND"
+          "net": "GND"
         },
         {
           "number": "2",
           "name": "3V3",
           "type": "unspecified",
-          "net": "/ESP32_S3/+3.3V"
+          "net": "+3.3V"
         },
         {
           "number": "3",
@@ -2213,7 +2201,7 @@
           "number": "9",
           "name": "IO16",
           "type": "unspecified",
-          "net": "/ESP32_S3/LED_DATA"
+          "net": "/LED_DATA"
         },
         {
           "number": "13",
@@ -2231,31 +2219,31 @@
           "number": "18",
           "name": "IO10",
           "type": "unspecified",
-          "net": "/ESP32_S3/TCA_RESET"
+          "net": "/TCA_RESET"
         },
         {
           "number": "19",
           "name": "IO11",
-          "type": "unspecified",
+          "type": "unspecified+no_connect",
           "net": "/ESP32_S3/INT3"
         },
         {
           "number": "20",
           "name": "IO12",
-          "type": "unspecified",
+          "type": "unspecified+no_connect",
           "net": "/ESP32_S3/INT2"
         },
         {
           "number": "21",
           "name": "IO13",
-          "type": "unspecified",
+          "type": "unspecified+no_connect",
           "net": "/ESP32_S3/INT1"
         },
         {
           "number": "23",
           "name": "IO21",
           "type": "unspecified",
-          "net": "/ESP32_S3/CHRG_INT"
+          "net": "/CHRG_INT"
         },
         {
           "number": "27",
@@ -2267,25 +2255,25 @@
           "number": "36",
           "name": "RXD0",
           "type": "unspecified",
-          "net": "/ESP32_S3/+5V"
+          "net": "/I2C_SCL"
         },
         {
           "number": "37",
           "name": "TXD0",
           "type": "unspecified",
-          "net": "/ESP32_S3/I2C_SDA"
+          "net": "/I2C_SDA"
         },
         {
           "number": "40",
           "name": "GND",
           "type": "unspecified",
-          "net": "/ESP32_S3/GND"
+          "net": "GND"
         },
         {
           "number": "41",
           "name": "GND",
           "type": "unspecified",
-          "net": "/ESP32_S3/GND"
+          "net": "GND"
         }
       ]
     },
@@ -2316,7 +2304,7 @@
           "number": "3",
           "name": "~{RESET}",
           "type": "input",
-          "net": "/TCA9548A_Subsystem/TCA_RESET"
+          "net": "/TCA_RESET"
         },
         {
           "number": "4",
@@ -2431,7 +2419,7 @@
           "number": "7",
           "name": "INT",
           "type": "output",
-          "net": "/Power Management/CHRG_INT"
+          "net": "/CHRG_INT"
         },
         {
           "number": "8",
@@ -2691,7 +2679,7 @@
           "number": "1",
           "name": "IN+",
           "type": "unspecified",
-          "net": "/Power Management/VSYS"
+          "net": "/Power Management/VSYS_SW"
         },
         {
           "number": "2",
@@ -2789,7 +2777,7 @@
           "number": "1",
           "name": "1",
           "type": "input",
-          "net": "/Power Management/USB_DP"
+          "net": "/USB_DP"
         },
         {
           "number": "2",
@@ -2801,13 +2789,13 @@
           "number": "3",
           "name": "3",
           "type": "input",
-          "net": "/Power Management/USB_DN"
+          "net": "/USB_DN"
         },
         {
           "number": "4",
           "name": "4",
           "type": "input",
-          "net": "/Power Management/USB_DN"
+          "net": "/USB_DN"
         },
         {
           "number": "5",
@@ -2819,7 +2807,7 @@
           "number": "6",
           "name": "6",
           "type": "input",
-          "net": "/Power Management/USB_DP"
+          "net": "/USB_DP"
         }
       ]
     }
@@ -2837,19 +2825,7 @@
       "direction": "",
       "description": ""
     },
-    "/ESP32_S3/+3.3V": {
-      "type": "",
-      "protocol": "",
-      "direction": "",
-      "description": ""
-    },
-    "/ESP32_S3/+5V": {
-      "type": "",
-      "protocol": "",
-      "direction": "",
-      "description": ""
-    },
-    "/ESP32_S3/CHRG_INT": {
+    "/CHRG_INT": {
       "type": "",
       "protocol": "",
       "direction": "",
@@ -2861,19 +2837,7 @@
       "direction": "",
       "description": ""
     },
-    "/ESP32_S3/GND": {
-      "type": "",
-      "protocol": "",
-      "direction": "",
-      "description": ""
-    },
     "/ESP32_S3/GPIO0_BOOT": {
-      "type": "",
-      "protocol": "",
-      "direction": "",
-      "description": ""
-    },
-    "/ESP32_S3/I2C_SDA": {
       "type": "",
       "protocol": "",
       "direction": "",
@@ -2897,37 +2861,13 @@
       "direction": "",
       "description": ""
     },
-    "/ESP32_S3/LED_DATA": {
-      "type": "",
-      "protocol": "",
-      "direction": "",
-      "description": ""
-    },
     "/ESP32_S3/LED_STATUS_DOUT": {
       "type": "",
       "protocol": "",
       "direction": "",
       "description": ""
     },
-    "/ESP32_S3/TCA_RESET": {
-      "type": "",
-      "protocol": "",
-      "direction": "",
-      "description": ""
-    },
-    "/ESP32_S3/USB_DN": {
-      "type": "",
-      "protocol": "",
-      "direction": "",
-      "description": ""
-    },
     "/ESP32_S3/USB_DN_MCU": {
-      "type": "",
-      "protocol": "",
-      "direction": "",
-      "description": ""
-    },
-    "/ESP32_S3/USB_DP": {
       "type": "",
       "protocol": "",
       "direction": "",
@@ -2957,13 +2897,13 @@
       "direction": "",
       "description": ""
     },
-    "/LED Controller/DATA_IN": {
+    "/LED Controller/DATA_TO_LEDS": {
       "type": "",
       "protocol": "",
       "direction": "",
       "description": ""
     },
-    "/LED Controller/DATA_TO_LEDS": {
+    "/LED_DATA": {
       "type": "",
       "protocol": "",
       "direction": "",
@@ -3071,12 +3011,6 @@
       "direction": "",
       "description": ""
     },
-    "/Power Management/CHRG_INT": {
-      "type": "",
-      "protocol": "",
-      "direction": "",
-      "description": ""
-    },
     "/Power Management/COMP_MID": {
       "type": "",
       "protocol": "",
@@ -3096,18 +3030,6 @@
       "description": ""
     },
     "/Power Management/Protected_VBUS": {
-      "type": "",
-      "protocol": "",
-      "direction": "",
-      "description": ""
-    },
-    "/Power Management/USB_DN": {
-      "type": "",
-      "protocol": "",
-      "direction": "",
-      "description": ""
-    },
-    "/Power Management/USB_DP": {
       "type": "",
       "protocol": "",
       "direction": "",
@@ -3179,7 +3101,19 @@
       "direction": "",
       "description": ""
     },
-    "/TCA9548A_Subsystem/TCA_RESET": {
+    "/TCA_RESET": {
+      "type": "",
+      "protocol": "",
+      "direction": "",
+      "description": ""
+    },
+    "/USB_DN": {
+      "type": "",
+      "protocol": "",
+      "direction": "",
+      "description": ""
+    },
+    "/USB_DP": {
       "type": "",
       "protocol": "",
       "direction": "",
@@ -3215,7 +3149,7 @@
         {
           "name": "DATA_IN",
           "direction": "input",
-          "net": "/LED Controller/DATA_IN"
+          "net": ""
         },
         {
           "name": "DATA_TO_LEDS",
@@ -3235,22 +3169,22 @@
         {
           "name": "+3.3V",
           "direction": "input",
-          "net": "/ESP32_S3/+3.3V"
+          "net": "+3.3V"
         },
         {
           "name": "+5V",
           "direction": "input",
-          "net": "/ESP32_S3/+5V"
+          "net": "+5V"
         },
         {
           "name": "CHRG_INT",
           "direction": "input",
-          "net": "/ESP32_S3/CHRG_INT"
+          "net": "/CHRG_INT"
         },
         {
           "name": "GND",
           "direction": "input",
-          "net": "/ESP32_S3/GND"
+          "net": "GND"
         },
         {
           "name": "I2C_SCL",
@@ -3260,7 +3194,7 @@
         {
           "name": "I2C_SDA",
           "direction": "input",
-          "net": "/ESP32_S3/I2C_SDA"
+          "net": "/I2C_SDA"
         },
         {
           "name": "INT1",
@@ -3280,22 +3214,22 @@
         {
           "name": "LED_DATA",
           "direction": "output",
-          "net": "/ESP32_S3/LED_DATA"
+          "net": "/LED_DATA"
         },
         {
           "name": "TCA_RESET",
           "direction": "output",
-          "net": "/ESP32_S3/TCA_RESET"
+          "net": "/TCA_RESET"
         },
         {
           "name": "USB_DN",
           "direction": "bidirectional",
-          "net": "/ESP32_S3/USB_DN"
+          "net": "/USB_DN"
         },
         {
           "name": "USB_DP",
           "direction": "bidirectional",
-          "net": "/ESP32_S3/USB_DP"
+          "net": "/USB_DP"
         }
       ]
     },
@@ -3315,7 +3249,7 @@
         {
           "name": "CHRG_INT",
           "direction": "output",
-          "net": "/Power Management/CHRG_INT"
+          "net": "/CHRG_INT"
         },
         {
           "name": "GND",
@@ -3335,12 +3269,12 @@
         {
           "name": "USB_DN",
           "direction": "bidirectional",
-          "net": "/Power Management/USB_DN"
+          "net": "/USB_DN"
         },
         {
           "name": "USB_DP",
           "direction": "bidirectional",
-          "net": "/Power Management/USB_DP"
+          "net": "/USB_DP"
         }
       ]
     },
@@ -3395,7 +3329,7 @@
         {
           "name": "TCA_RESET",
           "direction": "input",
-          "net": "/TCA9548A_Subsystem/TCA_RESET"
+          "net": "/TCA_RESET"
         },
         {
           "name": "VCC_3V3",
