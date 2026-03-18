@@ -954,6 +954,10 @@
     [
       "bfeba651-d961-4d9b-b09b-91dbbe05d3fa",
       "TCA9548A_Subsystem"
+    ],
+    [
+      "3f1c02c7-ac9c-44c5-97f4-3f360ee54131",
+      "ESP32_S3"
     ]
   ],
   "text_variables": {}

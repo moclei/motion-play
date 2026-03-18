@@ -31,10 +31,10 @@ New toolkit for programmatic modification of existing KiCad schematics via kiuti
 
 Generate `hardware/pcb-main/kicad/esp32_s3.kicad_sch` using the `tools/schematic-gen/` spec.json + generator approach.
 
-- [ ] Create `tools/schematic-gen/esp32_spec.json` — all components, positions, pin-to-net maps, hierarchical labels
-- [ ] Create `tools/schematic-gen/generate_esp32_sheet.py` (or extend existing generator)
+- [x] Create `tools/schematic-gen/esp32_spec.json` — all components, positions, pin-to-net maps, hierarchical labels
+- [x] Create `tools/schematic-gen/generate_esp32_sheet.py` (or extend existing generator)
 - [ ] Generate `esp32_s3.kicad_sch` and verify in KiCad
-- [ ] Annotate new components via `annotate.py`
+- [x] Annotate new components via `annotate.py`
 
 Components on this sheet: WROOM-1 module (U3), EN/reset circuit (10k pull-up + 1µF cap + tactile switch), boot circuit (10k pull-up + tactile switch), USB series resistors (2x 22Ω on D-/D+), decoupling (10µF bulk + 3x 100nF + 1µF), status LED.
 
@@ -47,20 +47,20 @@ GPIO breakout header: unpopulated 2x5 0.1" pitch pads on root or ESP32 sheet. Su
 Use `tools/schematic-modify/` to place new components on existing sheets (off to one side). User manually positions and wires in KiCad.
 
 **Root sheet (`motion-play-main.kicad_sch`):**
-- [ ] Add hierarchical sheet reference to `esp32_s3.kicad_sch` with all interface pins
-- [ ] Remove U2 (T-Display-S3) symbol instance
-- [ ] Remove unused test points (TPIO1, TPIO2, TPIO3, TPIO17, TPIO18)
+- [x] Add hierarchical sheet reference to `esp32_s3.kicad_sch` with all interface pins
+- [x] Remove U2 (T-Display-S3) symbol instance
+- [x] Remove unused test points (TPIO1, TPIO2, TPIO3, TPIO17, TPIO18)
 - [ ] Remove U1 (AP2112K) and associated caps C1, C2 — LDO moves to power_management sheet
 - [ ] Reconnect signal wires from old U2 to new ESP32 sheet pins (manual in KiCad)
 
 **Power management sheet (`power_management.kicad_sch`):**
-- [ ] Add AMS1117-3.3 with caps (22µF ceramic input, 22µF tantalum output) — VIN from `+5V` (boost output), not VSYS
+- [x] Add AMS1117-3.3 with caps (22µF ceramic input, 22µF tantalum output) — VIN from `+5V` (boost output), not VSYS
 - [ ] Change `+3.3V` hierarchical pin from input to output (power_management now produces +3.3V)
 - [ ] Add USB D+/D- net labels on J7's data pads — tie A-side and B-side D+/D- together for orientation independence
-- [ ] Add USBLC6-2SC6 ESD protection between J7 D+/D- pads and series resistors
-- [ ] Add hierarchical labels `USB_DP`, `USB_DN` for routing to ESP32 sheet
-- [ ] Add power slide switch in VSYS path between BQ24195 output and TPS61088 boost input
-- [ ] Annotate all new components via `annotate.py`
+- [x] Add USBLC6-2SC6 ESD protection between J7 D+/D- pads and series resistors
+- [x] Add hierarchical labels `USB_DP`, `USB_DN` for routing to ESP32 sheet
+- [x] Add power slide switch in VSYS path between BQ24195 output and TPS61088 boost input
+- [x] Annotate all new components via `annotate.py`
 
 ### 1e. Verification
 

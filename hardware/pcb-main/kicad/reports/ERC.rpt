@@ -1,12 +1,282 @@
-ERC report (2026-03-16T10:20:14-0700, Encoding UTF8)
+ERC report (2026-03-17T16:22:30-0700, Encoding UTF8)
 
 ***** Sheet /
+[pin_not_connected]: Pin not connected
+    ; error
+    @(4000 mils, 950 mils): Symbol #PWR02 Pin 1 [Power input, Line]
+[unconnected_wire_endpoint]: Unconnected wire endpoint
+    ; warning
+    @(4000 mils, 1250 mils): Vertical Wire, length 350 mils
+[unconnected_wire_endpoint]: Unconnected wire endpoint
+    ; warning
+    @(4100 mils, 1600 mils): Vertical Wire, length 200 mils
+[pin_not_connected]: Pin not connected
+    ; error
+    @(5100 mils, 950 mils): Symbol #PWR03 Pin 1 [Power input, Line]
+[unconnected_wire_endpoint]: Unconnected wire endpoint
+    ; warning
+    @(5100 mils, 1250 mils): Vertical Wire, length 150 mils
+[unconnected_wire_endpoint]: Unconnected wire endpoint
+    ; warning
+    @(3550 mils, 3900 mils): Horizontal Wire, length 550 mils
+[wire_dangling]: Wires not connected to anything
+    ; error
+    @(3550 mils, 3900 mils): Horizontal Wire, length 550 mils
+[unconnected_wire_endpoint]: Unconnected wire endpoint
+    ; warning
+    @(3550 mils, 4000 mils): Horizontal Wire, length 550 mils
+[wire_dangling]: Wires not connected to anything
+    ; error
+    @(3550 mils, 4000 mils): Horizontal Wire, length 550 mils
+[unconnected_wire_endpoint]: Unconnected wire endpoint
+    ; warning
+    @(4100 mils, 3500 mils): Vertical Wire, length 100 mils
+[unconnected_wire_endpoint]: Unconnected wire endpoint
+    ; warning
+    @(3550 mils, 3700 mils): Horizontal Wire, length 550 mils
+[unconnected_wire_endpoint]: Unconnected wire endpoint
+    ; warning
+    @(3450 mils, 3800 mils): Horizontal Wire, length 650 mils
+[unconnected_wire_endpoint]: Unconnected wire endpoint
+    ; warning
+    @(3550 mils, 3900 mils): Horizontal Wire, length 550 mils
+[unconnected_wire_endpoint]: Unconnected wire endpoint
+    ; warning
+    @(3550 mils, 4000 mils): Horizontal Wire, length 550 mils
+[unconnected_wire_endpoint]: Unconnected wire endpoint
+    ; warning
+    @(3600 mils, 4100 mils): Horizontal Wire, length 500 mils
+[unconnected_wire_endpoint]: Unconnected wire endpoint
+    ; warning
+    @(3800 mils, 4200 mils): Horizontal Wire, length 300 mils
+[no_connect_dangling]: Unconnected "no connection" flag
+    ; warning
+    @(4100 mils, 4300 mils): No Connect
+[unconnected_wire_endpoint]: Unconnected wire endpoint
+    ; warning
+    @(4000 mils, 4400 mils): Horizontal Wire, length 100 mils
+[no_connect_dangling]: Unconnected "no connection" flag
+    ; warning
+    @(4900 mils, 3500 mils): No Connect
+[unconnected_wire_endpoint]: Unconnected wire endpoint
+    ; warning
+    @(5250 mils, 3600 mils): Horizontal Wire, length 350 mils
+[unconnected_wire_endpoint]: Unconnected wire endpoint
+    ; warning
+    @(4000 mils, 4500 mils): Horizontal Wire, length 100 mils
+[unconnected_wire_endpoint]: Unconnected wire endpoint
+    ; warning
+    @(4900 mils, 3700 mils): Horizontal Wire, length 350 mils
+[wire_dangling]: Wires not connected to anything
+    ; error
+    @(4900 mils, 3700 mils): Horizontal Wire, length 350 mils
+[no_connect_dangling]: Unconnected "no connection" flag
+    ; warning
+    @(4100 mils, 4600 mils): No Connect
+[unconnected_wire_endpoint]: Unconnected wire endpoint
+    ; warning
+    @(5250 mils, 3800 mils): Horizontal Wire, length 350 mils
+[unconnected_wire_endpoint]: Unconnected wire endpoint
+    ; warning
+    @(4900 mils, 3900 mils): Horizontal Wire, length 1200 mils
+[unconnected_wire_endpoint]: Unconnected wire endpoint
+    ; warning
+    @(4900 mils, 4000 mils): Horizontal Wire, length 700 mils
+[unconnected_wire_endpoint]: Unconnected wire endpoint
+    ; warning
+    @(5250 mils, 3600 mils): Horizontal Wire, length 350 mils
+[wire_dangling]: Wires not connected to anything
+    ; error
+    @(5250 mils, 3600 mils): Horizontal Wire, length 350 mils
+[unconnected_wire_endpoint]: Unconnected wire endpoint
+    ; warning
+    @(4900 mils, 4100 mils): Horizontal Wire, length 700 mils
+[unconnected_wire_endpoint]: Unconnected wire endpoint
+    ; warning
+    @(4900 mils, 3700 mils): Horizontal Wire, length 350 mils
+[unconnected_wire_endpoint]: Unconnected wire endpoint
+    ; warning
+    @(4900 mils, 4200 mils): Horizontal Wire, length 700 mils
+[unconnected_wire_endpoint]: Unconnected wire endpoint
+    ; warning
+    @(5250 mils, 3800 mils): Horizontal Wire, length 350 mils
+[wire_dangling]: Wires not connected to anything
+    ; error
+    @(5250 mils, 3800 mils): Horizontal Wire, length 350 mils
+[label_dangling]: Label not connected to anything
+    ; error
+    @(5300 mils, 4000 mils): Label 'INT3'
+[unconnected_wire_endpoint]: Unconnected wire endpoint
+    ; warning
+    @(4900 mils, 4500 mils): Horizontal Wire, length 200 mils
+[label_dangling]: Label not connected to anything
+    ; error
+    @(5300 mils, 4100 mils): Label 'INT2'
+[label_dangling]: Label not connected to anything
+    ; error
+    @(5300 mils, 4200 mils): Label 'INT1'
+[pin_not_connected]: Pin not connected
+    ; error
+    @(14000 mils, 2100 mils): Hierarchical Sheet Pin INT1
+[pin_not_connected]: Pin not connected
+    ; error
+    @(14000 mils, 2300 mils): Hierarchical Sheet Pin INT2
+[pin_not_connected]: Pin not connected
+    ; error
+    @(14000 mils, 2500 mils): Hierarchical Sheet Pin INT3
+[pin_not_connected]: Pin not connected
+    ; error
+    @(14000 mils, 2700 mils): Hierarchical Sheet Pin CHRG_INT
+[pin_not_connected]: Pin not connected
+    ; error
+    @(14000 mils, 2900 mils): Hierarchical Sheet Pin USB_DP
+[pin_not_connected]: Pin not connected
+    ; error
+    @(14000 mils, 3100 mils): Hierarchical Sheet Pin USB_DN
+[pin_not_connected]: Pin not connected
+    ; error
+    @(14000 mils, 3300 mils): Hierarchical Sheet Pin +3.3V
+[pin_not_connected]: Pin not connected
+    ; error
+    @(14000 mils, 3500 mils): Hierarchical Sheet Pin GND
 [lib_symbol_issues]: The current configuration does not include the symbol library 'USB-C_SMD-TYPE-C-31-M-12'
     ; warning
     @(1500 mils, 2000 mils): Symbol J7 [TYPE-C-31-M-12]
 [lib_symbol_issues]: The current configuration does not include the symbol library 'BQ24195RGET'
     ; warning
     @(5000 mils, 2500 mils): Symbol U5 [BQ24195RGET]
+[footprint_link_issues]: Footprint 'SOT-223-3_L6.5-W3.4-P2.30-LS7.0-BR' not found in library 'JLC-MCP'.
+    ; warning
+    @(12000 mils, 1800 mils): Symbol U8 [AMS1117-3_3]
+[label_dangling]: Label not connected to anything
+    ; error
+    @(12000 mils, 3300 mils): Label 'VSYS_SW'
+[footprint_link_issues]: Footprint 'SW-TH_SS-12D10L5' not found in library 'JLC-MCP'.
+    ; warning
+    @(12000 mils, 3500 mils): Symbol SW1 [SS-12D10L5]
+[footprint_link_issues]: Footprint 'C0805' not found in library 'JLC-MCP'.
+    ; warning
+    @(12500 mils, 1500 mils): Symbol C42 [CC0805MKX5R6BB226]
+[footprint_link_issues]: Footprint 'CASE-A_3216' not found in library 'JLC-MCP'.
+    ; warning
+    @(12500 mils, 2100 mils): Symbol C43 [CA45-A-6_3V-22UF-K]
+[footprint_link_issues]: Footprint 'SOT-23-6_L2.9-W1.6-P0.95-LS2.8-BL' not found in library 'JLC-MCP'.
+    ; warning
+    @(13000 mils, 3000 mils): Symbol U9 [USBLC6-2SC6]
+[label_dangling]: Label not connected to anything
+    ; error
+    @(1000 mils, 2100 mils): Hierarchical Label 'INT1'
+[label_dangling]: Label not connected to anything
+    ; error
+    @(1100 mils, 2100 mils): Label 'INT1'
+[label_dangling]: Label not connected to anything
+    ; error
+    @(1000 mils, 2300 mils): Hierarchical Label 'INT2'
+[label_dangling]: Label not connected to anything
+    ; error
+    @(1100 mils, 2300 mils): Label 'INT2'
+[label_dangling]: Label not connected to anything
+    ; error
+    @(1000 mils, 2500 mils): Hierarchical Label 'INT3'
+[label_dangling]: Label not connected to anything
+    ; error
+    @(1100 mils, 2500 mils): Label 'INT3'
+[label_dangling]: Label not connected to anything
+    ; error
+    @(1000 mils, 2900 mils): Hierarchical Label 'CHRG_INT'
+[label_dangling]: Label not connected to anything
+    ; error
+    @(1100 mils, 2900 mils): Label 'CHRG_INT'
+[duplicate_reference]: Duplicate items R?
+
+    ; error
+    @(2700 mils, 1800 mils): Symbol R? [R]
+    @(3600 mils, 1800 mils): Symbol R? [R]
+[wire_dangling]: Wires not connected to anything
+    ; error
+    @(2700 mils, 1950 mils): Vertical Wire, length 200 mils
+[label_dangling]: Label not connected to anything
+    ; error
+    @(1000 mils, 3300 mils): Hierarchical Label 'USB_DN'
+[label_dangling]: Label not connected to anything
+    ; error
+    @(1100 mils, 3300 mils): Label 'USB_DN'
+[duplicate_reference]: Duplicate items C?
+
+    ; error
+    @(2700 mils, 2300 mils): Symbol C? [C]
+    @(4600 mils, 3000 mils): Symbol C? [C]
+[footprint_link_issues]: Footprint 'KEY-SMD_L4.0-W3.0-LS4.9-1' not found in library 'JLC-MCP'.
+    ; warning
+    @(2700 mils, 2800 mils): Symbol SW? [HX_3X4X2-2P-1_6N_TACTILE_SWITCH]
+[duplicate_reference]: Duplicate items R?
+
+    ; error
+    @(3600 mils, 1800 mils): Symbol R? [R]
+    @(7600 mils, 3500 mils): Symbol R? [R]
+[duplicate_reference]: Duplicate items SW?
+
+    ; error
+    @(3600 mils, 2300 mils): Symbol SW? [HX_3X4X2-2P-1_6N_TACTILE_SWITCH]
+    @(2700 mils, 2800 mils): Symbol SW? [HX_3X4X2-2P-1_6N_TACTILE_SWITCH]
+[footprint_link_issues]: Footprint 'KEY-SMD_L4.0-W3.0-LS4.9-1' not found in library 'JLC-MCP'.
+    ; warning
+    @(3600 mils, 2300 mils): Symbol SW? [HX_3X4X2-2P-1_6N_TACTILE_SWITCH]
+[duplicate_reference]: Duplicate items C?
+
+    ; error
+    @(4600 mils, 1800 mils): Symbol C? [C]
+    @(2700 mils, 2300 mils): Symbol C? [C]
+[duplicate_reference]: Duplicate items C?
+
+    ; error
+    @(4600 mils, 2100 mils): Symbol C? [C]
+    @(4600 mils, 2400 mils): Symbol C? [C]
+[unannotated]: Item not annotated: C?
+    ; error
+    @(4600 mils, 2100 mils): Symbol C? [C]
+[duplicate_reference]: Duplicate items C?
+
+    ; error
+    @(4600 mils, 2400 mils): Symbol C? [C]
+    @(4600 mils, 2700 mils): Symbol C? [C]
+[duplicate_reference]: Duplicate items C?
+
+    ; error
+    @(4600 mils, 2700 mils): Symbol C? [C]
+    @(4600 mils, 1800 mils): Symbol C? [C]
+[footprint_link_issues]: Footprint 'WIRELM-SMD_ESP32-S3-WROOM-1' not found in library 'JLC-MCP'.
+    ; warning
+    @(5500 mils, 3700 mils): Symbol U? [ESP32-S3-WROOM-1_N16R8_]
+[label_dangling]: Label not connected to anything
+    ; error
+    @(5400 mils, 5200 mils): Label 'INT3'
+[label_dangling]: Label not connected to anything
+    ; error
+    @(5500 mils, 5200 mils): Label 'INT2'
+[label_dangling]: Label not connected to anything
+    ; error
+    @(5600 mils, 5200 mils): Label 'INT1'
+[label_dangling]: Label not connected to anything
+    ; error
+    @(5800 mils, 5200 mils): Label 'CHRG_INT'
+[label_dangling]: Label not connected to anything
+    ; error
+    @(7600 mils, 3250 mils): Label 'USB_DN'
+[duplicate_reference]: Duplicate items R?
+
+    ; error
+    @(7600 mils, 3500 mils): Symbol R? [R]
+    @(7600 mils, 3900 mils): Symbol R? [R]
+[label_dangling]: Label not connected to anything
+    ; error
+    @(7100 mils, 4550 mils): Label '+5V'
+[footprint_link_issues]: Footprint 'LED-SMD_4P-L3.5-W3.5-TL_WS2812B-1' not found in library 'JLC-MCP'.
+    ; warning
+    @(7600 mils, 4500 mils): Symbol D? [WS2812B-MINI-X1]
+[label_dangling]: Label not connected to anything
+    ; error
+    @(8100 mils, 4550 mils): Label 'LED_STATUS_DOUT'
 
 ***** Sheet /LED Controller/
 
@@ -123,7 +393,188 @@ ERC report (2026-03-16T10:20:14-0700, Encoding UTF8)
     ; warning
     @(9100 mils, 2350 mils): Symbol U6 Pin 12 [NC, Unspecified, Line]
     @(9500 mils, 2250 mils): Symbol R40 Pin 2 [Passive, Line]
+[hier_label_mismatch]: Hierarchical label USB_DP has no matching sheet pin in the parent sheet
+    ; error
+    @(11000 mils, 3100 mils): Hierarchical Label 'USB_DP'
+[hier_label_mismatch]: Hierarchical label USB_DN has no matching sheet pin in the parent sheet
+    ; error
+    @(11000 mils, 3300 mils): Hierarchical Label 'USB_DN'
+[pin_to_pin]: Pins of type Unspecified and Passive are connected
+    ; warning
+    @(11550 mils, 1700 mils): Symbol U8 Pin 1 [GND, Unspecified, Line]
+    @(12500 mils, 1600 mils): Symbol C42 Pin 2 [2, Passive, Line]
+[pin_to_pin]: Pins of type Unspecified and Unspecified are connected
+    ; warning
+    @(11550 mils, 1800 mils): Symbol U8 Pin 2 [VOUT, Unspecified, Line]
+    @(12450 mils, 1800 mils): Symbol U8 Pin 4 [VOUT, Unspecified, Line]
+[pin_to_pin]: Pins of type Unspecified and Passive are connected
+    ; warning
+    @(11550 mils, 1900 mils): Symbol U8 Pin 3 [VIN, Unspecified, Line]
+    @(12500 mils, 1400 mils): Symbol C42 Pin 1 [1, Passive, Line]
+[pin_to_pin]: Pins of type Unspecified and Unspecified are connected
+    ; warning
+    @(11800 mils, 3400 mils): Symbol SW1 Pin 1 [1, Unspecified, Line]
+    @(12200 mils, 3400 mils): Symbol SW1 Pin 3 [3, Unspecified, Line]
+[pin_to_pin]: Pins of type Unspecified and Passive are connected
+    ; warning
+    @(12450 mils, 1800 mils): Symbol U8 Pin 4 [VOUT, Unspecified, Line]
+    @(12500 mils, 2000 mils): Symbol C43 Pin 1 [1, Passive, Line]
+[pin_not_driven]: Input pin not driven by any Output pins
+    ; error
+    @(12350 mils, 2700 mils): Symbol U9 Pin 1 [1, Input, Line]
+[pin_to_pin]: Pins of type Unspecified and Passive are connected
+    ; warning
+    @(12200 mils, 3400 mils): Symbol SW1 Pin 3 [3, Unspecified, Line]
+    @(7000 mils, 3150 mils): Symbol C27 Pin 1 [Passive, Line]
+[pin_not_driven]: Input pin not driven by any Output pins
+    ; error
+    @(12350 mils, 3300 mils): Symbol U9 Pin 3 [3, Input, Line]
 
 ***** Sheet /TCA9548A_Subsystem/
 
- ** ERC messages: 30  Errors 0  Warnings 30
+***** Sheet /ESP32_S3/
+[multiple_net_names]: Both USB_DN_MCU and USB_DP are attached to the same items; USB_DN_MCU will be used in the netlist
+    ; warning
+    @(4550 mils, 4450 mils): Label 'USB_DN_MCU'
+    @(1000 mils, 3100 mils): Hierarchical Label 'USB_DP'
+[pin_to_pin]: Pins of type Unspecified and Unspecified are connected
+    ; warning
+    @(2500 mils, 2800 mils): Symbol SW? Pin 1 [1, Unspecified, Line]
+    @(4650 mils, 3450 mils): Symbol U? Pin 3 [EN, Unspecified, Line]
+[multiple_net_names]: Both +3.3V and GND are attached to the same items; +3.3V will be used in the netlist
+    ; warning
+    @(2700 mils, 1550 mils): Label '+3.3V'
+    @(1000 mils, 3700 mils): Hierarchical Label 'GND'
+[pin_to_pin]: Pins of type Unspecified and Passive are connected
+    ; warning
+    @(2900 mils, 2800 mils): Symbol SW? Pin 2 [2, Unspecified, Line]
+    @(2700 mils, 2450 mils): Symbol C? Pin 2 [Passive, Line]
+[pin_to_pin]: Pins of type Unspecified and Passive are connected
+    ; warning
+    @(3400 mils, 2300 mils): Symbol SW? Pin 1 [1, Unspecified, Line]
+    @(3600 mils, 1950 mils): Symbol R? Pin 2 [Passive, Line]
+[pin_to_pin]: Pins of type Unspecified and Passive are connected
+    ; warning
+    @(3800 mils, 2300 mils): Symbol SW? Pin 2 [2, Unspecified, Line]
+    @(3600 mils, 1650 mils): Symbol R? Pin 1 [Passive, Line]
+[pin_to_pin]: Pins of type Unspecified and Unspecified are connected
+    ; warning
+    @(4650 mils, 3250 mils): Symbol U? Pin 1 [GND, Unspecified, Line]
+    @(4650 mils, 3350 mils): Symbol U? Pin 2 [3V3, Unspecified, Line]
+[pin_to_pin]: Pins of type Unspecified and Passive are connected
+    ; warning
+    @(4650 mils, 3350 mils): Symbol U? Pin 2 [3V3, Unspecified, Line]
+    @(4600 mils, 3150 mils): Symbol C? Pin 2 [Passive, Line]
+[pin_not_connected]: Pin not connected
+    ; error
+    @(4650 mils, 3550 mils): Symbol U? Pin 4 [IO4, Unspecified, Line]
+[pin_not_connected]: Pin not connected
+    ; error
+    @(4650 mils, 3650 mils): Symbol U? Pin 5 [IO5, Unspecified, Line]
+[pin_not_connected]: Pin not connected
+    ; error
+    @(4650 mils, 3750 mils): Symbol U? Pin 6 [IO6, Unspecified, Line]
+[pin_not_connected]: Pin not connected
+    ; error
+    @(4650 mils, 3850 mils): Symbol U? Pin 7 [IO7, Unspecified, Line]
+[pin_not_connected]: Pin not connected
+    ; error
+    @(4650 mils, 3950 mils): Symbol U? Pin 8 [IO15, Unspecified, Line]
+[pin_to_pin]: Pins of type Unspecified and Unspecified are connected
+    ; warning
+    @(4650 mils, 4050 mils): Symbol U? Pin 9 [IO16, Unspecified, Line]
+    @(6350 mils, 3650 mils): Symbol U? Pin 36 [RXD0, Unspecified, Line]
+[pin_not_connected]: Pin not connected
+    ; error
+    @(4650 mils, 4150 mils): Symbol U? Pin 10 [IO17, Unspecified, Line]
+[pin_not_connected]: Pin not connected
+    ; error
+    @(4650 mils, 4250 mils): Symbol U? Pin 11 [IO18, Unspecified, Line]
+[pin_not_connected]: Pin not connected
+    ; error
+    @(4650 mils, 4350 mils): Symbol U? Pin 12 [IO8, Unspecified, Line]
+[pin_to_pin]: Pins of type Unspecified and Passive are connected
+    ; warning
+    @(4650 mils, 4450 mils): Symbol U? Pin 13 [IO19, Unspecified, Line]
+    @(7600 mils, 3750 mils): Symbol R? Pin 1 [Passive, Line]
+[pin_to_pin]: Pins of type Unspecified and Passive are connected
+    ; warning
+    @(4650 mils, 4550 mils): Symbol U? Pin 14 [IO20, Unspecified, Line]
+    @(7600 mils, 4050 mils): Symbol R? Pin 2 [Passive, Line]
+[pin_to_pin]: Pins of type Unspecified and Passive are connected
+    ; warning
+    @(6350 mils, 3100 mils): Symbol U? Pin 41 [GND, Unspecified, Line]
+    @(4600 mils, 3150 mils): Symbol C? Pin 2 [Passive, Line]
+[pin_to_pin]: Pins of type Unspecified and Unspecified are connected
+    ; warning
+    @(6350 mils, 3250 mils): Symbol U? Pin 40 [GND, Unspecified, Line]
+    @(6350 mils, 3100 mils): Symbol U? Pin 41 [GND, Unspecified, Line]
+[pin_not_connected]: Pin not connected
+    ; error
+    @(5000 mils, 5100 mils): Symbol U? Pin 15 [IO3, Unspecified, Line]
+[pin_not_connected]: Pin not connected
+    ; error
+    @(6350 mils, 3350 mils): Symbol U? Pin 39 [IO1, Unspecified, Line]
+[pin_not_connected]: Pin not connected
+    ; error
+    @(5100 mils, 5100 mils): Symbol U? Pin 16 [IO46, Unspecified, Line]
+[pin_not_connected]: Pin not connected
+    ; error
+    @(6350 mils, 3450 mils): Symbol U? Pin 38 [IO2, Unspecified, Line]
+[pin_not_connected]: Pin not connected
+    ; error
+    @(5200 mils, 5100 mils): Symbol U? Pin 17 [IO9, Unspecified, Line]
+[pin_to_pin]: Pins of type Unspecified and Unspecified are connected
+    ; warning
+    @(5300 mils, 5100 mils): Symbol U? Pin 18 [IO10, Unspecified, Line]
+    @(6350 mils, 3550 mils): Symbol U? Pin 37 [TXD0, Unspecified, Line]
+[pin_not_connected]: Pin not connected
+    ; error
+    @(6350 mils, 3750 mils): Symbol U? Pin 35 [IO42, Unspecified, Line]
+[pin_not_connected]: Pin not connected
+    ; error
+    @(6350 mils, 3850 mils): Symbol U? Pin 34 [IO41, Unspecified, Line]
+[pin_not_connected]: Pin not connected
+    ; error
+    @(6350 mils, 3950 mils): Symbol U? Pin 33 [IO40, Unspecified, Line]
+[pin_not_connected]: Pin not connected
+    ; error
+    @(6350 mils, 4050 mils): Symbol U? Pin 32 [IO39, Unspecified, Line]
+[pin_not_connected]: Pin not connected
+    ; error
+    @(6350 mils, 4150 mils): Symbol U? Pin 31 [IO38, Unspecified, Line]
+[pin_not_connected]: Pin not connected
+    ; error
+    @(6350 mils, 4250 mils): Symbol U? Pin 30 [IO37, Unspecified, Line]
+[pin_not_connected]: Pin not connected
+    ; error
+    @(5700 mils, 5100 mils): Symbol U? Pin 22 [IO14, Unspecified, Line]
+[pin_not_connected]: Pin not connected
+    ; error
+    @(6350 mils, 4350 mils): Symbol U? Pin 29 [IO36, Unspecified, Line]
+[pin_not_connected]: Pin not connected
+    ; error
+    @(6350 mils, 4450 mils): Symbol U? Pin 28 [IO35, Unspecified, Line]
+[pin_not_connected]: Pin not connected
+    ; error
+    @(5900 mils, 5100 mils): Symbol U? Pin 24 [IO47, Unspecified, Line]
+[pin_to_pin]: Pins of type Unspecified and Passive are connected
+    ; warning
+    @(6350 mils, 4550 mils): Symbol U? Pin 27 [IO0, Unspecified, Line]
+    @(3600 mils, 1950 mils): Symbol R? Pin 2 [Passive, Line]
+[pin_not_connected]: Pin not connected
+    ; error
+    @(6000 mils, 5100 mils): Symbol U? Pin 25 [IO48, Unspecified, Line]
+[pin_not_connected]: Pin not connected
+    ; error
+    @(6100 mils, 5100 mils): Symbol U? Pin 26 [IO45, Unspecified, Line]
+[pin_to_pin]: Pins of type Unspecified and Unspecified are connected
+    ; warning
+    @(7200 mils, 4450 mils): Symbol D? Pin 1 [DIN, Unspecified, Line]
+    @(6350 mils, 3650 mils): Symbol U? Pin 36 [RXD0, Unspecified, Line]
+[pin_to_pin]: Pins of type Unspecified and Unspecified are connected
+    ; warning
+    @(8000 mils, 4450 mils): Symbol D? Pin 4 [GND, Unspecified, Line]
+    @(6350 mils, 3250 mils): Symbol U? Pin 40 [GND, Unspecified, Line]
+
+ ** ERC messages: 166  Errors 76  Warnings 90

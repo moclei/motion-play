@@ -456,7 +456,7 @@ def annotate_components(
 
     root = root_schematic.resolve()
     if annotate_script is None:
-        annotate_script = root.parents[2] / "tools/schematic-context/annotate.py"
+        annotate_script = root.parents[3] / "tools/schematic-context/annotate.py"
     annotate_path = annotate_script.resolve()
     if not annotate_path.exists():
         raise FileNotFoundError("annotate.py not found: {}".format(annotate_path))
