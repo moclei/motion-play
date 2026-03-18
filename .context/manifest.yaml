@@ -67,7 +67,7 @@ structure:
     path: mechanical/
     description: Physical enclosures and mounting hardware (3D-printed)
     specs: mechanical/specs/
-    enclosures: mechanical/enclosures/  # CAD files will be organized here as the design takes shape
+    models: mechanical/models/  # CAD projects (enclosures, experiments, fixtures, etc.)
     
   context:
     path: .context/

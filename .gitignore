@@ -68,5 +68,5 @@ tools/ml-training/output/
 # Mechanical CAD
 mechanical/.venv/
 mechanical/__pycache__/
-mechanical/enclosures/**/*.stl
-mechanical/enclosures/**/*.step
+mechanical/models/**/*.stl
+mechanical/models/**/*.step

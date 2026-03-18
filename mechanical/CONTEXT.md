@@ -1,12 +1,12 @@
 # Mechanical — Motion Play
 
-Context for the `mechanical/` directory: 3D-printed enclosures and mounting hardware for the sensor system.
+Context for the `mechanical/` directory: 3D-printed parts designed with build123d and viewed in OCP CAD Viewer.
 
 ## What This Is
 
-This folder contains the physical enclosure designs for the Motion Play sensor assemblies. Each sensor assembly mounts to a steel flat bar hoop and houses a rigid PCB (outer face), a flex PCB that wraps 180° around the bar's thin edge, and optical sensors (inner face). The enclosures protect electronics from ball impact, hold everything in position, and leave a window for the optical sensors.
+This folder contains parametric 3D models for the Motion Play project and related experiments. The primary focus is sensor enclosures for the hoop assembly, but the same tooling supports any 3D-printable part — replacement components, fixtures, test jigs, etc.
 
-The enclosures are designed in Python using build123d (parametric B-rep CAD on OpenCASCADE) and viewed in OCP CAD Viewer.
+All parts are designed in Python using build123d (parametric B-rep CAD on OpenCASCADE) and viewed in OCP CAD Viewer.
 
 ## Structure
 
@@ -15,27 +15,29 @@ mechanical/
 ├── CONTEXT.md                 # This file
 ├── FDM_DESIGN_RULES.md        # 3D printing design standards and tolerances
 ├── specs/                     # Problem definition and constraints
-│   └── assembly-v0.1.yaml    # Dimensions, requirements, current prototype issues
-├── enclosures/                # CAD models, one folder per design approach
-│   └── option-X/             # Each option explores a different solution
-│       ├── *.py              # build123d scripts (self-documenting)
-│       ├── *.step            # Exported STEP files
-│       └── *.stl             # Exported STL files (for slicing/printing)
-├── view.sh                    # Interactive launcher for OCP CAD Viewer
+│   └── assembly-v0.1.yaml    # Hoop assembly dimensions and requirements
+├── models/                    # CAD models, one folder per project
+│   ├── enclosures/            # Sensor enclosure designs (option-a, interior-channel, etc.)
+│   │   └── option-X/          # Each option explores a different solution
+│   │       ├── *.py           # build123d scripts (self-documenting)
+│   │       ├── *.step         # Exported STEP files
+│   │       └── *.stl          # Exported STL files (for slicing/printing)
+│   └── door-latch-spring/     # Replacement spring for a mortise latch (experiment)
+├── view.sh                    # Interactive launcher: model selector + OCP viewer auto-start
 └── .venv/                     # Python venv (build123d, ocp_vscode)
 ```
 
 ## Design Process
 
-1. **Spec first**: `specs/assembly-v0.1.yaml` defines the physical constraints, measurements, and requirements. All designs reference this.
-2. **Explore options**: `docs/explorations/sensor-enclosure.md` evaluates design approaches before committing to CAD work.
-3. **Parametric CAD**: Each option folder contains build123d Python scripts. Dimensions trace back to the spec file or to `FDM_DESIGN_RULES.md`. Scripts are self-documenting — the docstring at the top of each `.py` file explains what the part is, how it prints, and its coordinate system.
-4. **Visual evaluation**: Run scripts through `view.sh` to see parts in OCP CAD Viewer (standalone server on port 3939).
+1. **Spec first**: For project-related parts, `specs/assembly-v0.1.yaml` defines the physical constraints. For standalone p1s, the script docstring describes the problem and measurements.
+2. **Explore options**: `docs/explorations/sensor-enclosure.md` evaluates design approaches before committing to CAD work (for enclosures specifically).
+3. **Parametric CAD**: Each project folder contains build123d Python scripts. Dimensions trace back to the spec file or to `FDM_DESIGN_RULES.md`. Scripts are self-documenting — the docstring at the top of each `.py` file explains what the part is, how it prints, and its coordinate system.
+4. **Visual evaluation**: Run `./mechanical/view.sh` to select a project and model, then view in OCP CAD Viewer. The launcher auto-starts the viewer if it isn't running.
 5. **Print and test**: Export STL, slice in PrusaSlicer, print on Prusa Core One. PLA for test-fitting, PETG for final parts.
 
 ## Coordinate Conventions
 
-All enclosure scripts use the same axis definitions:
+Enclosure scripts use consistent axis definitions (see individual script docstrings for project-specific conventions):
 
 - **X** = across bar width (25.25mm)
 - **Y** = along hoop circumference
@@ -50,7 +52,7 @@ The outer and inner shells have opposite Z directions because they sit on opposi
 
 - **CAD**: build123d — Python parametric B-rep modeling on OpenCASCADE
 - **Viewer**: OCP CAD Viewer standalone server, port 3939
-- **Launcher**: `./mechanical/view.sh` from project root
+- **Launcher**: `./mechanical/view.sh` from project root (auto-starts viewer if needed)
 - **Environment**: Python 3.13 venv at `mechanical/.venv`
 - **Printer**: Prusa Core One, PrusaSlicer
 - **Materials**: PLA (test fitting), PETG (final parts)

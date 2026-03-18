@@ -49,7 +49,7 @@ motion-play/
 ├── hardware/              # KiCad schematics and PCB designs  ← has CONTEXT.md
 ├── infrastructure/        # AWS setup docs and config  ← has CONTEXT.md
 ├── lambda/                # AWS Lambda function source (Node.js)
-├── mechanical/            # Physical enclosures, 3D-printed parts (build123d)
+├── mechanical/            # 3D-printed parts — enclosures, experiments (build123d)
 ├── docs/                  # Project documentation
 │   ├── explorations/      # Problem-space analyses (pre-initiative)
 │   ├── initiatives/       # Feature docs (BRIEF/PLAN/TASKS per feature)
@@ -73,7 +73,7 @@ motion-play/
 | **Hardware** | `hardware/CONTEXT.md` | PCB designs (main + sensor rigid + flex), physical architecture, I2C mux chain, schematic context system, component nicknames |
 | **Infrastructure** | `infrastructure/CONTEXT.md` | AWS architecture, IoT Core, Lambda functions, DynamoDB schema (composite key!), API endpoints, MQTT message formats, data flow |
 | **Frontend** | `frontend/CONTEXT.md` | React app architecture, tech stack, what it does, relationship to cloud infrastructure |
-| **Mechanical** | `mechanical/CONTEXT.md` | Enclosure design process, build123d tooling, coordinate conventions, folder structure, FDM design rules |
+| **Mechanical** | `mechanical/CONTEXT.md` | 3D model design process, build123d tooling, coordinate conventions, folder structure, FDM design rules |
 
 ### Folders Without CONTEXT.md
 
