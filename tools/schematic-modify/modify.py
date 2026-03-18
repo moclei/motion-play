@@ -26,6 +26,7 @@ from kiutils.items.schitems import (
     HierarchicalSheetProjectInstance,
     HierarchicalSheetProjectPath,
     LocalLabel,
+    NoConnect,
     SchematicSymbol,
     SymbolProjectInstance,
     SymbolProjectPath,
@@ -472,3 +473,168 @@ def annotate_components(
         raise RuntimeError(
             "annotate.py failed:\n{}\n{}".format(result.stdout.strip(), result.stderr.strip())
         )
+
+
+# ---------------------------------------------------------------------------
+# Sheet reference helpers
+# ---------------------------------------------------------------------------
+
+def find_sheet_ref(root_doc: SheetDoc, file_name: str) -> HierarchicalSheet:
+    for sheet in root_doc.schematic.sheets:
+        if sheet.fileName.value == file_name:
+            return sheet
+    raise ValueError("Sheet reference not found: {}".format(file_name))
+
+
+def add_pin_to_sheet_ref(
+    root_doc: SheetDoc,
+    file_name: str,
+    pin_name: str,
+    direction: str,
+) -> None:
+    sheet = find_sheet_ref(root_doc, file_name)
+
+    for pin in sheet.pins:
+        if pin.name == pin_name:
+            raise ValueError("Pin '{}' already exists on {}".format(pin_name, file_name))
+
+    pin_step = 5.08
+    left_x = sheet.position.X
+    right_x = round(sheet.position.X + sheet.width, 2)
+
+    is_left = direction in ("input", "bidirectional")
+    target_x = left_x if is_left else right_x
+
+    max_y = sheet.position.Y
+    for existing_pin in sheet.pins:
+        if abs(existing_pin.position.X - target_x) < 1.0:
+            if existing_pin.position.Y > max_y:
+                max_y = existing_pin.position.Y
+
+    if max_y <= sheet.position.Y:
+        new_y = round(sheet.position.Y + pin_step, 2)
+    else:
+        new_y = round(max_y + pin_step, 2)
+
+    sheet_bottom = round(sheet.position.Y + sheet.height, 2)
+    if new_y + 2.0 > sheet_bottom:
+        sheet.height = round(new_y - sheet.position.Y + pin_step, 2)
+        sheet.fileName.position.Y = round(sheet.position.Y + sheet.height + 2.54, 2)
+
+    sheet.pins.append(
+        HierarchicalPin(
+            name=pin_name,
+            connectionType=direction,
+            position=Position(X=target_x, Y=new_y, angle=0),
+            effects=Effects(font=Font(height=FONT_SIZE, width=FONT_SIZE)),
+            uuid=new_uuid(),
+        )
+    )
+
+
+def change_sheet_pin_direction(
+    root_doc: SheetDoc,
+    file_name: str,
+    pin_name: str,
+    new_direction: str,
+) -> bool:
+    sheet = find_sheet_ref(root_doc, file_name)
+    for pin in sheet.pins:
+        if pin.name == pin_name:
+            pin.connectionType = new_direction
+            return True
+    return False
+
+
+# ---------------------------------------------------------------------------
+# Hierarchical label helpers
+# ---------------------------------------------------------------------------
+
+def change_hlabel_shape(
+    sheet_doc: SheetDoc,
+    label_name: str,
+    new_shape: str,
+) -> bool:
+    for hlabel in sheet_doc.schematic.hierarchicalLabels:
+        if hlabel.text == label_name:
+            hlabel.shape = new_shape
+            return True
+    return False
+
+
+# ---------------------------------------------------------------------------
+# Label / wire / no-connect surgery
+# ---------------------------------------------------------------------------
+
+def find_component(sheet_doc: SheetDoc, ref: str) -> Optional[SchematicSymbol]:
+    for sym in sheet_doc.schematic.schematicSymbols:
+        if _symbol_ref(sym) == ref:
+            return sym
+    return None
+
+
+def get_lib_symbol_for(sheet_doc: SheetDoc, lib_id: str):
+    for ls in sheet_doc.schematic.libSymbols:
+        if ls.libId == lib_id:
+            return ls
+    return None
+
+
+def remove_local_label_near(
+    sheet_doc: SheetDoc,
+    text: str,
+    position: Tuple[float, float],
+    tolerance: float = 0.5,
+) -> bool:
+    x, y = position
+    keep = []
+    removed = False
+    for label in sheet_doc.schematic.labels:
+        if (
+            label.text == text
+            and abs(label.position.X - x) < tolerance
+            and abs(label.position.Y - y) < tolerance
+        ):
+            removed = True
+            continue
+        keep.append(label)
+    sheet_doc.schematic.labels = keep
+    return removed
+
+
+def remove_wire_between(
+    sheet_doc: SheetDoc,
+    pos_a: Tuple[float, float],
+    pos_b: Tuple[float, float],
+    tolerance: float = 0.5,
+) -> bool:
+    keep = []
+    removed = False
+    for item in sheet_doc.schematic.graphicalItems:
+        if hasattr(item, "type") and item.type == "wire" and len(item.points) == 2:
+            p0, p1 = item.points
+            fwd = (
+                abs(p0.X - pos_a[0]) < tolerance
+                and abs(p0.Y - pos_a[1]) < tolerance
+                and abs(p1.X - pos_b[0]) < tolerance
+                and abs(p1.Y - pos_b[1]) < tolerance
+            )
+            rev = (
+                abs(p0.X - pos_b[0]) < tolerance
+                and abs(p0.Y - pos_b[1]) < tolerance
+                and abs(p1.X - pos_a[0]) < tolerance
+                and abs(p1.Y - pos_a[1]) < tolerance
+            )
+            if fwd or rev:
+                removed = True
+                continue
+        keep.append(item)
+    sheet_doc.schematic.graphicalItems = keep
+    return removed
+
+
+def add_no_connect(sheet_doc: SheetDoc, position: Tuple[float, float]) -> None:
+    nc = NoConnect()
+    nc.position = Position(X=float(position[0]), Y=float(position[1]))
+    nc.uuid = new_uuid()
+    sheet_doc.schematic.noConnects.append(nc)

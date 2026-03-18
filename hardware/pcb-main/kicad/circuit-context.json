@@ -6,39 +6,15 @@
     "sheets": {
       "led_controller.kicad_sch": "LED Controller",
       "power_management.kicad_sch": "Power Management",
-      "tca9548A_subsystem.kicad_sch": "TCA9548A_Subsystem"
+      "tca9548A_subsystem.kicad_sch": "TCA9548A_Subsystem",
+      "esp32_s3.kicad_sch": "ESP32_S3"
     },
-    "source_hash": "cd4df6380950",
-    "extracted_at": "2026-03-16T21:26:26.861774+00:00"
+    "source_hash": "84d3854a7a60",
+    "extracted_at": "2026-03-18T20:33:03.456508+00:00"
   },
   "description": "",
   "blocks": {},
   "components": {
-    "C1": {
-      "part": "C",
-      "value": "1\u00b5F",
-      "footprint": "Capacitor_SMD:C_0603_1608Metric",
-      "lcsc": "C15849",
-      "sheet": "motion-play-main.kicad_sch",
-      "block": "power",
-      "function": "Input bypass capacitor for U1 voltage regulator",
-      "role": "decoupling",
-      "critical_specs": "1uF, 0603",
-      "pins": [
-        {
-          "number": "1",
-          "name": "",
-          "type": "passive",
-          "net": "GND"
-        },
-        {
-          "number": "2",
-          "name": "",
-          "type": "passive",
-          "net": "+5V"
-        }
-      ]
-    },
     "C10": {
       "part": "C",
       "value": "10uF",
@@ -49,31 +25,6 @@
       "function": "Bulk decoupling capacitor for TCA9548A",
       "role": "decoupling",
       "critical_specs": "10uF, 0603",
-      "pins": [
-        {
-          "number": "1",
-          "name": "",
-          "type": "passive",
-          "net": "GND"
-        },
-        {
-          "number": "2",
-          "name": "",
-          "type": "passive",
-          "net": "+3.3V"
-        }
-      ]
-    },
-    "C2": {
-      "part": "C",
-      "value": "2.2\u00b5F",
-      "footprint": "Capacitor_SMD:C_0603_1608Metric",
-      "lcsc": "C23630",
-      "sheet": "motion-play-main.kicad_sch",
-      "block": "power",
-      "function": "Output stabilization capacitor for U1 voltage regulator",
-      "role": "decoupling",
-      "critical_specs": "2.2uF, 0603, required for LDO stability",
       "pins": [
         {
           "number": "1",
@@ -639,6 +590,206 @@
         }
       ]
     },
+    "C42": {
+      "part": "CC0805MKX5R6BB226",
+      "value": "22uF",
+      "footprint": "JLC-MCP:C0805",
+      "lcsc": "C109314",
+      "sheet": "power_management.kicad_sch",
+      "block": "power",
+      "function": "",
+      "role": "placed_by_schematic_modify",
+      "critical_specs": "",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "+5V"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "GND"
+        }
+      ]
+    },
+    "C43": {
+      "part": "CA45-A-6_3V-22UF-K",
+      "value": "22uF 6.3V Tant",
+      "footprint": "JLC-MCP:CASE-A_3216",
+      "lcsc": "C129288",
+      "sheet": "power_management.kicad_sch",
+      "block": "power",
+      "function": "",
+      "role": "placed_by_schematic_modify",
+      "critical_specs": "",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "+3.3V"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "GND"
+        }
+      ]
+    },
+    "C50": {
+      "part": "C_5",
+      "value": "1\u00b5F",
+      "footprint": "Capacitor_SMD:C_0603_1608Metric",
+      "lcsc": "C15849",
+      "sheet": "esp32_s3.kicad_sch",
+      "block": "mcu",
+      "function": "",
+      "role": "esp32_integration_phase_1c",
+      "critical_specs": "",
+      "pins": [
+        {
+          "number": "1",
+          "name": "",
+          "type": "passive",
+          "net": "/ESP32_S3/EN"
+        },
+        {
+          "number": "2",
+          "name": "",
+          "type": "passive",
+          "net": "/ESP32_S3/GND"
+        }
+      ]
+    },
+    "C51": {
+      "part": "C_2",
+      "value": "10\u00b5F",
+      "footprint": "Capacitor_SMD:C_0603_1608Metric",
+      "lcsc": "C96446",
+      "sheet": "esp32_s3.kicad_sch",
+      "block": "mcu",
+      "function": "",
+      "role": "esp32_integration_phase_1c",
+      "critical_specs": "",
+      "pins": [
+        {
+          "number": "1",
+          "name": "",
+          "type": "passive",
+          "net": "/ESP32_S3/+3.3V"
+        },
+        {
+          "number": "2",
+          "name": "",
+          "type": "passive",
+          "net": "/ESP32_S3/GND"
+        }
+      ]
+    },
+    "C52": {
+      "part": "C_1",
+      "value": "100nF",
+      "footprint": "Capacitor_SMD:C_0603_1608Metric",
+      "lcsc": "C14663",
+      "sheet": "esp32_s3.kicad_sch",
+      "block": "mcu",
+      "function": "",
+      "role": "esp32_integration_phase_1c",
+      "critical_specs": "",
+      "pins": [
+        {
+          "number": "1",
+          "name": "",
+          "type": "passive",
+          "net": "/ESP32_S3/+3.3V"
+        },
+        {
+          "number": "2",
+          "name": "",
+          "type": "passive",
+          "net": "/ESP32_S3/GND"
+        }
+      ]
+    },
+    "C53": {
+      "part": "C_3",
+      "value": "100nF",
+      "footprint": "Capacitor_SMD:C_0603_1608Metric",
+      "lcsc": "C14663",
+      "sheet": "esp32_s3.kicad_sch",
+      "block": "mcu",
+      "function": "",
+      "role": "esp32_integration_phase_1c",
+      "critical_specs": "",
+      "pins": [
+        {
+          "number": "1",
+          "name": "",
+          "type": "passive",
+          "net": "/ESP32_S3/+3.3V"
+        },
+        {
+          "number": "2",
+          "name": "",
+          "type": "passive",
+          "net": "/ESP32_S3/GND"
+        }
+      ]
+    },
+    "C54": {
+      "part": "C_4",
+      "value": "100nF",
+      "footprint": "Capacitor_SMD:C_0603_1608Metric",
+      "lcsc": "C14663",
+      "sheet": "esp32_s3.kicad_sch",
+      "block": "mcu",
+      "function": "",
+      "role": "esp32_integration_phase_1c",
+      "critical_specs": "",
+      "pins": [
+        {
+          "number": "1",
+          "name": "",
+          "type": "passive",
+          "net": "/ESP32_S3/+3.3V"
+        },
+        {
+          "number": "2",
+          "name": "",
+          "type": "passive",
+          "net": "/ESP32_S3/GND"
+        }
+      ]
+    },
+    "C55": {
+      "part": "C",
+      "value": "1\u00b5F",
+      "footprint": "Capacitor_SMD:C_0603_1608Metric",
+      "lcsc": "C15849",
+      "sheet": "esp32_s3.kicad_sch",
+      "block": "mcu",
+      "function": "",
+      "role": "esp32_integration_phase_1c",
+      "critical_specs": "",
+      "pins": [
+        {
+          "number": "1",
+          "name": "",
+          "type": "passive",
+          "net": "/ESP32_S3/+3.3V"
+        },
+        {
+          "number": "2",
+          "name": "",
+          "type": "passive",
+          "net": "/ESP32_S3/GND"
+        }
+      ]
+    },
     "C7": {
       "part": "C",
       "value": "100nF",
@@ -711,6 +862,43 @@
           "name": "",
           "type": "passive",
           "net": "+3.3V"
+        }
+      ]
+    },
+    "D5": {
+      "part": "WS2812B-MINI-X1",
+      "value": "WS2812B-MINI",
+      "footprint": "JLC-MCP:LED-SMD_4P-L3.5-W3.5-TL_WS2812B-1",
+      "lcsc": "C4154873",
+      "sheet": "esp32_s3.kicad_sch",
+      "block": "mcu",
+      "function": "",
+      "role": "esp32_integration_phase_1c",
+      "critical_specs": "",
+      "pins": [
+        {
+          "number": "1",
+          "name": "DIN",
+          "type": "unspecified",
+          "net": "/ESP32_S3/LED_DATA"
+        },
+        {
+          "number": "2",
+          "name": "VDD",
+          "type": "unspecified",
+          "net": "/ESP32_S3/+5V"
+        },
+        {
+          "number": "3",
+          "name": "DOUT",
+          "type": "unspecified",
+          "net": "/ESP32_S3/LED_STATUS_DOUT"
+        },
+        {
+          "number": "4",
+          "name": "GND",
+          "type": "unspecified",
+          "net": "/ESP32_S3/GND"
         }
       ]
     },
@@ -876,7 +1064,7 @@
       ]
     },
     "J5": {
-      "part": "Conn_01x05",
+      "part": "Conn_01x05_2",
       "value": "Conn_01x05",
       "footprint": "Connector_JST:JST_SH_SM05B-SRSS-TB_1x05-1MP_P1.00mm_Horizontal",
       "lcsc": "C136657",
@@ -913,7 +1101,7 @@
       ]
     },
     "J6": {
-      "part": "Conn_01x05",
+      "part": "Conn_01x05_1",
       "value": "Conn_01x05",
       "footprint": "Connector_JST:JST_SH_SM05B-SRSS-TB_1x05-1MP_P1.00mm_Horizontal",
       "lcsc": "C136657",
@@ -1560,6 +1748,106 @@
         }
       ]
     },
+    "R50": {
+      "part": "R",
+      "value": "10k\u03a9",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "lcsc": "C25804",
+      "sheet": "esp32_s3.kicad_sch",
+      "block": "mcu",
+      "function": "",
+      "role": "esp32_integration_phase_1c",
+      "critical_specs": "",
+      "pins": [
+        {
+          "number": "1",
+          "name": "",
+          "type": "passive",
+          "net": "/ESP32_S3/+3.3V"
+        },
+        {
+          "number": "2",
+          "name": "",
+          "type": "passive",
+          "net": "/ESP32_S3/EN"
+        }
+      ]
+    },
+    "R51": {
+      "part": "R_3",
+      "value": "10k\u03a9",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "lcsc": "C25804",
+      "sheet": "esp32_s3.kicad_sch",
+      "block": "mcu",
+      "function": "",
+      "role": "esp32_integration_phase_1c",
+      "critical_specs": "",
+      "pins": [
+        {
+          "number": "1",
+          "name": "",
+          "type": "passive",
+          "net": "/ESP32_S3/+3.3V"
+        },
+        {
+          "number": "2",
+          "name": "",
+          "type": "passive",
+          "net": "/ESP32_S3/GPIO0_BOOT"
+        }
+      ]
+    },
+    "R52": {
+      "part": "R_2",
+      "value": "22\u03a9",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "lcsc": "C23345",
+      "sheet": "esp32_s3.kicad_sch",
+      "block": "mcu",
+      "function": "",
+      "role": "esp32_integration_phase_1c",
+      "critical_specs": "",
+      "pins": [
+        {
+          "number": "1",
+          "name": "",
+          "type": "passive",
+          "net": "/ESP32_S3/USB_DN"
+        },
+        {
+          "number": "2",
+          "name": "",
+          "type": "passive",
+          "net": "/ESP32_S3/USB_DN_MCU"
+        }
+      ]
+    },
+    "R53": {
+      "part": "R_1",
+      "value": "22\u03a9",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "lcsc": "C23345",
+      "sheet": "esp32_s3.kicad_sch",
+      "block": "mcu",
+      "function": "",
+      "role": "esp32_integration_phase_1c",
+      "critical_specs": "",
+      "pins": [
+        {
+          "number": "1",
+          "name": "",
+          "type": "passive",
+          "net": "/ESP32_S3/USB_DP"
+        },
+        {
+          "number": "2",
+          "name": "",
+          "type": "passive",
+          "net": "/ESP32_S3/USB_DP_MCU"
+        }
+      ]
+    },
     "R6": {
       "part": "R",
       "value": "10k\u03a9",
@@ -1582,6 +1870,81 @@
           "name": "",
           "type": "passive",
           "net": "+3.3V"
+        }
+      ]
+    },
+    "SW1": {
+      "part": "SS-12D10L5",
+      "value": "SS-12D10L5",
+      "footprint": "JLC-MCP:SW-TH_SS-12D10L5",
+      "lcsc": "C319012",
+      "sheet": "power_management.kicad_sch",
+      "block": "power",
+      "function": "",
+      "role": "placed_by_schematic_modify",
+      "critical_specs": "",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "unspecified",
+          "net": "/Power Management/VSYS"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "unspecified",
+          "net": "/Power Management/VSYS_SW"
+        }
+      ]
+    },
+    "SW2": {
+      "part": "HX_3X4X2-2P-1_6N_TACTILE_SWITCH_1",
+      "value": "RESET",
+      "footprint": "JLC-MCP:KEY-SMD_L4.0-W3.0-LS4.9-1",
+      "lcsc": "C49234124",
+      "sheet": "esp32_s3.kicad_sch",
+      "block": "mcu",
+      "function": "",
+      "role": "esp32_integration_phase_1c",
+      "critical_specs": "",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "unspecified",
+          "net": "/ESP32_S3/EN"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "unspecified",
+          "net": "/ESP32_S3/GND"
+        }
+      ]
+    },
+    "SW3": {
+      "part": "HX_3X4X2-2P-1_6N_TACTILE_SWITCH",
+      "value": "BOOT",
+      "footprint": "JLC-MCP:KEY-SMD_L4.0-W3.0-LS4.9-1",
+      "lcsc": "C49234124",
+      "sheet": "esp32_s3.kicad_sch",
+      "block": "mcu",
+      "function": "",
+      "role": "esp32_integration_phase_1c",
+      "critical_specs": "",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "unspecified",
+          "net": "/ESP32_S3/GPIO0_BOOT"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "unspecified",
+          "net": "/ESP32_S3/GND"
         }
       ]
     },
@@ -1686,27 +2049,8 @@
         }
       ]
     },
-    "TPIO1": {
-      "part": "TestPoint",
-      "value": "TestPoint",
-      "footprint": "TestPoint:TestPoint_Pad_D2.0mm",
-      "lcsc": "",
-      "sheet": "motion-play-main.kicad_sch",
-      "block": "mcu",
-      "function": "GPIO 1 breakout test point (unused)",
-      "role": "test_point",
-      "critical_specs": "",
-      "pins": [
-        {
-          "number": "1",
-          "name": "1",
-          "type": "passive",
-          "net": "Net-(U2-1)"
-        }
-      ]
-    },
     "TPIO10": {
-      "part": "TestPoint",
+      "part": "TestPoint_4",
       "value": "TestPoint",
       "footprint": "TestPoint:TestPoint_Pad_D2.0mm",
       "lcsc": "",
@@ -1734,14 +2078,7 @@
       "function": "Sensor module 3 interrupt test point",
       "role": "test_point",
       "critical_specs": "",
-      "pins": [
-        {
-          "number": "1",
-          "name": "1",
-          "type": "passive",
-          "net": "/INT3"
-        }
-      ]
+      "pins": []
     },
     "TPIO12": {
       "part": "TestPoint",
@@ -1753,14 +2090,7 @@
       "function": "Sensor module 2 interrupt test point",
       "role": "test_point",
       "critical_specs": "",
-      "pins": [
-        {
-          "number": "1",
-          "name": "1",
-          "type": "passive",
-          "net": "/INT2"
-        }
-      ]
+      "pins": []
     },
     "TPIO13": {
       "part": "TestPoint",
@@ -1772,17 +2102,10 @@
       "function": "Sensor module 1 interrupt test point",
       "role": "test_point",
       "critical_specs": "",
-      "pins": [
-        {
-          "number": "1",
-          "name": "1",
-          "type": "passive",
-          "net": "/INT1"
-        }
-      ]
+      "pins": []
     },
     "TPIO16": {
-      "part": "TestPoint",
+      "part": "TestPoint_3",
       "value": "TestPoint",
       "footprint": "TestPoint:TestPoint_Pad_D2.0mm",
       "lcsc": "",
@@ -1797,63 +2120,6 @@
           "name": "1",
           "type": "passive",
           "net": "/LED Controller/DATA_IN"
-        }
-      ]
-    },
-    "TPIO17": {
-      "part": "TestPoint_1",
-      "value": "TestPoint",
-      "footprint": "TestPoint:TestPoint_Pad_D2.0mm",
-      "lcsc": "",
-      "sheet": "motion-play-main.kicad_sch",
-      "block": "mcu",
-      "function": "GPIO 17 breakout test point (unused)",
-      "role": "test_point",
-      "critical_specs": "",
-      "pins": [
-        {
-          "number": "1",
-          "name": "1",
-          "type": "passive",
-          "net": "Net-(U2-17)"
-        }
-      ]
-    },
-    "TPIO18": {
-      "part": "TestPoint",
-      "value": "TestPoint",
-      "footprint": "TestPoint:TestPoint_Pad_D2.0mm",
-      "lcsc": "",
-      "sheet": "motion-play-main.kicad_sch",
-      "block": "mcu",
-      "function": "GPIO 18 breakout test point (unused)",
-      "role": "test_point",
-      "critical_specs": "",
-      "pins": [
-        {
-          "number": "1",
-          "name": "1",
-          "type": "passive",
-          "net": "Net-(U2-18)"
-        }
-      ]
-    },
-    "TPIO2": {
-      "part": "TestPoint",
-      "value": "TestPoint",
-      "footprint": "TestPoint:TestPoint_Pad_D2.0mm",
-      "lcsc": "",
-      "sheet": "motion-play-main.kicad_sch",
-      "block": "mcu",
-      "function": "GPIO 2 breakout test point (unused)",
-      "role": "test_point",
-      "critical_specs": "",
-      "pins": [
-        {
-          "number": "1",
-          "name": "1",
-          "type": "passive",
-          "net": "Net-(U2-2)"
         }
       ]
     },
@@ -1873,25 +2139,6 @@
           "name": "1",
           "type": "passive",
           "net": "/Power Management/CHRG_INT"
-        }
-      ]
-    },
-    "TPIO3": {
-      "part": "TestPoint",
-      "value": "TestPoint",
-      "footprint": "TestPoint:TestPoint_Pad_D2.0mm",
-      "lcsc": "",
-      "sheet": "motion-play-main.kicad_sch",
-      "block": "mcu",
-      "function": "GPIO 3 breakout test point (unused)",
-      "role": "test_point",
-      "critical_specs": "",
-      "pins": [
-        {
-          "number": "1",
-          "name": "1",
-          "type": "passive",
-          "net": "Net-(U2-3)"
         }
       ]
     },
@@ -1933,224 +2180,112 @@
         }
       ]
     },
-    "TP_3V1": {
-      "part": "TestPoint",
-      "value": "TestPoint",
-      "footprint": "TestPoint:TestPoint_Pad_D2.0mm",
-      "lcsc": "",
-      "sheet": "motion-play-main.kicad_sch",
-      "block": "power",
-      "function": "Test point for +3.3V power rail",
-      "role": "test_point",
+    "U3": {
+      "part": "ESP32-S3-WROOM-1_N16R8_",
+      "value": "ESP32-S3-WROOM-1-N16R8",
+      "footprint": "JLC-MCP:WIRELM-SMD_ESP32-S3-WROOM-1",
+      "lcsc": "C2913202",
+      "sheet": "esp32_s3.kicad_sch",
+      "block": "mcu",
+      "function": "",
+      "role": "esp32_integration_phase_1c",
       "critical_specs": "",
       "pins": [
         {
           "number": "1",
-          "name": "1",
-          "type": "passive",
-          "net": "+3.3V"
-        }
-      ]
-    },
-    "TP_5V1": {
-      "part": "TestPoint",
-      "value": "TestPoint",
-      "footprint": "TestPoint:TestPoint_Pad_D2.0mm",
-      "lcsc": "",
-      "sheet": "motion-play-main.kicad_sch",
-      "block": "power",
-      "function": "Test point for +5V power rail",
-      "role": "test_point",
-      "critical_specs": "",
-      "pins": [
-        {
-          "number": "1",
-          "name": "1",
-          "type": "passive",
-          "net": "+5V"
-        }
-      ]
-    },
-    "TP_GND1": {
-      "part": "TestPoint",
-      "value": "TestPoint",
-      "footprint": "TestPoint:TestPoint_Pad_D2.0mm",
-      "lcsc": "",
-      "sheet": "motion-play-main.kicad_sch",
-      "block": "power",
-      "function": "Test point for ground rail",
-      "role": "test_point",
-      "critical_specs": "",
-      "pins": [
-        {
-          "number": "1",
-          "name": "1",
-          "type": "passive",
-          "net": "GND"
-        }
-      ]
-    },
-    "U1": {
-      "part": "AP2112K-3.3TRG1",
-      "value": "AP2112K-3.3TRG1",
-      "footprint": "motion-play-footprints:SOT95P285X140-5N",
-      "lcsc": "C51118",
-      "sheet": "motion-play-main.kicad_sch",
-      "block": "power",
-      "function": "3.3V LDO regulator for sensor and I2C bus power",
-      "role": "voltage_regulator",
-      "critical_specs": "3.3V output, 600mA max, dropout ~250mV, input from +5V",
-      "pins": [
-        {
-          "number": "1",
-          "name": "VIN",
-          "type": "power_in",
-          "net": "+5V"
+          "name": "GND",
+          "type": "unspecified",
+          "net": "/ESP32_S3/GND"
         },
         {
           "number": "2",
-          "name": "GND",
-          "type": "power_in",
-          "net": "GND"
+          "name": "3V3",
+          "type": "unspecified",
+          "net": "/ESP32_S3/+3.3V"
         },
         {
           "number": "3",
           "name": "EN",
-          "type": "input",
-          "net": "+5V"
+          "type": "unspecified",
+          "net": "/ESP32_S3/EN"
         },
         {
-          "number": "5",
-          "name": "VOUT",
-          "type": "power_in",
-          "net": "+3.3V"
-        }
-      ]
-    },
-    "U2": {
-      "part": "T-Display-S3",
-      "value": "T-Display-S3",
-      "footprint": "motion-play-footprints:T-Display-S3",
-      "lcsc": "",
-      "sheet": "motion-play-main.kicad_sch",
-      "block": "mcu",
-      "function": "Main system controller (LilyGO T-Display-S3 ESP32-S3 dev board with LCD), runs sensor acquisition on Core 0 and networking on Core 1",
-      "role": "controller",
-      "critical_specs": "ESP32-S3, dual-core 240MHz, WiFi+BT, built-in 1.9in LCD, PSRAM",
-      "pins": [
-        {
-          "number": "2",
-          "name": "1",
-          "type": "bidirectional",
-          "net": "Net-(U2-1)"
-        },
-        {
-          "number": "3",
-          "name": "2",
-          "type": "bidirectional",
-          "net": "Net-(U2-2)"
-        },
-        {
-          "number": "4",
-          "name": "3",
-          "type": "bidirectional",
-          "net": "Net-(U2-3)"
-        },
-        {
-          "number": "5",
-          "name": "10",
-          "type": "bidirectional",
-          "net": "/TCA9548A_Subsystem/TCA_RESET"
-        },
-        {
-          "number": "6",
-          "name": "11",
-          "type": "bidirectional",
-          "net": "/INT3"
-        },
-        {
-          "number": "7",
-          "name": "12",
-          "type": "bidirectional",
-          "net": "/INT2"
-        },
-        {
-          "number": "8",
-          "name": "13",
-          "type": "bidirectional",
-          "net": "/INT1"
-        },
-        {
-          "number": "11",
-          "name": "GND",
-          "type": "power_in",
-          "net": "GND"
-        },
-        {
-          "number": "12",
-          "name": "5V",
-          "type": "power_in",
-          "net": "+5V"
+          "number": "9",
+          "name": "IO16",
+          "type": "unspecified",
+          "net": "/ESP32_S3/LED_DATA"
         },
         {
           "number": "13",
-          "name": "GND",
-          "type": "power_in",
-          "net": "GND"
+          "name": "IO19",
+          "type": "unspecified",
+          "net": "/ESP32_S3/USB_DN_MCU"
         },
         {
           "number": "14",
-          "name": "GND",
-          "type": "power_in",
-          "net": "GND"
-        },
-        {
-          "number": "15",
-          "name": "43",
-          "type": "bidirectional",
-          "net": "/I2C_SDA"
-        },
-        {
-          "number": "16",
-          "name": "44",
-          "type": "bidirectional",
-          "net": "/I2C_SCL"
-        },
-        {
-          "number": "17",
-          "name": "18",
-          "type": "bidirectional",
-          "net": "Net-(U2-18)"
+          "name": "IO20",
+          "type": "unspecified",
+          "net": "/ESP32_S3/USB_DP_MCU"
         },
         {
           "number": "18",
-          "name": "17",
-          "type": "bidirectional",
-          "net": "Net-(U2-17)"
+          "name": "IO10",
+          "type": "unspecified",
+          "net": "/ESP32_S3/TCA_RESET"
         },
         {
           "number": "19",
-          "name": "21",
-          "type": "bidirectional",
-          "net": "/Power Management/CHRG_INT"
+          "name": "IO11",
+          "type": "unspecified",
+          "net": "/ESP32_S3/INT3"
         },
         {
           "number": "20",
-          "name": "16",
-          "type": "bidirectional",
-          "net": "/LED Controller/DATA_IN"
+          "name": "IO12",
+          "type": "unspecified",
+          "net": "/ESP32_S3/INT2"
         },
         {
-          "number": "22",
-          "name": "GND",
-          "type": "power_in",
-          "net": "GND"
+          "number": "21",
+          "name": "IO13",
+          "type": "unspecified",
+          "net": "/ESP32_S3/INT1"
         },
         {
           "number": "23",
+          "name": "IO21",
+          "type": "unspecified",
+          "net": "/ESP32_S3/CHRG_INT"
+        },
+        {
+          "number": "27",
+          "name": "IO0",
+          "type": "unspecified",
+          "net": "/ESP32_S3/GPIO0_BOOT"
+        },
+        {
+          "number": "36",
+          "name": "RXD0",
+          "type": "unspecified",
+          "net": "/ESP32_S3/+5V"
+        },
+        {
+          "number": "37",
+          "name": "TXD0",
+          "type": "unspecified",
+          "net": "/ESP32_S3/I2C_SDA"
+        },
+        {
+          "number": "40",
           "name": "GND",
-          "type": "power_in",
-          "net": "GND"
+          "type": "unspecified",
+          "net": "/ESP32_S3/GND"
+        },
+        {
+          "number": "41",
+          "name": "GND",
+          "type": "unspecified",
+          "net": "/ESP32_S3/GND"
         }
       ]
     },
@@ -2601,6 +2736,92 @@
           "net": "GND"
         }
       ]
+    },
+    "U8": {
+      "part": "AMS1117-3_3",
+      "value": "AMS1117-3.3",
+      "footprint": "JLC-MCP:SOT-223-3_L6.5-W3.4-P2.30-LS7.0-BR",
+      "lcsc": "C6186",
+      "sheet": "power_management.kicad_sch",
+      "block": "power",
+      "function": "",
+      "role": "placed_by_schematic_modify",
+      "critical_specs": "",
+      "pins": [
+        {
+          "number": "1",
+          "name": "GND",
+          "type": "unspecified",
+          "net": "GND"
+        },
+        {
+          "number": "2",
+          "name": "VOUT",
+          "type": "unspecified",
+          "net": "+3.3V"
+        },
+        {
+          "number": "3",
+          "name": "VIN",
+          "type": "unspecified",
+          "net": "+5V"
+        },
+        {
+          "number": "4",
+          "name": "VOUT",
+          "type": "unspecified",
+          "net": "+3.3V"
+        }
+      ]
+    },
+    "U9": {
+      "part": "USBLC6-2SC6",
+      "value": "USBLC6-2SC6",
+      "footprint": "JLC-MCP:SOT-23-6_L2.9-W1.6-P0.95-LS2.8-BL",
+      "lcsc": "C7519",
+      "sheet": "power_management.kicad_sch",
+      "block": "power",
+      "function": "",
+      "role": "placed_by_schematic_modify",
+      "critical_specs": "",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "input",
+          "net": "/Power Management/USB_DP"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "input",
+          "net": "GND"
+        },
+        {
+          "number": "3",
+          "name": "3",
+          "type": "input",
+          "net": "/Power Management/USB_DN"
+        },
+        {
+          "number": "4",
+          "name": "4",
+          "type": "input",
+          "net": "/Power Management/USB_DN"
+        },
+        {
+          "number": "5",
+          "name": "5",
+          "type": "input",
+          "net": "GND"
+        },
+        {
+          "number": "6",
+          "name": "6",
+          "type": "input",
+          "net": "/Power Management/USB_DP"
+        }
+      ]
     }
   },
   "nets": {
@@ -2616,6 +2837,108 @@
       "direction": "",
       "description": ""
     },
+    "/ESP32_S3/+3.3V": {
+      "type": "",
+      "protocol": "",
+      "direction": "",
+      "description": ""
+    },
+    "/ESP32_S3/+5V": {
+      "type": "",
+      "protocol": "",
+      "direction": "",
+      "description": ""
+    },
+    "/ESP32_S3/CHRG_INT": {
+      "type": "",
+      "protocol": "",
+      "direction": "",
+      "description": ""
+    },
+    "/ESP32_S3/EN": {
+      "type": "",
+      "protocol": "",
+      "direction": "",
+      "description": ""
+    },
+    "/ESP32_S3/GND": {
+      "type": "",
+      "protocol": "",
+      "direction": "",
+      "description": ""
+    },
+    "/ESP32_S3/GPIO0_BOOT": {
+      "type": "",
+      "protocol": "",
+      "direction": "",
+      "description": ""
+    },
+    "/ESP32_S3/I2C_SDA": {
+      "type": "",
+      "protocol": "",
+      "direction": "",
+      "description": ""
+    },
+    "/ESP32_S3/INT1": {
+      "type": "",
+      "protocol": "",
+      "direction": "",
+      "description": ""
+    },
+    "/ESP32_S3/INT2": {
+      "type": "",
+      "protocol": "",
+      "direction": "",
+      "description": ""
+    },
+    "/ESP32_S3/INT3": {
+      "type": "",
+      "protocol": "",
+      "direction": "",
+      "description": ""
+    },
+    "/ESP32_S3/LED_DATA": {
+      "type": "",
+      "protocol": "",
+      "direction": "",
+      "description": ""
+    },
+    "/ESP32_S3/LED_STATUS_DOUT": {
+      "type": "",
+      "protocol": "",
+      "direction": "",
+      "description": ""
+    },
+    "/ESP32_S3/TCA_RESET": {
+      "type": "",
+      "protocol": "",
+      "direction": "",
+      "description": ""
+    },
+    "/ESP32_S3/USB_DN": {
+      "type": "",
+      "protocol": "",
+      "direction": "",
+      "description": ""
+    },
+    "/ESP32_S3/USB_DN_MCU": {
+      "type": "",
+      "protocol": "",
+      "direction": "",
+      "description": ""
+    },
+    "/ESP32_S3/USB_DP": {
+      "type": "",
+      "protocol": "",
+      "direction": "",
+      "description": ""
+    },
+    "/ESP32_S3/USB_DP_MCU": {
+      "type": "",
+      "protocol": "",
+      "direction": "",
+      "description": ""
+    },
     "/I2C_SCL": {
       "type": "",
       "protocol": "",
@@ -2623,24 +2946,6 @@
       "description": ""
     },
     "/I2C_SDA": {
-      "type": "",
-      "protocol": "",
-      "direction": "",
-      "description": ""
-    },
-    "/INT1": {
-      "type": "",
-      "protocol": "",
-      "direction": "",
-      "description": ""
-    },
-    "/INT2": {
-      "type": "",
-      "protocol": "",
-      "direction": "",
-      "description": ""
-    },
-    "/INT3": {
       "type": "",
       "protocol": "",
       "direction": "",
@@ -2796,6 +3101,18 @@
       "direction": "",
       "description": ""
     },
+    "/Power Management/USB_DN": {
+      "type": "",
+      "protocol": "",
+      "direction": "",
+      "description": ""
+    },
+    "/Power Management/USB_DP": {
+      "type": "",
+      "protocol": "",
+      "direction": "",
+      "description": ""
+    },
     "/Power Management/VBAT": {
       "type": "",
       "protocol": "",
@@ -2815,6 +3132,12 @@
       "description": ""
     },
     "/Power Management/VSYS_SENSE": {
+      "type": "",
+      "protocol": "",
+      "direction": "",
+      "description": ""
+    },
+    "/Power Management/VSYS_SW": {
       "type": "",
       "protocol": "",
       "direction": "",
@@ -2873,36 +3196,6 @@
       "protocol": "",
       "direction": "",
       "description": ""
-    },
-    "Net-(U2-1)": {
-      "type": "",
-      "protocol": "",
-      "direction": "",
-      "description": ""
-    },
-    "Net-(U2-17)": {
-      "type": "",
-      "protocol": "",
-      "direction": "",
-      "description": ""
-    },
-    "Net-(U2-18)": {
-      "type": "",
-      "protocol": "",
-      "direction": "",
-      "description": ""
-    },
-    "Net-(U2-2)": {
-      "type": "",
-      "protocol": "",
-      "direction": "",
-      "description": ""
-    },
-    "Net-(U2-3)": {
-      "type": "",
-      "protocol": "",
-      "direction": "",
-      "description": ""
     }
   },
   "sheet_interfaces": {
@@ -2936,12 +3229,82 @@
         }
       ]
     },
-    "power_management.kicad_sch": {
+    "esp32_s3.kicad_sch": {
       "description": "",
       "pins": [
         {
           "name": "+3.3V",
           "direction": "input",
+          "net": "/ESP32_S3/+3.3V"
+        },
+        {
+          "name": "+5V",
+          "direction": "input",
+          "net": "/ESP32_S3/+5V"
+        },
+        {
+          "name": "CHRG_INT",
+          "direction": "input",
+          "net": "/ESP32_S3/CHRG_INT"
+        },
+        {
+          "name": "GND",
+          "direction": "input",
+          "net": "/ESP32_S3/GND"
+        },
+        {
+          "name": "I2C_SCL",
+          "direction": "input",
+          "net": "/I2C_SCL"
+        },
+        {
+          "name": "I2C_SDA",
+          "direction": "input",
+          "net": "/ESP32_S3/I2C_SDA"
+        },
+        {
+          "name": "INT1",
+          "direction": "input",
+          "net": "/ESP32_S3/INT1"
+        },
+        {
+          "name": "INT2",
+          "direction": "input",
+          "net": "/ESP32_S3/INT2"
+        },
+        {
+          "name": "INT3",
+          "direction": "input",
+          "net": "/ESP32_S3/INT3"
+        },
+        {
+          "name": "LED_DATA",
+          "direction": "output",
+          "net": "/ESP32_S3/LED_DATA"
+        },
+        {
+          "name": "TCA_RESET",
+          "direction": "output",
+          "net": "/ESP32_S3/TCA_RESET"
+        },
+        {
+          "name": "USB_DN",
+          "direction": "bidirectional",
+          "net": "/ESP32_S3/USB_DN"
+        },
+        {
+          "name": "USB_DP",
+          "direction": "bidirectional",
+          "net": "/ESP32_S3/USB_DP"
+        }
+      ]
+    },
+    "power_management.kicad_sch": {
+      "description": "",
+      "pins": [
+        {
+          "name": "+3.3V",
+          "direction": "output",
           "net": "+3.3V"
         },
         {
@@ -2968,6 +3331,16 @@
           "name": "I2C_SDA",
           "direction": "bidirectional",
           "net": "/I2C_SDA"
+        },
+        {
+          "name": "USB_DN",
+          "direction": "bidirectional",
+          "net": "/Power Management/USB_DN"
+        },
+        {
+          "name": "USB_DP",
+          "direction": "bidirectional",
+          "net": "/Power Management/USB_DP"
         }
       ]
     },
