@@ -54,11 +54,13 @@ motion-play/
 │   ├── explorations/      # Problem-space analyses (pre-initiative)
 │   ├── initiatives/       # Feature docs (BRIEF/PLAN/TASKS per feature)
 │   └── references/        # Hardware datasheets and component docs
-├── tools/                 # Diagnostic and ML tools
+├── tools/                 # KiCad schematic/PCB tools, firmware diagnostics, ML  ← has CONTEXT.md
+│   ├── schematic-context/ # KiCad → circuit-context.json extraction and annotation
+│   ├── schematic-gen/     # Generate .kicad_sch sheets from structured JSON specs
+│   ├── schematic-modify/  # Surgical in-place edits on existing .kicad_sch files
+│   ├── pcb-context/       # KiCad PCB → pcb-layout-context.json + auto-placement
 │   ├── ml-training/       # Python ML pipeline (download, preprocess, train, export TFLite)
-│   ├── schematic-context/ # KiCad → circuit-context.json extraction and annotation  ← has README
-│   ├── serial-studio/     # Serial Studio dashboard files
-│   └── transit-calculator.py
+│   └── serial-studio/     # Serial Studio dashboard files
 ├── scripts/               # Utility shell scripts
 ├── session_data/          # Labeled training data
 ├── platformio.ini         # PlatformIO configuration
@@ -74,6 +76,7 @@ motion-play/
 | **Infrastructure** | `infrastructure/CONTEXT.md` | AWS architecture, IoT Core, Lambda functions, DynamoDB schema (composite key!), API endpoints, MQTT message formats, data flow |
 | **Frontend** | `frontend/CONTEXT.md` | React app architecture, tech stack, what it does, relationship to cloud infrastructure |
 | **Mechanical** | `mechanical/CONTEXT.md` | 3D model design process, build123d tooling, coordinate conventions, folder structure, FDM design rules |
+| **Tools** | `tools/CONTEXT.md` | KiCad schematic/PCB tooling (context extraction, programmatic generation, modification), firmware diagnostics, ML pipeline. **Read this before touching any `.kicad_sch` or `.kicad_pcb` file.** |
 
 ### Folders Without CONTEXT.md
 
@@ -81,7 +84,6 @@ These folders have README.md files or are self-explanatory:
 
 - **`lambda/`** — Lambda function source code. Has its own `README.md` with deployment guides. Closely related to `infrastructure/`.
 - **`docs/`** — Organized per [WORKFLOW.md](./WORKFLOW.md). Explorations are single-file analyses; initiatives follow BRIEF/PLAN/TASKS.
-- **`tools/`** — `ml-training/` has its own README. `schematic-context/` has a README covering the extraction/annotation pipeline. `serial-studio/` dashboard files are documented in `firmware/CONTEXT.md`.
 - **`scripts/`** — Utility scripts with `README.md`.
 - **`session_data/`** — Labeled sensor data for ML training.
 
