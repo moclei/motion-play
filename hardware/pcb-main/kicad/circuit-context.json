@@ -9,8 +9,8 @@
       "tca9548A_subsystem.kicad_sch": "TCA9548A_Subsystem",
       "esp32_s3.kicad_sch": "ESP32_S3"
     },
-    "source_hash": "2835255ba395",
-    "extracted_at": "2026-03-18T22:30:45.213016+00:00"
+    "source_hash": "712ae131a517",
+    "extracted_at": "2026-03-18T23:08:59.331253+00:00"
   },
   "description": "",
   "blocks": {},
@@ -887,12 +887,6 @@
           "name": "VDD",
           "type": "unspecified",
           "net": "+5V"
-        },
-        {
-          "number": "3",
-          "name": "DOUT",
-          "type": "unspecified",
-          "net": "/ESP32_S3/LED_STATUS_DOUT"
         },
         {
           "number": "4",
@@ -2856,12 +2850,6 @@
       "description": ""
     },
     "/ESP32_S3/INT3": {
-      "type": "",
-      "protocol": "",
-      "direction": "",
-      "description": ""
-    },
-    "/ESP32_S3/LED_STATUS_DOUT": {
       "type": "",
       "protocol": "",
       "direction": "",
