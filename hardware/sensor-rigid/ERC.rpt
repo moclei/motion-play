@@ -1,0 +1,14 @@
+ERC report (2026-03-25T15:56:36-0700, Encoding UTF8)
+
+***** Sheet /
+[lib_symbol_mismatch]: Symbol 'PCA9546APWR' doesn't match copy in library 'motion-play-symbols'
+    ; warning
+    @(2850 mils, 3350 mils): Symbol U1 [PCA9546APWR]
+[footprint_link_issues]: The current configuration does not include the footprint library ''.
+    ; warning
+    @(7700 mils, 3800 mils): Symbol FPC1 [FPC1.0-8P]
+[lib_symbol_mismatch]: Symbol 'FPC1.0-8P' doesn't match copy in library 'easyeda2kicad'
+    ; warning
+    @(7700 mils, 3800 mils): Symbol FPC1 [FPC1.0-8P]
+
+ ** ERC messages: 3  Errors 0  Warnings 3

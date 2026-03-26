@@ -1,0 +1,30 @@
+{
+  "meta": {
+    "source_file": "hardware/sensor-flex/sensor-flex.kicad_pcb",
+    "extracted_at": "2026-03-25T17:16:45.103441+00:00",
+    "board_area_mm2": 0,
+    "schematic_context": "circuit-context.json"
+  },
+  "board_outline": {
+    "type": "none",
+    "error": "Could not parse Edge.Cuts geometry"
+  },
+  "placed_components": [
+    {"ref": "C4", "value": "2.2µF", "footprint": "C_0603_1608Metric", "x": 168.625, "y": 95.3, "rotation": -90, "side": "front", "bbox": {"width": 1.46, "height": 2.96}},
+    {"ref": "C6", "value": "0.1µF", "footprint": "C_0603_1608Metric", "x": 168.625, "y": 92.3, "rotation": 90, "side": "front", "bbox": {"width": 1.46, "height": 2.96}},
+    {"ref": "C7", "value": "0.1µF", "footprint": "C_0603_1608Metric", "x": 157.825, "y": 92.3, "rotation": 90, "side": "front", "bbox": {"width": 1.46, "height": 2.96}},
+    {"ref": "C8", "value": "2.2µF", "footprint": "C_0603_1608Metric", "x": 157.825, "y": 95.3, "rotation": -90, "side": "front", "bbox": {"width": 1.46, "height": 2.96}},
+    {"ref": "FPC1", "value": "FPC_Tail_10P", "footprint": "FPC_Tail_10P_1.0mm_TopContact", "x": 120.15, "y": 93.175, "rotation": -90, "side": "front", "bbox": {"width": 6.5, "height": 9.0}},
+    {"ref": "IC1", "value": "VCNL4040M3OE", "footprint": "VCNL4040M3OE", "x": 160.775, "y": 93.412, "rotation": 180, "side": "front", "bbox": {"width": 3.7, "height": 5.0}},
+    {"ref": "IC2", "value": "VCNL4040M3OE", "footprint": "VCNL4040M3OE", "x": 171.575, "y": 93.412, "rotation": 180, "side": "front", "bbox": {"width": 3.7, "height": 5.0}},
+    {"ref": "R10", "value": "22Ω", "footprint": "R_0603_1608Metric", "x": 167.125, "y": 93.95, "rotation": -90, "side": "front", "bbox": {"width": 1.46, "height": 2.96}},
+    {"ref": "R11", "value": "22Ω", "footprint": "R_0603_1608Metric", "x": 156.325, "y": 93.975, "rotation": 90, "side": "front", "bbox": {"width": 1.46, "height": 2.96}}
+  ],
+  "unplaced_components": [
+  ],
+  "summary": {
+    "total_components": 9,
+    "placed": 9,
+    "unplaced": 0
+  }
+}

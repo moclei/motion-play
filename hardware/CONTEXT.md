@@ -34,7 +34,7 @@ Houses the system controller and power management:
 - **AP2112K-3.3** voltage regulator — Provides 3.3V to sensors.
 - **DWEII USB-C power module** — Development power module providing 5V @ ~2.4A with battery charging. Will be replaced with a custom solution eventually.
 - **SN74AHCT125** logic level shifter — Between MCU (3.3V) and WS2818B LED strip (5V). 72 LEDs, 1.2m strip.
-- **3× JST-SH 5-pin connectors** — One per sensor PCB (Pin 1 = 3.3V, Pin 2 = GND, Pin 3 = SDA, Pin 4 = SCL, Pin 5 = INT)
+- **3× JST-SH 4-pin connectors** (SM04B-SRSS-TB) — One per sensor PCB (Pin 1 = 3.3V, Pin 2 = GND, Pin 3 = SDA, Pin 4 = SCL)
 
 ### 2. Sensor Rigid Base (`hardware/sensor-rigid/`)
 
@@ -43,33 +43,40 @@ The mounting board with local I2C multiplexing:
 | Ref | Component | Function |
 |-----|-----------|----------|
 | U1 | PCA9546A | Local I2C mux (controls two sensors) |
-| J1 | JST-SH 5-pin | Connector to main board |
+| J1 | JST-SH 4-pin (SM04B-SRSS-TB) | Connector to main board (3.3V, GND, SDA, SCL) |
 | FPC1 | C132510 ZIF | Connection to flex sensor strip |
-| R1, R2 | 4.7kΩ | Main I2C pull-ups |
-| R6-R9 | 4.7kΩ | Per-sensor I2C pull-ups |
-| R3, R12-R14 | 10kΩ | Reset and address pull-ups |
-| R5 | 8.2kΩ | INT pull-up |
-| D2, D3 | BAT54S | Interrupt combining (wired-OR) |
+| R1, R2 | 4.7kΩ | Upstream I2C pull-ups |
+| R6-R9 | 4.7kΩ | Per-sensor downstream I2C pull-ups |
+| R3 | 10kΩ | Reset pull-up (keeps PCA9546A active) |
+| R12 | 10kΩ | A2 address pull-up (permanently high) |
+| R13, R14 | 10kΩ | A0, A1 address pull-downs (default low) |
+| SW1 | EP-02KS DIP switch | I2C address select (A0, A1) |
 | D1, R4 | LED + 1kΩ | Power indicator |
 | C1, C2 | 2.2µF, 0.1µF | Power bypass caps |
-| JP3, JP4 | Solder jumpers | I2C address select (A0, A1) |
+| TP1-TP4 | Test pads | 3.3V, GND, SDA_UP, SCL_UP |
 
-- **PCB Type**: Standard rigid FR4, 1.6mm thickness, HASL or ENIG finish.
-- **I2C Addressing (PCA9546A):** Board 1: 0x70, Board 2: 0x71, Board 3: 0x72 (set via JP3/JP4).
+- **PCB Type**: Standard rigid FR4, 4 layers, 1.6mm thickness, HASL or ENIG finish.
+- **I2C Addressing (PCA9546A):** A2 permanently high. Address set via SW1 DIP switch:
+  - Board 1 (both OFF): 0x74
+  - Board 2 (SW2 ON): 0x75
+  - Board 3 (SW1 ON): 0x76
 
 ### 3. Flex Sensor Strip (`hardware/sensor-flex/`)
 
 Polyimide flex PCB that bends to angle sensors outward:
 
-- **PCB Type**: 2-layer polyimide flex, ~0.11mm core + 0.2mm stiffener = 0.3mm total, ENIG finish
+- **PCB Type**: 2-layer polyimide flex, ~0.11mm core, ENIG finish
 - ~25mm × 8mm, sensors 10mm apart center-to-center
 - ~5mm center bend zone (unstiffened, flexible)
-- Stiffened at sensor areas and connector tail
+- **Stiffeners** (all on bottom side):
+  - FPC tail: Polyimide (PI), 0.25mm (total ~0.3mm for ZIF connector grip)
+  - IC1 area: Stainless Steel (SS), 0.2mm
+  - IC2 area: Stainless Steel (SS), 0.2mm
 
 | Ref | Component | Function |
 |-----|-----------|----------|
 | IC1, IC2 | VCNL4040M3OE | Proximity sensors |
-| C4, C8 | 2.2µF | LED anode capa30Qtors |
+| C4, C8 | 2.2µF | LED anode capacitors |
 | C6, C7 | 0.1µF | VDD bypass capacitors |
 | R10, R11 | 22Ω | VDD series filter resistors (one per sensor) |
 | FPC1 | FPC_Tail_10P | FPC tail connector (mates with ZIF on rigid base) |
@@ -81,13 +88,13 @@ Connected to rigid base via ZIF FPC connector (C132510, 1.0mm pitch, top contact
 | Pin | Signal | Purpose |
 |-----|--------|---------|
 | 1 | 3.3V | Power |
-| 2 | INT1 | Interrupt sensor 1 |
-| 3 | SDA1 | I2C data sensor 1 |
-| 4 | SCL1 | I2C clock sensor 1 |
+| 2 | GND | Ground |
+| 3 | SCL1 | I2C clock sensor 1 |
+| 4 | SDA1 | I2C data sensor 1 |
 | 5 | GND | Ground (shield between sensor groups) |
-| 6 | INT2 | Interrupt sensor 2 |
+| 6 | SCL2 | I2C clock sensor 2 |
 | 7 | SDA2 | I2C data sensor 2 |
-| 8 | SCL2 | I2C clock sensor 2 |
+| 8 | GND | Ground |
 | 9 | GND | Mechanical mounting |
 | 10 | GND | Mechanical mounting |
 
@@ -124,8 +131,8 @@ Raw KiCad schematic files are difficult for AI assistants to interpret. The **sc
 | PCB | Context File | Status |
 |-----|-------------|--------|
 | Main PCB | `hardware/pcb-main/kicad/circuit-context.json` | Complete — 37 components, 26 nets, 5 functional blocks |
-| Sensor Rigid Base | `hardware/sensor-rigid/circuit-context.json` | Complete — 27 components, 16 nets, 6 functional blocks |
-| Sensor Flex Strip | `hardware/sensor-flex/circuit-context.json` | Complete — 9 components, 12 nets, 4 functional blocks |
+| Sensor Rigid Base | `hardware/sensor-rigid/circuit-context.json` | Complete — 22 components, 13 nets, 5 functional blocks |
+| Sensor Flex Strip | `hardware/sensor-flex/circuit-context.json` | Complete — 9 components, 10 nets, 4 functional blocks |
 | Power Supply | `hardware/pcb-power-supply/kicad/circuit-context.json` | Complete — 50 components, 29 nets, 4 functional blocks |
 
 ### What's in circuit-context.json
@@ -172,13 +179,13 @@ The previous system used `convert_netlist_to_json.py` to produce JSON netlists w
 ```
 T-Display-S3
     └── TCA9548A (Primary MUX, 0x70)
-        ├── Channel 0 → PCA9546A (0x70) → 2× VCNL4040 (Module 1)
-        ├── Channel 1 → PCA9546A (0x71) → 2× VCNL4040 (Module 2)
-        └── Channel 2 → PCA9546A (0x72) → 2× VCNL4040 (Module 3)
+        ├── Channel 0 → PCA9546A (0x74) → 2× VCNL4040 (Module 1)
+        ├── Channel 1 → PCA9546A (0x75) → 2× VCNL4040 (Module 2)
+        └── Channel 2 → PCA9546A (0x76) → 2× VCNL4040 (Module 3)
 ```
 
 All VCNL4040 sensors share address 0x60. The TCA→PCA dual-MUX chain provides individual addressability.
 
 ---
 
-*Last Updated: March 9, 2026*
+*Last Updated: March 25, 2026*
