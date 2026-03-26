@@ -41,7 +41,6 @@
 					(font
 						(size 1.27 1.27)
 					)
-					(hide yes)
 				)
 			)
 			(property "Datasheet" "~"
@@ -50,7 +49,6 @@
 					(font
 						(size 1.27 1.27)
 					)
-					(hide yes)
 				)
 			)
 			(property "Description" "Unpolarized capacitor"
@@ -59,7 +57,6 @@
 					(font
 						(size 1.27 1.27)
 					)
-					(hide yes)
 				)
 			)
 			(property "ki_keywords" "cap capacitor"
@@ -175,7 +172,6 @@
 					(font
 						(size 1.27 1.27)
 					)
-					(hide yes)
 				)
 			)
 			(property "Datasheet" "~"
@@ -184,7 +180,6 @@
 					(font
 						(size 1.27 1.27)
 					)
-					(hide yes)
 				)
 			)
 			(property "Description" "Fuse"
@@ -193,7 +188,6 @@
 					(font
 						(size 1.27 1.27)
 					)
-					(hide yes)
 				)
 			)
 			(property "ki_keywords" "fuse"
@@ -308,7 +302,6 @@
 					(font
 						(size 1.27 1.27)
 					)
-					(hide yes)
 				)
 			)
 			(property "Datasheet" "~"
@@ -317,7 +310,6 @@
 					(font
 						(size 1.27 1.27)
 					)
-					(hide yes)
 				)
 			)
 			(property "Description" "Resistor"
@@ -326,7 +318,6 @@
 					(font
 						(size 1.27 1.27)
 					)
-					(hide yes)
 				)
 			)
 			(property "ki_keywords" "R res resistor"
@@ -400,6 +391,394 @@
 			)
 			(embedded_fonts no)
 		)
+		(symbol "GND_1"
+			(power)
+			(pin_numbers
+				(hide yes)
+			)
+			(pin_names
+				(offset 0)
+				(hide yes)
+			)
+			(exclude_from_sim no)
+			(in_bom yes)
+			(on_board yes)
+			(property "Reference" "#PWR"
+				(at 0 -6.35 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Value" "GND"
+				(at 0 -3.81 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Footprint" ""
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Datasheet" ""
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Description" "Power symbol creates a global label with name \"GND\" , ground"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "ki_keywords" "global power"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(symbol "GND_1_0_1"
+				(polyline
+					(pts
+						(xy 0 0) (xy 0 -1.27) (xy 1.27 -1.27) (xy 0 -2.54) (xy -1.27 -1.27) (xy 0 -1.27)
+					)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+			)
+			(symbol "GND_1_1_1"
+				(pin power_in line
+					(at 0 0 270)
+					(length 0)
+					(name "~"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "1"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+			)
+			(embedded_fonts no)
+		)
+		(symbol "GND_2"
+			(power)
+			(pin_numbers
+				(hide yes)
+			)
+			(pin_names
+				(offset 0)
+				(hide yes)
+			)
+			(exclude_from_sim no)
+			(in_bom yes)
+			(on_board yes)
+			(property "Reference" "#PWR"
+				(at 0 -6.35 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Value" "GND"
+				(at 0 -3.81 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Footprint" ""
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Datasheet" ""
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Description" "Power symbol creates a global label with name \"GND\" , ground"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "ki_keywords" "global power"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(symbol "GND_2_0_1"
+				(polyline
+					(pts
+						(xy 0 0) (xy 0 -1.27) (xy 1.27 -1.27) (xy 0 -2.54) (xy -1.27 -1.27) (xy 0 -1.27)
+					)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+			)
+			(symbol "GND_2_1_1"
+				(pin power_in line
+					(at 0 0 270)
+					(length 0)
+					(name "~"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "1"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+			)
+			(embedded_fonts no)
+		)
+		(symbol "GND_3"
+			(power)
+			(pin_numbers
+				(hide yes)
+			)
+			(pin_names
+				(offset 0)
+				(hide yes)
+			)
+			(exclude_from_sim no)
+			(in_bom yes)
+			(on_board yes)
+			(property "Reference" "#PWR"
+				(at 0 -6.35 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Value" "GND"
+				(at 0 -3.81 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Footprint" ""
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Datasheet" ""
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Description" "Power symbol creates a global label with name \"GND\" , ground"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "ki_keywords" "global power"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(symbol "GND_3_0_1"
+				(polyline
+					(pts
+						(xy 0 0) (xy 0 -1.27) (xy 1.27 -1.27) (xy 0 -2.54) (xy -1.27 -1.27) (xy 0 -1.27)
+					)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+			)
+			(symbol "GND_3_1_1"
+				(pin power_in line
+					(at 0 0 270)
+					(length 0)
+					(name "~"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "1"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+			)
+			(embedded_fonts no)
+		)
+		(symbol "GND_4"
+			(power)
+			(pin_numbers
+				(hide yes)
+			)
+			(pin_names
+				(offset 0)
+				(hide yes)
+			)
+			(exclude_from_sim no)
+			(in_bom yes)
+			(on_board yes)
+			(property "Reference" "#PWR"
+				(at 0 -6.35 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Value" "GND"
+				(at 0 -3.81 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Footprint" ""
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Datasheet" ""
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Description" "Power symbol creates a global label with name \"GND\" , ground"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "ki_keywords" "global power"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(symbol "GND_4_0_1"
+				(polyline
+					(pts
+						(xy 0 0) (xy 0 -1.27) (xy 1.27 -1.27) (xy 0 -2.54) (xy -1.27 -1.27) (xy 0 -1.27)
+					)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+			)
+			(symbol "GND_4_1_1"
+				(pin power_in line
+					(at 0 0 270)
+					(length 0)
+					(name "~"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "1"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+			)
+			(embedded_fonts no)
+		)
 		(symbol "motion-play-symbols:SN74AHCT125PWR"
 			(exclude_from_sim no)
 			(in_bom yes)
@@ -429,7 +808,6 @@
 						(size 1.27 1.27)
 					)
 					(justify left top)
-					(hide yes)
 				)
 			)
 			(property "Datasheet" "http://www.ti.com/lit/gpn/sn74ahct125"
@@ -439,7 +817,6 @@
 						(size 1.27 1.27)
 					)
 					(justify left top)
-					(hide yes)
 				)
 			)
 			(property "Description" "Quadruple Bus Buffer Gates With 3-State Outputs"
@@ -448,7 +825,6 @@
 					(font
 						(size 1.27 1.27)
 					)
-					(hide yes)
 				)
 			)
 			(property "Height" "1.2"
@@ -458,7 +834,6 @@
 						(size 1.27 1.27)
 					)
 					(justify left top)
-					(hide yes)
 				)
 			)
 			(property "Mouser Part Number" "595-SN74AHCT125PWR"
@@ -468,7 +843,6 @@
 						(size 1.27 1.27)
 					)
 					(justify left top)
-					(hide yes)
 				)
 			)
 			(property "Mouser Price/Stock" "https://www.mouser.co.uk/ProductDetail/Texas-Instruments/SN74AHCT125PWR?qs=Tv815z3GeNSFP3h%252B2vFnHA%3D%3D"
@@ -478,7 +852,6 @@
 						(size 1.27 1.27)
 					)
 					(justify left top)
-					(hide yes)
 				)
 			)
 			(property "Manufacturer_Name" "Texas Instruments"
@@ -488,7 +861,6 @@
 						(size 1.27 1.27)
 					)
 					(justify left top)
-					(hide yes)
 				)
 			)
 			(property "Manufacturer_Part_Number" "SN74AHCT125PWR"
@@ -498,7 +870,6 @@
 						(size 1.27 1.27)
 					)
 					(justify left top)
-					(hide yes)
 				)
 			)
 			(symbol "SN74AHCT125PWR_1_1"
@@ -772,6 +1143,7 @@
 			(power)
 			(pin_names
 				(offset 0)
+				(hide yes)
 			)
 			(exclude_from_sim no)
 			(in_bom yes)
@@ -798,7 +1170,6 @@
 					(font
 						(size 1.27 1.27)
 					)
-					(hide yes)
 				)
 			)
 			(property "Datasheet" ""
@@ -807,7 +1178,6 @@
 					(font
 						(size 1.27 1.27)
 					)
-					(hide yes)
 				)
 			)
 			(property "Description" "Power symbol creates a global label with name \"GND\" , ground"
@@ -816,7 +1186,6 @@
 					(font
 						(size 1.27 1.27)
 					)
-					(hide yes)
 				)
 			)
 			(property "ki_keywords" "global power"
@@ -866,62 +1235,62 @@
 		)
 	)
 	(junction
-		(at 184.15 58.42)
+		(at 172.72 102.87)
 		(diameter 0)
 		(color 0 0 0 0)
 		(uuid "88584f52-5633-42b8-ba7c-470403700ab9")
 	)
 	(junction
-		(at 158.75 58.42)
+		(at 147.32 102.87)
 		(diameter 0)
 		(color 0 0 0 0)
 		(uuid "c5675f27-b3ae-4b77-9e27-07ca5dd4caaf")
 	)
 	(junction
-		(at 175.26 58.42)
+		(at 163.83 102.87)
 		(diameter 0)
 		(color 0 0 0 0)
 		(uuid "f93a4ec5-dcb4-4cb2-94b6-33ba3459f2bd")
 	)
 	(no_connect
-		(at 146.05 83.82)
+		(at 134.62 128.27)
 		(uuid "085e1c4c-a455-4ee2-9633-d7f674ca112b")
 	)
 	(no_connect
-		(at 173.99 76.2)
+		(at 162.56 120.65)
 		(uuid "31f4c1f1-54b4-4685-9cb9-cc9f1cded319")
 	)
 	(no_connect
-		(at 146.05 86.36)
+		(at 134.62 130.81)
 		(uuid "40555260-8f38-40c3-833f-b90aaf933728")
 	)
 	(no_connect
-		(at 146.05 81.28)
+		(at 134.62 125.73)
 		(uuid "ab335fa1-ef2a-40a2-8985-908ae2e5f32f")
 	)
 	(no_connect
-		(at 173.99 86.36)
+		(at 162.56 130.81)
 		(uuid "baa49ade-4d22-49ef-88c0-aa1d8e854920")
 	)
 	(no_connect
-		(at 173.99 83.82)
+		(at 162.56 128.27)
 		(uuid "bb167f8e-ff79-4aff-9798-e8b704224214")
 	)
 	(no_connect
-		(at 173.99 81.28)
+		(at 162.56 125.73)
 		(uuid "c871e1f1-6dd1-4387-b021-8103b88f69c7")
 	)
 	(no_connect
-		(at 173.99 88.9)
+		(at 162.56 133.35)
 		(uuid "cf59e748-06ce-4d76-abfb-1eb388297921")
 	)
 	(no_connect
-		(at 173.99 78.74)
+		(at 162.56 123.19)
 		(uuid "e51e974f-a71c-464b-911a-50d0e7427fc8")
 	)
 	(wire
 		(pts
-			(xy 134.62 62.23) (xy 133.35 62.23)
+			(xy 123.19 106.68) (xy 121.92 106.68)
 		)
 		(stroke
 			(width 0)
@@ -931,7 +1300,7 @@
 	)
 	(wire
 		(pts
-			(xy 175.26 73.66) (xy 175.26 58.42)
+			(xy 163.83 118.11) (xy 163.83 102.87)
 		)
 		(stroke
 			(width 0)
@@ -941,7 +1310,7 @@
 	)
 	(wire
 		(pts
-			(xy 158.75 48.26) (xy 158.75 49.53)
+			(xy 147.32 92.71) (xy 147.32 93.98)
 		)
 		(stroke
 			(width 0)
@@ -951,7 +1320,7 @@
 	)
 	(wire
 		(pts
-			(xy 138.43 78.74) (xy 146.05 78.74)
+			(xy 127 123.19) (xy 134.62 123.19)
 		)
 		(stroke
 			(width 0)
@@ -961,7 +1330,7 @@
 	)
 	(wire
 		(pts
-			(xy 184.15 49.53) (xy 184.15 50.8)
+			(xy 172.72 93.98) (xy 172.72 95.25)
 		)
 		(stroke
 			(width 0)
@@ -971,7 +1340,7 @@
 	)
 	(wire
 		(pts
-			(xy 135.89 66.04) (xy 135.89 76.2)
+			(xy 124.46 110.49) (xy 124.46 120.65)
 		)
 		(stroke
 			(width 0)
@@ -981,7 +1350,7 @@
 	)
 	(wire
 		(pts
-			(xy 173.99 73.66) (xy 175.26 73.66)
+			(xy 162.56 118.11) (xy 163.83 118.11)
 		)
 		(stroke
 			(width 0)
@@ -991,7 +1360,7 @@
 	)
 	(wire
 		(pts
-			(xy 144.78 73.66) (xy 146.05 73.66)
+			(xy 133.35 118.11) (xy 134.62 118.11)
 		)
 		(stroke
 			(width 0)
@@ -1001,7 +1370,7 @@
 	)
 	(wire
 		(pts
-			(xy 144.78 88.9) (xy 146.05 88.9)
+			(xy 133.35 133.35) (xy 134.62 133.35)
 		)
 		(stroke
 			(width 0)
@@ -1011,7 +1380,7 @@
 	)
 	(wire
 		(pts
-			(xy 158.75 58.42) (xy 167.64 58.42)
+			(xy 147.32 102.87) (xy 156.21 102.87)
 		)
 		(stroke
 			(width 0)
@@ -1021,7 +1390,7 @@
 	)
 	(wire
 		(pts
-			(xy 133.35 58.42) (xy 144.78 58.42)
+			(xy 121.92 102.87) (xy 133.35 102.87)
 		)
 		(stroke
 			(width 0)
@@ -1031,7 +1400,7 @@
 	)
 	(wire
 		(pts
-			(xy 184.15 58.42) (xy 194.31 58.42)
+			(xy 172.72 102.87) (xy 182.88 102.87)
 		)
 		(stroke
 			(width 0)
@@ -1041,7 +1410,7 @@
 	)
 	(wire
 		(pts
-			(xy 175.26 58.42) (xy 184.15 58.42)
+			(xy 163.83 102.87) (xy 172.72 102.87)
 		)
 		(stroke
 			(width 0)
@@ -1051,7 +1420,7 @@
 	)
 	(wire
 		(pts
-			(xy 133.35 66.04) (xy 135.89 66.04)
+			(xy 121.92 110.49) (xy 124.46 110.49)
 		)
 		(stroke
 			(width 0)
@@ -1061,7 +1430,7 @@
 	)
 	(wire
 		(pts
-			(xy 152.4 58.42) (xy 158.75 58.42)
+			(xy 140.97 102.87) (xy 147.32 102.87)
 		)
 		(stroke
 			(width 0)
@@ -1071,7 +1440,7 @@
 	)
 	(wire
 		(pts
-			(xy 158.75 57.15) (xy 158.75 58.42)
+			(xy 147.32 101.6) (xy 147.32 102.87)
 		)
 		(stroke
 			(width 0)
@@ -1081,7 +1450,7 @@
 	)
 	(wire
 		(pts
-			(xy 135.89 76.2) (xy 146.05 76.2)
+			(xy 124.46 120.65) (xy 134.62 120.65)
 		)
 		(stroke
 			(width 0)
@@ -1091,7 +1460,7 @@
 	)
 	(hierarchical_label "+5V_TO_LEDS"
 		(shape output)
-		(at 194.31 58.42 0)
+		(at 182.88 102.87 0)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -1102,7 +1471,7 @@
 	)
 	(hierarchical_label "DATA_IN"
 		(shape input)
-		(at 133.35 66.04 180)
+		(at 121.92 110.49 180)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -1113,7 +1482,7 @@
 	)
 	(hierarchical_label "GND"
 		(shape input)
-		(at 133.35 62.23 180)
+		(at 121.92 106.68 180)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -1124,7 +1493,7 @@
 	)
 	(hierarchical_label "+5V_IN"
 		(shape input)
-		(at 133.35 58.42 180)
+		(at 121.92 102.87 180)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -1135,7 +1504,7 @@
 	)
 	(hierarchical_label "DATA_TO_LEDS"
 		(shape output)
-		(at 138.43 78.74 180)
+		(at 127 123.19 180)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -1146,7 +1515,7 @@
 	)
 	(symbol
 		(lib_id "Device:Fuse")
-		(at 148.59 58.42 90)
+		(at 137.16 102.87 90)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -1155,7 +1524,7 @@
 		(fields_autoplaced yes)
 		(uuid "250d802f-0290-4865-81b0-0b3177357103")
 		(property "Reference" "F1"
-			(at 148.59 52.07 90)
+			(at 137.16 96.52 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -1163,7 +1532,7 @@
 			)
 		)
 		(property "Value" "3A"
-			(at 148.59 54.61 90)
+			(at 137.16 99.06 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -1171,7 +1540,7 @@
 			)
 		)
 		(property "Footprint" "Fuse:Fuse_1206_3216Metric"
-			(at 148.59 60.198 90)
+			(at 137.16 104.648 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -1180,7 +1549,7 @@
 			)
 		)
 		(property "Datasheet" "~"
-			(at 148.59 58.42 0)
+			(at 137.16 102.87 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -1189,7 +1558,7 @@
 			)
 		)
 		(property "Description" "LED Fuse"
-			(at 148.59 58.42 0)
+			(at 137.16 102.87 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -1198,7 +1567,7 @@
 			)
 		)
 		(property "LCSC Part No" "C354897"
-			(at 148.59 58.42 0)
+			(at 137.16 102.87 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -1207,7 +1576,7 @@
 			)
 		)
 		(property "LCSC Part" "C354897"
-			(at 148.59 58.42 90)
+			(at 137.16 102.87 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -1216,7 +1585,7 @@
 			)
 		)
 		(property "ai_block" "led_controller"
-			(at 0 0 0)
+			(at -11.43 44.45 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -1225,7 +1594,7 @@
 			)
 		)
 		(property "ai_critical_specs" "3A rated, 1206 package, protects against LED strip short circuit"
-			(at 0 0 0)
+			(at -11.43 44.45 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -1234,7 +1603,7 @@
 			)
 		)
 		(property "ai_function" "Overcurrent protection fuse on +5V LED strip power path"
-			(at 0 0 0)
+			(at -11.43 44.45 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -1243,7 +1612,7 @@
 			)
 		)
 		(property "ai_role" "protection"
-			(at 0 0 0)
+			(at -11.43 44.45 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -1268,16 +1637,15 @@
 	)
 	(symbol
 		(lib_id "Device:R")
-		(at 171.45 58.42 90)
+		(at 160.02 102.87 90)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
 		(on_board yes)
 		(dnp no)
-		(fields_autoplaced yes)
 		(uuid "2b6059b8-0c16-4678-bb36-09821fefa4cf")
 		(property "Reference" "R27"
-			(at 171.45 52.07 90)
+			(at 160.02 102.87 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -1285,15 +1653,16 @@
 			)
 		)
 		(property "Value" "0.1R"
-			(at 171.45 54.61 90)
+			(at 160.02 99.06 90)
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
+				(hide yes)
 			)
 		)
 		(property "Footprint" "Resistor_SMD:R_2512_6332Metric"
-			(at 171.45 60.198 90)
+			(at 160.02 104.648 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -1302,7 +1671,7 @@
 			)
 		)
 		(property "Datasheet" "~"
-			(at 171.45 58.42 0)
+			(at 160.02 102.87 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -1311,7 +1680,7 @@
 			)
 		)
 		(property "Description" "Current Sensing Resistor"
-			(at 171.45 58.42 0)
+			(at 160.02 102.87 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -1320,7 +1689,7 @@
 			)
 		)
 		(property "LCSC Part No" "C2903476"
-			(at 171.45 58.42 0)
+			(at 160.02 102.87 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -1329,7 +1698,7 @@
 			)
 		)
 		(property "LCSC Part" "C2903476"
-			(at 171.45 58.42 90)
+			(at 160.02 102.87 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -1338,7 +1707,7 @@
 			)
 		)
 		(property "ai_block" "led_controller"
-			(at 0 0 0)
+			(at -11.43 44.45 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -1347,7 +1716,7 @@
 			)
 		)
 		(property "ai_critical_specs" "0.1 ohm, 2512 package (high power), 1A = 0.1V drop"
-			(at 0 0 0)
+			(at -11.43 44.45 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -1356,7 +1725,7 @@
 			)
 		)
 		(property "ai_function" "Current sense resistor in LED strip +5V power path, enables measuring LED strip current draw"
-			(at 0 0 0)
+			(at -11.43 44.45 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -1365,7 +1734,7 @@
 			)
 		)
 		(property "ai_role" "current_sense"
-			(at 0 0 0)
+			(at -11.43 44.45 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -1389,8 +1758,9 @@
 		)
 	)
 	(symbol
+		(lib_name "GND_2")
 		(lib_id "power:GND")
-		(at 144.78 73.66 270)
+		(at 133.35 118.11 270)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -1399,15 +1769,16 @@
 		(fields_autoplaced yes)
 		(uuid "31afc168-7f6a-4c33-8d8b-d85463898076")
 		(property "Reference" "#PWR022"
-			(at 138.43 73.66 0)
+			(at 127 118.11 0)
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
+				(hide yes)
 			)
 		)
 		(property "Value" "GND"
-			(at 140.97 73.6599 90)
+			(at 129.54 118.1099 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -1416,25 +1787,23 @@
 			)
 		)
 		(property "Footprint" ""
-			(at 144.78 73.66 0)
+			(at 133.35 118.11 0)
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
-				(hide yes)
 			)
 		)
 		(property "Datasheet" ""
-			(at 144.78 73.66 0)
+			(at 133.35 118.11 0)
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
-				(hide yes)
 			)
 		)
 		(property "Description" "Power symbol creates a global label with name \"GND\" , ground"
-			(at 144.78 73.66 0)
+			(at 133.35 118.11 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -1456,7 +1825,7 @@
 	)
 	(symbol
 		(lib_id "Device:C")
-		(at 184.15 54.61 0)
+		(at 172.72 99.06 0)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -1464,7 +1833,7 @@
 		(dnp no)
 		(uuid "a0b49a8e-7d48-441e-b808-96f585d3d28a")
 		(property "Reference" "C8"
-			(at 188.468 54.61 90)
+			(at 177.8 99.822 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -1472,7 +1841,7 @@
 			)
 		)
 		(property "Value" "10uF"
-			(at 190.5 54.864 90)
+			(at 178.054 97.79 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -1480,7 +1849,7 @@
 			)
 		)
 		(property "Footprint" "Capacitor_SMD:C_0603_1608Metric"
-			(at 185.1152 58.42 0)
+			(at 173.6852 102.87 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -1489,7 +1858,7 @@
 			)
 		)
 		(property "Datasheet" "~"
-			(at 184.15 54.61 0)
+			(at 172.72 99.06 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -1498,7 +1867,7 @@
 			)
 		)
 		(property "Description" "10uF capacitor"
-			(at 184.15 54.61 0)
+			(at 172.72 99.06 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -1507,7 +1876,7 @@
 			)
 		)
 		(property "LCSC Part No" "C19702"
-			(at 184.15 54.61 0)
+			(at 172.72 99.06 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -1516,7 +1885,7 @@
 			)
 		)
 		(property "LCSC Part" "C19702"
-			(at 184.15 54.61 90)
+			(at 172.72 99.06 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -1525,7 +1894,7 @@
 			)
 		)
 		(property "ai_block" "led_controller"
-			(at 0 0 0)
+			(at -11.43 44.45 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -1534,7 +1903,7 @@
 			)
 		)
 		(property "ai_critical_specs" "10uF, 0603, placed near IC1 VCC and LED strip connector"
-			(at 0 0 0)
+			(at -11.43 44.45 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -1543,7 +1912,7 @@
 			)
 		)
 		(property "ai_function" "Bulk decoupling capacitor on +5V_TO_LEDS rail, stabilizes LED strip power"
-			(at 0 0 0)
+			(at -11.43 44.45 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -1552,7 +1921,7 @@
 			)
 		)
 		(property "ai_role" "decoupling"
-			(at 0 0 0)
+			(at -11.43 44.45 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -1576,25 +1945,26 @@
 		)
 	)
 	(symbol
+		(lib_name "GND_4")
 		(lib_id "power:GND")
-		(at 184.15 49.53 180)
+		(at 172.72 93.98 180)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
 		(on_board yes)
 		(dnp no)
-		(fields_autoplaced yes)
 		(uuid "a3f9331c-317f-40e8-a24f-56734ea0c4da")
 		(property "Reference" "#PWR05"
-			(at 184.15 43.18 0)
+			(at 172.72 87.63 0)
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
+				(hide yes)
 			)
 		)
 		(property "Value" "GND"
-			(at 184.15 44.45 0)
+			(at 172.72 88.9 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -1602,25 +1972,23 @@
 			)
 		)
 		(property "Footprint" ""
-			(at 184.15 49.53 0)
+			(at 172.72 93.98 0)
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
-				(hide yes)
 			)
 		)
 		(property "Datasheet" ""
-			(at 184.15 49.53 0)
+			(at 172.72 93.98 0)
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
-				(hide yes)
 			)
 		)
 		(property "Description" "Power symbol creates a global label with name \"GND\" , ground"
-			(at 184.15 49.53 0)
+			(at 172.72 93.98 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -1642,7 +2010,7 @@
 	)
 	(symbol
 		(lib_id "motion-play-symbols:SN74AHCT125PWR")
-		(at 146.05 73.66 0)
+		(at 134.62 118.11 0)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -1651,7 +2019,7 @@
 		(fields_autoplaced yes)
 		(uuid "d2cd9ab5-d451-4fc0-bbbb-ee10296a7226")
 		(property "Reference" "IC1"
-			(at 160.02 66.04 0)
+			(at 148.59 110.49 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -1659,7 +2027,7 @@
 			)
 		)
 		(property "Value" "SN74AHCT125PWR"
-			(at 160.02 68.58 0)
+			(at 148.59 113.03 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -1667,7 +2035,7 @@
 			)
 		)
 		(property "Footprint" "motion-play-footprints:SOP65P640X120-14N"
-			(at 170.18 168.58 0)
+			(at 158.75 213.03 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -1677,7 +2045,7 @@
 			)
 		)
 		(property "Datasheet" "http://www.ti.com/lit/gpn/sn74ahct125"
-			(at 170.18 268.58 0)
+			(at 158.75 313.03 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -1687,7 +2055,7 @@
 			)
 		)
 		(property "Description" "Quadruple Bus Buffer Gates With 3-State Outputs"
-			(at 146.05 73.66 0)
+			(at 134.62 118.11 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -1696,57 +2064,52 @@
 			)
 		)
 		(property "Height" "1.2"
-			(at 170.18 468.58 0)
+			(at 158.75 513.03 0)
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
 				(justify left top)
-				(hide yes)
 			)
 		)
 		(property "Mouser Part Number" "595-SN74AHCT125PWR"
-			(at 170.18 568.58 0)
+			(at 158.75 613.03 0)
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
 				(justify left top)
-				(hide yes)
 			)
 		)
 		(property "Mouser Price/Stock" "https://www.mouser.co.uk/ProductDetail/Texas-Instruments/SN74AHCT125PWR?qs=Tv815z3GeNSFP3h%252B2vFnHA%3D%3D"
-			(at 170.18 668.58 0)
+			(at 158.75 713.03 0)
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
 				(justify left top)
-				(hide yes)
 			)
 		)
 		(property "Manufacturer_Name" "Texas Instruments"
-			(at 170.18 768.58 0)
+			(at 158.75 813.03 0)
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
 				(justify left top)
-				(hide yes)
 			)
 		)
 		(property "Manufacturer_Part_Number" "SN74AHCT125PWR"
-			(at 170.18 868.58 0)
+			(at 158.75 913.03 0)
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
 				(justify left top)
-				(hide yes)
 			)
 		)
 		(property "LCSC Part" "C36365"
-			(at 146.05 73.66 0)
+			(at 134.62 118.11 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -1755,7 +2118,7 @@
 			)
 		)
 		(property "ai_block" "led_controller"
-			(at 0 0 0)
+			(at -11.43 44.45 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -1764,7 +2127,7 @@
 			)
 		)
 		(property "ai_critical_specs" "AHCT family (3.3V input compatible with 5V VCC), only 1 of 4 buffers used (1A->1Y)"
-			(at 0 0 0)
+			(at -11.43 44.45 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -1773,7 +2136,7 @@
 			)
 		)
 		(property "ai_function" "Quad bus buffer/level shifter, shifts LED data signal from 3.3V MCU logic to 5V WS2812B logic"
-			(at 0 0 0)
+			(at -11.43 44.45 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -1782,7 +2145,7 @@
 			)
 		)
 		(property "ai_role" "level_shifter"
-			(at 0 0 0)
+			(at -11.43 44.45 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -1843,7 +2206,7 @@
 	)
 	(symbol
 		(lib_id "power:GND")
-		(at 144.78 88.9 270)
+		(at 133.35 133.35 270)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -1852,15 +2215,16 @@
 		(fields_autoplaced yes)
 		(uuid "d31f2a7d-ff43-406c-9b51-beb539cf00ab")
 		(property "Reference" "#PWR020"
-			(at 138.43 88.9 0)
+			(at 127 133.35 0)
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
+				(hide yes)
 			)
 		)
 		(property "Value" "GND"
-			(at 140.97 88.8999 90)
+			(at 129.54 133.3499 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -1869,25 +2233,23 @@
 			)
 		)
 		(property "Footprint" ""
-			(at 144.78 88.9 0)
+			(at 133.35 133.35 0)
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
-				(hide yes)
 			)
 		)
 		(property "Datasheet" ""
-			(at 144.78 88.9 0)
+			(at 133.35 133.35 0)
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
-				(hide yes)
 			)
 		)
 		(property "Description" "Power symbol creates a global label with name \"GND\" , ground"
-			(at 144.78 88.9 0)
+			(at 133.35 133.35 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -1908,8 +2270,9 @@
 		)
 	)
 	(symbol
+		(lib_name "GND_1")
 		(lib_id "power:GND")
-		(at 134.62 62.23 90)
+		(at 123.19 106.68 90)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -1917,15 +2280,16 @@
 		(dnp no)
 		(uuid "ddfb798f-434f-4641-b9da-1f22b0cef695")
 		(property "Reference" "#PWR019"
-			(at 140.97 62.23 0)
+			(at 129.54 106.68 0)
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
+				(hide yes)
 			)
 		)
 		(property "Value" "GND"
-			(at 138.43 62.2299 90)
+			(at 127 106.6799 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -1934,7 +2298,7 @@
 			)
 		)
 		(property "Footprint" ""
-			(at 134.62 62.23 0)
+			(at 123.19 106.68 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -1943,7 +2307,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 134.62 62.23 0)
+			(at 123.19 106.68 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -1952,7 +2316,7 @@
 			)
 		)
 		(property "Description" "Power symbol creates a global label with name \"GND\" , ground"
-			(at 135.89 61.976 0)
+			(at 124.46 106.426 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -1974,7 +2338,7 @@
 	)
 	(symbol
 		(lib_id "Device:C")
-		(at 158.75 53.34 0)
+		(at 147.32 97.79 0)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -1982,7 +2346,7 @@
 		(dnp no)
 		(uuid "de156d70-0fbe-400d-b3f0-0aec4fd869da")
 		(property "Reference" "C7"
-			(at 161.29 52.07 0)
+			(at 149.86 96.52 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -1991,7 +2355,7 @@
 			)
 		)
 		(property "Value" "100nF"
-			(at 161.29 54.61 0)
+			(at 149.86 99.06 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2000,7 +2364,7 @@
 			)
 		)
 		(property "Footprint" "Capacitor_SMD:C_0603_1608Metric"
-			(at 159.7152 57.15 0)
+			(at 148.2852 101.6 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2009,7 +2373,7 @@
 			)
 		)
 		(property "Datasheet" "~"
-			(at 158.75 53.34 0)
+			(at 147.32 97.79 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2018,7 +2382,7 @@
 			)
 		)
 		(property "Description" "100nF Capacitor"
-			(at 158.75 53.34 0)
+			(at 147.32 97.79 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2027,7 +2391,7 @@
 			)
 		)
 		(property "LCSC Part No" "C14663"
-			(at 158.75 53.34 0)
+			(at 147.32 97.79 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2036,7 +2400,7 @@
 			)
 		)
 		(property "LCSC Part" "C14663"
-			(at 158.75 53.34 0)
+			(at 147.32 97.79 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2045,7 +2409,7 @@
 			)
 		)
 		(property "ai_block" "led_controller"
-			(at 0 0 0)
+			(at -11.43 44.45 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2054,7 +2418,7 @@
 			)
 		)
 		(property "ai_critical_specs" "100nF, 0603"
-			(at 0 0 0)
+			(at -11.43 44.45 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2063,7 +2427,7 @@
 			)
 		)
 		(property "ai_function" "High-frequency bypass capacitor on intermediate LED power node (between fuse F1 and sense resistor R27)"
-			(at 0 0 0)
+			(at -11.43 44.45 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2072,7 +2436,7 @@
 			)
 		)
 		(property "ai_role" "decoupling"
-			(at 0 0 0)
+			(at -11.43 44.45 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2096,8 +2460,9 @@
 		)
 	)
 	(symbol
+		(lib_name "GND_3")
 		(lib_id "power:GND")
-		(at 158.75 48.26 180)
+		(at 147.32 92.71 180)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -2106,15 +2471,16 @@
 		(fields_autoplaced yes)
 		(uuid "e10b418b-1046-42fa-9ec3-88fc5f1469b5")
 		(property "Reference" "#PWR018"
-			(at 158.75 41.91 0)
+			(at 147.32 86.36 0)
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
+				(hide yes)
 			)
 		)
 		(property "Value" "GND"
-			(at 158.75 43.18 0)
+			(at 147.32 87.63 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2122,25 +2488,23 @@
 			)
 		)
 		(property "Footprint" ""
-			(at 158.75 48.26 0)
+			(at 147.32 92.71 0)
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
-				(hide yes)
 			)
 		)
 		(property "Datasheet" ""
-			(at 158.75 48.26 0)
+			(at 147.32 92.71 0)
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
-				(hide yes)
 			)
 		)
 		(property "Description" "Power symbol creates a global label with name \"GND\" , ground"
-			(at 158.75 48.26 0)
+			(at 147.32 92.71 0)
 			(effects
 				(font
 					(size 1.27 1.27)

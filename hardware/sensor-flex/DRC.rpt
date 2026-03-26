@@ -1,1 +1,105 @@
-)
+** Drc report for sensor-flex.kicad_pcb **
+** Created on 2026-03-25T14:36:02-0700 **
+
+** Found 26 DRC violations **
+[clearance]: Clearance violation (netclass 'Default' clearance 0.2000 mm; actual 0.1760 mm)
+    Rule: netclass 'Default'; error
+    @(172.9260 mm, 92.4635 mm): Track [/SDA2] on F.Cu, length 1.3270 mm
+    @(172.2750 mm, 91.8000 mm): Pad 8 [/SCL2] of IC2 on F.Cu
+[clearance]: Clearance violation (netclass 'Default' clearance 0.2000 mm; actual 0.1760 mm)
+    Rule: netclass 'Default'; error
+    @(170.5895 mm, 88.8000 mm): Track [/SDA2] on F.Cu, length 43.2645 mm
+    @(172.2750 mm, 91.8000 mm): Track [/SCL2] on F.Cu, length 3.6402 mm
+[clearance]: Clearance violation (netclass 'Default' clearance 0.2000 mm; actual 0.1760 mm)
+    Rule: netclass 'Default'; error
+    @(162.2250 mm, 91.2355 mm): Track [/SDA1] on F.Cu, length 1.6426 mm
+    @(127.7270 mm, 89.6730 mm): Track [GND] on F.Cu, length 39.0460 mm
+[clearance]: Clearance violation (netclass 'Default' clearance 0.2000 mm; actual 0.1920 mm)
+    Rule: netclass 'Default'; error
+    @(169.7010 mm, 89.2260 mm): Track [/SCL2] on F.Cu, length 42.1770 mm
+    @(127.3250 mm, 88.8000 mm): Track [/SDA2] on F.Cu, length 2.6517 mm
+[clearance]: Clearance violation (netclass 'Default' clearance 0.2000 mm; actual 0.1760 mm)
+    Rule: netclass 'Default'; error
+    @(127.9260 mm, 90.0740 mm): Track [/SDA1] on F.Cu, length 5.0926 mm
+    @(128.1025 mm, 90.5000 mm): Track [/SCL1] on F.Cu, length 4.9546 mm
+[clearance]: Clearance violation (netclass 'Default' clearance 0.2000 mm; actual 0.1760 mm)
+    Rule: netclass 'Default'; error
+    @(161.4750 mm, 91.8000 mm): Track [/SCL1] on F.Cu, length 1.8385 mm
+    @(161.0635 mm, 90.0740 mm): Track [/SDA1] on F.Cu, length 33.1375 mm
+[clearance]: Clearance violation (netclass 'Default' clearance 0.2000 mm; actual 0.1920 mm)
+    Rule: netclass 'Default'; error
+    @(127.5240 mm, 89.2260 mm): Track [/SCL2] on F.Cu, length 3.4634 mm
+    @(127.3250 mm, 88.8000 mm): Track [/SDA2] on F.Cu, length 2.6517 mm
+[clearance]: Clearance violation (netclass 'Default' clearance 0.2000 mm; actual 0.1760 mm)
+    Rule: netclass 'Default'; error
+    @(128.1025 mm, 90.5000 mm): Track [/SCL1] on F.Cu, length 4.9546 mm
+    @(124.3250 mm, 93.6750 mm): Track [/SDA1] on F.Cu, length 2.3750 mm
+[clearance]: Clearance violation (netclass 'Default' clearance 0.2000 mm; actual 0.1760 mm)
+    Rule: netclass 'Default'; error
+    @(127.5240 mm, 89.2260 mm): Track [/SCL2] on F.Cu, length 3.4634 mm
+    @(170.5895 mm, 88.8000 mm): Track [/SDA2] on F.Cu, length 43.2645 mm
+[clearance]: Clearance violation (netclass 'Default' clearance 0.2000 mm; actual 0.1760 mm)
+    Rule: netclass 'Default'; error
+    @(127.9260 mm, 90.0740 mm): Track [/SDA1] on F.Cu, length 5.0926 mm
+    @(160.1750 mm, 90.5000 mm): Track [/SCL1] on F.Cu, length 32.0725 mm
+[clearance]: Clearance violation (netclass 'Default' clearance 0.2000 mm; actual 0.1760 mm)
+    Rule: netclass 'Default'; error
+    @(169.7010 mm, 89.2260 mm): Track [/SCL2] on F.Cu, length 42.1770 mm
+    @(170.5895 mm, 88.8000 mm): Track [/SDA2] on F.Cu, length 43.2645 mm
+[clearance]: Clearance violation (netclass 'Default' clearance 0.2000 mm; actual 0.1760 mm)
+    Rule: netclass 'Default'; error
+    @(128.1025 mm, 90.5000 mm): Track [/SCL1] on F.Cu, length 4.9546 mm
+    @(161.0635 mm, 90.0740 mm): Track [/SDA1] on F.Cu, length 33.1375 mm
+[clearance]: Clearance violation (netclass 'Default' clearance 0.2000 mm; actual 0.1993 mm)
+    Rule: netclass 'Default'; error
+    @(127.9260 mm, 90.0740 mm): Track [/SDA1] on F.Cu, length 5.0926 mm
+    @(121.9500 mm, 92.6750 mm): Track [GND] on F.Cu, length 2.7750 mm
+[clearance]: Clearance violation (netclass 'Default' clearance 0.2000 mm; actual 0.1993 mm)
+    Rule: netclass 'Default'; error
+    @(127.9260 mm, 90.0740 mm): Track [/SDA1] on F.Cu, length 5.0926 mm
+    @(124.7250 mm, 92.6750 mm): Track [GND] on F.Cu, length 4.2455 mm
+[clearance]: Clearance violation (netclass 'Default' clearance 0.2000 mm; actual 0.1920 mm)
+    Rule: netclass 'Default'; error
+    @(125.4500 mm, 90.6750 mm): Track [/SDA2] on F.Cu, length 3.5000 mm
+    @(127.5240 mm, 89.2260 mm): Track [/SCL2] on F.Cu, length 3.4634 mm
+[clearance]: Clearance violation (netclass 'Default' clearance 0.2000 mm; actual 0.1760 mm)
+    Rule: netclass 'Default'; error
+    @(127.9260 mm, 90.0740 mm): Track [/SDA1] on F.Cu, length 5.0926 mm
+    @(127.7270 mm, 89.6730 mm): Track [GND] on F.Cu, length 39.0460 mm
+[copper_edge_clearance]: Board edge clearance violation (board setup constraints edge clearance 0.5000 mm; actual 0.4937 mm)
+    Rule: board setup constraints edge; error
+    @(126.6500 mm, 88.6000 mm): Polygon on Edge.Cuts
+    @(127.3250 mm, 88.8000 mm): Track [/SDA2] on F.Cu, length 2.6517 mm
+[lib_footprint_mismatch]: Footprint 'FPC_Tail_10P_1.0mm_TopContact' does not match copy in library 'motion-play-footprints'.
+    Local override; warning
+    @(120.1500 mm, 93.1750 mm): Footprint FPC1
+[text_thickness]: Text thickness out of range (board setup constraints silk text thickness min thickness 0.0800 mm; actual 0.0600 mm)
+    Rule: board setup constraints silk text thickness; warning
+    @(124.3500 mm, 90.0000 mm): PCB text 'G' on F.Silkscreen
+[text_thickness]: Text thickness out of range (board setup constraints silk text thickness min thickness 0.0800 mm; actual 0.0600 mm)
+    Rule: board setup constraints silk text thickness; warning
+    @(124.3500 mm, 92.9500 mm): PCB text 'G' on F.Silkscreen
+[text_thickness]: Text thickness out of range (board setup constraints silk text thickness min thickness 0.0800 mm; actual 0.0600 mm)
+    Rule: board setup constraints silk text thickness; warning
+    @(124.3500 mm, 96.0000 mm): PCB text 'G' on F.Silkscreen
+[text_thickness]: Text thickness out of range (board setup constraints silk text thickness min thickness 0.0800 mm; actual 0.0600 mm)
+    Rule: board setup constraints silk text thickness; warning
+    @(124.4000 mm, 97.0000 mm): PCB text '3.3V' on F.Silkscreen
+[text_thickness]: Text thickness out of range (board setup constraints silk text thickness min thickness 0.0800 mm; actual 0.0600 mm)
+    Rule: board setup constraints silk text thickness; warning
+    @(124.4000 mm, 92.0000 mm): PCB text 'SC2' on F.Silkscreen
+[text_thickness]: Text thickness out of range (board setup constraints silk text thickness min thickness 0.0800 mm; actual 0.0600 mm)
+    Rule: board setup constraints silk text thickness; warning
+    @(124.4000 mm, 94.0500 mm): PCB text 'SD1' on F.Silkscreen
+[text_thickness]: Text thickness out of range (board setup constraints silk text thickness min thickness 0.0800 mm; actual 0.0600 mm)
+    Rule: board setup constraints silk text thickness; warning
+    @(124.4000 mm, 95.0500 mm): PCB text 'SC1' on F.Silkscreen
+[text_thickness]: Text thickness out of range (board setup constraints silk text thickness min thickness 0.0800 mm; actual 0.0600 mm)
+    Rule: board setup constraints silk text thickness; warning
+    @(124.4000 mm, 91.0000 mm): PCB text 'SD2' on F.Silkscreen
+
+** Found 0 unconnected pads **
+
+** Found 0 Footprint errors **
+
+** End of Report **

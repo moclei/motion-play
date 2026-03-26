@@ -1,0 +1,49 @@
+{
+  "meta": {
+    "source_file": "hardware/sensor-rigid/sensor-rigid.kicad_pcb",
+    "extracted_at": "2026-03-25T22:59:11.006325+00:00",
+    "board_area_mm2": 646.8,
+    "schematic_context": "circuit-context.json"
+  },
+  "board_outline": {
+    "type": "rectangle",
+    "min_x": 136.8625,
+    "min_y": 43.15,
+    "max_x": 165.3875,
+    "max_y": 65.825,
+    "width": 28.525,
+    "height": 22.675
+  },
+  "placed_components": [
+    {"ref": "C1", "value": "2.2µF", "footprint": "C_0603_1608Metric", "x": 143.475, "y": 54.85, "rotation": 180, "side": "front", "bbox": {"width": 2.96, "height": 1.46}},
+    {"ref": "C2", "value": "0.1µF", "footprint": "C_0603_1608Metric", "x": 149.71, "y": 62.263, "rotation": 180, "side": "front", "bbox": {"width": 2.96, "height": 1.46}},
+    {"ref": "D1", "value": "LED", "footprint": "LED_0603_1608Metric", "x": 139.925, "y": 45.025, "rotation": 180, "side": "front", "bbox": {"width": 2.96, "height": 1.46}},
+    {"ref": "FPC1", "value": "FPC1.0-8P", "footprint": "FPC-SMD_8P-P1.00_FPC1.0-8P-SJ", "x": 157.395, "y": 48.383, "rotation": 0, "side": "front", "bbox": {"width": 14.18, "height": 4.62}},
+    {"ref": "J1", "value": "Conn_01x04", "footprint": "JST_SH_SM04B-SRSS-TB_1x04-1MP_P1.00mm_Horizontal", "x": 139.688, "y": 58.7, "rotation": -90, "side": "front", "bbox": {"width": 6.56, "height": 7.8}},
+    {"ref": "R1", "value": "4.7kΩ", "footprint": "R_0603_1608Metric", "x": 145.2, "y": 62.075, "rotation": 90, "side": "front", "bbox": {"width": 1.46, "height": 2.96}},
+    {"ref": "R2", "value": "4.7kΩ", "footprint": "R_0603_1608Metric", "x": 146.75, "y": 61.05, "rotation": 90, "side": "front", "bbox": {"width": 1.46, "height": 2.96}},
+    {"ref": "R3", "value": "10kΩ", "footprint": "R_0603_1608Metric", "x": 153.847, "y": 62.25, "rotation": 180, "side": "front", "bbox": {"width": 2.96, "height": 1.46}},
+    {"ref": "R4", "value": "1kΩ", "footprint": "R_0603_1608Metric", "x": 139.925, "y": 46.6, "rotation": 0, "side": "front", "bbox": {"width": 2.96, "height": 1.46}},
+    {"ref": "R6", "value": "4.7kΩ", "footprint": "R_0603_1608Metric", "x": 152.9, "y": 53.2, "rotation": 0, "side": "front", "bbox": {"width": 2.96, "height": 1.46}},
+    {"ref": "R7", "value": "4.7kΩ", "footprint": "R_0603_1608Metric", "x": 155.925, "y": 53.4, "rotation": 0, "side": "front", "bbox": {"width": 2.96, "height": 1.46}},
+    {"ref": "R8", "value": "4.7kΩ", "footprint": "R_0603_1608Metric", "x": 156.75, "y": 54.9, "rotation": 180, "side": "front", "bbox": {"width": 2.96, "height": 1.46}},
+    {"ref": "R9", "value": "4.7kΩ", "footprint": "R_0603_1608Metric", "x": 151.775, "y": 54.7, "rotation": 180, "side": "front", "bbox": {"width": 2.96, "height": 1.46}},
+    {"ref": "R12", "value": "10kΩ", "footprint": "R_0603_1608Metric", "x": 152.7, "y": 63.75, "rotation": 0, "side": "front", "bbox": {"width": 2.96, "height": 1.46}},
+    {"ref": "R13", "value": "10kΩ", "footprint": "R_0603_1608Metric", "x": 156.65, "y": 62.425, "rotation": 90, "side": "front", "bbox": {"width": 1.46, "height": 2.96}},
+    {"ref": "R14", "value": "10kΩ", "footprint": "R_0603_1608Metric", "x": 156.65, "y": 59.175, "rotation": -90, "side": "front", "bbox": {"width": 1.46, "height": 2.96}},
+    {"ref": "SW1", "value": "EP-02KS", "footprint": "SW-SMD_EP-02KS", "x": 160.9, "y": 59.6, "rotation": 180, "side": "front", "bbox": {"width": 4.62, "height": 10.02}},
+    {"ref": "TP1", "value": "3V3", "footprint": "TestPoint_Pad_D1.5mm", "x": 140.45, "y": 50.7, "rotation": 0, "side": "front", "bbox": {"width": 2.5, "height": 2.5}},
+    {"ref": "TP2", "value": "GND", "footprint": "TestPoint_Pad_D1.5mm", "x": 140.45, "y": 53.35, "rotation": 0, "side": "front", "bbox": {"width": 2.5, "height": 2.5}},
+    {"ref": "TP3", "value": "SDA_UP", "footprint": "TestPoint_Pad_D1.5mm", "x": 143.15, "y": 52, "rotation": -90, "side": "front", "bbox": {"width": 2.5, "height": 2.5}},
+    {"ref": "TP4", "value": "SCL_UP", "footprint": "TestPoint_Pad_D1.5mm", "x": 145.8, "y": 52.05, "rotation": -90, "side": "front", "bbox": {"width": 2.5, "height": 2.5}},
+    {"ref": "U1", "value": "PCA9546APWR", "footprint": "SOP65P640X120-16N", "x": 151.83, "y": 58.688, "rotation": 180, "side": "front", "bbox": {"width": 7.81, "height": 5.5}}
+  ],
+  "unplaced_components": [
+  ],
+  "summary": {
+    "total_components": 22,
+    "placed": 22,
+    "unplaced": 0,
+    "board_utilization_pct": 45.1
+  }
+}

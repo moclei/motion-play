@@ -4,8 +4,8 @@
   "source": {
     "root": "sensor-rigid.kicad_sch",
     "sheets": {},
-    "source_hash": "06e82b5ab1ed",
-    "extracted_at": "2026-03-10T02:29:24.263094+00:00"
+    "source_hash": "e0c8e75d36f9",
+    "extracted_at": "2026-03-25T22:59:04.921815+00:00"
   },
   "description": "Sensor rigid base PCB with PCA9546A I2C mux routing upstream bus from main board to 2 downstream VCNL4040 sensor channels via ZIF FPC connector, with address configuration jumpers, wired-OR interrupt combining, and per-channel I2C pull-ups",
   "blocks": {
@@ -106,7 +106,7 @@
       ]
     },
     "C2": {
-      "part": "C",
+      "part": "C_1",
       "value": "0.1\u00b5F",
       "footprint": "Capacitor_SMD:C_0603_1608Metric",
       "lcsc": "C14663",
@@ -151,57 +151,7 @@
           "number": "2",
           "name": "A",
           "type": "passive",
-          "net": "Net-(D1-A)"
-        }
-      ]
-    },
-    "D2": {
-      "part": "BAT54S",
-      "value": "BAT54S",
-      "footprint": "Package_TO_SOT_SMD:SOT-23",
-      "lcsc": "C727126",
-      "sheet": "sensor-rigid.kicad_sch",
-      "block": "interrupts",
-      "function": "Wired-OR interrupt combiner for sensor 1",
-      "role": "diode",
-      "critical_specs": "BAT54S dual Schottky, 200mA",
-      "pins": [
-        {
-          "number": "1",
-          "name": "A",
-          "type": "passive",
-          "net": "Net-(D2-A)"
-        },
-        {
-          "number": "3",
-          "name": "COM",
-          "type": "passive",
-          "net": "/INT1"
-        }
-      ]
-    },
-    "D3": {
-      "part": "BAT54S",
-      "value": "BAT54S",
-      "footprint": "Package_TO_SOT_SMD:SOT-23",
-      "lcsc": "C727126",
-      "sheet": "sensor-rigid.kicad_sch",
-      "block": "interrupts",
-      "function": "Wired-OR interrupt combiner for sensor 2",
-      "role": "diode",
-      "critical_specs": "BAT54S dual Schottky, 200mA",
-      "pins": [
-        {
-          "number": "1",
-          "name": "A",
-          "type": "passive",
-          "net": "Net-(D2-A)"
-        },
-        {
-          "number": "3",
-          "name": "COM",
-          "type": "passive",
-          "net": "/INT2"
+          "net": "/LED_A"
         }
       ]
     },
@@ -224,21 +174,21 @@
         },
         {
           "number": "2",
+          "name": "GND",
+          "type": "power_in",
+          "net": "GND"
+        },
+        {
+          "number": "3",
           "name": "SCL1",
           "type": "bidirectional",
           "net": "/SCL1"
         },
         {
-          "number": "3",
+          "number": "4",
           "name": "SDA1",
           "type": "bidirectional",
           "net": "/SDA1"
-        },
-        {
-          "number": "4",
-          "name": "INT1",
-          "type": "input",
-          "net": "/INT1"
         },
         {
           "number": "5",
@@ -260,9 +210,9 @@
         },
         {
           "number": "8",
-          "name": "INT2",
-          "type": "input",
-          "net": "/INT2"
+          "name": "GND",
+          "type": "power_in",
+          "net": "GND"
         },
         {
           "number": "9",
@@ -279,15 +229,15 @@
       ]
     },
     "J1": {
-      "part": "Conn_01x05",
-      "value": "Conn_01x05",
-      "footprint": "Connector_JST:JST_SH_SM05B-SRSS-TB_1x05-1MP_P1.00mm_Horizontal",
-      "lcsc": "C136657",
+      "part": "Conn_01x04",
+      "value": "Conn_01x04",
+      "footprint": "Connector_JST:JST_SH_SM04B-SRSS-TB_1x04-1MP_P1.00mm_Horizontal",
+      "lcsc": "C160404",
       "sheet": "sensor-rigid.kicad_sch",
       "block": "connectors",
-      "function": "5-pin JST-SH connector to main PCB carrying I2C, power, and interrupt",
+      "function": "4-pin JST-SH connector to main PCB carrying I2C, power",
       "role": "connector",
-      "critical_specs": "JST-SH 1mm pitch, 5-pin",
+      "critical_specs": "JST-SH 1mm pitch, 4-pin",
       "pins": [
         {
           "number": "1",
@@ -305,74 +255,18 @@
           "number": "3",
           "name": "Pin_3",
           "type": "passive",
-          "net": "Net-(J1-Pin_3)"
+          "net": "/SDA_UP"
         },
         {
           "number": "4",
           "name": "Pin_4",
           "type": "passive",
-          "net": "Net-(J1-Pin_4)"
-        },
-        {
-          "number": "5",
-          "name": "Pin_5",
-          "type": "passive",
-          "net": "Net-(D2-A)"
-        }
-      ]
-    },
-    "JP3": {
-      "part": "SolderJumper_2_Open",
-      "value": "SolderJumper_2_Open",
-      "footprint": "Jumper:SolderJumper-2_P1.3mm_Open_RoundedPad1.0x1.5mm",
-      "lcsc": "",
-      "sheet": "sensor-rigid.kicad_sch",
-      "block": "i2c_mux",
-      "function": "A1 address select solder jumper \u2014 bridge to set A1=1",
-      "role": "address_config",
-      "critical_specs": "",
-      "pins": [
-        {
-          "number": "1",
-          "name": "A",
-          "type": "passive",
-          "net": "Net-(JP3-A)"
-        },
-        {
-          "number": "2",
-          "name": "B",
-          "type": "passive",
-          "net": "+3.3V"
-        }
-      ]
-    },
-    "JP4": {
-      "part": "SolderJumper_2_Open",
-      "value": "SolderJumper_2_Open",
-      "footprint": "Jumper:SolderJumper-2_P1.3mm_Open_RoundedPad1.0x1.5mm",
-      "lcsc": "",
-      "sheet": "sensor-rigid.kicad_sch",
-      "block": "i2c_mux",
-      "function": "A0 address select solder jumper \u2014 bridge to set A0=1",
-      "role": "address_config",
-      "critical_specs": "",
-      "pins": [
-        {
-          "number": "1",
-          "name": "A",
-          "type": "passive",
-          "net": "Net-(JP4-A)"
-        },
-        {
-          "number": "2",
-          "name": "B",
-          "type": "passive",
-          "net": "+3.3V"
+          "net": "/SCL_UP"
         }
       ]
     },
     "R1": {
-      "part": "R",
+      "part": "R_4",
       "value": "4.7k\u03a9",
       "footprint": "Resistor_SMD:R_0603_1608Metric",
       "lcsc": "C99782",
@@ -392,12 +286,12 @@
           "number": "2",
           "name": "",
           "type": "passive",
-          "net": "Net-(J1-Pin_3)"
+          "net": "/SDA_UP"
         }
       ]
     },
     "R12": {
-      "part": "R",
+      "part": "R_8",
       "value": "10k\u03a9",
       "footprint": "Resistor_SMD:R_0603_1608Metric",
       "lcsc": "C25804",
@@ -411,7 +305,7 @@
           "number": "1",
           "name": "",
           "type": "passive",
-          "net": "Net-(U1-A2)"
+          "net": "/PCA_A2"
         },
         {
           "number": "2",
@@ -422,7 +316,7 @@
       ]
     },
     "R13": {
-      "part": "R",
+      "part": "R_7",
       "value": "10k\u03a9",
       "footprint": "Resistor_SMD:R_0603_1608Metric",
       "lcsc": "C25804",
@@ -442,12 +336,12 @@
           "number": "2",
           "name": "",
           "type": "passive",
-          "net": "Net-(JP4-A)"
+          "net": "/PCA_A0"
         }
       ]
     },
     "R14": {
-      "part": "R",
+      "part": "R_6",
       "value": "10k\u03a9",
       "footprint": "Resistor_SMD:R_0603_1608Metric",
       "lcsc": "C25804",
@@ -467,12 +361,12 @@
           "number": "2",
           "name": "",
           "type": "passive",
-          "net": "Net-(JP3-A)"
+          "net": "/PCA_A1"
         }
       ]
     },
     "R2": {
-      "part": "R",
+      "part": "R_9",
       "value": "4.7k\u03a9",
       "footprint": "Resistor_SMD:R_0603_1608Metric",
       "lcsc": "C99782",
@@ -492,12 +386,12 @@
           "number": "2",
           "name": "",
           "type": "passive",
-          "net": "Net-(J1-Pin_4)"
+          "net": "/SCL_UP"
         }
       ]
     },
     "R3": {
-      "part": "R",
+      "part": "R_3",
       "value": "10k\u03a9",
       "footprint": "Resistor_SMD:R_0603_1608Metric",
       "lcsc": "C25804",
@@ -511,7 +405,7 @@
           "number": "1",
           "name": "",
           "type": "passive",
-          "net": "Net-(U1-~{RESET})"
+          "net": "/PCA_RESET"
         },
         {
           "number": "2",
@@ -522,7 +416,7 @@
       ]
     },
     "R4": {
-      "part": "R",
+      "part": "R_5",
       "value": "1k\u03a9",
       "footprint": "Resistor_SMD:R_0603_1608Metric",
       "lcsc": "C22548",
@@ -536,43 +430,18 @@
           "number": "1",
           "name": "",
           "type": "passive",
-          "net": "Net-(D1-A)"
+          "net": "/LED_A"
         },
         {
           "number": "2",
           "name": "",
           "type": "passive",
           "net": "+3.3V"
-        }
-      ]
-    },
-    "R5": {
-      "part": "R",
-      "value": "8.2k\u03a9",
-      "footprint": "Resistor_SMD:R_0603_1608Metric",
-      "lcsc": "C25981",
-      "sheet": "sensor-rigid.kicad_sch",
-      "block": "interrupts",
-      "function": "Combined INT line pull-up",
-      "role": "pull_up",
-      "critical_specs": "8.2k\u03a9 to 3.3V",
-      "pins": [
-        {
-          "number": "1",
-          "name": "",
-          "type": "passive",
-          "net": "+3.3V"
-        },
-        {
-          "number": "2",
-          "name": "",
-          "type": "passive",
-          "net": "Net-(D2-A)"
         }
       ]
     },
     "R6": {
-      "part": "R",
+      "part": "R_10",
       "value": "4.7k\u03a9",
       "footprint": "Resistor_SMD:R_0603_1608Metric",
       "lcsc": "C99782",
@@ -622,7 +491,7 @@
       ]
     },
     "R8": {
-      "part": "R",
+      "part": "R_2",
       "value": "4.7k\u03a9",
       "footprint": "Resistor_SMD:R_0603_1608Metric",
       "lcsc": "C99782",
@@ -647,7 +516,7 @@
       ]
     },
     "R9": {
-      "part": "R",
+      "part": "R_1",
       "value": "4.7k\u03a9",
       "footprint": "Resistor_SMD:R_0603_1608Metric",
       "lcsc": "C99782",
@@ -671,9 +540,46 @@
         }
       ]
     },
+    "SW1": {
+      "part": "EP-02KS",
+      "value": "EP-02KS",
+      "footprint": "JLC-MCP:SW-SMD_EP-02KS",
+      "lcsc": "C129087",
+      "sheet": "sensor-rigid.kicad_sch",
+      "block": "",
+      "function": "",
+      "role": "",
+      "critical_specs": "",
+      "pins": [
+        {
+          "number": "1",
+          "name": "A1",
+          "type": "input",
+          "net": "/PCA_A1"
+        },
+        {
+          "number": "2",
+          "name": "A2",
+          "type": "input",
+          "net": "/PCA_A0"
+        },
+        {
+          "number": "3",
+          "name": "B2",
+          "type": "input",
+          "net": "+3.3V"
+        },
+        {
+          "number": "4",
+          "name": "B1",
+          "type": "input",
+          "net": "+3.3V"
+        }
+      ]
+    },
     "TP1": {
-      "part": "TestPoint_Small",
-      "value": "TestPoint_Small",
+      "part": "TestPoint_Small_1",
+      "value": "3V3",
       "footprint": "TestPoint:TestPoint_Pad_D1.5mm",
       "lcsc": "",
       "sheet": "sensor-rigid.kicad_sch",
@@ -691,8 +597,8 @@
       ]
     },
     "TP2": {
-      "part": "TestPoint_Small",
-      "value": "TestPoint_Small",
+      "part": "TestPoint_Small_2",
+      "value": "GND",
       "footprint": "TestPoint:TestPoint_Pad_D1.5mm",
       "lcsc": "",
       "sheet": "sensor-rigid.kicad_sch",
@@ -710,8 +616,8 @@
       ]
     },
     "TP3": {
-      "part": "TestPoint_Small",
-      "value": "TestPoint_Small",
+      "part": "TestPoint_Small_3",
+      "value": "SDA_UP",
       "footprint": "TestPoint:TestPoint_Pad_D1.5mm",
       "lcsc": "",
       "sheet": "sensor-rigid.kicad_sch",
@@ -724,13 +630,13 @@
           "number": "1",
           "name": "1",
           "type": "passive",
-          "net": "Net-(J1-Pin_3)"
+          "net": "/SDA_UP"
         }
       ]
     },
     "TP4": {
       "part": "TestPoint_Small",
-      "value": "TestPoint_Small",
+      "value": "SCL_UP",
       "footprint": "TestPoint:TestPoint_Pad_D1.5mm",
       "lcsc": "",
       "sheet": "sensor-rigid.kicad_sch",
@@ -743,26 +649,7 @@
           "number": "1",
           "name": "1",
           "type": "passive",
-          "net": "Net-(J1-Pin_4)"
-        }
-      ]
-    },
-    "TP5": {
-      "part": "TestPoint_Small",
-      "value": "TestPoint_Small",
-      "footprint": "TestPoint:TestPoint_Pad_D1.5mm",
-      "lcsc": "",
-      "sheet": "sensor-rigid.kicad_sch",
-      "block": "test_points",
-      "function": "Combined INT line test point",
-      "role": "test_point",
-      "critical_specs": "",
-      "pins": [
-        {
-          "number": "1",
-          "name": "1",
-          "type": "passive",
-          "net": "Net-(D2-A)"
+          "net": "/SCL_UP"
         }
       ]
     },
@@ -781,19 +668,19 @@
           "number": "1",
           "name": "A0",
           "type": "input",
-          "net": "Net-(JP4-A)"
+          "net": "/PCA_A0"
         },
         {
           "number": "2",
           "name": "A1",
           "type": "input",
-          "net": "Net-(JP3-A)"
+          "net": "/PCA_A1"
         },
         {
           "number": "3",
           "name": "~{RESET}",
           "type": "input",
-          "net": "Net-(U1-~{RESET})"
+          "net": "/PCA_RESET"
         },
         {
           "number": "4",
@@ -829,19 +716,19 @@
           "number": "13",
           "name": "A2",
           "type": "input",
-          "net": "Net-(U1-A2)"
+          "net": "/PCA_A2"
         },
         {
           "number": "14",
           "name": "SCL",
           "type": "input",
-          "net": "Net-(J1-Pin_4)"
+          "net": "/SCL_UP"
         },
         {
           "number": "15",
           "name": "SDA",
           "type": "bidirectional",
-          "net": "Net-(J1-Pin_3)"
+          "net": "/SDA_UP"
         },
         {
           "number": "16",
@@ -859,17 +746,35 @@
       "direction": "",
       "description": "3.3V power rail supplied from main board via J1 pin 1"
     },
-    "/INT1": {
-      "type": "signal",
+    "/LED_A": {
+      "type": "",
       "protocol": "",
-      "direction": "input",
-      "description": "Interrupt line from sensor 1 on flex strip (PCA9546A channel 0 side)"
+      "direction": "",
+      "description": ""
     },
-    "/INT2": {
-      "type": "signal",
+    "/PCA_A0": {
+      "type": "",
       "protocol": "",
-      "direction": "input",
-      "description": "Interrupt line from sensor 2 on flex strip (PCA9546A channel 1 side)"
+      "direction": "",
+      "description": ""
+    },
+    "/PCA_A1": {
+      "type": "",
+      "protocol": "",
+      "direction": "",
+      "description": ""
+    },
+    "/PCA_A2": {
+      "type": "",
+      "protocol": "",
+      "direction": "",
+      "description": ""
+    },
+    "/PCA_RESET": {
+      "type": "",
+      "protocol": "",
+      "direction": "",
+      "description": ""
     },
     "/SCL1": {
       "type": "clock",
@@ -883,6 +788,12 @@
       "direction": "bidirectional",
       "description": "I2C clock for sensor 2 (PCA9546A channel 1 downstream)"
     },
+    "/SCL_UP": {
+      "type": "",
+      "protocol": "",
+      "direction": "",
+      "description": ""
+    },
     "/SDA1": {
       "type": "signal",
       "protocol": "I2C",
@@ -895,59 +806,17 @@
       "direction": "bidirectional",
       "description": "I2C data for sensor 2 (PCA9546A channel 1 downstream)"
     },
+    "/SDA_UP": {
+      "type": "",
+      "protocol": "",
+      "direction": "",
+      "description": ""
+    },
     "GND": {
       "type": "power",
       "protocol": "",
       "direction": "",
       "description": "Ground reference"
-    },
-    "Net-(D1-A)": {
-      "type": "signal",
-      "protocol": "",
-      "direction": "",
-      "description": "Power LED anode node between R4 current limiter and D1 LED"
-    },
-    "Net-(D2-A)": {
-      "type": "signal",
-      "protocol": "",
-      "direction": "output",
-      "description": "Combined interrupt line (wired-OR output from D2/D3) routed to main board via J1 pin 5"
-    },
-    "Net-(J1-Pin_3)": {
-      "type": "signal",
-      "protocol": "I2C",
-      "direction": "bidirectional",
-      "description": "Upstream SDA bus from main board to PCA9546A SDA pin"
-    },
-    "Net-(J1-Pin_4)": {
-      "type": "clock",
-      "protocol": "I2C",
-      "direction": "bidirectional",
-      "description": "Upstream SCL bus from main board to PCA9546A SCL pin"
-    },
-    "Net-(JP3-A)": {
-      "type": "signal",
-      "protocol": "",
-      "direction": "",
-      "description": "A1 address configuration node between JP3 jumper, R14 pull-down, and PCA9546A A1 pin"
-    },
-    "Net-(JP4-A)": {
-      "type": "signal",
-      "protocol": "",
-      "direction": "",
-      "description": "A0 address configuration node between JP4 jumper, R13 pull-down, and PCA9546A A0 pin"
-    },
-    "Net-(U1-A2)": {
-      "type": "signal",
-      "protocol": "",
-      "direction": "",
-      "description": "A2 address line permanently pulled high via R12 to PCA9546A A2 pin"
-    },
-    "Net-(U1-~{RESET})": {
-      "type": "signal",
-      "protocol": "",
-      "direction": "",
-      "description": "PCA9546A active-low reset line held high via R3 pull-up (always active)"
     }
   },
   "sheet_interfaces": {}

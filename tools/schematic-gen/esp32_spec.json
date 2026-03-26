@@ -1,0 +1,421 @@
+{
+  "_note": "Structured specification for esp32_s3.kicad_sch generation for ESP32 integration Phase 1c.",
+  "meta": {
+    "title": "ESP32-S3",
+    "description": "Hierarchical sheet: ESP32-S3-WROOM-1 module, boot/reset, decoupling, USB resistors, status LED",
+    "filename": "esp32_s3.kicad_sch",
+    "project": "motion-play-main",
+    "kicad_version": "20250114",
+    "source_doc": "docs/initiatives/esp32-integration/PLAN.md",
+    "root_sheet_uuid": "6e095bf3-d8d5-4f67-b79f-a2965409c7a9",
+    "hierarchical_sheet_uuid": "3f1c02c7-ac9c-44c5-97f4-3f360ee54131",
+    "total_components": 14,
+    "units": {
+      "position": "mm, KiCad schematic coordinates (origin top-left, Y increases downward)",
+      "angle": "degrees, 0=default orientation"
+    }
+  },
+  "interface_pins": [
+    {
+      "name": "I2C_SDA",
+      "type": "bidirectional",
+      "net": "I2C_SDA"
+    },
+    {
+      "name": "I2C_SCL",
+      "type": "bidirectional",
+      "net": "I2C_SCL"
+    },
+    {
+      "name": "TCA_RESET",
+      "type": "output",
+      "net": "TCA_RESET"
+    },
+    {
+      "name": "INT1",
+      "type": "input",
+      "net": "INT1"
+    },
+    {
+      "name": "INT2",
+      "type": "input",
+      "net": "INT2"
+    },
+    {
+      "name": "INT3",
+      "type": "input",
+      "net": "INT3"
+    },
+    {
+      "name": "LED_DATA",
+      "type": "output",
+      "net": "LED_DATA"
+    },
+    {
+      "name": "CHRG_INT",
+      "type": "input",
+      "net": "CHRG_INT"
+    },
+    {
+      "name": "USB_DP",
+      "type": "bidirectional",
+      "net": "USB_DP"
+    },
+    {
+      "name": "USB_DN",
+      "type": "bidirectional",
+      "net": "USB_DN"
+    },
+    {
+      "name": "+3.3V",
+      "type": "input",
+      "net": "+3.3V"
+    },
+    {
+      "name": "GND",
+      "type": "bidirectional",
+      "net": "GND"
+    }
+  ],
+  "symbol_sources": {
+    "_note": "Maps lib_id to extraction source. Paths may be relative to repo root or absolute.",
+    "JLC-MCP-MCUs:ESP32-S3-WROOM-1_N16R8_": {
+      "extract_from": "/Users/marcocleirigh/Documents/KiCad/9.0/3rdparty/jlc_mcp/symbols/JLC-MCP-MCUs.kicad_sym",
+      "source_type": "kicad_sym"
+    },
+    "JLC-MCP-ICs:HX_3X4X2-2P-1_6N_TACTILE_SWITCH": {
+      "extract_from": "/Users/marcocleirigh/Documents/KiCad/9.0/3rdparty/jlc_mcp/symbols/JLC-MCP-ICs.kicad_sym",
+      "source_type": "kicad_sym"
+    },
+    "JLC-MCP-Inductors:WS2812B-MINI-X1": {
+      "extract_from": "/Users/marcocleirigh/Documents/KiCad/9.0/3rdparty/jlc_mcp/symbols/JLC-MCP-Inductors.kicad_sym",
+      "source_type": "kicad_sym"
+    },
+    "Device:R": {
+      "extract_from": "hardware/pcb-main/kicad/power_management.kicad_sch"
+    },
+    "Device:C": {
+      "extract_from": "hardware/pcb-main/kicad/power_management.kicad_sch"
+    }
+  },
+  "components": [
+    {
+      "_comment": "=== ESP32-S3 module ==="
+    },
+    {
+      "ref": "U3",
+      "lib_id": "JLC-MCP-MCUs:ESP32-S3-WROOM-1_N16R8_",
+      "value": "ESP32-S3-WROOM-1-N16R8",
+      "footprint": "JLC-MCP:WIRELM-SMD_ESP32-S3-WROOM-1",
+      "lcsc": "C2913202",
+      "position": [
+        139.7,
+        93.98
+      ],
+      "pins": {
+        "1": "GND",
+        "2": "+3.3V",
+        "3": "EN",
+        "9": "LED_DATA",
+        "13": "USB_DN_MCU",
+        "14": "USB_DP_MCU",
+        "18": "TCA_RESET",
+        "19": "INT3",
+        "20": "INT2",
+        "21": "INT1",
+        "23": "CHRG_INT",
+        "27": "GPIO0_BOOT",
+        "36": "I2C_SCL",
+        "37": "I2C_SDA",
+        "40": "GND",
+        "41": "GND"
+      }
+    },
+    {
+      "_comment": "=== EN / reset circuit ==="
+    },
+    {
+      "ref": "R50",
+      "lib_id": "Device:R",
+      "value": "10kΩ",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "lcsc": "C25804",
+      "position": [
+        68.58,
+        45.72
+      ],
+      "pins": {
+        "1": "+3.3V",
+        "2": "EN"
+      }
+    },
+    {
+      "ref": "C50",
+      "lib_id": "Device:C",
+      "value": "1µF",
+      "footprint": "Capacitor_SMD:C_0603_1608Metric",
+      "lcsc": "C15849",
+      "position": [
+        68.58,
+        58.42
+      ],
+      "pins": {
+        "1": "EN",
+        "2": "GND"
+      }
+    },
+    {
+      "ref": "SW2",
+      "lib_id": "JLC-MCP-ICs:HX_3X4X2-2P-1_6N_TACTILE_SWITCH",
+      "value": "RESET",
+      "footprint": "JLC-MCP:KEY-SMD_L4.0-W3.0-LS4.9-1",
+      "lcsc": "C49234124",
+      "position": [
+        68.58,
+        71.12
+      ],
+      "pins": {
+        "1": "EN",
+        "2": "GND"
+      }
+    },
+    {
+      "_comment": "=== GPIO0 / boot circuit ==="
+    },
+    {
+      "ref": "R51",
+      "lib_id": "Device:R",
+      "value": "10kΩ",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "lcsc": "C25804",
+      "position": [
+        91.44,
+        45.72
+      ],
+      "pins": {
+        "1": "+3.3V",
+        "2": "GPIO0_BOOT"
+      }
+    },
+    {
+      "ref": "SW3",
+      "lib_id": "JLC-MCP-ICs:HX_3X4X2-2P-1_6N_TACTILE_SWITCH",
+      "value": "BOOT",
+      "footprint": "JLC-MCP:KEY-SMD_L4.0-W3.0-LS4.9-1",
+      "lcsc": "C49234124",
+      "position": [
+        91.44,
+        58.42
+      ],
+      "pins": {
+        "1": "GPIO0_BOOT",
+        "2": "GND"
+      }
+    },
+    {
+      "_comment": "=== USB data series resistors ==="
+    },
+    {
+      "ref": "R52",
+      "lib_id": "Device:R",
+      "value": "22Ω",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "lcsc": "C23345",
+      "position": [
+        193.04,
+        88.9
+      ],
+      "pins": {
+        "1": "USB_DN",
+        "2": "USB_DN_MCU"
+      }
+    },
+    {
+      "ref": "R53",
+      "lib_id": "Device:R",
+      "value": "22Ω",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "lcsc": "C23345",
+      "position": [
+        193.04,
+        99.06
+      ],
+      "pins": {
+        "1": "USB_DP",
+        "2": "USB_DP_MCU"
+      }
+    },
+    {
+      "_comment": "=== Decoupling ==="
+    },
+    {
+      "ref": "C51",
+      "lib_id": "Device:C",
+      "value": "10µF",
+      "footprint": "Capacitor_SMD:C_0603_1608Metric",
+      "lcsc": "C96446",
+      "position": [
+        116.84,
+        45.72
+      ],
+      "pins": {
+        "1": "+3.3V",
+        "2": "GND"
+      }
+    },
+    {
+      "ref": "C52",
+      "lib_id": "Device:C",
+      "value": "100nF",
+      "footprint": "Capacitor_SMD:C_0603_1608Metric",
+      "lcsc": "C14663",
+      "position": [
+        116.84,
+        53.34
+      ],
+      "pins": {
+        "1": "+3.3V",
+        "2": "GND"
+      }
+    },
+    {
+      "ref": "C53",
+      "lib_id": "Device:C",
+      "value": "100nF",
+      "footprint": "Capacitor_SMD:C_0603_1608Metric",
+      "lcsc": "C14663",
+      "position": [
+        116.84,
+        60.96
+      ],
+      "pins": {
+        "1": "+3.3V",
+        "2": "GND"
+      }
+    },
+    {
+      "ref": "C54",
+      "lib_id": "Device:C",
+      "value": "100nF",
+      "footprint": "Capacitor_SMD:C_0603_1608Metric",
+      "lcsc": "C14663",
+      "position": [
+        116.84,
+        68.58
+      ],
+      "pins": {
+        "1": "+3.3V",
+        "2": "GND"
+      }
+    },
+    {
+      "ref": "C55",
+      "lib_id": "Device:C",
+      "value": "1µF",
+      "footprint": "Capacitor_SMD:C_0603_1608Metric",
+      "lcsc": "C15849",
+      "position": [
+        116.84,
+        76.2
+      ],
+      "pins": {
+        "1": "+3.3V",
+        "2": "GND"
+      }
+    },
+    {
+      "_comment": "=== Status LED ==="
+    },
+    {
+      "ref": "D5",
+      "lib_id": "JLC-MCP-Inductors:WS2812B-MINI-X1",
+      "value": "WS2812B-MINI",
+      "footprint": "JLC-MCP:LED-SMD_4P-L3.5-W3.5-TL_WS2812B-1",
+      "lcsc": "C4154873",
+      "position": [
+        193.04,
+        114.3
+      ],
+      "pins": {
+        "1": "LED_DATA",
+        "2": "+5V",
+        "3": "LED_STATUS_DOUT",
+        "4": "GND"
+      }
+    }
+  ],
+  "nets": {
+    "GND": {
+      "type": "power",
+      "description": "Common ground"
+    },
+    "+3.3V": {
+      "type": "power",
+      "description": "Main 3.3V rail from power_management sheet"
+    },
+    "+5V": {
+      "type": "power",
+      "description": "Main 5V rail for WS2812 status LED supply"
+    },
+    "EN": {
+      "type": "signal",
+      "description": "ESP32 EN/reset net with RC and reset switch"
+    },
+    "GPIO0_BOOT": {
+      "type": "signal",
+      "description": "ESP32 boot strap net (GPIO0), pulled up and switch to GND"
+    },
+    "I2C_SDA": {
+      "type": "signal",
+      "description": "I2C data to system bus (GPIO43)"
+    },
+    "I2C_SCL": {
+      "type": "signal",
+      "description": "I2C clock to system bus (GPIO44)"
+    },
+    "TCA_RESET": {
+      "type": "signal",
+      "description": "TCA9548A reset output (GPIO10)"
+    },
+    "INT1": {
+      "type": "signal",
+      "description": "Sensor interrupt 1 input (GPIO13)"
+    },
+    "INT2": {
+      "type": "signal",
+      "description": "Sensor interrupt 2 input (GPIO12)"
+    },
+    "INT3": {
+      "type": "signal",
+      "description": "Sensor interrupt 3 input (GPIO11)"
+    },
+    "LED_DATA": {
+      "type": "signal",
+      "description": "LED data output (GPIO16)"
+    },
+    "CHRG_INT": {
+      "type": "signal",
+      "description": "BQ24195 CHRG_INT input (GPIO21)"
+    },
+    "USB_DP": {
+      "type": "signal",
+      "description": "USB D+ to power_management sheet/J7"
+    },
+    "USB_DN": {
+      "type": "signal",
+      "description": "USB D- to power_management sheet/J7"
+    },
+    "USB_DP_MCU": {
+      "type": "signal",
+      "description": "USB D+ at MCU side of series resistor"
+    },
+    "USB_DN_MCU": {
+      "type": "signal",
+      "description": "USB D- at MCU side of series resistor"
+    },
+    "LED_STATUS_DOUT": {
+      "type": "signal",
+      "description": "Unused status LED DOUT"
+    }
+  }
+}

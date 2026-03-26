@@ -1,0 +1,281 @@
+(footprint "CASE-A_3216"
+	(version 20241209)
+	(generator "ai-eda-jlc-mcp")
+	(layer "F.Cu")
+	(descr "22uF 6.3V 6Ω@100kHz ±10% CASE-A-3216-16(mm) Tantalum Capacitors ROHS")
+	(tags "component")
+	(property "Reference" "REF**"
+		(at 0 -2.55 0)
+		(layer "F.SilkS")
+		(effects
+			(font
+				(size 1 1)
+				(thickness 0.15)
+			)
+		)
+	)
+	(property "Value" "CA45-A-6.3V-22UF-K"
+		(at 0 2.58 0)
+		(layer "F.Fab")
+		(effects
+			(font
+				(size 1 1)
+				(thickness 0.15)
+			)
+		)
+	)
+	(property "Description" "22uF 6.3V 6Ω@100kHz ±10% CASE-A-3216-16(mm) Tantalum Capacitors ROHS"
+		(at 0 0 0)
+		(layer "F.Fab")
+		hide
+		(effects
+			(font
+				(size 1.27 1.27)
+				(thickness 0.15)
+			)
+		)
+	)
+	(property "LCSC" "C129288"
+		(at 0 0 0)
+		(layer "F.Fab")
+		hide
+		(effects
+			(font
+				(size 1.27 1.27)
+				(thickness 0.15)
+			)
+		)
+	)
+	(property "Manufacturer" "CEC(振华新云)"
+		(at 0 0 0)
+		(layer "F.Fab")
+		hide
+		(effects
+			(font
+				(size 1.27 1.27)
+				(thickness 0.15)
+			)
+		)
+	)
+	(property "Operating Temperature" "-55℃~+125℃"
+		(at 0 0 0)
+		(layer "F.Fab")
+		hide
+		(effects
+			(font
+				(size 1.27 1.27)
+				(thickness 0.15)
+			)
+		)
+	)
+	(property "Equivalent Series Resistance(ESR)" "6Ω@100kHz"
+		(at 0 0 0)
+		(layer "F.Fab")
+		hide
+		(effects
+			(font
+				(size 1.27 1.27)
+				(thickness 0.15)
+			)
+		)
+	)
+	(property "Voltage Rating" "6.3V"
+		(at 0 0 0)
+		(layer "F.Fab")
+		hide
+		(effects
+			(font
+				(size 1.27 1.27)
+				(thickness 0.15)
+			)
+		)
+	)
+	(property "Tolerance" "±10%"
+		(at 0 0 0)
+		(layer "F.Fab")
+		hide
+		(effects
+			(font
+				(size 1.27 1.27)
+				(thickness 0.15)
+			)
+		)
+	)
+	(property "Capacitance" "22uF"
+		(at 0 0 0)
+		(layer "F.Fab")
+		hide
+		(effects
+			(font
+				(size 1.27 1.27)
+				(thickness 0.15)
+			)
+		)
+	)
+	(attr smd)
+	(pad "1" smd roundrect
+		(at -1.1999 0)
+		(size 1.5 1.3589)
+		(layers "F.Cu" "F.Paste" "F.Mask")
+		(roundrect_rratio 0.25)
+	)
+	(pad "2" smd roundrect
+		(at 1.1999 0)
+		(size 1.5 1.3589)
+		(layers "F.Cu" "F.Paste" "F.Mask")
+		(roundrect_rratio 0.25)
+	)
+	(fp_line
+		(start -1.5748 0.8001)
+		(end 1.5748 0.8001)
+		(stroke
+			(width 0.08)
+			(type solid)
+		)
+		(layer "F.SilkS")
+	)
+	(fp_line
+		(start -1.6002 -0.8001)
+		(end 1.6002 -0.8001)
+		(stroke
+			(width 0.08)
+			(type solid)
+		)
+		(layer "F.SilkS")
+	)
+	(fp_line
+		(start -0.3235 0.8001)
+		(end -0.3198 -0.8001)
+		(stroke
+			(width 0.08)
+			(type solid)
+		)
+		(layer "F.SilkS")
+	)
+	(fp_circle
+		(center -1.5999 0.8001)
+		(end -1.5699 0.8001)
+		(stroke
+			(width 0.06)
+			(type solid)
+		)
+		(layer "F.Fab")
+	)
+	(fp_poly
+		(pts
+			(xy 1.5006 -0.1304)
+			(xy 1.5006 0.0796)
+			(xy 0.6606 0.0796)
+			(xy 0.6606 -0.1304)
+		)
+		(stroke
+			(width 0)
+			(type solid)
+		)
+		(fill solid)
+		(layer "Cmts.User")
+	)
+	(fp_poly
+		(pts
+			(xy -1.5634 -0.8128)
+			(xy -1.3602 -0.8128)
+			(xy -1.3602 -0.4826)
+			(xy -1.5634 -0.4826)
+		)
+		(stroke
+			(width 0)
+			(type solid)
+		)
+		(fill solid)
+		(layer "Cmts.User")
+	)
+	(fp_poly
+		(pts
+			(xy -1.3634 0.8128)
+			(xy -1.5666 0.8128)
+			(xy -1.5666 0.4826)
+			(xy -1.3634 0.4826)
+		)
+		(stroke
+			(width 0)
+			(type solid)
+		)
+		(fill solid)
+		(layer "Cmts.User")
+	)
+	(fp_poly
+		(pts
+			(xy -0.61 -0.1304)
+			(xy -0.61 0.0796)
+			(xy -1.45 0.0796)
+			(xy -1.45 -0.1304)
+		)
+		(stroke
+			(width 0)
+			(type solid)
+		)
+		(fill solid)
+		(layer "Cmts.User")
+	)
+	(fp_poly
+		(pts
+			(xy -1.0808 -0.7239)
+			(xy -0.8776 -0.7239)
+			(xy -0.8776 0.6731)
+			(xy -1.0808 0.6731)
+		)
+		(stroke
+			(width 0)
+			(type solid)
+		)
+		(fill solid)
+		(layer "Cmts.User")
+	)
+	(fp_text user "${REFERENCE}"
+		(at 0 0 0)
+		(layer "F.Fab")
+		(effects
+			(font
+				(size 0.5 0.5)
+				(thickness 0.08)
+			)
+		)
+	)
+	(fp_line
+		(start -2.2 -1.05)
+		(end 2.2 -1.05)
+		(stroke
+			(width 0.05)
+			(type solid)
+		)
+		(layer "F.CrtYd")
+	)
+	(fp_line
+		(start 2.2 -1.05)
+		(end 2.2 1.08)
+		(stroke
+			(width 0.05)
+			(type solid)
+		)
+		(layer "F.CrtYd")
+	)
+	(fp_line
+		(start 2.2 1.08)
+		(end -2.2 1.08)
+		(stroke
+			(width 0.05)
+			(type solid)
+		)
+		(layer "F.CrtYd")
+	)
+	(fp_line
+		(start -2.2 1.08)
+		(end -2.2 -1.05)
+		(stroke
+			(width 0.05)
+			(type solid)
+		)
+		(layer "F.CrtYd")
+	)
+	(embedded_fonts no)
+)

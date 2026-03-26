@@ -4,8 +4,8 @@
   "source": {
     "root": "sensor-flex.kicad_sch",
     "sheets": {},
-    "source_hash": "9e67c2379276",
-    "extracted_at": "2026-03-10T02:31:20.298682+00:00"
+    "source_hash": "b698b032cce6",
+    "extracted_at": "2026-03-25T15:53:11.204470+00:00"
   },
   "description": "Polyimide flex sensor strip with 2x VCNL4040 proximity/ambient light sensors, individual VDD filtering, IR LED bypass caps, and FPC tail connector to rigid base. Bends at center to angle sensors ~2 degrees outward for direction discrimination.",
   "blocks": {
@@ -74,7 +74,7 @@
       ]
     },
     "C6": {
-      "part": "C",
+      "part": "C_3",
       "value": "0.1\u00b5F",
       "footprint": "Capacitor_SMD:C_0603_1608Metric",
       "lcsc": "C14663",
@@ -88,7 +88,7 @@
           "number": "1",
           "name": "",
           "type": "passive",
-          "net": "Net-(IC2-VDD)"
+          "net": "/VDD_S2"
         },
         {
           "number": "2",
@@ -99,7 +99,7 @@
       ]
     },
     "C7": {
-      "part": "C",
+      "part": "C_2",
       "value": "0.1\u00b5F",
       "footprint": "Capacitor_SMD:C_0603_1608Metric",
       "lcsc": "C14663",
@@ -113,7 +113,7 @@
           "number": "1",
           "name": "",
           "type": "passive",
-          "net": "Net-(IC1-VDD)"
+          "net": "/VDD_S1"
         },
         {
           "number": "2",
@@ -124,7 +124,7 @@
       ]
     },
     "C8": {
-      "part": "C",
+      "part": "C_1",
       "value": "2.2\u00b5F",
       "footprint": "Capacitor_SMD:C_0603_1608Metric",
       "lcsc": "C23630",
@@ -167,21 +167,21 @@
         },
         {
           "number": "2",
-          "name": "SCL1",
-          "type": "bidirectional",
-          "net": "Net-(FPC1-SCL1)"
+          "name": "GND",
+          "type": "power_in",
+          "net": "GND"
         },
         {
           "number": "3",
-          "name": "SDA1",
+          "name": "SCL1",
           "type": "bidirectional",
-          "net": "Net-(FPC1-SDA1)"
+          "net": "/SCL1"
         },
         {
           "number": "4",
-          "name": "INT1",
-          "type": "output",
-          "net": "Net-(FPC1-INT1)"
+          "name": "SDA1",
+          "type": "bidirectional",
+          "net": "/SDA1"
         },
         {
           "number": "5",
@@ -193,19 +193,19 @@
           "number": "6",
           "name": "SCL2",
           "type": "bidirectional",
-          "net": "Net-(FPC1-SCL2)"
+          "net": "/SCL2"
         },
         {
           "number": "7",
           "name": "SDA2",
           "type": "bidirectional",
-          "net": "Net-(FPC1-SDA2)"
+          "net": "/SDA2"
         },
         {
           "number": "8",
-          "name": "INT2",
-          "type": "output",
-          "net": "Net-(FPC1-INT2)"
+          "name": "GND",
+          "type": "power_in",
+          "net": "GND"
         },
         {
           "number": "9",
@@ -242,13 +242,13 @@
           "number": "2",
           "name": "K(SENSOR)",
           "type": "passive",
-          "net": "Net-(IC1-K(LED))"
+          "net": "/LED_K1"
         },
         {
           "number": "3",
           "name": "VDD",
           "type": "passive",
-          "net": "Net-(IC1-VDD)"
+          "net": "/VDD_S1"
         },
         {
           "number": "4",
@@ -260,25 +260,19 @@
           "number": "5",
           "name": "K(LED)",
           "type": "passive",
-          "net": "Net-(IC1-K(LED))"
-        },
-        {
-          "number": "6",
-          "name": "INT",
-          "type": "passive",
-          "net": "Net-(FPC1-INT1)"
+          "net": "/LED_K1"
         },
         {
           "number": "7",
           "name": "SDAT",
           "type": "passive",
-          "net": "Net-(FPC1-SDA1)"
+          "net": "/SDA1"
         },
         {
           "number": "8",
           "name": "SCLK",
           "type": "passive",
-          "net": "Net-(FPC1-SCL1)"
+          "net": "/SCL1"
         }
       ]
     },
@@ -303,13 +297,13 @@
           "number": "2",
           "name": "K(SENSOR)",
           "type": "passive",
-          "net": "Net-(IC2-K(LED))"
+          "net": "/LED_K2"
         },
         {
           "number": "3",
           "name": "VDD",
           "type": "passive",
-          "net": "Net-(IC2-VDD)"
+          "net": "/VDD_S2"
         },
         {
           "number": "4",
@@ -321,25 +315,19 @@
           "number": "5",
           "name": "K(LED)",
           "type": "passive",
-          "net": "Net-(IC2-K(LED))"
-        },
-        {
-          "number": "6",
-          "name": "INT",
-          "type": "passive",
-          "net": "Net-(FPC1-INT2)"
+          "net": "/LED_K2"
         },
         {
           "number": "7",
           "name": "SDAT",
           "type": "passive",
-          "net": "Net-(FPC1-SDA2)"
+          "net": "/SDA2"
         },
         {
           "number": "8",
           "name": "SCLK",
           "type": "passive",
-          "net": "Net-(FPC1-SCL2)"
+          "net": "/SCL2"
         }
       ]
     },
@@ -358,18 +346,18 @@
           "number": "1",
           "name": "",
           "type": "passive",
-          "net": "+3.3V"
+          "net": "/VDD_S2"
         },
         {
           "number": "2",
           "name": "",
           "type": "passive",
-          "net": "Net-(IC2-VDD)"
+          "net": "+3.3V"
         }
       ]
     },
     "R11": {
-      "part": "R",
+      "part": "R_1",
       "value": "22\u03a9",
       "footprint": "Resistor_SMD:R_0603_1608Metric",
       "lcsc": "C23345",
@@ -389,7 +377,7 @@
           "number": "2",
           "name": "",
           "type": "passive",
-          "net": "Net-(IC1-VDD)"
+          "net": "/VDD_S1"
         }
       ]
     }
@@ -401,71 +389,59 @@
       "direction": "",
       "description": "3.3V power rail from rigid base via FPC1 pin 1"
     },
+    "/LED_K1": {
+      "type": "",
+      "protocol": "",
+      "direction": "",
+      "description": ""
+    },
+    "/LED_K2": {
+      "type": "",
+      "protocol": "",
+      "direction": "",
+      "description": ""
+    },
+    "/SCL1": {
+      "type": "",
+      "protocol": "",
+      "direction": "",
+      "description": ""
+    },
+    "/SCL2": {
+      "type": "",
+      "protocol": "",
+      "direction": "",
+      "description": ""
+    },
+    "/SDA1": {
+      "type": "",
+      "protocol": "",
+      "direction": "",
+      "description": ""
+    },
+    "/SDA2": {
+      "type": "",
+      "protocol": "",
+      "direction": "",
+      "description": ""
+    },
+    "/VDD_S1": {
+      "type": "",
+      "protocol": "",
+      "direction": "",
+      "description": ""
+    },
+    "/VDD_S2": {
+      "type": "",
+      "protocol": "",
+      "direction": "",
+      "description": ""
+    },
     "GND": {
       "type": "power",
       "protocol": "",
       "direction": "",
       "description": "Ground reference via FPC1 pins 5, 9, 10"
-    },
-    "Net-(FPC1-INT1)": {
-      "type": "signal",
-      "protocol": "",
-      "direction": "output",
-      "description": "Interrupt output from sensor 1 (IC1) to FPC1 pin 4"
-    },
-    "Net-(FPC1-INT2)": {
-      "type": "signal",
-      "protocol": "",
-      "direction": "output",
-      "description": "Interrupt output from sensor 2 (IC2) to FPC1 pin 8"
-    },
-    "Net-(FPC1-SCL1)": {
-      "type": "clock",
-      "protocol": "I2C",
-      "direction": "bidirectional",
-      "description": "I2C clock for sensor 1 (IC1 SCLK to FPC1 pin 2)"
-    },
-    "Net-(FPC1-SCL2)": {
-      "type": "clock",
-      "protocol": "I2C",
-      "direction": "bidirectional",
-      "description": "I2C clock for sensor 2 (IC2 SCLK to FPC1 pin 6)"
-    },
-    "Net-(FPC1-SDA1)": {
-      "type": "signal",
-      "protocol": "I2C",
-      "direction": "bidirectional",
-      "description": "I2C data for sensor 1 (IC1 SDAT to FPC1 pin 3)"
-    },
-    "Net-(FPC1-SDA2)": {
-      "type": "signal",
-      "protocol": "I2C",
-      "direction": "bidirectional",
-      "description": "I2C data for sensor 2 (IC2 SDAT to FPC1 pin 7)"
-    },
-    "Net-(IC1-K(LED))": {
-      "type": "analog",
-      "protocol": "",
-      "direction": "",
-      "description": "Sensor 1 internal connection between LED cathode (K(LED)) and photodiode cathode (K(SENSOR))"
-    },
-    "Net-(IC1-VDD)": {
-      "type": "power",
-      "protocol": "",
-      "direction": "",
-      "description": "Filtered VDD supply for sensor 1 \u2014 after R11 (22 ohm) series filter, bypassed by C7"
-    },
-    "Net-(IC2-K(LED))": {
-      "type": "analog",
-      "protocol": "",
-      "direction": "",
-      "description": "Sensor 2 internal connection between LED cathode (K(LED)) and photodiode cathode (K(SENSOR))"
-    },
-    "Net-(IC2-VDD)": {
-      "type": "power",
-      "protocol": "",
-      "direction": "",
-      "description": "Filtered VDD supply for sensor 2 \u2014 after R10 (22 ohm) series filter, bypassed by C6"
     }
   },
   "sheet_interfaces": {}
