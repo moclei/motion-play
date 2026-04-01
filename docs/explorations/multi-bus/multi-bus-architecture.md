@@ -1,8 +1,9 @@
  # Multi-Bus I2C Architecture — Exploration
 
 **Date:** March 22, 2026
-**Status:** Exploring
+**Status:** Decided
 **Branch:** `esp32-integration-schematic`
+**Decision:** Option A (Dual I2C Bus, No TCA) selected. See [`docs/initiatives/dual-bus-i2c/`](../../initiatives/dual-bus-i2c/BRIEF.md) for implementation.
 
 ---
 

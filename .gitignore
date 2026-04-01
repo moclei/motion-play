@@ -5,6 +5,9 @@
 .vscode/launch.json
 .vscode/ipch
 
+# Claude Code (local)
+.claude/
+
 #Mac and system files
 .DS_Store
 *.zip
@@ -42,6 +45,11 @@ fp-info-cache
 *.xml
 *.numbers
 
+# Python
+__pycache__/
+*.pyc
+*.pyo
+
 # Node.js
 node_modules/
 npm-debug.log*
@@ -57,16 +65,13 @@ lambda/**/*.zip
 # ML training data and artifacts
 tools/ml-training/data/
 tools/ml-training/venv/
-tools/ml-training/__pycache__/
 
 # Schematic context tools
-tools/schematic-context/__pycache__/
 tools/ml-training/*.tflite
 tools/ml-training/*.h5
 tools/ml-training/output/
 
 # Mechanical CAD
 mechanical/.venv/
-mechanical/__pycache__/
 mechanical/models/**/*.stl
 mechanical/models/**/*.step
