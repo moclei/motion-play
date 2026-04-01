@@ -5,6 +5,9 @@
 .vscode/launch.json
 .vscode/ipch
 
+# Claude Code (local)
+.claude/
+
 #Mac and system files
 .DS_Store
 *.zip
