@@ -1,6 +1,6 @@
 #include "SessionManager.h"
-
-extern bool serialStudioEnabled;
+#include "../sensor/SensorConfiguration.h"
+#include "debug_log.h"
 
 SessionManager::SessionManager()
 {
@@ -41,6 +41,12 @@ bool SessionManager::startSession()
     if (state != IDLE)
     {
         Serial.println("ERROR: Session already active");
+        return false;
+    }
+
+    if (sessionType == SessionType::PROXIMITY && dataQueue == NULL)
+    {
+        Serial.println("ERROR: Data queue not allocated — cannot start proximity session");
         return false;
     }
 
@@ -119,6 +125,9 @@ void SessionManager::processQueue()
 
     // Only process queue for proximity mode
     if (sessionType != SessionType::PROXIMITY)
+        return;
+
+    if (dataQueue == NULL)
         return;
 
     SensorReading reading;
@@ -212,8 +221,7 @@ void SessionManager::clearBuffer()
     interruptBuffer.clear();
     state = IDLE;
     sessionType = SessionType::PROXIMITY; // Reset to default
-    if (!serialStudioEnabled)
-        Serial.println("Buffer cleared, session reset to IDLE");
+    DEBUG_LOG("Buffer cleared, session reset to IDLE\n");
 }
 
 void SessionManager::setSensorMetadata(const std::vector<SensorMetadata> &metadata)
@@ -248,7 +256,7 @@ bool SessionManager::addInterruptEvent(const InterruptEvent &event)
     return true;
 }
 
-void SessionManager::finalizeSessionSummary(const SensorConfiguration *config, uint8_t numActiveSensors)
+void SessionManager::finalizeSessionSummary(SensorConfiguration *config, uint8_t numActiveSensors)
 {
     // Use caller-provided duration_ms if already set (Live Debug sets capture window duration),
     // otherwise fall back to the full session duration
@@ -276,8 +284,7 @@ void SessionManager::finalizeSessionSummary(const SensorConfiguration *config, u
         sessionSummary.theoretical_max_readings =
             (uint32_t)((float)sessionSummary.measured_cycle_rate_hz * (sessionSummary.duration_ms / 1000.0f) * numActiveSensors);
 
-        // Also populate actual_sample_rate_hz on the config (mutable cast — config is owned by main.cpp)
-        const_cast<SensorConfiguration *>(config)->actual_sample_rate_hz = sessionSummary.measured_cycle_rate_hz;
+        config->actual_sample_rate_hz = sessionSummary.measured_cycle_rate_hz;
     }
 
     // Log summary

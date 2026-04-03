@@ -1,31 +1,144 @@
 #include "DataTransmitter.h"
+#include "SerializationHelpers.h"
+#include "../mqtt/MQTTManager.h"
 #include "../memory/PSRAMAllocator.h"
-#include "../calibration/CalibrationData.h"
-#include "mbedtls/base64.h"
 
-DataTransmitter::DataTransmitter(MQTTManager *mqtt) : mqttManager(mqtt)
-{
-    // Constructor
-}
+DataTransmitter::DataTransmitter(MQTTManager *mqtt) : mqttManager(mqtt) {}
 
 // ============================================================================
-// Main entry point - routes to correct transmission method
+// Cooperative Transmission API
 // ============================================================================
 
-bool DataTransmitter::transmitSession(SessionManager &session, const SensorConfiguration *config)
+bool DataTransmitter::beginTransmission(SessionManager &session, const SensorConfiguration *config,
+                                        const UploadContext &context)
 {
-    if (session.getSessionType() == SessionType::INTERRUPT_BASED)
+    txContext_ = context;
+
+    if (txState_ == TransmitState::TRANSMITTING)
     {
-        return transmitInterruptSession(session, config);
+        Serial.println("ERROR: Transmission already in progress");
+        txState_ = TransmitState::FAILED;
+        return false;
+    }
+
+    if (!session.hasData())
+    {
+        Serial.println("No data to transmit");
+        txState_ = TransmitState::FAILED;
+        return false;
+    }
+
+    txSessionId_ = session.getSessionId();
+    txDeviceId_ = mqttManager->getDeviceId();
+    txStartTime_ = session.getStartTime();
+    txDuration_ = session.getDuration();
+    txConfig_ = config;
+    txOffset_ = 0;
+    txLastBatchTime_ = 0;
+    txSessionType_ = session.getSessionType();
+
+    if (txSessionType_ == SessionType::INTERRUPT_BASED)
+    {
+        txEvents_ = &session.getInterruptBuffer();
+        txTotalItems_ = txEvents_->size();
+        txBatchDelay_ = INT_BATCH_DELAY_MS;
+        txReadings_ = nullptr;
+        txSensorMetadata_ = nullptr;
+
+        Serial.printf("Transmitting interrupt session %s (%d events)\n",
+                      txSessionId_.c_str(), txTotalItems_);
     }
     else
     {
-        return transmitProximitySession(session, config);
+        txReadings_ = &session.getDataBuffer();
+        txSensorMetadata_ = &session.getSensorMetadata();
+        txTotalItems_ = txReadings_->size();
+        txBatchDelay_ = BATCH_DELAY_MS;
+        txEvents_ = nullptr;
+
+        Serial.printf("Transmitting proximity session %s (%d readings)\n",
+                      txSessionId_.c_str(), txTotalItems_);
     }
+
+    txState_ = TransmitState::TRANSMITTING;
+    return true;
+}
+
+TransmitState DataTransmitter::tick()
+{
+    if (txState_ != TransmitState::TRANSMITTING)
+        return txState_;
+
+    unsigned long requiredDelay = (txBatchRetries_ > 0) ? RETRY_DELAY_MS : txBatchDelay_;
+    if (txLastBatchTime_ > 0 && (millis() - txLastBatchTime_) < requiredDelay)
+        return txState_;
+
+    bool success;
+    size_t remaining = txTotalItems_ - txOffset_;
+    size_t batchCount;
+
+    if (txSessionType_ == SessionType::INTERRUPT_BASED)
+    {
+        batchCount = (remaining > INT_BATCH_SIZE) ? INT_BATCH_SIZE : remaining;
+        bool isFirst = (txOffset_ == 0);
+        success = transmitInterruptBatch(txSessionId_, txDeviceId_, txStartTime_, txDuration_,
+                                         *txEvents_, txOffset_, batchCount, isFirst, txConfig_);
+    }
+    else
+    {
+        batchCount = (remaining > BATCH_SIZE) ? BATCH_SIZE : remaining;
+        const std::vector<SensorMetadata> *metaPtr = (txOffset_ == 0) ? txSensorMetadata_ : nullptr;
+        success = transmitBatch(txSessionId_, txDeviceId_, txStartTime_, txDuration_,
+                                *txReadings_, txOffset_, batchCount, metaPtr, txConfig_);
+    }
+
+    if (!success)
+    {
+        txBatchRetries_++;
+        if (txBatchRetries_ > MAX_BATCH_RETRIES)
+        {
+            Serial.printf("ERROR: Batch at offset %d failed after %d attempts, aborting session\n",
+                          txOffset_, MAX_BATCH_RETRIES + 1);
+            txState_ = TransmitState::FAILED;
+            return txState_;
+        }
+        Serial.printf("WARNING: Batch at offset %d failed (attempt %d/%d), will retry\n",
+                      txOffset_, txBatchRetries_, MAX_BATCH_RETRIES + 1);
+        txLastBatchTime_ = millis();
+        return txState_;
+    }
+
+    txBatchRetries_ = 0;
+    txOffset_ += batchCount;
+    txLastBatchTime_ = millis();
+
+    if (txOffset_ >= txTotalItems_)
+    {
+        Serial.printf("%s session transmission complete!\n",
+                      txSessionType_ == SessionType::INTERRUPT_BASED ? "Interrupt" : "Proximity");
+        txState_ = TransmitState::SUCCEEDED;
+    }
+
+    return txState_;
+}
+
+void DataTransmitter::resetTransmission()
+{
+    txState_ = TransmitState::IDLE;
+    txReadings_ = nullptr;
+    txSensorMetadata_ = nullptr;
+    txEvents_ = nullptr;
+    txTotalItems_ = 0;
+    txOffset_ = 0;
+    txConfig_ = nullptr;
+    txLastBatchTime_ = 0;
+    txBatchDelay_ = 0;
+    txBatchRetries_ = 0;
+    txContext_ = UploadContext{};
 }
 
 // ============================================================================
-// Proximity Mode Transmission (existing implementation)
+// Proximity Batch Transmission (single batch)
 // ============================================================================
 
 bool DataTransmitter::transmitBatch(const String &sessionId,
@@ -46,7 +159,9 @@ bool DataTransmitter::transmitBatch(const String &sessionId,
     doc["session_type"] = "proximity";           // Explicit session type
     doc["start_timestamp"] = startTime * 1000UL; // Convert session start from ms to us (consistent with reading timestamps)
     doc["duration_ms"] = duration;
-    doc["sample_rate"] = SAMPLE_RATE_HZ;
+    doc["sample_rate"] = (config != nullptr && config->actual_sample_rate_hz > 0)
+                             ? config->actual_sample_rate_hz
+                             : SAMPLE_RATE_HZ;
     doc["batch_offset"] = offset;
     doc["batch_size"] = count;
     doc["timestamp_unit"] = "us"; // Signal to Lambda that timestamps are in microseconds
@@ -67,62 +182,18 @@ bool DataTransmitter::transmitBatch(const String &sessionId,
             sensorObj["active"] = sensor.active;
         }
 
-        // Add VCNL4040 configuration parameters
-        if (config != nullptr)
-        {
-            JsonObject configObj = doc.createNestedObject("vcnl4040_config");
-            configObj["sample_rate_hz"] = config->sample_rate_hz;
-            configObj["led_current"] = config->led_current;
-            configObj["integration_time"] = config->integration_time;
-            configObj["duty_cycle"] = config->duty_cycle;
-            configObj["multi_pulse"] = config->multi_pulse;
-            configObj["high_resolution"] = config->high_resolution;
-            configObj["read_ambient"] = config->read_ambient;
-            configObj["i2c_clock_khz"] = config->i2c_clock_khz;
-            configObj["actual_sample_rate_hz"] = config->actual_sample_rate_hz;
-        }
-
-        // Add calibration metadata if available
-        if (deviceCalibration.isValid())
-        {
-            JsonObject calObj = doc.createNestedObject("calibration");
-            calObj["valid"] = true;
-            calObj["timestamp"] = deviceCalibration.timestamp;
-            calObj["multi_pulse"] = deviceCalibration.multi_pulse;
-            calObj["integration_time"] = deviceCalibration.integration_time;
-
-            JsonArray thresholds = calObj.createNestedArray("thresholds");
-            for (int i = 0; i < CALIBRATION_NUM_PCBS; i++)
-            {
-                JsonObject pcbCal = thresholds.createNestedObject();
-                pcbCal["pcb"] = i + 1;
-                pcbCal["baseline_max"] = deviceCalibration.pcbs[i].baseline_max;
-                pcbCal["signal_min"] = deviceCalibration.pcbs[i].signal_min;
-                pcbCal["signal_max"] = deviceCalibration.pcbs[i].signal_max;
-                pcbCal["threshold"] = deviceCalibration.pcbs[i].threshold;
-            }
-        }
-        else
-        {
-            JsonObject calObj = doc.createNestedObject("calibration");
-            calObj["valid"] = false;
-        }
+        serialization::serializeConfig(doc, config);
+        serialization::serializeCalibration(doc);
     }
 
     // Add readings array
     JsonArray readingsArray = doc.createNestedArray("readings");
+    serialization::serializeReadingsArray(readingsArray, readings, offset, count);
 
-    for (size_t i = 0; i < count; i++)
+    if (doc.overflowed())
     {
-        SensorReading &reading = readings[offset + i];
-
-        JsonObject readingObj = readingsArray.createNestedObject();
-        readingObj["ts"] = reading.timestamp_us;
-        readingObj["pos"] = reading.position;
-        readingObj["pcb"] = reading.pcb_id;
-        readingObj["side"] = reading.side;
-        readingObj["prox"] = reading.proximity;
-        readingObj["amb"] = reading.ambient;
+        Serial.printf("WARNING: ArduinoJson overflow in transmitBatch! (doc: %d/8192 bytes, readings: %d)\n",
+                      doc.memoryUsage(), count);
     }
 
     // Serialize to string
@@ -151,59 +222,8 @@ bool DataTransmitter::transmitBatch(const String &sessionId,
     return success;
 }
 
-bool DataTransmitter::transmitProximitySession(SessionManager &session, const SensorConfiguration *config)
-{
-    if (!session.hasData())
-    {
-        Serial.println("No data to transmit");
-        return false;
-    }
-
-    String sessionId = session.getSessionId();
-    String deviceId = mqttManager->getDeviceId();
-    unsigned long startTime = session.getStartTime();
-    unsigned long duration = session.getDuration();
-
-    std::vector<SensorReading, PSRAMAllocator<SensorReading>> &readings = session.getDataBuffer();
-    const std::vector<SensorMetadata> &sensorMetadata = session.getSensorMetadata();
-    size_t totalReadings = readings.size();
-
-    Serial.print("Transmitting proximity session ");
-    Serial.print(sessionId);
-    Serial.print(" (");
-    Serial.print(totalReadings);
-    Serial.println(" readings)");
-
-    // Send in batches
-    size_t offset = 0;
-    while (offset < totalReadings)
-    {
-        size_t remaining = totalReadings - offset;
-        size_t batchCount = (remaining > BATCH_SIZE) ? BATCH_SIZE : remaining;
-
-        // Pass sensor metadata and config only for first batch
-        const std::vector<SensorMetadata> *metadataPtr = (offset == 0) ? &sensorMetadata : nullptr;
-        const SensorConfiguration *configPtr = (offset == 0) ? config : nullptr;
-
-        if (!transmitBatch(sessionId, deviceId, startTime, duration,
-                           readings, offset, batchCount, metadataPtr, configPtr))
-        {
-            Serial.println("ERROR: Failed to transmit batch");
-            return false;
-        }
-
-        offset += batchCount;
-
-        // Small delay between batches to avoid overwhelming MQTT
-        delay(100);
-    }
-
-    Serial.println("Proximity session transmission complete!");
-    return true;
-}
-
 // ============================================================================
-// Interrupt Mode Transmission (new implementation)
+// Interrupt Batch Transmission (single batch)
 // ============================================================================
 
 bool DataTransmitter::transmitInterruptBatch(const String &sessionId,
@@ -241,31 +261,7 @@ bool DataTransmitter::transmitInterruptBatch(const String &sessionId,
         intConfig["mode"] = config->interrupt_mode;
         intConfig["led_current"] = config->led_current;
 
-        // Add calibration metadata if available
-        if (deviceCalibration.isValid())
-        {
-            JsonObject calObj = doc.createNestedObject("calibration");
-            calObj["valid"] = true;
-            calObj["timestamp"] = deviceCalibration.timestamp;
-            calObj["multi_pulse"] = deviceCalibration.multi_pulse;
-            calObj["integration_time"] = deviceCalibration.integration_time;
-
-            JsonArray thresholds = calObj.createNestedArray("thresholds");
-            for (int i = 0; i < CALIBRATION_NUM_PCBS; i++)
-            {
-                JsonObject pcbCal = thresholds.createNestedObject();
-                pcbCal["pcb"] = i + 1;
-                pcbCal["baseline_max"] = deviceCalibration.pcbs[i].baseline_max;
-                pcbCal["signal_min"] = deviceCalibration.pcbs[i].signal_min;
-                pcbCal["signal_max"] = deviceCalibration.pcbs[i].signal_max;
-                pcbCal["threshold"] = deviceCalibration.pcbs[i].threshold;
-            }
-        }
-        else
-        {
-            JsonObject calObj = doc.createNestedObject("calibration");
-            calObj["valid"] = false;
-        }
+        serialization::serializeCalibration(doc);
     }
 
     // Add events array
@@ -297,6 +293,12 @@ bool DataTransmitter::transmitInterruptBatch(const String &sessionId,
         evtObj["flags"] = evt.rawFlags;
     }
 
+    if (doc.overflowed())
+    {
+        Serial.printf("WARNING: ArduinoJson overflow in transmitInterruptBatch! (doc: %d/8192 bytes, events: %d)\n",
+                      doc.memoryUsage(), count);
+    }
+
     // Serialize to string for debugging
     String payload;
     size_t payloadSize = serializeJson(doc, payload);
@@ -319,56 +321,8 @@ bool DataTransmitter::transmitInterruptBatch(const String &sessionId,
     return success;
 }
 
-bool DataTransmitter::transmitInterruptSession(SessionManager &session, const SensorConfiguration *config)
-{
-    if (!session.hasData())
-    {
-        Serial.println("No interrupt events to transmit");
-        return false;
-    }
-
-    String sessionId = session.getSessionId();
-    String deviceId = mqttManager->getDeviceId();
-    unsigned long startTime = session.getStartTime();
-    unsigned long duration = session.getDuration();
-
-    const std::vector<InterruptEvent> &events = session.getInterruptBuffer();
-    size_t totalEvents = events.size();
-
-    Serial.print("Transmitting interrupt session ");
-    Serial.print(sessionId);
-    Serial.print(" (");
-    Serial.print(totalEvents);
-    Serial.println(" events)");
-
-    // Send in batches (interrupt events are smaller, can send more per batch)
-    size_t offset = 0;
-    while (offset < totalEvents)
-    {
-        size_t remaining = totalEvents - offset;
-        size_t batchCount = (remaining > INT_BATCH_SIZE) ? INT_BATCH_SIZE : remaining;
-
-        bool isFirstBatch = (offset == 0);
-
-        if (!transmitInterruptBatch(sessionId, deviceId, startTime, duration,
-                                    events, offset, batchCount, isFirstBatch, config))
-        {
-            Serial.println("ERROR: Failed to transmit interrupt batch");
-            return false;
-        }
-
-        offset += batchCount;
-
-        // Small delay between batches
-        delay(50);
-    }
-
-    Serial.println("Interrupt session transmission complete!");
-    return true;
-}
-
 // ============================================================================
-// Live Debug Capture Transmission
+// Live Debug Capture Transmission (legacy synchronous path)
 // ============================================================================
 
 String DataTransmitter::transmitLiveDebugCapture(
@@ -426,7 +380,9 @@ String DataTransmitter::transmitLiveDebugCapture(
         doc["start_timestamp"] = startTime; // Microseconds (first reading timestamp)
         doc["duration_ms"] = durationMs;
         doc["timestamp_unit"] = "us"; // Signal to Lambda that timestamps are in microseconds
-        doc["sample_rate"] = SAMPLE_RATE_HZ;
+        doc["sample_rate"] = (config != nullptr && config->actual_sample_rate_hz > 0)
+                                 ? config->actual_sample_rate_hz
+                                 : SAMPLE_RATE_HZ;
         doc["batch_offset"] = offset;
         doc["batch_size"] = batchCount;
 
@@ -441,57 +397,13 @@ String DataTransmitter::transmitLiveDebugCapture(
                 doc["detection_confidence"] = detectionConfidence;
             }
 
-            // Sensor configuration
-            if (config != nullptr)
-            {
-                JsonObject configObj = doc.createNestedObject("vcnl4040_config");
-                configObj["sample_rate_hz"] = config->sample_rate_hz;
-                configObj["led_current"] = config->led_current;
-                configObj["integration_time"] = config->integration_time;
-                configObj["duty_cycle"] = config->duty_cycle;
-                configObj["multi_pulse"] = config->multi_pulse;
-                configObj["high_resolution"] = config->high_resolution;
-                configObj["read_ambient"] = config->read_ambient;
-                configObj["i2c_clock_khz"] = config->i2c_clock_khz;
-                configObj["actual_sample_rate_hz"] = config->actual_sample_rate_hz;
-            }
-
-            // Calibration metadata
-            if (deviceCalibration.isValid())
-            {
-                JsonObject calObj = doc.createNestedObject("calibration");
-                calObj["valid"] = true;
-                calObj["timestamp"] = deviceCalibration.timestamp;
-                calObj["multi_pulse"] = deviceCalibration.multi_pulse;
-                calObj["integration_time"] = deviceCalibration.integration_time;
-
-                JsonArray thresholds = calObj.createNestedArray("thresholds");
-                for (int i = 0; i < CALIBRATION_NUM_PCBS; i++)
-                {
-                    JsonObject pcbCal = thresholds.createNestedObject();
-                    pcbCal["pcb"] = i + 1;
-                    pcbCal["baseline_max"] = deviceCalibration.pcbs[i].baseline_max;
-                    pcbCal["signal_min"] = deviceCalibration.pcbs[i].signal_min;
-                    pcbCal["signal_max"] = deviceCalibration.pcbs[i].signal_max;
-                    pcbCal["threshold"] = deviceCalibration.pcbs[i].threshold;
-                }
-            }
+            serialization::serializeConfig(doc, config);
+            serialization::serializeCalibration(doc);
         }
 
         // Add readings array
         JsonArray readingsArray = doc.createNestedArray("readings");
-        for (size_t i = 0; i < batchCount; i++)
-        {
-            SensorReading &reading = readings[startIdx + offset + i];
-
-            JsonObject readingObj = readingsArray.createNestedObject();
-            readingObj["ts"] = reading.timestamp_us;
-            readingObj["pos"] = reading.position;
-            readingObj["pcb"] = reading.pcb_id;
-            readingObj["side"] = reading.side;
-            readingObj["prox"] = reading.proximity;
-            readingObj["amb"] = reading.ambient;
-        }
+        serialization::serializeReadingsArray(readingsArray, readings, startIdx + offset, batchCount);
 
         // Check for ArduinoJson buffer overflow (silent data truncation)
         size_t actualReadingsInDoc = readingsArray.size();
@@ -535,191 +447,6 @@ String DataTransmitter::transmitLiveDebugCapture(
 }
 
 // ============================================================================
-// Live Debug Capture — Binary-Packed Single Message
-// ============================================================================
-
-String DataTransmitter::transmitLiveDebugCaptureBinary(
-    std::vector<SensorReading, PSRAMAllocator<SensorReading>> &readings,
-    size_t startIdx,
-    size_t count,
-    const char *captureReason,
-    const char *detectionDirection,
-    float detectionConfidence,
-    const SessionSummary &summary,
-    const SensorConfiguration *config)
-{
-    if (count == 0)
-    {
-        Serial.println("Live Debug Binary: No readings to transmit");
-        return "";
-    }
-
-    // Generate session ID
-    String deviceId = mqttManager->getDeviceId();
-    String deviceSuffix = deviceId;
-    int lastDash = deviceId.lastIndexOf('-');
-    int secondLastDash = deviceId.lastIndexOf('-', lastDash - 1);
-    if (secondLastDash >= 0)
-    {
-        deviceSuffix = deviceId.substring(secondLastDash + 1);
-    }
-    String sessionId = deviceSuffix + "_" + String(millis());
-
-    // Calculate timing from the readings themselves (timestamps are in microseconds)
-    unsigned long startTime = readings[startIdx].timestamp_us;
-    unsigned long endTime = readings[startIdx + count - 1].timestamp_us;
-    unsigned long durationUs = endTime - startTime;
-    unsigned long durationMs = durationUs / 1000;
-
-    Serial.printf("Live Debug Binary: reason=%s, readings=%d, duration=%lums\n",
-                  captureReason, count, durationMs);
-
-    // 1. Pack readings into binary buffer (9 bytes per reading, little-endian)
-    size_t binarySize = count * 9;
-    uint8_t *binaryBuf = (uint8_t *)ps_malloc(binarySize);
-    if (!binaryBuf)
-    {
-        Serial.printf("ERROR: Failed to allocate %d bytes in PSRAM for binary buffer\n", binarySize);
-        return "";
-    }
-
-    for (size_t i = 0; i < count; i++)
-    {
-        SensorReading &r = readings[startIdx + i];
-        size_t off = i * 9;
-        memcpy(binaryBuf + off, &r.timestamp_us, 4);
-        binaryBuf[off + 4] = r.position;
-        memcpy(binaryBuf + off + 5, &r.proximity, 2);
-        memcpy(binaryBuf + off + 7, &r.ambient, 2);
-    }
-
-    // 2. Base64-encode
-    size_t base64Len = 0;
-    mbedtls_base64_encode(NULL, 0, &base64Len, binaryBuf, binarySize);
-
-    unsigned char *base64Buf = (unsigned char *)ps_malloc(base64Len + 1);
-    if (!base64Buf)
-    {
-        Serial.printf("ERROR: Failed to allocate %d bytes in PSRAM for base64 buffer\n", base64Len + 1);
-        free(binaryBuf);
-        return "";
-    }
-
-    size_t written = 0;
-    mbedtls_base64_encode(base64Buf, base64Len + 1, &written, binaryBuf, binarySize);
-    base64Buf[written] = '\0';
-    free(binaryBuf);
-
-    Serial.printf("Live Debug Binary: packed %d bytes -> %d bytes base64\n", binarySize, written);
-
-    // 3. Build JSON document
-    // ArduinoJson stores char* by reference (zero-copy), so the doc only needs
-    // memory for the JSON structure itself, not the base64 string content.
-    DynamicJsonDocument doc(8192);
-
-    // Session metadata
-    doc["session_id"] = sessionId;
-    doc["device_id"] = deviceId;
-    doc["session_type"] = "proximity";
-    doc["mode"] = "live_debug";
-    doc["start_timestamp"] = startTime;
-    doc["duration_ms"] = durationMs;
-    doc["timestamp_unit"] = "us";
-    doc["sample_rate"] = SAMPLE_RATE_HZ;
-
-    // Capture metadata
-    doc["capture_reason"] = captureReason;
-    if (detectionDirection != nullptr)
-    {
-        doc["detection_direction"] = detectionDirection;
-        doc["detection_confidence"] = detectionConfidence;
-    }
-
-    // Binary reading payload
-    doc["reading_format"] = "bin9";
-    doc["reading_count"] = count;
-    doc["readings_b64"] = (const char *)base64Buf;
-
-    // Sensor configuration
-    if (config != nullptr)
-    {
-        JsonObject configObj = doc.createNestedObject("vcnl4040_config");
-        configObj["sample_rate_hz"] = config->sample_rate_hz;
-        configObj["led_current"] = config->led_current;
-        configObj["integration_time"] = config->integration_time;
-        configObj["duty_cycle"] = config->duty_cycle;
-        configObj["multi_pulse"] = config->multi_pulse;
-        configObj["high_resolution"] = config->high_resolution;
-        configObj["read_ambient"] = config->read_ambient;
-        configObj["i2c_clock_khz"] = config->i2c_clock_khz;
-        configObj["actual_sample_rate_hz"] = config->actual_sample_rate_hz;
-    }
-
-    // Calibration metadata
-    if (deviceCalibration.isValid())
-    {
-        JsonObject calObj = doc.createNestedObject("calibration");
-        calObj["valid"] = true;
-        calObj["timestamp"] = deviceCalibration.timestamp;
-        calObj["multi_pulse"] = deviceCalibration.multi_pulse;
-        calObj["integration_time"] = deviceCalibration.integration_time;
-
-        JsonArray thresholds = calObj.createNestedArray("thresholds");
-        for (int i = 0; i < CALIBRATION_NUM_PCBS; i++)
-        {
-            JsonObject pcbCal = thresholds.createNestedObject();
-            pcbCal["pcb"] = i + 1;
-            pcbCal["baseline_max"] = deviceCalibration.pcbs[i].baseline_max;
-            pcbCal["signal_min"] = deviceCalibration.pcbs[i].signal_min;
-            pcbCal["signal_max"] = deviceCalibration.pcbs[i].signal_max;
-            pcbCal["threshold"] = deviceCalibration.pcbs[i].threshold;
-        }
-    }
-
-    // Inline session summary — Lambda processes everything in one shot
-    doc["type"] = "session_summary";
-    JsonObject summaryObj = doc.createNestedObject("summary");
-    summaryObj["total_cycles"] = summary.total_cycles;
-    summaryObj["queue_drops"] = summary.queue_drops;
-    summaryObj["buffer_drops"] = summary.buffer_drops;
-    summaryObj["total_readings_transmitted"] = count;
-    summaryObj["total_batches_transmitted"] = 1;
-    summaryObj["measured_cycle_rate_hz"] = summary.measured_cycle_rate_hz;
-    summaryObj["duration_ms"] = summary.duration_ms;
-    summaryObj["theoretical_max_readings"] = summary.theoretical_max_readings;
-    summaryObj["num_active_sensors"] = summary.num_active_sensors;
-
-    JsonArray collectedArr = summaryObj.createNestedArray("readings_collected");
-    JsonArray errorsArr = summaryObj.createNestedArray("i2c_errors");
-    for (int i = 0; i < NUM_SENSORS; i++)
-    {
-        collectedArr.add(summary.readings_collected[i]);
-        errorsArr.add(summary.i2c_errors[i]);
-    }
-
-    if (doc.overflowed())
-    {
-        Serial.printf("ERROR: JSON doc overflow! (usage=%d/8192 bytes)\n", doc.memoryUsage());
-        free(base64Buf);
-        return "";
-    }
-
-    // 4. Publish via streaming API (payload exceeds the 32KB PubSubClient buffer)
-    bool success = mqttManager->publishDataStreaming(doc);
-    free(base64Buf);
-
-    if (!success)
-    {
-        Serial.println("ERROR: Live Debug Binary MQTT streaming publish failed!");
-        return "";
-    }
-
-    Serial.printf("Live Debug Binary: session=%s, %d readings in 1 message\n",
-                  sessionId.c_str(), count);
-    return sessionId;
-}
-
-// ============================================================================
 // Session Confirmation: Transmit pipeline integrity summary
 // ============================================================================
 
@@ -734,24 +461,7 @@ bool DataTransmitter::transmitSessionSummary(const SessionSummary &summary,
     doc["device_id"] = deviceId;
 
     JsonObject summaryObj = doc.createNestedObject("summary");
-    summaryObj["total_cycles"] = summary.total_cycles;
-    summaryObj["queue_drops"] = summary.queue_drops;
-    summaryObj["buffer_drops"] = summary.buffer_drops;
-    summaryObj["total_readings_transmitted"] = summary.total_readings_transmitted;
-    summaryObj["total_batches_transmitted"] = summary.total_batches_transmitted;
-    summaryObj["measured_cycle_rate_hz"] = summary.measured_cycle_rate_hz;
-    summaryObj["duration_ms"] = summary.duration_ms;
-    summaryObj["theoretical_max_readings"] = summary.theoretical_max_readings;
-    summaryObj["num_active_sensors"] = summary.num_active_sensors;
-
-    // Per-sensor arrays
-    JsonArray collectedArr = summaryObj.createNestedArray("readings_collected");
-    JsonArray errorsArr = summaryObj.createNestedArray("i2c_errors");
-    for (int i = 0; i < NUM_SENSORS; i++)
-    {
-        collectedArr.add(summary.readings_collected[i]);
-        errorsArr.add(summary.i2c_errors[i]);
-    }
+    serialization::serializeSummary(summaryObj, summary);
 
     // Retry up to 3 times
     for (int attempt = 0; attempt < 3; attempt++)

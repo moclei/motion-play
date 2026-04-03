@@ -7,9 +7,9 @@
  * 3. Calculates optimal thresholds for detection
  *
  * Calibration Flow:
- *   IDLE → INTRO → BASELINE_PCB1 → APPROACH_PCB1 →
- *                  BASELINE_PCB2 → APPROACH_PCB2 →
- *                  BASELINE_PCB3 → APPROACH_PCB3 → SUMMARY → COMPLETE
+ *   IDLE → INTRO → [BASELINE → APPROACH → APPROACH_SUCCESS/TIMEOUT] × 3 PCBs → SUMMARY → COMPLETE
+ *
+ * The active PCB is tracked by _currentPCB (1-3), not encoded in the state.
  *
  * Triggers:
  *   - Frontend: SET_MODE command with CALIBRATE mode
@@ -31,28 +31,29 @@
 #include <Arduino.h>
 #include "CalibrationData.h"
 #include "../sensor/SensorManager.h"
-#include "../display/DisplayManager.h"
+#include "../display/CalibrationScreen.h"
+#include "pin_config.h"
 
 // ============================================================================
 // Configuration Constants
 // ============================================================================
 
-// Timing (milliseconds)
-#define CAL_INTRO_DURATION_MS 3000        // Intro screen duration
-#define CAL_BASELINE_DURATION_MS 600      // Baseline capture per PCB
-#define CAL_APPROACH_TIMEOUT_MS 10000     // Max wait for user to approach
-#define CAL_APPROACH_SUSTAIN_MS 500       // Sustained elevated readings needed
-#define CAL_SUCCESS_DISPLAY_MS 1500       // Show success before next step
-#define CAL_SUMMARY_MIN_DISPLAY_MS 2000   // Minimum summary display time
+// Timing
+static constexpr uint32_t CAL_INTRO_DURATION_MS      = 3000;
+static constexpr uint32_t CAL_BASELINE_DURATION_MS    = 600;
+static constexpr uint32_t CAL_APPROACH_TIMEOUT_MS     = 10000;
+static constexpr uint32_t CAL_APPROACH_SUSTAIN_MS     = 500;
+static constexpr uint32_t CAL_SUCCESS_DISPLAY_MS      = 1500;
+static constexpr uint32_t CAL_SUMMARY_MIN_DISPLAY_MS  = 2000;
 
 // Detection thresholds
-#define CAL_ELEVATED_MULTIPLIER 2.0f      // Reading must be 2× baseline to count as elevated
-#define CAL_MIN_ELEVATED_READING 10       // Minimum absolute reading to count as elevated
+static constexpr float    CAL_ELEVATED_MULTIPLIER     = 2.0f;
+static constexpr uint16_t CAL_MIN_ELEVATED_READING    = 10;
 
-// Button configuration
-#define CAL_BUTTON_HOLD_MS 3000           // Hold time to trigger calibration
-#define CAL_BUTTON_TRIGGER 0              // BOOT button (GPIO 0) - hold to trigger calibration
-#define CAL_BUTTON_CANCEL 14              // Right button (GPIO 14) - press to cancel
+// Button configuration (GPIOs from pin_config.h)
+static constexpr uint32_t CAL_BUTTON_HOLD_MS          = 3000;
+static constexpr uint8_t  CAL_BUTTON_TRIGGER          = PIN_BUTTON_2;  // BOOT button
+static constexpr uint8_t  CAL_BUTTON_CANCEL           = PIN_BUTTON_1;  // Right button
 
 // ============================================================================
 // State Machine
@@ -60,18 +61,16 @@
 
 enum class CalibrationState : uint8_t
 {
-    IDLE,             // Not calibrating
-    INTRO,            // Showing intro screen
-    BASELINE_PCB1,    // Capturing baseline for PCB 1
-    APPROACH_PCB1,    // Waiting for approach on PCB 1
-    BASELINE_PCB2,    // Capturing baseline for PCB 2
-    APPROACH_PCB2,    // Waiting for approach on PCB 2
-    BASELINE_PCB3,    // Capturing baseline for PCB 3
-    APPROACH_PCB3,    // Waiting for approach on PCB 3
-    SUMMARY,          // Showing summary
-    COMPLETE,         // Calibration complete
-    FAILED,           // Calibration failed
-    CANCELLED         // User cancelled
+    IDLE,               // Not calibrating
+    INTRO,              // Showing intro screen
+    BASELINE,           // Capturing baseline for _currentPCB
+    APPROACH,           // Waiting for approach on _currentPCB
+    APPROACH_SUCCESS,   // Displaying success result (timer-based)
+    APPROACH_TIMEOUT,   // Displaying timeout/skip message (timer-based)
+    SUMMARY,            // Showing summary
+    COMPLETE,           // Calibration complete
+    FAILED,             // Calibration failed
+    CANCELLED           // User cancelled (timer-based display)
 };
 
 // ============================================================================
@@ -112,7 +111,7 @@ public:
     {
         if (count < 2)
             return 0;
-        uint32_t variance = (sumSq - (sum * sum / count)) / (count - 1);
+        uint64_t variance = (sumSq - ((uint64_t)sum * sum / count)) / (count - 1);
         return (uint16_t)sqrt(variance);
     }
 
@@ -121,7 +120,7 @@ public:
 private:
     uint32_t count = 0;
     uint32_t sum = 0;
-    uint32_t sumSq = 0;
+    uint64_t sumSq = 0;
     uint16_t minVal = UINT16_MAX;
     uint16_t maxVal = 0;
 };
@@ -138,10 +137,10 @@ public:
     /**
      * Initialize the calibration manager
      * @param sensorMgr Pointer to SensorManager for sensor reading
-     * @param display Pointer to DisplayManager for UI rendering (optional)
+     * @param calScreen Pointer to CalibrationScreen for UI rendering (optional)
      * @return true if successful
      */
-    bool begin(SensorManager *sensorMgr, DisplayManager *display = nullptr);
+    bool begin(SensorManager *sensorMgr, CalibrationScreen *calScreen = nullptr);
 
     /**
      * Update function - call every loop iteration
@@ -226,7 +225,7 @@ public:
 
 private:
     SensorManager *_sensorMgr;
-    DisplayManager *_display;
+    CalibrationScreen *_calScreen;
 
     CalibrationState _state;
     uint8_t _currentPCB;        // 1-3 during calibration
@@ -238,6 +237,12 @@ private:
     // Button tracking
     uint32_t _buttonPressStart;
     bool _buttonWasPressed;
+
+    // Render-once and rate-limit state (reset on each state transition)
+    bool _phaseRendered;
+    uint32_t _lastDisplayUpdate;
+    uint32_t _lastReadFailLog;
+    uint32_t _lastReadingLog;
 
     // Statistics accumulators
     StatsAccumulator _baselineStats;
@@ -255,6 +260,8 @@ private:
     void handleIntro();
     void handleBaseline();
     void handleApproach();
+    void handleApproachSuccess();
+    void handleApproachTimeout();
     void handleSummary();
     void handleComplete();
     void handleFailed();
@@ -265,8 +272,6 @@ private:
     bool readPCB(uint8_t pcbId, uint16_t &reading);
     void saveBaselineStats();
     void saveSignalStats();
-    bool configureSensorForCalibration(uint8_t position);
-    uint8_t getPCBForState(CalibrationState state) const;
     CalibrationState getNextState() const;
 };
 

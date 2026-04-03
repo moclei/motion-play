@@ -1,4 +1,5 @@
 #include "SerialStudioOutput.h"
+#include "constants.h"
 
 void SerialStudioOutput::begin(
     std::vector<SensorReading, PSRAMAllocator<SensorReading>> *buffer,
@@ -184,14 +185,13 @@ uint16_t SerialStudioOutput::calculateSensorRate()
     else if (it == "4T") it_us = 500.0f;
     else if (it == "8T") it_us = 1000.0f;
 
-    // Duty cycle denominator (default 1/40)
-    uint16_t duty_denom = 40;
+    uint16_t duty_denom = DEFAULT_IR_DUTY_DENOMINATOR;
     String dc = _config->duty_cycle;
     int slash = dc.indexOf('/');
     if (slash >= 0)
         duty_denom = dc.substring(slash + 1).toInt();
     if (duty_denom == 0)
-        duty_denom = 40;
+        duty_denom = DEFAULT_IR_DUTY_DENOMINATOR;
 
     float period_us = it_us * (float)duty_denom;
     return (uint16_t)(1000000.0f / period_us);

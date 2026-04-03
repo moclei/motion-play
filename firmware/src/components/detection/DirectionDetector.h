@@ -1,9 +1,9 @@
-#ifndef DIRECTION_DETECTOR_H
-#define DIRECTION_DETECTOR_H
+#pragma once
 
 #include <Arduino.h>
-#include <vector>
-#include "../sensor/SensorManager.h"
+#include "ring_buffer.h"
+#include "detection_types.h"
+#include "sensor_types.h"
 #include "../calibration/CalibrationData.h"
 
 /**
@@ -23,130 +23,6 @@
  * Layer 3 - Consensus: Multiple modules detecting the same direction boosts
  *   confidence. Disagreement lowers it.
  */
-
-enum class Direction
-{
-    UNKNOWN,
-    A_TO_B,
-    B_TO_A
-};
-
-enum class DetectorState
-{
-    ESTABLISHING_BASELINE,
-    READY,
-    DETECTING
-};
-
-enum class WaveState
-{
-    IDLE,
-    IN_WAVE,
-    COMPLETE
-};
-
-struct DetectionResult
-{
-    Direction direction;
-    float confidence;
-    uint32_t centerOfMassA;
-    uint32_t centerOfMassB;
-    uint32_t comGapMs;
-    uint16_t maxSignalA;
-    uint16_t maxSignalB;
-    uint32_t waveDurationA;
-    uint32_t waveDurationB;
-    float baselineA;
-    float baselineB;
-    float thresholdA;
-    float thresholdB;
-    uint8_t detectedModule;  // 1-3 for which module triggered, 0 for none
-    uint8_t modulesDetected; // how many modules corroborated
-};
-
-struct DetectorConfig
-{
-    uint16_t baselineReadings = 50;
-    float peakMultiplier = 1.5f;
-    uint16_t minRise = 10;
-
-    uint8_t smoothingWindow = 5;
-    uint32_t minWaveDurationMs = 8;
-    uint32_t maxWaveDurationMs = 200;
-    uint32_t maxPeakGapMs = 150;
-    float waveExitThreshold = 0.5f;
-
-    uint32_t minGapForConfidence = 5;
-    float minSignalForConfidence = 20;
-};
-
-/**
- * Ring buffer for smoothing and baseline tracking
- */
-template <typename T, size_t SIZE>
-class RingBuffer
-{
-private:
-    T buffer[SIZE];
-    size_t head = 0;
-    size_t count = 0;
-
-public:
-    void push(const T &item)
-    {
-        buffer[head] = item;
-        head = (head + 1) % SIZE;
-        if (count < SIZE)
-            count++;
-    }
-
-    T &operator[](size_t idx)
-    {
-        size_t actualIdx = (head - count + idx + SIZE) % SIZE;
-        return buffer[actualIdx];
-    }
-
-    const T &operator[](size_t idx) const
-    {
-        size_t actualIdx = (head - count + idx + SIZE) % SIZE;
-        return buffer[actualIdx];
-    }
-
-    size_t size() const { return count; }
-    void clear()
-    {
-        count = 0;
-        head = 0;
-    }
-    bool isFull() const { return count == SIZE; }
-
-    float getSmoothedAverage(size_t windowSize) const
-    {
-        if (count == 0)
-            return 0;
-        size_t n = min(windowSize, count);
-        float sum = 0;
-        for (size_t i = count - n; i < count; i++)
-        {
-            sum += buffer[(head - count + i + SIZE) % SIZE];
-        }
-        return sum / n;
-    }
-
-    float getMax() const
-    {
-        if (count == 0)
-            return 0;
-        float maxVal = buffer[(head - count + SIZE) % SIZE];
-        for (size_t i = 1; i < count; i++)
-        {
-            float val = buffer[(head - count + i + SIZE) % SIZE];
-            if (val > maxVal)
-                maxVal = val;
-        }
-        return maxVal;
-    }
-};
 
 /**
  * Independent tracker for a single sensor.
@@ -196,7 +72,7 @@ struct SensorTracker
     }
 };
 
-class DirectionDetector
+class DirectionDetector : public IDetector
 {
 private:
     DetectorConfig config;
@@ -216,16 +92,16 @@ public:
     DirectionDetector();
     DirectionDetector(const DetectorConfig &cfg);
 
-    void addReading(const SensorReading &reading);
-    void flushReading();
+    void addReading(const SensorReading &reading) override;
+    void flushReading() override;
 
-    bool hasDetection() const;
-    DetectionResult getResult();
+    bool hasDetection() const override;
+    DetectionResult getResult() override;
 
-    void reset();
-    void fullReset();
+    void reset() override;
+    void fullReset() override;
 
-    bool isReady() const;
+    bool isReady() const override;
     DetectorState getState() const;
 
     void setConfig(const DetectorConfig &cfg);
@@ -245,8 +121,5 @@ public:
     WaveState getWaveStateA() const;
     WaveState getWaveStateB() const;
 
-    static const char *directionToString(Direction dir);
     void debugPrint() const;
 };
-
-#endif

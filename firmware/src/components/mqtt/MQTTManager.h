@@ -1,10 +1,10 @@
-#ifndef MQTT_MANAGER_H
-#define MQTT_MANAGER_H
+#pragma once
 
 #include <PubSubClient.h>
 #include <ArduinoJson.h>
-#include <LittleFS.h>
-#include "../network/NetworkManager.h"
+
+class NetworkManager;
+struct DeviceConfig;
 
 class MQTTManager
 {
@@ -26,12 +26,19 @@ private:
     String clientCert;
     String privateKey;
 
+    // Non-blocking reconnection state
+    uint32_t lastReconnectAttemptMs = 0;
+    uint8_t reconnectAttemptCount = 0;
+
+    static constexpr uint32_t MQTT_RECONNECT_BASE_MS = 1000;
+    static constexpr uint32_t MQTT_RECONNECT_MAX_MS  = 60000;
+
     bool loadCertificates();
-    static void messageCallback(char *topic, byte *payload, unsigned int length);
+    uint32_t getReconnectBackoffMs() const;
 
 public:
     MQTTManager(NetworkManager *netManager);
-    bool loadConfig();
+    bool applyConfig(const DeviceConfig& config);
     bool connect();
     void disconnect();
     bool isConnected();
@@ -42,5 +49,3 @@ public:
     bool publishDataStreaming(const JsonDocument &data);
     void setCallback(std::function<void(char *, byte *, unsigned int)> callback);
 };
-
-#endif

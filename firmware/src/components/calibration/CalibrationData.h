@@ -15,14 +15,11 @@
 
 #include <Arduino.h>
 
-// Magic number for calibration validity check
-#define CALIBRATION_MAGIC 0xCA11B123
-
-// Current calibration data version
-#define CALIBRATION_VERSION 1
-
-// Number of PCBs to calibrate
-#define CALIBRATION_NUM_PCBS 3
+static constexpr uint32_t CALIBRATION_MAGIC    = 0xCA11B123;
+static constexpr uint32_t CALIBRATION_VERSION   = 1;
+static constexpr uint8_t  CALIBRATION_NUM_PCBS  = 3;
+static constexpr uint16_t CAL_OVERLAP_MARGIN    = 5;
+static constexpr uint8_t  CAL_DEFAULT_LED_CURRENT = 200;
 
 /**
  * Calibration data for a single PCB
@@ -64,8 +61,7 @@ struct PCBCalibration
         }
         else
         {
-            // Signal overlaps with noise - use signal_min with small margin
-            threshold = signal_min > 5 ? signal_min - 5 : 1;
+            threshold = signal_min > CAL_OVERLAP_MARGIN ? signal_min - CAL_OVERLAP_MARGIN : 1;
         }
     }
 
@@ -148,7 +144,7 @@ struct DeviceCalibration
         timestamp = 0;
         multi_pulse = 1;
         integration_time = 1;
-        led_current = 200;
+        led_current = CAL_DEFAULT_LED_CURRENT;
 
         for (int i = 0; i < CALIBRATION_NUM_PCBS; i++)
         {

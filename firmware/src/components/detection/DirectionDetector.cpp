@@ -1,6 +1,5 @@
 #include "DirectionDetector.h"
-
-extern bool serialStudioEnabled;
+#include "debug_log.h"
 
 DirectionDetector::DirectionDetector() : config() {}
 
@@ -31,9 +30,8 @@ void DirectionDetector::addReading(const SensorReading &reading)
             sensor.baselineReady = true;
             recalculateThreshold(sensor, pos);
 
-            if (!serialStudioEnabled)
-                Serial.printf("[Detector] Sensor %d baseline ready (threshold=%.1f)\n",
-                              pos, sensor.threshold);
+            DEBUG_LOG("[Detector] Sensor %d baseline ready (threshold=%.1f)\n",
+                     pos, sensor.threshold);
         }
         else if (sensor.baselineReady &&
                  sensor.baselineUpdateCount % 50 == 0)
@@ -244,18 +242,8 @@ DetectionResult DirectionDetector::getResult()
     result.detectedModule = bestModule + 1; // 1-indexed
     result.modulesDetected = modulesDetected;
 
-    // Baseline from rolling buffer mean
-    float sumA = 0, sumB = 0;
-    for (size_t i = 0; i < sensors[posA].baselineBuffer.size(); i++)
-        sumA += sensors[posA].baselineBuffer[i];
-    for (size_t i = 0; i < sensors[posB].baselineBuffer.size(); i++)
-        sumB += sensors[posB].baselineBuffer[i];
-    result.baselineA = sensors[posA].baselineBuffer.size() > 0
-                           ? sumA / sensors[posA].baselineBuffer.size()
-                           : 0;
-    result.baselineB = sensors[posB].baselineBuffer.size() > 0
-                           ? sumB / sensors[posB].baselineBuffer.size()
-                           : 0;
+    result.baselineA = sensors[posA].baselineBuffer.getMean();
+    result.baselineB = sensors[posB].baselineBuffer.getMean();
 
     // Confidence scoring
     float gapConfidence = min(1.0f, (float)result.comGapMs / 50.0f);
@@ -272,10 +260,9 @@ DetectionResult DirectionDetector::getResult()
     result.confidence = baseConfidence;
     _detectedModule = bestModule;
 
-    if (!serialStudioEnabled)
-        Serial.printf("[Detector] Detection on M%d (%d modules agree): %s conf=%.2f\n",
-                      bestModule + 1, modulesDetected,
-                      directionToString(result.direction), result.confidence);
+    DEBUG_LOG("[Detector] Detection on M%d (%d modules agree): %s conf=%.2f\n",
+             bestModule + 1, modulesDetected,
+             directionToString(result.direction), result.confidence);
 
     return result;
 }
@@ -410,19 +397,6 @@ WaveState DirectionDetector::getWaveStateB() const
 {
     int m = (_detectedModule >= 0) ? _detectedModule : 0;
     return sensors[m * 2 + 1].waveState;
-}
-
-const char *DirectionDetector::directionToString(Direction dir)
-{
-    switch (dir)
-    {
-    case Direction::A_TO_B:
-        return "A_TO_B";
-    case Direction::B_TO_A:
-        return "B_TO_A";
-    default:
-        return "UNKNOWN";
-    }
 }
 
 void DirectionDetector::debugPrint() const

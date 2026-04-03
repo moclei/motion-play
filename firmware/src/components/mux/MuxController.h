@@ -22,6 +22,7 @@
 
 #include <Arduino.h>
 #include <Wire.h>
+#include "constants.h"
 
 // Number of sensor boards and sensors per board
 #define MUX_NUM_BOARDS 3
@@ -70,10 +71,10 @@ public:
      * Initialize I2C and scan for sensor boards
      * @param sda SDA pin (default -1 = don't reinitialize I2C)
      * @param scl SCL pin (default -1 = don't reinitialize I2C)
-     * @param clockHz I2C clock speed (default 400000 = 400kHz)
+     * @param clockHz I2C clock speed (default I2C_CLOCK_HZ = 400kHz)
      * @return true if at least one sensor board found
      */
-    bool begin(int sda = -1, int scl = -1, uint32_t clockHz = 400000);
+    bool begin(int sda = -1, int scl = -1, uint32_t clockHz = I2C_CLOCK_HZ);
     
     /**
      * Select a specific sensor by position (0-5)

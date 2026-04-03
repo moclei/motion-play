@@ -482,9 +482,17 @@ public:
     /**
      * Read a 16-bit register
      * @param commandCode Register address
-     * @return 16-bit register value
+     * @return 16-bit register value (0 on I2C failure)
      */
     uint16_t readRegister(uint8_t commandCode);
+
+    /**
+     * Read a 16-bit register with error reporting
+     * @param commandCode Register address
+     * @param result Output: 16-bit register value
+     * @return true if read succeeded, false on I2C failure
+     */
+    bool readRegister(uint8_t commandCode, uint16_t &result);
 
     /**
      * Write a 16-bit register

@@ -160,14 +160,18 @@ void VCNL4040::setIRDutyCycle(uint16_t dutyValue)
 
 void VCNL4040::setProxIntegrationTime(uint8_t timeValue)
 {
+    // Accepts whole-T values (1,2,3,4,8) and ×10 encoding for half-T (15=1.5T, 25=2.5T, 35=3.5T)
     uint8_t value;
     switch (timeValue) {
-        case 1:  value = VCNL4040_PS_IT_1T; break;
-        case 2:  value = VCNL4040_PS_IT_2T; break;
-        case 3:  value = VCNL4040_PS_IT_3T; break;
-        case 4:  value = VCNL4040_PS_IT_4T; break;
-        case 8:  value = VCNL4040_PS_IT_8T; break;
-        default: value = VCNL4040_PS_IT_1T; break;
+        case 1:  case 10: value = VCNL4040_PS_IT_1T; break;
+        case 15:          value = VCNL4040_PS_IT_1_5T; break;
+        case 2:  case 20: value = VCNL4040_PS_IT_2T; break;
+        case 25:          value = VCNL4040_PS_IT_2_5T; break;
+        case 3:  case 30: value = VCNL4040_PS_IT_3T; break;
+        case 35:          value = VCNL4040_PS_IT_3_5T; break;
+        case 4:  case 40: value = VCNL4040_PS_IT_4T; break;
+        case 8:  case 80: value = VCNL4040_PS_IT_8T; break;
+        default:          value = VCNL4040_PS_IT_1T; break;
     }
     bitMask(VCNL4040_PS_CONF1_2, false, VCNL4040_PS_IT_MASK, value);
 }
@@ -354,6 +358,25 @@ uint16_t VCNL4040::readRegister(uint8_t commandCode)
     }
     
     return 0;
+}
+
+bool VCNL4040::readRegister(uint8_t commandCode, uint16_t &result)
+{
+    _i2cPort->beginTransmission(_address);
+    _i2cPort->write(commandCode);
+    if (_i2cPort->endTransmission(false) != 0)
+        return false;
+    
+    _i2cPort->requestFrom(_address, (uint8_t)2);
+    
+    if (_i2cPort->available() >= 2) {
+        uint8_t lsb = _i2cPort->read();
+        uint8_t msb = _i2cPort->read();
+        result = ((uint16_t)msb << 8) | lsb;
+        return true;
+    }
+    
+    return false;
 }
 
 bool VCNL4040::writeRegister(uint8_t commandCode, uint16_t value)

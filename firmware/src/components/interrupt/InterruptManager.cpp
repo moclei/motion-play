@@ -5,6 +5,21 @@
  */
 
 #include "InterruptManager.h"
+#include "constants.h"
+
+// Per-module constants (InterruptManager)
+static constexpr uint32_t SENSOR_STABILIZE_MS     = 50;
+static constexpr uint8_t  PROX_RESOLUTION_BITS    = 16;
+static constexpr uint32_t INT_TASK_STACK_SIZE      = 4096;
+static constexpr uint8_t  INT_TASK_PRIORITY        = 1;
+static constexpr uint8_t  INT_TASK_CORE            = 1;   // Core 1 (not the sensor core)
+static constexpr uint32_t MUX_MIN_SETTLE_US        = 50;
+static constexpr uint32_t MUX_DEBUG_SETTLE_US      = 200;
+static constexpr uint8_t  SENSOR_ID_UNKNOWN        = 255;
+static constexpr uint32_t DEBUG_POLL_INTERVAL_MS   = 2000;
+static constexpr uint32_t REGISTER_SETTLE_MS       = 5;
+static constexpr uint32_t TASK_EXIT_TIMEOUT_MS     = 500;
+static constexpr uint32_t SENSOR_DISABLE_SETTLE_MS = 2;
 
 // Singleton instance for ISR access
 InterruptManager *InterruptManager::_instance = nullptr;
@@ -58,7 +73,7 @@ bool InterruptManager::begin()
     Serial.println("InterruptManager: Initializing...");
 
     // Initialize MuxController
-    if (!_mux.begin(PIN_IIC_SDA, PIN_IIC_SCL, 400000))
+    if (!_mux.begin(PIN_I2C_SDA, PIN_I2C_SCL, I2C_CLOCK_HZ))
     {
         Serial.println("  ERROR: MuxController initialization failed");
         return false;
@@ -95,6 +110,12 @@ bool InterruptManager::begin()
 
 int InterruptManager::calibrateSensors()
 {
+    if (_monitoring)
+    {
+        Serial.println("InterruptManager: Cannot calibrate while monitoring is active");
+        return -1;
+    }
+
     Serial.println("\n╔══════════════════════════════════════════════════════════════════════════════╗");
     Serial.println("║              INTERRUPT MODE CALIBRATION (MAX Baseline Detection)             ║");
     Serial.println("╠══════════════════════════════════════════════════════════════════════════════╣");
@@ -118,7 +139,7 @@ int InterruptManager::calibrateSensors()
             continue;
         }
 
-        delay(5); // Allow MUX to settle
+        delay(MUX_SETTLE_MS);
 
         VCNL4040 &sensor = _sensors[pos];
 
@@ -133,13 +154,13 @@ int InterruptManager::calibrateSensors()
         // Configure for baseline measurement (same settings as detection)
         sensor.setLEDCurrent(_config.ledCurrent);
         sensor.setProxIntegrationTime(_config.integrationTime);
-        sensor.setIRDutyCycle(40);
-        sensor.setProxResolution(16);
+        sensor.setIRDutyCycle(DEFAULT_IR_DUTY_DENOMINATOR);
+        sensor.setProxResolution(PROX_RESOLUTION_BITS);
         sensor.setMultiPulse(_config.multiPulse);
         sensor.setProxCancellation(0); // No hardware cancellation - we'll use thresholds
         sensor.powerOnProximity(true);
 
-        delay(50); // Allow sensor to stabilize
+        delay(SENSOR_STABILIZE_MS);
 
         // Take samples for 1 second, track MAX value
         uint16_t maxReading = 0;
@@ -217,6 +238,12 @@ void InterruptManager::setCalibration(const DeviceCalibration *cal)
 
 bool InterruptManager::configure(const InterruptConfig &config)
 {
+    if (_monitoring)
+    {
+        Serial.println("InterruptManager: Cannot configure while monitoring is active");
+        return false;
+    }
+
     Serial.println("InterruptManager: Configuring sensors for interrupt mode...");
 
     _config = config;
@@ -275,7 +302,7 @@ bool InterruptManager::configureSensor(uint8_t position)
         return false;
     }
 
-    delay(5); // Allow MUX to settle
+    delay(MUX_SETTLE_MS);
 
     // Initialize sensor using our enhanced library
     VCNL4040 &sensor = _sensors[position];
@@ -288,8 +315,8 @@ bool InterruptManager::configureSensor(uint8_t position)
     // Configure proximity sensor settings for maximum range
     sensor.setLEDCurrent(_config.ledCurrent);
     sensor.setProxIntegrationTime(_config.integrationTime);
-    sensor.setIRDutyCycle(40);                // 1/40 duty for fast response
-    sensor.setProxResolution(16);             // 16-bit resolution
+    sensor.setIRDutyCycle(DEFAULT_IR_DUTY_DENOMINATOR);
+    sensor.setProxResolution(PROX_RESOLUTION_BITS);
     sensor.setMultiPulse(_config.multiPulse); // Multi-pulse for stronger signal
     sensor.setProxCancellation(0);            // No hardware cancellation
 
@@ -360,15 +387,14 @@ bool InterruptManager::configureSensor(uint8_t position)
     // Power on proximity sensor
     sensor.powerOnProximity(true);
 
-    // Debug: verify configuration was written
-    delay(5); // Allow registers to settle
+    delay(REGISTER_SETTLE_MS);
 
-    // Read back PS_CONF1_2 to verify interrupt enable
-    uint16_t conf12 = sensor.readRegister(0x03); // PS_CONF1_2
-    uint8_t psConf1 = conf12 & 0xFF;             // Low byte = PS_CONF1
-    uint8_t psConf2 = (conf12 >> 8) & 0xFF;      // High byte = PS_CONF2
-    uint8_t psIntBits = psConf2 & 0x03;          // Bits 1:0 = PS_INT
-    uint8_t psItBits = (psConf1 >> 1) & 0x07;    // Bits 3:1 = PS_IT
+#ifdef DEBUG_INTERRUPTS
+    uint16_t conf12 = sensor.readRegister(VCNL4040_PS_CONF1_2);
+    uint8_t psConf1 = conf12 & 0xFF;
+    uint8_t psConf2 = (conf12 >> 8) & 0xFF;
+    uint8_t psIntBits = psConf2 & 0x03;
+    uint8_t psItBits = (psConf1 >> 1) & 0x07;
 
     Serial.printf("    Sensor %d: PS_CONF1_2=0x%04X, PS_IT=%d, PS_INT=%d (%s) ✓\n",
                   position, conf12, psItBits,
@@ -377,17 +403,16 @@ bool InterruptManager::configureSensor(uint8_t position)
                                               : psIntBits == 3   ? "BOTH"
                                                                  : "DISABLED");
 
-    // Read thresholds back to verify
-    uint16_t threshH = sensor.readRegister(0x07); // PS_THDH
-    uint16_t threshL = sensor.readRegister(0x06); // PS_THDL
+    uint16_t threshH = sensor.readRegister(VCNL4040_PS_THDH);
+    uint16_t threshL = sensor.readRegister(VCNL4040_PS_THDL);
     Serial.printf("    Sensor %d: Verified thresholds: HIGH=%d, LOW=%d\n",
                   position, threshH, threshL);
 
-    // Read current proximity value (should be below threshold if no object)
     uint16_t proxValue = sensor.readProximity();
     uint16_t margin = (proxValue < threshH) ? (threshH - proxValue) : 0;
     Serial.printf("    Sensor %d: Current proximity=%d (margin to threshold: %d)\n",
                   position, proxValue, margin);
+#endif
 
     return true;
 }
@@ -421,15 +446,14 @@ bool InterruptManager::startMonitoring()
     // Clear event queue
     clearEvents();
 
-    // Create processing task
     BaseType_t result = xTaskCreatePinnedToCore(
         processingTaskFunc,
         "IntProcTask",
-        4096, // Stack size
-        this, // Parameter
-        1,    // Priority (lower than sensor polling)
+        INT_TASK_STACK_SIZE,
+        this,
+        INT_TASK_PRIORITY,
         &_processingTask,
-        1 // Run on Core 1 (not the sensor core)
+        INT_TASK_CORE
     );
 
     if (result != pdPASS)
@@ -480,25 +504,24 @@ void InterruptManager::stopMonitoring()
     detachInterrupt(digitalPinToInterrupt(PIN_SENSOR_INT_2));
     detachInterrupt(digitalPinToInterrupt(PIN_SENSOR_INT_3));
 
-    // Wait for the processing task to exit on its own
-    // The task will self-delete when it sees _monitoring = false
+    // Wake the processing task so it can observe _monitoring == false and exit.
+    // Set _stopRequestor BEFORE the wake to avoid a race on multi-core: the
+    // processing task (Core 1) could exit and read _stopRequestor before we set it.
     if (_processingTask != nullptr)
     {
-        // Give task time to notice the flag and clean up
-        int timeout = 50; // 500ms max wait
-        while (_processingTask != nullptr && timeout > 0)
-        {
-            delay(10);
-            timeout--;
-        }
+        _stopRequestor = xTaskGetCurrentTaskHandle();
+        xTaskNotifyGive(_processingTask);
 
-        // If task didn't exit gracefully, force delete (shouldn't happen)
-        if (_processingTask != nullptr)
+        uint32_t notified = ulTaskNotifyTake(pdTRUE, pdMS_TO_TICKS(TASK_EXIT_TIMEOUT_MS));
+
+        if (!notified)
         {
             Serial.println("  WARNING: Task didn't exit gracefully, force deleting");
             vTaskDelete(_processingTask);
-            _processingTask = nullptr;
         }
+
+        _processingTask = nullptr;
+        _stopRequestor = nullptr;
     }
 
     // Disable all sensors' interrupts
@@ -508,7 +531,7 @@ void InterruptManager::stopMonitoring()
         {
             if (_mux.selectSensor(pos))
             {
-                delay(2);
+                delay(SENSOR_DISABLE_SETTLE_MS);
                 _sensors[pos].setProxInterruptType(VCNL4040_PSInterrupt::DISABLE);
                 _sensors[pos].readInterruptFlags(); // Clear any pending
             }
@@ -519,7 +542,7 @@ void InterruptManager::stopMonitoring()
 
     Serial.println("InterruptManager: Monitoring stopped");
     Serial.printf("  Session stats: %lu events, %lu ISRs, %lu dropped\n",
-                  _stats.totalEvents, _stats.isrCount, _stats.droppedEvents);
+                  _stats.totalEvents, (unsigned long)_isrCount.load(), _stats.droppedEvents);
 }
 
 // ============================================================================
@@ -560,6 +583,7 @@ void InterruptManager::clearEvents()
 void InterruptManager::resetStats()
 {
     memset(&_stats, 0, sizeof(_stats));
+    _isrCount.store(0, std::memory_order_relaxed);
 }
 
 bool InterruptManager::queueEvent(const InterruptEvent &event)
@@ -603,11 +627,17 @@ void IRAM_ATTR InterruptManager::handleIsr(uint8_t board)
         return;
     }
 
-    // Record timestamp and set pending flag
-    // Keep ISR minimal - just record that something happened
     _instance->_lastIsrTime[board] = micros();
     _instance->_isrPending[board] = true;
-    _instance->_stats.isrCount++;
+    _instance->_isrCount.fetch_add(1, std::memory_order_relaxed);
+
+    // Wake the processing task immediately — zero-latency ISR→task handoff
+    BaseType_t xHigherPriorityTaskWoken = pdFALSE;
+    if (_instance->_processingTask != nullptr)
+    {
+        vTaskNotifyGiveFromISR(_instance->_processingTask, &xHigherPriorityTaskWoken);
+        portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
+    }
 }
 
 // ============================================================================
@@ -620,8 +650,9 @@ void InterruptManager::processingTaskFunc(void *param)
 
     Serial.println("InterruptManager: Processing task started");
 
+#ifdef DEBUG_INTERRUPTS
     uint32_t lastDebugPoll = 0;
-    const uint32_t DEBUG_POLL_INTERVAL = 2000; // Poll every 2 seconds for debug
+#endif
 
     while (mgr->_monitoring)
     {
@@ -642,26 +673,24 @@ void InterruptManager::processingTaskFunc(void *param)
             }
         }
 
-        // DEBUG: Periodically poll sensors to check if they're detecting anything
+#ifdef DEBUG_INTERRUPTS
+        // Periodically poll sensors to check if they're detecting anything
         uint32_t now = millis();
-        if (now - lastDebugPoll > DEBUG_POLL_INTERVAL)
+        if (now - lastDebugPoll > DEBUG_POLL_INTERVAL_MS)
         {
             lastDebugPoll = now;
 
-            // Read GPIO states
             Serial.printf("[DEBUG] GPIO: INT1=%d, INT2=%d, INT3=%d | ",
                           digitalRead(PIN_SENSOR_INT_1),
                           digitalRead(PIN_SENSOR_INT_2),
                           digitalRead(PIN_SENSOR_INT_3));
 
-            // Find the first available sensor to poll
-            // NOTE: We only read proximity, NOT interrupt flags (reading flags clears them!)
             bool polledSensor = false;
             for (uint8_t pos = 0; pos < MUX_TOTAL_SENSORS && !polledSensor; pos++)
             {
                 if (mgr->_mux.isSensorAvailable(pos) && mgr->_mux.selectSensor(pos))
                 {
-                    delayMicroseconds(200);
+                    delayMicroseconds(MUX_DEBUG_SETTLE_US);
                     uint16_t prox = mgr->_sensors[pos].readProximity();
                     Serial.printf("S%d: prox=%d\n", pos, prox);
                     polledSensor = true;
@@ -672,23 +701,30 @@ void InterruptManager::processingTaskFunc(void *param)
                 Serial.println("No sensors available to poll");
             }
         }
+#endif
 
-        // If nothing pending, yield briefly
-        // Use minimal delay to maximize responsiveness for direction detection
         if (!anyPending)
         {
-            // Yield without delay - just let other tasks run briefly
-            taskYIELD();
+            // Sleep until notified by ISR or stopMonitoring() — zero CPU cost while idle,
+            // immediate wake on interrupt (vs taskYIELD which burns CPU and adds tick latency)
+#ifdef DEBUG_INTERRUPTS
+            ulTaskNotifyTake(pdTRUE, pdMS_TO_TICKS(DEBUG_POLL_INTERVAL_MS));
+#else
+            ulTaskNotifyTake(pdTRUE, portMAX_DELAY);
+#endif
         }
     }
 
     Serial.println("InterruptManager: Processing task exiting");
 
-    // Clear the task handle BEFORE deleting ourselves
-    // This signals to stopMonitoring() that we're done
-    mgr->_processingTask = nullptr;
+    // Notify the task that requested the stop, completing the exit handshake
+    TaskHandle_t requestor = mgr->_stopRequestor;
+    if (requestor != nullptr)
+    {
+        xTaskNotifyGive(requestor);
+    }
 
-    // Self-delete - this function never returns
+    // Self-delete — the requestor is responsible for NULLing _processingTask
     vTaskDelete(NULL);
 }
 
@@ -707,12 +743,11 @@ void InterruptManager::processBoard(uint8_t board)
     // shortly after, we'll get a NEW interrupt with a NEW timestamp.
     // This maximizes our chance of distinguishing S1 vs S2 timing.
 
-    // Check sensor 1 first
     if (_mux.isSensorAvailable(sensor1))
     {
         if (_mux.selectSensor(sensor1))
         {
-            delayMicroseconds(50); // Minimal settle time
+            delayMicroseconds(MUX_MIN_SETTLE_US);
             if (processSensor(sensor1, timestamp_us))
             {
                 // S1 had a flag - we've cleared it
@@ -723,12 +758,11 @@ void InterruptManager::processBoard(uint8_t board)
         }
     }
 
-    // S1 didn't have a flag, check sensor 2
     if (_mux.isSensorAvailable(sensor2))
     {
         if (_mux.selectSensor(sensor2))
         {
-            delayMicroseconds(50); // Minimal settle time
+            delayMicroseconds(MUX_MIN_SETTLE_US);
             if (processSensor(sensor2, timestamp_us))
             {
                 // S2 had a flag - we've cleared it
@@ -743,7 +777,7 @@ void InterruptManager::processBoard(uint8_t board)
     InterruptEvent evt;
     evt.timestamp_us = timestamp_us;
     evt.boardId = board + 1;
-    evt.sensorId = 255; // Unknown which sensor
+    evt.sensorId = SENSOR_ID_UNKNOWN;
     evt.type = InterruptEventType::UNKNOWN;
     evt.rawFlags = 0;
 
