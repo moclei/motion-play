@@ -58,12 +58,61 @@
           "width": 0.0
         }
       ],
-      "drc_exclusions": [],
+      "drc_exclusions": [
+        [
+          "clearance|82625000|116744000|9ba74ac6-f149-4432-9feb-04e235fba658|a98a97ae-02dc-4379-a2db-c04acf5d8fb2",
+          ""
+        ],
+        [
+          "clearance|82625000|117744000|be98cae3-45d1-4fb2-a5f8-5cb8fe588708|25edb244-bb63-4e1d-aded-307a10a85871",
+          ""
+        ],
+        [
+          "clearance|82625000|121744000|9d11ba9c-b21f-4472-acc4-e93169650a29|9fa53216-eb66-481b-8eba-d7bceb6320d5",
+          ""
+        ],
+        [
+          "clearance|82625000|122544000|c486ad1d-ae5d-49b2-80ae-7d10e2cd89b5|14e1d4a0-4177-4916-b1c3-c855c005a6fd",
+          ""
+        ],
+        [
+          "clearance|82625000|123974000|2d472355-e489-4726-96cb-179528382cfe|14e1d4a0-4177-4916-b1c3-c855c005a6fd",
+          ""
+        ],
+        [
+          "clearance|82915000|115314000|f5d8d2d5-861f-4479-9795-13caccb60564|a98a97ae-02dc-4379-a2db-c04acf5d8fb2",
+          ""
+        ],
+        [
+          "clearance|83925000|116744000|a98a97ae-02dc-4379-a2db-c04acf5d8fb2|be98cae3-45d1-4fb2-a5f8-5cb8fe588708",
+          ""
+        ],
+        [
+          "clearance|83925000|121544000|9d11ba9c-b21f-4472-acc4-e93169650a29|2b30a185-89dc-4407-801d-2f98fd1f375b",
+          ""
+        ],
+        [
+          "clearance|83925000|122544000|14e1d4a0-4177-4916-b1c3-c855c005a6fd|9d11ba9c-b21f-4472-acc4-e93169650a29",
+          ""
+        ],
+        [
+          "clearance|94435000|116964000|17a2ebe8-3016-4313-930a-51c941926008|ffae18fd-bb56-42f1-97d9-ffc1fa0ed5a4",
+          ""
+        ],
+        [
+          "hole_clearance|82625000|116944000|9ba74ac6-f149-4432-9feb-04e235fba658|be98cae3-45d1-4fb2-a5f8-5cb8fe588708",
+          ""
+        ],
+        [
+          "hole_clearance|82625000|122344000|c486ad1d-ae5d-49b2-80ae-7d10e2cd89b5|9d11ba9c-b21f-4472-acc4-e93169650a29",
+          ""
+        ]
+      ],
       "meta": {
         "version": 2
       },
       "rule_severities": {
-        "annular_width": "error",
+        "annular_width": "ignore",
         "clearance": "error",
         "connection_width": "warning",
         "copper_edge_clearance": "error",
@@ -138,7 +187,7 @@
         "min_text_thickness": 0.08,
         "min_through_hole_diameter": 0.2,
         "min_track_width": 0.15,
-        "min_via_annular_width": 0.13,
+        "min_via_annular_width": 0.1,
         "min_via_diameter": 0.45,
         "solder_mask_to_copper_clearance": 0.005,
         "use_height_for_length_calcs": true

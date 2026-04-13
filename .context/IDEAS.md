@@ -41,6 +41,7 @@ Ideas for future development. Not prioritized, just captured.
 - WiFi sleep mode when idle
 - Display dimming/sleep
 - Custom power PCB to replace DWEII module
+- **v8 main PCB: short BQ24195 D+ to D− instead of grounding both.** v6 and v7 tie U5 pins 2 and 3 to GND, which disables the BQ24195's BC1.2 detection and forces the IINLIM register to its ~500 mA default — the board browns out under load until firmware lifts the limit (see `configureBQ24195()` in `firmware/src/main.cpp`). Shorting D+ directly to D− (no GND connection) makes the chip auto-detect a DCP and set IINLIM=1.5 A in hardware before firmware runs. Removes the firmware dependency entirely so blank boards, test sketches, and stripped-down builds all boot cleanly. Pure layout change, no new components.
 
 ### Future Hardware
 - Migrate from T-Display-S3 to custom ESP32-S3 board

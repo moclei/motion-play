@@ -1,0 +1,108 @@
+** Drc report for motion-play-main.kicad_pcb **
+** Created on 2026-04-05T17:21:16-0700 **
+
+** Found 25 DRC violations **
+[annular_width]: Annular width (board setup constraints min annular width 0.1000 mm; actual -0.0032 mm)
+    Rule: board setup constraints; error
+    @(82.0150 mm, 116.7440 mm): PTH pad [<no net>] of J7
+[annular_width]: Annular width (board setup constraints min annular width 0.1000 mm; actual -0.0032 mm)
+    Rule: board setup constraints; error
+    @(82.0150 mm, 122.5440 mm): PTH pad [<no net>] of J7
+[clearance]: Clearance violation (netclass 'Power_Med' clearance 0.2000 mm; actual 0.1900 mm)
+    Rule: netclass 'Power_Med'; error
+    @(109.1000 mm, 127.9000 mm): Track [/Power Management/VSYS_SENSE] on B.Cu, length 4.4000 mm
+    @(109.4074 mm, 128.6900 mm): Track [/Power Management/BOOST_FSW] on B.Cu, length 2.7574 mm
+[clearance]: Clearance violation (netclass 'Power_Med' clearance 0.2000 mm; actual 0.1950 mm)
+    Rule: netclass 'Power_Med'; error
+    @(94.8350 mm, 116.8140 mm): Pad 20 [/Power Management/BQ_SW] of U5 on F.Cu
+    @(94.0479 mm, 117.1395 mm): Via [/Power Management/BQ_BTST] on F.Cu - B.Cu
+[clearance]: Clearance violation (netclass 'Power_Med' clearance 0.2000 mm; actual 0.1760 mm)
+    Rule: netclass 'Power_Med'; error
+    @(114.5000 mm, 127.2000 mm): Track [/Power Management/VSYS_SENSE] on F.Cu, length 4.7600 mm
+    @(113.9388 mm, 128.8940 mm): Track [/Power Management/BOOST_VCC] on F.Cu, length 2.8694 mm
+[clearance]: Clearance violation (netclass 'Default' clearance 0.2000 mm; actual 0.1950 mm)
+    Rule: netclass 'Default'; error
+    @(113.5300 mm, 128.8940 mm): Track [/Power Management/BOOST_VCC] on F.Cu, length 0.4088 mm
+    @(111.3500 mm, 129.6440 mm): Pad 21 [GND] of U6 on F.Cu
+[clearance]: Clearance violation (netclass 'Power_Med' clearance 0.2000 mm; actual 0.1964 mm)
+    Rule: netclass 'Power_Med'; error
+    @(108.5460 mm, 128.8940 mm): Track [/Power Management/BOOST_SS] on F.Cu, length 0.5077 mm
+    @(107.4360 mm, 129.6510 mm): Pad 1 [/Power Management/VSYS_SENSE] of C31 on F.Cu
+[clearance]: Clearance violation (netclass 'Power_Med' clearance 0.2000 mm; actual 0.1760 mm)
+    Rule: netclass 'Power_Med'; error
+    @(108.1870 mm, 129.2530 mm): Track [/Power Management/BOOST_SS] on F.Cu, length 0.8721 mm
+    @(107.4360 mm, 129.6510 mm): Pad 1 [/Power Management/VSYS_SENSE] of C31 on F.Cu
+[clearance]: Clearance violation (netclass 'Default' clearance 0.2000 mm; actual 0.1950 mm)
+    Rule: netclass 'Default'; error
+    @(111.3500 mm, 129.6440 mm): Pad 21 [GND] of U6 on F.Cu
+    @(109.1700 mm, 128.8940 mm): Track [/Power Management/BOOST_SS] on F.Cu, length 0.6240 mm
+[clearance]: Clearance violation (netclass 'Power_Med' clearance 0.2000 mm; actual 0.1804 mm)
+    Rule: netclass 'Power_Med'; error
+    @(108.1870 mm, 130.1251 mm): Track [/Power Management/BOOST_SS] on F.Cu, length 1.7888 mm
+    @(107.4360 mm, 129.6510 mm): Pad 1 [/Power Management/VSYS_SENSE] of C31 on F.Cu
+[clearance]: Clearance violation (netclass 'Power_Med' clearance 0.2000 mm; actual 0.1500 mm)
+    Rule: netclass 'Power_Med'; error
+    @(109.1000 mm, 127.9000 mm): Track [/Power Management/VSYS_SENSE] on B.Cu, length 4.4000 mm
+    @(108.1500 mm, 124.6530 mm): Via [GND] on F.Cu - B.Cu
+[clearance]: Clearance violation (netclass 'Power_Med' clearance 0.2000 mm; actual 0.1500 mm)
+    Rule: netclass 'Power_Med'; error
+    @(113.1000 mm, 127.9140 mm): Pad 2 [/Power Management/VSYS_SENSE] of U6 on F.Cu
+    @(112.6000 mm, 127.9140 mm): Via [/Power Management/BOOST_FSW] on F.Cu - B.Cu
+[clearance]: Clearance violation (netclass 'Power_Med' clearance 0.2000 mm; actual 0.1760 mm)
+    Rule: netclass 'Power_Med'; error
+    @(109.1000 mm, 127.9000 mm): Track [/Power Management/VSYS_SENSE] on B.Cu, length 4.4000 mm
+    @(110.1834 mm, 127.9140 mm): Track [/Power Management/BOOST_FSW] on B.Cu, length 1.0974 mm
+[clearance]: Clearance violation (netclass 'Default' clearance 0.2000 mm; actual 0.1684 mm)
+    Rule: netclass 'Default'; error
+    @(113.5300 mm, 128.8940 mm): Pad 1 [/Power Management/BOOST_VCC] of U6 on F.Cu
+    @(111.3500 mm, 129.6440 mm): Pad 21 [GND] of U6 on F.Cu
+[clearance]: Clearance violation (netclass 'Default' clearance 0.2000 mm; actual 0.1714 mm)
+    Rule: netclass 'Default'; error
+    @(109.1700 mm, 128.8940 mm): Pad 10 [/Power Management/BOOST_SS] of U6 on F.Cu
+    @(111.3500 mm, 129.6440 mm): Pad 21 [GND] of U6 on F.Cu
+[hole_clearance]: Hole clearance violation (board minimum hole clearance 0.2500 mm; actual 0.2170 mm)
+    Local override; error
+    @(82.0150 mm, 116.7440 mm): PTH pad [<no net>] of J7
+    @(83.2750 mm, 117.2440 mm): Pad A4B9 [/Power Management/VBUS_RAW] of J7 on F.Cu
+[clearance]: Clearance violation (board minimum clearance 0.2000 mm; actual 0.1850 mm)
+    Local override; error
+    @(82.0150 mm, 116.7440 mm): PTH pad [<no net>] of J7
+    @(83.2750 mm, 116.4440 mm): Pad A1B12 [GND] of J7 on F.Cu
+[clearance]: Clearance violation (board minimum clearance 0.2000 mm; actual 0.1850 mm)
+    Local override; error
+    @(82.0150 mm, 122.5440 mm): PTH pad [<no net>] of J7
+    @(83.2750 mm, 122.8440 mm): Pad B1A12 [GND] of J7 on F.Cu
+[hole_clearance]: Hole clearance violation (board minimum hole clearance 0.2500 mm; actual 0.2170 mm)
+    Local override; error
+    @(82.0150 mm, 122.5440 mm): PTH pad [<no net>] of J7
+    @(83.2750 mm, 122.0440 mm): Pad B4A9 [/Power Management/VBUS_RAW] of J7 on F.Cu
+[clearance]: Clearance violation (board minimum clearance 0.2000 mm; actual 0.1800 mm)
+    Local override; error
+    @(82.5150 mm, 123.9740 mm): PTH pad 1 [<no net>] of J7
+    @(83.2750 mm, 122.8440 mm): Pad B1A12 [GND] of J7 on F.Cu
+[clearance]: Clearance violation (board minimum clearance 0.2000 mm; actual 0.1800 mm)
+    Local override; error
+    @(82.5150 mm, 115.3140 mm): PTH pad 4 [<no net>] of J7
+    @(83.2750 mm, 116.4440 mm): Pad A1B12 [GND] of J7 on F.Cu
+[clearance]: Clearance violation (board minimum clearance 0.2000 mm; actual 0.1000 mm)
+    Local override; error
+    @(83.2750 mm, 116.4440 mm): Pad A1B12 [GND] of J7 on F.Cu
+    @(83.2750 mm, 117.2440 mm): Pad A4B9 [/Power Management/VBUS_RAW] of J7 on F.Cu
+[clearance]: Clearance violation (board minimum clearance 0.2000 mm; actual 0.1500 mm)
+    Local override; error
+    @(83.2750 mm, 117.2440 mm): Pad A4B9 [/Power Management/VBUS_RAW] of J7 on F.Cu
+    @(83.2750 mm, 117.8940 mm): Pad B8 [unconnected-(J7-SBU2-PadB8)] of J7 on F.Cu
+[clearance]: Clearance violation (board minimum clearance 0.2000 mm; actual 0.1000 mm)
+    Local override; error
+    @(83.2750 mm, 122.8440 mm): Pad B1A12 [GND] of J7 on F.Cu
+    @(83.2750 mm, 122.0440 mm): Pad B4A9 [/Power Management/VBUS_RAW] of J7 on F.Cu
+[clearance]: Clearance violation (board minimum clearance 0.2000 mm; actual 0.1500 mm)
+    Local override; error
+    @(83.2750 mm, 122.0440 mm): Pad B4A9 [/Power Management/VBUS_RAW] of J7 on F.Cu
+    @(83.2750 mm, 121.3940 mm): Pad B5 [/Power Management/CC2] of J7 on F.Cu
+
+** Found 0 unconnected pads **
+
+** Found 0 Footprint errors **
+
+** End of Report **

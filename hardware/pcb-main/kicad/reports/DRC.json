@@ -1,0 +1,285 @@
+{
+    "$schema": "https://schemas.kicad.org/drc.v1.json",
+    "coordinate_units": "mm",
+    "date": "2026-04-07T14:13:50-0700",
+    "kicad_version": "9.0.4",
+    "schematic_parity": [],
+    "source": "motion-play-main.kicad_pcb",
+    "unconnected_items": [],
+    "violations": [
+        {
+            "description": "Track has unconnected end",
+            "items": [
+                {
+                    "description": "Track [/TCA_RESET] on F.Cu, length 0.2850 mm",
+                    "pos": {
+                        "x": 152.8575,
+                        "y": 109.495
+                    },
+                    "uuid": "5456823b-cfea-4346-8a99-625227edd8d4"
+                }
+            ],
+            "severity": "warning",
+            "type": "track_dangling"
+        },
+        {
+            "description": "Via is not connected or connected on only one layer",
+            "items": [
+                {
+                    "description": "Via [+5V] on F.Cu - B.Cu",
+                    "pos": {
+                        "x": 112.21,
+                        "y": 105.6
+                    },
+                    "uuid": "08f0362c-e3c1-4616-aeca-8be696637e69"
+                }
+            ],
+            "severity": "warning",
+            "type": "via_dangling"
+        },
+        {
+            "description": "Track has unconnected end",
+            "items": [
+                {
+                    "description": "Track [/Power Management/VSYS] on F.Cu, length 0.4950 mm",
+                    "pos": {
+                        "x": 96.735,
+                        "y": 114.4
+                    },
+                    "uuid": "c5e73200-8e4e-4732-943d-d95e3738f9e0"
+                }
+            ],
+            "severity": "warning",
+            "type": "track_dangling"
+        },
+        {
+            "description": "Track has unconnected end",
+            "items": [
+                {
+                    "description": "Track [/Power Management/PMOS_GATE] on F.Cu, length 0.6725 mm",
+                    "pos": {
+                        "x": 91.635,
+                        "y": 124.7725
+                    },
+                    "uuid": "5c461f0a-fa10-4486-94bc-4d65199f6aeb"
+                }
+            ],
+            "severity": "warning",
+            "type": "track_dangling"
+        },
+        {
+            "description": "Copper connection too narrow (board setup constraints minimum connection width 0.1500 mm; actual 0.1255 mm) (F.Cu)",
+            "items": [
+                {
+                    "description": "Pad 2 [GND] of C28 on F.Cu",
+                    "pos": {
+                        "x": 99.221,
+                        "y": 112.142
+                    },
+                    "uuid": "395f866a-1c75-472c-8191-c9a8c7c20f1c"
+                },
+                {
+                    "description": "Track [GND] on F.Cu, length 0.3309 mm",
+                    "pos": {
+                        "x": 99.221,
+                        "y": 111.634
+                    },
+                    "uuid": "7b4bc6b0-e0ff-464e-b828-bd0fea4eb16e"
+                }
+            ],
+            "severity": "warning",
+            "type": "connection_width"
+        },
+        {
+            "description": "Clearance violation (netclass 'Default' clearance 0.2000 mm; actual 0.1950 mm)",
+            "items": [
+                {
+                    "description": "Track [/Power Management/BOOST_SS] on F.Cu, length 0.6240 mm",
+                    "pos": {
+                        "x": 103.68,
+                        "y": 128.24
+                    },
+                    "uuid": "afc9fbae-4b3c-49c1-bae8-4ebbed2033ff"
+                },
+                {
+                    "description": "PTH pad 21 [GND] of U6",
+                    "pos": {
+                        "x": 102.93,
+                        "y": 129.14
+                    },
+                    "uuid": "ca827462-bdcc-4202-9232-30d6ad389d09"
+                }
+            ],
+            "severity": "error",
+            "type": "clearance"
+        },
+        {
+            "description": "Clearance violation (netclass 'Power_5V' clearance 0.2000 mm; actual 0.1500 mm)",
+            "items": [
+                {
+                    "description": "Via [/Power Management/BOOST_FSW] on F.Cu - B.Cu",
+                    "pos": {
+                        "x": 104.66,
+                        "y": 131.67
+                    },
+                    "uuid": "62668053-8cca-4b72-b2ea-2aba79c4bfd7"
+                },
+                {
+                    "description": "Pad 4 [/Power Management/BOOST_SW] of U6 on F.Cu",
+                    "pos": {
+                        "x": 104.66,
+                        "y": 131.17
+                    },
+                    "uuid": "a9bded9c-3933-4794-9e21-73e85ebf61da"
+                }
+            ],
+            "severity": "error",
+            "type": "clearance"
+        },
+        {
+            "description": "Clearance violation (netclass 'Default' clearance 0.2000 mm; actual 0.1684 mm)",
+            "items": [
+                {
+                    "description": "Pad 1 [/Power Management/BOOST_VCC] of U6 on F.Cu",
+                    "pos": {
+                        "x": 103.68,
+                        "y": 132.6
+                    },
+                    "uuid": "7a6699b7-09dc-4fc5-bfde-24c8df35f39c"
+                },
+                {
+                    "description": "PTH pad 21 [GND] of U6",
+                    "pos": {
+                        "x": 102.93,
+                        "y": 129.14
+                    },
+                    "uuid": "ca827462-bdcc-4202-9232-30d6ad389d09"
+                }
+            ],
+            "severity": "error",
+            "type": "clearance"
+        },
+        {
+            "description": "Clearance violation (netclass 'Default' clearance 0.2000 mm; actual 0.1714 mm)",
+            "items": [
+                {
+                    "description": "Pad 10 [/Power Management/BOOST_SS] of U6 on F.Cu",
+                    "pos": {
+                        "x": 103.68,
+                        "y": 128.24
+                    },
+                    "uuid": "c39bad71-e3a9-40be-9750-51b0e621317f"
+                },
+                {
+                    "description": "PTH pad 21 [GND] of U6",
+                    "pos": {
+                        "x": 102.93,
+                        "y": 129.14
+                    },
+                    "uuid": "ca827462-bdcc-4202-9232-30d6ad389d09"
+                }
+            ],
+            "severity": "error",
+            "type": "clearance"
+        },
+        {
+            "description": "Padstack is questionable (PTH pad hole leaves no copper)",
+            "items": [
+                {
+                    "description": "PTH pad [<no net>] of J7",
+                    "pos": {
+                        "x": 82.015,
+                        "y": 116.744
+                    },
+                    "uuid": "9ba74ac6-f149-4432-9feb-04e235fba658"
+                }
+            ],
+            "severity": "warning",
+            "type": "padstack"
+        },
+        {
+            "description": "Padstack is questionable (PTH pad hole leaves no copper)",
+            "items": [
+                {
+                    "description": "PTH pad [<no net>] of J7",
+                    "pos": {
+                        "x": 82.015,
+                        "y": 122.544
+                    },
+                    "uuid": "c486ad1d-ae5d-49b2-80ae-7d10e2cd89b5"
+                }
+            ],
+            "severity": "warning",
+            "type": "padstack"
+        },
+        {
+            "description": "Silkscreen overlap",
+            "items": [
+                {
+                    "description": "Segment of U3 on F.Silkscreen",
+                    "pos": {
+                        "x": 122.195,
+                        "y": 126.8991
+                    },
+                    "uuid": "5c413d39-fa15-4e85-a1ab-62cd3bb5f840"
+                },
+                {
+                    "description": "Reference field of SW2",
+                    "pos": {
+                        "x": 124.486,
+                        "y": 127.1101
+                    },
+                    "uuid": "78caea1e-43d2-4b95-a879-8d98daa3cadc"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_overlap"
+        },
+        {
+            "description": "Silkscreen overlap",
+            "items": [
+                {
+                    "description": "PCB text 'D' on F.Silkscreen",
+                    "pos": {
+                        "x": 139.538,
+                        "y": 138.1
+                    },
+                    "uuid": "10792f27-82cd-428c-8819-630b67223da1"
+                },
+                {
+                    "description": "Segment of D5 on F.Silkscreen",
+                    "pos": {
+                        "x": 138.5201,
+                        "y": 133.8001
+                    },
+                    "uuid": "7ccaf972-853f-46f1-a60d-f6adcdbbe759"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_overlap"
+        },
+        {
+            "description": "Silkscreen overlap",
+            "items": [
+                {
+                    "description": "Segment of D5 on F.Silkscreen",
+                    "pos": {
+                        "x": 138.5201,
+                        "y": 133.8001
+                    },
+                    "uuid": "7ccaf972-853f-46f1-a60d-f6adcdbbe759"
+                },
+                {
+                    "description": "PCB text '5V' on F.Silkscreen",
+                    "pos": {
+                        "x": 139.538,
+                        "y": 136.1
+                    },
+                    "uuid": "98394826-1633-4ed5-a066-2015ce73848a"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_overlap"
+        }
+    ]
+}
