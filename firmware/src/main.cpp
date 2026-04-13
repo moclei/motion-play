@@ -1,4 +1,5 @@
 #include <Arduino.h>
+#include <Wire.h>
 #include <Adafruit_VCNL4040.h>
 #include <HTTPClient.h>
 #include <ArduinoJson.h>
@@ -13,6 +14,7 @@
 #include "components/detection/DirectionDetector.h"
 #include "components/detection/MLDetector.h"
 #include "components/led/LEDController.h"
+#include "components/power/PowerMonitor.h"
 #include "components/interrupt/InterruptManager.h"
 #include "components/calibration/CalibrationManager.h"
 #include "components/serialstudio/SerialStudioOutput.h"
@@ -41,6 +43,7 @@ DataTransmitter *dataTransmitter;
 DirectionDetector directionDetector;
 MLDetector mlDetector;
 LEDController ledController;
+PowerMonitor powerMonitor;
 SerialStudioOutput serialStudioOutput;
 
 // Detection mode: false = heuristic (DirectionDetector), true = ML (MLDetector)
@@ -83,6 +86,22 @@ SensorConfiguration currentConfig;
 void initializeSystem();
 void handleCommand(const String &command, JsonDocument *doc = nullptr);
 bool fetchConfigFromCloud();
+void configureBQ24195();
+
+// BQ24195 battery charger / power-path manager (main PCB v6+)
+// On v6 the D+/D- pins are tied to GND, so the BQ falls back to its default
+// register IINLIM (~500 mA) and clamps VSYS as soon as the ESP32 + display
+// pull more than that. Symptom: VSYS thrashes 4.2 V -> 2.6 V, +5 V/+3.3 V
+// brown out, T-Display resets in a loop. Fix: lift IINLIM via I2C and
+// disable the 40 s I2C watchdog so the setting sticks. Must run *before*
+// display.init() because the display draws enough to trigger the brownout.
+#define BQ24195_I2C_ADDR    0x6B
+#define BQ24195_REG00       0x00 // Input Source Control
+#define BQ24195_REG05       0x05 // Charge Term / Timer Control
+// REG00: EN_HIZ=0, VINDPM=0110 (4.36 V default), IINLIM=110 (2 A) -> 0x36
+#define BQ24195_REG00_VAL   0x36
+// REG05: EN_TERM=1, WATCHDOG=00 (disabled), EN_TIMER=1, CHG_TIMER=01 (8 h) -> 0x8A
+#define BQ24195_REG05_VAL   0x8A
 
 void setup()
 {
@@ -98,6 +117,11 @@ void setup()
     pinMode(BUTTON_1, INPUT_PULLUP);
     pinMode(BUTTON_2, INPUT_PULLUP);
 
+    // Reconfigure the BQ24195 input current limit BEFORE anything that draws
+    // significant current (display init, WiFi). Without this the v6 board
+    // browns out under load. See note above the #defines for full context.
+    configureBQ24195();
+
     display.init();
     display.showInitScreen();
     Serial.println("Display initialized");
@@ -105,6 +129,45 @@ void setup()
     initializeSystem();
 
     Serial.println("\n=== Setup Complete - Entering Loop ===\n");
+}
+
+void configureBQ24195()
+{
+    Serial.println("=== Configuring BQ24195 (input current limit) ===");
+
+    // Bring the I2C bus up early. SensorManager will call Wire.begin() again
+    // later with the same pins, which is harmless.
+    Wire.begin(43, 44); // SDA=43, SCL=44 on T-Display-S3
+
+    // Probe for the chip first so we don't spam errors on boards that don't
+    // have it (e.g., bench testing on a bare T-Display).
+    Wire.beginTransmission(BQ24195_I2C_ADDR);
+    if (Wire.endTransmission() != 0)
+    {
+        Serial.println("BQ24195 not found at 0x6B - skipping (bare T-Display?)");
+        return;
+    }
+
+    // REG00: raise IINLIM to 2 A and clear EN_HIZ.
+    Wire.beginTransmission(BQ24195_I2C_ADDR);
+    Wire.write(BQ24195_REG00);
+    Wire.write(BQ24195_REG00_VAL);
+    uint8_t r0 = Wire.endTransmission();
+
+    // REG05: disable the 40 s I2C watchdog so REG00 stays put.
+    Wire.beginTransmission(BQ24195_I2C_ADDR);
+    Wire.write(BQ24195_REG05);
+    Wire.write(BQ24195_REG05_VAL);
+    uint8_t r5 = Wire.endTransmission();
+
+    if (r0 == 0 && r5 == 0)
+    {
+        Serial.println("BQ24195 configured: IINLIM=2A, watchdog disabled");
+    }
+    else
+    {
+        Serial.printf("BQ24195 write error (REG00=%u, REG05=%u)\n", r0, r5);
+    }
 }
 
 bool fetchConfigFromCloud()
@@ -434,6 +497,12 @@ void initializeSystem()
     serialStudioOutput.setConfig(&currentConfig);
     serialStudioOutput.setEnabled(serialStudioEnabled);
     Serial.printf("Serial Studio output: %s\n", serialStudioEnabled ? "enabled" : "disabled");
+
+    // --- Power Monitor ---
+    if (powerMonitor.init())
+    {
+        Serial.println("INA219 power monitor ready on VSYS rail");
+    }
 
     // --- Done ---
 
@@ -1247,6 +1316,28 @@ void handleCommand(const String &command, JsonDocument *doc)
             }
         }
     }
+    else if (command == "led_strip_test")
+    {
+        if (sessionManager.getState() != IDLE)
+        {
+            Serial.println("[LEDTest] Refused: session not IDLE");
+            mqttManager->publishStatus("led_strip_test_refused_busy");
+        }
+        else
+        {
+            uint16_t ledCount = 90;
+            if (doc && (*doc)["led_count"].is<int>())
+            {
+                int requested = (*doc)["led_count"].as<int>();
+                if (requested > 0)
+                    ledCount = (uint16_t)requested;
+            }
+            Serial.printf("[LEDTest] Running strip test with %u LEDs\n", ledCount);
+            mqttManager->publishStatus("led_strip_test_started");
+            ledController.runStripTest(ledCount);
+            mqttManager->publishStatus("led_strip_test_complete");
+        }
+    }
     else if (command == "reboot")
     {
         display.showMessage("Rebooting...", TFT_YELLOW);
@@ -1811,6 +1902,15 @@ void loop()
                 }
             }
         }
+    }
+
+    // Update power monitor display (~2Hz)
+    static unsigned long lastPowerUpdate = 0;
+    if (powerMonitor.isAvailable() && millis() - lastPowerUpdate > 500)
+    {
+        lastPowerUpdate = millis();
+        powerMonitor.update();
+        display.updatePowerStatus(powerMonitor.getVoltage(), powerMonitor.getCurrentMA());
     }
 
     // Send periodic status updates

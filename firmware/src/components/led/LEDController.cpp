@@ -22,6 +22,10 @@ bool LEDController::init()
     FastLED.addLeds<LED_TYPE, LED_PIN, COLOR_ORDER>(leds, NUM_LEDS);
     FastLED.setBrightness(DEFAULT_BRIGHTNESS);
 
+    // Soft power limit: keep LED strip draw under ~1A at 5V so the BQ24195
+    // (IINLIM=2A on VSYS) has headroom for ESP32 + display (~300mA at 5V).
+    FastLED.setMaxPowerInVoltsAndMilliamps(5, 1000);
+
     // Clear all LEDs
     FastLED.clear();
     FastLED.show();
@@ -158,4 +162,109 @@ bool LEDController::update()
 bool LEDController::isAnimating() const
 {
     return animationActive;
+}
+
+void LEDController::runStripTest(uint16_t count)
+{
+    if (!initialized)
+    {
+        if (!init())
+            return;
+    }
+
+    if (count < 1)
+        count = 1;
+    if (count > NUM_LEDS)
+        count = NUM_LEDS;
+
+    Serial.printf("[LEDTest] Starting strip test on %u LEDs\n", count);
+
+    // Cancel any in-progress direction animation and start from full brightness.
+    animationActive = false;
+    FastLED.setBrightness(255);
+    FastLED.clear(true);
+
+    // Brightness levels — conservative to stay within BQ24195 IINLIM budget.
+    // FastLED soft power limit (1A) provides a backstop, but keep test values
+    // modest so the readout on screen shows realistic current draw.
+    const uint8_t LEVEL_20 = 51;  // ~20% of 255 (used for white / combined RGB)
+    const uint8_t LEVEL_30 = 77;  // ~30% of 255 (used for single-channel phases)
+
+    auto fillRange = [&](CRGB color)
+    {
+        for (uint16_t i = 0; i < count; ++i)
+            leds[i] = color;
+        for (uint16_t i = count; i < NUM_LEDS; ++i)
+            leds[i] = CRGB::Black;
+    };
+
+    // ---- Phase 1: solid colors (single channels at 30%, white at 20%) ----
+    Serial.println("[LEDTest] Phase 1: solid R/G/B @ 30%, W @ 20%");
+    const CRGB phase1Colors[4] = {
+        CRGB(LEVEL_30, 0, 0),
+        CRGB(0, LEVEL_30, 0),
+        CRGB(0, 0, LEVEL_30),
+        CRGB(LEVEL_20, LEVEL_20, LEVEL_20),
+    };
+    for (int c = 0; c < 4; ++c)
+    {
+        fillRange(phase1Colors[c]);
+        FastLED.show();
+        delay(500);
+    }
+    fillRange(CRGB::Black);
+    FastLED.show();
+    delay(100);
+
+    // ---- Phase 2: per-channel ramp 0 -> 30% over ~1s each ----
+    Serial.println("[LEDTest] Phase 2: per-channel ramp R/G/B (capped 30%)");
+    const uint8_t channels[3][3] = {
+        {1, 0, 0}, // red
+        {0, 1, 0}, // green
+        {0, 0, 1}, // blue
+    };
+    for (int ch = 0; ch < 3; ++ch)
+    {
+        for (int v = 0; v <= LEVEL_30; v += 4)
+        {
+            CRGB color((uint8_t)(channels[ch][0] * v),
+                       (uint8_t)(channels[ch][1] * v),
+                       (uint8_t)(channels[ch][2] * v));
+            fillRange(color);
+            FastLED.show();
+            delay(30);
+        }
+        fillRange(CRGB::Black);
+        FastLED.show();
+        delay(80);
+    }
+
+    // ---- Phase 3: combined RGB ramp to ~20% (peak current draw) ----
+    Serial.println("[LEDTest] Phase 3: combined white ramp to ~20%");
+    for (int v = 0; v <= LEVEL_20; v += 2)
+    {
+        fillRange(CRGB((uint8_t)v, (uint8_t)v, (uint8_t)v));
+        FastLED.show();
+        delay(30);
+    }
+    delay(600); // hold at peak — watch INA219 readout on display
+    fillRange(CRGB::Black);
+    FastLED.show();
+    delay(150);
+
+    // ---- Phase 4: sequential per-pixel sweep ----
+    Serial.println("[LEDTest] Phase 4: sequential per-pixel sweep");
+    for (uint16_t i = 0; i < count; ++i)
+    {
+        fillRange(CRGB::Black);
+        leds[i] = CRGB(LEVEL_20, LEVEL_20, LEVEL_20);
+        FastLED.show();
+        delay(20);
+    }
+
+    // ---- Phase 5: cleanup ----
+    Serial.println("[LEDTest] Phase 5: cleanup");
+    FastLED.clear(true);
+    FastLED.setBrightness(DEFAULT_BRIGHTNESS);
+    Serial.println("[LEDTest] Strip test complete");
 }

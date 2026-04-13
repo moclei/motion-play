@@ -84,11 +84,17 @@ private:
     // Message area at bottom
     static const int MESSAGE_Y = 145;
 
+    // Power monitoring cached values
+    float cachedPowerVoltage = 0.0f;
+    float cachedPowerCurrentMA = 0.0f;
+    bool powerMonitorActive = false;
+
     // Drawing helpers
     void drawProgressBar();
     void drawSessionStatus();
     void drawStatusBadge(); // New: compact status in header
     void drawConfigPanel(); // New: config display in center
+    void drawPowerStatus(); // Power monitor readout
     void drawCheckmark(int x, int y, uint16_t color);
     void drawModeBadge();
 
@@ -109,6 +115,9 @@ public:
     void setSensorConfig(const SensorConfiguration *config);
     void setDetectionConfig(float peakMult, uint16_t minRise, uint32_t minWaveDurMs, uint8_t smoothWin);
     void setMode(DisplayMode mode);
+
+    // Power monitoring display
+    void updatePowerStatus(float vsysVoltage, float currentMA);
 
     // Legacy compatibility (for gradual migration)
     void showBootScreen();
