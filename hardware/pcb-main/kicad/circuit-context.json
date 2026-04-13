@@ -9,12 +9,37 @@
       "tca9548A_subsystem.kicad_sch": "TCA9548A_Subsystem",
       "esp32_s3.kicad_sch": "ESP32_S3"
     },
-    "source_hash": "712ae131a517",
-    "extracted_at": "2026-03-18T23:08:59.331253+00:00"
+    "source_hash": "455cad3e5704",
+    "extracted_at": "2026-04-10T20:33:09.991578+00:00"
   },
   "description": "",
   "blocks": {},
   "components": {
+    "BT1": {
+      "part": "Battery_Cell",
+      "value": "Battery_Cell",
+      "footprint": "Battery:BatteryHolder_Keystone_1042_1x18650",
+      "lcsc": "",
+      "sheet": "power_management.kicad_sch",
+      "block": "",
+      "function": "",
+      "role": "",
+      "critical_specs": "",
+      "pins": [
+        {
+          "number": "1",
+          "name": "+",
+          "type": "passive",
+          "net": "/Power Management/BAT_RAW"
+        },
+        {
+          "number": "2",
+          "name": "-",
+          "type": "passive",
+          "net": "GND"
+        }
+      ]
+    },
     "C10": {
       "part": "C",
       "value": "10uF",
@@ -865,6 +890,31 @@
         }
       ]
     },
+    "D1": {
+      "part": "LED",
+      "value": "LED",
+      "footprint": "LED_SMD:LED_0603_1608Metric",
+      "lcsc": "C19171301",
+      "sheet": "power_management.kicad_sch",
+      "block": "",
+      "function": "",
+      "role": "",
+      "critical_specs": "",
+      "pins": [
+        {
+          "number": "1",
+          "name": "K",
+          "type": "passive",
+          "net": "GND"
+        },
+        {
+          "number": "2",
+          "name": "A",
+          "type": "passive",
+          "net": "Net-(D1-A)"
+        }
+      ]
+    },
     "D5": {
       "part": "WS2812B-MINI-X1",
       "value": "WS2812B-MINI",
@@ -1021,15 +1071,15 @@
       ]
     },
     "J4": {
-      "part": "Conn_01x05",
-      "value": "Conn_01x05",
-      "footprint": "Connector_JST:JST_SH_SM05B-SRSS-TB_1x05-1MP_P1.00mm_Horizontal",
-      "lcsc": "C136657",
+      "part": "Conn_01x04",
+      "value": "Conn_01x04",
+      "footprint": "Connector_JST:JST_SH_SM04B-SRSS-TB_1x04-1MP_P1.00mm_Horizontal",
+      "lcsc": "C160404",
       "sheet": "motion-play-main.kicad_sch",
       "block": "sensor_connectors",
-      "function": "JST-SH connector to sensor module 1 (M1, 6 oclock position), carries I2C CH0 + INT1",
+      "function": "JST-SH connector to sensor module 1 (M1, 6 oclock position), carries I2C CH0",
       "role": "connector",
-      "critical_specs": "5-pin: 3.3V, GND, CH0_SDA, CH0_SCL, INT1",
+      "critical_specs": "4-pin: 3.3V, GND, CH0_SDA, CH0_SCL",
       "pins": [
         {
           "number": "1",
@@ -1058,15 +1108,15 @@
       ]
     },
     "J5": {
-      "part": "Conn_01x05_2",
-      "value": "Conn_01x05",
-      "footprint": "Connector_JST:JST_SH_SM05B-SRSS-TB_1x05-1MP_P1.00mm_Horizontal",
-      "lcsc": "C136657",
+      "part": "Conn_01x04",
+      "value": "Conn_01x04",
+      "footprint": "Connector_JST:JST_SH_SM04B-SRSS-TB_1x04-1MP_P1.00mm_Horizontal",
+      "lcsc": "C160404",
       "sheet": "motion-play-main.kicad_sch",
       "block": "sensor_connectors",
-      "function": "JST-SH connector to sensor module 2 (M2, 9 oclock position), carries I2C CH1 + INT2",
+      "function": "JST-SH connector to sensor module 2 (M2, 9 oclock position), carries I2C CH1 ",
       "role": "connector",
-      "critical_specs": "5-pin: 3.3V, GND, CH1_SDA, CH1_SCL, INT2",
+      "critical_specs": "4-pin: 3.3V, GND, CH1_SDA, CH1_SCL",
       "pins": [
         {
           "number": "1",
@@ -1095,15 +1145,15 @@
       ]
     },
     "J6": {
-      "part": "Conn_01x05_1",
-      "value": "Conn_01x05",
-      "footprint": "Connector_JST:JST_SH_SM05B-SRSS-TB_1x05-1MP_P1.00mm_Horizontal",
-      "lcsc": "C136657",
+      "part": "Conn_01x04_1",
+      "value": "Conn_01x04",
+      "footprint": "Connector_JST:JST_SH_SM04B-SRSS-TB_1x04-1MP_P1.00mm_Horizontal",
+      "lcsc": "C160404",
       "sheet": "motion-play-main.kicad_sch",
       "block": "sensor_connectors",
-      "function": "JST-SH connector to sensor module 3 (M3, 3 oclock position), carries I2C CH2 + INT3",
+      "function": "JST-SH connector to sensor module 3 (M3, 3 oclock position), carries I2C CH2",
       "role": "connector",
-      "critical_specs": "5-pin: 3.3V, GND, CH2_SDA, CH2_SCL, INT3",
+      "critical_specs": "4-pin: 3.3V, GND, CH2_SDA, CH2_SCL",
       "pins": [
         {
           "number": "1",
@@ -1210,31 +1260,6 @@
         }
       ]
     },
-    "J8": {
-      "part": "Conn_01x02",
-      "value": "JST_PH_2pin",
-      "footprint": "Connector_JST:JST_PH_S2B-PH-SM4-TB_1x02-1MP_P2.00mm_Horizontal",
-      "lcsc": "C18221575",
-      "sheet": "power_management.kicad_sch",
-      "block": "battery_mgmt",
-      "function": "Battery connector for single-cell Li-ion (Samsung 30Q)",
-      "role": "connector",
-      "critical_specs": "JST PH 2-pin, reverse polarity protected by Q2",
-      "pins": [
-        {
-          "number": "1",
-          "name": "Pin_1",
-          "type": "passive",
-          "net": "/Power Management/BAT_RAW"
-        },
-        {
-          "number": "2",
-          "name": "Pin_2",
-          "type": "passive",
-          "net": "GND"
-        }
-      ]
-    },
     "L1": {
       "part": "L",
       "value": "2.2\u00b5H",
@@ -1286,7 +1311,7 @@
       ]
     },
     "Q2": {
-      "part": "PMOS",
+      "part": "Q_PMOS_GSD",
       "value": "PMOS",
       "footprint": "Package_TO_SOT_SMD:SOT-23",
       "lcsc": "C15127",
@@ -1298,21 +1323,71 @@
       "pins": [
         {
           "number": "1",
-          "name": "D",
-          "type": "passive",
-          "net": "/Power Management/BAT_RAW"
-        },
-        {
-          "number": "2",
           "name": "G",
           "type": "input",
           "net": "/Power Management/PMOS_GATE"
         },
         {
-          "number": "3",
+          "number": "2",
           "name": "S",
           "type": "passive",
+          "net": "/Power Management/BAT_RAW"
+        },
+        {
+          "number": "3",
+          "name": "D",
+          "type": "passive",
           "net": "/Power Management/VBAT"
+        }
+      ]
+    },
+    "R1": {
+      "part": "R_4",
+      "value": "1k\u03a9",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "lcsc": "C22548",
+      "sheet": "power_management.kicad_sch",
+      "block": "",
+      "function": "",
+      "role": "",
+      "critical_specs": "1k ohm resistor for power indicator LED",
+      "pins": [
+        {
+          "number": "1",
+          "name": "",
+          "type": "passive",
+          "net": "Net-(D1-A)"
+        },
+        {
+          "number": "2",
+          "name": "",
+          "type": "passive",
+          "net": "+3.3V"
+        }
+      ]
+    },
+    "R2": {
+      "part": "R_3",
+      "value": "100k\u03a9",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "lcsc": "C14675",
+      "sheet": "power_management.kicad_sch",
+      "block": "battery_mgmt",
+      "function": "PMOS gate bias resistor to BAT_RAW (turns Q2 off if reverse polarity)",
+      "role": "bias",
+      "critical_specs": "100k",
+      "pins": [
+        {
+          "number": "1",
+          "name": "",
+          "type": "passive",
+          "net": "/Power Management/BOOST_EN"
+        },
+        {
+          "number": "2",
+          "name": "",
+          "type": "passive",
+          "net": "GND"
         }
       ]
     },
@@ -1492,7 +1567,7 @@
       ]
     },
     "R34": {
-      "part": "R",
+      "part": "R_3",
       "value": "100k\u03a9",
       "footprint": "Resistor_SMD:R_0603_1608Metric",
       "lcsc": "C14675",
@@ -1512,7 +1587,7 @@
           "number": "2",
           "name": "",
           "type": "passive",
-          "net": "/Power Management/BAT_RAW"
+          "net": "GND"
         }
       ]
     },
@@ -1756,7 +1831,7 @@
           "number": "1",
           "name": "",
           "type": "passive",
-          "net": "/Power Management/VSYS_SW"
+          "net": "/Power Management/VSYS"
         },
         {
           "number": "2",
@@ -1892,27 +1967,33 @@
       ]
     },
     "SW1": {
-      "part": "SS-12D10L5",
-      "value": "SS-12D10L5",
-      "footprint": "JLC-MCP:SW-TH_SS-12D10L5",
-      "lcsc": "C319012",
+      "part": "SW_SPDT",
+      "value": "SW_SPDT",
+      "footprint": "JLC-MCP:MK-12C02-G020_GSW",
+      "lcsc": "C431540",
       "sheet": "power_management.kicad_sch",
-      "block": "power",
+      "block": "",
       "function": "",
-      "role": "placed_by_schematic_modify",
+      "role": "",
       "critical_specs": "",
       "pins": [
         {
           "number": "1",
-          "name": "1",
-          "type": "unspecified",
-          "net": "/Power Management/VSYS"
+          "name": "A",
+          "type": "passive",
+          "net": "/Power Management/VSYS_SENSE"
         },
         {
           "number": "2",
-          "name": "2",
-          "type": "unspecified",
-          "net": "/Power Management/VSYS_SW"
+          "name": "B",
+          "type": "passive",
+          "net": "/Power Management/BOOST_EN"
+        },
+        {
+          "number": "3",
+          "name": "C",
+          "type": "passive",
+          "net": "GND"
         }
       ]
     },
@@ -2546,7 +2627,7 @@
           "number": "2",
           "name": "EN",
           "type": "unspecified",
-          "net": "/Power Management/VSYS_SENSE"
+          "net": "/Power Management/BOOST_EN"
         },
         {
           "number": "3",
@@ -2673,7 +2754,7 @@
           "number": "1",
           "name": "IN+",
           "type": "unspecified",
-          "net": "/Power Management/VSYS_SW"
+          "net": "/Power Management/VSYS"
         },
         {
           "number": "2",
@@ -2795,7 +2876,7 @@
           "number": "5",
           "name": "5",
           "type": "input",
-          "net": "GND"
+          "net": "/Power Management/Protected_VBUS"
         },
         {
           "number": "6",
@@ -2910,6 +2991,12 @@
       "description": ""
     },
     "/Power Management/BOOST_COMP": {
+      "type": "",
+      "protocol": "",
+      "direction": "",
+      "description": ""
+    },
+    "/Power Management/BOOST_EN": {
       "type": "",
       "protocol": "",
       "direction": "",
@@ -3047,12 +3134,6 @@
       "direction": "",
       "description": ""
     },
-    "/Power Management/VSYS_SW": {
-      "type": "",
-      "protocol": "",
-      "direction": "",
-      "description": ""
-    },
     "/TCA9548A_Subsystem/CH0_SCL": {
       "type": "",
       "protocol": "",
@@ -3114,6 +3195,12 @@
       "description": ""
     },
     "Net-(C7-Pad2)": {
+      "type": "",
+      "protocol": "",
+      "direction": "",
+      "description": ""
+    },
+    "Net-(D1-A)": {
       "type": "",
       "protocol": "",
       "direction": "",

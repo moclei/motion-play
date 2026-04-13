@@ -1,0 +1,251 @@
+ERC report (2026-04-05T13:34:34-0700, Encoding UTF8)
+
+***** Sheet /
+[lib_symbol_issues]: The current configuration does not include the symbol library 'USB-C_SMD-TYPE-C-31-M-12'
+    ; warning
+    @(1500 mils, 2000 mils): Symbol J7 [TYPE-C-31-M-12]
+[lib_symbol_issues]: The current configuration does not include the symbol library 'BQ24195RGET'
+    ; warning
+    @(4650 mils, 2100 mils): Symbol U5 [BQ24195RGET]
+
+***** Sheet /LED Controller/
+
+***** Sheet /Power Management/
+[pin_to_pin]: Pins of type Unspecified and Input are connected
+    ; warning
+    @(1050 mils, 1950 mils): Symbol J7 Pin B6 [DP2, Unspecified, Line]
+    @(8750 mils, 2900 mils): Symbol U9 Pin 1 [1, Input, Line]
+[pin_to_pin]: Pins of type Unspecified and Input are connected
+    ; warning
+    @(1050 mils, 2050 mils): Symbol J7 Pin B7 [DN2, Unspecified, Line]
+    @(8750 mils, 3500 mils): Symbol U9 Pin 3 [3, Input, Line]
+[pin_to_pin]: Pins of type Unspecified and Unspecified are connected
+    ; warning
+    @(1950 mils, 1950 mils): Symbol J7 Pin A7 [DN1, Unspecified, Line]
+    @(1050 mils, 2050 mils): Symbol J7 Pin B7 [DN2, Unspecified, Line]
+[pin_to_pin]: Pins of type Unspecified and Unspecified are connected
+    ; warning
+    @(1950 mils, 2050 mils): Symbol J7 Pin A6 [DP1, Unspecified, Line]
+    @(1050 mils, 1950 mils): Symbol J7 Pin B6 [DP2, Unspecified, Line]
+[pin_to_pin]: Pins of type Unspecified and Passive are connected
+    ; warning
+    @(1100 mils, 3500 mils): Symbol U7 Pin 1 [IN+, Unspecified, Line]
+    @(1250 mils, 5100 mils): Symbol R44 Pin 1 [Passive, Line]
+[pin_to_pin]: Pins of type Unspecified and Passive are connected
+    ; warning
+    @(1100 mils, 3600 mils): Symbol U7 Pin 2 [IN-, Unspecified, Line]
+    @(1250 mils, 5400 mils): Symbol R44 Pin 2 [Passive, Line]
+[pin_to_pin]: Pins of type Unspecified and Unspecified are connected
+    ; warning
+    @(1100 mils, 3700 mils): Symbol U7 Pin 3 [GND, Unspecified, Line]
+    @(1900 mils, 3600 mils): Symbol U7 Pin 7 [A0, Unspecified, Line]
+[pin_to_pin]: Pins of type Unspecified and Passive are connected
+    ; warning
+    @(1100 mils, 3800 mils): Symbol U7 Pin 4 [VS, Unspecified, Line]
+    @(2900 mils, 3600 mils): Symbol C40 Pin 1 [Passive, Line]
+[pin_to_pin]: Pins of type Unspecified and Passive are connected
+    ; warning
+    @(1900 mils, 3500 mils): Symbol U7 Pin 8 [A1, Unspecified, Line]
+    @(1550 mils, 2850 mils): Symbol J7 Pin 0 [SH, Passive, Line]
+[pin_to_pin]: Pins of type Unspecified and Unspecified are connected
+    ; warning
+    @(1900 mils, 3600 mils): Symbol U7 Pin 7 [A0, Unspecified, Line]
+    @(1900 mils, 3500 mils): Symbol U7 Pin 8 [A1, Unspecified, Line]
+[pin_to_pin]: Pins of type Unspecified and Bidirectional are connected
+    ; warning
+    @(1900 mils, 3700 mils): Symbol U7 Pin 6 [SDA, Unspecified, Line]
+    @(3950 mils, 2800 mils): Symbol U5 Pin 6 [SDA, Bidirectional, Line]
+[pin_to_pin]: Pins of type Unspecified and Input are connected
+    ; warning
+    @(1900 mils, 3800 mils): Symbol U7 Pin 5 [SCL, Unspecified, Line]
+    @(3950 mils, 2400 mils): Symbol U5 Pin 5 [SCL, Input, Line]
+[pin_to_pin]: Pins of type Unspecified and Unspecified are connected
+    ; warning
+    @(6750 mils, 1700 mils): Symbol U6 Pin 2 [EN, Unspecified, Line]
+    @(6750 mils, 2400 mils): Symbol U6 Pin 9 [VIN, Unspecified, Line]
+[pin_to_pin]: Pins of type Unspecified and Passive are connected
+    ; warning
+    @(6750 mils, 1800 mils): Symbol U6 Pin 3 [FSW, Unspecified, Line]
+    @(6800 mils, 5050 mils): Symbol R41 Pin 1 [Passive, Line]
+[pin_to_pin]: Pins of type Unspecified and Unspecified are connected
+    ; warning
+    @(6750 mils, 1900 mils): Symbol U6 Pin 4 [SW, Unspecified, Line]
+    @(6750 mils, 2000 mils): Symbol U6 Pin 5 [SW, Unspecified, Line]
+[pin_to_pin]: Pins of type Unspecified and Unspecified are connected
+    ; warning
+    @(6750 mils, 2000 mils): Symbol U6 Pin 5 [SW, Unspecified, Line]
+    @(6750 mils, 2100 mils): Symbol U6 Pin 6 [SW, Unspecified, Line]
+[pin_to_pin]: Pins of type Unspecified and Unspecified are connected
+    ; warning
+    @(6750 mils, 2100 mils): Symbol U6 Pin 6 [SW, Unspecified, Line]
+    @(6750 mils, 2200 mils): Symbol U6 Pin 7 [SW, Unspecified, Line]
+[pin_to_pin]: Pins of type Unspecified and Passive are connected
+    ; warning
+    @(6750 mils, 2200 mils): Symbol U6 Pin 7 [SW, Unspecified, Line]
+    @(6800 mils, 5350 mils): Symbol R41 Pin 2 [Passive, Line]
+[pin_to_pin]: Pins of type Unspecified and Passive are connected
+    ; warning
+    @(6750 mils, 2300 mils): Symbol U6 Pin 8 [BOOT, Unspecified, Line]
+    @(9550 mils, 5850 mils): Symbol C32 Pin 1 [Passive, Line]
+[pin_to_pin]: Pins of type Unspecified and Passive are connected
+    ; warning
+    @(6750 mils, 2400 mils): Symbol U6 Pin 9 [VIN, Unspecified, Line]
+    @(4750 mils, 5050 mils): Symbol C31 Pin 1 [Passive, Line]
+[pin_to_pin]: Pins of type Unspecified and Passive are connected
+    ; warning
+    @(7150 mils, 1100 mils): Symbol U6 Pin 1 [VCC, Unspecified, Line]
+    @(9000 mils, 5850 mils): Symbol C33 Pin 1 [Passive, Line]
+[pin_to_pin]: Pins of type Unspecified and Unspecified are connected
+    ; warning
+    @(7450 mils, 1100 mils): Symbol U6 Pin 21 [PGND, Unspecified, Line]
+    @(8900 mils, 1850 mils): Symbol U8 Pin 1 [GND, Unspecified, Line]
+[pin_to_pin]: Pins of type Unspecified and Unspecified are connected
+    ; warning
+    @(7550 mils, 1100 mils): Symbol U6 Pin 20 [AGND, Unspecified, Line]
+    @(7450 mils, 1100 mils): Symbol U6 Pin 21 [PGND, Unspecified, Line]
+[pin_to_pin]: Pins of type Unspecified and Passive are connected
+    ; warning
+    @(7150 mils, 3000 mils): Symbol U6 Pin 10 [SS, Unspecified, Line]
+    @(9500 mils, 5050 mils): Symbol C37 Pin 1 [Passive, Line]
+[pin_to_pin]: Pins of type Unspecified and Unspecified are connected
+    ; warning
+    @(7550 mils, 3000 mils): Symbol U6 Pin 11 [NC, Unspecified, Line]
+    @(7950 mils, 2400 mils): Symbol U6 Pin 12 [NC, Unspecified, Line]
+[pin_to_pin]: Pins of type Unspecified and Passive are connected
+    ; warning
+    @(7950 mils, 1700 mils): Symbol U6 Pin 19 [ILIM, Unspecified, Line]
+    @(7350 mils, 5050 mils): Symbol R42 Pin 1 [Passive, Line]
+[pin_to_pin]: Pins of type Unspecified and Passive are connected
+    ; warning
+    @(7950 mils, 1800 mils): Symbol U6 Pin 18 [COMP, Unspecified, Line]
+    @(7900 mils, 5050 mils): Symbol R43 Pin 1 [Passive, Line]
+[pin_to_pin]: Pins of type Unspecified and Passive are connected
+    ; warning
+    @(7950 mils, 1900 mils): Symbol U6 Pin 17 [FB, Unspecified, Line]
+    @(6300 mils, 5050 mils): Symbol R40 Pin 1 [Passive, Line]
+[pin_to_pin]: Pins of type Unspecified and Unspecified are connected
+    ; warning
+    @(7950 mils, 2000 mils): Symbol U6 Pin 16 [VOUT, Unspecified, Line]
+    @(8900 mils, 2050 mils): Symbol U8 Pin 3 [VIN, Unspecified, Line]
+[pin_to_pin]: Pins of type Unspecified and Unspecified are connected
+    ; warning
+    @(7950 mils, 2100 mils): Symbol U6 Pin 15 [VOUT, Unspecified, Line]
+    @(7950 mils, 2000 mils): Symbol U6 Pin 16 [VOUT, Unspecified, Line]
+[pin_to_pin]: Pins of type Unspecified and Unspecified are connected
+    ; warning
+    @(7950 mils, 2200 mils): Symbol U6 Pin 14 [VOUT, Unspecified, Line]
+    @(7950 mils, 2100 mils): Symbol U6 Pin 15 [VOUT, Unspecified, Line]
+[pin_to_pin]: Pins of type Unspecified and Unspecified are connected
+    ; warning
+    @(7950 mils, 2400 mils): Symbol U6 Pin 12 [NC, Unspecified, Line]
+    @(8900 mils, 1850 mils): Symbol U8 Pin 1 [GND, Unspecified, Line]
+[pin_to_pin]: Pins of type Unspecified and Power input are connected
+    ; warning
+    @(8900 mils, 900 mils): Symbol SW1 Pin 1 [1, Unspecified, Line]
+    @(5350 mils, 1400 mils): Symbol U5 Pin 15 [SYS1, Power input, Line]
+[pin_to_pin]: Pins of type Unspecified and Input are connected
+    ; warning
+    @(8900 mils, 1850 mils): Symbol U8 Pin 1 [GND, Unspecified, Line]
+    @(8750 mils, 3200 mils): Symbol U9 Pin 2 [2, Input, Line]
+[pin_to_pin]: Pins of type Unspecified and Unspecified are connected
+    ; warning
+    @(8900 mils, 1950 mils): Symbol U8 Pin 2 [VOUT, Unspecified, Line]
+    @(9800 mils, 1950 mils): Symbol U8 Pin 4 [VOUT, Unspecified, Line]
+[pin_to_pin]: Pins of type Unspecified and Passive are connected
+    ; warning
+    @(8900 mils, 2050 mils): Symbol U8 Pin 3 [VIN, Unspecified, Line]
+    @(10300 mils, 1950 mils): Symbol C42 Pin 1 [1, Passive, Line]
+[pin_to_pin]: Pins of type Unspecified and Unspecified are connected
+    ; warning
+    @(9100 mils, 900 mils): Symbol SW1 Pin 2 [2, Unspecified, Line]
+    @(1100 mils, 3500 mils): Symbol U7 Pin 1 [IN+, Unspecified, Line]
+[pin_to_pin]: Pins of type Unspecified and Passive are connected
+    ; warning
+    @(9800 mils, 1950 mils): Symbol U8 Pin 4 [VOUT, Unspecified, Line]
+    @(10750 mils, 1950 mils): Symbol C43 Pin 1 [1, Passive, Line]
+
+***** Sheet /TCA9548A_Subsystem/
+
+***** Sheet /ESP32_S3/
+[pin_to_pin]: Pins of type Unspecified and Passive are connected
+    ; warning
+    @(2950 mils, 2850 mils): Symbol SW2 Pin 1 [1, Unspecified, Line]
+    @(2600 mils, 2050 mils): Symbol R50 Pin 2 [Passive, Line]
+[pin_to_pin]: Pins of type Unspecified and Unspecified are connected
+    ; warning
+    @(3350 mils, 2850 mils): Symbol SW2 Pin 2 [2, Unspecified, Line]
+    @(3400 mils, 3250 mils): Symbol SW3 Pin 2 [2, Unspecified, Line]
+[pin_to_pin]: Pins of type Unspecified and Passive are connected
+    ; warning
+    @(3000 mils, 3250 mils): Symbol SW3 Pin 1 [1, Unspecified, Line]
+    @(3000 mils, 2050 mils): Symbol R51 Pin 2 [Passive, Line]
+[pin_to_pin]: Pins of type Unspecified and Passive are connected
+    ; warning
+    @(3400 mils, 3250 mils): Symbol SW3 Pin 2 [2, Unspecified, Line]
+    @(3500 mils, 2000 mils): Symbol C51 Pin 2 [Passive, Line]
+[pin_to_pin]: Pins of type Unspecified and Unspecified are connected
+    ; warning
+    @(5500 mils, 1750 mils): Symbol D5 Pin 1 [DIN, Unspecified, Line]
+    @(5050 mils, 4400 mils): Symbol U3 Pin 9 [IO16, Unspecified, Line]
+[pin_to_pin]: Pins of type Unspecified and Unspecified are connected
+    ; warning
+    @(5500 mils, 1850 mils): Symbol D5 Pin 2 [VDD, Unspecified, Line]
+    @(8900 mils, 2050 mils): Symbol U8 Pin 3 [VIN, Unspecified, Line]
+[pin_to_pin]: Pins of type Unspecified and Passive are connected
+    ; warning
+    @(5050 mils, 3600 mils): Symbol U3 Pin 1 [GND, Unspecified, Line]
+    @(4500 mils, 2000 mils): Symbol C55 Pin 2 [Passive, Line]
+[pin_to_pin]: Pins of type Unspecified and Passive are connected
+    ; warning
+    @(5050 mils, 3700 mils): Symbol U3 Pin 2 [3V3, Unspecified, Line]
+    @(4500 mils, 1700 mils): Symbol C55 Pin 1 [Passive, Line]
+[pin_to_pin]: Pins of type Unspecified and Passive are connected
+    ; warning
+    @(5050 mils, 3800 mils): Symbol U3 Pin 3 [EN, Unspecified, Line]
+    @(2600 mils, 2050 mils): Symbol R50 Pin 2 [Passive, Line]
+[pin_to_pin]: Pins of type Unspecified and Unspecified are connected
+    ; warning
+    @(6300 mils, 1750 mils): Symbol D5 Pin 4 [GND, Unspecified, Line]
+    @(6750 mils, 3450 mils): Symbol U3 Pin 41 [GND, Unspecified, Line]
+[pin_to_pin]: Pins of type Unspecified and Passive are connected
+    ; warning
+    @(5050 mils, 4400 mils): Symbol U3 Pin 9 [IO16, Unspecified, Line]
+    @(1400 mils, 2350 mils): Symbol TPIO16 Pin 1 [1, Passive, Line]
+[pin_to_pin]: Pins of type Unspecified and Passive are connected
+    ; warning
+    @(5050 mils, 4800 mils): Symbol U3 Pin 13 [IO19, Unspecified, Line]
+    @(3150 mils, 3700 mils): Symbol R52 Pin 2 [Passive, Line]
+[pin_to_pin]: Pins of type Unspecified and Passive are connected
+    ; warning
+    @(5050 mils, 4900 mils): Symbol U3 Pin 14 [IO20, Unspecified, Line]
+    @(3150 mils, 4050 mils): Symbol R53 Pin 2 [Passive, Line]
+[pin_to_pin]: Pins of type Unspecified and Passive are connected
+    ; warning
+    @(6750 mils, 3450 mils): Symbol U3 Pin 41 [GND, Unspecified, Line]
+    @(4500 mils, 2000 mils): Symbol C55 Pin 2 [Passive, Line]
+[pin_to_pin]: Pins of type Unspecified and Unspecified are connected
+    ; warning
+    @(6750 mils, 3600 mils): Symbol U3 Pin 40 [GND, Unspecified, Line]
+    @(6750 mils, 3450 mils): Symbol U3 Pin 41 [GND, Unspecified, Line]
+[pin_to_pin]: Pins of type Unspecified and Unspecified are connected
+    ; warning
+    @(6750 mils, 3900 mils): Symbol U3 Pin 37 [TXD0, Unspecified, Line]
+    @(1900 mils, 3700 mils): Symbol U7 Pin 6 [SDA, Unspecified, Line]
+[pin_to_pin]: Pins of type Unspecified and Unspecified are connected
+    ; warning
+    @(6750 mils, 4000 mils): Symbol U3 Pin 36 [RXD0, Unspecified, Line]
+    @(1900 mils, 3800 mils): Symbol U7 Pin 5 [SCL, Unspecified, Line]
+[pin_to_pin]: Pins of type Unspecified and Input are connected
+    ; warning
+    @(5700 mils, 5450 mils): Symbol U3 Pin 18 [IO10, Unspecified, Line]
+    @(5750 mils, 2500 mils): Symbol U4 Pin 3 [~{RESET}, Input, Line]
+[pin_to_pin]: Pins of type Unspecified and Output are connected
+    ; warning
+    @(6200 mils, 5450 mils): Symbol U3 Pin 23 [IO21, Unspecified, Line]
+    @(5350 mils, 1900 mils): Symbol U5 Pin 7 [INT, Output, Line]
+[pin_to_pin]: Pins of type Unspecified and Passive are connected
+    ; warning
+    @(6750 mils, 4900 mils): Symbol U3 Pin 27 [IO0, Unspecified, Line]
+    @(3000 mils, 2050 mils): Symbol R51 Pin 2 [Passive, Line]
+
+ ** ERC messages: 60  Errors 0  Warnings 60
