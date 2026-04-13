@@ -16,7 +16,9 @@
  */
 
 // LED Configuration
-#define NUM_LEDS 72
+// NUM_LEDS is the buffer/test cap. Production hoop uses 72; the buffer is sized
+// larger so the diagnostic strip-test command can drive longer test strips.
+#define NUM_LEDS 90
 #define LED_PIN 16
 #define LED_TYPE WS2812B
 #define COLOR_ORDER GRB
@@ -84,6 +86,15 @@ public:
      * Check if currently animating
      */
     bool isAnimating() const;
+
+    /**
+     * Run a blocking diagnostic test on the LED strip.
+     * Lights `count` LEDs through five phases (solid colors, per-channel ramps,
+     * combined RGB peak at ~40%, sequential per-pixel sweep, cleanup) so a new
+     * strip can be validated for both addressing and current draw.
+     * @param count Number of LEDs to test, clamped to [1, NUM_LEDS].
+     */
+    void runStripTest(uint16_t count);
 };
 
 #endif

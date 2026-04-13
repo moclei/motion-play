@@ -519,6 +519,59 @@ void DisplayManager::updateStatus(const String &status, uint16_t color)
     showMessage(status, color);
 }
 
+void DisplayManager::updatePowerStatus(float vsysVoltage, float currentMA)
+{
+    // Only redraw if values changed meaningfully (avoids flicker)
+    bool voltChanged = fabsf(vsysVoltage - cachedPowerVoltage) > 0.005f;
+    bool currChanged = fabsf(currentMA - cachedPowerCurrentMA) > 5.0f;
+
+    cachedPowerVoltage = vsysVoltage;
+    cachedPowerCurrentMA = currentMA;
+
+    if (!powerMonitorActive || voltChanged || currChanged)
+    {
+        powerMonitorActive = true;
+        drawPowerStatus();
+    }
+}
+
+void DisplayManager::drawPowerStatus()
+{
+    // Draw power readout in the message area (bottom 25px) using big text
+    const int y = MESSAGE_Y;
+    tft.fillRect(0, y, SCREEN_WIDTH, 25, TFT_BLACK);
+
+    // Format: "3.82V  1240mA" in large text, centered
+    tft.setTextSize(2);
+
+    // Voltage in green/yellow/red depending on level
+    uint16_t vColor = TFT_GREEN;
+    if (cachedPowerVoltage < 3.2f)
+        vColor = TFT_RED;
+    else if (cachedPowerVoltage < 3.5f)
+        vColor = TFT_YELLOW;
+
+    // Current in white, or red if high
+    uint16_t iColor = TFT_WHITE;
+    if (cachedPowerCurrentMA > 1800.0f)
+        iColor = TFT_RED;
+    else if (cachedPowerCurrentMA > 1400.0f)
+        iColor = TFT_YELLOW;
+
+    char vBuf[8];
+    snprintf(vBuf, sizeof(vBuf), "%.2fV", cachedPowerVoltage);
+    char iBuf[10];
+    int ma = (int)cachedPowerCurrentMA;
+    snprintf(iBuf, sizeof(iBuf), "%dmA", ma);
+
+    // Voltage on left, current on right — both big
+    tft.setTextColor(vColor, TFT_BLACK);
+    tft.drawString(vBuf, 30, y + 3);
+
+    tft.setTextColor(iColor, TFT_BLACK);
+    tft.drawString(iBuf, 180, y + 3);
+}
+
 void DisplayManager::setConfigString(const String &config)
 {
     configString = config;

@@ -1,9 +1,12 @@
 import { useState } from 'react';
 import { api } from '../services/api';
-import { Play, Square, ChevronDown, Settings, Target, AlertCircle } from 'lucide-react';
+import { Play, Square, ChevronDown, Settings, Target, AlertCircle, Lightbulb } from 'lucide-react';
 import toast from 'react-hot-toast';
 
 type StartMode = 'debug' | 'play' | 'live_debug';
+
+const LED_TEST_MAX = 90;
+const LED_TEST_DURATION_MS = 6000;
 
 interface HeaderProps {
     onCollectionStopped?: () => void;
@@ -34,6 +37,8 @@ export const Header = ({ onCollectionStopped, onSettingsClick }: HeaderProps) =>
     const [selectedMode, setSelectedMode] = useState<StartMode>('live_debug');
     const [dropdownOpen, setDropdownOpen] = useState(false);
     const [calibrating, setCalibrating] = useState(false);
+    const [ledTestCount, setLedTestCount] = useState<number>(90);
+    const [ledTestRunning, setLedTestRunning] = useState(false);
 
     const handleStart = async () => {
         try {
@@ -90,6 +95,29 @@ export const Header = ({ onCollectionStopped, onSettingsClick }: HeaderProps) =>
             toast.error('Failed to start calibration', { id: 'calibration' });
             setCalibrating(false);
             console.error(err);
+        }
+    };
+
+    const handleRunLedTest = async () => {
+        if (collecting) {
+            toast.error('Stop collection first');
+            return;
+        }
+        const clamped = Math.max(1, Math.min(LED_TEST_MAX, Math.floor(ledTestCount || 0)));
+        try {
+            setLedTestRunning(true);
+            toast.loading(`Running LED test (${clamped} LEDs)...`, { id: 'led-test' });
+            await api.sendCommand('led_strip_test', { led_count: clamped });
+            toast.success(`LED test sent (${clamped} LEDs) — watch the strip`, {
+                id: 'led-test',
+                duration: 4000,
+            });
+        } catch (err) {
+            toast.error('Failed to send LED test', { id: 'led-test' });
+            console.error(err);
+        } finally {
+            // Test runs ~6s on device; re-enable button after a cooldown.
+            setTimeout(() => setLedTestRunning(false), LED_TEST_DURATION_MS);
         }
     };
 
@@ -216,6 +244,34 @@ export const Header = ({ onCollectionStopped, onSettingsClick }: HeaderProps) =>
                         <Target size={18} />
                         {calibrating ? 'Calibrating...' : 'Calibrate'}
                     </button>
+
+                    {/* LED Strip Test */}
+                    <div className="flex items-center gap-1">
+                        <input
+                            type="number"
+                            min={1}
+                            max={LED_TEST_MAX}
+                            value={ledTestCount}
+                            onChange={(e) => setLedTestCount(parseInt(e.target.value, 10) || 0)}
+                            disabled={ledTestRunning || collecting}
+                            title={`LED count (1-${LED_TEST_MAX})`}
+                            className="w-16 px-2 py-2 border rounded text-sm disabled:bg-gray-100 disabled:text-gray-400"
+                        />
+                        <button
+                            onClick={handleRunLedTest}
+                            disabled={ledTestRunning || collecting}
+                            className={`flex items-center gap-2 px-4 py-2 rounded transition-colors font-medium ${ledTestRunning
+                                ? 'bg-yellow-500 text-white animate-pulse'
+                                : collecting
+                                    ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                                    : 'bg-yellow-100 text-yellow-800 hover:bg-yellow-200'
+                                }`}
+                            title={collecting ? 'Stop collection first' : 'Run LED strip diagnostic test'}
+                        >
+                            <Lightbulb size={18} />
+                            {ledTestRunning ? 'Testing...' : 'LED Test'}
+                        </button>
+                    </div>
 
                     {/* Settings Button */}
                     <button
