@@ -30,11 +30,11 @@
 
 ## Phase 3: v7 first deliverable
 
-- [ ] Run extractor on `hardware/pcb-main/kicad/motion-play-main.kicad_pcb`
-- [ ] Run auditor with `v7-main-i2c.json` spec
-- [ ] Sanity-check the output: do numbers feel right given known board layout? (BQ at far end of bus, R28/R29 in top-right, L1 near BQ)
-- [ ] Add a new section to `docs/debugging/v7-i2c-investigation.md` (e.g., "Phase 16 — routing-aware audit") with: the Markdown audit output verbatim, a 1–2 paragraph interpretation, and a verdict on whether the geometry supports or weakens the routing-asymmetry hypothesis.
-- [ ] Update `tools/pcb-context/README.md` with usage examples for both new scripts and audit spec authoring guide.
+- [x] Run extractor on `hardware/pcb-main/kicad/motion-play-main.kicad_pcb`
+- [x] Run auditor with `v7-main-i2c.json` spec
+- [x] Sanity-check the output — numbers consistent with known board layout (BQ at far end of bus, R28/R29 top-right, L1 near BQ)
+- [x] Phase 16 section added to `docs/debugging/v7-i2c-investigation.md` — verdict: routing-asymmetry hypothesis **weakened**, not supported, by measured geometry
+- [x] Updated `tools/pcb-context/README.md` with usage examples for both new scripts and audit-spec authoring guide
 
 ## Phase 4: Relay prompt for v2 (workflow override — see note below)
 
