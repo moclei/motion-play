@@ -97,15 +97,25 @@ Audit spec (`audit-specs/v7-main-i2c.json`):
 ```json
 {
   "pcb": "hardware/pcb-main/kicad/motion-play-main.kicad_pcb",
+  "routing_context": "hardware/pcb-main/kicad/pcb-routing-context.json",
   "target_nets": ["/I2C_SDA", "/I2C_SCL"],
   "noisy_components": ["L1", "L2", "U5", "U6"],
   "noisy_pads": [
-    {"ref": "U5", "pad": "7", "label": "BQ24195 SW pin"}
+    {"ref": "U5", "pad": "19", "label": "BQ24195 SW pin (pad 19)"},
+    {"ref": "U5", "pad": "20", "label": "BQ24195 SW pin (pad 20)"}
   ],
-  "noisy_nets": ["/VBUS", "/VSYS", "/BAT"],
+  "noisy_nets": [
+    "/Power Management/Protected_VBUS",
+    "/Power Management/VSYS",
+    "/Power Management/VBAT",
+    "/Power Management/BQ_SW",
+    "/Power Management/BOOST_SW"
+  ],
   "compare_pair": ["/I2C_SDA", "/I2C_SCL"]
 }
 ```
+
+Note: hierarchical-sheet net names on this board are prefixed (e.g. `/Power Management/VSYS`, not `/VSYS`). Use `routing_extract.py --list-nets` for exact strings. The BQ24195RGER's SW pin is split across pads 19 and 20, not pad 7.
 
 Audit report JSON (rough):
 

@@ -1,0 +1,336 @@
+{
+  "meta": {
+    "spec": "v7-main-i2c.json",
+    "spec_full_path": "/Users/marcocleirigh/Workspace/motion-play/tools/pcb-context/audit-specs/v7-main-i2c.json",
+    "pcb": "hardware/pcb-main/kicad/motion-play-main.kicad_pcb",
+    "routing_context": "/Users/marcocleirigh/Workspace/motion-play/hardware/pcb-main/kicad/pcb-routing-context.json",
+    "generated_at": "2026-04-25T17:30:53.066907+00:00",
+    "schema_version": 1
+  },
+  "nets": {
+    "/I2C_SDA": {
+      "name": "/I2C_SDA",
+      "total_length_mm": 72.8983,
+      "length_by_layer": {
+        "B.Cu": 36.9806,
+        "F.Cu": 35.9176
+      },
+      "segment_count": 25,
+      "via_count": 3,
+      "proximities": {
+        "L1": {
+          "min_distance_mm": 6.050000000000011,
+          "layer": "F.Cu",
+          "per_layer_mm": {
+            "F.Cu": 6.050000000000011
+          }
+        },
+        "L2": {
+          "min_distance_mm": 6.988537472175414,
+          "layer": "F.Cu",
+          "per_layer_mm": {
+            "F.Cu": 6.988537472175414
+          }
+        },
+        "U5": {
+          "min_distance_mm": 0.0,
+          "layer": "F.Cu",
+          "per_layer_mm": {
+            "F.Cu": 0.0
+          }
+        },
+        "U6": {
+          "min_distance_mm": 5.420000000000001,
+          "layer": "F.Cu",
+          "per_layer_mm": {
+            "F.Cu": 5.420000000000001,
+            "B.Cu": 6.880740533547231
+          }
+        },
+        "U5.pad.19": {
+          "min_distance_mm": 4.259839556789039,
+          "layer": "F.Cu",
+          "pad_position": [
+            94.835,
+            116.314
+          ],
+          "effective_radius_mm": 0.4,
+          "per_layer_mm": {
+            "F.Cu": 4.259839556789039
+          },
+          "label": "BQ24195 SW pin (pad 19)"
+        },
+        "U5.pad.20": {
+          "min_distance_mm": 3.9214011007380014,
+          "layer": "F.Cu",
+          "pad_position": [
+            94.835,
+            116.814
+          ],
+          "effective_radius_mm": 0.4,
+          "per_layer_mm": {
+            "F.Cu": 3.9214011007380014
+          },
+          "label": "BQ24195 SW pin (pad 20)"
+        },
+        "/Power Management/Protected_VBUS": {
+          "min_distance_mm": 2.192227016072931,
+          "layer": "F.Cu",
+          "per_layer_mm": {
+            "F.Cu": 2.192227016072931,
+            "B.Cu": 26.770354149506513
+          }
+        },
+        "/Power Management/VSYS": {
+          "min_distance_mm": 2.782373087851441,
+          "layer": "F.Cu",
+          "per_layer_mm": {
+            "F.Cu": 2.782373087851441,
+            "B.Cu": 8.958566207267781
+          }
+        },
+        "/Power Management/VBAT": {
+          "min_distance_mm": 4.028000000000006,
+          "layer": "F.Cu",
+          "per_layer_mm": {
+            "F.Cu": 4.028000000000006,
+            "B.Cu": 5.442285943424877
+          }
+        },
+        "/Power Management/BQ_SW": {
+          "min_distance_mm": 4.470599065002375,
+          "layer": "F.Cu",
+          "per_layer_mm": {
+            "F.Cu": 4.470599065002375
+          }
+        },
+        "/Power Management/BOOST_SW": {
+          "min_distance_mm": 2.6676701988814058,
+          "layer": "F.Cu",
+          "per_layer_mm": {
+            "F.Cu": 2.6676701988814058
+          }
+        }
+      }
+    },
+    "/I2C_SCL": {
+      "name": "/I2C_SCL",
+      "total_length_mm": 73.302,
+      "length_by_layer": {
+        "B.Cu": 39.6406,
+        "F.Cu": 33.6614
+      },
+      "segment_count": 33,
+      "via_count": 5,
+      "proximities": {
+        "L1": {
+          "min_distance_mm": 5.550000000000011,
+          "layer": "F.Cu",
+          "per_layer_mm": {
+            "F.Cu": 5.550000000000011
+          }
+        },
+        "L2": {
+          "min_distance_mm": 6.505658217275178,
+          "layer": "F.Cu",
+          "per_layer_mm": {
+            "F.Cu": 6.505658217275178
+          }
+        },
+        "U5": {
+          "min_distance_mm": 0.0,
+          "layer": "F.Cu",
+          "per_layer_mm": {
+            "F.Cu": 0.0
+          }
+        },
+        "U6": {
+          "min_distance_mm": 4.969000000000007,
+          "layer": "F.Cu",
+          "per_layer_mm": {
+            "F.Cu": 4.969000000000007,
+            "B.Cu": 6.384217280920182
+          }
+        },
+        "U5.pad.19": {
+          "min_distance_mm": 3.9202672779062904,
+          "layer": "F.Cu",
+          "pad_position": [
+            94.835,
+            116.314
+          ],
+          "effective_radius_mm": 0.4,
+          "per_layer_mm": {
+            "F.Cu": 3.9202672779062904
+          },
+          "label": "BQ24195 SW pin (pad 19)"
+        },
+        "U5.pad.20": {
+          "min_distance_mm": 3.552733943674062,
+          "layer": "F.Cu",
+          "pad_position": [
+            94.835,
+            116.814
+          ],
+          "effective_radius_mm": 0.4,
+          "per_layer_mm": {
+            "F.Cu": 3.552733943674062
+          },
+          "label": "BQ24195 SW pin (pad 20)"
+        },
+        "/Power Management/Protected_VBUS": {
+          "min_distance_mm": 1.714473461445231,
+          "layer": "F.Cu",
+          "per_layer_mm": {
+            "F.Cu": 1.714473461445231,
+            "B.Cu": 27.513528513987442
+          }
+        },
+        "/Power Management/VSYS": {
+          "min_distance_mm": 3.145345767956195,
+          "layer": "F.Cu",
+          "per_layer_mm": {
+            "F.Cu": 3.145345767956195,
+            "B.Cu": 9.970815818678032
+          }
+        },
+        "/Power Management/VBAT": {
+          "min_distance_mm": 4.034335137293386,
+          "layer": "F.Cu",
+          "per_layer_mm": {
+            "F.Cu": 4.034335137293386,
+            "B.Cu": 6.3621746510135875
+          }
+        },
+        "/Power Management/BQ_SW": {
+          "min_distance_mm": 4.115368270276683,
+          "layer": "F.Cu",
+          "per_layer_mm": {
+            "F.Cu": 4.115368270276683
+          }
+        },
+        "/Power Management/BOOST_SW": {
+          "min_distance_mm": 1.8105839638083605,
+          "layer": "F.Cu",
+          "per_layer_mm": {
+            "F.Cu": 1.8105839638083605
+          }
+        }
+      }
+    }
+  },
+  "asymmetry": {
+    "pair": [
+      "/I2C_SDA",
+      "/I2C_SCL"
+    ],
+    "diffs": [
+      {
+        "metric": "total_length_mm",
+        "a": 72.8983,
+        "b": 73.302,
+        "delta_a_minus_b": -0.4037
+      },
+      {
+        "metric": "min_distance_to_/Power Management/BOOST_SW_mm",
+        "a": 2.6676701988814058,
+        "a_layer": "F.Cu",
+        "b": 1.8105839638083605,
+        "b_layer": "F.Cu",
+        "delta_a_minus_b": 0.8571,
+        "label": null
+      },
+      {
+        "metric": "min_distance_to_/Power Management/BQ_SW_mm",
+        "a": 4.470599065002375,
+        "a_layer": "F.Cu",
+        "b": 4.115368270276683,
+        "b_layer": "F.Cu",
+        "delta_a_minus_b": 0.3552,
+        "label": null
+      },
+      {
+        "metric": "min_distance_to_/Power Management/Protected_VBUS_mm",
+        "a": 2.192227016072931,
+        "a_layer": "F.Cu",
+        "b": 1.714473461445231,
+        "b_layer": "F.Cu",
+        "delta_a_minus_b": 0.4778,
+        "label": null
+      },
+      {
+        "metric": "min_distance_to_/Power Management/VBAT_mm",
+        "a": 4.028000000000006,
+        "a_layer": "F.Cu",
+        "b": 4.034335137293386,
+        "b_layer": "F.Cu",
+        "delta_a_minus_b": -0.0063,
+        "label": null
+      },
+      {
+        "metric": "min_distance_to_/Power Management/VSYS_mm",
+        "a": 2.782373087851441,
+        "a_layer": "F.Cu",
+        "b": 3.145345767956195,
+        "b_layer": "F.Cu",
+        "delta_a_minus_b": -0.363,
+        "label": null
+      },
+      {
+        "metric": "min_distance_to_L1_mm",
+        "a": 6.050000000000011,
+        "a_layer": "F.Cu",
+        "b": 5.550000000000011,
+        "b_layer": "F.Cu",
+        "delta_a_minus_b": 0.5,
+        "label": null
+      },
+      {
+        "metric": "min_distance_to_L2_mm",
+        "a": 6.988537472175414,
+        "a_layer": "F.Cu",
+        "b": 6.505658217275178,
+        "b_layer": "F.Cu",
+        "delta_a_minus_b": 0.4829,
+        "label": null
+      },
+      {
+        "metric": "min_distance_to_U5_mm",
+        "a": 0.0,
+        "a_layer": "F.Cu",
+        "b": 0.0,
+        "b_layer": "F.Cu",
+        "delta_a_minus_b": 0.0,
+        "label": null
+      },
+      {
+        "metric": "min_distance_to_U5.pad.19_mm",
+        "a": 4.259839556789039,
+        "a_layer": "F.Cu",
+        "b": 3.9202672779062904,
+        "b_layer": "F.Cu",
+        "delta_a_minus_b": 0.3396,
+        "label": "BQ24195 SW pin (pad 19)"
+      },
+      {
+        "metric": "min_distance_to_U5.pad.20_mm",
+        "a": 3.9214011007380014,
+        "a_layer": "F.Cu",
+        "b": 3.552733943674062,
+        "b_layer": "F.Cu",
+        "delta_a_minus_b": 0.3687,
+        "label": "BQ24195 SW pin (pad 20)"
+      },
+      {
+        "metric": "min_distance_to_U6_mm",
+        "a": 5.420000000000001,
+        "a_layer": "F.Cu",
+        "b": 4.969000000000007,
+        "b_layer": "F.Cu",
+        "delta_a_minus_b": 0.451,
+        "label": null
+      }
+    ]
+  },
+  "warnings": []
+}

@@ -18,15 +18,15 @@
 
 ## Phase 2: Auditor (`routing_audit.py`)
 
-- [ ] Skeleton: argparse, load routing JSON + audit spec
-- [ ] Min-distance computation: net (`MultiLineString`) → component bbox (`Polygon`), layer-aware
-- [ ] Min-distance computation: net → named pad (`Point.buffer(effective_radius)`), layer-aware
-- [ ] Min-distance computation: net → another net (LineString-to-LineString, layer-aware)
-- [ ] Per-net summary block (length, length-by-layer, proximities) → JSON
-- [ ] Asymmetry diff between named pair → JSON
-- [ ] Markdown formatter matching the structure in PLAN.md
-- [ ] Write audit spec `tools/pcb-context/audit-specs/v7-main-i2c.json`
-- [ ] **Verify:** for one proximity pair (e.g., `/I2C_SDA` → `L1`), measure manually in KiCad and compare. Tolerance ±0.05 mm.
+- [x] Skeleton: argparse, load routing JSON + audit spec
+- [x] Min-distance computation: net (`MultiLineString`) → component bbox (`Polygon`), layer-aware
+- [x] Min-distance computation: net → named pad (`Point.buffer(effective_radius)`), layer-aware
+- [x] Min-distance computation: net → another net (LineString-to-LineString, layer-aware)
+- [x] Per-net summary block (length, length-by-layer, proximities) → JSON
+- [x] Asymmetry diff between named pair → JSON
+- [x] Markdown formatter matching the structure in PLAN.md
+- [x] Write audit spec `tools/pcb-context/audit-specs/v7-main-i2c.json`
+- [x] **Verify:** for one proximity pair (e.g., `/I2C_SDA` → `L1`), measure manually in KiCad and compare. Tolerance ±0.05 mm. — user-confirmed (SDA→L1 6.05 mm, SCL→L1 5.55 mm)
 
 ## Phase 3: v7 first deliverable
 
