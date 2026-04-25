@@ -132,5 +132,11 @@ Ideas for future development. Not prioritized, just captured.
 
 ---
 
+## Tooling
+
+- PCB routing audit tool v2 — extend the v1 read-only routing audit (`tools/pcb-context/routing_extract.py` + `routing_audit.py`) with the items deferred from v1: pad-to-pad path-distance via segment graph traversal, cross-PCB comparison (e.g., v7-vs-v8 routing diff), and optionally light SI estimates. See `docs/initiatives/pcb-routing-audit-tool/RELAY_V2.md` for the handoff doc and self-contained planning prompt.
+
+---
+
 *Last Updated: December 5, 2025*
 

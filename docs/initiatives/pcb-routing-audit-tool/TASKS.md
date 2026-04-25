@@ -40,10 +40,5 @@
 
 > **Note:** This phase exists by explicit user override of `.context/WORKFLOW.md`'s "no orphan documents" rule. The `RELAY_V2.md` file is a fourth document outside the BRIEF/PLAN/TASKS triad, and that's intentional for this initiative.
 
-- [ ] Create `docs/initiatives/pcb-routing-audit-tool/RELAY_V2.md` containing:
-  - What v1 delivered (one paragraph, with file paths to the v1 code and the v7 audit output).
-  - Deferred items list, each with a one-line rationale carried over from this initiative's BRIEF.md "What's out" section. At minimum: pad-to-pad path-distance via segment graph traversal; cross-PCB comparison (e.g., automated v7-vs-v8 routing diff).
-  - Suggested first deliverables for v2 (which deferred items are highest-value to tackle first, and why).
-  - Pointers to v1 artifacts: `docs/initiatives/pcb-routing-audit-tool/PLAN.md`, `tools/pcb-context/routing_extract.py`, `tools/pcb-context/routing_audit.py`, the v7 audit spec, the v7 audit Markdown output.
-  - A self-contained planning prompt at the bottom — written so a fresh AI session can read just `RELAY_V2.md` and have everything it needs to produce a v2 initiative doc, in the same style as the prompt that produced this v1 initiative.
-- [ ] Add a one-bullet entry to `.context/IDEAS.md` under a new "Tooling" section: a brief description of the deferred routing-audit-v2 work plus a pointer to `RELAY_V2.md` so it's discoverable from the project-level backlog after this initiative's folder becomes a historical record.
+- [x] Created `docs/initiatives/pcb-routing-audit-tool/RELAY_V2.md` — what-v1-delivered, v1 artifacts list, deferred items with use cases, suggested v2 first deliverables (cross-PCB diff ranked highest given v8 on deck), self-contained planning prompt for a fresh v2 session
+- [x] Added `## Tooling` section to `.context/IDEAS.md` with a single bullet pointing at `RELAY_V2.md`
