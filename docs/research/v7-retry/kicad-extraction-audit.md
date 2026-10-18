@@ -228,6 +228,60 @@ Topic 2 did most of the component and net half of this by hand with `kicad-cli` 
 
 **One initiative, not several,** because all three phases share one board model, and splitting them recreates the drift between `layout-context` and `routing-context` that this audit found. Your call on whether to launch it before Stage B synthesis or let topic 6 / decisioning sequence it.
 
+### 6.1 Input for the Planner
+
+This section is not a PLAN. It lists what the Planner needs to settle when writing BRIEF, PLAN and TASKS.
+
+**Goals and non-goals.**
+- In: everything in §5.2–5.4.
+- Out: impedance and SI simulation, EM field modelling, current density and thermal analysis, any write-back to `.kicad_pcb`, auto-fixing.
+- The extractor must run on all three boards (main, sensor-rigid, sensor-flex). Validation is required on main only.
+
+**Suggested module layout** (all in `tools/pcb-context/`):
+
+| Module | Job |
+|---|---|
+| `board_model.py` | Parse once into one internal model; JSON cache with source hash |
+| `net_report.py` | Net-centric and route-narrative output |
+| `plane_report.py` | Planes, splits, voids, per-segment reference plane, stitching density |
+| `render.py` | Per-net and per-plane PNGs |
+| `board_diff.py` | Diff mode over git refs |
+
+`routing_audit.py` becomes a thin consumer of the model. `routing_extract.py` stays only as a compatibility shim, or is retired.
+
+**Definitions to fix in the PLAN** (as a per-board config file, not hard-coded):
+- *High-current:* the net has a zone, any segment ≥ 0.5 mm wide, or schematic role power/ground.
+- *High dv/dt:* an explicit list per board. Seed for main: `BQ_SW`, `BOOST_SW`, the U5 SW pads 19/20, `LED_DATA`, `USB_DP`/`USB_DN`, `CHRG_INT`.
+- *Neighbour radii:* 1 mm for signals, 3 mm for high-current, 5 mm for high dv/dt, all measured in plan view across layers.
+- *Clearance:* always copper edge to copper edge.
+
+**Validation fixtures.** The phase 1–2 output must reproduce these values from this audit, each also spot-checked in KiCad:
+
+| Check | Expected value |
+|---|---|
+| SDA length | 72.9 mm (F 35.9 / B 37.0), 3 vias |
+| SDA branch lengths from U3 | 19.4 / 5.9 / 31.7 / 47.7 mm |
+| SCL to BOOST_SW gap | 0.94 mm, edge to edge |
+| SDA to R44 pad 2 gap | 0.85 mm |
+| SDA to SCL gap | 0.20 mm |
+| SDA over In2 +3.3V / over nothing | ~28.9 mm / ~6.8 mm |
+| SDA B.Cu inside BT1 body | 29.7 mm |
+| Zones on the board | 8, per the §4 inventory |
+
+For phase 3, the diff must surface topic 2's CL-19, CL-20 and CL-21 between `fd632ef` (v6) and `c2acffc` (v7).
+
+**Dependencies.**
+- Python 3.7 is the current pyenv constraint. Check that shapely 2.0.x and matplotlib wheels still install on it, or bump Python as an explicit task.
+- `kicad-cli` 9.0.4 is already required by `schematic-context`.
+
+**Decisions for you (the user)**, to answer at Planner kickoff:
+1. Commit generated outputs, stamped with a source hash, or gitignore them and generate on demand?
+2. Delete `pcb-layout-context.json` and `drc-report.json` now, or regenerate them until phase 1 lands?
+3. Is the pcbnew Python API allowed as a fallback (for example, for zone refill), or kiutils + `kicad-cli` only?
+4. Launch now, or wait for the Stage B decisioning?
+
+**Rough size:** 3–6 sessions in total, plus the cleanup task.
+
 ---
 
 ## Observations for other topics
