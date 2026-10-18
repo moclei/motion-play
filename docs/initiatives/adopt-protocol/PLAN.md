@@ -45,10 +45,10 @@ A single-phase docs/config swap. Steps: copy the staged files into place, make a
 
 **`.gitignore`.** Replace the `.claude/` line with:
 ```
-.claude/*
+**/.claude/*
 !.claude/agents/
 ```
-Verify that `git check-ignore .claude/settings.local.json` still matches and `git check-ignore .claude/agents/worker.md` does not.
+(`**/` is needed: a bare `.claude/*` is root-anchored and stops ignoring nested dirs such as `hardware/libraries/.claude/settings.local.json`.) Verify that `git check-ignore .claude/settings.local.json` and `hardware/libraries/.claude/settings.local.json` still match and `git check-ignore .claude/agents/worker.md` does not.
 
 **`.context/PROJECT.md` edits (light reconciliation):**
 - Line 3 Quick Reference: `WORKFLOW.md` → `PROTOCOL.md` ("…for the initiative workflow and agent roles"). Keep the manifest and IDEAS links.
@@ -72,6 +72,7 @@ Verify that `git check-ignore .claude/settings.local.json` still matches and `gi
 - Deprecate manifest.yaml or fold IDEAS.md into GARDEN.md. User chose to keep both untouched.
 - Cut `feat/adopt-protocol` from `feat/v7-board-firmware` HEAD. Would drag the unmerged pcb-routing-audit commits along.
 - Install role files under `.claude/agents/` without a `.gitignore` change. `.claude/` is ignored, so they'd never be committed.
+- `.claude/*` (root-anchored) in `.gitignore`. Un-ignored the nested `hardware/libraries/.claude/`; replaced by `**/.claude/*`.
 
 ## Open Questions
 - ~~PROJECT.md reconciliation~~ → light edits only (see Technical Notes)

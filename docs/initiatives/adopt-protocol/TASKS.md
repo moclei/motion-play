@@ -10,7 +10,7 @@
 - [x] Update `.context/PROJECT.md` lines 3, 36, 46 (+ tree entries), 86 per PLAN.md; touch nothing else
 - [x] Update `.cursor/rules/context-folder.mdc` WORKFLOW.md line → PROTOCOL.md
 - [x] Delete `.context/WORKFLOW.md` and the whole `docs/scratch/` folder
-- [ ] Run the PLAN.md verification greps and `git ls-files .claude CLAUDE.md`; fix any residual hits
+- [x] Run the PLAN.md verification greps and `git ls-files .claude CLAUDE.md`; fix any residual hits
 - [ ] 🔄 Handoff
 
 ## Deferred

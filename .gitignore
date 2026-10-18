@@ -6,7 +6,7 @@
 .vscode/ipch
 
 # Claude Code (local)
-.claude/*
+**/.claude/*
 !.claude/agents/
 
 #Mac and system files
