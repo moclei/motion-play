@@ -10,7 +10,7 @@ See `RESEARCHER.md` for conventions. Kickoff relay drafts are in `relays/`.
 |---|---|---|---|---|
 | 1 | Post-mortem of prior debug attempt | complete | `postmortem.md` | — |
 | 2 | v6 → v7 changelist | complete | `v6-v7-changelist.md` | — |
-| 3 | KiCad extraction audit | not started | `kicad-extraction-audit.md` | — |
+| 3 | KiCad extraction audit | complete | `kicad-extraction-audit.md` | — |
 | 4 | Testing / scope workflow audit | not started | `test-workflow-audit.md` | — |
 | 5 | Expert approaches to PCB bring-up debug | not started | `expert-approaches.md` | — |
 | 6 | Context strategy for v7-retry sessions | not started | `context-strategy.md` | all of 1–5 |
