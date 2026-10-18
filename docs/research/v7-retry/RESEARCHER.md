@@ -95,7 +95,8 @@ Append notes here as research sessions complete. One line per observation. Keep 
 
 ### What worked
 
-- _(to be filled in)_
+- Topic 1: surfacing top findings to the user before writing caught nothing wrong but surfaced four user concerns (measurement validity, layout understanding, synthesis, context budget) that became major sections.
+- Topic 2: kicad-cli (`/Applications/KiCad/KiCad.app/Contents/MacOS/kicad-cli`) XML netlist + pos export on `git archive`d refs gave a clean component/pin/net diff in seconds; regenerating gerbers and matching against the fabricated zips verified the anchors. Note zsh: quote `"${ref}:path"` — `$r:h` is a zsh modifier.
 
 ### What didn't
 
