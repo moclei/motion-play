@@ -8,7 +8,7 @@ See `RESEARCHER.md` for conventions. Kickoff relay drafts are in `relays/`.
 
 | # | Topic | Status | Artifact | Depends on |
 |---|---|---|---|---|
-| 1 | Post-mortem of prior debug attempt | not started | `postmortem.md` | — |
+| 1 | Post-mortem of prior debug attempt | complete | `postmortem.md` | — |
 | 2 | v6 → v7 changelist | not started | `v6-v7-changelist.md` | — |
 | 3 | KiCad extraction audit | not started | `kicad-extraction-audit.md` | — |
 | 4 | Testing / scope workflow audit | not started | `test-workflow-audit.md` | — |

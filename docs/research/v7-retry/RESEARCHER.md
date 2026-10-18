@@ -95,7 +95,7 @@ Append notes here as research sessions complete. One line per observation. Keep 
 
 ### What worked
 
-- _(to be filled in)_
+- Topic 1: surfacing top findings to the user before writing caught nothing wrong but surfaced four user concerns (measurement validity, layout understanding, synthesis, context budget) that became major sections.
 
 ### What didn't
 
