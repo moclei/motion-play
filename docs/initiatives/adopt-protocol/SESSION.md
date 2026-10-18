@@ -56,7 +56,10 @@ The first task is marked `[~]` because it was dispatched to you — it is not so
   - PROJECT.md (only the 4 planned spots plus the tree entries) and `.cursor/rules/context-folder.mdc`
   - The PROTOCOL.md Session Management line (§UI Components gone, closing section intact)
   - The gardener and bugfix adapt edits
-- Not re-derived: verbatim copies of planner/orchestrator/worker/organizer. `docs/scratch/` was never committed, so the Worker's `cmp` is the only check.
+- Provenance (after the user restored the originals to `docs/scratch/`):
+  - planner/orchestrator/worker/organizer are byte-identical to the originals (cmp + sha1).
+  - In the gardener/bugfix diffs, only the PLAN-listed lines changed.
+  - PROTOCOL.md was diffed against the orchestrator's session read of the original: only the Session Management line changed, and §UI Components was removed.
 - `.context/WORKFLOW.md` and `docs/scratch/` are gone. PLAN.md has no date-stamped headings. All TASKS are `[x]`. Working tree is clean except `.vscode/extensions.json` (PlatformIO auto-rewrite, already committed on `feat/v7-board-firmware`).
 - Carries forward: the `claude --agent <role>` goal is untested here, because roles load only in a new session.
 
