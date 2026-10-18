@@ -5,7 +5,7 @@
 - [x] Update `.gitignore`: replace `.claude/` with `.claude/*` + `!.claude/agents/`; confirm `.claude/settings.local.json` is still ignored and `.claude/agents/*.md` is not
 - [x] Copy `planner.md`, `orchestrator.md`, `worker.md`, `organizer.md` from `docs/scratch/` → `.claude/agents/` verbatim
 - [x] Copy `gardener.md` and `bugfix.md` → `.claude/agents/` and apply the strip/adapt edits in PLAN.md Technical Notes
-- [ ] Copy `docs/scratch/PROTOCOL.md` → `.context/PROTOCOL.md` and apply the strip/adapt edits (Session Management principle, delete §UI Components)
+- [x] Copy `docs/scratch/PROTOCOL.md` → `.context/PROTOCOL.md` and apply the strip/adapt edits (Session Management principle, delete §UI Components)
 - [ ] Create minimal root `CLAUDE.md` per PLAN.md (`@.context/PROJECT.md` import + one pointer line to PROTOCOL.md and `.claude/agents/`)
 - [ ] Update `.context/PROJECT.md` lines 3, 36, 46 (+ tree entries), 86 per PLAN.md; touch nothing else
 - [ ] Update `.cursor/rules/context-folder.mdc` WORKFLOW.md line → PROTOCOL.md
