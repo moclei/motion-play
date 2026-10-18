@@ -8,7 +8,7 @@
 - [x] Copy `docs/scratch/PROTOCOL.md` → `.context/PROTOCOL.md` and apply the strip/adapt edits (Session Management principle, delete §UI Components)
 - [x] Create minimal root `CLAUDE.md` per PLAN.md (`@.context/PROJECT.md` import + one pointer line to PROTOCOL.md and `.claude/agents/`)
 - [x] Update `.context/PROJECT.md` lines 3, 36, 46 (+ tree entries), 86 per PLAN.md; touch nothing else
-- [ ] Update `.cursor/rules/context-folder.mdc` WORKFLOW.md line → PROTOCOL.md
+- [x] Update `.cursor/rules/context-folder.mdc` WORKFLOW.md line → PROTOCOL.md
 - [ ] Delete `.context/WORKFLOW.md` and the whole `docs/scratch/` folder
 - [ ] Run the PLAN.md verification greps and `git ls-files .claude CLAUDE.md`; fix any residual hits
 - [ ] 🔄 Handoff
