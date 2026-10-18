@@ -2,9 +2,11 @@
 Inner Shell — Motion Play Sensor Enclosure (Option A)
 
 Sits on the inner face (hoop-interior side) of the steel flat bar.
-Provides a flat base against the bar, a ramped surround that deflects
-ball impacts, an open sensor window, and a V-ridge that angles the two
-sensors at ±3° toward opposite hoop entrances for direction detection.
+Provides a flat base against the bar, a ramped surround on ±X sides
+that deflects ball impacts (vertical walls on ±Y sides — the along-hoop
+direction sees no ball impact and adjacent hoop attachments need clearance
+there), an open sensor window, and a V-ridge that angles the two
+sensors at ±5° toward opposite hoop entrances for direction detection.
 
 Fastens to the outer shell (wrap-around tray) via 3× M2.5 screws
 in a triangular pattern. Reinforcement pads at each screw position
@@ -47,19 +49,22 @@ OUTPUT_DIR = Path(__file__).parent
 
 BAR_WIDTH = 25.25           # mm — flat face width
 BAR_THICKNESS = 4.0         # mm — thin edge
-FLEX_PCB_WIDTH = 10.0       # mm — narrow dimension, runs along Y on inner face
-FLEX_SEATING_LENGTH = 22.0  # mm — lies across bar width in X direction
+FLEX_PCB_WIDTH = 10.15      # mm — narrow dimension, runs along Y on inner face
+# Seated portion (post-bend) = overhang + sensor stiffener + gap + sensor stiffener
+# = 0.9 + 8.35 + 2.85 + 8.35 = 20.45 mm. Full flex is 54.5mm; bend region 27.25mm.
+FLEX_SEATING_LENGTH = 20.45
 SENSOR_HEIGHT = 1.4         # mm — VCNL4040 protrusion above flex
 
 # Sensor positions (measured from the far end of the flex, the +X end)
-SENSOR_1_FROM_END = 7.25    # mm — sensor farthest from FPC tail
-SENSOR_2_FROM_END = 17.75   # mm — sensor nearest to FPC tail
-SENSOR_SPACING = 10.5       # mm — center-to-center
-SENSOR_MIDPOINT_FROM_END = (SENSOR_1_FROM_END + SENSOR_2_FROM_END) / 2  # 12.5 mm
+# Centered symmetrically within the seating area to put midpoint at bar center.
+SENSOR_SPACING = 10.8       # mm — center-to-center (from sensor-flex KiCad placement)
+SENSOR_1_FROM_END = (FLEX_SEATING_LENGTH - SENSOR_SPACING) / 2   # 4.825 mm — sensor farthest from FPC tail
+SENSOR_2_FROM_END = SENSOR_1_FROM_END + SENSOR_SPACING           # 15.625 mm — sensor nearest to FPC tail
+SENSOR_MIDPOINT_FROM_END = (SENSOR_1_FROM_END + SENSOR_2_FROM_END) / 2  # 10.225 mm
 
-# FPC connector is at Y=+6.75 on the outer shell. Viewed from the inner
-# face (opposite side of bar), this maps to Y=-6.75.
-FPC_CENTER_Y_OUTER = 6.75   # mm — on outer shell
+# FPC connector is at Y=+6.27 on the outer shell. Viewed from the inner
+# face (opposite side of bar), this maps to Y=-6.27.
+FPC_CENTER_Y_OUTER = 6.27   # mm — on outer shell
 
 SENSOR_ANGLE_DEG = 5.0      # degrees — tilt per sensor from horizontal
 
@@ -162,10 +167,14 @@ with BuildPart() as inner_shell:
         Rectangle(SHELL_WIDTH, SHELL_LENGTH)
     extrude(amount=BASE_THICKNESS)
 
-    # 2. Ramp surround — tapered walls, centered on shell footprint
+    # 2. Ramp surround — tapered only on ±X sides (face the ball impact angle).
+    #    ±Y sides are vertical walls (along-hoop direction has no ball impact
+    #    angle and other hoop-attached parts need clearance).
     with BuildSketch(Plane.XY.offset(BASE_THICKNESS)):
         Rectangle(SHELL_WIDTH, SHELL_LENGTH)
-    extrude(amount=RAMP_HEIGHT, taper=TAPER_ANGLE)
+    with BuildSketch(Plane.XY.offset(BASE_THICKNESS + RAMP_HEIGHT)):
+        Rectangle(RAMP_TOP_WIDTH, SHELL_LENGTH)
+    loft()
 
     # 3. Sensor window — cut only ramp material, preserve base plate.
     #    Box bottom at Z = BASE_THICKNESS (not below) so the ridge can

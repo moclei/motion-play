@@ -1,4 +1,5 @@
 #include "NetworkManager.h"
+#include <esp_system.h>
 
 NetworkManager::NetworkManager() {
     // Constructor
@@ -41,10 +42,27 @@ bool NetworkManager::loadConfig() {
         }
     }
     Serial.println("Config file opened successfully!");
+    Serial.flush();
+    Serial.println("[DBG] A: after file open");
+    Serial.flush();
+    Serial.printf("[DBG] B: reset_reason=%d\n", (int)esp_reset_reason());
+    Serial.flush();
+    Serial.printf("[DBG] C: free_heap=%u\n", (unsigned)ESP.getFreeHeap());
+    Serial.flush();
+    Serial.printf("[DBG] D: free_psram=%u\n", (unsigned)ESP.getFreePsram());
+    Serial.flush();
 
+    Serial.println("[DBG] Allocating DynamicJsonDocument(1024)...");
+    Serial.flush();
     DynamicJsonDocument doc(1024);
+    Serial.println("[DBG] Doc allocated. Parsing...");
+    Serial.flush();
     DeserializationError error = deserializeJson(doc, configFile);
+    Serial.println("[DBG] Parse returned. Closing file...");
+    Serial.flush();
     configFile.close();
+    Serial.println("[DBG] File closed.");
+    Serial.flush();
 
     if (error) {
         Serial.print("Failed to parse config: ");
@@ -52,10 +70,19 @@ bool NetworkManager::loadConfig() {
         return false;
     }
 
+    Serial.println("[DBG] Extracting ssid...");
+    Serial.flush();
     ssid = doc["wifi"]["ssid"].as<String>();
+    Serial.println("[DBG] Extracting password...");
+    Serial.flush();
     password = doc["wifi"]["password"].as<String>();
+    Serial.println("[DBG] Extracting deviceId...");
+    Serial.flush();
     deviceId = doc["device_id"].as<String>();
-    
+
+    Serial.printf("[DBG] ssid='%s' deviceId='%s'\n", ssid.c_str(), deviceId.c_str());
+    Serial.flush();
+
     // Load API endpoint if available
     if (doc.containsKey("api") && doc["api"].containsKey("endpoint"))
     {
@@ -64,6 +91,8 @@ bool NetworkManager::loadConfig() {
         Serial.println(apiEndpoint);
     }
 
+    Serial.println("[DBG] loadConfig complete.");
+    Serial.flush();
     return true;
 }
 

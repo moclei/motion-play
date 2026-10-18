@@ -39,6 +39,37 @@ public:
         return (Wire.endTransmission() == 0);
     }
 
+    // Reads the PCA9546A control register (single byte read with no sub-address).
+    // Returns 0xFF on I2C failure. Useful for diagnosing whether a prior
+    // selectChannel() actually latched in the PCA.
+    uint8_t readControlRegister()
+    {
+        uint8_t bytes = Wire.requestFrom(address, (uint8_t)1);
+        if (bytes == 0 || !Wire.available())
+            return 0xFF;
+        return Wire.read();
+    }
+
+    // selectChannel() with readback verification. Writes (1 << channel) to the
+    // control register, then reads it back and confirms the bit latched.
+    // If `readback` is non-null, the observed control register value is stored
+    // there even on mismatch — useful for logging the exact failure mode.
+    bool selectChannelVerify(uint8_t channel, uint8_t *readback = nullptr)
+    {
+        if (channel > 3)
+            return false;
+        uint8_t expected = (1 << channel);
+        Wire.beginTransmission(address);
+        Wire.write(expected);
+        if (Wire.endTransmission() != 0)
+            return false;
+        delayMicroseconds(100); // let the register settle before readback
+        uint8_t actual = readControlRegister();
+        if (readback)
+            *readback = actual;
+        return (actual == expected);
+    }
+
     bool disableAllChannels()
     {
         Wire.beginTransmission(address);
@@ -138,6 +169,13 @@ public:
     void dumpSensorConfiguration();                 // Diagnostic: print all sensor configs to serial
     bool calibrateProximityCancellation();          // Calibrate PS_CANC for all sensors (cover offset)
     uint16_t getBaselineValue(uint8_t sensorIndex); // Get stored baseline for a sensor
+
+    // Continuous bus diagnostic: probes a fixed set of I2C addresses in four
+    // different mux states (baseline, TCA-only, TCA+PCA0, TCA+PCA1) every
+    // ~2 seconds and prints one compact line per state. Runs forever — press
+    // reset to stop. Intended for use when init() fails so we can observe
+    // whether bus behavior is consistent or flaky.
+    void runBusDiagnosticLoop();
 };
 
 #endif

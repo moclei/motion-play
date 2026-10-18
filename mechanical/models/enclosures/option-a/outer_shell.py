@@ -50,22 +50,25 @@ OUTPUT_DIR = Path(__file__).parent
 BAR_WIDTH = 25.25
 BAR_THICKNESS = 4.0
 
-PCB_X = 22.6
-PCB_Y = 28.5
+# Sensor-rigid PCB dimensions — see hardware/sensor-rigid/pcb-layout-context.json
+PCB_X = 22.675              # across bar
+PCB_Y = 28.525              # along hoop
 PCB_THICKNESS = 1.6
-PCB_TALLEST_COMPONENT = 3.25
+PCB_TALLEST_COMPONENT = 3.25  # JST-SH right-angle female still tallest
 PCB_TOTAL_HEIGHT = PCB_THICKNESS + PCB_TALLEST_COMPONENT
 
-FLEX_PCB_WIDTH = 10.0
+FLEX_PCB_WIDTH = 10.15      # was 10.0
 
-JST_HOUSING_W = 7.0
+# JST-SH 4-pin SM04B-SRSS-TB on -Y short edge, cable exits along hoop
+JST_HOUSING_W = 7.0         # body width (KiCad bbox 6.56, +clearance)
 JST_HOUSING_H = 3.25
-JST_CENTER_FROM_WEST = 15.5
-JST_X_OFFSET = -PCB_X / 2 + JST_CENTER_FROM_WEST
+JST_CENTER_FROM_WEST = 15.55
+JST_X_OFFSET = -PCB_X / 2 + JST_CENTER_FROM_WEST  # +4.21 mm
 
-FPC_HOUSING_W = 15.0
+# FPC connector on -X long edge, body sits ~0.9mm short of PCB +Y end
+FPC_HOUSING_W = 14.18       # body width along Y (was 15.0)
 FPC_HOUSING_H = 2.75
-FPC_CENTER_Y = PCB_Y / 2 - FPC_HOUSING_W / 2  # +6.75 mm
+FPC_CENTER_Y = 6.27         # from KiCad placement (was +6.75)
 
 # ============================================================
 # Design parameters

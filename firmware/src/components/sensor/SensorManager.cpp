@@ -1,5 +1,8 @@
 #include "SensorManager.h"
 #include "../session/SessionManager.h" // For SessionSummary full definition
+#include <driver/gpio.h>
+#include <driver/i2c.h>
+#include <soc/io_mux_reg.h>
 
 extern bool serialStudioEnabled;
 
@@ -633,9 +636,54 @@ bool SensorManager::init(SensorConfiguration *config)
     activeConfig = config;
 
     // Initialize I2C
-    Wire.begin(43, 44);    // SDA=43, SCL=44 for T-Display S3
-    Wire.setClock(400000); // 400 kHz (Fast Mode) - set BEFORE sensor initialization
-    Serial.println("I2C clock set to 400 kHz");
+    Wire.begin(43, 44); // SDA=43, SCL=44 for T-Display S3
+    // TEMP DEBUG: clock back to 100 kHz to match Phase 21 baseline; only variable
+    // changing is GPIO drive strength below. Restore to 400000 after Phase 23.
+    Wire.setClock(100000);
+    // TEMP DEBUG: bump SDA/SCL drive from CAP_2 (default ~20 mA) to CAP_3 (~40 mA)
+    // to lower master pull-down R_DS(on) and hence V_OL at BQ pin 6. Tests Story
+    // G-revised: V_OL elevation by ~100 mV from cable-injected ~330 µA crosses BQ's
+    // effective V_IL. Halving R_DS(on) should drop V_OL well below threshold.
+    // See docs/debugging/v7-i2c-investigation.md Phase 23.
+    gpio_set_drive_capability(GPIO_NUM_43, GPIO_DRIVE_CAP_3);
+    gpio_set_drive_capability(GPIO_NUM_44, GPIO_DRIVE_CAP_3);
+    // EXPERIMENT 1 (Phase 24 — NULL RESULT): legacy-driver digital deglitcher
+    // at maximum (7 I2C_SCLK cycles). The arduino-esp32 v2.0.14 / IDF v4.4
+    // wrapper leaves this OFF by default; the new driver (IDF 5.2+) enables
+    // it at 7 by default. Filter went on (filter_enable returned OK) but the
+    // BQ NACK pattern on TCA2 was unchanged — refutes "sub-µs glitches at the
+    // I2C controller input" as the missing knob. Kept on because there is no
+    // downside, and removing it for the next experiments would conflate two
+    // changes. See docs/explorations/esp32-s3-i2c-master-deep-dive.md §5 #1.
+    i2c_filter_enable(I2C_NUM_0, 7);
+
+    // EXPERIMENT 2 (Phase 25): pad-level input filter — independent 2-APB-cycle
+    // (~25 ns) pulse rejection at the GPIO pad input itself. Documented in
+    // ESP32-S3 TRM §6.4.3 / Register 6.36 as bit 15 of IO_MUX_GPIOn_REG; *not*
+    // enabled by the IDF I2C driver. Different physical filter from
+    // i2c_filter_enable() above (that one is in the I2C controller, this one
+    // is in the IO_MUX). No public API; direct register bit.
+    // The IDF v4.4 SDK's io_mux_reg.h on S3 does not export the macro, so we
+    // define it locally per TRM. See deep-dive §5 Experiment 2.
+    #ifndef FUN_FILTER_EN
+    #define FUN_FILTER_EN (BIT(15))
+    #endif
+    REG_SET_BIT(GPIO_PIN_MUX_REG[43], FUN_FILTER_EN);
+    REG_SET_BIT(GPIO_PIN_MUX_REG[44], FUN_FILTER_EN);
+
+    // EXPERIMENT 3 (Phase 25): explicitly disable internal pull-ups and pull-
+    // downs on SDA/SCL. Per arduino-esp32 #4887 the internals don't reliably
+    // disable through pinMode/Wire.begin alone; we have 2.2 kΩ external pulls
+    // on R28/R29 so the ~45 kΩ internal pull-up in parallel is nominally
+    // negligible — but Phase 5 has already shown total pull strength isn't
+    // the mechanism, so this is a free null test. See deep-dive §5 #3.
+    gpio_pullup_dis(GPIO_NUM_43);
+    gpio_pullup_dis(GPIO_NUM_44);
+    gpio_pulldown_dis(GPIO_NUM_43);
+    gpio_pulldown_dis(GPIO_NUM_44);
+
+    Serial.println("I2C: 100 kHz, drive CAP_3, filter(7), pad-filter, "
+                   "internal pulls dis [Phase 24 null + Phase 25 bundle]");
 
     if (activeConfig != nullptr)
     {
@@ -702,13 +750,22 @@ bool SensorManager::init(SensorConfiguration *config)
 
         delay(5);
 
-        // Select PCA channel on the sensor board
-        if (!pca_instances[tca_ch].selectChannel(pca_ch))
+        // Select PCA channel on the sensor board, with readback verification.
+        // A plain selectChannel() returns true as long as the PCA ACKs the
+        // control-register write — it does not confirm the channel bit
+        // actually latched. selectChannelVerify() reads the control register
+        // back and compares. Mismatches here explain a NACK at 0x60 even
+        // though the PCA is alive on the upstream bus.
+        uint8_t pca_readback = 0xFF;
+        if (!pca_instances[tca_ch].selectChannelVerify(pca_ch, &pca_readback))
         {
-            Serial.println("  ERROR: Failed to select PCA channel");
+            Serial.printf("  ERROR: PCA channel select did not verify "
+                          "(wrote 0x%02X, read 0x%02X)\n",
+                          (1 << pca_ch), pca_readback);
             sensorsActive[i] = false;
             continue;
         }
+        Serial.printf("  PCA ch %d selected (ctrl reg = 0x%02X)\n", pca_ch, pca_readback);
 
         delay(5);
 
@@ -717,9 +774,27 @@ bool SensorManager::init(SensorConfiguration *config)
         byte error = Wire.endTransmission();
         if (error != 0)
         {
-            Serial.print("  ERROR: No VCNL4040 at 0x60 (I2C error: ");
-            Serial.print(error);
-            Serial.println(")");
+            Serial.printf("  ERROR: No VCNL4040 at 0x60 (I2C error: %d)\n", error);
+
+            // Diagnostic: the PCA confirmed the channel is open (verified above),
+            // so if 0x60 doesn't answer, sweep the channel to see what (if anything)
+            // is reachable. Tells us: silent bus (hardware/wiring), device at a
+            // different address (wrong part / wrong address pins), or something
+            // unexpected entirely.
+            Serial.println("  Scanning this PCA channel for any I2C device...");
+            int found = 0;
+            for (uint8_t addr = 0x08; addr <= 0x77; addr++)
+            {
+                Wire.beginTransmission(addr);
+                if (Wire.endTransmission() == 0)
+                {
+                    Serial.printf("    Found device at 0x%02X\n", addr);
+                    found++;
+                }
+            }
+            if (found == 0)
+                Serial.println("    (no devices responded on this channel)");
+
             sensorsActive[i] = false;
             continue;
         }
@@ -1251,6 +1326,174 @@ bool SensorManager::reinitialize(SensorConfiguration *config)
     // handles offset changes from config updates dynamically.
 
     return true;
+}
+
+void SensorManager::runBusDiagnosticLoop()
+{
+    Serial.println();
+    Serial.println("==============================================================");
+    Serial.println("I2C BUS DIAGNOSTIC LOOP (continuous — press RESET to stop)");
+    Serial.println("==============================================================");
+
+    // Note which TCA channels had a PCA detected during init. Channels with
+    // a PCA get an extra TCA+PCA0 / TCA+PCA1 probe round. Channels without
+    // a PCA still get a TCA_only probe so we can compare.
+    Serial.println("PCA detection summary (from init):");
+    for (int ch = 0; ch < 3; ch++)
+    {
+        if (pca_addresses[ch] != 0)
+            Serial.printf("  TCA ch %d: PCA9546A at 0x%02X\n", ch, pca_addresses[ch]);
+        else
+            Serial.printf("  TCA ch %d: (nothing detected)\n", ch);
+    }
+
+    Serial.println();
+    Serial.println("Probing: INA(0x40)  BQ(0x6B)  TCA(0x70)  PCA(0x76)  VCNL(0x60)");
+    Serial.println("Legend:  '.' = ACK,  'X(n)' = error n");
+    Serial.println("         1=data_too_long 2=NACK_addr 3=NACK_data 4=other 5=timeout/bus_hang");
+    Serial.println();
+    Serial.println("Expected when working correctly:");
+    Serial.println("  BASE           -> INA, BQ, TCA present; PCA, VCNL absent");
+    Serial.println("  TCA{0,1,2}     -> INA, BQ, TCA present; PCA present only on");
+    Serial.println("                    channels that have a rigid; VCNL absent");
+    Serial.println("  TCA+PCA0/1     -> INA, BQ, TCA, PCA, VCNL all present");
+#ifdef BUS_RECOVERY_TEST
+    Serial.println();
+    Serial.println("[BUS_RECOVERY_TEST] Active: 3x dummy START+STOP framings issued after each");
+    Serial.println("                    TCA channel-open, before probing. Tests Story A");
+    Serial.println("                    (BQ in stuck state, recoverable in software).");
+#endif
+    Serial.println();
+
+    // Table of addresses we probe in every state. Names match the column
+    // headers in the output.
+    struct Probe
+    {
+        uint8_t addr;
+        const char *name;
+    };
+    static const Probe probes[] = {
+        {0x40, "INA"},
+        {0x6B, "BQ"},
+        {0x70, "TCA"},
+        {0x76, "PCA"},
+        {0x60, "VCNL"},
+    };
+    static const int nProbes = sizeof(probes) / sizeof(probes[0]);
+
+    // Probe all addresses in the current mux state and print one line.
+    // Error codes from Wire.endTransmission(): 0=ACK, 1=data_too_long,
+    // 2=NACK_on_address, 3=NACK_on_data, 4=other, 5=timeout (bus stuck).
+    // 2 vs 5 is the key distinction: 2 = device refused; 5 = SDA/SCL hung.
+    auto probeAndPrint = [&](const char *stateLabel)
+    {
+        Serial.printf("t=%7lu  %-10s  ", millis(), stateLabel);
+        for (int i = 0; i < nProbes; i++)
+        {
+            Wire.beginTransmission(probes[i].addr);
+            uint8_t err = Wire.endTransmission();
+            if (err == 0)
+                Serial.printf("%s:.    ", probes[i].name);
+            else
+                Serial.printf("%s:X(%u) ", probes[i].name, err);
+        }
+        Serial.println();
+    };
+
+    // Force every TCA/PCA back to a fully-closed state. Safe to call at any
+    // point between rounds of probing. Must select each TCA channel before
+    // touching that channel's PCA (if any).
+    auto resetAllMuxes = [&]()
+    {
+        for (int ch = 0; ch < 3; ch++)
+        {
+            if (pca_addresses[ch] != 0)
+            {
+                mux.selectChannel(ch);
+                delay(1);
+                pca_instances[ch].disableAllChannels();
+            }
+        }
+        mux.disableAllChannels();
+        delay(2);
+    };
+
+#ifdef BUS_RECOVERY_TEST
+    // Issue 3x dummy general-call (0x00) transmissions. Each one sends
+    //   START + 0x00 + R/W=0 + NACK (no slave responds at 0x00) + STOP
+    // = 9 SCL clocks plus a clean STOP. Repeating gives any slave that's
+    // in a confused state-machine state (e.g. mid-byte counting from a
+    // phantom-START fired by the channel-open transient) multiple chances
+    // to reset to idle before the next probe series. Tests Story A from
+    // the v7 I2C investigation (see docs/debugging/v7-i2c-investigation.md).
+    auto busRecoverySequence = [&]()
+    {
+        for (int i = 0; i < 3; i++)
+        {
+            Wire.beginTransmission((uint8_t)0x00);
+            Wire.endTransmission();
+        }
+    };
+#endif
+
+    unsigned long iter = 0;
+    while (true)
+    {
+        iter++;
+        Serial.printf("--- Iteration %lu ---\n", iter);
+
+        // State: BASE — everything closed.
+        resetAllMuxes();
+        probeAndPrint("BASE");
+
+        // For each TCA channel (0..2), open just that channel (no PCA) and
+        // probe. Then, if a PCA was detected on this channel, also probe the
+        // two PCA-channel states. This way the test works with or without
+        // rigids connected — an empty TCA channel still exercises the
+        // "TCA channel open" state, just without any downstream load.
+        for (int tca_ch = 0; tca_ch < 3; tca_ch++)
+        {
+            resetAllMuxes();
+
+            // State: TCA{ch} — TCA channel open, PCA channels (if any) closed.
+            mux.selectChannel(tca_ch);
+            delay(2);
+            if (pca_addresses[tca_ch] != 0)
+            {
+                pca_instances[tca_ch].disableAllChannels();
+                delay(2);
+            }
+#ifdef BUS_RECOVERY_TEST
+            busRecoverySequence();
+#endif
+            char label[16];
+            snprintf(label, sizeof(label), "TCA%d", tca_ch);
+            probeAndPrint(label);
+
+            if (pca_addresses[tca_ch] != 0)
+            {
+                // State: TCA{ch}+PCA0
+                pca_instances[tca_ch].selectChannel(0);
+                delay(2);
+                snprintf(label, sizeof(label), "TCA%d+PCA0", tca_ch);
+                probeAndPrint(label);
+
+                // State: TCA{ch}+PCA1
+                pca_instances[tca_ch].disableAllChannels();
+                delay(1);
+                pca_instances[tca_ch].selectChannel(1);
+                delay(2);
+                snprintf(label, sizeof(label), "TCA%d+PCA1", tca_ch);
+                probeAndPrint(label);
+            }
+        }
+
+        Serial.println();
+
+        // ~2 second cadence between iterations. delay() yields on ESP32
+        // so the task watchdog is fed.
+        delay(2000);
+    }
 }
 
 void SensorManager::dumpSensorConfiguration()

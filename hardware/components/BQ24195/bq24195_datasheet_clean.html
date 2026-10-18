@@ -1,0 +1,4719 @@
+<ti-raw>
+<div>
+
+<div>
+<div>DATA SHEET</div>
+<h1>bq24195 I2C Controlled 2.5-A /4.5-A Single Cell USB/Adapter Charger with 5.1 V at 1 A
+/5.1 V at 2.1 A Synchronous Boost Operation</h1>
+
+<h2 id="SLUSAW51209">1 Features</h2>
+<ul>
+<li>High Efficiency Switch Mode Charger 
+<ul>
+<li>2.5-A (bq24195L) or 4.5-A (bq24195) Fast Charging</li>
+<li>92% Charge Efficiency at 2 A, 90% at 4 A</li>
+</ul>
+</li>
+<li>Synchronous Boost Converter in Battery Boost Mode<ul>
+<li>5.1 V at 1 A (bq24195L) or 5.1 V at 2.1 A (bq24195) </li>
+<li>94% 5.1-V Boost Efficiency at 1 A, <br> 91% at 2.1 A</li>
+</ul>
+</li>
+<li>Highest Battery Discharge Efficiency with 12-mΩ Battery Discharge MOSFET up to 9-A Discharge Current
+</li>
+<li>Single Input USB-compliant/Adapter Charger<ul>
+<li>USB Host or Charging Port D+/D- Detection Compatible to USB Battery Charger Spec 1.2</li>
+<li>Input Voltage and Current Limit Supports USB2.0 and USB3.0</li>
+<li>Input Current Limit: 100 mA, 150 mA, 500 mA, 900 mA, 1.2 A, 1.5 A, 2 A and 3 A</li>
+</ul>
+</li>
+<li>3.9-V to 17-V Input Operating Voltage Range<ul>
+<li>Support All Kinds of Adapter with Input Voltage DPM Regulation</li>
+</ul>
+</li>
+<li>Narrow VDC (NVDC) Power Path Management <ul>
+<li>Instant-on Works with No Battery or Deeply Discharged Battery</li>
+<li>Ideal Diode Operation in Battery Supplement Mode</li>
+</ul>
+</li>
+<li>1.5-MHz Switching Frequency for Low Profile Inductor</li>
+<li>Autonomous Battery Charging with or without Host Management<ul>
+<li>Battery Charge Enable</li>
+<li>Battery Charge Preconditioning</li>
+<li>Charge Termination and Recharge</li>
+</ul>
+</li>
+<li>High Accuracy (0°C to 125°C)<ul>
+<li>±0.5% Charge Voltage Regulation</li>
+<li>±7% Charge Current Regulation</li>
+<li>±7.5% Input Current Regulation</li>
+<li>±2% Output Regulation in Boost Mode</li>
+</ul>
+</li>
+<li>High Integration<ul>
+<li>Power Path Management</li>
+<li>Synchronous Switching MOSFETs</li>
+<li>Integrated Current Sensing</li>
+<li>Bootstrap Diode</li>
+<li>Internal Loop Compensation</li>
+</ul>
+</li>
+<li>Safety<ul>
+<li>Battery Temperature Sensing and Charging Safety Timer</li>
+<li>Thermal Regulation and Thermal Shutdown</li>
+<li>Input System Over-Voltage Protection</li>
+<li>MOSFET Over-Current Protection</li>
+</ul>
+</li>
+<li>Charge Status Outputs for LED or Host Processor</li>
+<li>Low Battery Leakage Current and Support Shipping Mode</li>
+<li>4.00 mm x 4.00 mm QFN-24 Package</li>
+</ul>
+</div>
+<div>
+<h2 id="SLUSAW53030">2 Applications</h2>
+<ul>
+<li>Power Bank for Smartphone, Tablet</li>
+<li>Tablet PC and Smart Phone</li>
+<li>Portable Audio Speaker</li>
+<li>Portable Media Players</li>
+<li>Internet Devices</li>
+</ul>
+</div>
+<div>
+<h2 id="SLUSAW54839">3 Description</h2>
+<p>The <span>bq24195L, bq24195 are</span> highly-integrated switch-mode battery charge management and system
+power path management devices for single cell Li-Ion and Li-polymer battery in a wide range of
+<span>power bank, </span>tablet and other portable devices.</p>
+<div>
+<h3 id="SLUSAW59633">Device Information<sup>(1)</sup>
+</h3>
+<table>
+
+<thead>
+<tr>
+<th>PART NUMBER</th>
+<th>PACKAGE</th>
+<th>BODY SIZE (NOM)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>bq24195</td>
+<td rowspan="2">VQFN (24)</td>
+<td rowspan="2">4.00 mm x 4.00 mm</td>
+</tr>
+<tr>
+<td>bq24195L</td>
+</tr>
+</tbody>
+</table>
+</div>
+<ol>
+<li id="DevInfoNote"> For all available packages, see the orderable addendum at the end of the
+datasheet. </li>
+</ol>
+<div>
+[image]
+</div>
+</div>
+<div>
+<h2 id="SLUSAW5649">4 Revision History</h2>
+<p>
+<strong>Changes from * Revision (October 2012) to A Revision</strong>
+</p>
+<ul>
+<li>
+<span>Added Handling Rating table, Feature Description section, Device Functional
+Modes, Application and Implementation section, Power Supply Recommendations section, Layout
+section, Device and Documentation Support section, and Mechanical, Packaging, and Orderable
+Information section. </span><span>Go</span>
+</li>
+<li>
+<span>Changed V<sub>SLEEPZ</sub>, V<sub>BAT_DPL_HY</sub>, V<sub>BATGD </sub>,
+I<sub>CHG_20pct</sub>, V<sub>SHORT</sub>, I<sub>ADPT_DPM</sub>, K<sub>ILIM</sub>,
+V<sub>BTST_REFRESH</sub> in Electrical Characteristics</span><span>Go</span>
+</li>
+<li>
+<span>Added –40°C to 85° to I<sub>BAT</sub> Test Condition</span><span>Go</span>
+</li>
+<li>
+<span>Added REG00[6:3] = 0110 (4.36 V) or 1011 (4.76 V) to V<sub>INDPM_REG_ACC</sub>
+Test Conditions</span><span>Go</span>
+</li>
+<li>
+<span> Added a MIN value of 435 to K<sub>ILIM</sub></span><span>Go</span>
+</li>
+<li>
+<span>Deleted T<sub>Junction_REG</sub> MIN and MAX</span><span>Go</span>
+</li>
+<li>
+<span>Changed V<sub>OTG_ILIM</sub> to I<sub>OTG_ILIM</sub></span><span>Go</span>
+</li>
+<li>
+<span>Changed Functional Block Diagram</span><span>Go</span>
+</li>
+<li>
+<span>Changed Charging Current in <span>Table 3</span></span><span>Go</span>
+</li>
+<li>
+<span>Changed REG09[5:4] to REG08[5:4] in Charging Termination section</span><span>Go</span>
+</li>
+<li>
+<span>Changed Charging Safety Timer description</span><span>Go</span>
+</li>
+<li>
+<span>Changed Host Mode and Default Mode description</span><span>Go</span>
+</li>
+<li>
+<span>Changed Charge Current Control Register REG02 Bit 0 description and
+note</span><span>Go</span>
+</li>
+</ul>
+</div>
+
+</div>
+</ti-raw>
+
+<ti-raw>
+<div>
+
+<div>
+<h2 id="SLUSAW55822">5 Description (Continued)</h2>
+<p>Its low impedance power path optimizes switch-mode operation efficiency, reduces battery charging time
+and extends battery life during discharging phase. The I<sup>2</sup>C serial interface with charging and
+system settings makes the device a truly flexible solution.</p>
+<p>The device supports a wide range of input sources, including standard USB host port, USB charging port
+and high power DC adapter. To set the default input current limit, the bq24195L, bq24195 detects the
+input source following the USB battery charging spec 1.2. The bq24195/bq24195L are compliant with USB
+2.0 and USB 3.0 power specifications with input current and voltage regulation. The bq24195L, bq24195
+supports battery boost operation by supplying 5.1 V on PMID pin with minimum current of 1.0 A (bq24195L)
+or 2.1 A (bq24195).</p>
+<p>The power path management regulates the system slightly above battery voltage but does not drop below
+3.5-V minimum system voltage (programmable). With this feature, the system maintains operation even when
+the battery is completely depleted or removed. When the input current limit or voltage limit is reached,
+the power path management automatically reduces the charge current to zero. As the system load continues
+to increase, the power path discharges the battery until the system power requirement is met. This
+supplement mode operation prevents overloading the input source.</p>
+<p>The devices initiate and complete a charging cycle without software control. It automatically detects the
+battery voltage and charges the battery in three phases: pre-conditioning, constant current and constant
+voltage. At the end of the charging cycle, the charger automatically terminates when the charge current
+is below a preset limit in the constant voltage phase. When the full battery falls below the recharge
+threshold, the charger will automatically start another charging cycle.</p>
+<p>The devices provide various safety features for battery charging and system operation, including negative
+thermistor monitoring, charging safety timer and over-voltage/over-current protections. The thermal
+regulation reduces charge current when the junction temperature exceeds 120°C (programmable).</p>
+<p>The STAT output reports the charging status and any fault conditions. The INT immediately notifies the
+host when a fault occurs.</p>
+<p> The <span>bq24195 and bq24195L are</span> available in a 24-pin, 4.00 x 4.00 mm<sup>2</sup> thin VQFN
+package. </p>
+</div>
+
+</div>
+</ti-raw>
+
+<ti-raw>
+<div>
+
+<div>
+<h2 id="SLUSAW59490">6 Pin Configuration and Functions</h2>
+<div>
+<div>RGE Package</div>
+<div>24-Pin VQFN With Exposed Thermal Pad</div>
+<div>(Top View)</div>
+[image]
+</div>
+<div>
+<h3 id="SLUSAW52328">Pin Functions</h3>
+<table>
+
+<thead>
+<tr>
+<th colspan="2">PIN</th>
+<th rowspan="2">TYPE</th>
+<th rowspan="2">DESCRIPTION</th>
+</tr>
+<tr>
+<th>NAME</th>
+<th>NUMBER</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>VBUS</td>
+<td>1,24</td>
+<td>P</td>
+<td>Charger Input Voltage. The internal n-channel reverse block
+MOSFET (RBFET) is connected between VBUS and PMID with VBUS on source. Place a 1-µF
+ceramic capacitor from VBUS to PGND and place it as close as possible to IC. (Refer to
+Application Information Section for details)</td>
+</tr>
+<tr>
+<td>D+ </td>
+<td>2</td>
+<td>I <br> Analog</td>
+<td>Positive line of the USB data line pair. D+/D– based USB
+host/charging port detection. The detection includes data contact detection (DCD) and
+primary detection in bc1.2.</td>
+</tr>
+<tr>
+<td>D–</td>
+<td>3</td>
+<td>I<br> Analog</td>
+<td>Negative line of the USB data line pair. D+/D– based USB
+host/charging port detection. The detection includes data contact detection (DCD) and
+primary detection in bc1.2.</td>
+</tr>
+<tr>
+<td>STAT</td>
+<td>4</td>
+<td>O<br> Digital</td>
+<td>Open drain charge status output to indicate various charger
+operation. Connect to the pull up rail via 10-kΩ. LOW indicates charge in progress. HIGH
+indicates charge complete or charge disabled. When any fault condition occurs, STAT pin
+blinks at 1 Hz.</td>
+</tr>
+<tr>
+<td>SCL</td>
+<td>5</td>
+<td>I<br> Digital</td>
+<td>I<sup>2</sup>C Interface clock. Connect SCL to the logic
+rail through a 10-kΩ resistor.</td>
+</tr>
+<tr>
+<td>SDA</td>
+<td>6</td>
+<td>I/O<br> Digital</td>
+<td>I<sup>2</sup>C Interface data. Connect SDA to the logic
+rail through a 10-kΩ resistor.</td>
+</tr>
+<tr>
+<td>INT</td>
+<td>7</td>
+<td>O<br> Digital</td>
+<td>Open-drain Interrupt Output. Connect the INT to a logic
+rail via 10-kΩ resistor. The INT pin sends active low, 256-us pulse to host to report
+charger device status and fault.</td>
+</tr>
+<tr>
+<td rowspan="3">OTG</td>
+<td rowspan="3">8</td>
+<td rowspan="3">I<br> Digital</td>
+<td>USB current limit selection pin
+during buck mode, and active high enable pin during boost mode.</td>
+</tr>
+<tr>
+<td>In buck mode with USB host, when OTG
+= High, IIN limit = 500 mA and when OTG = Low, IIN limit = 100 mA.</td>
+</tr>
+<tr>
+<td>The boost mode is activated when the REG01[5:4] = 10 and
+OTG pin is High.</td>
+</tr>
+<tr>
+<td><span>CE</span></td>
+<td>9</td>
+<td>I<br> Digital</td>
+<td>Active low Charge Enable pin. Battery charging is enabled
+when REG01[5:4] = 01 and <span>CE</span> pin = Low. <span>CE</span> pin must be pulled high or low.</td>
+</tr>
+<tr>
+<td>ILIM</td>
+<td>10</td>
+<td>I<br> Analog</td>
+<td>ILIM pin sets the maximum input current limit by regulating
+the ILIM voltage at 1 V. A resistor is connected from ILIM pin to ground to set the
+maximum limit as I<sub>INMAX</sub> = (1V/R<sub>ILIM</sub>) × 530. The actual input
+current limit is the lower one set by ILIM and by I<sup>2</sup>C REG00[2:0]. The minimum
+input current programmed on ILIM pin is 500 mA.</td>
+</tr>
+<tr>
+<td>TS1</td>
+<td>11</td>
+<td>I<br> Analog</td>
+<td>Temperature qualification voltage input #1. Connect a
+negative temperature coefficient thermistor. Program temperature window with a resistor
+divider from REGN to TS1 to GND. Charge suspends when either TS pin is out of range.
+Recommend 103AT-2 thermistor. TS1 and TS2 pins have to be shorted together.</td>
+</tr>
+<tr>
+<td>TS2</td>
+<td>12</td>
+<td>I<br> Analog</td>
+<td>Temperature qualification voltage input #2. TS1 and TS2
+pins have to be shorted together.</td>
+</tr>
+<tr>
+<td>BAT</td>
+<td>13,14</td>
+<td>P</td>
+<td>Battery connection point to the positive terminal of the
+battery pack. The internal BATFET is connected between BAT and SYS. Connect a 10 µF
+closely to the BAT pin.</td>
+</tr>
+<tr>
+<td>SYS</td>
+<td>15,16</td>
+<td>P</td>
+<td>System connection point. The internal BATFET is connected
+between BAT and SYS. When the battery falls below the minimum system voltage,
+switch-mode converter keeps SYS above the minimum system voltage. (Refer to Application
+Information Section for inductor and capacitor selection.)</td>
+</tr>
+<tr>
+<td>PGND</td>
+<td>17,18</td>
+<td>P</td>
+<td>Power ground connection for high-current power converter
+node. Internally, PGND is connected to the source of the n-channel LSFET. On PCB layout,
+connect directly to ground connection of input and output capacitors of the charger. A
+single point connection is recommended between power PGND and the analog GND near the IC
+PGND pin.</td>
+</tr>
+<tr>
+<td>SW</td>
+<td>19,20</td>
+<td>O<br> Analog</td>
+<td>Switching node connecting to output inductor. Internally SW
+is connected to the source of the n-channel HSFET and the drain of the n-channel LSFET.
+Connect the 0.047-µF bootstrap capacitor from SW to BTST.</td>
+</tr>
+<tr>
+<td>BTST</td>
+<td>21</td>
+<td>P</td>
+<td>PWM high side driver positive supply. Internally, the BTST
+is connected to the anode of the boost-strap diode. Connect the 0.047-µF bootstrap
+capacitor from SW to BTST.</td>
+</tr>
+<tr>
+<td>REGN</td>
+<td>22</td>
+<td>P</td>
+<td>PWM low side driver positive supply output. Internally,
+REGN is connected to the cathode of the boost-strap diode. Connect a 4.7-µF (10-V
+rating) ceramic capacitor from REGN to analog GND. The capacitor should be placed close
+to the IC. REGN also serves as bias rail of TS1 and TS2 pins.</td>
+</tr>
+<tr>
+<td>PMID</td>
+<td>23</td>
+<td>P</td>
+<td>Battery Boost Mode Output Voltage. Connected to the drain
+of the reverse blocking MOSFET and the drain of HSFET. The minimum capacitance required
+on PMID to PGND is 20 µF (bq24195L) or 60 µF (bq24195)</td>
+</tr>
+<tr>
+<td>Thermal Pad</td>
+<td>–</td>
+<td>P</td>
+<td>Exposed pad beneath the IC for heat dissipation. Always
+solder thermal pad to the board, and have vias on the thermal pad plane star-connecting
+to PGND and ground plane for high-current power converter.</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+
+</div>
+</ti-raw>
+
+<ti-raw>
+<div>
+
+<div>
+<h2 id="SLUSAW59510">7 Specifications</h2>
+<div>
+<h3 id="SLUSAW51588">7.1 Absolute Maximum Ratings<sup>(1)</sup>
+</h3>
+<span>over operating free-air temperature range (unless otherwise noted)</span>
+<table>
+
+<thead>
+<tr>
+<th colspan="2"></th>
+<th>MIN</th>
+<th>MAX</th>
+<th>UNIT</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td rowspan="9">Voltage range (with respect to GND)</td>
+<td>VBUS</td>
+<td>–2</td>
+<td>22</td>
+<td>V</td>
+</tr>
+<tr>
+<td>PMID</td>
+<td>–0.3</td>
+<td>22</td>
+<td>V</td>
+</tr>
+<tr>
+<td>STAT, </td>
+<td>–0.3</td>
+<td>20</td>
+<td>V</td>
+</tr>
+<tr>
+<td>BTST</td>
+<td>–0.3</td>
+<td>26</td>
+<td>V</td>
+</tr>
+<tr>
+<td>SW</td>
+<td>–2</td>
+<td>20</td>
+<td>V</td>
+</tr>
+<tr>
+<td>BAT, SYS (converter not switching)</td>
+<td>–0.3</td>
+<td>6</td>
+<td>V</td>
+</tr>
+<tr>
+<td>SDA, SCL, INT, OTG, ILIM, REGN, TS1, TS2, <span>CE</span>, <span>D+, D–</span></td>
+<td>–0.3</td>
+<td>7</td>
+<td> V</td>
+</tr>
+<tr>
+<td>BTST TO SW</td>
+<td>–0.3</td>
+<td>–7</td>
+<td>V</td>
+</tr>
+<tr>
+<td>PGND to GND</td>
+<td>–0.3</td>
+<td>–0.3</td>
+<td> V</td>
+</tr>
+<tr>
+<td>Output sink current</td>
+<td>INT, STAT</td>
+<td></td>
+<td>6</td>
+<td>mA</td>
+</tr>
+<tr>
+<td>Junction temperature</td>
+<td></td>
+<td>–40°C</td>
+<td>150</td>
+<td> °C</td>
+</tr>
+<tr>
+<td>Storage temperature, T<sub>stg</sub></td>
+<td></td>
+<td>–65 </td>
+<td>150 </td>
+<td>°C</td>
+</tr>
+</tbody>
+</table>
+<div id="SLUSB996923">(1) Stresses beyond those listed under absolute maximum ratings
+may cause permanent damage to the device. These are stress ratings only, and functional operation of
+the device at these or any other conditions beyond those indicated under recommended operating
+conditions is not implied. Exposure to absolute-maximum-rated conditions for extended periods may
+affect device reliability. All voltage values are with respect to the network ground terminal unless
+otherwise noted.</div>
+</div>
+<div>
+<h3 id="SLUSAW52438">7.2 ESD Ratings </h3>
+<table>
+
+<thead>
+<tr>
+<th colspan="3" rowspan="1"></th>
+<th>VALUE</th>
+<th>UNIT</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td rowspan="2">V<sub>(ESD)</sub></td>
+<td rowspan="2">Electrostatic discharge</td>
+<td>Human body model (HBM), per ANSI/ESDA/JEDEC JS-001<sup>(1)</sup></td>
+<td>1000</td>
+<td rowspan="2">V</td>
+</tr>
+<tr>
+<td>Charged device model (CDM), per JEDEC specification
+JESD22-C101<sup>(2)</sup></td>
+<td>250</td>
+</tr>
+</tbody>
+</table>
+<div id="HBM_comm">(1) JEDEC document JEP155 states that 500-V HBM allows safe
+manufacturing with a standard ESD control process.</div>
+<div id="CDM_comm">(2) JEDEC document JEP157 states that 250-V CDM allows safe
+manufacturing with a standard ESD control process. </div>
+</div>
+<div>
+<h3 id="SLUSAW53397">7.3 Recommended Operating Conditions</h3>
+<table>
+
+<thead>
+<tr>
+<th colspan="2"></th>
+<th>MIN</th>
+<th>MAX</th>
+<th>UNIT</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>V<sub>IN</sub></td>
+<td>Input voltage</td>
+<td>3.9</td>
+<td>17<sup>(1)</sup></td>
+<td>V</td>
+</tr>
+<tr>
+<td>I<sub>IN</sub></td>
+<td>Input current </td>
+<td></td>
+<td>3</td>
+<td>A</td>
+</tr>
+<tr>
+<td>I<sub>SYS</sub></td>
+<td>Output current (SYS)</td>
+<td></td>
+<td>4.5 (bq24195)<br> 2.5 (bq24195L)</td>
+<td>A</td>
+</tr>
+<tr>
+<td>V<sub>BAT</sub></td>
+<td>Battery voltage</td>
+<td></td>
+<td>4.4</td>
+<td>V</td>
+</tr>
+<tr>
+<td rowspan="2">I<sub>BAT</sub></td>
+<td>Fast charging current</td>
+<td></td>
+<td>4.5 (bq24195)<br> 2.5 (bq24195L)</td>
+<td>A</td>
+</tr>
+<tr>
+<td>Discharging current with internal MOSFET</td>
+<td></td>
+<td> 6 continuous <br> 9 peak<br> (up to 1 sec duration)</td>
+<td>A</td>
+</tr>
+<tr>
+<td>T<sub>A</sub></td>
+<td>Operating free-air temperature range</td>
+<td>–40</td>
+<td>85</td>
+<td>°C</td>
+</tr>
+</tbody>
+</table>
+<div id="SLUSAW51361">(1) The inherent switching noise voltage spikes should not
+exceed the absolute maximum rating on either the BTST or SW pins. A tight layout minimizes switching
+noise. </div>
+</div>
+<div>
+<h3 id="SLUSAW5135">7.4 Thermal Information</h3>
+<table>
+
+<thead>
+<tr>
+<th colspan="2" rowspan="2">THERMAL METRIC<sup>(1)</sup></th>
+<th><span>bq24195</span></th>
+<th rowspan="2">UNIT</th>
+</tr>
+<tr>
+<th>RGE (24 PIN)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td rowspan="1">R<sub>θJA</sub></td>
+<td>Junction-to-ambient thermal resistance </td>
+<td>32.2</td>
+<td rowspan="6">°C/W</td>
+</tr>
+<tr>
+<td rowspan="1">R<sub>θJCtop</sub></td>
+<td>Junction-to-case (top) thermal resistance </td>
+<td>29.8</td>
+</tr>
+<tr>
+<td>R<sub>θJB</sub></td>
+<td>Junction-to-board thermal resistance </td>
+<td>9.1</td>
+</tr>
+<tr>
+<td>ψ<sub>JT</sub></td>
+<td>Junction-to-top characterization parameter </td>
+<td>0.3</td>
+</tr>
+<tr>
+<td>ψ<sub>JB</sub></td>
+<td>Junction-to-board characterization parameter </td>
+<td>9.1</td>
+</tr>
+<tr>
+<td>R<sub>θJCbot</sub></td>
+<td>Junction-to-case (bottom) thermal resistance </td>
+<td>2.2</td>
+</tr>
+</tbody>
+</table>
+<div id="appnote_sprs953">(1) For more information about traditional and new thermal
+metrics, see the <i>IC Package Thermal Metrics</i> application report, SPRA953.</div>
+</div>
+<div>
+
+<h3 id="SLUSAW57346">7.5 Electrical Characteristics</h3>
+<span>V<sub>VBUS_UVLOZ</sub> &lt; V<sub>VBUS</sub> &lt; V<sub>ACOV</sub> and
+V<sub>VBUS</sub> &gt; V<sub>BAT</sub> + V<sub>SLEEP</sub>, T<sub>J</sub> = –40°C to 125°C and
+T<sub>J</sub> = 25°C for typical values unless other noted. </span>
+<table>
+
+<thead>
+<tr>
+<th colspan="2">PARAMETER</th>
+<th>TEST CONDITIONS</th>
+<th>MIN</th>
+<th>TYP</th>
+<th>MAX</th>
+<th>UNIT</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td colspan="7">QUIESCENT CURRENTS </td>
+</tr>
+<tr>
+<td rowspan="3">I<sub>BAT</sub></td>
+<td rowspan="3">Battery discharge current (BAT, SW, SYS)</td>
+<td>V<sub>VBUS</sub> &lt; V<sub>UVLO</sub>, VBAT = 4.2 V, leakage between BAT and VBUS</td>
+<td></td>
+<td></td>
+<td>5</td>
+<td>µA</td>
+</tr>
+<tr>
+<td>High-Z Mode, or no VBUS, BATFET disabled (REG07[5] = 1), <span>–40°C to 85°C</span></td>
+<td></td>
+<td>12</td>
+<td>20</td>
+<td>µA</td>
+</tr>
+<tr>
+<td>High-Z Mode, or no VBUS, REG07[5] = 0, –40°C to 85°C</td>
+<td></td>
+<td>32</td>
+<td>55</td>
+<td>µA</td>
+</tr>
+<tr>
+<td rowspan="5">I<sub>VBUS</sub></td>
+<td rowspan="5">Input supply current (VBUS)</td>
+<td>V<sub>VBUS</sub> = 5 V, High-Z mode</td>
+<td></td>
+<td>15</td>
+<td>30</td>
+<td>µA</td>
+</tr>
+<tr>
+<td>V<sub>VBUS</sub> = 17 V, High-Z mode</td>
+<td></td>
+<td>30</td>
+<td>50</td>
+<td>µA</td>
+</tr>
+<tr>
+<td>V<sub>VBUS</sub> &gt; V<sub>UVLO</sub>, V<sub>VBUS</sub> &gt; V<sub>BAT</sub>, converter
+not switching</td>
+<td></td>
+<td>1.5</td>
+<td>3</td>
+<td>mA</td>
+</tr>
+<tr>
+<td>V<sub>VBUS</sub> &gt; V<sub>UVLO</sub>, V<sub>VBUS</sub> &gt; V<sub>BAT</sub>, converter
+switching, V<sub>BAT</sub> = 3.2 V, I<sub>SYS</sub> = 0 A</td>
+<td></td>
+<td>4</td>
+<td></td>
+<td>mA</td>
+</tr>
+<tr>
+<td>V<sub>VBUS</sub> &gt; V<sub>UVLO</sub>, V<sub>VBUS</sub> &gt; V<sub>BAT</sub>, converter
+switching, V<sub>BAT</sub> = 3.8 V, I<sub>SYS</sub> = 0 A</td>
+<td></td>
+<td>15</td>
+<td></td>
+<td>mA</td>
+</tr>
+<tr>
+<td>I<sub>BOOST</sub></td>
+<td>Battery discharge current in boost mode</td>
+<td>VBAT = 4.2 V, Boost mode, I<sub>PMID</sub> = 0 A, converter switching</td>
+<td></td>
+<td>15</td>
+<td></td>
+<td>mA</td>
+</tr>
+<tr>
+<td colspan="7">VBUS/BAT POWER UP</td>
+</tr>
+<tr>
+<td>V<sub>VBUS_OP</sub></td>
+<td>VBUS operating range</td>
+<td></td>
+<td>3.9</td>
+<td></td>
+<td><span>17</span></td>
+<td>V</td>
+</tr>
+<tr>
+<td>V<sub>VBUS_UVLOZ</sub></td>
+<td>VBUS for active I<sup>2</sup>C, no battery</td>
+<td>V<sub>VBUS</sub> rising</td>
+<td>3.6</td>
+<td></td>
+<td></td>
+<td>V</td>
+</tr>
+<tr>
+<td>V<sub>SLEEP</sub></td>
+<td>Sleep mode falling threshold</td>
+<td>V<sub>VBUS</sub> falling, V<sub>VBUS-VBAT</sub></td>
+<td>35</td>
+<td>80</td>
+<td>120</td>
+<td>mV</td>
+</tr>
+<tr>
+<td>V<sub>SLEEPZ</sub></td>
+<td>Sleep mode rising threshold</td>
+<td>V<sub>VBUS</sub> rising, V<sub>VBUS-VBAT</sub></td>
+<td>170</td>
+<td>250</td>
+<td>350</td>
+<td>mV</td>
+</tr>
+<tr>
+<td>V<sub>ACOV</sub></td>
+<td>VBUS over-voltage rising threshold</td>
+<td>V<sub>VBUS</sub> rising</td>
+<td>17.4</td>
+<td>18</td>
+<td></td>
+<td>V</td>
+</tr>
+<tr>
+<td>V<sub>ACOV_HYST</sub></td>
+<td>VBUS over-voltage falling hysteresis</td>
+<td>V<sub>VBUS</sub> falling</td>
+<td></td>
+<td>700</td>
+<td></td>
+<td>mV</td>
+</tr>
+<tr>
+<td>V<sub>BAT_UVLOZ</sub></td>
+<td>Battery for active I<sup>2</sup>C, no VBUS</td>
+<td>V<sub>BAT</sub> rising</td>
+<td>2.3</td>
+<td></td>
+<td></td>
+<td>V</td>
+</tr>
+<tr>
+<td>V<sub>BAT_DPL</sub></td>
+<td>Battery depletion threshold</td>
+<td>V<sub>BAT</sub> falling</td>
+<td></td>
+<td>2.4</td>
+<td>2.6</td>
+<td>V</td>
+</tr>
+<tr>
+<td>V<sub>BAT_DPL_HY</sub></td>
+<td>Battery depletion rising hysteresis</td>
+<td>V<sub>BAT</sub> rising</td>
+<td></td>
+<td>170</td>
+<td>260</td>
+<td>mV</td>
+</tr>
+<tr>
+<td>V<sub>VBUSMIN</sub></td>
+<td>Bad adapter detection threshold</td>
+<td>V<sub>VBUS</sub> falling</td>
+<td></td>
+<td>3.8</td>
+<td></td>
+<td>V</td>
+</tr>
+<tr>
+<td>I<sub>BADSRC</sub></td>
+<td>Bad adapter detection current source</td>
+<td></td>
+<td></td>
+<td>30</td>
+<td></td>
+<td>mA</td>
+</tr>
+<tr>
+<td>t<sub>BADSRC</sub></td>
+<td>Bad source detection duration</td>
+<td></td>
+<td></td>
+<td>30</td>
+<td></td>
+<td>ms</td>
+</tr>
+<tr>
+<td colspan="7">POWER PATH MANAGEMENT</td>
+</tr>
+<tr>
+<td>V<sub>SYS_RANGE</sub></td>
+<td>Typical system regulation voltage</td>
+<td>Isys = 0 A, Q4 off, V<sub>BAT </sub>up to 4.2 V, <br> REG01[3:1] = 101,
+V<sub>SYSMIN</sub> = 3.5 V</td>
+<td>3.5</td>
+<td></td>
+<td>4.35</td>
+<td>V</td>
+</tr>
+<tr>
+<td>V<sub>SYS_MIN</sub></td>
+<td>System voltage output</td>
+<td>REG01[3:1] = 101, V<sub>SYSMIN</sub> = 3.5 V</td>
+<td>3.55</td>
+<td>3.65</td>
+<td></td>
+<td>V</td>
+</tr>
+<tr>
+<td>R<sub>ON(RBFET)</sub></td>
+<td>Internal top reverse blocking MOSFET on-resistance</td>
+<td>Measured between VBUS and PMID</td>
+<td></td>
+<td>23</td>
+<td>38</td>
+<td>mΩ</td>
+</tr>
+<tr>
+<td rowspan="2">R<sub>ON(HSFET)</sub></td>
+<td rowspan="2">Internal top switching MOSFET on-resistance between PMID and SW</td>
+<td>T<sub>J</sub> = –40°C to 85°C</td>
+<td></td>
+<td>30</td>
+<td>38</td>
+<td rowspan="2">mΩ</td>
+</tr>
+<tr>
+<td>T<sub>J</sub> = -40°C to 125°C</td>
+<td></td>
+<td>30</td>
+<td>48</td>
+</tr>
+<tr>
+<td rowspan="2">R<sub>ON(LSFET)</sub></td>
+<td rowspan="2">Internal bottom switching MOSFET on-resistance between SW and PGND</td>
+<td>T<sub>J</sub> = –40°C to 85°C</td>
+<td></td>
+<td>35</td>
+<td>48</td>
+<td rowspan="2">mΩ</td>
+</tr>
+<tr>
+<td>T<sub>J</sub> = -40°C to 125°C</td>
+<td></td>
+<td>35</td>
+<td>51</td>
+</tr>
+<tr>
+<td>V<sub>FWD</sub></td>
+<td>BATFET forward voltage in supplement mode</td>
+<td>BAT discharge current 10 mA</td>
+<td></td>
+<td>30</td>
+<td></td>
+<td>mV</td>
+</tr>
+<tr>
+<td>V<sub>SYS_BAT</sub></td>
+<td>SYS/BAT Comparator</td>
+<td>V<sub>SYS</sub> falling</td>
+<td></td>
+<td>90</td>
+<td></td>
+<td>mV</td>
+</tr>
+<tr>
+<td>V<sub>BATGD</sub></td>
+<td>Battery good comparator rising threshold</td>
+<td>V<sub>BAT</sub> rising</td>
+<td></td>
+<td>3.55</td>
+<td></td>
+<td>V</td>
+</tr>
+<tr>
+<td>V<sub>BATGD_HYST</sub></td>
+<td>Battery good comparator falling threshold</td>
+<td>V<sub>BAT</sub> falling</td>
+<td></td>
+<td>100</td>
+<td></td>
+<td>mV</td>
+</tr>
+<tr>
+<td colspan="7">BATTERY CHARGER</td>
+</tr>
+<tr>
+<td>V<sub>BAT_REG_ACC</sub></td>
+<td>Charge voltage regulation accuracy</td>
+<td>V<sub>BAT</sub> = 4.208 V</td>
+<td>–0.5%</td>
+<td></td>
+<td>0.5%</td>
+<td></td>
+</tr>
+<tr>
+<td rowspan="2">I<sub>ICHG_REG_ACC</sub></td>
+<td rowspan="2">Fast charge current regulation accuracy</td>
+<td>V<sub>BAT</sub> = 3.8 V, I<sub>CHG</sub> = 1792 mA, T<sub>J</sub> = 25°C</td>
+<td>–4%</td>
+<td></td>
+<td>4%</td>
+<td></td>
+</tr>
+<tr>
+<td>V<sub>BAT</sub> = 3.8 V, I<sub>CHG</sub> = 1792 mA, T<sub>J</sub> = –20°C to 125°C</td>
+<td>–7%</td>
+<td></td>
+<td>7%</td>
+<td></td>
+</tr>
+<tr>
+<td>I<sub>CHG_20pct</sub></td>
+<td>Charge current with 20% option on </td>
+<td>V<sub>BAT</sub> = 3.1 V, I<sub>CHG</sub> = 104 mA, REG02 = 03 </td>
+<td>75</td>
+<td><span>100</span></td>
+<td><span>150</span></td>
+<td>mA</td>
+</tr>
+<tr>
+<td>V<sub>BATLOWV</sub></td>
+<td>Battery LOWV falling threshold</td>
+<td>Fast charge to precharge, REG04[1] = 1</td>
+<td>2.6</td>
+<td>2.8</td>
+<td>2.9</td>
+<td>V</td>
+</tr>
+<tr>
+<td>V<sub>BATLOWV_HYST</sub></td>
+<td>Battery LOWV rising threshold</td>
+<td>Precharge to fast charge, REG04[1] = 1</td>
+<td>2.8</td>
+<td>3.0</td>
+<td>3.1</td>
+<td>V</td>
+</tr>
+<tr>
+<td>I<sub>PRECHG_ACC</sub></td>
+<td>Precharge current regulation accuracy</td>
+<td>VBAT = 2.6 V, I<sub>CHG</sub> = 256 mA</td>
+<td>–20%</td>
+<td></td>
+<td>20%</td>
+<td></td>
+</tr>
+<tr>
+<td>I<sub>TERM_ACC</sub></td>
+<td>Termination current accuracy</td>
+<td>I<sub>TERM</sub> = 256 mA, I<sub>CHG</sub> = 960 mA</td>
+<td>–20%</td>
+<td></td>
+<td>20%</td>
+<td></td>
+</tr>
+<tr>
+<td>V<sub>SHORT</sub></td>
+<td>Battery Short Voltage</td>
+<td>VBAT falling</td>
+<td></td>
+<td><span>2.0</span></td>
+<td></td>
+<td>V</td>
+</tr>
+<tr>
+<td>V<sub>SHORT_HYST</sub></td>
+<td>Battery Short Voltage hysteresis</td>
+<td>VBAT rising</td>
+<td></td>
+<td>200</td>
+<td></td>
+<td>mV</td>
+</tr>
+<tr>
+<td>I<sub>SHORT</sub></td>
+<td>Battery short current</td>
+<td>VBAT &lt; 2.2V</td>
+<td></td>
+<td>100</td>
+<td></td>
+<td>mA</td>
+</tr>
+<tr>
+<td>V<sub>RECHG</sub></td>
+<td>Recharge threshold below VBAT_REG</td>
+<td>VBAT falling, REG04[0] = 0</td>
+<td></td>
+<td>100</td>
+<td></td>
+<td>mV</td>
+</tr>
+<tr>
+<td>t<sub>RECHG</sub></td>
+<td>Recharge deglitch time</td>
+<td>VBAT falling, REG04[0] = 0</td>
+<td></td>
+<td>20</td>
+<td></td>
+<td>ms</td>
+</tr>
+<tr>
+<td rowspan="2">R<sub>ON_BATFET</sub></td>
+<td rowspan="2">SYS-BAT MOSFET on-resistance</td>
+<td>T<sub>J</sub> = 25°C</td>
+<td></td>
+<td><span>12</span></td>
+<td><span>15</span></td>
+<td rowspan="2">mΩ</td>
+</tr>
+<tr>
+<td>T<sub>J</sub> = –40°C to 125°C</td>
+<td></td>
+<td><span>12</span></td>
+<td><span>20</span></td>
+</tr>
+<tr>
+<td colspan="7">INPUT VOLTAGE/CURRENT REGULATION</td>
+</tr>
+<tr>
+<td>V<sub>INDPM_REG_ACC</sub></td>
+<td>Input voltage regulation accuracy</td>
+<td><span>REG00[6:3] = 0110 (4.36 V) or 1011 (4.76 V)</span></td>
+<td>–2%</td>
+<td></td>
+<td>2%</td>
+<td></td>
+</tr>
+<tr>
+<td rowspan="4">I<sub>USB_DPM</sub></td>
+<td rowspan="4">USB Input current regulation limit, VBUS = 5 V, current pulled from SW</td>
+<td>USB100</td>
+<td>85</td>
+<td></td>
+<td>100</td>
+<td>mA</td>
+</tr>
+<tr>
+<td>USB150</td>
+<td>125</td>
+<td></td>
+<td>150</td>
+<td>mA</td>
+</tr>
+<tr>
+<td>USB500</td>
+<td>440</td>
+<td></td>
+<td>500</td>
+<td>mA</td>
+</tr>
+<tr>
+<td>USB900</td>
+<td>750</td>
+<td></td>
+<td>900</td>
+<td>mA</td>
+</tr>
+<tr>
+<td>I<sub>ADPT_DPM</sub></td>
+<td>Input current regulation accuracy</td>
+<td></td>
+<td>1.35</td>
+<td>1.5</td>
+<td>1.65</td>
+<td>A</td>
+</tr>
+<tr>
+<td>I<sub>IN_START</sub></td>
+<td>Input current limit during system start up</td>
+<td>VSYS &lt; 2.2 V</td>
+<td></td>
+<td>100</td>
+<td></td>
+<td>mA</td>
+</tr>
+<tr>
+<td>K<sub>ILIM</sub></td>
+<td>I<sub>IN</sub> = K<sub>ILIM</sub>/R<sub>ILIM</sub></td>
+<td>IINDPM = 1.5 A </td>
+<td><span>435</span></td>
+<td>485</td>
+<td>530</td>
+<td>A x Ω</td>
+</tr>
+<tr>
+<td colspan="7">D+/D- DETECTION</td>
+</tr>
+<tr>
+<td>V<sub>D+_SRC</sub></td>
+<td>D+ voltage source</td>
+<td></td>
+<td>0.5</td>
+<td>0.6</td>
+<td>0.7</td>
+<td>V</td>
+</tr>
+<tr>
+<td>I<sub>D+_SRC</sub></td>
+<td>D+ connection check current source</td>
+<td></td>
+<td>7</td>
+<td></td>
+<td>14</td>
+<td>µA</td>
+</tr>
+<tr>
+<td>I<sub>D–_SINK</sub></td>
+<td>D– current sink</td>
+<td></td>
+<td>50</td>
+<td>100</td>
+<td>150</td>
+<td>µA</td>
+</tr>
+<tr>
+<td rowspan="2">I<sub>D_LKG</sub></td>
+<td rowspan="2">Leakage current into D+/D–</td>
+<td>D–, switch open</td>
+<td>–1</td>
+<td></td>
+<td>1</td>
+<td>µA</td>
+</tr>
+<tr>
+<td>D+, switch open</td>
+<td>–1</td>
+<td></td>
+<td>1</td>
+<td>µA</td>
+</tr>
+<tr>
+<td>V<sub>D+_LOW</sub></td>
+<td>D+ Low comparator threshold</td>
+<td></td>
+<td>0.7</td>
+<td></td>
+<td>0.8</td>
+<td>V</td>
+</tr>
+<tr>
+<td>V<sub>D–_LOWdatref</sub></td>
+<td>D– Low comparator threshold</td>
+<td></td>
+<td>250</td>
+<td></td>
+<td>400</td>
+<td>mV</td>
+</tr>
+<tr>
+<td>R<sub>D–_DWN</sub></td>
+<td>D– Pulldown for connection check</td>
+<td></td>
+<td>14.25</td>
+<td></td>
+<td>24.8</td>
+<td>kΩ</td>
+</tr>
+<tr>
+<td>t<sub>SDP_DEFAULT</sub></td>
+<td>Charging timer with 100-mA USB host in default mode</td>
+<td></td>
+<td></td>
+<td></td>
+<td>45</td>
+<td>mins</td>
+</tr>
+<tr>
+<td colspan="7">BAT OVER-VOLTAGE PROTECTION </td>
+</tr>
+<tr>
+<td>V<sub>BATOVP</sub></td>
+<td>Battery over-voltage threshold</td>
+<td>V<sub>BAT</sub> rising, as percentage of V<sub>BAT_REG</sub></td>
+<td></td>
+<td>104%</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>V<sub>BATOVP_HYST</sub></td>
+<td>Battery over-voltage hysteresis</td>
+<td>V<sub>BAT</sub> falling, as percentage of V<sub>BAT_REG</sub></td>
+<td></td>
+<td>2%</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>t<sub>BATOVP</sub></td>
+<td>Battery over-voltage deglitch time to disable charge</td>
+<td></td>
+<td></td>
+<td>1</td>
+<td></td>
+<td>µs</td>
+</tr>
+<tr>
+<td colspan="7">THERMAL REGULATION AND THERMAL SHUTDOWN</td>
+</tr>
+<tr>
+<td>T<sub>Junction_REG</sub></td>
+<td>Junction temperature regulation accuracy</td>
+<td>REG06[1:0] = 11</td>
+<td></td>
+<td>120</td>
+<td></td>
+<td>°C</td>
+</tr>
+<tr>
+<td>T<sub>SHUT</sub></td>
+<td>Thermal shutdown rising temperature</td>
+<td>Temperature increasing</td>
+<td></td>
+<td>160</td>
+<td></td>
+<td>°C</td>
+</tr>
+<tr>
+<td>T<sub>SHUT_HYS</sub></td>
+<td>Thermal shutdown hysteresis</td>
+<td></td>
+<td></td>
+<td>30</td>
+<td></td>
+<td>°C</td>
+</tr>
+<tr>
+<td></td>
+<td>Thermal shutdown rising deglitch</td>
+<td>Temperature increasing delay</td>
+<td></td>
+<td>1</td>
+<td></td>
+<td>ms</td>
+</tr>
+<tr>
+<td></td>
+<td>Thermal shutdown falling deglitch</td>
+<td>Temperature decreasing delay</td>
+<td></td>
+<td>1</td>
+<td></td>
+<td>ms</td>
+</tr>
+<tr>
+<td colspan="7">COLD/HOT THERMISTER COMPARATOR </td>
+</tr>
+<tr>
+<td>V<sub>LTF</sub></td>
+<td>Cold temperature threshold, TS pin voltage rising threshold</td>
+<td>Charger suspends charge. As percentage to V<sub>REGN</sub></td>
+<td>73%</td>
+<td>73.5%</td>
+<td>74%</td>
+<td></td>
+</tr>
+<tr>
+<td>V<sub>LTF_HYS</sub></td>
+<td>Cold temperature hysteresis, TS pin voltage falling</td>
+<td>As percentage to V<sub>REGN</sub></td>
+<td><span>0.2%</span></td>
+<td>0.4%</td>
+<td>0.6%</td>
+<td></td>
+</tr>
+<tr>
+<td>V<sub>HTF</sub></td>
+<td>Hot temperature TS pin voltage threshold</td>
+<td>As percentage to V<sub>REGN</sub></td>
+<td>46.6%</td>
+<td>47.2%</td>
+<td>48.8%</td>
+<td></td>
+</tr>
+<tr>
+<td>V<sub>TCO</sub></td>
+<td>Cut-off temperature TS pin voltage falling threshold</td>
+<td>As percentage to V<sub>REGN</sub></td>
+<td>44.2%</td>
+<td>44.7%</td>
+<td>45.2%</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Deglitch time for temperature out of range detection</td>
+<td>V<sub>TS</sub> &gt; V<sub>LTF</sub>, or V<sub>TS</sub> &lt; V<sub>TCO</sub>, or
+V<sub>TS</sub> &lt; V<sub>HTF</sub></td>
+<td></td>
+<td>10</td>
+<td></td>
+<td>ms</td>
+</tr>
+<tr>
+<td colspan="7">CHARGE OVER-CURRENT COMPARATOR</td>
+</tr>
+<tr>
+<td>I<sub>HSFET_OCP</sub></td>
+<td>HSFET over-current threshold</td>
+<td></td>
+<td>5.3</td>
+<td>7</td>
+<td></td>
+<td>A</td>
+</tr>
+<tr>
+<td>I<sub>BATFET_OCP</sub></td>
+<td>System over load threshold</td>
+<td></td>
+<td>9</td>
+<td></td>
+<td></td>
+<td>A</td>
+</tr>
+<tr>
+<td colspan="7">CHARGE UNDER-CURRENT COMPARATOR (CYCLE-BY-CYCLE)</td>
+</tr>
+<tr>
+<td>V<sub>LSFET_UCP</sub></td>
+<td>LSFET charge under-current falling threshold</td>
+<td>From sync mode to non-sync mode</td>
+<td></td>
+<td>100</td>
+<td></td>
+<td>mA</td>
+</tr>
+<tr>
+<td colspan="7">PWM OPERATION</td>
+</tr>
+<tr>
+<td>F<sub>SW</sub></td>
+<td>PWM Switching frequency, and digital clock</td>
+<td></td>
+<td>1300</td>
+<td>1500</td>
+<td>1700</td>
+<td>kHz</td>
+</tr>
+<tr>
+<td>D<sub>MAX</sub></td>
+<td>Maximum PWM duty cycle</td>
+<td></td>
+<td></td>
+<td>97%</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td rowspan="2">V<sub>BTST_REFRESH</sub></td>
+<td rowspan="2">Bootstrap refresh comparator threshold</td>
+<td>VBTST-VSW when LSFET refresh pulse is requested, VBUS = 5 V</td>
+<td></td>
+<td>3.6</td>
+<td></td>
+<td rowspan="2">V</td>
+</tr>
+<tr>
+<td>VBTST-VSW when LSFET refresh pulse is requested, VBUS &gt; 6 V</td>
+<td></td>
+<td><span>4.5</span></td>
+<td></td>
+</tr>
+<tr>
+<td colspan="7">BOOST MODE OPERATION</td>
+</tr>
+<tr>
+<td>V<sub>OTG_REG</sub></td>
+<td>Boost mode output voltage</td>
+<td>I(PMID) = 0</td>
+<td></td>
+<td>5.12</td>
+<td></td>
+<td>V</td>
+</tr>
+<tr>
+<td>V<sub>OTG_REG_ACC</sub></td>
+<td>Boost mode output voltage accuracy</td>
+<td>I(PMID) = 0</td>
+<td>–2%</td>
+<td></td>
+<td>2%</td>
+<td></td>
+</tr>
+<tr>
+<td rowspan="2">I<sub>OTG</sub></td>
+<td rowspan="2">Boost mode output current on PMID</td>
+<td>bq24195L</td>
+<td>1.0 </td>
+<td></td>
+<td></td>
+<td>A</td>
+</tr>
+<tr>
+<td>bq24195</td>
+<td>2.1</td>
+<td></td>
+<td></td>
+<td>A</td>
+</tr>
+<tr>
+<td rowspan="2">V<sub>OTG_BAT</sub></td>
+<td rowspan="2">Battery operating voltage for boost mode</td>
+<td>bq24195L</td>
+<td>3.0</td>
+<td></td>
+<td></td>
+<td>V</td>
+</tr>
+<tr>
+<td>bq24195</td>
+<td>3.2</td>
+<td></td>
+<td></td>
+<td>V</td>
+</tr>
+<tr>
+<td rowspan="2">I<sub>OTG_ILIM</sub></td>
+<td rowspan="2">LSFET cycle-by-cycle current limit</td>
+<td>bq24195L</td>
+<td>2.76 </td>
+<td>3.8 </td>
+<td></td>
+<td>A</td>
+</tr>
+<tr>
+<td>bq24195</td>
+<td>4.83</td>
+<td>6.5</td>
+<td></td>
+<td>A</td>
+</tr>
+<tr>
+<td colspan="7">REGN LDO </td>
+</tr>
+<tr>
+<td rowspan="2">V<sub>REGN</sub></td>
+<td rowspan="2">REGN LDO output voltage</td>
+<td>V<sub>VBUS</sub> = 10 V, I<sub>REGN</sub> = 40 mA</td>
+<td>5.6</td>
+<td>6</td>
+<td>6.4</td>
+<td>V</td>
+</tr>
+<tr>
+<td>V<sub>VBUS</sub> = 5 V, I<sub>REGN</sub> = 20 mA</td>
+<td>4.75</td>
+<td>4.8</td>
+<td></td>
+<td>V</td>
+</tr>
+<tr>
+<td>I<sub>REGN</sub></td>
+<td>REGN LDO current limit</td>
+<td>V<sub>VBUS</sub> = 10 V, V<sub>REGN</sub> = 3.8 V</td>
+<td>50</td>
+<td></td>
+<td></td>
+<td>mA</td>
+</tr>
+<tr>
+<td colspan="7">LOGIC I/O PIN CHARACTERISTICS (OTG, <span>CE</span>, STAT)</td>
+</tr>
+<tr>
+<td>V<sub>ILO</sub></td>
+<td>Input low threshold</td>
+<td></td>
+<td></td>
+<td></td>
+<td>0.4</td>
+<td>V</td>
+</tr>
+<tr>
+<td>V<sub>IH</sub></td>
+<td>Input high threshold</td>
+<td></td>
+<td>1.3</td>
+<td></td>
+<td></td>
+<td>V</td>
+</tr>
+<tr>
+<td>V<sub>OUT_LO</sub></td>
+<td>Output low saturation voltage</td>
+<td>Sink current = 5 mA</td>
+<td></td>
+<td></td>
+<td>0.4</td>
+<td>V</td>
+</tr>
+<tr>
+<td>I<sub>BIAS</sub></td>
+<td>High level leakage current</td>
+<td>Pull up rail 1.8 V</td>
+<td></td>
+<td></td>
+<td>1</td>
+<td>µA</td>
+</tr>
+<tr>
+<td colspan="7">I<sup>2</sup>C INTERFACE (SDA, SCL, INT)</td>
+</tr>
+<tr>
+<td>V<sub>IH</sub></td>
+<td>Input high threshold level</td>
+<td>VPULL-UP = 1.8 V, SDA and SCL</td>
+<td>1.3</td>
+<td></td>
+<td></td>
+<td>V</td>
+</tr>
+<tr>
+<td>V<sub>IL</sub></td>
+<td>Input low threshold level</td>
+<td>VPULL-UP = 1.8 V, SDA and SCL</td>
+<td></td>
+<td></td>
+<td>0.4</td>
+<td>V</td>
+</tr>
+<tr>
+<td>V<sub>OL</sub></td>
+<td>Output low threshold level</td>
+<td>Sink current = 5 mA</td>
+<td></td>
+<td></td>
+<td>0.4</td>
+<td>V</td>
+</tr>
+<tr>
+<td>I<sub>BIAS</sub></td>
+<td>High-level leakage current</td>
+<td>VPULL-UP = 1.8 V, SDA and SCL</td>
+<td></td>
+<td></td>
+<td>1</td>
+<td>µA</td>
+</tr>
+<tr>
+<td>f<sub>SCL</sub></td>
+<td>SCL clock frequency</td>
+<td></td>
+<td></td>
+<td></td>
+<td>400</td>
+<td>kHz</td>
+</tr>
+<tr>
+<td colspan="7">DIGITAL CLOCK AND WATCHDOG TIMER </td>
+</tr>
+<tr>
+<td>f<sub>HIZ</sub></td>
+<td>Digital crude clock</td>
+<td>REGN LDO disabled</td>
+<td>15</td>
+<td>35</td>
+<td>50</td>
+<td>kHz</td>
+</tr>
+<tr>
+<td>f<sub>DIG</sub></td>
+<td>Digital clock</td>
+<td>REGN LDO enabled</td>
+<td>1300</td>
+<td>1500</td>
+<td>1700</td>
+<td>kHz</td>
+</tr>
+<tr>
+<td>t<sub>WDT</sub></td>
+<td>REG05[5:4] = 11</td>
+<td>REGN LDO enabled </td>
+<td>136</td>
+<td>160</td>
+<td></td>
+<td>sec</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div>
+<h3 id="SLUSAW59898">7.6 Typical Characteristics</h3>
+
+<div>
+<h3 id="SLUSAW54297">Table 1. Table of Figures</h3>
+<table>
+
+<thead>
+<tr>
+<th></th>
+<th>FIGURE NO.</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Charging Efficiency vs Charging Current</td>
+<td><span>Figure 1</span></td>
+</tr>
+<tr>
+<td>Boost Mode Efficiency vs PMID Load Current</td>
+<td><span>Figure 2</span></td>
+</tr>
+<tr>
+<td>Boost Mode PMID Voltage Regulation vs PMID Load Current</td>
+<td><span>Figure 3</span></td>
+</tr>
+<tr>
+<td>BAT Voltage vs Temperature</td>
+<td><span>Figure 4</span></td>
+</tr>
+<tr>
+<td>Input Current Limit vs Temperature</td>
+<td><span>Figure 5</span></td>
+</tr>
+<tr>
+<td>Charge Current vs Temperature</td>
+<td><span>Figure 6</span></td>
+</tr>
+</tbody>
+</table>
+</div>
+
+<div>
+<div>
+<div>
+[image]
+<div id="SLUSAW5840">
+
+</div>
+<span id="SLUSAW54543">Figure 1. Charging Efficiency vs Charging
+Current</span>
+</div>
+<div>
+[image]
+<div id="SLUSAW57198">
+
+</div>
+<span id="SLUSAW57094">Figure 3. Boost Mode PMID Voltage Regulation vs PMID
+Load Current</span>
+</div>
+<div>
+[image]
+<div id="SLUSAW53469">
+
+</div>
+<span id="SLUSAW52858">Figure 5. Input Current Limit vs Temperature</span>
+</div>
+</div>
+<div>
+<div>
+[image]
+<div id="SLUSAW56563">
+
+</div>
+<span id="SLUSAW55995">Figure 2. Boost Mode Efficiency vs PMID Load
+Current</span>
+</div>
+<div>
+[image]
+<div id="SLUSAW53722">
+
+</div>
+<span id="SLUSAW53706">Figure 4. BAT Voltage vs Temperature</span>
+</div>
+<div>
+[image]
+<div id="SLUSAW5930">
+
+</div>
+<span id="SLUSAW52183">Figure 6. Charge Current vs Temperature</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</ti-raw>
+
+<ti-raw>
+<div>
+
+<div>
+<h2 id="SLUSAW51090">8 Detailed Description</h2>
+<div>
+<h3 id="SLUSAW58541">8.1 Overview</h3>
+<p>The <span>bq24195L, bq24195</span> is an I<sup>2</sup>C controlled power path management device and a
+single cell Li-Ion battery charger. It integrates the input reverse-blocking FET (RBFET, Q1),
+high-side switching FET (HSFET, Q2), low-side switching FET (LSFET, Q3), and BATFET (Q4) between
+system and battery. The device also integrates the bootstrap diode for the high-side gate drive.
+</p>
+</div>
+<div>
+<h3 id="SLUSAW54357">8.2 Functional Block Diagram</h3>
+<div>
+[image]
+</div>
+</div>
+<div>
+<h3 id="SLUSAW51146">8.3 Feature Description</h3>
+<div>
+<h4 id="SLUSAW52680">8.3.1 Device Power Up</h4>
+<div>
+<h4 id="SLUSAW58877">8.3.1.1 Power-On-Reset (POR)</h4>
+<p> The internal bias circuits are powered from the higher voltage of VBUS and BAT. When VBUS or
+VBAT rises above UVLOZ, the sleep comparator, battery depletion comparator and BATFET driver
+are active. I<sup>2</sup>C interface is ready for communication and all the registers are
+reset to default value. The host can access all the registers after POR. </p>
+</div>
+<div>
+<h4 id="SLUSAW54108">8.3.1.2 Power Up from Battery without DC Source</h4>
+<p> If only battery is present and the voltage is above depletion threshold
+(V<sub>BAT_DEPL</sub>), the BATFET turns on and connects battery to system. The REGN LDO
+stays off to minimize the quiescent current. The low R<sub>DSON</sub> in BATFET and the low
+quiescent current on BAT minimize the conduction loss and maximize the battery run time. The
+device always monitors the discharge current through BATFET. When the system is overloaded
+or shorted, the device will immediately turn off BATFET and keep BATFET off until the input
+source plugs in again. </p>
+<div>
+<h4 id="SLUSAW57603">8.3.1.2.1 BATFET Turn Off </h4>
+<p>The BATFET can be forced off by the host through I<sup>2</sup>C REG07[5]. This bit allows
+the user to independently turn off the BATFET when the battery condition becomes
+abnormal during charging. When BATFET is off, there is no path to charge or discharge
+the battery. </p>
+<p>When battery is not attached, the BATFET should be turned off by setting REG07[5] to 1 to
+disable charging and supplement mode.</p>
+</div>
+<div>
+<h4 id="SLUSAW51590">8.3.1.2.2 Shipping Mode </h4>
+<p>When end equipment is assembled, the system is connected to battery through BATFET. There
+will be a small leakage current to discharge the battery even when the system is powered
+off. In order to extend the battery life during shipping and storage, the device can
+turn off BATFET so that the system voltage is zero to minimize the leakage. </p>
+<p>In order to keep BATFET off during shipping mode, the host has to disable the watchdog
+timer (REG05[5:4] = 00) and disable BATFET (REG07[5] = 1) at the same time. </p>
+<p>Once the BATFET is disabled, the BATFET can be turned on by plugging in adapter.</p>
+</div>
+</div>
+<div>
+<h4 id="SLUSAW53825">8.3.1.3 Power Up from DC Source </h4>
+<p>When the DC source plugs in, the <span>bq24195L, bq24195</span> checks the input source
+voltage to turn on REGN LDO and all the bias circuits. It also checks the input current
+limit before starts the buck converter. </p>
+<div>
+<h4 id="SLUSAW55929">8.3.1.3.1 REGN LDO </h4>
+<p>The REGN LDO supplies internal bias circuits as well as the HSFET and LSFET gate drive.
+The LDO also provides bias rail to TS1/TS2 external resistors. The pull-up rail of STAT
+can be connected to REGN as well. </p>
+<p>The REGN is enabled when all the conditions are valid. </p>
+<ol>
+<li>VBUS above UVLOZ</li>
+<li>VBUS above battery + V<sub>SLEEPZ</sub> in buck mode or VBUS below battery +
+V<sub>SLEEPZ</sub> in boost mode</li>
+<li>After typical 220ms delay (100ms minimum) is complete</li>
+</ol>
+<p>If one of the above conditions is not valid, the device is in high impedance mode (HIZ)
+with REGN LDO off. The device draws less than 50 µA from VBUS during HIZ state. The
+battery powers up the system when the device is in HIZ. </p>
+</div>
+<div>
+<h4 id="SLUSAW59157">8.3.1.3.2 Input Source Qualification</h4>
+<p> After REGN LDO powers up, the <span>bq24195L, bq24195</span> checks the current
+capability of the input source. The input source has to meet the following requirements
+to start the buck converter. </p>
+<ol>
+<li>VBUS voltage below 18 V (not in ACOV) </li>
+<li>VBUS voltage above 3.8 V when pulling 30 mA (poor source detection) </li>
+</ol>
+<p>Once the input source passes all the conditions above, the status register REG08[2] goes
+high. An INT is asserted to the host. </p>
+<p>If the device fails the poor source detection, it will repeat the detection every 2
+seconds. </p>
+</div>
+<div>
+<h4 id="SLUSAW53243">8.3.1.3.3 Input Current Limit Detection </h4>
+<p>The USB ports on personal computers are convenient charging source for portable devices
+(PDs). If the portable device is attached to a USB host, the USB specification requires
+the portable device to draw limited current (100 mA/500 mA in USB 2.0, and 150 mA/900 mA
+in USB 3.0). If the portable device is attached to a charging port, it is allowed to
+draw up to 1.5 A. </p>
+<p>After REG08[2] goes HIGH, the charger device always runs input current limit detection
+when a DC source plugs in unless the charger is in HIZ during host mode. </p>
+<p>The bq24195L, bq24195 follows battery charging specification 1.2 (bc1.2) to detect input
+source through USB D+/D– lines. After the input current limit detection is done, the
+host can write to REG00[2:0] to change the input current limit. </p>
+</div>
+<div>
+<h4 id="SLUSAW56146">8.3.1.3.4 D+/D– Detection Sets Input Current Limit </h4>
+<p>The bq24195L, bq24195 contains a D+/D– based input source detection to program the input
+current limit. The D+/D- detection has two steps: data contact detect (DCD) followed by
+primary detection. </p>
+<div>
+[image]<span id="SLUSAW54763">Figure 7. USB D+/D- Detection</span>
+</div>
+<p>DCD (Data Contact Detection) uses a current source to detect when the D+/D– pins have
+made contact during an attach event. The protocol for data contact detect is as follows:
+</p>
+<ul>
+<li>Detect VBUS present and REG08[2] = 1 (power good)</li>
+<li>Turn on D+ I<sub>DP_SRC</sub> and the D– pull-down resistor R<sub>DM_DWN</sub> for
+40 ms</li>
+<li>If the USB connector is properly attached, the D+ line goes from HIGH to LOW, wait
+up to 0.5 sec.</li>
+<li>Turn off I<sub>DP_SRC</sub> and disconnect R<sub>DM_DWN</sub>
+</li>
+</ul>
+<p>The primary detection is used to distinguish between USB host (Standard Down Stream Port,
+or SDP) and different type of charging ports (Charging Down Stream Port, or CDP, and
+Dedicated Charging Port, or DCP). The protocol for primary detection is as follows: </p>
+<ul>
+<li>Turn on V<sub>DP_SRC</sub> on D+ and I<sub>DM_SINK</sub> on D– for 40 ms</li>
+<li>If PD is attached to a USB host (SDP), the D– is low. If PD is attached to a
+charging port (CDP or DCP), the D– is high</li>
+<li>Turn off V<sub>DP_SRC</sub> and I<sub>DM_SINK</sub>
+</li>
+</ul>
+<p>
+<span>Table 2</span> shows the input
+current limit setting after D+/D– detection.
+</p>
+<div>
+<h3 id="SLUSAW53089">Table 2. bq24195L, bq24195 USB D+/D– Detection</h3>
+<table>
+
+<thead>
+<tr>
+<th>D+/D– DETECTION</th>
+<th>OTG</th>
+<th>INPUT CURRENT LIMIT</th>
+<th>REG08[7:6]</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0.5 sec timer expired in DCD (D+/D- floating) </td>
+<td>—</td>
+<td>100 mA</td>
+<td>00</td>
+</tr>
+<tr>
+<td>USB host</td>
+<td>LOW</td>
+<td>100 mA</td>
+<td>01</td>
+</tr>
+<tr>
+<td>USB host</td>
+<td>HIGH</td>
+<td>500 mA</td>
+<td>01</td>
+</tr>
+<tr>
+<td>Charging port</td>
+<td>—</td>
+<td>1.5 A</td>
+<td>10</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div>
+<h4 id="SLUSAW52753">8.3.1.3.5 HIZ State wth 100mA USB Host</h4>
+<p>In battery charging spec, the good battery threshold is the minimum charge level of a
+battery to power up the portable device successfully. When the input source is 100-mA
+USB host, and the battery is above bat-good threshold (V<sub>BATGD</sub>), the device
+follows battery charging spec and enters high impedance state (HIZ). In HIZ state, the
+device is in the lowest quiescent state with REGN LDO and the bias circuits off. The
+charger device sets REG00[7] to 1, and the VBUS current during HIZ state will be less
+than 30 µA. The system is supplied by the battery. </p>
+<p>Once the charger device enters HIZ state in host mode, it stays in HIZ until the host
+writes REG00[7] = 0. When the processor host wakes up, it is recommended to first check
+if the charger is in HIZ state. </p>
+<p>In default mode, the charger IC will reset REG00[7] back to 0 when input source is
+removed. When another source plugs in, the charger IC will run detection again, and
+update the input current limit. </p>
+</div>
+<div>
+<h4 id="SLUSAW5790">8.3.1.3.6 Force Input Current Limit Detection</h4>
+<p>The host can force the charger device to run input current limit detection by setting
+REG07[7] = 1. After the detection is complete, REG07[7] will return to 0 by itself. </p>
+</div>
+</div>
+<div>
+<h4 id="SLUSAW55715">8.3.1.4 Converter Power-Up</h4>
+<p>After the input current limit is set, the converter is enabled and the HSFET and LSFET start
+switching. If battery charging is disabled, BATFET turns off. Otherwise, BATFET stays on to
+charge the battery. </p>
+<p>The <span>bq24195L, bq24195</span> provides soft-start when ramp up the system rail. When the
+system rail is below 2.2 V, the input current limit is forced to 100 mA. After the system
+rises above 2.2 V, the charger device sets the input current limit set by the lower value
+between register and ILIM pin. </p>
+<p>As a battery charger, the <span>bq24195L, bq24195</span> deploys a 1.5-MHz step-down
+switching regulator. The fixed frequency oscillator keeps tight control of the switching
+frequency under all conditions of input voltage, battery voltage, charge current and
+temperature, simplifying output filter design. </p>
+<p>A type III compensation network allows using ceramic capacitors at the output of the
+converter. An internal saw-tooth ramp is compared to the internal error control signal to
+vary the duty cycle of the converter. The ramp height is proportional to the PMID voltage to
+cancel out any loop gain variation due to a change in input voltage. </p>
+<p>In order to improve light-load efficiency, the device switches to PFM control at light load
+when battery is below minimum system voltage setting or charging is disabled. During the PFM
+operation, the switching duty cycle is set by the ratio of SYS and VBUS. </p>
+</div>
+<div>
+<h4 id="SLUSAW57994">8.3.1.5 Boost Mode Operation from Battery</h4>
+<p>The bq24195L, bq24195 supports boost converter operation to deliver power from the battery to
+other portable devices through USB port. The boost mode output current rating meets the 1 A
+(bq24195L) or 2.1 A (bq24195) charging requirements for smartphone and tablet. The boost
+operation can be enabled if the following conditions are valid:</p>
+<ol>
+<li>BAT above BATLOWV threshold (V<sub>BATLOWV</sub> set by REG04[1])</li>
+<li>VBUS less than BAT+V<sub>SLEEP</sub> (in sleep mode)</li>
+<li>Boost mode operation is enabled (OTG pin HIGH and REG01[5:4] = 10)</li>
+<li>After 220-ms delay from boost mode enable</li>
+</ol>
+<p>In battery boost mode, the bq24195L, bq24195 employs a 1.5-MHz step-up switching regulator.
+During boost mode, the status register REG08[7:6] is set to 11, the PMID output voltage is
+5.1 V. </p>
+<p>For power bank applications, the boost current is supported from PMID pin as in the
+application diagram. It is recommended to use the minimum PMID cap value 20 µF (bq24195L) or
+60 µF (bq24195) for boost current. Please note that there is no boost current limit setting
+when the boost current is sourced from PMID pin, hence it is important not to overload the
+boost current under this condition. </p>
+</div>
+</div>
+<div>
+<h4 id="SLUSAW52110">8.3.2 Power Path Management</h4>
+<p>The <span>bq24195L, bq24195</span> accommodates a wide range of input sources from USB, wall
+adapter, to car battery. The device provides automatic power path selection to supply the system
+(SYS) from input source (VBUS), battery (BAT), or both. </p>
+<div>
+<h4 id="SLUSAW59572">8.3.2.1 Narrow VDC Architecture</h4>
+<p>The device deploys Narrow VDC architecture (NVDC) with BATFET separating system from battery.
+The minimum system voltage is set by REG01[3:1]. Even with a fully depleted battery, the
+system is regulated above the minimum system voltage (default 3.5 V). </p>
+<p>When the battery is below minimum system voltage setting, the BATFET operates in linear mode
+(LDO mode), and the system is 150 mV above the minimum system voltage setting. As the
+battery voltage rises above the minimum system voltage, BATFET is fully on and the voltage
+difference between the system and battery is the V<sub>DS</sub> of BATFET. </p>
+<p>When the battery charging is disabled or terminated, the system is always regulated at 150 mV
+above the minimum system voltage setting. The status register REG08[0] goes high when the
+system is in minimum system voltage regulation.</p>
+<div>
+[image]<span
+id="SLUSAW55493">Figure 8. V(SYS) vs V(BAT)</span>
+</div>
+</div>
+<div>
+<h4 id="SLUSAW59315">8.3.2.2 Dynamic Power Management</h4>
+<p>To meet maximum current limit in USB spec and avoid over loading the adapter, the
+<span>bq24195L, bq24195</span> features Dynamic Power Management (DPM), which continuously
+monitors the input current and input voltage.</p>
+<p>When input source is over-loaded, either the current exceeds the input current limit
+(REG00[2:0]) or the voltage falls below the input voltage limit (REG00[6:3]). The device
+then reduces the charge current until the input current falls below the input current limit
+and the input voltage rises above the input voltage limit. </p>
+<p>When the charge current is reduced to zero, but the input source is still overloaded, the
+system voltage starts to drop. Once the system voltage falls below the battery voltage, the
+device automatically enters the supplement mode where the BATFET turns on and battery starts
+discharging so that the system is supported from both the input source and battery. </p>
+<p>During DPM mode (either VINDPM or IINDPM), the status register REG08[3] will go high. </p>
+<p>
+<span>Figure 9</span> shows the DPM
+response with 9-V/1.2-A adapter, 3.2-V battery, 2.8-A charge current and 3.4-V minimum
+system voltage setting.
+</p>
+<div>
+[image]<span
+id="SLUSAW56808">Figure 9. DPM Response</span>
+</div>
+</div>
+<div>
+<h4 id="SLUSAW56134">8.3.2.3 Supplement Mode</h4>
+<p>When the system voltage falls below the battery voltage, the BATFET turns on and the BATFET
+gate is regulated the gate drive of BATFET so that the minimum BATFET V<sub>DS</sub> stays
+at 30 mV when the current is low. This prevents oscillation from entering and exiting the
+supplement mode. As the discharge current increases, the BATFET gate is regulated with a
+higher voltage to reduce R<sub>DSON</sub> until the BATFET is in full conduction. At this
+point onwards, the BATFET V<sub>DS</sub> linearly increases with discharge current. <span>Figure 10</span> shows the V-I curve
+of the BATFET gate regulation operation. BATFET turns off to exit supplement mode when the
+battery is below battery depletion threshold.</p>
+<div>
+[image]<span
+id="SLUSAW57012">Figure 10. BATFET V-I Curve</span>
+</div>
+</div>
+</div>
+<div>
+<h4 id="SLUSAW55838">8.3.3 Battery Charging Management</h4>
+<p>The <span>bq24195L, bq24195</span> charges 1-cell Li-Ion battery with up to
+<span>2.5A/4.5A</span> charge current for high capacity tablet battery. The 12-mΩ BATFET
+improves charging efficiency and minimizes the voltage drop during discharging. </p>
+<div>
+<h4 id="SLUSAW54455">8.3.3.1 Autonomous Charging Cycle</h4>
+<p>With battery charging enabled at POR (REG01[5:4] = 01), the <span>bq24195L, bq24195</span>
+can complete a charging cycle without host involvement. The device default charging
+parameters are listed in .
+</p>
+<div>
+<h3 id="SLUSAW56431">Table 3. Charging Parameter Default Setting</h3>
+<table>
+
+<thead>
+<tr>
+<th>DEFAULT MODE</th>
+<th><span>bq24195L, bq24195</span></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Charging voltage</td>
+<td><span>4.208 V</span></td>
+</tr>
+<tr>
+<td>Charging current</td>
+<td><span>2.048 A</span></td>
+</tr>
+<tr>
+<td>Pre-charge current</td>
+<td>256 mA</td>
+</tr>
+<tr>
+<td>Termination current</td>
+<td>256 mA</td>
+</tr>
+<tr>
+<td>Temperature profile</td>
+<td>Hot/Cold</td>
+</tr>
+<tr>
+<td>Safety timer</td>
+<td>8 hours
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>A new charge cycle starts when the following conditions are valid:</p>
+<ul>
+<li>Converter starts</li>
+<li>Battery charging is enabled by I<sup>2</sup>C register bit (REG01[5:4]) = 01 and <span>CE</span> is low</li>
+<li>No thermistor fault on TS1 and TS2</li>
+<li>No safety timer fault</li>
+<li>BATFET is not forced to turn off (REG07[5])</li>
+</ul>
+<p>The charger device automatically terminates the charging cycle when the charging current is
+below termination threshold and charge voltage is above recharge threshold. When a full
+battery voltage is discharged below recharge threshold (REG04[0]), the <span>bq24195L,
+bq24195</span> automatically starts another charging cycle.</p>
+<p>The STAT output indicates the charging status of charging (LOW), charging complete or charge
+disable (HIGH) or charging fault (Blinking). The status register REG08[5:4] indicates the
+different charging phases: 00-charging disable, 01-precharge, 10-fast charge (constant
+current) and constant voltage mode, 11-charging done. Once a charging cycle is complete, an
+INT is asserted to notify the host.</p>
+<p>The host can always control the charging operation and optimize the charging parameters by
+writing to the registers through I<sup>2</sup>C. </p>
+</div>
+<div>
+<h4 id="SLUSAW5893">8.3.3.2 Battery Charging Profile </h4>
+<p>The device charges the battery in three phases: preconditioning, constant current and
+constant voltage. At the beginning of a charging cycle, the device checks the battery
+voltage and applies current. </p>
+<div>
+<h3 id="SLUSAW58953">Table 4. Charging Current Setting</h3>
+<table>
+
+<thead>
+<tr>
+<th>VBAT</th>
+<th>CHARGING CURRENT</th>
+<th>REG DEFAULT SETTING</th>
+<th>REG08[5:4]</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>&lt; 2 V</td>
+<td>100 mA</td>
+<td>–</td>
+<td>01</td>
+</tr>
+<tr>
+<td>2 V - 3 V</td>
+<td>REG03[7:4]</td>
+<td>256 mA</td>
+<td>01</td>
+</tr>
+<tr>
+<td>&gt; 3 V</td>
+<td>REG02[7:2]</td>
+<td>2048 mA</td>
+<td>10</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>If the charger device is in DPM regulation or thermal regulation during charging, the actual
+charging current will be less than the programmed value. In this case, termination is
+temporarily disabled and the charging safety timer is counted at half the clock rate. </p>
+<div>
+[image]<span
+id="SLUSAW54858">Figure 11. Battery Charging Profile</span>
+</div>
+</div>
+<div>
+<h4 id="SLUSAW51918">8.3.3.3 Thermistor Cold/Hot Temperature Window</h4>
+<p>The <span>bq24195L, bq24195</span> continuously monitors battery temperature by measuring the
+voltage between the TS pins and ground, typically determined by a negative temperature
+coefficient thermistor and an external voltage divider. The device compares this voltage
+against its internal thresholds to determine if charging is allowed. To initiate a charge
+cycle, the battery temperature must be within the V<sub>LTF</sub> to V<sub>HTF</sub>
+thresholds. During the charge cycle the battery temperature must be within the
+V<sub>LTF</sub> to V<sub>TCO</sub> thresholds, else the device suspends charging and waits
+until the battery temperature is within the V<sub>LTF</sub> to V<sub>HTF</sub> range. </p>
+<div>
+[image]<span
+id="SLUSAW5439">Figure 12. TS Resistor Network</span>
+</div>
+<p>When the TS fault occurs, the fault register REG09[2:0] indicates the actual condition on
+each TS pin and an INT is asserted to the host. The STAT pin indicates the fault when
+charging is suspended.</p>
+<div>
+[image]<span id="SLUSAW55497">Figure 13. TS Pin Thermistor Sense Thresholds</span>
+</div>
+<p>Assuming a 103AT NTC thermistor is used on the battery pack, the value RT1 and RT2 can be
+determined by using the following equations:</p>
+<div id="SLUSAW52088">Equation 1. [image]</div>
+<p>Select 0°C to 45°C range for Li-ion or Li-polymer battery, <br> RTH<sub>COLD</sub> = 27.28 kΩ
+<br> RTH<sub>HOT</sub> = 4.911 kΩ <br> RT1 = 5.52 kΩ <br> RT2 = 31.23 kΩ </p>
+</div>
+<div>
+<h4 id="SLUSAW52885">8.3.3.4 Charging Termination</h4>
+<p>The <span>bq24195L, bq24195</span> terminates a charge cycle when the battery voltage is
+above recharge threshold, and the current is below termination current. After the charging
+cycle is complete, the BATFET turns off. The converter keeps running to power the system,
+and BATFET can turn back on to engage supplement mode. </p>
+<p>When termination occurs, the status register <span>REG08[5:4]</span>
+is 11, and an INT is asserted to the host. Termination is temporarily disabled if the
+charger device is in input current/voltage regulation or thermal regulation. Termination can
+be disabled by writing 0 to REG05[7].</p>
+<div>
+<h4 id="SLUSAW56348">8.3.3.4.1 Termination when REG02[0] = 1</h4>
+<p>When REG02[0] is HIGH to reduce the charging current by 80%, the charging current could
+be less than the termination current. The charger device termination function should be
+disabled. When the battery is charged to fully capacity, the host disables charging
+through <span>CE</span> pin or REG01[5:4]. </p>
+</div>
+<div>
+<h4 id="SLUSAW59028">8.3.3.4.2 Termination when REG05[6] = 1</h4>
+<p>Usually the STAT bit indicates charging complete when the charging current falls below
+termination threshold. Write REG05[6] = 1 to enable an early “charge done” indication on
+STAT pin. The STAT pin goes high when the charge current reduces below 800 mA. The
+charging cycle is still on-going until the current falls below the termination
+threshold. </p>
+</div>
+</div>
+<div>
+<h4 id="SLUSAW53824">8.3.3.5 Charging Safety Timer</h4>
+<p>The <span>bq24195L, bq24195</span> has safety timer to prevent extended charging cycle due to
+abnormal battery conditions. </p>
+<p>In default mode, the device keeps charging the battery with 5-hour fast charging safety timer
+regardless of REG05[2:1] default value. At the end of the 5 hours, the EN_HIZ (REG00[7]) is
+set to signal the buck converter stops and the system load is supplied by the battery. The
+EN_HIZ bit can be cleared to restart the buck converter.</p>
+<p> In host mode, the device keeps charging the battery until the fast charging safety timer
+expired. The duration of safety timer can be set by the REG05[2:1] bits (default = 8 hours).
+At the end of safety timer, the EN_HIZ (REG00[7]) is cleared to signal the buck converter
+continues to operation to supply system load.</p>
+<p>The safety timer is 1 hour when the battery is below BATLOWV threshold. The user can program
+fast charge safety timer through I<sup>2</sup>C (REG05[2:1]). When safety timer expires, the
+fault register REG09[5:4] goes 11 and an INT is asserted to the host. The safety timer
+feature can be disabled via I2C (REG05[3]). </p>
+<p>The following actions restart the safety timer:</p>
+<ul>
+<li>At the beginning of a new charging cycle</li>
+<li>Toggle the <span>CE</span> pin HIGH to LOW to HIGH (charge enable)
+</li>
+<li>Write REG01[5:4] from 00 to 01 (charge enable)</li>
+<li>Write REG05[3] from 0 to 1 (safety timer enable)</li>
+</ul>
+<p>During input voltage/current regulation or thermal regulation, <span>or when FORCE_20PCT
+(REG02[0]) bit is set, </span>the safety timer counts at half clock rate since the
+actual charge current is likely to be below the register setting. For example, if the
+charger is in input current regulation (IINDPM) throughout the whole charging cycle, and the
+safety time is set to 5 hours, the safety timer will expire in 10 hours. This feature can be
+disabled by writing 0 to REG07[6]. </p>
+<p>It is recommended to disable safety timer first by clearing REG05[3] bit before safety timer
+configuration is changed. The safety timer should be re-enabled by setting REG05[3] bit.
+</p>
+</div>
+<div>
+<h4 id="SLUSAW5452">8.3.3.6 USB Timer when Charging from USB100mA Source</h4>
+<p>The total charging time in default mode from USB100-mA source is limited by a 45-min max
+timer. At the end of the timer, the device stops the converter and goes to HIZ. </p>
+</div>
+</div>
+<div>
+<h4 id="SLUSAW58434">8.3.4 Status Outputs (<span>STAT and INT</span>)</h4>
+<div>
+<h4 id="SLUSAW55625">8.3.4.1 Charging Status Indicator (STAT)</h4>
+<p>The <span>bq24195L, bq24195</span> indicates charging state on the open drain STAT pin. The
+STAT pin can drive LED as the application diagram shows. </p>
+<div>
+<h3 id="SLUSAW58761">Table 5. STAT Pin State </h3>
+<table>
+
+<thead>
+<tr>
+<th>CHARGING STATE</th>
+<th>STAT</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Charging in progress (including recharge)</td>
+<td>LOW</td>
+</tr>
+<tr>
+<td>Charging complete</td>
+<td>HIGH</td>
+</tr>
+<tr>
+<td>Sleep mode, charge disable</td>
+<td>HIGH</td>
+</tr>
+<tr>
+<td>Charge suspend (Input over-voltage, TS fault, timer fault, input or system
+over-voltage)</td>
+<td>blinking at 1Hz </td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div>
+<h4 id="SLUSAW53462">8.3.4.2 Interrupt to Host (INT)</h4>
+<p>In some applications, the host does not always monitor the charger operation. The INT
+notifies the system on the device operation. The following events will generate 256-us INT
+pulse. </p>
+<ul>
+<li>USB/adapter source identified (through DPDM detection)</li>
+<li>Good input source detected<ul>
+<li>V<sub>VBUS</sub> - V<sub>BAT</sub> &gt; V<sub>SLEEPZ</sub>
+</li>
+<li>V<sub>VBUS</sub> &gt; V<sub>ACOV</sub>
+</li>
+<li>current limit above I<sub>BADSRC</sub>
+</li>
+</ul>
+</li>
+<li>Input removed</li>
+<li>Charge Complete</li>
+<li>Any FAULT event in REG09</li>
+</ul>
+<p>When a fault occurs, the charger device sends out INT and keeps the fault state in REG09
+until the host reads the fault register. Before the host reads REG09 and all the faults are
+cleared, the charger device would not send any INT upon new faults. In order to read the
+current fault status, the host has to read REG09 two times consecutively. The 1<sup>st</sup>
+reads fault register status from the last read and the 2<sup>nd</sup> reads the current
+fault register status. </p>
+</div>
+</div>
+<div>
+<h4 id="SLUSAW52851">8.3.5 Protections</h4>
+<div>
+<h4 id="SLUSAW57253">8.3.5.1 Input Current Limit on ILIM</h4>
+<p>For safe operation, the <span>bq24195L, bq24195</span> has an additional hardware pin on ILIM
+to limit maximum input current on ILIM pin. The input maximum current is set by a resistor
+from ILIM pin to ground as: </p>
+<div id="SLUSAW57300">Equation 2. [image]</div>
+<p>The actual input current limit is the lower value between ILIM setting and register setting
+(REG00[2:0]). For example, if the register setting is 111 for 3 A, and ILIM has a 353-Ω
+resistor to ground for 1.5 A, the input current limit is 1.5 A. ILIM pin can be used to set
+the input current limit rather than the register settings. </p>
+<p>The device regulates ILIM pin at 1 V. If ILIM voltage exceeds 1 V, the device enters input
+current regulation (Refer to <i>Dynamic Power Path Management</i> section). </p>
+<p>The voltage on the ILIM pin is proportional to the input current. The ILIM pin can be used to
+monitor the input current per <span>Equation
+3</span>:</p>
+<div id="SLUSAW55958">Equation 3. [image]</div>
+<p>For example, if the ILIM pin sets 2 A, and the ILIM voltage is 0.6 V, the actual input
+current is 1.2 A. If the ILIM pin is open, the input current is limited to zero since ILIM
+voltage floats above 1 V. If the ILIM pin is short, the input current limit is set by the
+register. </p>
+</div>
+<div>
+<h4 id="SLUSAW54985">8.3.5.2 Thermal Regulation and Thermal Shutdown</h4>
+<p>The <span>bq24195L, bq24195</span> monitors the internal junction temperature T<sub>J</sub>
+to avoid overheat the chip and limits the IC surface temperature. When the internal junction
+temperature exceeds the preset limit (REG06[1:0]), the device lowers down the charge
+current. The wide thermal regulation range from 60°C to 120°C allows the user to optimize
+the system thermal performance. </p>
+<p>During thermal regulation, the actual charging current is usually below the programmed
+battery charging current. Therefore, termination is disabled, the safety timer runs at half
+the clock rate, and the status register REG08[1] goes high. </p>
+<p>Additionally, the device has thermal shutdown to turn off the converter. The fault register
+REG09[5:4] is 10 and an INT is asserted to the host. </p>
+</div>
+<div>
+<h4 id="SLUSAW54630">8.3.5.3 Voltage and Current Monitoring in Buck Mode</h4>
+<p>The <span>bq24195L, bq24195</span> closely monitor the input and system voltage, as well as
+HSFET and LSFET current for safe buck mode operation. </p>
+<div>
+<h4 id="SLUSAW58123">8.3.5.3.1 Input Over-Voltage (ACOV)</h4>
+<p>The maximum input voltage for buck mode operation is <span>18 V</span>. If VBUS voltage
+exceeds <span>18 V</span>, the device stops switching immediately. During input over
+voltage (ACOV), the fault register REG09[5:4] will be set to 01. An INT is asserted to
+the host.</p>
+</div>
+<div>
+<h4 id="SLUSAW52725">8.3.5.3.2 System Over-Voltage Protection (SYSOVP)</h4>
+<p>The charger device monitors the voltage at SYS. When system over-voltage is detected, the
+converter is stopped to protect components connected to SYS from high voltage damage.
+</p>
+</div>
+</div>
+<div>
+<h4 id="SLUSAW57580">8.3.5.4 Current Monitoring in Boost Mode</h4>
+<p>The bq24195L, bq24195 closely monitors LSFET current to ensure safe boost mode operation.
+</p>
+</div>
+<div>
+<h4 id="SLUSAW57100">8.3.5.5 Battery Protection</h4>
+<div>
+<h4 id="SLUSAW51831">8.3.5.5.1 Battery Over-Current Protection (BATOVP)</h4>
+<p>The battery over-voltage limit is clamped at 4% above the battery regulation voltage.
+When battery over voltage occurs, the charger device immediately disables charge. The
+fault register REG09[5] goes high and an INT is asserted to the host. </p>
+</div>
+<div>
+<h4 id="SLUSAW58715">8.3.5.5.2 Charging During Battery Short Protection</h4>
+<p>If the battery voltage falls below 2 V, the charge current is reduced to 100 mA for
+battery safety. </p>
+</div>
+<div>
+<h4 id="SLUSAW58139">8.3.5.5.3 System Over-Current Protection </h4>
+<p>If the system is shorted or exceeds the over-current limit, the BATFET is latched off. DC
+source insertion on VBUS is required to reset the latch-off condition and turn on
+BATFET. </p>
+</div>
+</div>
+</div>
+<div>
+<h4 id="SLUSAW5371">8.3.6 Serial Interface</h4>
+<p>The <span>bq24195L, bq24195</span> uses I<sup>2</sup>C compatible interface for flexible charging
+parameter programming and instantaneous device status reporting. I<sup>2</sup>C is a
+bi-directional 2-wire serial interface developed by Philips Semiconductor (now NXP
+Semiconductors). Only two bus lines are required: a serial data line (SDA) and a serial clock
+line (SCL). Devices can be considered as masters or slaves when performing data transfers. A
+master is the device which initiates a data transfer on the bus and generates the clock signals
+to permit that transfer. At that time, any device addressed is considered a slave. </p>
+<p>The device operates as a slave device with address 6BH, receiving control inputs from the master
+device like micro controller or a digital signal processor. The I<sup>2</sup>C interface
+supports both standard mode (up to 100 kbits), and fast mode (up to 400 kbits). </p>
+<p>Both SDA and SCL are bi-directional lines, connecting to the positive supply voltage via a
+current source or pull-up resistor. When the bus is free, both lines are HIGH. The SDA and SCL
+pins are open drain. </p>
+<div>
+<h4 id="SLUSAW57933">8.3.6.1 Data Validity</h4>
+<p>The data on the SDA line must be stable during the HIGH period of the clock. The HIGH or LOW
+state of the data line can only change when the clock signal on the SCL line is LOW. One
+clock pulse is generated for each data bit transferred. </p>
+<div>
+[image]<span
+id="SLUSAW59124">Figure 14. Bit Transfer on the I<sup>2</sup>C Bus</span>
+</div>
+</div>
+<div>
+<h4 id="SLUSAW55874">8.3.6.2 START and STOP Conditions</h4>
+<p>All transactions begin with a START (S) and can be terminated by a STOP (P). A HIGH to LOW
+transition on the SDA line while SCl is HIGH defines a START condition. A LOW to HIGH
+transition on the SDA line when the SCL is HIGH defines a STOP condition. </p>
+<p>START and STOP conditions are always generated by the master. The bus is considered busy
+after the START condition, and free after the STOP condition. </p>
+<div>
+[image]<span
+id="SLUSAW53181">Figure 15. START and STOP conditions</span>
+</div>
+</div>
+<div>
+<h4 id="SLUSAW5443">8.3.6.3 Byte Format</h4>
+<p>Every byte on the SDA line must be 8 bits long. The number of bytes to be transmitted per
+transfer is unrestricted. Each byte has to be followed by an Acknowledge bit. Data is
+transferred with the Most Significant Bit (MSB) first. If a slave cannot receive or transmit
+another complete byte of data until it has performed some other function, it can hold the
+clock line SCL low to force the master into a wait state (clock stretching). Data transfer
+then continues when the slave is ready for another byte of data and release the clock line
+SCL. </p>
+<div>
+[image]<span id="SLUSAW52638">Figure 16. Data Transfer on the I<sup>2</sup>C
+Bus</span>
+</div>
+</div>
+<div>
+<h4 id="SLUSAW55687">8.3.6.4 Acknowledge (ACK) and Not Acknowledge (NACK)</h4>
+<p>The acknowledge takes place after every byte. The acknowledge bit allows the receiver to
+signal the transmitter that the byte was successfully received and another byte may be sent.
+All clock pulses, including the acknowledge 9<sup>th</sup> clock pulse, are generated by the
+master. </p>
+<p>The transmitter releases the SDA line during the acknowledge clock pulse so the receiver can
+pull the SDA line LOW and it remains stable LOW during the HIGH period of this clock pulse.
+</p>
+<p>When SDA remains HIGH during the 9th clock pulse, this is the Not Acknowledge signal. The
+master can then generate either a STOP to abort the transfer or a repeated START to start a
+new transfer. </p>
+</div>
+<div>
+<h4 id="SLUSAW57885">8.3.6.5 Slave Address and Data Direction Bit</h4>
+<p>After the START, a slave address is sent. This address is 7 bits long followed by the eighth
+bit as a data direction bit (bit R/W). A zero indicates a transmission (WRITE) and a one
+indicates a request for data (READ). </p>
+<div>
+[image]<span
+id="SLUSAW57752">Figure 17. Complete Data Transfer</span>
+</div>
+<div>
+<h4 id="SLUSAW57135">8.3.6.5.1 Single Read and Write</h4>
+<div>
+[image]<span
+id="SLUSAW51568">Figure 18. Single Write</span>
+</div>
+<div>
+[image]<span
+id="SLUSAW59713">Figure 19. Single Read</span>
+</div>
+<p>If the register address is not defined, the charger IC send back NACK and go back to the
+idle state. </p>
+</div>
+<div>
+<h4 id="SLUSAW58115">8.3.6.5.2 Multi-Read and Multi-Write</h4>
+<p>The charger device supports multi-read and multi-write on REG00 through REG08. </p>
+<div>
+[image]<span
+id="SLUSAW55342">Figure 20. Multi-Write</span>
+</div>
+<div>
+[image]<span
+id="SLUSAW53141">Figure 21. Multi-Read</span>
+</div>
+<p>The fault register REG09 locks the previous fault and only clears it after the register
+is read. For example, if Charge Safety Timer Expiration fault occurs but recovers later,
+the fault register REG09 reports the fault when it is read the first time, but returns
+to normal when it is read the second time. To verify real time fault, the fault register
+REG09 should be read twice to get the real condition. In addition, the fault register
+REG09 does not support multi-read or multi-write. </p>
+</div>
+</div>
+</div>
+</div>
+<div>
+<h3 id="SLUSAW52270">8.4 Device Functional Modes</h3>
+<div>
+<h4 id="SLUSAW56583">8.4.1 Host Mode and Default Mode</h4>
+<p>The <span>bq24195L, bq24195</span> is a host controlled device, but it can operate in default
+mode without host management. In default mode, <span>bq24195L, bq24195</span> can be used as an
+autonomous charger with no host or with host in sleep. </p>
+<p>When the charger is in default mode, REG09[7] is HIGH. When the charger is in host mode, REG09[7]
+is LOW. After power-on-reset, the device starts in watchdog timer expiration state, or default
+mode. All the registers are in the default settings. </p>
+<p>Any write command to <span>bq24195L, bq24195</span> transitions the device from default mode to
+host mode. All the device parameters can be programmed by the host. To keep the device in host
+mode, the host has to reset the watchdog timer by writing 1 <span>twice</span> to REG01[6] before the watchdog timer expires (REG05[5:4]),
+or disable watchdog timer by setting REG05[5:4] = <span>00.</span>
+</p>
+<div>
+[image]<span
+id="SLUSAW54159">Figure 22. Watchdog Timer Flow Chart</span>
+</div>
+<div>
+<h4 id="SLUSAW52175">8.4.1.1 Plug in USB100mA Source with Good Battery</h4>
+<p>When the input source is detected as 100-mA USB host, and the battery voltage is above
+batgood threshold (V<sub>BATGD</sub>), the charger device enters HIZ state to meet the
+battery charging spec requirement. </p>
+<p>If the charger device is in host mode, it will stay in HIZ state even after the USB100-mA
+source is removed, and the adapter plugs in. During the HIZ state, REG00[7] is set HIGH and
+the system load is supplied from battery. It is recommended that the processor host always
+checks if the charger IC is in HIZ state when it wakes up. The host can write REG00[7] to 0
+to exit HIZ state. </p>
+<p>If the charger is in default mode, when the DC source is removed, the charger device will get
+out of HIZ state automatically. When the input source plugs in again, the charger IC runs
+detection on the input source and update the input current limit. </p>
+</div>
+<div>
+<h4 id="SLUSAW52176">8.4.1.2 USB Timer when Charging from USB 100-mA Source</h4>
+<p>The total charging time in default mode from USB 100-mA source is limited by a 45-min max
+timer. At the end of the timer, the device stops the converter and goes to HIZ. </p>
+</div>
+</div>
+</div>
+<div>
+<h3 id="SLUSAW54084">8.5 Register Map</h3>
+<div>
+<h3 id="SLUSAW51039">Table 6. Register Map</h3>
+<table>
+
+<thead>
+<tr>
+<th>REGISTER </th>
+<th>REGISTER NAME</th>
+<th>RESET </th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>REG00 </td>
+<td>Input Source Control Register </td>
+<td><span>00110000, or 30</span></td>
+</tr>
+<tr>
+<td>REG01 </td>
+<td>Power-On Configuration Register</td>
+<td> 00011011, or 1B</td>
+</tr>
+<tr>
+<td>REG02</td>
+<td>Charge Current Control Register</td>
+<td><span>01100000, or 60</span></td>
+</tr>
+<tr>
+<td>REG03</td>
+<td>Pre-Charge/Termination Current Control Register </td>
+<td>00010001, or 11</td>
+</tr>
+<tr>
+<td>REG04</td>
+<td>Charge Voltage Control Register</td>
+<td><span>10110010, or B2</span></td>
+</tr>
+<tr>
+<td>REG05</td>
+<td>Charge Termination/Timer Control Register</td>
+<td> 10011010, or 9A</td>
+</tr>
+<tr>
+<td>REG06</td>
+<td>Thermal Regulation Control Register</td>
+<td>00000011, or 03</td>
+</tr>
+<tr>
+<td>REG07</td>
+<td>Misc Operation Control Register</td>
+<td>01001011, or 4B</td>
+</tr>
+<tr>
+<td>REG08</td>
+<td>System Status Register</td>
+<td>—</td>
+</tr>
+<tr>
+<td>REG09</td>
+<td>Fault Register</td>
+<td>—</td>
+</tr>
+<tr>
+<td>REG0A</td>
+<td>Vender / Part / Revision Status Register</td>
+<td>—</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div>
+<h4 id="SLUSAW55318">8.5.1 I<sup>2</sup>C Registers</h4>
+<p>Address: 6BH. REG00-07 support Read and Write. REG08-0A are read only. </p>
+<div>
+<h4 id="SLUSAW56880">8.5.1.1 <span>Input Source Control Register REG00 (reset = 00110000, or 30)
+</span>
+</h4>
+<div>
+<span id="SLUSAW52626">Figure 23. REG00 Input Source Control Register
+Format</span>
+<table>
+
+<tbody>
+<tr>
+<td>7</td>
+<td>6</td>
+<td>5</td>
+<td>4</td>
+<td>3</td>
+<td>2</td>
+<td>1</td>
+<td>0</td>
+</tr>
+<tr>
+<td>EN_HIZ</td>
+<td>VINDPM[3]</td>
+<td>VINDPM[2]</td>
+<td>VINDPM[1]</td>
+<td>VINDPM[0]</td>
+<td>IINLIM[2]</td>
+<td>IINLIM[1]</td>
+<td>IINLIM[0]</td>
+</tr>
+<tr>
+<td>R/W</td>
+<td>R/W</td>
+<td>R/W</td>
+<td>R/W</td>
+<td>R/W</td>
+<td>R/W</td>
+<td>R/W</td>
+<td>R/W</td>
+</tr>
+</tbody>
+</table>
+<table>
+
+<tbody>
+<tr>
+<td>LEGEND: R/W = Read/Write; R = Read only; -n = value after reset</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div>
+<h3 id="SLUSAW54344">Table 7. REG00 <span>Input Source Control</span> Register Description
+</h3>
+<table>
+
+<thead>
+<tr>
+<th>BIT</th>
+<th>FIELD</th>
+<th>TYPE</th>
+<th>RESET</th>
+<th>DESCRIPTION</th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Bit 7</td>
+<td>EN_HIZ</td>
+<td>R/W</td>
+<td>0</td>
+<td>0 – Disable, 1 – Enable</td>
+<td>Default: Disable (0)</td>
+</tr>
+<tr>
+<td colspan="6">Input Voltage Limit</td>
+</tr>
+<tr>
+<td>Bit 6</td>
+<td>VINDPM[3]</td>
+<td>R/W</td>
+<td>0</td>
+<td>640 mV</td>
+<td rowspan="4">Offset 3.88 V, Range: 3.88 V to 5.08 V<br>
+<span>Default: 4.36 V (0110)</span>
+</td>
+</tr>
+<tr>
+<td>Bit 5</td>
+<td>VINDPM[2]</td>
+<td>R/W</td>
+<td>1</td>
+<td>320 mV</td>
+</tr>
+<tr>
+<td>Bit 4</td>
+<td>VINDPM[1]</td>
+<td>R/W</td>
+<td>1</td>
+<td>160 mV</td>
+</tr>
+<tr>
+<td>Bit 3</td>
+<td>VINDPM[0]</td>
+<td>R/W</td>
+<td><span>0</span></td>
+<td>80 mV</td>
+</tr>
+<tr>
+<td colspan="6">Input Current Limit (Actual input current limit is the lower of
+I<sup>2</sup>C and ILIM)</td>
+</tr>
+<tr>
+<td>Bit 2</td>
+<td>IINLIM[2]</td>
+<td>R/W</td>
+<td>0</td>
+<td rowspan="3">000 – 100 mA, 001 – 150 mA, 010 – 500 mA, <br> 011 – 900 mA, 100
+– 1.2 A, <br> 101 – 1.5 A, <br> 110 – 2 A, 111 – 3 A</td>
+<td rowspan="3"><span>Default SDP: 100 mA (000)(OTG pin = 0) or 500 mA (010)<br>
+(OTG pin = 1)<br> Default DCP/CDP: 1.5 A (101)</span></td>
+</tr>
+<tr>
+<td>Bit 1</td>
+<td>IINLIM[1]</td>
+<td>R/W</td>
+<td>0</td>
+</tr>
+<tr>
+<td>Bit 0</td>
+<td>IINLIM[0]</td>
+<td>R/W</td>
+<td>0</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div>
+<h4 id="SLUSAW53872">8.5.1.2 Power-On Configuration Register REG01 (reset = 00011011, or 1B)
+</h4>
+<div>
+<span id="SLUSAW51977">Figure 24. REG01 Power-On Configuration Register
+Format</span>
+<table>
+
+<tbody>
+<tr>
+<td>7</td>
+<td>6</td>
+<td>5</td>
+<td>4</td>
+<td>3</td>
+<td>2</td>
+<td>1</td>
+<td>0</td>
+</tr>
+<tr>
+<td>Register Reset</td>
+<td>I<sup>2</sup>C Watchdog Timer Reset</td>
+<td>CHG_CONFIG[1]</td>
+<td>CHG_CONFIG[0]</td>
+<td>SYS_MIN[2]</td>
+<td>SYS_MIN[1]</td>
+<td>SYS_MIN[0]</td>
+<td><span>Reserved</span></td>
+</tr>
+<tr>
+<td>R/W</td>
+<td>R/W</td>
+<td>R/W</td>
+<td>R/W</td>
+<td>R/W</td>
+<td>R/W</td>
+<td>R/W</td>
+<td>R/W</td>
+</tr>
+</tbody>
+</table>
+<table>
+
+<tbody>
+<tr>
+<td>LEGEND: R/W = Read/Write; R = Read only; -n = value after reset</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div>
+<h3 id="SLUSAW57425">Table 8. REG01 Power-On Configuration Register Description</h3>
+<table>
+
+<thead>
+<tr>
+<th>BIT</th>
+<th>FIELD</th>
+<th>TYPE</th>
+<th>RESET</th>
+<th>DESCRIPTION</th>
+<th>NOTE</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Bit 7</td>
+<td>Register Reset</td>
+<td>R/W</td>
+<td>0</td>
+<td>0 – Keep current register setting, <br> 1 – Reset to default</td>
+<td>Default: Keep current register setting (0)<br> Back to 0 after register
+reset</td>
+</tr>
+<tr>
+<td>Bit 6</td>
+<td>I<sup>2</sup>C Watchdog Timer Reset</td>
+<td>R/W</td>
+<td>0</td>
+<td>0 – Normal ; 1 – Reset</td>
+<td>Default: Normal (0)<br> Back to 0 after timer reset</td>
+</tr>
+<tr>
+<td colspan="6">Charger Configuration </td>
+</tr>
+<tr>
+<td>Bit 5</td>
+<td>CHG_CONFIG[1]</td>
+<td>R/W</td>
+<td>0</td>
+<td rowspan="2">00 – Charge Disable, 01 – Charge Battery, <br> 10/11 – OTG</td>
+<td rowspan="2">Default: Charge Battery (01)</td>
+</tr>
+<tr>
+<td>Bit 4</td>
+<td>CHG_CONFIG[0]</td>
+<td>R/W</td>
+<td>1</td>
+</tr>
+<tr>
+<td colspan="6">Minimum System Voltage Limit</td>
+</tr>
+<tr>
+<td>Bit 3</td>
+<td>SYS_MIN[2]</td>
+<td>R/W</td>
+<td>1</td>
+<td>0.4 V</td>
+<td rowspan="3">Offset: 3.0 V, Range 3.0 V to 3.7 V<br> Default: 3.5 V (101)
+</td>
+</tr>
+<tr>
+<td>Bit 2</td>
+<td>SYS_MIN[1]</td>
+<td>R/W</td>
+<td>0</td>
+<td>0.2 V</td>
+</tr>
+<tr>
+<td>Bit 1</td>
+<td>SYS_MIN[0]</td>
+<td>R/W</td>
+<td>1</td>
+<td>0.1 V</td>
+</tr>
+<tr>
+<td>Bit 0</td>
+<td>Reserved</td>
+<td>R/W</td>
+<td>1</td>
+<td>1 - Reserved</td>
+<td>Reserved. Must write "1"</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div>
+<h4 id="SLUSAW51175">8.5.1.3 <span>Charge Current Control Register REG02 (reset = 01100000, or
+60)</span>
+</h4>
+<div>
+<span id="SLUSAW57279">Figure 25. REG02 Charge Current Control Register
+Format</span>
+<table>
+
+<tbody>
+<tr>
+<td>7</td>
+<td>6</td>
+<td>5</td>
+<td>4</td>
+<td>3</td>
+<td>2</td>
+<td>1</td>
+<td>0</td>
+</tr>
+<tr>
+<td>ICHG[5]</td>
+<td>ICHG[4]</td>
+<td>ICHG[3]</td>
+<td>ICHG[2]</td>
+<td>ICHG[1]</td>
+<td>ICHG[0]</td>
+<td>Reserved</td>
+<td>FORCE_20PCT</td>
+</tr>
+<tr>
+<td>R/W</td>
+<td>R/W</td>
+<td>R/W</td>
+<td>R/W</td>
+<td>R/W</td>
+<td>R/W</td>
+<td>R/W</td>
+<td>R/W</td>
+</tr>
+</tbody>
+</table>
+<table>
+
+<tbody>
+<tr>
+<td>LEGEND: R/W = Read/Write; R = Read only; -n = value after reset</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div>
+<h3 id="SLUSAW52681">Table 9. REG02 <span>Charge Current Control</span> Register Description
+</h3>
+<table>
+
+<thead>
+<tr>
+<th>BIT</th>
+<th>FIELD</th>
+<th>TYPE</th>
+<th>RESET</th>
+<th>DESCRIPTION</th>
+<th>NOTE</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td colspan="6">Fast Charge Current Limit</td>
+</tr>
+<tr>
+<td>Bit 7</td>
+<td>ICHG[5]</td>
+<td>R/W</td>
+<td>0</td>
+<td>2048 mA</td>
+<td rowspan="6">Offset: 512 mA<br>
+<span>Range: 512 to 4544 mA (bq24195)<br> Range: 512 to 2496mA
+(bq24195L)</span>
+<br>
+<span>Default: 2048 mA (011000)</span>
+</td>
+</tr>
+<tr>
+<td>Bit 6</td>
+<td>ICHG[4]</td>
+<td>R/W</td>
+<td><span>1</span></td>
+<td>1024 mA</td>
+</tr>
+<tr>
+<td>Bit 5</td>
+<td>ICHG[3]</td>
+<td>R/W</td>
+<td>1</td>
+<td>512 mA</td>
+</tr>
+<tr>
+<td>Bit 4</td>
+<td>ICHG[2]</td>
+<td>R/W</td>
+<td>0</td>
+<td>256 mA</td>
+</tr>
+<tr>
+<td>Bit 3</td>
+<td>ICHG[1]</td>
+<td>R/W</td>
+<td>0</td>
+<td>128 mA</td>
+</tr>
+<tr>
+<td>Bit 2</td>
+<td>ICHG[0]</td>
+<td>R/W</td>
+<td>0</td>
+<td>64 mA</td>
+</tr>
+<tr>
+<td>Bit 1</td>
+<td>Reserved</td>
+<td>R/W</td>
+<td>0</td>
+<td>0 - Reserved</td>
+<td>Reserved. Must write "0"</td>
+</tr>
+<tr>
+<td>Bit 0</td>
+<td>FORCE_20PCT</td>
+<td>R/W</td>
+<td>0</td>
+<td><span>0 - ICHG as REG02[7:2] (Fast Charge Current Limit) and REG03[7:4]
+(Pre-Charge Current Limit) programmed <br> 1 - ICHG as 20% of REG02[7:2]
+(Fast Charge Current Limit) and 50% of REG03[7:4] (Pre-Charge Current
+Limit) programmed</span></td>
+<td><span>Default: ICHG as REG02[7:2] (Fast Charge Current Limit) and REG03[7:4]
+(Pre-Charge Current Limit) programmed (0)</span></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div>
+<h4 id="SLUSAW51292">8.5.1.4 Pre-Charge/Termination Current Control Register REG03 (reset =
+00010001, or 11)</h4>
+<div>
+<span id="SLUSAW58954">Figure 26. REG03 Pre-Charge/Termination Current
+Control Register Format</span>
+<table>
+
+<tbody>
+<tr>
+<td>7</td>
+<td>6</td>
+<td>5</td>
+<td>4</td>
+<td>3</td>
+<td>2</td>
+<td>1</td>
+<td>0</td>
+</tr>
+<tr>
+<td>IPRECHG[3]</td>
+<td>IPRECHG[2]</td>
+<td>IPRECHG[1]</td>
+<td>IPRECHG[0]</td>
+<td>ITERM[3]</td>
+<td>ITERM[2]</td>
+<td>ITERM[1]</td>
+<td>ITERM[0]</td>
+</tr>
+<tr>
+<td>R/W</td>
+<td>R/W</td>
+<td>R/W</td>
+<td>R/W</td>
+<td>R/W</td>
+<td>R/W</td>
+<td>R/W</td>
+<td>R/W</td>
+</tr>
+</tbody>
+</table>
+<table>
+
+<tbody>
+<tr>
+<td>LEGEND: R/W = Read/Write; R = Read only; -n = value after reset</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div>
+<h3 id="SLUSAW52381">Table 10. REG03 Pre-Charge/Termination Current Control Register
+Description</h3>
+<table>
+
+<thead>
+<tr>
+<th>BIT</th>
+<th>FIELD</th>
+<th>TYPE</th>
+<th>RESET</th>
+<th>DESCRIPTION</th>
+<th>NOTE</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td colspan="6">Pre-Charge Current Limit</td>
+</tr>
+<tr>
+<td>Bit 7</td>
+<td>IPRECHG[3]</td>
+<td>R/W</td>
+<td>0</td>
+<td>1024 mA</td>
+<td rowspan="4">Offset: 128 mA,<br>
+<span>Range: 128 mA to 2048 mA </span>
+<br> Default: 256 mA (0001)
+</td>
+</tr>
+<tr>
+<td>Bit 6</td>
+<td>IPRECHG[2]</td>
+<td>R/W</td>
+<td>0</td>
+<td>512 mA</td>
+</tr>
+<tr>
+<td>Bit 5</td>
+<td>IPRECHG[1]</td>
+<td>R/W</td>
+<td>0</td>
+<td>256 mA</td>
+</tr>
+<tr>
+<td>Bit 4</td>
+<td>IPRECHG[0]</td>
+<td>R/W</td>
+<td>1</td>
+<td>128 mA</td>
+</tr>
+<tr>
+<td colspan="6">Termination Current Limit</td>
+</tr>
+<tr>
+<td>Bit 3</td>
+<td>ITERM[3]</td>
+<td>R/W</td>
+<td>0</td>
+<td>1024 mA</td>
+<td rowspan="4">Offset: 128 mA<br> Range: 128 mA to 2048 mA<br> Default: 256 mA
+(0001)</td>
+</tr>
+<tr>
+<td>Bit 2</td>
+<td>ITERM[2]</td>
+<td>R/W</td>
+<td>0</td>
+<td>512 mA</td>
+</tr>
+<tr>
+<td>Bit 1</td>
+<td>ITERM[1]</td>
+<td>R/W</td>
+<td>0</td>
+<td>256 mA</td>
+</tr>
+<tr>
+<td>Bit 0</td>
+<td>ITERM[0]</td>
+<td>R/W</td>
+<td>1</td>
+<td>128 mA</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div>
+<h4 id="SLUSAW5491">8.5.1.5 <span>Charge Voltage Control Register REG04 (reset = 10110010, or
+B2)</span>
+</h4>
+<div>
+<span id="SLUSAW51282">Figure 27. REG04 Charge Voltage Control Register
+Format</span>
+<table>
+
+<tbody>
+<tr>
+<td>7</td>
+<td>6</td>
+<td>5</td>
+<td>4</td>
+<td>3</td>
+<td>2</td>
+<td>1</td>
+<td>0</td>
+</tr>
+<tr>
+<td>VREG[5]</td>
+<td>VREG[4]</td>
+<td>VREG[3]</td>
+<td>VREG[2]</td>
+<td>VREG[1]</td>
+<td>VREG[0]</td>
+<td>BATLOWV</td>
+<td>VRECHG</td>
+</tr>
+<tr>
+<td>R/W</td>
+<td>R/W</td>
+<td>R/W</td>
+<td>R/W</td>
+<td>R/W</td>
+<td>R/W</td>
+<td>R/W</td>
+<td>R/W</td>
+</tr>
+</tbody>
+</table>
+<table>
+
+<tbody>
+<tr>
+<td>LEGEND: R/W = Read/Write; R = Read only; -n = value after reset</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div>
+<h3 id="SLUSAW51616">Table 11. REG04 <span>Charge Voltage Control</span> Register
+Description</h3>
+<table>
+
+<thead>
+<tr>
+<th>BIT</th>
+<th>FIELD</th>
+<th>TYPE</th>
+<th>RESET</th>
+<th>DESCRIPTION</th>
+<th>NOTE</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td colspan="6">Charge Voltage Limit</td>
+</tr>
+<tr>
+<td>Bit 7</td>
+<td>VREG[5]</td>
+<td>R/W</td>
+<td>1</td>
+<td>512 mV</td>
+<td rowspan="6">Offset: 3.504 V<br> Range: 3.504 V to 4.400 V (111000)<br>
+<span>Default: 4.208 V (101100) </span>
+</td>
+</tr>
+<tr>
+<td>Bit 6</td>
+<td>VREG[4]</td>
+<td>R/W</td>
+<td><span>0</span></td>
+<td>256 mV</td>
+</tr>
+<tr>
+<td>Bit 5</td>
+<td>VREG[3]</td>
+<td>R/W</td>
+<td><span>1</span></td>
+<td>128 mV</td>
+</tr>
+<tr>
+<td>Bit 4</td>
+<td>VREG[2]</td>
+<td>R/W</td>
+<td><span>1</span></td>
+<td>64 mV</td>
+</tr>
+<tr>
+<td>Bit 3</td>
+<td>VREG[1]</td>
+<td>R/W</td>
+<td><span>0</span></td>
+<td>32 mV</td>
+</tr>
+<tr>
+<td>Bit 2</td>
+<td>VREG[0]</td>
+<td>R/W</td>
+<td>0</td>
+<td>16 mV</td>
+</tr>
+<tr>
+<td colspan="6">Battery Precharge to Fast Charge Threshold</td>
+</tr>
+<tr>
+<td>Bit 1</td>
+<td>BATLOWV</td>
+<td>R/W</td>
+<td>1</td>
+<td>0 – 2.8 V, 1 – 3.0 V</td>
+<td>Default: 3.0 V (1)</td>
+</tr>
+<tr>
+<td colspan="6">Battery Recharge Threshold (below battery regulation voltage)
+</td>
+</tr>
+<tr>
+<td>Bit 0</td>
+<td>VRECHG</td>
+<td>R/W</td>
+<td>0</td>
+<td>0 – 100 mV, 1 – 300 mV</td>
+<td>Default: 100 mV (0)</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div>
+<h4 id="SLUSAW54070">8.5.1.6 Charge Termination/Timer Control Register REG05 (reset = 10011010,
+or 9A)</h4>
+<div>
+<span id="SLUSAW58181">Figure 28. REG05 Charge Termination/Timer Control
+Register Format</span>
+<table>
+
+<tbody>
+<tr>
+<td>7</td>
+<td>6</td>
+<td>5</td>
+<td>4</td>
+<td>3</td>
+<td>2</td>
+<td>1</td>
+<td>0</td>
+</tr>
+<tr>
+<td>EN_TERM</td>
+<td>TERM_STAT</td>
+<td>WATCHDOG[1]</td>
+<td>WATCHDOG[0]</td>
+<td>EN_TIMER</td>
+<td>CHG_TIMER[1]</td>
+<td>CHG_TIMER[0]</td>
+<td><span>Reserved</span></td>
+</tr>
+<tr>
+<td>R/W</td>
+<td>R/W</td>
+<td>R/W</td>
+<td>R/W</td>
+<td>R/W</td>
+<td>R/W</td>
+<td>R/W</td>
+<td>R/W</td>
+</tr>
+</tbody>
+</table>
+<table>
+
+<tbody>
+<tr>
+<td>LEGEND: R/W = Read/Write; R = Read only; -n = value after reset</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div>
+<h3 id="SLUSAW58126">Table 12. REG05 Charge Termination/Timer Control Register Description
+</h3>
+<table>
+
+<thead>
+<tr>
+<th>BIT</th>
+<th>FIELD</th>
+<th>TYPE</th>
+<th>RESET</th>
+<th>DESCRIPTION</th>
+<th>NOTE</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td colspan="6">Charging Termination Enable</td>
+</tr>
+<tr>
+<td>Bit 7</td>
+<td>EN_TERM</td>
+<td>R/W</td>
+<td>1</td>
+<td>0 – Disable, 1 – Enable</td>
+<td>Default: Enable termination (1)</td>
+</tr>
+<tr>
+<td colspan="6">Termination Indicator Threshold</td>
+</tr>
+<tr>
+<td>Bit 6</td>
+<td>TERM_STAT</td>
+<td>R/W</td>
+<td>0</td>
+<td>0 – Match ITERM, <br> 1 – STAT pin high before actual termination when
+charge current below 800 mA</td>
+<td>Default Match ITERM (0)</td>
+</tr>
+<tr>
+<td colspan="6">I2C Watchdog Timer Setting</td>
+</tr>
+<tr>
+<td>Bit 5</td>
+<td>WATCHDOG[1]</td>
+<td>R/W</td>
+<td>0</td>
+<td rowspan="2">00 – Disable timer, 01 – 40 s, 10 – 80 s, 11 – 160 s</td>
+<td rowspan="2">Default: 40 s (01)</td>
+</tr>
+<tr>
+<td>Bit 4</td>
+<td>WATCHDOG[0]</td>
+<td>R/W</td>
+<td>1</td>
+</tr>
+<tr>
+<td colspan="6">Charging Safety Timer Enable</td>
+</tr>
+<tr>
+<td>Bit 3</td>
+<td>EN_TIMER</td>
+<td>R/W</td>
+<td>1</td>
+<td>0 – Disable, 1 – Enable</td>
+<td>Default: Enable (1)</td>
+</tr>
+<tr>
+<td colspan="6">Fast Charge Timer Setting</td>
+</tr>
+<tr>
+<td>Bit 2</td>
+<td>CHG_TIMER[1]</td>
+<td>R/W</td>
+<td>0</td>
+<td rowspan="2">00 – 5 hrs, 01 – 8 hrs, 10 – 12 hrs, 11 – 20 hrs</td>
+<td rowspan="2">Default: 8 hours (01)<br> (See Charging Safety Timer for
+details)</td>
+</tr>
+<tr>
+<td>Bit 1</td>
+<td>CHG_TIMER[0]</td>
+<td>R/W</td>
+<td>1</td>
+</tr>
+<tr>
+<td>Bit 0</td>
+<td>Reserved</td>
+<td>R/W</td>
+<td>0</td>
+<td>0 - Reserved</td>
+<td>Reserved. Must write "0"</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div>
+<h4 id="SLUSAW58232">8.5.1.7 Thermal Regulation Control Register REG06 (reset = 00000011, or 03)
+</h4>
+<div>
+<span id="SLUSAW53638">Figure 29. REG06 Thermal Regulation Control Register
+Format</span>
+<table>
+
+<tbody>
+<tr>
+<td>7</td>
+<td>6</td>
+<td>5</td>
+<td>4</td>
+<td>3</td>
+<td>2</td>
+<td>1</td>
+<td>0</td>
+</tr>
+<tr>
+<td>Reserved</td>
+<td>Reserved</td>
+<td>Reserved</td>
+<td>Reserved</td>
+<td>Reserved</td>
+<td>Reserved</td>
+<td>TREG[1]</td>
+<td>TREG[0]</td>
+</tr>
+<tr>
+<td>R/W</td>
+<td>R/W</td>
+<td>R/W</td>
+<td>R/W</td>
+<td>R/W</td>
+<td>R/W</td>
+<td>R/W</td>
+<td>R/W</td>
+</tr>
+</tbody>
+</table>
+<table>
+
+<tbody>
+<tr>
+<td>LEGEND: R/W = Read/Write; R = Read only; -n = value after reset</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div>
+<h3 id="SLUSAW56184">Table 13. REG06 Thermal Regulation Control Register Description</h3>
+<table>
+
+<thead>
+<tr>
+<th>BIT</th>
+<th>FIELD</th>
+<th>TYPE</th>
+<th>RESET</th>
+<th>DESCRIPTION</th>
+<th>NOTE</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Bit 7</td>
+<td>Reserved</td>
+<td>R/W</td>
+<td>0</td>
+<td>0 - Reserved</td>
+<td>Reserved. Must write "0"</td>
+</tr>
+<tr>
+<td>Bit 6</td>
+<td>Reserved</td>
+<td>R/W</td>
+<td>0</td>
+<td>0 - Reserved</td>
+<td>Reserved. Must write "0"</td>
+</tr>
+<tr>
+<td>Bit 5</td>
+<td>Reserved</td>
+<td>R/W</td>
+<td>0</td>
+<td>0 - Reserved</td>
+<td>Reserved. Must write "0"</td>
+</tr>
+<tr>
+<td>Bit 4</td>
+<td>Reserved</td>
+<td>R/W</td>
+<td>0</td>
+<td>0 - Reserved</td>
+<td>Reserved. Must write "0"</td>
+</tr>
+<tr>
+<td>Bit 3</td>
+<td>Reserved</td>
+<td>R/W</td>
+<td>0</td>
+<td>0 - Reserved</td>
+<td>Reserved. Must write "0"</td>
+</tr>
+<tr>
+<td>Bit 2</td>
+<td>Reserved</td>
+<td>R/W</td>
+<td>0</td>
+<td>0 - Reserved</td>
+<td>Reserved. Must write "0"</td>
+</tr>
+<tr>
+<td colspan="6">Thermal Regulation Threshold</td>
+</tr>
+<tr>
+<td>Bit 1</td>
+<td>TREG[1]</td>
+<td>R/W</td>
+<td>1</td>
+<td rowspan="2">00 – 60°C, 01 – 80°C, 10 – 100°C, 11 – 120°C</td>
+<td rowspan="2">Default: 120°C (11)</td>
+</tr>
+<tr>
+<td>Bit 0</td>
+<td>TREG[0]</td>
+<td>R/W</td>
+<td>1</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div>
+<h4 id="SLUSAW56712">8.5.1.8 Misc Operation Control Register REG07 (reset = 01001011, or 4B)
+</h4>
+<div>
+<span id="SLUSAW58879">Figure 30. REG07 Misc Operation Control Register
+Format</span>
+<table>
+
+<tbody>
+<tr>
+<td>7</td>
+<td>6</td>
+<td>5</td>
+<td>4</td>
+<td>3</td>
+<td>2</td>
+<td>1</td>
+<td>0</td>
+</tr>
+<tr>
+<td>DPDM_EN</td>
+<td>TMR2X_EN</td>
+<td>BATFET_Disable</td>
+<td><span>Reserved</span></td>
+<td>Reserved</td>
+<td>Reserved</td>
+<td>INT_MASK[1]</td>
+<td>INT_MASK[0]</td>
+</tr>
+<tr>
+<td>R/W</td>
+<td>R/W</td>
+<td>R/W</td>
+<td>R/W</td>
+<td>R/W</td>
+<td>R/W</td>
+<td>R/W</td>
+<td>R/W</td>
+</tr>
+</tbody>
+</table>
+<table>
+
+<tbody>
+<tr>
+<td>LEGEND: R/W = Read/Write; R = Read only; -n = value after reset</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div>
+<h3 id="SLUSAW57850">Table 14. REG07 Misc Operation Control Register Description</h3>
+<table>
+
+<thead>
+<tr>
+<th>BIT</th>
+<th>FIELD</th>
+<th>TYPE</th>
+<th>RESET</th>
+<th>DESCRIPTION</th>
+<th>NOTE</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td colspan="6">Force DPDM detection </td>
+</tr>
+<tr>
+<td>Bit 7</td>
+<td>DPDM_EN</td>
+<td>R/W</td>
+<td>0</td>
+<td>0 – Not in D+/D– detection;<br> 1 – Force D+/D– detection</td>
+<td>Default: Not in D+/D– detection (0), Back to 0 after detection complete</td>
+</tr>
+<tr>
+<td colspan="6">Safety Timer Setting during Input DPM and Thermal Regulation
+</td>
+</tr>
+<tr>
+<td>Bit 6</td>
+<td>TMR2X_EN</td>
+<td>R/W</td>
+<td>1</td>
+<td>0 – Safety timer not slowed by 2X during input DPM or thermal regulation,
+<br> 1 – Safety timer slowed by 2X during input DPM or thermal regulation
+</td>
+<td>Default: Safety timer slowed by 2X (1)</td>
+</tr>
+<tr>
+<td colspan="6">Force BATFET Off</td>
+</tr>
+<tr>
+<td>Bit 5</td>
+<td>BATFET_Disable</td>
+<td>R/W</td>
+<td>0</td>
+<td>0 – Allow Q4 turn on, 1 – Turn off Q4</td>
+<td>Default: Allow Q4 turn on(0)</td>
+</tr>
+<tr>
+<td>Bit 4</td>
+<td>Reserved</td>
+<td>R/W</td>
+<td>0</td>
+<td>0 – Reserved. Must write "0"</td>
+<td></td>
+</tr>
+<tr>
+<td>Bit 3</td>
+<td>Reserved</td>
+<td>R/W</td>
+<td>1</td>
+<td>1 – Reserved. Must write "1"</td>
+<td></td>
+</tr>
+<tr>
+<td>Bit 2</td>
+<td>Reserved</td>
+<td>R/W</td>
+<td>0</td>
+<td>0 – Reserved. Must write "0"</td>
+<td></td>
+</tr>
+<tr>
+<td>Bit 1</td>
+<td>INT_MASK[1]</td>
+<td>R/W</td>
+<td>1</td>
+<td>0 – No INT during CHRG_FAULT, 1 – INT on CHRG_FAULT</td>
+<td>Default: INT on CHRG_FAULT (1)</td>
+</tr>
+<tr>
+<td>Bit 0</td>
+<td>INT_MASK[0]</td>
+<td>R/W</td>
+<td>1</td>
+<td>0 – No INT during BAT_FAULT, 1 – INT on BAT_FAULT</td>
+<td>Default: INT on BAT_FAULT (1)</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div>
+<h4 id="SLUSAW5792">8.5.1.9 System Status Register REG08</h4>
+<div>
+<span id="SLUSAW55542">Figure 31. REG08 System Status Register Format</span>
+<table>
+
+<tbody>
+<tr>
+<td>7</td>
+<td>6</td>
+<td>5</td>
+<td>4</td>
+<td>3</td>
+<td>2</td>
+<td>1</td>
+<td>0</td>
+</tr>
+<tr>
+<td>VBUS_STAT[1]</td>
+<td>VBUS_STAT[0]</td>
+<td>CHRG_STAT[1]</td>
+<td>CHRG_STAT[0]</td>
+<td>DPM_STAT</td>
+<td>PG_STAT</td>
+<td>THERM_STAT</td>
+<td>VSYS_STAT</td>
+</tr>
+<tr>
+<td>R</td>
+<td>R</td>
+<td>R</td>
+<td>R</td>
+<td>R</td>
+<td>R</td>
+<td>R</td>
+<td>R</td>
+</tr>
+</tbody>
+</table>
+<table>
+
+<tbody>
+<tr>
+<td>LEGEND: R = Read only; -n = value after reset</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div>
+<h3 id="SLUSAW52704">Table 15. REG08 System Status Register Description</h3>
+<table>
+
+<thead>
+<tr>
+<th>BIT</th>
+<th>FIELD</th>
+<th>TYPE</th>
+<th>DESCRIPTION</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Bit 7</td>
+<td>VBUS_STAT[1]</td>
+<td>R</td>
+<td rowspan="2">00 – Unknown (no input, or DPDM detection incomplete), 01 – USB
+host, 10 – Adapter port, 11 – OTG</td>
+</tr>
+<tr>
+<td>Bit 6</td>
+<td>VBUS_STAT[0]</td>
+<td>R</td>
+</tr>
+<tr>
+<td>Bit 5</td>
+<td>CHRG_STAT[1]</td>
+<td>R</td>
+<td rowspan="2">00 – Not Charging, 01 – Pre-charge (&lt;V<sub>BATLOWV</sub>), 10
+– Fast Charging, 11 – Charge Termination Done</td>
+</tr>
+<tr>
+<td>Bit 4</td>
+<td>CHRG_STAT[0]</td>
+<td>R</td>
+</tr>
+<tr>
+<td>Bit 3</td>
+<td>DPM_STAT</td>
+<td>R</td>
+<td>0 – Not DPM, 1 – VINDPM or IINDPM</td>
+</tr>
+<tr>
+<td>Bit 2</td>
+<td>PG_STAT</td>
+<td>R</td>
+<td>0 – Not Power Good, 1 – Power Good</td>
+</tr>
+<tr>
+<td>Bit 1</td>
+<td>THERM_STAT</td>
+<td>R</td>
+<td>0 – Normal, 1 – In Thermal Regulation</td>
+</tr>
+<tr>
+<td>Bit 0</td>
+<td>VSYS_STAT</td>
+<td>R</td>
+<td>0 – Not in VSYSMIN regulation (BAT &gt; VSYSMIN), 1 – In VSYSMIN regulation
+(BAT &lt; VSYSMIN)</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div>
+<h4 id="SLUSAW53734">8.5.1.10 Fault Register REG09</h4>
+<div>
+<span id="SLUSAW54417">Figure 32. REG09 Fault Register Format</span>
+<table>
+
+<tbody>
+<tr>
+<td>7</td>
+<td>6</td>
+<td>5</td>
+<td>4</td>
+<td>3</td>
+<td>2</td>
+<td>1</td>
+<td>0</td>
+</tr>
+<tr>
+<td>WATCHDOG_<br> FAULT</td>
+<td><span>Reserved</span></td>
+<td>CHRG_FAULT[1]</td>
+<td>CHRG_FAULT[0]</td>
+<td>BAT_FAULT</td>
+<td>NTC_FAULT[2]</td>
+<td>NTC_FAULT[1]</td>
+<td>NTC_FAULT[0]</td>
+</tr>
+<tr>
+<td>R</td>
+<td>R</td>
+<td>R</td>
+<td>R</td>
+<td>R</td>
+<td>R</td>
+<td>R</td>
+<td>R</td>
+</tr>
+</tbody>
+</table>
+<table>
+
+<tbody>
+<tr>
+<td>LEGEND: R = Read only; -n = value after reset</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div>
+<h3 id="SLUSAW55549">Table 16. REG09 Fault Register Description</h3>
+<table>
+
+<thead>
+<tr>
+<th>BIT</th>
+<th>FIELD</th>
+<th>TYPE</th>
+<th>DESCRIPTION</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Bit 7</td>
+<td>WATCHDOG_FAULT</td>
+<td>R</td>
+<td>0 – Normal, 1- Watchdog timer expiration</td>
+</tr>
+<tr>
+<td>Bit 6</td>
+<td>Reserved</td>
+<td>R</td>
+<td>0 - Reserved</td>
+</tr>
+<tr>
+<td>Bit 5</td>
+<td>CHRG_FAULT[1]</td>
+<td>R</td>
+<td rowspan="2">00 – Normal, 01 – Input fault (VBUS OVP or VBAT &lt; VBUS &lt;
+3.8 V), 10 - Thermal shutdown, <br> 11 – Charge Safety Timer Expiration</td>
+</tr>
+<tr>
+<td>Bit 4</td>
+<td>CHRG_FAULT[0]</td>
+<td>R</td>
+</tr>
+<tr>
+<td>Bit 3</td>
+<td>BAT_FAULT</td>
+<td>R</td>
+<td>0 – Normal, 1 – BATOVP</td>
+</tr>
+<tr>
+<td>Bit 2</td>
+<td>NTC_FAULT[2]</td>
+<td>R</td>
+<td rowspan="3"><span> 000 – Normal, 101 – Cold, 110 – Hot</span></td>
+</tr>
+<tr>
+<td>Bit 1</td>
+<td>NTC_FAULT[1]</td>
+<td>R</td>
+</tr>
+<tr>
+<td>Bit 0</td>
+<td>NTC_FAULT[0]</td>
+<td>R</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div>
+<h4 id="SLUSAW58350">8.5.1.11 Vender / Part / Revision Status Register REG0A <span>(reset =
+00100011, or 23)</span>
+</h4>
+<div>
+<span id="SLUSAW54781">Figure 33. REG0A Vender / Part / Revision Status
+Register Format</span>
+<table>
+
+<tbody>
+<tr>
+<td>7</td>
+<td>6</td>
+<td>5</td>
+<td>4</td>
+<td>3</td>
+<td>2</td>
+<td>1</td>
+<td>0</td>
+</tr>
+<tr>
+<td>Reserved</td>
+<td>Reserved</td>
+<td>PN[2]</td>
+<td>PN[1]</td>
+<td>PN[0]</td>
+<td>TS_PROFILE</td>
+<td>DEV_REG[0]</td>
+<td>DEV_REG[1]</td>
+</tr>
+<tr>
+<td>R</td>
+<td>R</td>
+<td>R</td>
+<td>R</td>
+<td>R</td>
+<td>R</td>
+<td>R</td>
+<td>R</td>
+</tr>
+</tbody>
+</table>
+<table>
+
+<tbody>
+<tr>
+<td>LEGEND: R = Read only; -n = value after reset</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div>
+<h3 id="SLUSAW58169">Table 17. REG0A Vender / Part / Revision Status Register Description
+</h3>
+<table>
+
+<thead>
+<tr>
+<th>BIT</th>
+<th>FIELD</th>
+<th>TYPE</th>
+<th>RESET</th>
+<th>DESCRIPTION</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Bit 7</td>
+<td>Reserved</td>
+<td>R</td>
+<td>0</td>
+<td>0 - Reserved</td>
+</tr>
+<tr>
+<td>Bit 6</td>
+<td>Reserved</td>
+<td>R</td>
+<td>0</td>
+<td>0 - Reserved</td>
+</tr>
+<tr>
+<td colspan="5">Device Configuration</td>
+</tr>
+<tr>
+<td>Bit 5</td>
+<td>PN[2]</td>
+<td>R</td>
+<td><span>1</span></td>
+<td rowspan="3"><span>100</span></td>
+</tr>
+<tr>
+<td>Bit 4</td>
+<td>PN[1]</td>
+<td>R</td>
+<td>0</td>
+</tr>
+<tr>
+<td>Bit 3</td>
+<td>PN[0]</td>
+<td>R</td>
+<td><span>0</span></td>
+</tr>
+<tr>
+<td>Bit 2</td>
+<td>TS_PROFILE</td>
+<td>R</td>
+<td>0</td>
+<td>0 - Cold/Hot window</td>
+</tr>
+<tr>
+<td>Bit 1</td>
+<td>DEV_REG[0]</td>
+<td>R</td>
+<td>1</td>
+<td rowspan="2">11</td>
+</tr>
+<tr>
+<td>Bit 0</td>
+<td>DEV_REG[1]</td>
+<td>R</td>
+<td>1</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</ti-raw>
+
+<ti-raw>
+<div>
+
+<div>
+<h2 id="SLUSAW54478">9 Application and Implementation</h2>
+<div>
+<span>
+<p>NOTE</p>
+<p>Information in the following applications sections is not part of the TI component specification,
+and TI does not warrant its accuracy or completeness. TI’s customers are responsible for
+determining suitability of components for their purposes. Customers should validate and test
+their design implementation to confirm system functionality. </p>
+</span>
+</div>
+<div>
+<h3 id="SLUSAW56095">9.1 Application Information</h3>
+<p>A typical application consists of the device configured as an I<sup>2</sup>C controlled power path
+management device and a single cell Li-Ion battery charger for single cell Li-Ion and Li-polymer
+batteries used in a wide range of tablets and other portable devices. It integrates an input
+reverse-blocking FET (RBFET, Q1), high-side switching FET (HSFET, Q2), low-side switching FET
+(LSFET, Q3), and BATFET (Q4) between the system and battery. The device also integrates a bootstrap
+diode for the high-side gate drive.</p>
+</div>
+<div>
+<h3 id="SLUSAW56742">9.2 Typical Application</h3>
+<div>
+[image]
+</div>
+<div>
+<h4 id="SLUSAW54020">9.2.1 Design Requirements</h4>
+<div>
+<h3 id="SLUSB972696">Table 18. Design Requirements</h3>
+<table>
+
+<thead>
+<tr>
+<th>DESIGN PARAMETER </th>
+<th>EXAMPLE VALUE </th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Input voltage </td>
+<td>3.9 V to 17 V </td>
+</tr>
+<tr>
+<td>Input current limit </td>
+<td>1.5 A </td>
+</tr>
+<tr>
+<td>Fast charge current </td>
+<td>2048 mA</td>
+</tr>
+<tr>
+<td>Boost mode output current </td>
+<td>2.5 A (bq24195L) or 4.5 A (bq24195)</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div>
+<h4 id="SLUSAW5841">9.2.2 Detailed Design Procedure</h4>
+<div>
+<h4 id="SLUSAW54298">9.2.2.1 Inductor Selection</h4>
+<p>The <span>bq24195L, bq24195</span> has 1.5-MHz switching frequency to allow the use of small
+inductor and capacitor values. The Inductor saturation current should be higher than the
+charging current (I<sub>CHG</sub>) plus half the ripple current (I<sub>RIPPLE</sub>):</p>
+<div id="SLUSAW59291">Equation 4. [image]</div>
+<p>The inductor ripple current depends on input voltage (VBUS), duty cycle (D =
+V<sub>BAT</sub>/V<sub>VBUS</sub>), switching frequency (fs) and inductance (L):</p>
+<div id="SLUSAW56922">Equation 5. [image]</div>
+<p>The maximum inductor ripple current happens with D = 0.5 or close to 0.5. Usually inductor
+ripple is designed in the range of (20 to 40%) maximum charging current as a trade-off
+between inductor size and efficiency for a practical design. Typical inductor value is 2.2
+µH.</p>
+</div>
+<div>
+<h4 id="SLUSAW52778">9.2.2.2 Input Capacitor</h4>
+<p>Input capacitor should have enough ripple current rating to absorb input switching ripple
+current. The worst case RMS ripple current is half of the charging current when duty cycle
+is 0.5. If the converter does not operate at 50% duty cycle, then the worst case capacitor
+RMS current I<sub>CIN</sub> occurs where the duty cycle is closest to 50% and can be
+estimated by the following equation:</p>
+<div id="SLUSAW51457">Equation 6. [image]</div>
+<p>For best performance, VBUS should be decouple to PGND with 1-μF capacitance. The remaining
+input capacitor should be place on PMID. </p>
+<p>Low ESR ceramic capacitor such as X7R or X5R is preferred for input decoupling capacitor and
+should be placed to the drain of the high side MOSFET and source of the low side MOSFET as
+close as possible. Voltage rating of the capacitor must be higher than normal input voltage
+level. 25-V rating or higher capacitor is preferred for 15-V input voltage. </p>
+</div>
+<div>
+<h4 id="SLUSAW57085">9.2.2.3 Output Capacitor</h4>
+<p>Output capacitor also should have enough ripple current rating to absorb output switching
+ripple current. The output capacitor RMS current I<sub>COUT</sub> is given:</p>
+<div id="SLUSAW54713">Equation 7. [image]</div>
+<p>The output capacitor voltage ripple can be calculated as follows:</p>
+<div id="SLUSAW53812">Equation 8. [image]</div>
+<p>At certain input/output voltage and switching frequency, the voltage ripple can be reduced by
+increasing the output filter LC.</p>
+<p>The charger device has internal loop compensator. To get good loop stability, the resonant
+frequency of the output inductor and output capacitor should be designed between 15 kHz and
+25 kHz. With 2.2-µH inductor, the typical output capacitor value is 20 µF. The preferred
+ceramic capacitor is 6 V or higher rating, X7R or X5R. </p>
+</div>
+</div>
+<div>
+<h4 id="SLUSAW59912">9.2.3 Application Performance Plots</h4>
+<div>
+<div>
+<div>
+[image]
+<div id="SLUSAW54413">
+<div>
+<table>
+
+<tbody>
+<tr>
+<td></td>
+<td></td>
+<td>VBAT 3.2 V</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<span id="SLUSAW53833">Figure 34. Power Up from USB100 mA</span>
+</div>
+<div>
+[image]
+<div id="SLUSAW57612">
+<div>
+<table>
+
+<tbody>
+<tr>
+<td></td>
+<td></td>
+<td>VBUS 12 V </td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<span id="SLUSAW59861">Figure 36. Charge Disable</span>
+</div>
+<div>
+[image]
+<div id="SLUSAW58045">
+<div>
+<table>
+
+<tbody>
+<tr>
+<td colspan="3">VBUS 12 V, VBAT
+3.8 V, ICHG 3 A </td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<span id="SLUSAW51842">Figure 38. PWM Switching Waveform</span>
+</div>
+<div>
+[image]
+<div id="SLUSAW57629">
+<div>
+<table>
+
+<tbody>
+<tr>
+<td colspan="3">VBAT 3.8 V, ILOAD
+1 A </td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<span id="SLUSAW57661">Figure 40. Boost Mode Switching Waveform</span>
+</div>
+</div>
+<div>
+<div>
+[image]
+<div id="SLUSAW55727">
+<div>
+<table>
+
+<tbody>
+<tr>
+<td></td>
+<td></td>
+<td>VBUS 5 V</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<span id="SLUSAW5413">Figure 35. Charge Enable</span>
+</div>
+<div>
+[image]
+<div id="SLUSAW54372">
+<div>
+<table>
+
+<tbody>
+<tr>
+<td colspan="3">VBUS 5 V, IIN 3
+A, Charge Disable </td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<span id="SLUSAW5871">Figure 37. Input Current DPM Response without
+Battery</span>
+</div>
+<div>
+[image]
+<div id="SLUSAW52606">
+<div>
+<table>
+
+<tbody>
+<tr>
+<td colspan="3">VBUS 9 V, No
+Battery, ISYS 10 mA, Charge Disable </td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<span id="SLUSAW56913">Figure 39. PFM Switching Waveform</span>
+</div>
+<div>
+[image]
+<div id="SLUSAW58231">
+<div>
+<table>
+
+<tbody>
+<tr>
+<td></td>
+<td></td>
+<td>VBAT 3.8 V </td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<span id="SLUSAW52268">Figure 41. Boost Mode Load Transient</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</ti-raw>
+
+<ti-raw>
+<div>
+
+<div>
+<h2 id="SLUSAW5321">10 Power Supply Recommendations</h2>
+<div>
+<p>In order to provide an output voltage on SYS, the devices require a power supply between 3.9 V and 17
+V input with at least 100-mA current rating connected to VBUS; or, a single-cell Li-Ion battery with
+voltage &gt; VBAT_UVLOZ connected to BAT.</p>
+</div>
+</div>
+
+</div>
+<div>
+
+<div>
+<h2 id="SLUSAW54055">11 Layout</h2>
+<div>
+<h3 id="SLUSAW55541">11.1 Layout Guidelines</h3>
+<p>The switching node rise and fall times should be minimized for minimum switching loss. Proper layout
+of the components to minimize high frequency current path loop (see <span>Figure 42</span>) is important to prevent electrical and magnetic
+field radiation and high frequency resonant problems. Here is a PCB layout priority list for proper
+layout. Layout PCB according to this specific order is essential.</p>
+<ol>
+<li>Place input capacitor as close as possible to PMID pin and GND pin connections and use shortest
+copper trace connection or GND plane.</li>
+<li>Place inductor input terminal to SW pin as close as possible. Minimize the copper area of this
+trace to lower electrical and magnetic field radiation but make the trace wide enough to carry
+the charging current. Do not use multiple layers in parallel for this connection. Minimize
+parasitic capacitance from this area to any other trace or plane.</li>
+<li>Put output capacitor near to the inductor and the IC. Ground connections need to be tied to the
+IC ground with a short copper trace connection or GND plane.</li>
+<li>Route analog ground separately from power ground. Connect analog ground and connect power ground
+separately. Connect analog ground and power ground together using power pad as the single ground
+connection point. Or using a 0-Ω resistor to tie analog ground to power ground.</li>
+<li>Use single ground connection to tie charger power ground to charger analog ground. Just beneath
+the IC. Use ground copper pour but avoid power pins to reduce inductive and capacitive noise
+coupling. </li>
+<li>Decoupling capacitors should be placed next to the IC pins and make trace connection as short as
+possible.</li>
+<li>It is critical that the exposed power pad on the backside of the IC package be soldered to the
+PCB ground. Ensure that there are sufficient thermal vias directly under the IC, connecting to
+the ground plane on the other layers. </li>
+<li>The via size and number should be enough for a given current path.</li>
+</ol>
+<p>See the EVM design for the recommended component placement with trace and via locations. For the VQFN
+information, refer to SCBA017 and SLUA271. </p>
+<div>
+[image]<span
+id="SLUSAW55676">Figure 42. High Frequency Current Path</span>
+</div>
+</div>
+<div>
+<h3 id="SLUSAW52515">11.2 Layout Example</h3>
+<div>
+[image]<span id="SLUSAW53048">Figure 43. Layout Example Diagram</span>
+</div>
+</div>
+</div>
+
+</div>
+</ti-raw>
+
+<ti-raw>
+<div>
+
+<div>
+<h2 id="SLUSAW539">12 Device and Documentation Support</h2>
+<div>
+<h3 id="SLUSAW56600">12.1 Documentation Support </h3>
+<div>
+<h4 id="SLUSAW52946">12.1.1 Related Documentation </h4>
+<p>
+<i>bq24195/L EVM (PWR021) User’s Guide</i> (SLUUA18)
+</p>
+<p>
+<i>Quad Flatpack No-Lead Logic Packages Application Report</i> (SCBA017)
+</p>
+<p>
+<i>QFN/SON PCB Attachment Application Report</i> (SLUA271)
+</p>
+</div>
+</div>
+<div>
+<h3 id="designaid">12.2 Related Links</h3>
+<p>The table below lists quick access links. Categories include technical documents, support and
+community resources, tools and software, and quick access to sample or buy.</p>
+<div>
+<h3 id="device_and_documentation_support_1">Table 19. Related Links</h3>
+<table>
+
+<thead>
+<tr>
+<th>PARTS</th>
+<th>PRODUCT FOLDER</th>
+<th>SAMPLE &amp; BUY</th>
+<th>TECHNICAL DOCUMENTS</th>
+<th>TOOLS &amp; SOFTWARE</th>
+<th>SUPPORT &amp; COMMUNITY</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>bq24195</td>
+<td>Click here</td>
+<td>Click here</td>
+<td>Click here</td>
+<td>Click here</td>
+<td>Click here</td>
+</tr>
+<tr>
+<td>bq24195L</td>
+<td>Click here</td>
+<td>Click here</td>
+<td>Click here</td>
+<td>Click here</td>
+<td>Click here</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div>
+<h3 id="device_and_documentation_support_2">12.3 Trademarks</h3>
+<p>All other trademarks are the property of their respective owners.</p>
+</div>
+<div>
+<h3 id="device_and_documentation_support_3">12.4 Electrostatic Discharge Caution</h3>
+[image]
+<p>These devices have limited built-in ESD protection. The leads should be shorted together or the
+device placed in conductive foam during storage or handling to prevent electrostatic damage to the
+MOS gates.</p>
+</div>
+<div>
+<h3 id="TI_Glossary">12.5 Glossary</h3>
+<p>
+SLYZ022 — <i>TI Glossary</i>.
+</p>
+<p>This glossary lists and explains terms, acronyms, and definitions.</p>
+<p></p>
+</div>
+</div>
+
+</div>
+</ti-raw>
+
+<ti-raw>
+<div>
+
+<div>
+<h2 id="impnote">13 Mechanical, Packaging, and Orderable Information</h2>
+<div>
+<p> The following pages include mechanical, packaging, and orderable information. This information is
+the most current data available for the designated devices. This data is subject to change without
+notice and revision of this document. For browser-based versions of this data sheet, refer to the
+left-hand navigation.</p>
+</div>
+</div>
+
+</div>
+<div>
+
+<div id="loadContentArea">
+<div>
+<h3 id="ImpNotice001">IMPORTANT NOTICE</h3>
+<p>Texas Instruments Incorporated and its subsidiaries (TI) reserve the right to make corrections,
+enhancements, improvements and other changes to its semiconductor products and services per JESD46,
+latest issue, and to discontinue any product or service per JESD48, latest issue. Buyers should
+obtain the latest relevant information before placing orders and should verify that such information
+is current and complete. All semiconductor products (also referred to herein as "components") are
+sold subject to TI's terms and conditions of sale supplied at the time of order acknowledgment.</p>
+<p>TI warrants performance of its components to the specifications applicable at the time of sale, in
+accordance with the warranty in TI's terms and conditions of sale of semiconductor products. Testing
+and other quality control techniques are used to the extent TI deems necessary to support this
+warranty. Except where mandated by applicable law, testing of all parameters of each component is
+not necessarily performed.</p>
+<p>TI assumes no liability for applications assistance or the design of Buyers' products. Buyers are
+responsible for their products and applications using TI components. To minimize the risks
+associated with Buyers' products and applications, Buyers should provide adequate design and
+operating safeguards.</p>
+<p>TI does not warrant or represent that any license, either express or implied, is granted under any
+patent right, copyright, mask work right, or other intellectual property right relating to any
+combination, machine, or process in which TI components or services are used. Information published
+by TI regarding third-party products or services does not constitute a license to use such products
+or services or a warranty or endorsement thereof. Use of such information may require a license from
+a third party under the patents or other intellectual property of the third party, or a license from
+TI under the patents or other intellectual property of TI.</p>
+<p>Reproduction of significant portions of TI information in TI data books or data sheets is permissible
+only if reproduction is without alteration and is accompanied by all associated warranties,
+conditions, limitations, and notices. TI is not responsible or liable for such altered
+documentation. Information of third parties may be subject to additional restrictions.</p>
+<p>Resale of TI components or services with statements different from or beyond the parameters stated by
+TI for that component or service voids all express and any implied warranties for the associated TI
+component or service and is an unfair and deceptive business practice. TI is not responsible or
+liable for any such statements.</p>
+<p>Buyer acknowledges and agrees that it is solely responsible for compliance with all legal, regulatory
+and safety-related requirements concerning its products, and any use of TI components in its
+applications, notwithstanding any applications-related information or support that may be provided
+by TI. Buyer represents and agrees that it has all the necessary expertise to create and implement
+safeguards which anticipate dangerous consequences of failures, monitor failures and their
+consequences, lessen the likelihood of failures that might cause harm and take appropriate remedial
+actions. Buyer will fully indemnify TI and its representatives against any damages arising out of
+the use of any TI components in safety-critical applications.</p>
+<p>In some cases, TI components may be promoted specifically to facilitate safety-related applications.
+With such components, TI's goal is to help enable customers to design and create their own
+end-product solutions that meet applicable functional safety standards and requirements.
+Nonetheless, such components are subject to these terms.</p>
+<p>No TI components are authorized for use in FDA Class III (or similar life-critical medical equipment)
+unless authorized officers of the parties have executed a special agreement specifically governing
+such use.</p>
+<p>Only those TI components which TI has specifically designated as military grade or "enhanced plastic"
+are designed and intended for use in military/aerospace applications or environments. Buyer
+acknowledges and agrees that any military or aerospace use of TI components which have <i>not</i>
+been so designated is solely at the Buyer's risk, and that Buyer is solely responsible for
+compliance with all legal and regulatory requirements in connection with such use.</p>
+<p>TI has specifically designated certain components as meeting ISO/TS16949 requirements, mainly for
+automotive use. In any case of use of non-designated products, TI will not be responsible for any
+failure to meet ISO/TS16949.</p>
+<h4>Products</h4>
+<ul>
+<li>Audio: www.ti.com/audio</li>
+<li>Amplifiers: amplifier.ti.com</li>
+<li>Data Converters: dataconverter.ti.com
+</li>
+<li>DLP® Products: www.dlp.com</li>
+<li>DSP: dsp.ti.com</li>
+<li>Clocks and Timers: www.ti.com/clocks
+</li>
+<li>Interface: interface.ti.com</li>
+<li>Logic: logic.ti.com</li>
+<li>Power Mgmt: power.ti.com</li>
+<li>Microcontrollers: microcontroller.ti.com</li>
+<li>RFID: www.ti.rfid.com</li>
+<li>OMAP Application Processors: www.ti.com/omap</li>
+<li>Wireless Connectivity: www.ti.com/wirelessconnectivity</li>
+</ul>
+<h4>Applications</h4>
+<ul>
+<li>Automotive and Transportation: www.ti.com/automotive</li>
+<li>Communications and Telecom: www.ti.com/communications</li>
+<li>Computers and Peripherals: www.ti.com/computers</li>
+<li>Consumer Electronics: www.ti.com/consumer-apps</li>
+<li>Energy and Lighting: www.ti.com/energy
+</li>
+<li>Industrial: www.ti.com/industrial
+</li>
+<li>Medical: www.ti.com/medical</li>
+<li>Security: www.ti.com/security</li>
+<li>Space, Avionics and Defense: www.ti.com/space-avionics-defense</li>
+<li>Video &amp; Imaging: www.ti.com/video</li>
+</ul>
+<p>TI E2E Community : e2e.ti.com</p>
+<p>Mailing Address: Texas Instruments, Post Office Box 655303, Dallas, Texas 75265<br>
+Copyright© 2014, Texas Instruments Incorporated</p>
+</div>
+</div>
+
+</div>
+</ti-raw>

@@ -1,6 +1,7 @@
 #pragma once
 
-// Display pins
+#ifdef HAS_DISPLAY
+// T-Display-S3 display pins (8-bit parallel interface)
 #define PIN_LCD_BL 38
 #define PIN_LCD_D0 39
 #define PIN_LCD_D1 40
@@ -16,14 +17,15 @@
 #define PIN_LCD_WR 8
 #define PIN_LCD_RD 9
 
-// Power control
+// T-Display-S3 power control
 #define PIN_POWER_ON 15
 
 // Touch Screen (Note: PIN_TOUCH_INT conflicts with LED strip)
 #define PIN_TOUCH_RES 21
 // #define PIN_TOUCH_INT 16  // DISABLED - conflicts with LED strip
+#endif // HAS_DISPLAY
 
-// I2C (Custom PCB connections)
+// I2C (Custom PCB connections — same on T-Display-S3 and v7 WROOM)
 #define PIN_IIC_SCL 44
 #define PIN_IIC_SDA 43
 
@@ -34,12 +36,16 @@
 #define PIN_SENSOR_INT_3 13   // Sensor board 3 interrupt
 #define PIN_LED_STRIP_DATA 16 // WS2818B LED strip data (72 LEDs)
 
+#ifdef HAS_DISPLAY
 // SD Card (Note: Some pins conflict with Motion Play hardware)
 #define PIN_SD_CS 10   // CONFLICTS with TCA_RESET - choose one
 #define PIN_SD_MISO 13 // CONFLICTS with SENSOR_INT_3 - choose one
 #define PIN_SD_MOSI 11 // CONFLICTS with SENSOR_INT_1 - choose one
 #define PIN_SD_SCLK 12 // CONFLICTS with SENSOR_INT_2 - choose one
+#endif // HAS_DISPLAY
 
-// Built-in button
+#ifdef HAS_BUTTONS
+// T-Display-S3 built-in buttons
 #define PIN_BUTTON_1 14
 #define PIN_BUTTON_2 0
+#endif // HAS_BUTTONS
