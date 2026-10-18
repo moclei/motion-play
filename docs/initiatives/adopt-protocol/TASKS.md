@@ -2,7 +2,7 @@
 
 ## Phase 1: Install and reconcile
 
-- [~] Update `.gitignore`: replace `.claude/` with `.claude/*` + `!.claude/agents/`; confirm `.claude/settings.local.json` is still ignored and `.claude/agents/*.md` is not
+- [x] Update `.gitignore`: replace `.claude/` with `.claude/*` + `!.claude/agents/`; confirm `.claude/settings.local.json` is still ignored and `.claude/agents/*.md` is not
 - [ ] Copy `planner.md`, `orchestrator.md`, `worker.md`, `organizer.md` from `docs/scratch/` → `.claude/agents/` verbatim
 - [ ] Copy `gardener.md` and `bugfix.md` → `.claude/agents/` and apply the strip/adapt edits in PLAN.md Technical Notes
 - [ ] Copy `docs/scratch/PROTOCOL.md` → `.context/PROTOCOL.md` and apply the strip/adapt edits (Session Management principle, delete §UI Components)
