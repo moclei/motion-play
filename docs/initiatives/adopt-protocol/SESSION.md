@@ -39,3 +39,27 @@ The first task is marked `[~]` because it was dispatched to you — it is not so
 - Verification: the only `WORKFLOW.md` hits are in `docs/initiatives/adopt-protocol/*` (allowed). The foreign-term grep over PROTOCOL.md and the agents returns nothing. `git ls-files .claude CLAUDE.md` shows exactly the 6 roles + CLAUDE.md.
 - `docs/scratch/` deleted (untracked, so it was a filesystem delete). `.vscode/extensions.json` was left unstaged as instructed.
 - The new roles don't take effect until a new `claude` session starts, so the `worker` subagent type is not live in the current orchestrator session.
+
+#### Result
+| # | Phase | Result | Escalation evaluated? | Commit | Notes |
+|---|-------|--------|-----------------------|--------|-------|
+| 1 | Phase 1: Install and reconcile | DONE | No — clean completion | ddcb36c | 10 tasks; `.gitignore` deviation (`**/.claude/*`) recorded in PLAN |
+
+#### Verification
+- Re-ran all three PLAN.md verification checks independently:
+  - The only `WORKFLOW.md` hits are in `docs/initiatives/adopt-protocol/*` (allowed).
+  - The foreign-term grep returns nothing.
+  - `git ls-files .claude CLAUDE.md` lists exactly the 6 roles + CLAUDE.md.
+- `git check-ignore`: both `settings.local.json` files (root and `hardware/libraries/`) are ignored; `.claude/agents/worker.md` is not.
+- Accepted the `.gitignore` deviation. It is required by the BRIEF constraint that `settings.local.json` stays gitignored, and it is recorded in PLAN.md.
+- Diff-reviewed:
+  - PROJECT.md (only the 4 planned spots plus the tree entries) and `.cursor/rules/context-folder.mdc`
+  - The PROTOCOL.md Session Management line (§UI Components gone, closing section intact)
+  - The gardener and bugfix adapt edits
+- Not re-derived: verbatim copies of planner/orchestrator/worker/organizer. `docs/scratch/` was never committed, so the Worker's `cmp` is the only check.
+- `.context/WORKFLOW.md` and `docs/scratch/` are gone. PLAN.md has no date-stamped headings. All TASKS are `[x]`. Working tree is clean except `.vscode/extensions.json` (PlatformIO auto-rewrite, already committed on `feat/v7-board-firmware`).
+- Carries forward: the `claude --agent <role>` goal is untested here, because roles load only in a new session.
+
+---
+
+**Outcome:** Loop complete. 1 worker dispatched, 0 unresolved blockers. Not merged; the user decides when it lands on `main`.
