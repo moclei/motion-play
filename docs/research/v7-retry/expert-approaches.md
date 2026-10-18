@@ -107,7 +107,7 @@ Eleven principles. Principles 1–5 are the *bring-up / regression* layer, where
 
 **Why it works.** Writing the prediction first stops after-the-fact threshold fitting. Zeller calls debugging without a log "playing Mastermind in memory."
 
-**Apply to us.** Backs **PM §6.1, §6.9, §6.20** almost word for word, so it adds no new rule. Zeller's five-column row is a ready-made template for the test card, and topic 6 may want to adopt it verbatim.
+**Apply to us.** Backs **PM §6.1, §6.9, §6.20** almost word for word, so it adds no new rule. Zeller's five-column row is a ready-made starting point for the test card. Topic 4 defines the card; topic 6 decides how it is stored and loaded.
 
 **Sources.**
 - A. Zeller, *Why Programs Fail*, ch. 6 "Scientific Debugging", §6.5 "Keeping a Logbook". The example log uses columns Hypothesis | Prediction | Experiment | Observation | Conclusion. [P]
@@ -179,7 +179,7 @@ Eleven principles. Principles 1–5 are the *bring-up / regression* layer, where
 | **Half-splitting / binary isolation** | **Adopt with caveat** | Pease pp. 5–6 (128 resistors in ~7 trials) [P]; HP *Bench Briefs* Mar–Apr 1974 [P] | HP: it applies most readily where "the circuit under test is a linear path". A shared I²C bus is *not* linear, because every device sits on the same two nets. Split by *function or segment* (mux channels, master vs. slave, cable vs. no cable), not by position along a wire. |
 | **Minimum reproducing subset** | **Adopt** | NXP AN10216 slide 55 [P]; Agans R4 [S] | AN10216 describes the I²C version: disable all mux channels, then re-enable them one by one "until the bus hangs again". Depopulating components is an application of the same idea [own]. Use a sacrificial board (PM §6.7). |
 | **Written falsification criteria** | **Adopt** | Platt [P] | Each test lists the hypotheses each outcome excludes (P6). |
-| **Pre-registered predictions / test card** | **Adopt** | Zeller §6.5 [P]; Pease [P] | Use Zeller's five-column logbook row (P7). Topic 6 owns the format. |
+| **Pre-registered predictions / test card** | **Adopt** | Zeller §6.5 [P]; Pease [P] | Use Zeller's five-column logbook row (P7). Topic 4 owns the format; topic 6 owns storage and loading. |
 | **Scope before logic analyser for electrical questions** | **Adopt** | TI SCPA063 §3.1 [P]; Tektronix ABCs [P] | Use a logic analyser for protocol sequencing and a scope for levels, edges and V_OL. Validate probe setup first (P3). |
 | **Shotgunning** | **Reject as a default** | Jargon File [P]; Agans R5 [S] | [own] exception: cheap, *recorded*, reversible swaps that are then re-tested one at a time. That is parallel triage, not undirected change. No authoritative source endorses even this, so use it sparingly. |
 
@@ -256,6 +256,7 @@ The few worth actually reading, in priority order:
 ## Observations for other topics
 
 - **Topic 4 (test/scope workflow audit):** P3's sources (Tektronix ABCs, Pease) give an outside basis for the instrument-validation step. Re-check scope findings against ground-lead length and probe loading first. TI SCPA063 §3.6 defines rise time as 30%→70%.
-- **Topic 6 (context strategy):** adopt Zeller's five-column logbook row as the test-card format. Raymond's "symptoms, not guesses" is a ready-made rule for handoff prompts (PM §6.18). The IS / IS NOT table (P1) is a candidate standing section of the current-state file.
+- **Topic 4 (test workflow), test card:** Zeller's five-column logbook row is the suggested starting point for the test-card format, extended with the fields from P6 (outcomes → hypotheses excluded) and P8 (declared baseline, revert-on-null).
+- **Topic 6 (context strategy):** decide how test cards and the log are stored and loaded (topic 4 owns their format). Raymond's "symptoms, not guesses" is a ready-made rule for handoff prompts (PM §6.18). The IS / IS NOT table (P1) is a candidate standing section of the current-state file.
 - **Synthesis (Stage B), not a hypothesis:** the external record includes a documented ESP32-S3 I²C *master* misbehaviour (espressif/esp-idf #8543: SCL clocking after STOP on IDF release/v4.4, fixed 2022; the ESP32 original was unaffected). Espressif docs also give glitch-filter (`glitch_ignore_cnt`, typical 7) and pull-up guidance. These are reference facts for the hypothesis map. Their relevance to v7 is unassessed; the ESP32-S3 errata page could not be checked this session.
 - **Unverified leads** (excluded from the principles above): ADI AN-686 *Implementing an I²C Reset* (fetch failed; UM10204 §3.1.16 covers the nine-clock bus clear); Agans sub-rule wording (secondary only); Kahneman; NASA RCA guidance.
