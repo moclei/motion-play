@@ -32,3 +32,10 @@ Tasks assigned (from TASKS.md Phase 1):
 
 The first task is marked `[~]` because it was dispatched to you — it is not someone else's work in progress.
 ```
+
+#### Notes
+- All Phase 1 tasks done; one commit per task (bdb6b62, 841df97, b10a02d, 8da06ec, 811faf8, c48610e, 8716b85, 79d0f15, b83ee36 + this handoff).
+- Deviation: `.gitignore` uses `**/.claude/*` rather than the planned `.claude/*`. The root-anchored form stopped ignoring `hardware/libraries/.claude/settings.local.json`. PLAN.md Technical Notes and Rejected Approaches are updated to match.
+- Verification: the only `WORKFLOW.md` hits are in `docs/initiatives/adopt-protocol/*` (allowed). The foreign-term grep over PROTOCOL.md and the agents returns nothing. `git ls-files .claude CLAUDE.md` shows exactly the 6 roles + CLAUDE.md.
+- `docs/scratch/` deleted (untracked, so it was a filesystem delete). `.vscode/extensions.json` was left unstaged as instructed.
+- The new roles don't take effect until a new `claude` session starts, so the `worker` subagent type is not live in the current orchestrator session.

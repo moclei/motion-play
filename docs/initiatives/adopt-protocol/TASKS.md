@@ -11,7 +11,7 @@
 - [x] Update `.cursor/rules/context-folder.mdc` WORKFLOW.md line → PROTOCOL.md
 - [x] Delete `.context/WORKFLOW.md` and the whole `docs/scratch/` folder
 - [x] Run the PLAN.md verification greps and `git ls-files .claude CLAUDE.md`; fix any residual hits
-- [ ] 🔄 Handoff
+- [x] 🔄 Handoff
 
 ## Deferred
 
