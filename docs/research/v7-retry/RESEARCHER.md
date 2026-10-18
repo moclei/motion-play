@@ -98,7 +98,9 @@ Append notes here as research sessions complete. One line per observation. Keep 
 - Topic 1: surfacing top findings to the user before writing caught nothing wrong but surfaced four user concerns (measurement validity, layout understanding, synthesis, context budget) that became major sections.
 - Topic 2: kicad-cli (`/Applications/KiCad/KiCad.app/Contents/MacOS/kicad-cli`) XML netlist + pos export on `git archive`d refs gave a clean component/pin/net diff in seconds; regenerating gerbers and matching against the fabricated zips verified the anchors. Note zsh: quote `"${ref}:path"` — `$r:h` is a zsh modifier.
 - Topic 3: answering one concrete question ("where does SDA route, what's near it?") with throwaway read-only kiutils+shapely probes exposed every extraction gap in under an hour; better than auditing scripts line by line.
+- Topic 5: fanning web research out to 3 parallel subagents with a strict "tag each claim [read]/[secondary]/[unverified]" instruction kept main context small and made the citation bar enforceable.
 
 ### What didn't
 
 - Topic 3: committed generated outputs (layout context, DRC report) had silently gone stale; any artifact derived from a source file needs a source hash.
+- Topic 5: no authoritative source exists for "when to respin" or "when to hire a consultant"; vendor blogs only. Expect to label such heuristics as our own.
