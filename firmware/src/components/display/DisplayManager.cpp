@@ -1,4 +1,7 @@
 #include "DisplayManager.h"
+
+#ifdef HAS_DISPLAY
+
 #include "pin_config.h"
 #include "components/sensor/SensorConfiguration.h"
 
@@ -926,3 +929,4 @@ void DisplayManager::showCalibrationCancelled()
     tft.drawString("Calibration was cancelled", SCREEN_WIDTH / 2 - 75, 100);
     tft.drawString("Previous settings unchanged", SCREEN_WIDTH / 2 - 81, 120);
 }
+#endif // HAS_DISPLAY

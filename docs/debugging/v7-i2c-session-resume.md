@@ -111,7 +111,7 @@ Before modifying a file, check whether I've already modified it (look for a rece
 
 The previous fresh-perspective prompt and its assessment have been folded into the investigation doc (Phase 10 onward) and superseded by Phases 17 and 18. The current immediate next step is **the Arduino-as-master probe of BQ in the failing config** — now the uncontested top of the priority list, since Phase 18 closed the bench-PSU sanity check. See `docs/debugging/v7-i2c-investigation.md` § "Immediate next steps" item 1 for full details.
 
-Implementation is blocked on a small firmware change: a `DIAG_RELEASE_I2C` build flag that boots normally through `configureBQ24195()`, then calls `Wire.end()` and reconfigures GPIO 43/44 to `INPUT` (no internal pullup), then sits in a tight print loop. The flag is a sibling of the existing `DIAG_NO_WIFI` and `BUS_RECOVERY_TEST` flags and follows the same pattern in `firmware/src/components/sensor/SensorManager.cpp` and `platformio.ini`. After the flag exists, the test is: wire an Arduino Nano ESP32 to the main PCB's TPIO43 (SDA) / TPIO44 (SCL) / any GND test pad, share GND, leave the failing-config cable in J6, run a probe loop on the Arduino targeting 0x6B, and observe whether BQ ACKs.
+Implementation is **ready** — the `DIAG_RELEASE_I2C` build flag exists as a sibling of `DIAG_NO_WIFI` / `BUS_RECOVERY_TEST` (env: `motion-play-v7-relbus` in `platformio.ini`). The firmware boots through `configureBQ24195()` exactly like the regular build, runs a 5-iteration diagnostic burst to confirm the BQ NACK reproduces on the ESP32 side first, then closes all TCA channels for a clean baseline, calls `Wire.end()`, reconfigures GPIO 43/44 to `INPUT` (no internal pull — on-board 2.2 kΩ R28/R29 hold the lines at idle high), prints "BUS RELEASED", and sits in a 5-second heartbeat loop. The companion Arduino sketch is `tools/arduino-sketches/v7_bq_master_probe/v7_bq_master_probe.ino`. Procedure: `pio run -e motion-play-v7-relbus -t upload`, wait for "BUS RELEASED" on serial, wire Arduino Nano ESP32's SDA/SCL/GND to TPIO43 / TPIO44 / a GND test pad on the main PCB (share GND only, do not tie 3.3 V or 5 V rails together), leave the failing-config cable in J6, flash the Arduino sketch, and read its serial output. The Arduino runs the same BASE/TCA0/TCA1/TCA2 probe pattern from its own master.
 
 Expected outcomes:
 
@@ -127,11 +127,13 @@ A sibling test to run in any free moment that doesn't depend on the firmware cha
 ## Key commands and paths
 
 - Firmware source: `firmware/src/` — main entry is `firmware/src/main.cpp`. Sensor logic is in `firmware/src/components/sensor/SensorManager.{cpp,h}`.
-- Build: `pio run -e motion-play-v7 -t upload` (normal) or `pio run -e motion-play-v7-diag -t upload` (WiFi/BT off).
+- Build: `pio run -e motion-play-v7 -t upload` (normal), `pio run -e motion-play-v7-diag -t upload` (WiFi/BT off), `pio run -e motion-play-v7-busrec -t upload` (bus-recovery test for Story A residual), or `pio run -e motion-play-v7-relbus -t upload` (release I2C bus to external master after confirming NACK reproduces — Arduino-as-master test).
 - Serial monitor: `pio device monitor -e motion-play-v7` at 115200 baud.
 - PCB circuit context: `hardware/pcb-main/kicad/circuit-context.json`.
 - PCB placement context: `hardware/pcb-main/kicad/pcb-layout-context.json`. Note: **placement only, no routing/tracks**. The `tools/pcb-context/` tooling might be extendable to include routing if needed.
-- Arduino external-master sketch: `tools/arduino-sketches/vcnl4040_i2c_diagnose/vcnl4040_i2c_diagnose.ino`.
+- Arduino external-master sketches:
+  - `tools/arduino-sketches/vcnl4040_i2c_diagnose/vcnl4040_i2c_diagnose.ino` — sensor assembly health check (tests rigid + flex + VCNL standalone).
+  - `tools/arduino-sketches/v7_bq_master_probe/v7_bq_master_probe.ino` — Arduino-as-master discrimination test (Story D-revised vs Story F). Pair with the `motion-play-v7-relbus` firmware build.
 
 ---
 

@@ -1,6 +1,24 @@
 # Debugging v7 I2C Communication with an Oscilloscope
 
-Step-by-step guide for using an oscilloscope to diagnose the v7 main-PCB I2C fault chain. Originally written for a **Hantek DSO5202P** to capture VCNL4040 NACK behaviour; controls are described against that scope but the procedure is broadly portable to any 2-channel ≥100 MHz scope with I2C decode. Written assuming no prior oscilloscope experience.
+Step-by-step guide for using an oscilloscope to diagnose the v7 main-PCB I2C fault chain. Originally written for a Hantek DSO5202P; the **Rigol DHO804** that arrived 2026-04-28 is now the working scope, so DHO804-specific notes have been added at the top of each major section. The button-name walkthroughs below sometimes still reflect Hantek conventions — when in doubt, follow the DHO804 notes. Written assuming no prior oscilloscope experience.
+
+---
+
+## Rigol DHO804 — what's different from the Hantek the original guide assumed
+
+The DHO804 is a 4-channel, 70 MHz, 12-bit, 1.25 GSa/s scope with a 7" capacitive touchscreen. Most front-panel buttons have a touchscreen equivalent, and many menus are easier to reach by tapping than by knob-hunting. Keep these in mind as you read the rest of the guide:
+
+- **12-bit ADC vs the Hantek's 8-bit ADC** is the single most useful difference for *this* investigation. We are looking for sub-100 mV wobbles on SDA at BQ's pad — features that an 8-bit / 5 V-range scope would round into the LSB. The DHO804 resolves them comfortably.
+- **Memory depth: up to 25 Mpts** standard. Set it generously — deep memory at a fine timebase lets you scroll horizontally through a whole transaction after the trigger fires, which matters for I2C decoding.
+- **Touchscreen is the fast path for most settings.** Tap the channel label at the bottom of the screen to open the channel menu. Tap a measured value to change its source. Tap the trigger label to open the trigger menu. The physical knobs still work and are sometimes faster (especially the multi-purpose knob for fine adjustments).
+- **Probes that ship with the DHO804** are typically Rigol's PVP3150 or similar 1×/10× passive probes. Use the **10× position on the probe switch** for everything in this guide. Confirm the scope agrees by tapping the channel label and setting Probe Ratio to 10×.
+- **Probe-comp terminal** is on the front, labelled "Cal". Two pins (signal + ground), 1 kHz square wave. Worth doing once.
+- **I2C decode is built in.** Press `MATH` → `Decode` → `Decode 1` (or tap the `Decode` button on the touchscreen menu bar). The DHO804 decodes I2C, SPI, UART, CAN, and LIN; for our purposes only I2C matters.
+- **Trigger has dedicated I2C trigger types.** You can trigger on a START condition specifically, on a particular address byte, or on a NACK — much more useful than the generic falling-edge trigger this guide originally described. We'll use the I2C-specific trigger for the BQ-pad capture below.
+- **Saving screenshots / waveform data** — there's a USB-A port on the front for a thumb drive. Press the dedicated `Save` button or use `Storage` from the menu. Image (.png) and waveform (.csv / .wfm) both work.
+- **No loud fan**, runs cool, no external PSU brick. Powered from a normal mains cord on the back.
+
+The rest of the original guide is portable to the DHO804 with one substitution: where the original says "press CH1 button → menu appears on the right" you can also tap the CH1 label at the bottom of the screen and the same menu opens. Where it says "press Decode" → use the `MATH → Decode` path described above.
 
 ---
 

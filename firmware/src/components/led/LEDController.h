@@ -22,7 +22,9 @@
 #define LED_PIN 16
 #define LED_TYPE WS2812B
 #define COLOR_ORDER GRB
-#define DEFAULT_BRIGHTNESS 128
+// Match the LED-test LEVEL_30 cap so operational modes stay within the
+// BQ24195 IINLIM budget validated during strip testing.
+#define DEFAULT_BRIGHTNESS 77
 
 class LEDController {
 private:

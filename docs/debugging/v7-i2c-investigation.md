@@ -1,6 +1,6 @@
 # Main PCB v7 — VCNL4040 I2C Silent Failure Investigation
 
-> **Status as of 2026-04-26 (post Phase 18)**: Confirmed **v7 design-level issue**, reproducible on any healthy-assembly board. The BQ24195's I2C interface stops acknowledging at address 0x6B whenever a TCA9548A channel opens with a cable that has **DC contact on SDA pulled toward +3 V at the far end specifically** — SCL loading does nothing (Phase 12), SDA pulled toward GND does nothing (Phase 13), source noise quality is irrelevant (Phase 14), software-issued bus recovery sequences do nothing (Phase 15), trace routing is not the asymmetry source — SCL is routed marginally closer to noise sources than SDA, yet only SDA fails (Phase 16), the original ESD-diode-mediated framing of Story D is ruled out by the BQ24195 datasheet — there is no upper ESD clamp at +3.3 V on BQ's SDA pin (abs max +7 V, characterised at V_PULL-UP = 1.8 V) (Phase 17), and **USB-C / VBUS state is ruled out as a contributor — bench PSU from battery pads with USB-C disconnected reproduces the fault identically (Phase 18)**. Phase 18 also confirmed the failure is **live / ongoing** rather than latched: BQ recovers spontaneously between TCA2 selections within a single iteration of the diagnostic loop, with no software intervention, ruling out any "transient at the moment of plug-in" framing. Failure is always error code 2 (NACK on address), never 5 (bus hang). The non-scope option space has **one remaining high-value test** (Arduino-as-master, blocked on a small firmware change). Naive Stories A and B, Story C, Story A's residual stuck-state variant, the routing-EMI hypothesis, the original ESD-diode framing of Story D, and any USB-C / VBUS-mediated story are all ruled out. **Story D-revised — SDA input-stage noise-margin failure at BQ (CMOS receiver mis-classifies bits during the 9th-clock ACK window when cable parasitics + SCL crosstalk drag SDA below V_IH = 1.3 V, ongoing while the cable is connected) — is the dominant remaining hypothesis**, with **Story F (ESP32-S3 I2C peripheral interaction)** as a tracked hypothesis pending the Arduino-as-master discrimination test. Story E (cable-mediated mechanism not captured by D-revised) is downgraded — the 2.5 cm horizontal cable geometry the operator has been testing with rules out the EMI-antenna framing. **Path forward: Arduino-as-master test (blocked on `DIAG_RELEASE_I2C` firmware flag) + scope at BQ pads (week of 2026-04-28) + v8 design with I2C buffer (start in parallel — independently justified at this point regardless of which surviving story is correct).**
+> **Status as of 2026-05-02 (post Phase 24 — Story F confirmed; Experiment 1 null; Phase 25 in flight)**: Arduino-as-master test (Phase 24) **confirms Story F**: BQ ACKs a SAMD21 (Nano 33 IoT) master cleanly on the same wire where it NACKs the ESP32-S3 master, in the same failing-config cable load. Mechanism is unambiguously in the ESP32-S3 master peripheral itself — not in BQ's input, not in the bus, not in cable parasitics independent of the master. Story H (BQ-side input feature) refuted. Threshold stories at the BQ pad already refuted (D-revised by Phase 20, G-revised by Phase 23). Phase 24 Experiment 1 (`i2c_filter_enable(I2C_NUM_0, 7)` — turn on the I2C controller's digital deglitcher that the legacy IDF v4.4 driver leaves off by default) returned a null result: BQ NACK pattern on TCA2 byte-identical to baseline. Refutes "sub-µs glitches at the I2C controller's input" as the missing knob; the master is emitting something on the *output* side, or the disturbance is at a path the I2C controller's filter doesn't sit on. **Phase 25 in flight**: bundles Experiment 2 (pad-level `IO_MUX_FUN_FILTER_EN` on GPIO 43/44 — independent ~25 ns physical filter at the pad input) and Experiment 3 (explicit `gpio_pullup_dis` / `gpio_pulldown_dis`). Full ESP32-S3 master peripheral audit and ranked experiment plan in [`docs/explorations/esp32-s3-i2c-master-deep-dive.md`](../explorations/esp32-s3-i2c-master-deep-dive.md). v8 with I2C buffer remains the architectural answer regardless.
 
 This document exists as a handoff. A long multi-session debugging effort has happened. A fresh AI session (or the same human returning later) should be able to read this file, glance at the referenced files, and pick up exactly where the investigation left off.
 
@@ -12,8 +12,8 @@ This document exists as a handoff. A long multi-session debugging effort has hap
 - **Boards tested**: 3 of 3 assembled v7 boards. Board 1 (originally healthy, now damaged by a failed bodge attempt — see Phase 7). Board 2 (assembly defect, BQ dead at boot, not part of this investigation — see Phase 8). Board 3 (healthy, reproduces the fault identically to Board 1's original behavior — see Phase 9). So the fault is design-level, not per-board.
 - **Firmware state**: `SensorManager::runBusDiagnosticLoop()` is the active diagnostic. Prints `BQ:X(n)` with real error code. Run in env `motion-play-v7-diag` to skip WiFi/MQTT init (`-DDIAG_NO_WIFI`) — useful for eliminating RF confounds, but RF is already ruled out so the default `motion-play-v7` env is fine now.
 - **What's ruled out**: sensor-side defects; power brown-out; I2C speed (100 kHz same as 400 kHz); pullup strength (4.7 k, 10 k, 47 k external all fail identically — though note the weakness of that test, see Phase 5); ESP32 WiFi/BT RF coupling (Phase 6); routing differences between CH0/CH1/CH2 (all three behave identically, Phase 6); cable stub capacitance alone (dangling cable passes, Phase 6).
-- **What's alive as a hypothesis (post-Phase-18)**: Stories A and B (naive forms) weakened by polarity test (Phase 13). Story C (3.3 V rail noise injection) ruled out by clean-power-source test (Phase 14). Story A residual variant (stuck state machine recoverable by software-issued bus reset) ruled out by firmware bus-recovery test (Phase 15) — and doubly closed by Phase 18's live/ongoing observation, which means there is no stuck state to recover from in the first place. **The original ESD-diode-mediated framing of Story D is ruled out by Phase 17's datasheet drill** — BQ's SDA pin abs max is +7 V with no conventional upper clamp at +3.3 V, so the diode the original story relied on doesn't exist where the story needed it. **Any USB-C / VBUS-mediated story is ruled out by Phase 18** — the fault reproduces identically with VBUS completely absent. **Story D-revised — SDA input-stage noise-margin failure at BQ — is the dominant surviving hypothesis.** With the cable-extended pullup attached, BQ's SDA pin sees added parasitic C from the cable + connector (~5–10 pF, constant regardless of far-end resistor value — consistent with the pullup-strength-invariant observation in Phase 5) and capacitive crosstalk from SCL on the parallel-routed pair (Phase 16, operator-confirmed). Combined, SCL transitions inject crosstalk pulses that drag SDA at BQ's pad below V_IH = 1.3 V momentarily during the 9th-clock ACK window. BQ's CMOS receiver mis-classifies and NACKs. The polarity asymmetry is *better* explained under this framing: the pin has a real conventional lower clamp diode at GND (so SDA-to-GND disturbances are absorbed cleanly) but no upper clamp at +3.3 V (so SDA-to-VCC disturbances ride through to the receiver). Phase 18 sharpens the framing further — the disturbance is *ongoing while the cable is electrically connected*, not a transient at the moment of plug-in (BQ recovers spontaneously between TCA2 selections with no software intervention). **Story F — ESP32-S3 I2C peripheral interaction — remains a tracked hypothesis** pending the Arduino-as-master discrimination test (blocked on the `DIAG_RELEASE_I2C` firmware flag — see "Immediate next steps"). Story E (cable-mediated mechanism not captured by D-revised) is downgraded — the 2.5 cm horizontal cable the operator has been testing with rules out the EMI-antenna framing, and the residual "cable parasitics altering bus dynamics" variant collapses largely into Story D-revised. Datasheet review (Phase 10) ruled out a "BQ in some documented operating mode" story.
-- **What hasn't been tried yet**: Arduino-as-master probe in failing config (highest-information remaining pre-scope test, the only such test left, discriminates Story D-revised vs Story F); scope waveform capture at BQ pads with the *revised* capture targets — SCL-correlated SDA wobble below V_IH during the 9th-clock ACK window, in addition to the original rising-edge overshoot target (new scope arriving week of 2026-04-28); Phase 11 current measurement with DMM in-line (verify rail-load-only test was actually loading the rail at the assumed magnitude); I2C buffer IC to isolate BQ; redesigning upstream bus for better termination near BQ.
+- **What's alive as a hypothesis (post-Phase-23)**: Both threshold stories at the BQ pad are **refuted by direct measurement**. Story D-revised (V_IH violation) refuted by Phase 20 — SDA worst dip 3.01 V, ~1.7 V above V_IH = 1.3 V. Story G-revised (V_IL violation) refuted by Phase 23 — bumping ESP32-S3 drive to `GPIO_DRIVE_CAP_3` dropped V_OL at BQ pin 6 to ~50 mV (peak 77, floor 30, with cable in), yet BQ still NACKs. The mechanism is not at SDA's voltage levels. Surviving option space is narrower but unidentified: (1) **Story F — ESP32-S3 I2C peripheral interaction**: S3's I2C goes through GPIO matrix (no IOMUX direct path), and community reports document subtle output glitches and "S3 touchier than ESP32 on same bus" patterns — the cable + S3 master combination may emit a transaction the analyzer accepts as 0xD6 but BQ's stricter input rejects. (2) **Story H — BQ-side input feature** (Schmitt deglitcher, START detector, etc.) interacting with cable parasitics in some way not captured by the simple V_IL/V_IH model. (3) **Some timing-related effect** we haven't directly captured. Phase 22 (50 kHz null) rules out clock-rate-dependent dynamics; the issue is invariant to clock speed. Earlier phases ruled out: Stories A/B/C residuals (Phases 13/14/15/18), USB-C/VBUS state (Phase 18), routing-asymmetry-EMI (Phase 16), the original ESD-diode framing of Story D (Phase 17 datasheet drill), cable-as-EMI-antenna (Phase 17/19 — 2.5 cm cable too short), documented BQ operating modes (Phase 10).
+- **What hasn't been tried yet**: **Arduino-as-master probe in failing config — highest-priority remaining test.** Discriminates Story F (ESP32-S3 master peripheral quirk) from Story H (BQ-side input issue regardless of master). Infrastructure ready (`motion-play-v7-relbus` env, `tools/arduino-sketches/v7_bq_master_probe/`). Cheap pre-test: scope-capture START condition at BQ pin 6 with cable in vs out, look for SCL droop during SDA's fall or other anomalies. v8 with I2C buffer remains the architectural answer regardless of which surviving story turns out to be right.
 - **Open-cable discriminator**: a JST-SH cable with bare dangling wires at the far end (no resistor, no rigid) does NOT trigger the fault. Only a DC path on the **I2C signal pins** (SDA and/or SCL) at the far end triggers it (Phase 6 + Phase 11).
 - **Rail-load-only discriminator (Phase 11)**: a cable with a single resistor between far-end VCC (pin 1) and GND (pin 2), SDA and SCL wires unconnected at the far end, does NOT trigger the fault. So loading the 3.3 V rail through the cable is not sufficient — the DC contact must be on the signal pins specifically. Combined with Phase 6, this localizes the mechanism to the BQ's I2C pads, not to its supply or the 3.3 V rail.
 
@@ -755,13 +755,232 @@ This means the failure mechanism requires **ongoing electrical contact** of the 
 
 ---
 
+### Phase 19 — ESP32-S3 / TCA9548A literature search (2026-04-28)
+
+Goal: zoom out from the rabbit-hole of fine electrical hypotheses and ask a question none of the prior phases formally addressed — are there documented quirks, errata, or community-known issues with the ESP32-S3 I2C peripheral or the TCA9548A multiplexer that could explain or partially explain the v7 fault signature ("SDA pulled toward +3.3 V at the far end of any cable plugged into J4–J6 causes BQ24195 to NACK its address at 0x6B; SCL loading does nothing; SDA-to-GND does nothing; resistance value is irrelevant from 4.7 kΩ to 47 kΩ; live/ongoing while connected, recovers immediately when removed")? Story F (ESP32-S3 I2C peripheral interaction) had been carrying this question implicitly without ever being investigated. The TCA side had never been investigated at all.
+
+**Method:** targeted web research across ESP-IDF GitHub issue tracker, arduino-esp32 issues, ESP32 community forums, TI's TCA9548A datasheet, and TI E2E support forums.
+
+**Findings — ESP32-S3 side:**
+
+1. **TX FIFO leak after NACK — ESP-IDF #14343 (IDFGH-13437).** When the S3 master receives a NACK on a *data byte*, the queued byte is not flushed from the TX FIFO, and the *next* transaction sends the stale byte instead of the new address byte. **Probably not our bug** — this would manifest as the master sending wrong addresses on subsequent probes; our log shows the post-BQ-NACK probes (TCA, PCA, VCNL on the same row) all behaving as expected. But it confirms the S3 has documented I2C-peripheral quirks that don't exist on the original ESP32.
+
+2. **Generic "S3 less reliable than ESP32 on the same bus" reports.** ESP-IDF #11397 (IDFGH-10122), ESP-IDF #8741 (IDFGH-7138), and several esp32.com forum threads from 2024–2025 describe sensors that work cleanly on the original ESP32 but produce intermittent NACKs when the same code is run on an S3 across the same bus. No single root cause; the cluster reads as "the S3 I2C peripheral is touchier under marginal bus conditions." This is the literature signature most consistent with Story F: it doesn't predict our exact behaviour, but it's the kind of thing that could partially explain why a CMOS-receiver-noise-margin issue at BQ shows up under our specific master and might not show up under another.
+
+3. **Arduino-ESP32 3.2.0 I2C regression.** Issues #11351 (BMI160 / ICM-20948) and #11496 describe a regression introduced in arduino-esp32 3.2.0 that broke I2C with several common sensors that worked under 3.1.3. Worth a 5-minute check against the version pinned in `platformio.ini` and a downgrade-to-3.1.3 sanity test if applicable. Not predicted to fix the underlying electrical signature, but a free disambiguator.
+
+4. **Clock-stretching cap at 20 ms on S3.** ESP-IDF #14667 (IDFGH-13819). Not relevant — BQ24195 doesn't clock-stretch by default and we've never observed clock-stretch behaviour on this bus.
+
+5. **Internal-pullup quirks.** Arduino-ESP32 #4887. The S3's internal pullups don't fully disable through `pinMode(INPUT)` alone; explicit `gpio_pullup_dis()` / `gpio_pulldown_dis()` calls are needed. **Bears on the Arduino-as-master test only**, where the `DIAG_RELEASE_I2C` flag re-configures GPIO 43/44 to INPUT before the Arduino takes over the bus. The release path should call the explicit disable functions to avoid leaving a residual ~50 kΩ pull on either line that would bias the Arduino's view of the bus. Worth confirming in the firmware before the Arduino-as-master test runs.
+
+**Findings — TCA9548A side:**
+
+1. **Pass-gate level-translator topology — fundamental design feature, not a bug, but with implications we hadn't formally accounted for.** Per the TI TCA9548A datasheet and a [TI E2E thread on level translation](https://e2e.ti.com/support/interface-group/interface/f/interface-forum/542188/tca9548a-level-translation), the TCA's per-channel switches are **NMOS pass-FETs**, not CMOS analog switches. The Vcc pin is the gate of every pass-FET. When the source/drain voltage rises above approximately Vcc − Vt (≈ 1.9 V at Vcc = 3.3 V), the FET pinches off and the upstream and downstream sides decouple. Below that voltage, the FET conducts bidirectionally. **Implications for our setup:**
+   - When the TCA channel is open and SDA is sitting HIGH at idle (~3.3 V on both sides), the FET is **pinched off** and the two sides are electrically decoupled. Each side floats to its own pullup. The cable's far-end pullup does *not* directly drive BQ's pad through the FET in this regime.
+   - When SDA is being pulled LOW by the master, the FET is fully on and the cable's parasitic capacitance (~5–10 pF) is effectively in parallel with the upstream bus capacitance.
+   - During the **rising edge** of SDA (master releasing the line), the upstream bus rises toward 3.3 V via R28 (2.2 kΩ). As long as the voltage is below ~1.9 V, the FET is still conducting and the upstream is electrically merged with the cable's parasitic C; once it crosses ~1.9 V the FET pinches off and the upstream finishes its rise to 3.3 V on its own pullup alone. **The rising edge therefore has a non-linear shape: slow up to ~1.9 V (loaded by cable C), then accelerates above that point (decoupled, on-board pullup only).** This is a mechanism specific to the TCA-with-cable-and-far-end-pullup configuration. It does not exist with on-board pullups alone (R28 only) and does not exist with the cable removed.
+   - This is consistent with Story D-revised but **sharpens it**: the receiver-side noise-margin failure at BQ doesn't depend solely on SCL-to-SDA capacitive crosstalk on the on-board trace pair — it also has a contribution from the cable's added C dragging down the rising-edge ramp through the FET's bidirectional region. Both mechanisms predict the same scope target (SDA wobble below V_IH = 1.3 V at BQ's pad during the 9th-clock ACK window); the literature search just adds a second pathway to the story.
+
+2. **TI E2E thread describing the inverse of our symptom — [PCA9548A: downstream device only detected when downstream pullup is removed](https://e2e.ti.com/support/interface-group/interface/f/interface-forum/1635473/pca9548a-down-stream-with-out-pull-up-only-working/6306200).** A user reports a downstream slave failing detection when both upstream and downstream pullups are present, and detection succeeding when the downstream pullup is removed. TI's response attributes the failure to the pass-gate's Vpass limit preventing the downstream side from being driven properly. Same physics (pass-gate Vpass limit, level-translator topology), opposite victim (their downstream slave fails; our upstream BQ fails). Note: in their case the upstream master is the one the chip is supposed to communicate with, and the pass-gate quirk affects what the slave sees. In our case the master and the failing slave are both upstream, and the cable's far-end pullup creates a configuration TI's framing didn't directly anticipate.
+
+3. **TCA9548A low-frequency channel-switching reliability — TI E2E #1107817.** Some channel-switching reliability issues at SCL frequencies below 100 kHz. Not our issue (we tested 100 kHz and 400 kHz with identical failure).
+
+4. **No published TCA9548A errata** in the datasheet's Revision History describing upstream-slave NACK from downstream-pullup conditions. The pass-gate Vpass behaviour is documented, intentional behaviour, not a bug — but it has the side effect described above on rising-edge shape.
+
+**Synthesis:**
+
+There is **no clean, single, well-documented errata or known issue on either chip that exactly predicts our v7 fault signature.** Several adjacent findings exist on each side, none decisive:
+
+- The S3's I2C peripheral is documented to be touchier than the original ESP32 but no single bug matches our pattern. Story F's plausibility is increased modestly — the kind of marginal-bus-condition NACK that the S3 community sees on the same bus where the original ESP32 worked is the right shape of bug to map onto our observation, even if not the exact mechanism.
+- The TCA9548A's pass-gate Vpass behaviour is well-documented level-translator physics. It adds a specific contributing mechanism to Story D-revised (non-linear rising-edge shape through the FET below ~1.9 V), tightening but not changing the dominant story.
+- Neither chip has a published errata that says "this device is known to NACK its own address under [specific bus loading condition]." Our symptom remains undocumented behaviour from the BQ24195 side specifically (Phase 10 already established that), and now also from the ESP32-S3 and TCA9548A sides.
+
+**Implications for next steps:**
+
+- **Strengthens the case for the Arduino-as-master test sooner rather than later.** Story F was the only surviving non-receiver-side story going into Phase 19, and the literature search confirms there's no smoking-gun bug to either side that would resolve the question without empirical disambiguation. The Arduino-as-master test remains the cleanest discriminator: if Arduino master also NACKs BQ in the failing config, Story F is refuted and Story D-revised is confirmed; if Arduino master ACKs BQ where the ESP32 NACKs, Story F is confirmed and Story D-revised is at least partially weakened.
+- **Two cheap, free sanity checks added to the queue, both independent of the scope work:**
+  1. Check `platformio.ini` for the arduino-esp32 framework version. If it's 3.2.x, downgrade to 3.1.3 and re-run the failing config. 5-minute test, no cost. Disambiguates against the 3.2.0 I2C regression cluster.
+  2. In the `DIAG_RELEASE_I2C` release path, confirm that GPIO 43/44 reconfiguration calls explicit `gpio_pullup_dis()` / `gpio_pulldown_dis()` (not just `pinMode(INPUT)`). Required to ensure the bus is electrically clean for the Arduino master.
+- **Scope target unchanged.** Phase 19 doesn't introduce a new scope target. The Story D-revised primary target (SCL-correlated wobble on SDA at BQ's pad below V_IH = 1.3 V during the 9th-clock ACK window) is still the right thing to capture; Phase 19 just adds a second mechanism (TCA pass-gate non-linear ramp) that can produce the same observable.
+- **v8 buffer fix unchanged.** All surviving stories — Story D-revised, Story E, Story F — are receiver-side or master-side problems that an I2C buffer between the upstream bus and BQ would isolate from. Phase 19 doesn't reshuffle this.
+
+**Sources captured for traceability:**
+
+- [ESP-IDF #14343 — S3 master TX FIFO not reset after NACK (IDFGH-13437)](https://github.com/espressif/esp-idf/issues/14343)
+- [ESP-IDF #11397 — S3 vs ESP32 I2C instability (IDFGH-10122)](https://github.com/espressif/esp-idf/issues/11397)
+- [ESP-IDF #8741 — S3 I2C communication failures (IDFGH-7138)](https://github.com/espressif/esp-idf/issues/8741)
+- [Arduino-ESP32 #11351 — BMI160 / ICM-20948 broken in 3.2.0](https://github.com/espressif/arduino-esp32/issues/11351)
+- [Arduino-ESP32 #11496 — I2C regression 3.1.3 → 3.2.0](https://github.com/espressif/arduino-esp32/issues/11496)
+- [ESP-IDF #14667 — S3 clock stretching capped at 20 ms (IDFGH-13819)](https://github.com/espressif/esp-idf/issues/14667)
+- [Arduino-ESP32 #4887 — internal pullups not cleanly disabled](https://github.com/espressif/arduino-esp32/issues/4887)
+- [TI TCA9548A datasheet](https://www.ti.com/lit/ds/symlink/tca9548a.pdf)
+- [TI E2E — TCA9548A level translation (#542188)](https://e2e.ti.com/support/interface-group/interface/f/interface-forum/542188/tca9548a-level-translation)
+- [TI E2E — PCA9548A downstream pullup prevents detection (#1635473)](https://e2e.ti.com/support/interface-group/interface/f/interface-forum/1635473/pca9548a-down-stream-with-out-pull-up-only-working/6306200)
+- [TI E2E — TCA9548A low-frequency channel switching (#1107817)](https://e2e.ti.com/support/interface-group/interface/f/interface-forum/1107817/tca9548a-tca9548a-no-channel-switching-with-i2c-frequency-100khz)
+
+---
+
+### Phase 20 — Direct scope at BQ pin 6 via Sensepeek SQ-500 (2026-04-29)
+
+Goal: capture SDA at BQ24195's actual pin 6 (not at TPIO43 ~34 mm of trace away), looking for the high-level wobble during the 9th-clock ACK window that Story D-revised predicted (SDA dragged below V_IH = 1.3 V by SCL crosstalk + cable parasitics, BQ's CMOS receiver mis-classifying the address byte).
+
+Setup: Sensepeek PCBite + SQ-500 BNC-terminated 10× scope probe arms — spring-loaded needles landed directly on BQ pin 6 (SDA, CH1) and pin 5 (SCL, CH2) with no soldering on the chip. Both probe grounds via a soldered wire stub on the board's GND test pad. Rigol DHO804 trigger configured as I2C MissedAck. Confirmed `Write:D6 A:1` decoded annotation at the trigger marker — direct corroboration on the wire that BQ NACKs its address (rules out a class of "ESP32 misperceives the bus" stories).
+
+Result: cursor measurement of SDA during the 9th-clock NACK window with the failing-config cable in J6:
+
+| Cursor | Voltage |
+|---|---|
+| Y1 (idle high) | 3.29 V |
+| Y2 (worst dip during 9th-clock window) | 3.01 V |
+| ΔY | -281 mV |
+
+SDA's worst excursion during the NACK window is 3.01 V — ~1.7 V above V_IH = 1.3 V. The wobble is real (~280 mV peak-to-peak, correlated with SCL transitions, classic capacitive crosstalk) but does not approach the noise-margin threshold. Visually, the wobble looks **identical in ACKed and NACKed transactions within the same captured window**. Rising edges show clean exponential shape — no non-linear "kink" at ~1.9 V that Phase 19's TCA pass-gate prediction would have produced.
+
+**Conclusion: Story D-revised refuted at the receiver pad.** The 280 mV wobble is normal SCL-to-SDA capacitive crosstalk that exists on every I2C transaction regardless of whether the slave ACKs. It is not the mechanism. Phase 21 shifts the diagnostic from V_IH (high-level threshold during ACK window) to V_OL (low-level threshold during data-bit transmission).
+
+### Phase 21 — V_OL measurement at BQ pin 6 (2026-04-30)
+
+Goal: with Story D-revised refuted, test whether SDA's *low* level during 0-bits of the address byte exceeds BQ's V_IL threshold. If so, BQ would mis-classify 0-bits as 1s, fail to see 0xD6 (its own address with R/W=0), and correctly NACK because it doesn't think it's being addressed.
+
+Method: same Sensepeek setup as Phase 20. Address byte 0xD6 = 11010110 — three 0-bits at positions 5, 3, and 0. Cursor-measured SDA voltage during a 0-bit (master actively pulling SDA low) in two conditions: failing cable in J6, and cable removed.
+
+Results:
+
+| Condition | Floor (lowest) | Average | Peak (highest) |
+|---|---|---|---|
+| No cable (BQ ACKs) | ~375 mV | ~650 mV | ~790 mV |
+| Failing cable (BQ NACKs) | ~581 mV | ~750 mV | ~894 mV |
+| Cable adds | +206 mV | +100 mV | +104 mV |
+
+Three observations:
+
+1. **SDA's V_OL is elevated by the cable**, ~100 mV at the central level and ~104 mV at the peak excursion. Direct, repeatable cursor measurement at BQ's pin.
+2. **V_OL is already above BQ's datasheet V_IL(max) = 0.4 V even in the clean baseline** — peak excursion 790 mV, average 650 mV. Yet BQ ACKs cleanly without the cable. **BQ's effective in-practice V_IL is ~800–900 mV**, well above the worst-case datasheet number. Real silicon has more margin than the spec guarantees.
+3. **SCL's V_OL is also elevated when the failing cable is plugged in**, despite the cable's SCL wire dangling unconnected. Likely capacitive crosstalk from SDA, or shared driver-side coupling inside the ESP32-S3 I2C peripheral. Doesn't affect the failure mechanism (BQ samples on SCL rising edges, not on SCL low level), but tells us the V_OL elevation isn't strictly per-pin.
+
+**Mechanism (Story G-revised, confirmed by direct measurement):**
+
+The failing cable's 10 kΩ pullup at the far end injects ~330 µA into the SDA bus when TCA channel 2 is open. This current must flow through the ESP32-S3 master's SDA output pull-down to ground when SDA is being driven low. The added current raises V_OL by ~100 mV at the master's output, and that elevation propagates to BQ's input pin (the bus equilibrates). When SDA's worst-case peak excursion during a 0-bit (894 mV with cable) crosses BQ's effective V_IL threshold (~800–900 mV), BQ's CMOS receiver mis-classifies the 0-bit as a logic 1. The address byte 0xD6 gets read by BQ as something other than 0xD6 (e.g., 0xFF or some partial corruption). BQ doesn't see itself addressed and NACKs.
+
+**Why only BQ:** INA219 has V_IL(max) = 0.99 V (standard I2C spec) — its tolerance window includes the elevated V_OL. BQ24195 has unusually strict input thresholds in this silicon, making it the failure-mode discriminator on a marginally-loaded bus.
+
+**Why every prior phase is consistent:**
+
+- **Phase 5 (pullup-strength insensitivity):** 4.7 kΩ–47 kΩ all inject enough current to push V_OL across BQ's threshold; exact value isn't critical.
+- **Phase 6 (cable-only stub passes):** no DC pullup → no current path → no V_OL elevation.
+- **Phase 11 (rail-load-only passes):** resistor between VCC and GND doesn't drive current into SDA.
+- **Phase 12 (SCL-only pullup harmless):** elevates SCL's V_OL but not SDA's; BQ's address-byte sampling is on SDA.
+- **Phase 13 (polarity asymmetry):** SDA-to-GND assists the master's pull-down (V_OL drops further, BQ ACKs); SDA-to-VCC fights it (V_OL rises, BQ NACKs). **Now perfectly explained.**
+- **Phase 14 (clean PSU triggers identically):** DC current contribution is the same regardless of source noise.
+- **Phase 15 (bus-recovery doesn't help):** bit-level corruption, not state-machine confusion.
+- **Phase 18 (VBUS-independent, live/ongoing):** DC current path is independent of VBUS and persists while the cable is electrically connected.
+- **Phase 20 (no V_IH violation):** the disturbance is on the LOW level, not the high level — we were probing the wrong feature for two phases.
+
+**Conclusion (as of Phase 21):** Story G-revised is the mechanism. *Note: this conclusion is later refuted by Phase 23 — see below.*
+
+### Phase 22 — I2C clock slowdown null result (2026-05-01)
+
+Goal: test Story G-revised's prediction that slowing SCL allows SDA to relax to its true V_OL floor between transitions, dropping the peak excursion below BQ's V_IL.
+
+Setup: `Wire.setClock(100000)` → `Wire.setClock(50000)` in `SensorManager::init()`. Reflashed `motion-play-v7-diag`. Failing-config cable in J6. Sensepeek probes still on BQ pin 6.
+
+Result: **no change.** BQ NACKs identically (`BQ:X(2)` on TCA2 row, every iteration). Operator-reported scope observation: SDA and SCL waveforms look "clean and consistent," same DC shift from cable as Phase 21, no visible change in wobble dynamics or peak excursion. Slowing 2× already shows the wobble has time to fully relax — going further to 10 kHz would not help.
+
+Implication: clock-speed-dependent dynamics are ruled out as the gating factor. Whatever mechanism is gating BQ's ACK is invariant to SCL period. Story G-revised is still alive as written but the "peak excursion crosses threshold" sub-story is weakened — the floor/average level itself is what would need to cross threshold.
+
+### Phase 23 — ESP32-S3 GPIO drive-capability bump (2026-05-01)
+
+Goal: directly test Story G-revised's V_OL prediction. Bump SDA/SCL drive from `GPIO_DRIVE_CAP_2` (default ~20 mA) to `GPIO_DRIVE_CAP_3` (~40 mA) to roughly halve master pull-down R_DS(on) and hence V_OL by Ohm's law. Predicted: V_OL drops from ~750 mV (cable in) to ~350 mV, well below BQ's ~800 mV effective V_IL → BQ ACKs.
+
+Setup: added `gpio_set_drive_capability(GPIO_NUM_43, GPIO_DRIVE_CAP_3)` and same for GPIO 44 after `Wire.begin()`, with `#include <driver/gpio.h>`. Clock kept at 100 kHz to match Phase 21 baseline. Reflashed `motion-play-v7-diag`. Failing-config cable in J6. Sensepeek probes still on BQ pin 6.
+
+Results (cursor measurement, cable in, BQ NACKs):
+
+| Quantity | Phase 21 (CAP_2) | Phase 23 (CAP_3) |
+|---|---|---|
+| V_OL floor | ~581 mV | ~30 mV |
+| V_OL peak | ~894 mV | ~77 mV |
+| SCL V_OL range | (not cursor-measured) | ~290–350 mV |
+| BQ behavior | NACK | NACK |
+
+**Story G-revised refuted.** V_OL at ~50 mV (average) is far below any plausible V_IL — datasheet 0.4 V max, Phase 21's inferred effective threshold ~800 mV. There's no threshold story that fits V_OL = 50 mV failing while V_OL = 650 mV (Phase 21 no-cable baseline) succeeded. Operator confirmed via direct cursor measurement at BQ pin 6.
+
+**Operator observation noted but not load-bearing**: when SCL falls to its V_OL, SDA shows a small downward spike (the floor 30 mV reading). This is normal SCL→SDA capacitive crosstalk via mutual C on the parallel-routed pair. Was present in Phase 20 captures too. Slaves sample SDA on SCL **rising** edges, not falling, so coupling during SCL fall doesn't directly affect bit-reading.
+
+**What this leaves:**
+
+- The mechanism is not at SDA's voltage levels (both V_IH and V_IL ruled out by direct measurement).
+- The bus produces a transaction the I2C analyzer decodes as `Write:D6 A:1` (Phase 20) but BQ silently doesn't ACK.
+- SDA and SCL both look visibly clean at BQ's pad with cable in.
+- Whatever's wrong is something the simple "voltage level crosses threshold" model doesn't capture.
+
+**Surviving option space:**
+
+- *Story F — ESP32-S3 I2C peripheral interaction.* S3's I2C is GPIO-matrix-routed (no IOMUX direct path); community reports document subtle output glitches and "S3 touchier than ESP32 on same bus" patterns (Phase 19). The cable + S3 master combination may emit something on the wire that the analyzer accepts but BQ's stricter input rejects. Promoted from "tracked" to **highest-priority surviving hypothesis**.
+- *Story H — BQ input-feature interaction.* BQ's I2C input may have a Schmitt deglitcher, START detector, or other feature whose timing/edge-shape sensitivity is disturbed by cable parasitics in a way not captured by simple voltage thresholds. Cannot be directly tested without BQ internals; would be inferred if Arduino-as-master also fails.
+- Timing-related effects we haven't directly captured (setup/hold, START condition shape, etc.).
+
+**Implications for next steps:**
+
+- **Arduino-as-master test is now the uncontested top-priority experiment.** Its predictive power has *increased* with this null result — it cleanly discriminates Story F (Arduino succeeds) from Story H (Arduino also fails). Either outcome closes a real branch. Infrastructure ready.
+- Cheap pre-test (5 min): scope-capture the START condition at BQ pin 6 — SDA falling edge while SCL high — with cable in vs out. Look for SCL droop, ringing, or unexpected coupling that could break BQ's START detection. Probes are already on BQ pins 5/6.
+- v8 with I2C buffer remains the architectural answer: it isolates BQ from any upstream-side perturbation regardless of mechanism.
+
+### Phase 24 — Arduino-as-master test confirms Story F (2026-05-01)
+
+Goal: discriminate Story F (ESP32-S3 master peripheral quirk) from Story H (BQ-side input issue regardless of master). Procedure described in Phase 19 / Immediate next steps: `motion-play-v7-relbus` env releases the bus from the ESP32, then a SAMD21-based Arduino Nano 33 IoT becomes master via `tools/arduino-sketches/v7_bq_master_probe/v7_bq_master_probe.ino`.
+
+Result: **Arduino Nano 33 IoT (SAMD21 SERCOM master) ACKs BQ at 0x6B in the failing config — same physical wire, same JST-SH cable with 10 kΩ pullup on SDA at far end, same TCA channel state.** The ESP32-S3 master NACKs the same address byte on the same wire seconds before/after.
+
+**Story F confirmed; Story H refuted.** The fault is unambiguously in the ESP32-S3 master peripheral. BQ's input is functioning correctly — it ACKs the SAMD21's address byte cleanly. Whatever the ESP32-S3 emits on the wire — accepted by the I2C protocol analyzer as `Write:D6 A:1` — is rejected by BQ for reasons not visible at the analyzer's time/voltage resolution.
+
+**Implications:**
+- Mechanism narrowed to the ESP32-S3 master peripheral itself: timing, edge-shape, sub-ns glitches, FIFO/state-machine quirks, GPIO-matrix routing artifacts, or open-drain emulation glitches at the pad.
+- Hardware fixes (v8 I2C buffer) remain the architectural answer regardless. Buffer regenerates clean edges and isolates BQ from any S3-emitted artifact.
+- Firmware mitigation is now worth a deep investigation as a parallel track. See **`docs/explorations/esp32-s3-i2c-master-deep-dive.md`** — full audit of the ESP32-S3 I2C master peripheral configuration knobs, community-known issues (ESP-IDF #14343, #17474, #14030, #15675; Adafruit's Troublesome Chips guidance; PlatformIO Wire-vs-IDF disambiguator), hypothesis mapping, and a ranked experiment plan with concrete code.
+
+### Phase 24 — Experiment 1: I2C glitch filter null result (2026-05-01)
+
+Goal: highest-priority cheap experiment from the deep-dive doc. The arduino-esp32 v2.0.14 / IDF v4.4 legacy I2C driver leaves the I2C controller's digital deglitcher OFF by default; the new IDF 5.2+ driver enables it at 7 cycles by default. If the failing-config bus produces sub-µs glitches on SDA that the analyzer integrates over but BQ rejects, enabling the filter would resolve.
+
+Setup: added `i2c_filter_enable(I2C_NUM_0, 7)` after `Wire.begin()` and after the existing CAP_3 drive bump in [SensorManager.cpp:649-658](../../firmware/src/components/sensor/SensorManager.cpp#L649-L658). Boot log confirms `filter_enable(7)=OK`. Failing-config cable in J6, `motion-play-v7-diag` env.
+
+Result (5 iterations, all identical):
+
+```
+TCA0  INA:.  BQ:.    TCA:.  PCA:X(2)  VCNL:X(2)
+TCA1  INA:.  BQ:.    TCA:.  PCA:X(2)  VCNL:X(2)
+TCA2  INA:.  BQ:X(2) TCA:.  PCA:X(2)  VCNL:X(2)
+```
+
+**Null. BQ NACK pattern on TCA2 byte-identical to Phase 23 baseline.** Filter is on (register write succeeded, return ESP_OK), but the failure is unaffected.
+
+**Implication: refutes "sub-µs glitches at the I2C controller's input" as the missing knob.** The I2C controller's `I2C_FILTER_CFG_REG` deglitcher rejects pulses shorter than 7 × T(I2C_SCLK) on both SDA and SCL — whatever's wrong is either (a) a legitimately wide-enough pulse that the filter passes, (b) on the *output* side (master emitting something the slave rejects, not master input glitching), or (c) at a path the I2C controller's filter doesn't sit on (e.g., the pad-level input filter, or the GPIO matrix output skew).
+
+Filter kept on in firmware — no downside, removing it for the next experiments would conflate two changes.
+
+### Phase 25 — Experiment 2 + 3: pad-level filter and explicit internal-pull-disable (in progress)
+
+Goals (bundled into a single firmware change to amortize flash time):
+
+- **Experiment 2**: enable `IO_MUX_FUN_FILTER_EN` (bit 15 of `IO_MUX_GPIOn_REG`) on GPIO 43 and 44. Independent ~25 ns pulse rejection at the GPIO pad input itself, separate physical filter from `i2c_filter_enable()`. The IDF I2C driver does not enable it. The IDF v4.4 SDK header for S3 doesn't even export the macro — bit defined locally per TRM Register 6.36.
+- **Experiment 3**: explicitly call `gpio_pullup_dis()` and `gpio_pulldown_dis()` on GPIO 43 and 44. Per arduino-esp32 #4887 the internal pulls don't reliably disable through `pinMode`/`Wire.begin()` alone. Phase 5 has already shown total bus pull strength isn't the mechanism, so the predicted outcome is null — but it's a free piggyback on the Phase 25 flash.
+
+Code: see [SensorManager.cpp:649-682](../../firmware/src/components/sensor/SensorManager.cpp#L649-L682). Filter from Phase 24 is preserved; CAP_3 from Phase 23 is preserved. The accumulating change list keeps each experiment's effect additive — if any single experiment fixes the fault, we'll see it. If none of them does, we know none of {I2C-controller filter, pad-level filter, internal-pull combination, drive strength} is the gating variable, and the next move is software bit-bang (Experiment 6 in the deep-dive) to discriminate "I2C peripheral logic" from "GPIO pad / matrix output."
+
+Pending: flash + observe diagnostic loop. Result to be filled in after the run.
+
+---
+
 ## Current working theory
 
-Many simple hypotheses have been progressively disproven: pull-up strength (Phase 5), cable-stub physics (Phase 6), BQ-mode-suppression (Phase 10), rail-perturbation through the cable loop (Phase 11), SCL involvement (Phase 12), SDA-edge-integrity-naive (Phase 13 polarity), channel-open-transient-naive (Phase 13 polarity), 3.3 V rail noise injection (Phase 14 clean PSU), stuck-state-machine recoverable in software (Phase 15 firmware bus-recovery), the original ESD-diode-mediated framing of Story D (Phase 17 datasheet drill — the upper clamp diode the original story relied on does not exist at +3.3 V on BQ's SDA pin), and **any USB-C / VBUS-mediated story (Phase 18 bench-PSU-from-battery-pads test — fault reproduces identically with VBUS completely absent)**. Phase 18 also confirmed the disturbance is **live / ongoing while the cable is electrically connected**, not a transient at the moment of plug-in: BQ recovers spontaneously between TCA2 selections within a single diagnostic-loop iteration with no software intervention, ruling out any story requiring a latched post-event state. **All cheap non-scope mechanisms are now ruled out except the Arduino-as-master test.** The surviving candidates are narrow and electrical-only:
+Both threshold stories at the BQ pad have been refuted by direct cursor measurement (Phases 20 and 23). The mechanism is unidentified.
 
-- **Story D (revised) — SDA input-stage noise-margin failure at BQ.** Phase 17's datasheet drill ruled out the original ESD-diode-mediated framing: BQ's SDA pin is rated –0.3 V to +7 V abs max, characterised at V_PULL-UP = 1.8 V with V_IH(min) = 1.3 V, with no conventional upper ESD clamp at +3.3 V — the upper protection is almost certainly a snapback structure that doesn't conduct until ~6 V. The reframed mechanism is classic CMOS noise-margin failure at BQ's SDA receiver. With the cable-extended pullup attached, BQ's SDA pin sees added parasitic capacitance from the cable + connector (~5–10 pF, constant regardless of far-end resistor value — consistent with the pullup-strength-invariant observation in Phase 5) and capacitive crosstalk from SCL on the parallel-routed pair (Phase 16 noted SDA and SCL travel near-parallel from U5 past U7 to ESP32 and onward to TCA, operator-confirmed). Combined, SCL transitions inject crosstalk pulses onto SDA while the added C slows SDA's recovery, and the result can drag SDA at BQ's pad below V_IH = 1.3 V momentarily during the 9th-clock ACK window. BQ mis-classifies the address byte and NACKs. The polarity asymmetry is now better explained than under the original framing: the pin has a real conventional lower clamp diode at GND that absorbs negative-going disturbances cleanly (so SDA-to-GND disturbances never reach the receiver), but no equivalent upper clamp (so SDA-to-VCC disturbances ride straight through to the input stage). Phase 18 sharpens the framing further — the disturbance is **ongoing while the cable is electrically connected, not a transient at the moment of plug-in**: BQ recovers spontaneously between TCA2 selections within a single iteration of the diagnostic loop, with no software intervention, which means the mechanism is the steady-state crosstalk + parasitic-loading regime described above, not a latching one-shot event. Source-noise-independent (Phase 14 ✓), state-machine-independent (Phase 15 ✓), routing-independent at the gross-trace-geometry level (Phase 16 ✓), VBUS-state-independent (Phase 18 ✓), live/ongoing rather than latched (Phase 18 ✓), receiver-side at a single pin. Predictions: scope should show SCL-correlated wobble on SDA at BQ's pad that crosses the V_IH threshold during the 9th-clock ACK window with the failing config attached and TCA2 open; an active I2C buffer or v8 isolation between the upstream bus and BQ would eliminate it. **Currently the dominant surviving candidate.**
-- **Story E — cable-mediated mechanism not captured by Story D-revised.** Substantially weakened by two Phase-17-era findings and further narrowed by Phase 18, but not eliminated. The 2.5 cm horizontal cable geometry the operator has been testing with rules out the "cable as EMI antenna" framing — a wire of that length held that distance from L1/L2/U5/U6 cannot couple meaningfully at switcher fundamentals (1.5–2.2 MHz) and is well below the LC self-resonance of a stub of that parasitic profile. The residual "cable parasitics altering bus dynamics independently of crosstalk" variant collapses largely into Story D-revised, because the parasitic-C and biased-conductor effects it would invoke are exactly the inputs Story D-revised already absorbs. Story E remains in reserve as the catch-all for any mechanism that survives the discrimination tests below — it must satisfy: steady-state (Phase 15), SDA-only (Phase 12), +3.3 V-polarity-only (Phase 13), source-noise-independent (Phase 14), cable-distance-required (Phase 5/6), bus-recovery-immune (Phase 15), pullup-strength-invariant (Phase 5), VBUS-state-independent (Phase 18), live/ongoing rather than latched (Phase 18), and survive the Arduino-as-master discrimination (Story F).
-- **Story F — ESP32-S3 I2C peripheral interaction.** A new entry that none of the prior phases formally separated from Story D. Until an external master probes BQ in the failing config, the option space contains "BQ's input stage is the problem regardless of master" (Story D-revised) *and* "ESP32-S3's I2C drive characteristics or sampling behaviour interact specifically with the cable-modified bus to produce the BQ NACK" (Story F). These predict opposite outcomes on a clean discriminator: Story D-revised says **Arduino master also NACKs BQ** with the same failing config attached. Story F says **Arduino master gets BQ to ACK** even with the failing config. The Arduino-as-master test is therefore the highest-information remaining pre-scope test. The cleanest implementation of the test uses a `DIAG_RELEASE_I2C` firmware build flag: ESP32 boots normally through `configureBQ24195()`, then calls `Wire.end()` and reconfigures GPIO 43/44 to `INPUT` (no internal pullup), then sits in a tight print loop. ESP32 stays alive (so +3.3 V, BQ config, etc. remain stable) but the bus is electrically free for an external master. No reset-button hold required. This flag is queued as a separate firmware change before the test runs — see `Immediate next steps` below.
+- **Story D-revised — V_IH violation (REFUTED, Phase 20).** SDA's worst dip during the 9th-clock NACK window is 3.01 V, ~1.7 V above V_IH = 1.3 V. ~280 mV high-level wobble is normal SCL crosstalk, identical in ACKed and NACKed transactions.
+- **Story G-revised — V_IL violation (REFUTED, Phase 23).** Drive bump to `GPIO_DRIVE_CAP_3` dropped V_OL at BQ pin 6 to peak 77 mV / floor 30 mV with cable still in; BQ still NACKs. There's no plausible V_IL the bus is crossing. The bus produces a transaction the analyzer accepts as 0xD6 but BQ silently rejects.
+- **Story F — ESP32-S3 master peripheral interaction (HIGHEST-PRIORITY SURVIVING HYPOTHESIS).** ESP32-S3's I2C is GPIO-matrix-routed (no IOMUX direct path); community reports document subtle output glitches and "S3 touchier than ESP32 on same bus" patterns (Phase 19). The cable + S3 master combination may emit something on the wire — sub-nanosecond glitches, edge-shape anomalies, or timing artifacts — that the analyzer integrates over but BQ's input rejects. Discriminator: Arduino-as-master test.
+- **Story H — BQ-side input-feature interaction (NEW).** BQ's I2C input may have a Schmitt deglitcher, START detector, or other feature whose timing/edge-shape sensitivity is disturbed by cable parasitics in a way not captured by simple voltage thresholds. Inferred-only if Arduino-as-master also fails. Polarity asymmetry (Phase 13) and SDA-only sensitivity (Phase 12) remain consistent under this story but unexplained mechanistically.
+- **Story E — cable-mediated mechanism not yet captured (still open as catch-all).** Closed framings: cable-as-EMI-antenna (Phase 17/19), rail-perturbation (Phase 11), source-noise (Phase 14). Open: any unaccounted parasitic interaction with the master or BQ's input.
 
 What we know empirically:
 
@@ -837,6 +1056,7 @@ The fact that adding even a 47 kΩ DC path (tiny current, ~70 µA maximum) is su
 Once the hardware fix is confirmed working, these temporary firmware debug changes should be reviewed:
 
 - **`Wire.setClock(100000)` → `Wire.setClock(400000)`** in `SensorManager::init()`. Also revert the log message.
+- **`gpio_set_drive_capability(...)` calls and `#include <driver/gpio.h>`** in `SensorManager.cpp` — added in Phase 23, no longer needed once the bus issue is resolved. Harmless to leave but unnecessary.
 - **`STARTUP_I2C_SCAN` back to `false`** in `platformio.ini` (or leave on — adds ~50 ms to boot, useful diagnostic).
 - **`runBusDiagnosticLoop()`** — can stay, only runs on init failure. Noisy but gated by actual fault.
 - **`[PWR ...]` log lines at boot** — can stay. Low cost, useful.
@@ -849,17 +1069,18 @@ Once the hardware fix is confirmed working, these temporary firmware debug chang
 
 ## Candidate fixes
 
-**None yet confirmed.** Pull-up strength was disproven in Phase 5. Cable stub physics was disproven in Phase 6. The Phase 7 bodge attempt (lower 1.1 kΩ pullups) damaged Board 1 without producing test data.
+With both threshold stories refuted, fixes that target voltage levels (clock slowdown, drive-strength bump, R28 increase) are now known to NOT work — Phase 22 and 23 demonstrated this empirically. Fix candidates ranked by what's left:
 
-Candidates still worth considering, in rough order of preference:
+1. **I2C buffer / repeater IC for BQ (v8).** P82B96 or PCA9517 between upstream I2C and BQ. Isolates BQ from any upstream perturbation regardless of mechanism — works for both surviving hypotheses (Story F master-side, Story H BQ-side input feature). Architectural answer.
+2. **Replace ESP32-S3 with original ESP32 / use external I2C master IC.** Only relevant if Arduino-as-master test confirms Story F. Bigger redesign.
+3. **Active I2C bus accelerator (LTC4311).** May help with edge-shape issues that the simple V_OL/V_IH model didn't catch. Worth evaluating during v8 work.
 
-1. **I2C buffer/repeater IC for BQ.** Put a P82B96 or PCA9517 between the upstream I2C and BQ, so BQ sees a locally-terminated short bus regardless of what happens on the main upstream bus. Decouples BQ from downstream loading entirely. Adds two extra pullups (one on each side of the buffer) and a small IC. This is a v8 design change — non-trivial but architecturally clean.
-2. **Move BQ closer to the pullups / shorten upstream bus.** Currently BQ is ~55 mm from R28/R29, which is the worst-case node on the bus. Shortening that distance would reduce noise accumulation at BQ. Requires v8 re-layout.
-3. **Active I2C bus accelerator.** Something like the LTC4311 — detects rising edges on SDA/SCL and injects a strong pull-up pulse to accelerate them. One part, two pins, cheap. Would mask slow-edge and ringing issues without requiring full bus redesign.
-4. **Stronger upstream pullups (1 kΩ or even lower).** The direct test of this hypothesis failed (Phase 7 bodge damaged the board before producing data). The theory is still alive — a fresh board could be used to retry the bodge, more carefully, on Board 3.
-5. **Low-ESR bulk capacitor right at BQ's I2C pins.** Not typical; would act as a local ringing suppressor. Speculative.
+**Disproven by direct measurement (do NOT retry):**
 
-If a scope becomes available, a single capture of SDA/SCL at BQ during the failing transaction (with and without the rigid plugged in) would almost certainly identify the mechanism immediately and let us pick between these options with confidence.
+- Slow down I2C clock (Phase 22): no effect on V_OL or BQ behavior.
+- Bump GPIO drive strength to CAP_3 (Phase 23): drops V_OL ~15× but BQ still NACKs. V_OL is not the gating variable.
+- Increase R28 (would lower V_OL further): same logic — V_OL isn't the issue.
+- Lower R28 (Phase 7 bodge): directionally wrong even under the now-refuted V_OL story; damaged Board 1 with no test data.
 
 ---
 
@@ -885,30 +1106,34 @@ If a scope becomes available, a single capture of SDA/SCL at BQ during the faili
 
 ## Immediate next steps
 
-The non-scope option space is now reduced to **a single high-value pre-scope test (Arduino-as-master)**, plus one quick verification of a Phase 11 result. Phase 18's bench-PSU test ruled out the only other pre-scope candidate (USB-C / VBUS state contribution). All surviving stories (Story D-revised, Story E, Story F) still point at v8 with an I2C buffer as the right design intervention regardless of mechanism, so the v8 work runs in parallel.
+Both threshold stories at the BQ pad have been refuted (Phases 20, 23). Mechanism is unidentified. Priority order:
 
-Highest priority first:
+1. **Arduino-as-master validation test (~30 min).** Highest-value remaining experiment. Discriminates Story F (S3 master quirk — Arduino succeeds) from Story H (BQ-side input issue — Arduino also fails). Either outcome closes a real branch. Procedure: `pio run -e motion-play-v7-relbus -t upload`, wait for "BUS RELEASED", wire Arduino Nano ESP32 (SDA/SCL/GND only, no power rails tied), flash `tools/arduino-sketches/v7_bq_master_probe/v7_bq_master_probe.ino`, read serial.
+2. **Pre-test scope capture (~5 min).** With Sensepeek probes already on BQ pins 5/6 and cable in J6: capture the START condition (SDA falling edge while SCL high) at BQ pin 6, cable in vs out. Look for SCL droop during SDA fall, ringing, or coupling that could break BQ's START detection. If START looks broken with cable in, "BQ never enters address-decode" is a coherent story compatible with all current data.
+3. **v8 design with I2C buffer.** P82B96 or PCA9517 between upstream I2C and BQ. Architectural answer regardless of which surviving story is right — buffer isolates BQ from any upstream perturbation. Start design in parallel with #1.
 
-1. **Arduino-as-master probe of BQ in the failing config (highest information per effort, pre-scope, the only such test left).** Discriminates Story D-revised (BQ's input is the problem regardless of master) from Story F (ESP32-S3 I2C peripheral interaction is part of the trigger). If Arduino master succeeds where ESP32 fails → Story F confirmed, and Story D-revised is weakened or refuted. If Arduino master also NACKs BQ in the same failing config → Story D-revised confirmed, Story F refuted. Implementation requires a `DIAG_RELEASE_I2C` build flag (queued as a separate firmware change before the test runs): boots normally through `configureBQ24195()` and existing diagnostics, then calls `Wire.end()` and reconfigures GPIO 43/44 to `INPUT` (no internal pullup), then sits in a print loop. ESP32 stays alive; the bus is electrically free for an external master without holding the reset button. Wire Arduino Nano ESP32's SDA/SCL/GND to the corresponding test points on the main PCB (TPIO43 = SDA, TPIO44 = SCL, any GND test pad), share GND, leave the failing-config cable in J6, run the same probe loop from the Arduino, and observe whether BQ at 0x6B ACKs.
-2. **Phase 11 current measurement (low priority — quick verification of an existing result).** During the rail-load-only Phase 11 setup (cable + 10 kΩ between pin 1 VCC and pin 2 GND, signal pins unconnected), measure the actual current draw with a DMM in series with the cable's VCC wire. Expected value is ~330 µA (3.3 V / 10 kΩ). Confirms the rail-load-only test was actually loading the rail at the magnitude assumed.
-3. **Oscilloscope capture at BQ pads (gold standard; blocked until ~2026-04-28).** New scope arriving week of 2026-04-28. See `docs/debugging/i2c-oscilloscope-debugging.md` (updated to reflect Phase 17). The session captures **two** waveform features at the same probe setup: (a) **rising-edge overshoot at BQ's SDA pad** — kept as a sanity check on whether the original ESD-diode framing has any residual life despite the datasheet ruling it unlikely; (b) **SCL-correlated wobble on SDA at BQ's pad during the 9th-clock ACK window**, with the failing config attached and TCA2 open (Phase 18 confirmed the disturbance is live/ongoing while connected, not transient at insertion — so the capture window is "any time TCA2 is open with the cable in"), looking for excursions below V_IH = 1.3 V (Story D-revised's prediction). If (b) is observed → Story D-revised is confirmed regardless of (a). If neither is observed → Story E becomes the only remaining candidate. Either way, the v8 fix is the right answer because all surviving stories localise the disturbance to BQ's pad.
-4. **v8 design with an I2C buffer IC between the upstream bus and BQ (start now, in parallel with the diagnostic work).** Independently justified by Phase 15's confirmation that the disturbance is steady-state at BQ's pin and Phase 18's confirmation that it is live/ongoing while the cable is connected. All surviving mechanisms (Story D-revised, Story E, and Story F to a lesser extent) are about local SDA conditions at BQ's pad — a buffer isolates BQ from any upstream-side perturbation. Candidate parts to evaluate: P82B96 (rugged, level-shifting capable), PCA9517 (small, simple), LTC4311 (active-pullup edge accelerator — different mechanism, worth evaluating). This work should not wait on the scope; the scope only confirms the precise mechanism, not whether the buffer fix is needed.
-
-**Completed phases (DONE):**
-- Phase 11 — Rail-load-only test: rail-perturbation through cable ruled out.
+**Completed phases:**
+- Phase 11 — Rail-load-only test: rail-perturbation ruled out.
 - Phase 12 — Asymmetry test: SDA-specific (SCL loading harmless).
-- Phase 13 — Polarity test: polarity-sensitive (SDA-to-VCC fails, SDA-to-GND works).
+- Phase 13 — Polarity test: polarity-sensitive (SDA-to-VCC fails, SDA-to-GND works). Mechanistic explanation now unclear (was attributed to V_OL, but Phase 23 refutes that).
 - Phase 14 — Clean-power-source test: source noise quality irrelevant. Story C ruled out.
-- Phase 15 — Firmware bus-recovery test: software recovery doesn't help. Story A residual ruled out. Disturbance confirmed steady-state.
-- Phase 16 — Routing-aware audit: SDA and SCL are routing-symmetric (in fact SCL is the more exposed of the two). Routing-asymmetry-EMI hypothesis ruled out.
-- Phase 17 — BQ24195 SDA pin protection drill: no upper ESD clamp at +3.3 V on BQ's SDA pin. Original ESD-diode framing of Story D ruled out. Story D reframed as receiver-side noise-margin failure. Story E weakened by 2.5 cm horizontal cable geometry. Story F (ESP32-S3 I2C peripheral interaction) added as new tracked hypothesis pending Arduino-as-master test.
-- Phase 18 — Bench-PSU-from-battery-pads test: with USB-C VBUS completely absent (data-only USB-C cable for serial only, board powered from bench PSU at ~3.7 V on BAT_RAW pads), BQ NACK reproduces identically — `BQ:X(2)` on TCA2 row only, persistent across 14 post-cable iterations. USB-C / VBUS state ruled out as a contributor. Per-row recovery pattern (BQ recovers spontaneously between TCA2 selections within a single diagnostic iteration with no software intervention) confirms the failure is live / ongoing while the cable is electrically connected, not a latched event from plug-in. Any "transient-at-plug-in" framing ruled out.
+- Phase 15 — Firmware bus-recovery test: software recovery doesn't help. Story A residual ruled out.
+- Phase 16 — Routing-aware audit: SDA and SCL routing-symmetric. Routing-asymmetry-EMI ruled out.
+- Phase 17 — BQ24195 SDA pin protection drill: no upper ESD clamp at +3.3 V. Original ESD-diode framing of Story D ruled out.
+- Phase 18 — Bench-PSU-from-battery-pads test: USB-C / VBUS state ruled out. Disturbance is live/ongoing.
+- Phase 19 — ESP32-S3 / TCA9548A literature search: no smoking-gun errata; S3 "touchier on marginal bus" pattern noted.
+- **Phase 20 — Scope at BQ pin 6: Story D-revised refuted. SDA worst dip 3.01 V, ~1.7 V above V_IH.**
+- **Phase 21 — V_OL measurement at BQ pin 6: V_OL elevation by cable confirmed (~100 mV), but Phase 23 later refutes V_OL as the gating variable.**
+- **Phase 22 — I2C clock slowdown to 50 kHz: null result. No change in V_OL, wobble, or BQ behavior. Clock-rate-dependent dynamics ruled out.**
+- **Phase 23 — `GPIO_DRIVE_CAP_3` drive bump: V_OL dropped to ~50 mV (peak 77, floor 30) at BQ pin 6 with cable in, BQ still NACKs. Story G-revised refuted.**
+- **Phase 24 — Arduino-as-master test: SAMD21 (Nano 33 IoT) ACKs BQ on the failing-config wire that the ESP32-S3 NACKs. Story F confirmed; Story H refuted. Mechanism narrowed to the ESP32-S3 master peripheral. Spawned [esp32-s3-i2c-master-deep-dive.md](../explorations/esp32-s3-i2c-master-deep-dive.md).**
+- **Phase 24 — Experiment 1 (`i2c_filter_enable(I2C_NUM_0, 7)`): null result. I2C-controller digital deglitcher is on; BQ still NACKs identically. Refutes sub-µs input glitches at the I2C controller as the gating mechanism.**
+- **Phase 25 (in flight) — Experiment 2 (pad-level `IO_MUX_FUN_FILTER_EN`) + Experiment 3 (explicit `gpio_pullup_dis`/`gpio_pulldown_dis`).** Bundled into one flash. Built clean for `motion-play-v7-diag`.
 
-**Deprioritised (no remaining theory pushes for them):**
-- Cable-position scope test (moving cable physically away from board to discriminate against EMI antenna mechanism): Phase 17 noted the operator's existing 2.5 cm horizontal cable geometry already represents a worst case for cable-as-antenna mechanisms. Switcher fundamentals at 1.5–2.2 MHz cannot couple meaningfully into a 2.5 cm wire that distance from the inductors, and changing position won't discriminate further.
-- High-rate INA219 logging: Phases 11–18 make rail-mediated and state-machine-mediated mechanisms unlikely. Skip unless new evidence points back.
-
-**Do not** run the Phase 7 bodge attempt again without first understanding why it damaged Board 1.
+**Deprioritised:**
+- Clock slowdown to 10 kHz: covered by Phase 22's null result; no value in going slower.
+- Increase R28 to 4.7 kΩ: would lower V_OL further but Phase 23 already proved V_OL isn't the gating variable.
+- Cable-position scope test: ruled out by Phase 17/19.
 
 ### Working state — which boards to use
 - **Board 1**: damaged, investigation-dead. May be recoverable with deliberate rework but isn't needed right now.

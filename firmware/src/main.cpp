@@ -1,5 +1,6 @@
 #include <Arduino.h>
 #include <Wire.h>
+#include <WiFi.h>
 #include <Adafruit_VCNL4040.h>
 #include <HTTPClient.h>
 #include <ArduinoJson.h>
@@ -19,9 +20,11 @@
 #include "components/calibration/CalibrationManager.h"
 #include "components/serialstudio/SerialStudioOutput.h"
 
+#ifdef HAS_BUTTONS
 // Button pins for T-Display-S3
 #define BUTTON_1 0  // Left button (BOOT)
 #define BUTTON_2 14 // Right button
+#endif
 
 // Device modes (what the device is doing)
 // Note: HOW we sense (polling vs interrupt) is determined by currentConfig.sensor_mode
@@ -111,20 +114,166 @@ void setup()
     Serial.println("\n\n=================================");
     Serial.println("Motion Play Device - BOOT");
     Serial.println("=================================");
-    Serial.println("Press RIGHT button (GPIO 14) to restart anytime");
     Serial.println("=================================\n");
 
+#ifdef HAS_BUTTONS
+    Serial.println("Press RIGHT button (GPIO 14) to restart anytime");
     pinMode(BUTTON_1, INPUT_PULLUP);
     pinMode(BUTTON_2, INPUT_PULLUP);
+#endif
 
     // Reconfigure the BQ24195 input current limit BEFORE anything that draws
     // significant current (display init, WiFi). Without this the v6 board
     // browns out under load. See note above the #defines for full context.
     configureBQ24195();
 
+    // Bring up the INA219 power monitor early so we can log VSYS voltage and
+    // current at each boot phase. Useful for diagnosing brown-outs and for
+    // confirming the BQ24195 IINLIM fix actually raised the usable envelope.
+    if (powerMonitor.init())
+    {
+        powerMonitor.update();
+        Serial.printf("[PWR after BQ config] VSYS=%.2f V, I=%.0f mA\n",
+                      powerMonitor.getVoltage(), powerMonitor.getCurrentMA());
+    }
+
     display.init();
     display.showInitScreen();
     Serial.println("Display initialized");
+    if (powerMonitor.isAvailable())
+    {
+        powerMonitor.update();
+        Serial.printf("[PWR after display init] VSYS=%.2f V, I=%.0f mA\n",
+                      powerMonitor.getVoltage(), powerMonitor.getCurrentMA());
+    }
+
+#ifdef DIAG_RELEASE_I2C
+    // Bus-release diagnostic build (Arduino-as-master test). Skip the entire
+    // network/sensor init path. Run a short diagnostic burst to prove the
+    // BQ NACK reproduces on the ESP32 side first (so the operator can confirm
+    // the failing-config cable is set up correctly before handover). Then
+    // close all TCA/PCA channels for a clean baseline, release the I2C bus
+    // by ending Wire and pulling SDA/SCL to high-Z (the on-board 2.2 kΩ
+    // pull-ups R28/R29 keep the lines at idle high), and sit in a heartbeat
+    // loop so the operator can verify ESP32 is still alive while the
+    // external master takes over.
+    //
+    // See docs/debugging/v7-i2c-investigation.md § "Immediate next steps"
+    // item 1 for the full test rationale, and
+    // tools/arduino-sketches/v7_bq_master_probe/ for the companion sketch.
+    {
+        Serial.println();
+        Serial.println("==============================================================");
+        Serial.println("[DIAG_RELEASE_I2C] Bus-release diagnostic mode");
+        Serial.println("==============================================================");
+        Serial.println("Skipping WiFi/MQTT/sensor init.");
+        Serial.println("Running 5-iteration diagnostic burst to prove BQ NACK reproduces");
+        Serial.println("on the ESP32 side, then releasing the I2C bus to an external master.");
+        Serial.println();
+
+        constexpr uint8_t TCA_ADDR = 0x70;
+        struct ReleaseProbe { uint8_t addr; const char* name; };
+        constexpr ReleaseProbe releaseProbes[] = {
+            {0x40, "INA"},
+            {0x6B, "BQ"},
+            {0x70, "TCA"},
+        };
+        constexpr int nReleaseProbes = sizeof(releaseProbes) / sizeof(releaseProbes[0]);
+
+        auto tcaSelect = [&](uint8_t mask) -> uint8_t {
+            Wire.beginTransmission(TCA_ADDR);
+            Wire.write(mask);
+            return Wire.endTransmission();
+        };
+        auto probeRow = [&](const char* label) {
+            Serial.printf("t=%7lu  %-10s  ", millis(), label);
+            for (int i = 0; i < nReleaseProbes; i++) {
+                Wire.beginTransmission(releaseProbes[i].addr);
+                uint8_t err = Wire.endTransmission();
+                if (err == 0)
+                    Serial.printf("%s:.    ", releaseProbes[i].name);
+                else
+                    Serial.printf("%s:X(%u) ", releaseProbes[i].name, err);
+            }
+            Serial.println();
+        };
+
+        Serial.println("Probing: INA(0x40)  BQ(0x6B)  TCA(0x70)");
+        Serial.println("Legend:  '.' = ACK,  'X(n)' = error n");
+        Serial.println("         (with failing-config cable in J6, expect BQ:X(2) on TCA2 row)");
+        Serial.println();
+
+        for (int iter = 1; iter <= 5; iter++) {
+            Serial.printf("--- Iteration %d ---\n", iter);
+
+            tcaSelect(0x00);
+            delay(2);
+            probeRow("BASE");
+
+            for (int ch = 0; ch < 3; ch++) {
+                tcaSelect(0x00);
+                delay(1);
+                tcaSelect((uint8_t)(1 << ch));
+                delay(2);
+                char label[16];
+                snprintf(label, sizeof(label), "TCA%d", ch);
+                probeRow(label);
+            }
+
+            Serial.println();
+            delay(1500);
+        }
+
+        Serial.println("Burst complete. Closing all TCA channels for clean baseline...");
+        tcaSelect(0x00);
+        delay(5);
+
+        Serial.println("Releasing I2C bus...");
+        Serial.flush();
+        delay(50);
+
+        Wire.end();
+        pinMode(43, INPUT); // SDA — high-Z; on-board R28 (2.2 kΩ) holds it at +3.3V
+        pinMode(44, INPUT); // SCL — high-Z; on-board R29 (2.2 kΩ) holds it at +3.3V
+
+        Serial.println();
+        Serial.println("==============================================================");
+        Serial.println("BUS RELEASED");
+        Serial.println("==============================================================");
+        Serial.println("ESP32 is no longer driving SDA/SCL. All TCA channels are closed");
+        Serial.println("(clean baseline). BQ24195 is configured (IINLIM=2A, watchdog");
+        Serial.println("disabled) and will retain that state indefinitely.");
+        Serial.println();
+        Serial.println("Connect an Arduino Nano ESP32 (or any 3.3V Arduino) to:");
+        Serial.println("  Arduino SDA   <-> main PCB TPIO43 (SDA)");
+        Serial.println("  Arduino SCL   <-> main PCB TPIO44 (SCL)");
+        Serial.println("  Arduino GND   <-> main PCB GND test pad (shared ground required)");
+        Serial.println();
+        Serial.println("Then flash and run:");
+        Serial.println("  tools/arduino-sketches/v7_bq_master_probe/v7_bq_master_probe.ino");
+        Serial.println();
+        Serial.println("The Arduino sketch probes BQ on the closed-bus baseline, then opens");
+        Serial.println("TCA channel 2 from its own master, and reports whether BQ ACKs in");
+        Serial.println("each state. Expected outcomes:");
+        Serial.println("  - BQ NACKs Arduino on TCA2 -> Story D-revised confirmed");
+        Serial.println("  - BQ ACKs Arduino on TCA2  -> Story F confirmed");
+        Serial.println();
+        Serial.println("ESP32 will print a heartbeat every 5 seconds so you can confirm it");
+        Serial.println("is still alive while the Arduino has the bus. Press RESET to exit.");
+        Serial.println("==============================================================");
+        Serial.println();
+
+        unsigned long lastHeartbeat = 0;
+        while (true) {
+            unsigned long now = millis();
+            if (now - lastHeartbeat >= 5000) {
+                lastHeartbeat = now;
+                Serial.printf("[heartbeat] t=%lu ms — ESP32 alive, bus released\n", now);
+            }
+            delay(100);
+        }
+    }
+#endif // DIAG_RELEASE_I2C
 
     initializeSystem();
 
@@ -138,6 +287,21 @@ void configureBQ24195()
     // Bring the I2C bus up early. SensorManager will call Wire.begin() again
     // later with the same pins, which is harmless.
     Wire.begin(43, 44); // SDA=43, SCL=44 on T-Display-S3
+
+    // Full I2C scan so we can see which devices respond on this board.
+    Serial.println("[I2C SCAN] Scanning 0x03..0x77...");
+    int found = 0;
+    for (uint8_t addr = 0x03; addr < 0x78; ++addr)
+    {
+        Wire.beginTransmission(addr);
+        if (Wire.endTransmission() == 0)
+        {
+            Serial.printf("[I2C SCAN]   Found device at 0x%02X\n", addr);
+            found++;
+        }
+    }
+    Serial.printf("[I2C SCAN] Done. %d device(s) responded.\n", found);
+    Serial.flush();
 
     // Probe for the chip first so we don't spam errors on boards that don't
     // have it (e.g., bench testing on a bare T-Display).
@@ -372,6 +536,15 @@ void initializeSystem()
     // --- Phase 1: Network (WiFi → MQTT → cloud config) ---
     // Done first so we have the real sensor config before initializing hardware.
 
+#ifdef DIAG_NO_WIFI
+    // Diagnostic build: keep the radio powered down so we can run the I2C
+    // bus diagnostic loop without any RF activity on the ESP32. Skips the
+    // whole network/MQTT/cloud-config block below; sensors init with defaults.
+    Serial.println("[DIAG_NO_WIFI] Skipping WiFi/MQTT init, forcing radio off");
+    WiFi.mode(WIFI_OFF);
+    btStop();
+    bool cloudConfigLoaded = false;
+#else
     Serial.println("Loading WiFi config...");
     if (!networkManager.loadConfig())
     {
@@ -441,6 +614,7 @@ void initializeSystem()
     Serial.println("Fetching sensor config from cloud...");
     display.updateInitStage(INIT_COMPLETE, "Loading config...");
     bool cloudConfigLoaded = fetchConfigFromCloud();
+#endif // DIAG_NO_WIFI
     if (cloudConfigLoaded)
     {
         Serial.println("Cloud config loaded — sensors will init with cloud settings");
@@ -457,10 +631,30 @@ void initializeSystem()
 
     Serial.println("Initializing sensors...");
     display.updateInitStage(INIT_SENSORS, "Initializing sensors...");
-    if (!sensorManager.init(&currentConfig))
+    if (powerMonitor.isAvailable())
+    {
+        powerMonitor.update();
+        Serial.printf("[PWR before sensor init] VSYS=%.2f V, I=%.0f mA\n",
+                      powerMonitor.getVoltage(), powerMonitor.getCurrentMA());
+    }
+    bool sensorInitOk = sensorManager.init(&currentConfig);
+    if (powerMonitor.isAvailable())
+    {
+        powerMonitor.update();
+        Serial.printf("[PWR after sensor init] VSYS=%.2f V, I=%.0f mA\n",
+                      powerMonitor.getVoltage(), powerMonitor.getCurrentMA());
+    }
+    if (!sensorInitOk)
     {
         Serial.println("ERROR: Sensor initialization failed!");
         display.setInitError("Sensor init failed!");
+
+        // Instead of halting, enter a continuous diagnostic loop that cycles
+        // through mux states (BASE / TCA_only / TCA+PCA0 / TCA+PCA1) and
+        // probes a fixed set of addresses each round. Lets us see whether
+        // the failure is consistent or intermittent. Runs until reset.
+        sensorManager.runBusDiagnosticLoop();
+
         while (1)
             delay(1000);
     }
@@ -499,10 +693,8 @@ void initializeSystem()
     Serial.printf("Serial Studio output: %s\n", serialStudioEnabled ? "enabled" : "disabled");
 
     // --- Power Monitor ---
-    if (powerMonitor.init())
-    {
-        Serial.println("INA219 power monitor ready on VSYS rail");
-    }
+    // Already initialized early in setup() so we can log power state at each
+    // boot phase; nothing to re-init here.
 
     // --- Done ---
 
@@ -1348,13 +1540,7 @@ void handleCommand(const String &command, JsonDocument *doc)
 
 void loop()
 {
-    static int buttonState2 = HIGH;
     static unsigned long lastSampleUpdate = 0;
-    static unsigned long button1HoldStart = 0;
-    static bool button1WasPressed = false;
-
-    int currentButton1 = digitalRead(BUTTON_1);
-    int currentButton2 = digitalRead(BUTTON_2);
 
     // If calibration is active, handle it exclusively
     if (calibrationManager.isActive())
@@ -1383,6 +1569,14 @@ void loop()
         delay(10);
         return; // Skip normal loop during calibration
     }
+
+#ifdef HAS_BUTTONS
+    static int buttonState2 = HIGH;
+    static unsigned long button1HoldStart = 0;
+    static bool button1WasPressed = false;
+
+    int currentButton1 = digitalRead(BUTTON_1);
+    int currentButton2 = digitalRead(BUTTON_2);
 
     // Check for LEFT button (BOOT) long-press to start calibration
     if (currentButton1 == LOW)
@@ -1440,12 +1634,15 @@ void loop()
         ESP.restart();
     }
     buttonState2 = currentButton2;
+#endif // HAS_BUTTONS
 
+#ifndef DIAG_NO_WIFI
     // Check network connection
     networkManager.checkConnection();
 
     // Handle MQTT
     mqttManager->loop();
+#endif
 
     // Process sensor data queue if collecting
     if (sessionManager.getState() == COLLECTING)
