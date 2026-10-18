@@ -282,6 +282,60 @@ For phase 3, the diff must surface topic 2's CL-19, CL-20 and CL-21 between `fd6
 
 **Rough size:** 3–6 sessions in total, plus the cleanup task.
 
+### 6.2 Draft relay for the Planner
+
+This is a draft. Answer the four decisions in §6.1 first and edit them into "Open questions", or leave them for the Planner to ask you. To launch: save the block below as `docs/initiatives/pcb-board-model/RELAY-planner.md`, then start a session with `--agent planner`. The initiative name is a suggestion.
+
+````markdown
+# Relay — research → planner — <date>
+
+role:planner
+
+## Context
+Topic 3 of the v7-retry research (`docs/research/v7-retry/kicad-extraction-audit.md`) audited the KiCad extraction scripts. They describe components well, but they can't show where a trace routes, what it passes near, which plane it references, or how v6 differs from v7. Some reported numbers are also wrong: Phase 16 clearances were measured centreline to centreline, pads are modelled as bounding circles and never rotated, and two committed outputs are stale. This initiative replaces the PCB-side extraction with one board model and derives every report from it.
+
+## Load these files
+- .context/PROTOCOL.md
+- docs/research/v7-retry/kicad-extraction-audit.md — **the source of truth for scope**. Read §2–§6 in full; §6.1 is the planner input.
+- docs/research/v7-retry/v6-v7-changelist.md — CL-19, CL-20, CL-21 (the diff-mode acceptance targets) and the kicad-cli method in §2 "Scope of comparison"
+- tools/CONTEXT.md, tools/pcb-context/README.md
+- tools/pcb-context/routing_extract.py, routing_audit.py, extract.py — the code being replaced or extended
+- docs/initiatives/pcb-routing-audit-tool/BRIEF.md — prior constraints (kiutils, shapely, no pcbnew)
+- docs/initiatives/routing-verification/BRIEF.md — never executed; check whether any of its design-intent checks belong in scope
+
+## State
+Branch: n/a (the Orchestrator cuts `feat/pcb-board-model` from main at run time)
+Build: n/a — Python tooling only, no firmware
+TASKS.md current: n/a — not yet written
+Initiative folder `docs/initiatives/pcb-board-model/` holds only this relay.
+
+## What was done
+- Audited all extraction scripts and outputs. The schematic-context tools are fine; keep them.
+- Confirmed the PCB extractors read no zones, no stackup and no component bodies. Pad geometry is wrong for rotated parts, and auditor clearances ignore trace width.
+- Answered "where does SDA route and what's near it" by hand with read-only probes. The measured values are the validation fixtures in audit §6.1.
+- Found `pcb-layout-context.json` stale (7 parts moved) and `drc-report.json` from before routing. Nothing in either file flags it.
+- Recommended one initiative in three phases sharing one board model: (1) model + correctness + freshness, (2) net-centric, plane and route-narrative reports plus PNGs, (3) diff mode over git refs. Plus a cleanup task.
+- Ruled out of scope: schematic-gen and schematic-modify, SI/EM simulation, any write-back to `.kicad_pcb`.
+
+## Your task
+Write BRIEF.md, PLAN.md and TASKS.md in `docs/initiatives/pcb-board-model/`, using audit §5 (what to build) and §6.1 (goals, module layout, definitions, fixtures, dependencies).
+
+- Each phase's acceptance test is concrete: phase 1–2 output must reproduce the §6.1 fixture table, and phase 3 must surface CL-19/20/21 between `fd632ef` and `c2acffc`.
+- Put threshold definitions in a per-board config file, not in code.
+- Keep each phase Worker-session-sized; split with a `🔄 Handoff` if not.
+- Phase 1 must start by confirming the Python 3.7 / shapely 2.x / matplotlib install works, or by adding a Python bump task.
+- Put the cleanup (stale outputs, README flag mismatch, marking the schematic-gen/modify one-offs historical in tools/CONTEXT.md) in a phase 0 or in phase 1.
+
+This initiative builds tooling only. It must not draw conclusions about the v7 I²C bug; that is Stage B's job.
+
+## Open questions
+1. Commit generated outputs (hash-stamped), or gitignore them and generate on demand?
+2. Delete the stale `pcb-layout-context.json` and `drc-report.json` now, or regenerate them until phase 1 lands?
+3. Is the pcbnew Python API allowed as a fallback (for example, for zone refill), or kiutils + kicad-cli only?
+4. Launch before Stage B decisioning, or let `decisioning.md` sequence it?
+5. Does `routing_extract.py` survive as a compatibility shim, or is it retired? (`v7-main-i2c.json` is its only consumer.)
+````
+
 ---
 
 ## Observations for other topics
