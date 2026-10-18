@@ -11,9 +11,30 @@
 | **Gerber ↔ git check** | F/In1/In2/B.Cu + Edge.Cuts regenerated from `fd632ef` with kicad-cli 9.0.4 match the zip's coordinate streams exactly | Same check against `c2acffc`: exact match on all 5 layers |
 | **HEAD vs ref** | — | `.kicad_sch` / `.kicad_pcb` at HEAD are identical to `c2acffc` (later commits only add JSON context exports and 3D models) |
 | **MCU** | LilyGO T-Display-S3 dev board (U2), on header | ESP32-S3-WROOM-1-N16R8 module (U3), soldered on |
-| **Firmware that ran on it** | `4da1c67` (2026-04-13), env `lilygo-t-display-s3` — best estimate, see §4 | `HEAD` (`6400df9`), env `motion-play-v7` (+ diag variants) |
+| **Firmware that ran on it** | `4da1c67` (2026-04-13), env `lilygo-t-display-s3` — the user's chosen baseline ("last confirmed working"; trusted over later debug edits) | `HEAD` (`6400df9`), env `motion-play-v7` (+ diag variants) |
 
 The user confirmed these anchors on 2026-10-18. Every later session should diff against **`fd632ef` ↔ `c2acffc`**.
+
+### 1a. Timeline — was v6 actually brought up?
+
+The user isn't sure whether v6 was tested. This is what the repo and memory record:
+
+| Date | Event | Source |
+|---|---|---|
+| 2026-03-16 | **v6 ordered** from JLCPCB (PCBA) | `fd632ef` commit message; v6 gerber timestamps |
+| 2026-03-17 | ESP32 integration initiative opened. Its BRIEF says v7 fabrication is "gated on v6 validation". | `docs/initiatives/esp32-integration/BRIEF.md:39` |
+| 2026-03-26 | Main + sensor-rigid boards revised to 4-pin connectors (design only) | `cc5e603` |
+| 2026-04-03 | Q2 polarity-protection fix committed (v7 design) | `fae477e` (message gives no reason) |
+| 2026-04-07 | **v7 ordered.** The "Confirm v6 board validation is complete (gate for ordering)" checkbox was never ticked. | memory note; v7 gerber timestamps; `docs/initiatives/esp32-integration/TASKS.md:102` |
+| 2026-04-10 | **BQ24195 IINLIM brownout found on a v6 board and fixed in firmware.** "VSYS held steady, display booted normally." | memory `project_bq24195_iinlim_fix` |
+| 2026-04-13 | Firmware committed with `configureBQ24195()`, a new INA219 `PowerMonitor`, and LED-strip current-draw test modes with a display UI | `4da1c67` |
+| 2026-04-21 | v7 debugging Phase 6 under way; boards 1–3 in hand by 04-22 | `docs/debugging/v7-i2c-investigation.md:277-319` |
+
+**Conclusion: a v6 board was definitely powered up and running firmware.** The INA219 and the BQ24195 exist only on the main PCB, not on a bare T-Display. So the 04-10/04-13 work proves that on v6 the T-Display master talked over I²C to the BQ (at 0x6B on the same upstream bus) and to the INA219, while running from J7 USB power.
+
+**This also explains the user's question "if v6 found the IINLIM bug, why didn't v7 fix it?".** The bug was found on 04-10, three days *after* v7 was ordered on 04-07. v7 was ordered before v6 validation was finished.
+
+**Not proven: v6 with sensors on the TCA channels** (the v7 failure condition). Nothing in the repo records it. Local `session_data/` has nothing after Dec 2025. Sessions live in DynamoDB, so querying for sessions created between 2026-04-10 and ~04-20 would settle it. The user recalls that any v6 testing was done with sensors attached and worked.
 
 **Correction to prior assumptions.** The memory note `project_pcb_revision_apr2026` lists "custom power circuit: BQ24195, TPS61088, INA219" as a v7 change. It is not one. All three were already on v6 (`fd632ef` BOM: U5 BQ24195RGER, U6 TPS61088RHLR, U7 INA219AIDCNR). That fits the IINLIM note, which records the BQ24195 being configured over I²C on a v6 board on 2026-04-10. The memory note is also wrong on two smaller points (see CL-06 and CL-17).
 
@@ -67,7 +88,7 @@ Evidence paths are relative to `hardware/pcb-main/kicad/` unless stated otherwis
 
 | ID | Category | Subsystem | What changed | v6 → v7 | Risk | Evidence |
 |---|---|---|---|---|---|---|
-| CL-16 | footprint | sensor connectors | J4–J6 changed from 5-pin to 4-pin | SM05B-SRSS-TB (C136657) → SM04B-SRSS-TB (C160404). Pins 1–4 keep the same order: 1 = +3.3V, 2 = GND, 3 = CHn_SDA, 4 = CHn_SCL. | **Medium.** The fault shows up specifically when a TCA channel is open and has a cable attached. Changing to 4-pin means **different cables or harnesses** in the exact failing path. Find out whether v6 testing used the same sensor boards and cable types. | netlist J4–J6 |
+| CL-16 | footprint | sensor connectors | J4–J6 changed from 5-pin to 4-pin | SM05B-SRSS-TB (C136657) → SM04B-SRSS-TB (C160404). Pins 1–4 keep the same order: 1 = +3.3V, 2 = GND, 3 = CHn_SDA, 4 = CHn_SCL. | **Medium.** The fault shows up specifically when a TCA channel is open and has a cable attached. The user says v6 used the same sensor cables as v7. **Open contradiction:** the fabricated v6 has 5-pin SM05B sockets and v7 has 4-pin SM04B. One cable can only serve both if a 4-pin plug sat offset in a 5-pin socket, or if "same" means the same cable type. In the same 03-26 commit the sensor-rigid boards also went 5→4-pin, so the **sensor-board revision** on the far end may differ between v6 and v7 testing as well. | netlist J4–J6 |
 | CL-17 | net | sensor connectors | (Correction) INT lines | Pin 5 was already **unconnected** on v6 (`unconnected-(J4-Pin_5-Pad5)`). The memory note's "INT lines removed" changed the footprint only, not the circuit. | Low | v6 netlist |
 | CL-18 | net (rename) | hierarchy | Labels promoted to the root sheet | `/TCA9548A_Subsystem/TCA_RESET` → `/TCA_RESET`, `/Power Management/CHRG_INT` → `/CHRG_INT`, `/LED Controller/DATA_IN` → `/LED_DATA`. Membership is unchanged apart from the MCU pin. | Low. Names only. | netlist |
 
@@ -92,7 +113,7 @@ Evidence paths are relative to `hardware/pcb-main/kicad/` unless stated otherwis
 
 | ID | Category | Subsystem | What changed | v6 → v7 | Risk | Evidence |
 |---|---|---|---|---|---|---|
-| CL-26 | component | test points | Test points removed | Removed: TP_3V1, TP_5V1, TP_GND1 (rail test pads), TPIO1/2/3/17/18 (spare T-Display GPIOs), TPIO11–13 (INT). Kept: TPIO43/44 (SDA/SCL), TPIO10, TPIO16, TPIO21, TP1–TP4. | Low for the fault. **Relevant to topic 4**: v7 has no dedicated GND or +3.3V probe pad. | netlist |
+| CL-26 | component | test points | Test points removed | Removed: TP_3V1 (+3.3V), TP_5V1 (+5V), TP_GND1 (a second GND pad), TPIO1/2/3/17/18 (spare T-Display GPIOs), TPIO11–13 (INT). Kept on v7: **TP1 VSYS, TP2 VBAT, TP3 PVBUS, TP4 PGND (= GND net)**, TPIO43/44 (SDA/SCL), TPIO10, TPIO16, TPIO21. | Low for the fault. **Relevant to topic 4**: v7 has a GND pad (TP4), but no +3.3V or +5V pad. (Corrected 2026-10-18; the first draft missed that TP4 is GND.) | netlist |
 
 ### Verified unchanged (useful invariants)
 
@@ -107,11 +128,11 @@ These are identical in both netlists:
 ## 4. Changes we could not determine
 
 1. **T-Display-S3 internals around GPIO43/44.** There's no T-Display schematic in the repo. Unknown: any series resistors, ESD or onboard pull-ups on the header's 43/44 pins; how the T-Display's LDO output voltage compares with the AP2112K's; the ESP32-S3R8 chip revision vs the WROOM-1's. *Next step: get the LilyGO T-Display-S3 schematic and read the die revision of each part from the boot log.*
-2. **v6 operating conditions when it "worked".** Given CL-09, v6 can only have run with VBUS present. Unknown: whether it was powered through J7 (→ BQ24195) or the T-Display's own USB-C (→ back-feeding +5V through U2.12, which may leave the BQ without VBUS). The IINLIM note (2026-04-10) implies J7 at least once. *Ask the user.*
-3. **Whether v6 ran with sensors attached, BQ on the bus, and a TCA channel open** — the exact v7 failure condition. "v6 worked" is not yet shown to cover that configuration. *Ask the user; this is the single most important unknown in this artifact.*
+2. ~~v6 power source~~ — **answered by the user:** v6 ran from J7 USB-C, with the T-Display's own USB-C disconnected. So the BQ always had VBUS on v6, and the back-feed path in CL-13 was never used.
+3. **Whether v6 ran with sensors attached, BQ on the bus, and a TCA channel open** — the exact v7 failure condition. Partly resolved (§1a): v6 was brought up, and BQ + INA219 I²C worked on it. The user recalls sensors were attached and working but isn't certain. *Settle it by querying DynamoDB for sessions between 2026-04-10 and ~04-20.* Still the most important unknown in this artifact.
 4. ~~Whether the v7 fault depends on power regime~~ — **resolved during this session:** it reproduces both with USB-C power and with VBUS absent (Phase 18, bench PSU on BAT_RAW; `docs/debugging/v7-i2c-investigation.md:162`, `:690`). Not yet tested on v7: a VBUS-present, no-battery run that also isolates the T-Display-style back-feed path, which can't exist on v7 anyway.
-5. **Sensor cables and boards used with v6 vs v7** (CL-16). The cable assemblies aren't in the repo.
-6. **Exact firmware build that ran on v6.** `4da1c67` is the nearest commit to the 2026-04-10 v6 bring-up that contains `configureBQ24195()`. Earlier sensor-data runs on v6 may have used older firmware. Resolved library versions are unknown (no lockfile).
+5. **Sensor cables and boards used with v6 vs v7** (CL-16). The user says the cables were the same, but the v6 socket is 5-pin and the v7 socket is 4-pin. Which sensor-rigid revision (5-pin, pre-03-26, or 4-pin) was on the far end in each case is unknown.
+6. **Exact firmware build that ran on v6.** The user chose `4da1c67` as the baseline: the last confirmed-working firmware, trusted over the later debug edits. Any uncommitted local changes at the time, and the resolved library versions (no lockfile), are unknown.
 7. **The v6 as-built BOM.** I assume it matches `fd632ef` `production/bom.csv`. No record of checkout substitutions exists for v6.
 8. **v5 → v6 delta.** Out of scope by agreement. The v5 (2025-09-18) gerbers exist locally if needed.
 
@@ -126,4 +147,4 @@ These are identical in both netlists:
 ## Observations for other topics
 
 - **Topic 3 (KiCad extraction audit):** CL-07 USB route length; CL-20 B.Cu GND pour removal and the reordered In2 split-plane priorities; CL-21 I²C on B.Cu under the BT1 footprint; what kind of plane each I²C trace segment references. A single-sheet XML netlist export (`kicad-cli sch export netlist --format kicadxml`) plus position export reproduced everything at component and net level here in a few seconds. The audit could use it as an independent cross-check on `circuit-context.json` and `pcb-layout-context.json`.
-- **Topic 4 (test workflow):** v7 has no GND or +3.3V test pads (CL-26). Scope ground has to come from somewhere else, which matters for the post-mortem's measurement-validity concern. Also, a v6 reference measurement needs `4da1c67`-era firmware (CL-25).
+- **Topic 4 (test workflow):** v7 has TP4 (PGND = GND) for scope ground, but no +3.3V or +5V test pad (CL-26). A v6 reference measurement needs `4da1c67` firmware (CL-25). A surviving v6 board plus `4da1c67` firmware is the natural known-good reference the post-mortem asked for.
