@@ -1,6 +1,6 @@
 # Motion Play Project Context
 
-> **Quick Reference**: See [manifest.yaml](./manifest.yaml) for structured metadata. See [IDEAS.md](./IDEAS.md) for feature backlog. See [WORKFLOW.md](./WORKFLOW.md) for instructions on managing features and initiatives.
+> **Quick Reference**: See [manifest.yaml](./manifest.yaml) for structured metadata. See [IDEAS.md](./IDEAS.md) for feature backlog. See [PROTOCOL.md](./PROTOCOL.md) for the initiative workflow and agent roles.
 
 ## Overview
 
@@ -33,7 +33,7 @@ This project uses a distributed documentation system for AI chat context. Instea
 - **This file** (`PROJECT.md`) provides the high-level project overview, cross-cutting terminology, and a map of what lives where. It should be read first.
 - **Aspect CONTEXT.md files** (e.g., `firmware/CONTEXT.md`) contain the detailed architecture, constraints, and design decisions specific to that domain. Read the relevant one when working in that area.
 - **README.md files** in some folders provide developer-oriented documentation (build steps, API reference, debugging). These complement the CONTEXT.md files.
-- **Initiative docs** in `docs/initiatives/` follow the BRIEF/PLAN/TASKS structure defined in [WORKFLOW.md](./WORKFLOW.md).
+- **Initiative docs** in `docs/initiatives/` follow the structure defined in [PROTOCOL.md](./PROTOCOL.md); agent roles live in `.claude/agents/`.
 
 **When starting a new conversation about a specific area**, point the AI at both this file and the relevant aspect's `CONTEXT.md`. When working across aspects, include multiple CONTEXT.md files as needed.
 
@@ -43,7 +43,9 @@ This project uses a distributed documentation system for AI chat context. Instea
 
 ```
 motion-play/
-├── .context/              # AI documentation (this file, manifest, workflow, ideas)
+├── .claude/agents/        # Agent role definitions
+├── .context/              # AI documentation (this file, manifest, protocol, ideas)
+├── CLAUDE.md              # Auto-loads PROJECT.md
 ├── firmware/              # ESP32-S3 firmware (C++/Arduino)  ← has CONTEXT.md
 ├── frontend/              # React web interface (TypeScript)  ← has CONTEXT.md
 ├── hardware/              # KiCad schematics and PCB designs  ← has CONTEXT.md
@@ -83,7 +85,7 @@ motion-play/
 These folders have README.md files or are self-explanatory:
 
 - **`lambda/`** — Lambda function source code. Has its own `README.md` with deployment guides. Closely related to `infrastructure/`.
-- **`docs/`** — Organized per [WORKFLOW.md](./WORKFLOW.md). Explorations are single-file analyses; initiatives follow BRIEF/PLAN/TASKS.
+- **`docs/`** — Initiatives follow BRIEF/PLAN/TASKS/SESSION per [PROTOCOL.md](./PROTOCOL.md).
 - **`scripts/`** — Utility scripts with `README.md`.
 - **`session_data/`** — Labeled sensor data for ML training.
 
