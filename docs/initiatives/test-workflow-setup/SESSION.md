@@ -181,3 +181,19 @@ Afterwards, `check_state.py --load` on the clone gave `RESULT: OK (0 warnings)` 
 - **W2 and tools/CONTEXT.md.** W2 lists "a `tools/lab/` entry" for `tools/CONTEXT.md`. That entry has already landed here (task 6). W2 should show it to the user alongside the kiutils and source-hash rule diffs rather than add a second one.
 - **Not enforced.** §4.3's "a new card can't be pre-registered while a checkpoint is due" is enforced by neither the hook nor the checker. The checker's CHECKPOINT-DUE message states the rule. Add a hook rule later if wanted.
 - **Debugger role setup.** The debugger role should tell the session to run `git config core.hooksPath .githooks` if `git config core.hooksPath` is empty.
+
+#### Result
+| # | Phase | Result | Escalation evaluated? | Commit | Notes |
+|---|-------|--------|-----------------------|--------|-------|
+| 3 | Phase 3: Checker and pre-commit hook | DONE | No — clean completion | 7925e52 | 6 tasks; 9 fixtures; hook acceptance in scratch clone |
+
+#### Verification
+- Re-ran `tools/lab/tests/run_tests.py`: 0 failures. `core.hooksPath` = `.githooks` in the real repo.
+- Re-ran `check_state.py` on the real `lab/`: exit 0, `OK (4 warnings)`, all `[MEMORY]` (MEMORY.md, `project_bq24195_iinlim_fix.md`, `project_pcb_revision_apr2026.md`, `project_v7_i2c_bq_debug.md`). Phase 4 task "expect a clean output" depends on the W2 memory decision; even after the two planned deletions, the IINLIM memory and its index line still match.
+- TASKS.md diff: only Phase 3 lines changed (the Worker's stray Handoff ticks in Phases 4–9 were reverted before commit; confirmed).
+- PLAN.md: `Result commit` Open Question struck through; no date-stamped headings.
+- Carry forward to Phase 4 (from Worker #3 Notes): the `tools/lab/` entry in `tools/CONTEXT.md` already exists, so W2 shows it rather than adding it again. The debugger role should tell sessions to set `core.hooksPath` if it is unset. The §4.3 "no pre-registration while a checkpoint is due" rule is stated, not enforced.
+
+---
+
+**W1 — loop paused before Phase 4.** Awaiting the user: is `docs/research/v7-retry/debugger-role-draft.md` final, and does its checkpoint section carry the `decisioning.md` §4.2 criteria table or a pointer?
