@@ -614,3 +614,149 @@ Tasks assigned (from TASKS.md Phase 5):
 - [ ] Draft the Phase 6 bench script as §4.8 blocks in SESSION.md (LAN connect, `*IDN?`, each query, USB save, LAN pull, third-party smoke test)
 - [ ] 🔄 Handoff
 ```
+
+#### Phase 6 bench script (draft, §4.8 blocks)
+
+The Orchestrator relays these blocks to the user **one at a time** and records each REPORT. Every command and menu path comes from PLAN "Verified instrument facts". Port 5555 and the firmware-00.01.05 behaviour are the **needs bench** items these steps settle. Files land in `lab/inbox/phase6/` (gitignored).
+
+Shell helper for S2–S6. The user pastes it once into a Mac terminal at the repo root:
+```
+SCOPE=<ip from S1>; mkdir -p lab/inbox/phase6
+q(){ printf '%s\n' "$1" | nc -w 3 "$SCOPE" 5555; }
+```
+
+```
+STEP S1 of 9 — Phase 6 (scope on the LAN)
+DO:      Connect the DHO804 to the router with an Ethernet cable. On the scope open Utility > IO.
+         Turn DHCP on. Then, on the router, give the scope's MAC a DHCP reservation (or set a fixed IP on the scope).
+         While in Utility, set the scope's date/time to the Mac's clock.
+CHECK:   The IO page shows a non-zero IP address and a "connected"-type LAN status.
+         The scope clock is within 1 min of the Mac.
+CAPTURE: Nothing.
+REPORT:  1. IP address: ___   (reserved on router? yes/no; or fixed IP: ___)
+         2. MAC address: ___
+         3. Firmware version shown on the scope (Utility > About or similar): ___
+         4. Anything you noticed that wasn't asked for, described as what you see, not why
+STOP IF: no IP after 1 min, or the IO menu looks different from "Utility > IO" → report the menu names you see and wait.
+```
+
+```
+STEP S2 of 9 — Phase 6 (*IDN? over LAN)
+DO:      Paste the shell helper (above) with the S1 IP. Then run:  q '*IDN?'
+CHECK:   The command returns within ~3 s.
+CAPTURE: Nothing.
+REPORT:  1. Output, verbatim: ___
+         2. If nothing came back: open http://<ip> in a browser, go to "SCPI Panel Control", send *IDN?, and paste what it shows: ___
+         3. Anything you noticed that wasn't asked for, described as what you see, not why
+STOP IF: no response by either route → report and wait (port 5555 is unconfirmed).
+```
+
+```
+STEP S3 of 9 — Phase 6 (known signal on screen)
+DO:      Rigol stock probe on CH1, probe switch at 10×, tip and ground clip on the Cal output terminal.
+         Set CH1 1 V/div, timebase 200 µs/div, edge trigger on CH1. Open the measurement panel with Vamp, Vtop and Vbase on CH1.
+         Close every other menu so only the waveform and the measurement panel show.
+CHECK:   A stable square wave is on screen. The panel shows three numbers.
+CAPTURE: Nothing yet.
+REPORT:  1. CH1 Probe Ratio as the scope's channel menu shows it: ___
+         2. Vamp = ___ V, Vtop = ___ V, Vbase = ___ V (from the panel)
+         3. Anything you noticed that wasn't asked for, described as what you see, not why
+STOP IF: no stable trace → report and wait.
+```
+
+```
+STEP S4 of 9 — Phase 6 (every settings query, live)
+DO:      Do not touch the scope. Run:
+         for c in ':CHANnel1:PROBe?' ':CHANnel1:BWLimit?' ':CHANnel1:SCALe?' ':CHANnel1:OFFSet?' ':CHANnel1:COUPling?' \
+           ':CHANnel1:DISPlay?' ':CHANnel1:INVert?' ':CHANnel1:UNITs?' ':TIMebase:MAIN:SCALe?' ':TIMebase:MAIN:OFFSet?' \
+           ':TIMebase:MODE?' ':ACQuire:SRATe?' ':ACQuire:MDEPth?' ':ACQuire:TYPE?' ':TRIGger:MODE?' ':TRIGger:SWEep?' \
+           ':TRIGger:STATus?' ':TRIGger:EDGE:SOURce?' ':TRIGger:EDGE:SLOPe?' ':TRIGger:EDGE:LEVel?' \
+           ':TRIGger:IIC:WHEN?' ':TRIGger:IIC:CLEVel?' ':BUS1:MODE?' ':BUS1:THReshold? SDA' ':MEASure:AMSource?' \
+           ':MEASure:THReshold:TYPE?' ':MEASure:SETup:MAX?' ':MEASure:SETup:MID?' ':MEASure:SETup:MIN?' \
+           ':MEASure:ITEM? VAMP,CHANnel1' ':MEASure:ITEM? VTOP,CHANnel1' ':MEASure:ITEM? VBASe,CHANnel1' \
+           ':SAVE:IMAGe:HEADer?' ':LAN:IPADdress?' ':LAN:VISA?' ':SYSTem:VERSion?' ':SYSTem:ERRor?'; do printf '%-34s ' "$c"; q "$c"; done \
+           | tee lab/inbox/phase6/s4_queries.txt
+CHECK:   Every line has a value after the command. The waveform is still on screen.
+CAPTURE: lab/inbox/phase6/s4_queries.txt (written by the command).
+REPORT:  1. Paste the whole output verbatim: ___
+         2. Lines with an empty value, or an error from :SYSTem:ERRor?: ___
+         3. Anything you noticed that wasn't asked for, described as what you see, not why
+STOP IF: more than three empty lines → report and wait.
+```
+
+```
+STEP S5 of 9 — Phase 6 (freeze, then pull over LAN)
+DO:      Press STOP on the scope, then do not touch it until S6 is done. Run:
+         printf ':DISPlay:DATA? PNG\n' | nc -w 8 "$SCOPE" 5555 > lab/inbox/phase6/lan_shot.tmc
+         printf ':SYSTem:SETup?\n' | nc -w 5 "$SCOPE" 5555 > lab/inbox/phase6/lan_setup.tmc
+         q ':WAVeform:SOURce CHANnel1'; q ':WAVeform:MODE NORMal'; q ':WAVeform:FORMat ASCii'
+         q ':WAVeform:PREamble?' | tee lab/inbox/phase6/lan_preamble.txt; q ':WAVeform:DATA?' > lab/inbox/phase6/lan_wave_ascii.txt
+         ls -l lab/inbox/phase6/; head -c 40 lab/inbox/phase6/lan_setup.tmc; echo
+CHECK:   The scope still shows STOP and the same frozen trace.
+CAPTURE: The four lan_* files (written by the commands).
+REPORT:  1. Paste the ls -l output: ___
+         2. Preamble line, verbatim: ___
+         3. First 40 bytes of lan_setup.tmc, verbatim: ___
+         4. Anything you noticed that wasn't asked for, described as what you see, not why
+STOP IF: lan_shot.tmc is under 10 KB or the trace changed → report and wait.
+```
+
+```
+STEP S6 of 9 — Phase 6 (same frozen capture to USB: SCPI-driven, then by menu)
+DO:      USB stick in the front USB port, scope still STOPPED. Run:
+         q ':SAVE:IMAGe:FORMat PNG'; q ':SAVE:IMAGe D:/p6img.png'; sleep 3; q ':SAVE:STATus?'
+         q ':SAVE:WAVeform D:/p6wav.csv'; sleep 3; q ':SAVE:STATus?'
+         q ':SAVE:SETup D:/p6set.stp'; sleep 2; q ':SAVE:STATus?'
+         Then, by hand on the scope: Storage > Save tab > Choose "Save Wave" > Data Source "Screen" > Format "*.csv"
+         > File Name p6menu > File Path D: > Save. Then Choose "Save Setup" > File Name p6menu > Save.
+CHECK:   Each :SAVE:STATus? prints 1. The menu names match the ones above.
+CAPTURE: The files on the stick (p6img.png, p6wav.csv, p6set.stp, p6menu.csv, p6menu.stp).
+REPORT:  1. The three :SAVE:STATus? outputs: ___
+         2. Menu path as it actually appeared on 00.01.05, if any name differed: ___
+         3. File names the scope showed for the two menu saves: ___
+         4. Setup-file extension the scope used: ___
+         5. Anything you noticed that wasn't asked for, described as what you see, not why
+STOP IF: the stick isn't detected (no D:) or a save errors → report and wait.
+```
+
+```
+STEP S7 of 9 — Phase 6 (stick to Mac)
+DO:      Press RUN on the scope. Move the stick to the Mac and copy its files into lab/inbox/phase6/usb/ :
+         mkdir -p lab/inbox/phase6/usb && cp /Volumes/<stick>/p6* lab/inbox/phase6/usb/ && ls -l lab/inbox/phase6/usb/
+CHECK:   Five p6* files listed.
+CAPTURE: lab/inbox/phase6/usb/ (copied).
+REPORT:  1. Paste the ls -l output: ___
+         2. Anything you noticed that wasn't asked for, described as what you see, not why
+STOP IF: fewer than five files → report which are missing and wait.
+```
+
+```
+STEP S8 of 9 — Phase 6 (probe facts on the bench)
+DO:      Move the Rigol probe off CH2 if it's there. Connect the Sensepeek SQ500 to CH2, tip and ground on the Cal output.
+         Do not change CH2's Probe Ratio by hand. Then run: q ':CHANnel2:PROBe?'
+CHECK:   A square wave is on CH2.
+CAPTURE: Nothing.
+REPORT:  1. :CHANnel2:PROBe? output: ___   (did the scope change CH2's ratio by itself when the SQ500 was plugged in? yes/no)
+         2. Any accessories in the stock-probe bags that look like ground springs: ___
+         3. Anything you noticed that wasn't asked for, described as what you see, not why
+STOP IF: anything smells or gets hot → report and wait.
+```
+
+```
+STEP S9 of 9 — Phase 6 (third-party tool smoke test)
+DO:      Only if you are OK installing it: in a Python ≥ 3.10 venv outside the repo, run
+         pip install "git+https://github.com/mattjax16/rigol-dho-mcp@f9ac7191869845ae46ca714de69a877c388b2530"
+         cd lab/inbox/phase6 && RIGOL_HOST="$SCOPE" rigol-dho-cli '*IDN?' ':CHANnel1:SCALe?' ':DISPlay:DATA? PNG'
+CHECK:   The install finishes. The CLI prints the IDN string.
+CAPTURE: The capture_*.png the CLI writes in lab/inbox/phase6/.
+REPORT:  1. CLI output, verbatim: ___
+         2. Name and size of the PNG it saved: ___
+         3. Anything you noticed that wasn't asked for, described as what you see, not why
+STOP IF: you'd rather not install third-party code → skip, and say so in REPORT 1.
+```
+
+After S9, the Phase 6 Worker does the following:
+- Strips the TMC headers from `lan_shot.tmc` and `lan_setup.tmc`.
+- Pixel-diffs `lan_shot` against `p6img.png`, and compares `lan_wave_ascii.txt` sample-for-sample with `p6wav.csv`.
+- Diffs `lan_setup` against `p6set.stp`.
+- Marks each needs-bench row in PLAN.
