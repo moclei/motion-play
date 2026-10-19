@@ -760,3 +760,41 @@ After S9, the Phase 6 Worker does the following:
 - Pixel-diffs `lan_shot` against `p6img.png`, and compares `lan_wave_ascii.txt` sample-for-sample with `p6wav.csv`.
 - Diffs `lan_setup` against `p6set.stp`.
 - Marks each needs-bench row in PLAN.
+
+#### Notes
+All Phase 5 work was done at the desk. Every fact is in PLAN → Technical Notes → "Verified instrument facts", with its source. Nothing is marked *verified*: rows are either desk-verified or needs bench.
+
+**Findings that change later phases:**
+- **Firmware gap:** Rigol's Programming Guide (PGA39106-1110) and User Guide (UGA36105-1110) both document software 00.01.03, and the scope runs 00.01.05. Every SCPI row needs one live check (bench script S4–S6).
+- **No SCPI command reads a file back.** Over the LAN, the CSV has to be built from `:WAVeform:DATA?` + `PREamble?`. The setup can come over the LAN as ASCII through `:SYSTem:SETup?` ([PG] p.270–271), but whether that matches the `.stp` file needs bench.
+  - Alternative for Phase 7: the scope can save native files into a Mac SMB share (`:SAVe:SMB:*`, drive `I:`).
+- **No "list active measurements" query.** The capture tool has to query a named item list.
+- **The CSV menu path is "Save Wave", not "Waveform/Trace".** Storage → Save → Choose "Save Wave" → Screen/Memory → `*.csv` ([UG] pp.210–213). The setup extension is `.stp`.
+- **Filenames given over SCPI are capped at 16 characters,** so §4.4 names can only be applied at ingest.
+- **The DHO804 Cal output is 1 kHz, 3 Vpp** ([DS] p.17), with no tolerance given. V4's ±3 % is our own tolerance.
+- **Probes:**
+  - SQ500: 10:1 fixed (no switch), 500 MHz, 9 pF.
+  - SQ10: 1:1, > 10 MHz, capacitance not specified.
+  - V2's "probe switch position" can't apply to the SQ500. Phase 8 should word V2 as "probe ratio (switch or fixed)".
+- **V_OL is partly supported** (Open Question struck):
+  - The CAP_3 typical I_OL gives ≈ 18 Ω, so ≈ 35 mV at 2 mA. The datasheet's V_OL max is a no-load figure.
+  - Pass stays ≤ 0.4 V, and the expectation becomes a labelled estimate.
+  - The topic-4 acceptance "Dry run" row in PLAN still says "*once the datasheet check confirms it*". The Planner or Phase 8 may want to reword it to "estimate only". I didn't change the acceptance table.
+- **Nearest GND to U5 pins 5/6 on v7:** **C21.2** at 2.64 mm edge-to-edge (TP4 is 12.09 mm). It is the same 2.64 mm on v6, so it suits the same-ground-length rule.
+  - C21.1 next to it is `Protected_VBUS`: there is a bridging risk.
+  - v6 names: TPIO43/44 = SDA/SCL, U5.5 = SCL and U5.6 = SDA (same as v7), and TP4 + TP_GND1 for GND.
+  - **CL-26's wording in `v6-v7-changelist.md` implies v6 lacked TP4; it didn't.** That research doc is outside my edit scope, so I'm flagging it for the Orchestrator.
+- **W5 input:**
+  - The audit doesn't name the third-party project. The best candidate is `mattjax16/rigol-dho-mcp` (MIT, active July–October 2026, untested on any stated firmware). It doesn't write files, pull the setup or configure I²C.
+  - Recommendation: build our own `capture.py`, optionally vendoring its stdlib `ScpiClient`.
+
+**Mechanics:**
+- The scratch probes (`gnd_probe.py`, `gnd_probe2.py`, `tp_probe.py`) and the downloaded PDFs were in the session scratchpad and are temporary. PLAN gives the PDF URLs and their sha256 prefixes, and the commits the probes ran against (`c2acffc` v7, `fd632ef` v6, kiutils 1.4.8).
+- New Deferred line: add the ESP32-S3 datasheet to `docs/references/` (it was read from `~/Downloads`, so the task's "cite the docs/references page" couldn't be met literally).
+- The Phase 6 bench script (S1–S9) is above. S9 installs third-party code, and the user may skip it.
+- PLAN grew by about 110 lines with the facts subsection. It is still the right home (the Planner specified it), but the Phase 8 procedures should cite rows rather than copy them.
+
+#### Result
+| # | Phase | Result | Escalation evaluated? | Commit | Notes |
+|---|-------|--------|-----------------------|--------|-------|
+| 6 | Phase 5: Instrument facts (desk) | DONE | No — clean completion | (handoff commit) | All 6 tasks + handoff; needs-bench items listed for Phase 6 |
