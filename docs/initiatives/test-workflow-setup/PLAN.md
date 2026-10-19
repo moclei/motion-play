@@ -218,6 +218,35 @@ Status values: **desk-verified** means it comes from a vendor document, cited be
   - "Expect tens of mV (≈ 35 mV at CAP_3, from the datasheet's typical I_OL; default drive not specified)" may appear only as a labelled **estimate [own]**. The "> 0.2 V = investigate the setup" line stays as our own heuristic.
   - The procedure must not present 30–80 mV as a pass band.
 
+**Third-party DHO800 LAN/MCP project (input to W5).** The audit doesn't name the project, so Phase 5 checked the three GitHub candidates (data from `gh api`, 2026-10-19).
+
+| Project | Licence | Activity | Notes |
+|---|---|---|---|
+| **`mattjax16/rigol-dho-mcp`** @ `f9ac719` | MIT | Created 2026-07-09. 26 commits, the last on 2026-07-30 (pushed 2026-10-17). 2 stars, 1 open issue ("MCP v2 migration"). | Best fit. Python ≥ 3.10, `mcp<2.0` pinned. Raw socket on port 5555. Stdlib-only `scpi.py` (~215 lines) plus a FastMCP `server.py` with 14 tools and a `rigol-dho-cli`. No tests. Doesn't say which firmware it was tested on |
+| `csibug/rigol-dho824-mcp` | MIT | 1 commit (2026-03-29), inactive | Bundles Rigol's manuals converted to Markdown |
+| `MasterJubei/pydho800` | BSD-3 | 27 commits, the last on 2024-05-08, stale | Library only, no MCP. Predates firmware 00.01.05 |
+
+`mattjax16` against §5 item 1:
+- **Covered:**
+  - `*IDN?`.
+  - Per-channel probe ratio, BW, scale, offset, coupling (`get_status`).
+  - Timebase, sample rate and memory depth.
+  - Trigger mode/sweep/status, but configuration is edge-only.
+  - A single named measurement (`get_measurement`).
+  - Screen or RAW waveform, chunked.
+  - A PNG screenshot.
+- **Not covered:**
+  - The setup file (`:SYSTem:SETup?` and `:SAVE:SETup` are absent).
+  - I²C trigger and decode settings, which would need the opt-in raw `scpi_command`.
+  - A list of active measurements (no SCPI exists for it).
+  - **Writing files at all.** The screenshot comes back as an MCP image and the waveform as decimated JSON, both into the session context. Only the CLI writes a `capture_NNNNN.png`.
+  - Names per §4.4 and the §4.6 log entry.
+- **Effort:**
+  - Adopting the MCP server as it stands gives interactive control but none of the file/log contract. We would still write the capture tool, and the server needs a Python ≥ 3.10 venv (the repo's default `python3` is 3.7).
+  - Reusing its `scpi.py` (MIT, keep the notice) under our own `tools/lab/capture.py` saves about 100 lines of socket/TMC-block code. Everything else is ours either way: setup, I²C queries, CSV from PREamble, naming, YAML.
+
+**Recommendation (for the user at W5): build our own `capture.py`.** Either vendor `mattjax16`'s `ScpiClient` with its MIT notice, or write the equivalent. Don't adopt the MCP server as the capture path. Use the Phase 6 smoke test (port 5555, `*IDN?`, `:DISPlay:DATA? PNG` via `rigol-dho-cli`) to validate the transport on 00.01.05 whichever way W5 goes. Registering the MCP server for interactive debugger sessions is a separate, later choice, outside this initiative.
+
 ## Rejected Approaches
 - A separate context-scaffolding initiative: both topics build `lab/`, and one dry run validates both (decisioning §3.1).
 - A Claude Code hook for the STATE rule: it isn't versioned (`.claude/*` is gitignored) and only fires inside Claude; git `core.hooksPath` only (user, 2026-10-18).
