@@ -574,3 +574,20 @@ The "substituted parts" are listed in the same file's section just above it, als
 **For the Orchestrator / W3:**
 - W3 and Handoff are left unchecked. The branch is ready for the milestone PR.
 - Out-of-scope note, carried over from Worker #4: the existing `### Power Flow` text in `firmware/CONTEXT.md` and the Main PCB bullets in `hardware/CONTEXT.md` still describe the pre-v6 path (T-Display, DWEII, AP2112K). The new IINLIM subsection now sits beside that stale text. This is for the Organizer or GARDEN, and is not added to Deferred.
+
+#### Result
+| # | Phase | Result | Escalation evaluated? | Commit | Notes |
+|---|-------|--------|-----------------------|--------|-------|
+| 5 | Phase 4: Touch points (apply + checks) | DONE | No — clean completion (stopped before W3 as dispatched) | 213b741 | W2 items applied; budget pass; checker 0 warnings |
+
+#### Verification
+- Re-ran `check_state.py` on the real `lab/`: `RESULT: OK (0 warnings)`.
+- MEMORY.md now has 3 lines with no v7 entries. The memory directory holds only user_profile and the two feedback files.
+- Spot-checked: PROJECT.md L22 pointer line; PROTOCOL.md Debugger (draft) row L19, invocation note L25, lab/ entry L151, relay row L176, escalation L226. Each of the 7 banner files has +2 lines, with the banner on line 1 and the body untouched.
+- TASKS Phase 4: W2, budget check and checker ticked; W3 and Handoff open.
+- Carry forward: the housekeeping list (preserved in the Worker #5 Notes) still needs the user's answer. The memory backups are in the session scratchpad and are temporary. Stale Power Flow / Main PCB text in firmware/ and hardware/ CONTEXT.md is an Organizer/GARDEN item, outside this initiative.
+
+---
+
+### W3 — milestone PR (Orchestrator)
+Branch pushed, PR "test-workflow-setup: log-only ready" opened against main. Merge with a **merge commit** (keeps `90053af`/`v7-clean` reachable from main's history).
