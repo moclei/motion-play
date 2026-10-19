@@ -2,7 +2,17 @@
 
 ## Critical Rule
 
-**DO NOT read or edit `.kicad_sch` or `.kicad_pcb` files directly.** These files are large, verbose S-expression formats that waste context window budget and produce unreliable edits. Instead, use the tools described below — they extract compact JSON context files and perform programmatic CRUD through kiutils.
+**Never read `.kicad_sch` or `.kicad_pcb` text into context, and never edit them directly.** Use the tools below. Exception: targeted read-only kiutils or `kicad-cli` probes are allowed when no tool output answers the question (e.g. zones, stackup). Run them from a scratch script, print only the numbers you need, and cite the probe and file commit.
+
+## Source-Hash Rule
+
+**Every generated context file carries provenance, and every reader checks it.**
+
+- **JSON:** a top-level `_provenance` object: `source`, `source_sha256`, `generator`, `generator_commit`, `generated`.
+- **Markdown:** the same fields as a front-matter block.
+- **Images:** a sidecar `<name>.meta.json`, or the provenance block of the narrative that embeds them.
+- **Check:** `python3 tools/lab/check_state.py --fresh <file>` recomputes the source hash (exit 0 fresh, 1 stale, 2 no provenance). Run it before citing a generated file in a card or a design decision.
+- **Scope:** all generated context, including the existing `circuit-context.json` outputs. Those have no `_provenance` yet (the retrofit belongs to the board-model initiative), so `--fresh` reports them as having none (exit 2). Until the retrofit, judge their freshness from git.
 
 ## KiCad Schematic Tools
 
@@ -80,6 +90,23 @@ Full pipeline: download labeled sessions → preprocess into (300, 6) tensors �
 
 JSON dashboard definition files for Serial Studio (advanced serial monitor). Multiple versioned files exist from iterative development — the latest version is the active one. These are loaded into Serial Studio to visualize real-time sensor data from the device.
 
+## Lab Tools
+
+### lab/
+
+Tooling for the bench-debug `lab/` tree at the repo root (STATE, cards, log, evidence). The rules come from `docs/research/v7-retry/context-strategy.md` §4.2 and §8.2. Stdlib Python 3.7+; PyYAML is used if it's installed, otherwise a built-in front-matter parser.
+
+| Tool | Purpose |
+|------|---------|
+| `check_state.py` | Session-start check. A STATE.md `as_of` behind the highest recorded/abandoned card is **STALE**, the only hard failure (exit 1). These only warn: open-card mismatch, a card in `run` with no commit for 7 days, CHECKPOINT DUE (≥ 3 recorded since `last_checkpoint`, or > 14 days since the last notebook entry), section caps, stale source hashes of generated files cited in Lookups, and v7 mentions in auto-memory. `--load` also prints the default L1 load: open cards, the last two recorded conclusions and today's log, with `self` commits resolved. `--fresh <file>` checks one generated file's provenance (exit 0 fresh, 1 stale, 2 none). `--root`, `--memory-dir` (or `$LAB_MEMORY_DIR`) and `--now` exist for fixtures. |
+| `precommit.py` | Called by `.githooks/pre-commit` on commits that stage anything under `lab/`. It rejects three things: a card moved to `recorded`/`abandoned` unless `lab/STATE.md` is staged with `as_of` set to that ID; a `recorded` card with an empty `Result commit` or no `lab/evidence/<ID>/` citation in its Conclusion; and a duplicate `V7R-NNN`. |
+| `lablib.py` | Shared front-matter and card helpers. Splits on the first two `---` lines, matches only `V7R-NNN-*.md`. |
+| `tests/run_tests.py` | Fixture tests (`tests/fixtures/<condition>/`). Each checker condition fires exactly once and nothing else does. Run after any checker change. |
+
+**One-time setup per clone:** `git config core.hooksPath .githooks`. Without it the STATE rule is not enforced.
+
+**`self` convention:** `prereg_commit: self` and `Result commit: self` mean "the commit that made this transition", since a commit can't hold its own hash. `check_state.py --load` resolves them from git.
+
 ## Dependencies
 
-All Python tools in this folder use **kiutils ≥ 1.4.8** for KiCad file parsing. Install via `pip install kiutils`. Shell scripts require AWS CLI + jq.
+All KiCad Python tools in this folder use **kiutils ≥ 1.4.8** for KiCad file parsing. Install via `pip install kiutils`. Shell scripts require AWS CLI + jq.

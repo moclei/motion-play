@@ -93,6 +93,14 @@ Without these, TFT_eSPI falls back to its default ILI9341 SPI configuration, res
 - +5V → LED strip (directly)
 - +5V → T-Display via pin 12 (5V pin)
 
+### BQ24195 Input Current Limit (main PCB v6 and v7)
+
+Both boards tie U5 (BQ24195) D+ and D− to GND, so BC1.2 detection never runs and the BQ defaults to ~500 mA IINLIM. Above that it clamps VSYS (4.2 V → 2.6 V), +5 V/+3.3 V brown out and the MCU reset-loops. This is unrecoverable on USB-only power.
+
+- **Fix:** `configureBQ24195()` in `firmware/src/main.cpp` runs in `setup()` **before** `display.init()`. It probes 0x6B (on the TCA9548A bus, SDA=43/SCL=44; bare T-Display setups skip it), then writes REG00=0x36 (IINLIM=2 A, EN_HIZ=0) and REG05=0x8A (I²C watchdog disabled). Do not delete it or move it after `display.init()`. Confirmed on v6, 2026-04-10.
+- **Ceiling:** the hardware ILIM is ~1.6 A via R32=330 Ω (530/R_ILIM), so the register's 2 A is effectively 1.6 A until R32 changes.
+- **v8 candidate:** short D+ to D− instead of both to GND. The BQ then detects a DCP and sets 1.5 A in hardware, with no firmware dependency.
+
 ### Power Isolation Challenge
 
 The T-Display's 5V pin (pin 12) is bidirectional. When powered via USB for programming, it back-feeds 5V to the main PCB's +5V rail. USB power (500-900mA) is insufficient for the LED strip (up to 4-5A), risking brown-outs or damage.

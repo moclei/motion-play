@@ -1,0 +1,8 @@
+---
+source: src/net.txt
+source_sha256: 200a14b5c6b3cc4c17a6f1bf4d8fcf8817918aee3e9dc29979a94ba9260e7c3d
+generator: fixture
+generated: 2026-11-01
+---
+
+# Net narrative

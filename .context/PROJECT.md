@@ -19,6 +19,7 @@ Motion Play is primarily an engineering project — the goal is to design and bu
 ## Current Project Status
 
 **Hardware:** ✅ Custom PCBs operational with dual-MUX architecture (TCA→PCA→Sensors). AI-optimized `circuit-context.json` available for all three PCBs (main, sensor-rigid, sensor-flex).
+**v7 main PCB I²C fault:** open, see lab/STATE.md.
 **Firmware:** ✅ Full data collection pipeline (1000 Hz, PSRAM buffering, MQTT transmission)
 **Backend:** ✅ AWS IoT Core + Lambda + DynamoDB + API Gateway
 **Frontend:** ✅ React web interface with real-time visualization and device control

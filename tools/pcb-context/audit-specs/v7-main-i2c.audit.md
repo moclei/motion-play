@@ -1,3 +1,5 @@
+> **RETIRED for numbers.** Clearances here are centreline to centreline and overstate the real copper gap by roughly half the combined trace widths (`docs/research/v7-retry/kicad-extraction-audit.md`). Don't quote them. Use edge-to-edge figures from a read-only probe (tools/CONTEXT.md Critical Rule) until the board model lands.
+
 ## Routing audit — hardware/pcb-main/kicad/motion-play-main.kicad_pcb
 
 _Generated_: 2026-04-25T17:30:53.066907+00:00

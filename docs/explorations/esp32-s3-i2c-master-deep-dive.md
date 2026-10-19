@@ -1,3 +1,5 @@
+> **Pre-retry interpretation: conclusions not authoritative; see `lab/STATE.md`.** Reference facts may be cited from this file; its conclusions may not.
+
 # ESP32-S3 I2C peripheral configuration audit and experiment plan
 
 > Date: 2026-05-01. Scope: **the ESP32-S3 I2C master peripheral only.** Hardware, PCB, BQ24195 input characteristics, bus topology, and v8 design are explicitly out of scope — see [v7-i2c-investigation.md](../debugging/v7-i2c-investigation.md) for everything else. The Phase 24 Arduino-as-master test confirmed Story F: the same wire that NACKs an ESP32-S3 master ACKs a SAMD21 (Nano 33 IoT) master. Mechanism is in the S3 master peripheral itself; this document audits every knob we can poke from firmware to find it.

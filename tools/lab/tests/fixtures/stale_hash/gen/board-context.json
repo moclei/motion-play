@@ -1,0 +1,10 @@
+{
+  "_provenance": {
+    "source": "src/board.txt",
+    "source_sha256": "f82fad9a22ddb0427352117240a794ee9e09edc349f29a2bef3fdbbd3922df16",
+    "generator": "fixture",
+    "generator_commit": "0000000",
+    "generated": "2026-11-01"
+  },
+  "nets": []
+}

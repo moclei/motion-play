@@ -76,3 +76,7 @@ tools/ml-training/output/
 mechanical/.venv/
 mechanical/models/**/*.stl
 mechanical/models/**/*.step
+
+# Lab bench data (raw dumps and renamed captures; backed up to Google Drive, not git)
+lab/inbox/
+lab/captures/

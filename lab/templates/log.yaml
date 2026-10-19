@@ -1,0 +1,61 @@
+# lab/log/YYYY-MM-DD_sNN.yaml — measurement log template
+# Source: test-workflow-audit §4.6, plus the ai_read block (context-strategy §6.4) and the kind field.
+# One YAML document per bench session. The setup blocks are written once and referenced by each measurement.
+# Example values are from the §4.6 mock-up; replace them all.
+#
+# Required-field markers (enforced by tools/lab/validate_log.py, Phase 7; it branches on `kind`):
+#   [REQ]        required in every log (kind: log-only and kind: scope)
+#   [REQ scope]  required only when kind: scope
+#   (unmarked)   optional
+# Fields are snake_case. Units go in the key name (_mV, _V, _mm, _us), never inside the value string.
+# Quote hashes, hex values and anything containing " #": YAML reads 0x6B and all-digit hashes as ints, and " #" starts a comment.
+
+session_id: 2026-11-04_s01            # [REQ] YYYY-MM-DD_sNN; matches the filename
+kind: scope                           # [REQ] log-only | scope. log-only = no scope captures; only dut.* and measurement test_id/feature/raw_observation are required
+operator: user
+ai_session: <claude session id or relay name>
+
+dut:                                  # [REQ] every dut.* field, both kinds
+  board_id: v7-B3                     # [REQ] physical label on the board; see card
+  firmware_commit: "1a2b3c4"          # [REQ] exact build flashed (quoted)
+  firmware_env: motion-play-v7-diag   # [REQ]
+  declared_baseline: v7-clean         # [REQ] v7-clean | v6-ref | other (describe in the card)
+
+scope:                                # [REQ scope]
+  model: Rigol DHO804
+  firmware: 00.01.05
+  setup_file: 2026-11-04_V7R-012_A1_01.stp   # extension per DHO804 [verify, Phase 5/6]
+
+validation:                           # [REQ scope] test-workflow-audit §4.2; every item below is required
+  passed: true                        # [REQ scope] must be true before any measurement is trusted
+  V2_probe_ratio: {CH1: 10x/10x, CH2: 10x/10x}   # [REQ scope] scope setting / probe switch
+  V3_comp_png: 2026-11-04_V7R-012_val_V3_01.png
+  V5_noise_floor_mVpp: 12             # [REQ scope]
+  V6_ground: {method: spring, point: TP4, length_mm: 8}   # [REQ scope]
+  V7_idle_high_V: {CH1: 3.29, CH2: 3.30}                  # [REQ scope]
+  V8_decode_ok: true
+  notes: ""
+
+channels:                             # [REQ scope] per channel: ratio, bw_limit, signal, point are [REQ scope]
+  CH1: {probe: "SQ-500 #1", ratio: 10x, signal: SDA, point: U5.6, bw_limit: 20MHz, v_div: 200mV, offset_V: -0.6, coupling: DC}
+  CH2: {probe: "SQ-500 #2", ratio: 10x, signal: SCL, point: U5.5, bw_limit: 20MHz, v_div: 1V, offset_V: 0, coupling: DC}
+
+measurements:                         # [REQ] at least one entry
+  - test_id: V7R-012                  # [REQ]
+    arm: A1                           # A1 | B | A2 | S1… | val (test-workflow-audit §4.4)
+    time: "2026-11-04T10:42"
+    trigger: {type: I2C, condition: address, value: "0x6B", source: CH2}
+    timebase: 5us/div
+    method: auto                      # [REQ scope] auto | cursor | both
+    feature: "SDA, master-driven 0-bit #3 of addr byte (bit 0), flat region"   # [REQ] operator field; the capture tool leaves it TODO
+    values:                           # [REQ scope]
+      - {name: Vbase, ch: CH1, value_mV: 48, gate: "t=+12..+18us"}
+      - {name: cursor_Y, ch: CH1, value_mV: 51, cursor: "Y1 on flat region"}
+    captures: [2026-11-04_V7R-012_A1_01.png, 2026-11-04_V7R-012_A1_01.csv]   # [REQ scope] names per §4.4
+    raw_observation: "BQ:X(2) every iteration; decode shows D6 N"   # [REQ] operator, verbatim; the capture tool leaves it TODO
+    ai_read:                          # one entry per PNG in captures, written by the session when it opens the image at ingest (context-strategy §6.4).
+                                      #   Unmarked because it lands after the capture; whether the validator warns on a missing entry is a Phase 7 call
+      - capture: 2026-11-04_V7R-012_A1_01.png
+        settings_seen: {CH1_v_div: 200mV, CH2_v_div: 1V, timebase: 5us/div, CH1_ratio: 10x, bw_limit: 20MHz, trigger: "I2C addr 0x6B on CH2"}   # on-screen labels only
+        values_seen: {CH1_Vbase_mV: 48}   # measurement-panel and cursor values as shown
+        mismatch: none                # none | "<what differs from the operator REPORT or the channels block>". Any mismatch is a stop condition: record it in the card as a raw observation

@@ -1,3 +1,5 @@
+> **Not debug context.** This is the April 2026 pre-order review prompt for v7. Do not load it for the v7 I²C fault; see `lab/STATE.md`.
+
 I need a thorough final review of my main PCB design before sending it to JLCPCB for manufacture and assembly. The goal is to catch any errors that would result in a non-functional board, wasted money, or a board that needs rework.
 
 ### Context

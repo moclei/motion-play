@@ -16,10 +16,13 @@
 | Organizer    | CONTEXT.md files | Audits and maintains the context hierarchy   |
 | Bugfix       | —                | Diagnoses user-found issues; proposes fixes, applies only on approval |
 | Gardener     | GARDEN.md, HAZARDS.md | Clears accumulated cross-cutting refinements via orchestrated sub-agents |
+| Debugger *(draft)* | `lab/` (STATE, NOTEBOOK, cards, log) | Runs pre-registered bench experiments with the user and keeps state current |
 
 Each role's full definition lives in its own file under `.claude/agents/`; this document holds only the sections shared across roles. 
 
 **Invocation:** The user runs Planner, Orchestrator, Organizer, Bugfix, and Gardener as their own top-level sessions with `claude --agent <role>` — the active agent is fixed for a session's lifetime. The Worker is spawned by the Orchestrator via the Task tool (`subagent_type: worker`), never by the user or another role.
+
+**Debugger (draft):** not installed yet. Its definition is the user's draft at `docs/research/v7-retry/debugger-role-draft.md`, not a file under `.claude/agents/`. Until it is installed, the user runs it as an ad-hoc `claude` session opened with "Read `docs/research/v7-retry/debugger-role-draft.md` and act as that role for this session."
 
 ---
 
@@ -145,6 +148,8 @@ Size each phase for one session. When in doubt, smaller — a session that finis
 
 Rules: one trap per entry, a line or two, no history. Route here when the value is *knowing before you start*; route a scoped fix to GARDEN, a durable "always do X" rule to a CONTEXT.md, and a decision or feature to MASTER. If an item is both a warning and a fix, HAZARDS holds the warning and links the GARDEN item that owns the fix.
 
+**lab/:** Bench-debug state, owned by the Debugger, at the repo root. `lab/STATE.md` is the single live handoff document and is loaded at the start of every debugger session. It must be updated in the same commit that records or abandons a card: the pre-commit hook rejects the commit otherwise, and `tools/lab/check_state.py` reports a stale `as_of` at session start. `lab/NOTEBOOK.md` is append-only and is grepped by test ID or date, never loaded whole. Cards (`lab/cards/V7R-NNN-<slug>.md`), session logs (`lab/log/`) and evidence (`lab/evidence/`) are committed. `lab/captures/` and `lab/inbox/` are gitignored. Templates live in `lab/templates/`. `lab/` is not an initiative folder, so the "no orphan documents" rule does not apply to it.
+
 ---
 
 ## Session Management
@@ -168,6 +173,7 @@ Relays are always written on request — by the current session, for the next on
 | Research / ideation session | `role:planner` | `RELAY-planner.md` | Enough explored to start an initiative |
 | Planner session | `role:orchestrator` | `RELAY-orchestrator.md` | Initiative docs complete, ready to build |
 | Orchestrator session | Bugfix / playtesting session | `RELAY-bugfix-<date>.md` | Build complete, testing needed |
+| Debugger session | `role:planner` | `RELAY-planner.md` (in the new initiative's folder) | A fix, a design change or a tool is needed |
 
 **Relay template:**
 
@@ -216,6 +222,11 @@ In order of severity:
 **Worker encounters a blocker**
 → Document in `## Rejected Approaches` in PLAN.md → add to `## Open Questions`
 → Return `BLOCKED` → Orchestrator emits evaluation line, escalates to Planner
+
+**Debugger finds that build work is needed (a fix, a tool, a design change)**
+→ Do not implement it → propose a Planner relay
+→ Exception: a firmware change that *is* the experiment (a card's declared delta) is allowed with the user's approval and is reverted on a null result
+→ Anything that outlives the card goes to the Planner
 
 **Orchestrator sees repeated failure or drift**
 → Stop dispatching → send replan request to Planner with specifics

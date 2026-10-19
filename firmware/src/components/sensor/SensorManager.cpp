@@ -1,8 +1,5 @@
 #include "SensorManager.h"
 #include "../session/SessionManager.h" // For SessionSummary full definition
-#include <driver/gpio.h>
-#include <driver/i2c.h>
-#include <soc/io_mux_reg.h>
 
 extern bool serialStudioEnabled;
 
@@ -636,54 +633,11 @@ bool SensorManager::init(SensorConfiguration *config)
     activeConfig = config;
 
     // Initialize I2C
-    Wire.begin(43, 44); // SDA=43, SCL=44 for T-Display S3
-    // TEMP DEBUG: clock back to 100 kHz to match Phase 21 baseline; only variable
-    // changing is GPIO drive strength below. Restore to 400000 after Phase 23.
-    Wire.setClock(100000);
-    // TEMP DEBUG: bump SDA/SCL drive from CAP_2 (default ~20 mA) to CAP_3 (~40 mA)
-    // to lower master pull-down R_DS(on) and hence V_OL at BQ pin 6. Tests Story
-    // G-revised: V_OL elevation by ~100 mV from cable-injected ~330 µA crosses BQ's
-    // effective V_IL. Halving R_DS(on) should drop V_OL well below threshold.
-    // See docs/debugging/v7-i2c-investigation.md Phase 23.
-    gpio_set_drive_capability(GPIO_NUM_43, GPIO_DRIVE_CAP_3);
-    gpio_set_drive_capability(GPIO_NUM_44, GPIO_DRIVE_CAP_3);
-    // EXPERIMENT 1 (Phase 24 — NULL RESULT): legacy-driver digital deglitcher
-    // at maximum (7 I2C_SCLK cycles). The arduino-esp32 v2.0.14 / IDF v4.4
-    // wrapper leaves this OFF by default; the new driver (IDF 5.2+) enables
-    // it at 7 by default. Filter went on (filter_enable returned OK) but the
-    // BQ NACK pattern on TCA2 was unchanged — refutes "sub-µs glitches at the
-    // I2C controller input" as the missing knob. Kept on because there is no
-    // downside, and removing it for the next experiments would conflate two
-    // changes. See docs/explorations/esp32-s3-i2c-master-deep-dive.md §5 #1.
-    i2c_filter_enable(I2C_NUM_0, 7);
-
-    // EXPERIMENT 2 (Phase 25): pad-level input filter — independent 2-APB-cycle
-    // (~25 ns) pulse rejection at the GPIO pad input itself. Documented in
-    // ESP32-S3 TRM §6.4.3 / Register 6.36 as bit 15 of IO_MUX_GPIOn_REG; *not*
-    // enabled by the IDF I2C driver. Different physical filter from
-    // i2c_filter_enable() above (that one is in the I2C controller, this one
-    // is in the IO_MUX). No public API; direct register bit.
-    // The IDF v4.4 SDK's io_mux_reg.h on S3 does not export the macro, so we
-    // define it locally per TRM. See deep-dive §5 Experiment 2.
-    #ifndef FUN_FILTER_EN
-    #define FUN_FILTER_EN (BIT(15))
-    #endif
-    REG_SET_BIT(GPIO_PIN_MUX_REG[43], FUN_FILTER_EN);
-    REG_SET_BIT(GPIO_PIN_MUX_REG[44], FUN_FILTER_EN);
-
-    // EXPERIMENT 3 (Phase 25): explicitly disable internal pull-ups and pull-
-    // downs on SDA/SCL. Per arduino-esp32 #4887 the internals don't reliably
-    // disable through pinMode/Wire.begin alone; we have 2.2 kΩ external pulls
-    // on R28/R29 so the ~45 kΩ internal pull-up in parallel is nominally
-    // negligible — but Phase 5 has already shown total pull strength isn't
-    // the mechanism, so this is a free null test. See deep-dive §5 #3.
-    gpio_pullup_dis(GPIO_NUM_43);
-    gpio_pullup_dis(GPIO_NUM_44);
-    gpio_pulldown_dis(GPIO_NUM_43);
-    gpio_pulldown_dis(GPIO_NUM_44);
-
-    Serial.println("I2C: 100 kHz, drive CAP_3, filter(7), pad-filter, "
-                   "internal pulls dis [Phase 24 null + Phase 25 bundle]");
+    Wire.begin(43, 44);    // SDA=43, SCL=44 for T-Display S3
+    Wire.setClock(400000); // 400 kHz (Fast Mode) - set BEFORE sensor initialization
+    // Default drive strength, no I2C/IO_MUX glitch filters, internal pulls as
+    // left by Wire.begin() (v7-clean baseline; matches 4da1c67).
+    Serial.println("I2C: 400 kHz, default drive, no filters, default pulls [v7-clean]");
 
     if (activeConfig != nullptr)
     {
