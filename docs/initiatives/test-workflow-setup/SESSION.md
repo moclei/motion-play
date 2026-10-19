@@ -85,3 +85,24 @@ Tasks assigned (from TASKS.md Phase 2):
 - [ ] Templates acceptance: create a dummy card `V7R-999-dummy.md` from the template, commit it as pre-registered, confirm the front matter parses (`python3 -c` yaml load), then delete it in a follow-up commit and note both hashes in SESSION.md
 - [ ] 🔄 Handoff
 ```
+
+#### Notes
+
+**Task 1 (`241c0e3`).** `lab/{cards,log,evidence,procedures,templates}/.gitkeep`. `.gitignore` gains `lab/inbox/` and `lab/captures/` (confirmed with `git check-ignore`). The two ignored dirs are not created; they appear on first ingest.
+
+**Task 2 (`45860a7`).** `lab/STATE.md`: front matter `as_of: V7R-000`, `updated: 2026-10-19`, `last_checkpoint: V7R-000`, `open_cards: []` (parses with `yaml.safe_load`). The 9 headings keep the §4.1 cap annotations in the heading line, so the Phase 3 cap check can parse `(≤ N lines|rows)` from it. Sections 1–8 hold only the one-line field definition, plus the table header row where the section is a table (no data rows). Section 9 has three rows: changelist, legacy phase grep, decisioning.md §2 (until transcribed). The §4.1 mock-up's changelist cell said "§5; §3 by CL-ID"; the real file has §3 = changes table, §5 = observations, and the row says that.
+- Judgement: section 6 (Baselines) is left empty even though `v7-clean`/`v6-ref` exist, per the "no content in sections 1–8" rule. The first debugger session fills it.
+- Note for Phase 3: the cap check must decide whether the definition line and table header rows count toward a section's cap.
+
+**Task 3 (`fcf1865`).** `lab/NOTEBOOK.md`: header (append-only rule, the "no result written twice" split), both §5 formats with placeholders, then the seed entry `2026-10-19 · s00`: volume 0 = `docs/debugging/v7-i2c-investigation.md` frozen; `L-PhNN`, `L-Ph24a` (Arduino-as-master), `L-Ph24b` (Exp 1 glitch filter).
+
+**Task 4 (`5d6ac6d`).** `lab/templates/card.md` is the §4.7 block verbatim, with two changes: `firmware_commit` is quoted (an all-digit hash parses as an int), and the §4.7 rules are appended as an HTML comment at the end. `lab/templates/instruction.md` has the §4.8 block as a placeholder skeleton, the §4.8 example, and the three rules.
+
+**Task 5 (`2344740`).** `lab/templates/log.yaml`: the §4.6 schema plus `kind: log-only | scope` and a per-measurement `ai_read` list (one entry per PNG: `capture`, `settings_seen`, `values_seen`, `mismatch`). Markers: `[REQ]` = both kinds (`session_id`, `kind`, `dut.*`, `measurements[].test_id/feature/raw_observation`); `[REQ scope]` = the rest of the §4.6 required list. `ai_read` is unmarked because it is written at ingest, after the capture; the Phase 7 validator decides whether to warn when it is missing. Two fixes so the §4.6 example parses: `probe: "SQ-500 #1"` (an unquoted ` #` starts a YAML comment and silently truncates the flow map) and `value: "0x6B"` (YAML 1.1 reads it as int 107). The filename follows PLAN (`YYYY-MM-DD_sNN.yaml`), not the §4.6 example's `_session-01`.
+
+**Task 6 (templates acceptance).** `lab/cards/V7R-999-dummy.md` created from the template (test_id, title, created, H1 changed), committed as `status: pre-registered` in **`9bc9d0c`**. Front matter parsed from the committed blob with `yaml.safe_load` (lines between the first two `---`): `test_id: V7R-999`, `status: pre-registered`, all baseline keys present. Deleted in **`91b482f`**. No hook exists yet (Phase 3), so nothing guarded these commits.
+
+**For Phase 3.**
+- `prereg_commit:` in the card template ("filled by the commit") has the same self-reference problem as `Result commit`. Settle both with one convention.
+- A front-matter parser must split on the first two `---` *lines*. A naive `split('---')` works on these files only because `--- RUN ---` comes after the front matter.
+- `lab/cards/.gitkeep` sits beside the cards. The counter and the duplicate-ID check should match `V7R-NNN-*.md` only.
