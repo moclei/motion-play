@@ -1,3 +1,5 @@
+> **RETIRED, superseded by `lab/STATE.md`; do not load.** A future outside-review prompt is generated from `lab/STATE.md` (context-strategy §7.3), not maintained by hand.
+
 # Fresh-Perspective Handoff — v7 Main PCB I2C Fault
 
 I designed a PCB and had it manufactured and components assembled by JLCPCB. It arrived and I uploaded my custom firmware, and it doesn't work. I've been trying to find the fault for several days and I'm worried about confirmation bias —  I'm worried that my framing of the problem is causing blind spots in my troubleshooting. **Your job is to look at this with fresh eyes and challenge the framing where it makes sense.** You are not obligated to accept the existing interpretation.
