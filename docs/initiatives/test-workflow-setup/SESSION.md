@@ -593,3 +593,24 @@ The "substituted parts" are listed in the same file's section just above it, als
 Branch pushed, PR "test-workflow-setup: log-only ready" opened against main. Merge with a **merge commit** (keeps `90053af`/`v7-clean` reachable from main's history).
 - PR #79 merged by the Orchestrator at the user's request, using a **merge commit** (`b412284`). `90053af` (`v7-clean`) is reachable from `origin/main`.
 - Branch `feat/test-workflow-setup` re-cut from the new main. W3 and the Phase 4 Handoff are ticked. **Track 1 complete: the debug track can start as ad-hoc sessions off the draft.**
+
+---
+
+### Worker #6 — Phase 5: Instrument facts (desk)
+
+**Dispatch:**
+```
+Initiative: Test Workflow Setup
+Phase: 5 — Instrument facts (desk)
+Initiative path: docs/initiatives/test-workflow-setup/
+Additional reading: docs/research/v7-retry/test-workflow-audit.md §2.1, §4.2, §4.3, §4.8, §5 as the tasks name; tools/CONTEXT.md before any KiCad probe. Phase notes: desk only — nothing goes to the bench. Every fact gets a source; anything unconfirmable is marked "needs bench" and is not used as verified. kiutils probes are read-only scratch scripts in your scratchpad, citing file@commit. Branch freshly re-cut from main after the milestone merge (no rebase needed).
+
+Tasks assigned (from TASKS.md Phase 5):
+- [~] From Rigol's DHO800/DHO900 Programming Guide, record the exact SCPI syntax for every query listed in PLAN (screenshot, waveform data, setup save/load, per-channel ratio/BW/scale/offset, timebase, trigger, measurements), with source page numbers
+- [ ] Record the DHO804 Cal output spec, the setup-file extension, the CSV save path on fw 00.01.05, and Sensepeek SQ-500/SQ-10 bandwidth, attenuation and tip capacitance, each with its source. Mark each "desk-verified" or "needs bench"
+- [ ] Check the ESP32-S3 V_OL datasheet figure behind §2.1's "≈ 30–80 mV". Record whether it's supported (cite the `docs/references/` page) and what the procedure may claim
+- [ ] Evaluate the third-party DHO800 LAN/MCP project: licence, activity, coverage vs §5 item 1, effort to wrap. Write a short recommendation in PLAN
+- [ ] kiutils probe (scratch script, read-only): the closest GND-net pad to U5 pins 5/6 on v7 (edge-to-edge, `file@commit`), and the v6 names of the master SDA/SCL test points, BQ24195 pins 5/6 and the GND pad. Record them in PLAN
+- [ ] Draft the Phase 6 bench script as §4.8 blocks in SESSION.md (LAN connect, `*IDN?`, each query, USB save, LAN pull, third-party smoke test)
+- [ ] 🔄 Handoff
+```
