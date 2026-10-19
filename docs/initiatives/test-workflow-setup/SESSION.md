@@ -591,3 +591,5 @@ The "substituted parts" are listed in the same file's section just above it, als
 
 ### W3 — milestone PR (Orchestrator)
 Branch pushed, PR "test-workflow-setup: log-only ready" opened against main. Merge with a **merge commit** (keeps `90053af`/`v7-clean` reachable from main's history).
+- PR #79 merged by the Orchestrator at the user's request, using a **merge commit** (`b412284`). `90053af` (`v7-clean`) is reachable from `origin/main`.
+- Branch `feat/test-workflow-setup` re-cut from the new main. W3 and the Phase 4 Handoff are ticked. **Track 1 complete: the debug track can start as ad-hoc sessions off the draft.**
