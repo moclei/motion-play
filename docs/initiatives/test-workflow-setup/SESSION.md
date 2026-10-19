@@ -475,3 +475,35 @@ Worker recommendation, for the Orchestrator to pass on or drop: **B**. It is a d
 #### Verification
 - `git diff f567168 d1e9de4`: only SESSION.md changed. No touch point applied. The memory directory was not touched. W2 is still `[~]`.
 - Drafts read in full and presented to the user as items 1–6, plus the housekeeping-list question from 5b.
+
+**W2 decisions (user, 2026-10-19):**
+- Approved: items 1a–1d (PROTOCOL.md), 2 (PROJECT.md pointer), 3a–3b (tools/CONTEXT.md), 4a–4g (banners, including the regeneration caveat on 4f), 5a, 5b, 5c, and 6 = **Option B** (move IINLIM to `firmware/CONTEXT.md`, delete the memory file and its index line).
+- Memory edits are applied by the Worker; the user did not choose to do them by hand.
+- The housekeeping-list question (5b) was left unanswered. Before deleting `project_pcb_revision_apr2026.md`, its "Housekeeping still needed" list is preserved verbatim in the applying Worker's Notes, and the question is put to the user again. Nothing goes to GARDEN.md until the user answers.
+
+---
+
+### Worker #5 — Phase 4: Touch points, milestone (apply + checks)
+
+**Dispatch:**
+```
+Initiative: Test Workflow Setup
+Phase: 4 — Touch points, milestone
+Initiative path: docs/initiatives/test-workflow-setup/
+Additional reading: SESSION.md "Worker #4" Notes block (the drafted items 1–6, applied exactly as drafted) and the "W2 decisions" block that follows Worker #4's Verification. Phase notes:
+- Apply the approved items: 1a–1d, 2, 3a–3b, 4a–4g, 5a, 5b, 5c, and 6 Option B.
+  - Use the drafted text verbatim; adjust line anchors only.
+  - One commit per file group.
+- Memory files live outside git (~/.claude/projects/-Users-marcocleirigh-Workspace-motion-play/memory/), so log each memory edit in your Notes.
+- Before deleting project_pcb_revision_apr2026.md, copy its "Housekeeping still needed" list verbatim into your Notes. Do not write to GARDEN.md.
+- Fill in Worker #4's outcome table by restating it in your own Notes. Don't edit Worker #4's block.
+- Then do the budget check and the check_state.py task.
+- Stop before W3. The Orchestrator opens the milestone PR. Leave W3 and Handoff unchecked, and return DONE with "ready for W3".
+
+Tasks assigned (from TASKS.md Phase 4):
+- [~] **W2:** present each touch point as a diff for approval and apply only the approved ones: … (approvals recorded in SESSION.md; apply them)
+- [ ] Budget check: measure the actual L0 (lines and bytes/4), with `docs/research/v7-retry/debugger-role-draft.md` standing in for `debugger.md`, and record it in SESSION.md. Pass: < 500 lines and ≤ ~12k tokens. If over, report which file and stop
+- [ ] Run `python3 tools/lab/check_state.py` on the real `lab/`. Expect no findings except `[MEMORY]` warnings the user accepted at W2 (sentinel state). Any other finding: report and stop
+- [ ] **W3:** (Orchestrator)
+- [ ] 🔄 Handoff
+```
