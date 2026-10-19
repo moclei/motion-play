@@ -469,30 +469,99 @@ The user's biggest pain point. Proposed flow:
 
 ## 6. Does this spawn an implementation initiative?
 
-**Yes: one concrete initiative, `test-workflow-setup`.** It is a precondition for any v7 bench work. The re-measurement (R1) is *not* a separate initiative; it becomes the first test cards of the Stage B debugging initiative.
+**Yes: one initiative, suggested name `test-workflow-setup`.** It is a precondition for any new v7 bench measurement: until it lands, no v7 scope number can be trusted or audited (§2–§3). How to phase it is the Planner's call; §6.1 gives the inputs.
 
-### Initiative: `test-workflow-setup`
+**The re-measurement (R1) is not part of it.** R1 is v7 debugging and needs the Stage B hypothesis map. The recommendation is that R1 become the first test cards of the Stage B debugging initiative, followed by the Phase 25 experiments only if still relevant, one per card. `decisioning.md` confirms this.
 
-**Goal:** before any new v7 measurement is recorded, the bench produces captures that are validated, self-describing, filed by test ID, and readable by an AI session without manual transcription.
+### 6.1 Input for the Planner
 
-| Phase | Deliverables | Done when |
-|---|---|---|
-| 1. Baselines | Two firmware baseline commits/envs: `v7-clean` (HEAD minus the five I²C-init debug changes, §2.5) and `v6-ref` (`4da1c67`, CL-25). Both build. | `pio run` succeeds for both; each baseline's I²C init diff is written into its commit message. |
-| 2. Scope connectivity | DHO804 on the LAN, SCPI reachable from the Mac. Confirm on firmware 00.01.05: CSV save path, setup-file save, `:DISPlay:DATA?`, `:WAVeform:DATA?`, per-channel probe-ratio/BW-limit queries (§4.1 [verify] items). | A screenshot and a CSV pulled over LAN match ones saved to USB. |
-| 3. Capture tool | SCPI capture CLI (§5 item 1): pulls PNG + CSV + setup, names per §4.4 into `lab/captures/<test-id>/`, appends a pre-filled log entry (§4.6). Interim USB ingest script (§5 item 5) as fallback. | One command produces correctly named files and a log entry with every required §4.6 field filled from the scope. |
-| 4. Templates and layout | `lab/` structure and `.gitignore` (§4.5, final location per topic 6); test-card template (§4.7); log template (§4.6); instruction/report block (§4.8); `V7R-NNN` counter. Optional: card scaffolder and validator (§5 items 3–4). | A dummy card can be created, pre-registered and committed end to end. |
-| 5. Bench procedure | DHO804-only scope procedure replacing `docs/debugging/i2c-oscilloscope-debugging.md`, containing §4.2 setup validation and §4.3 known-good reference. Identify the closest GND pad to U5 (§5 item 6). Ground springs on hand. | Document reviewed by the user. |
-| 6. Acceptance dry run | Run §4.2 + §4.3 on the v6 board with `v6-ref` firmware, using the new card, log, tool and instruction format end to end. Test ID `V7R-001`. | v6 reads within §4.3 spec (V_OL ≤ 0.4 V, expected ≈ 30–80 mV; idle high 3.3 V ± 5%; rise time within limit), and the user confirms the handoff was workable. If v6 fails spec, the setup is fixed before the initiative closes. |
+This section is not a PLAN. It lists what the Planner needs to settle when writing BRIEF, PLAN and TASKS.
 
-**Out of scope for this initiative:** any v7 measurement, any hypothesis work, and the R1 re-measurement.
+**Goal.** Before any new v7 measurement is recorded, the bench produces captures that are validated, self-describing, filed by test ID, and readable by an AI session without manual transcription.
 
-### Follow-on, inside the Stage B debugging initiative (not separate)
+**In scope:**
+- Two declared firmware baselines: `v7-clean` (HEAD minus the five I²C-init debug changes, §2.5) and `v6-ref` (`4da1c67`, CL-25).
+- Scope on the LAN, with SCPI confirmed on firmware 00.01.05, including every §4.1 [verify] item (CSV save, setup-file save, screenshot and waveform queries, per-channel probe-ratio and BW-limit queries).
+- The SCPI capture tool (§5 item 1), plus the USB ingest script (§5 item 5) as a fallback.
+- Templates and layout as files: test card (§4.7), measurement log (§4.6), instruction/report block (§4.8), `lab/` capture split and `.gitignore` (§4.5), `V7R-NNN` counter.
+- A DHO804-only bench procedure containing §4.2 setup validation and §4.3 known-good reference, replacing `docs/debugging/i2c-oscilloscope-debugging.md`.
+- Identifying the GND pad closest to U5 (§5 item 6), and ground springs on hand.
+- An acceptance dry run of §4.2 + §4.3 on the v6 board, using the new card, log, tool and instruction format end to end.
 
-- **R1 as the first v7 test cards** (`V7R-002`+): SDA/SCL V_OL at U5 pins 5/6 with cable A/B/A on `v7-clean`, then CAP_2 vs CAP_3 as its own card (§2.4). These cards decide whether Story G-revised stays "measured-refuted" and resolve the Phase 21→23 swing.
-- **Phase 25 Experiments 2/3,** only if the hypothesis map still needs them, as individual cards against `v7-clean`.
-- **R2** only if a Phase 20 visual claim becomes load-bearing.
+**Optional, Planner's judgement:** card scaffolder, log/card validator, validation helper (§5 items 2–4); evaluating the third-party DHO800 LAN/MCP project (§5 item 7) before building the capture tool.
 
-The synthesis session confirms ordering. The user placed no limits on scope.
+**Out of scope:** any v7 measurement, R1/R2, any hypothesis work about the v7 fault, firmware changes beyond defining the two baselines.
+
+**Acceptance criteria to carry into the PLAN:**
+
+| Check | Pass |
+|---|---|
+| Baselines | Both `v7-clean` and `v6-ref` build; each one's I²C init is stated in its commit message. |
+| LAN capture | A screenshot and CSV pulled over LAN match the same capture saved to USB. |
+| Capture tool | One command yields files named per §4.4 and a log entry with every required §4.6 field filled from the scope's own settings. |
+| Templates | A dummy card can be created, pre-registered and committed end to end. |
+| Dry run | v6 on `v6-ref` reads within §4.3 spec (V_OL ≤ 0.4 V, expected ≈ 30–80 mV; idle high 3.3 V ± 5%; rise time 30→70% ≤ 300 ns at 400 kHz), and the user confirms the image handoff was workable. A v6 failure means the setup is fixed before the initiative closes. |
+
+**Dependencies and constraints.**
+- Topic 6 decides where `lab/` lives and how cards and logs are loaded. The Planner should either wait for topic 6 or leave the location as a single config value.
+- The ESP32-S3 V_OL datasheet figure behind §2.1 must be checked before the §4.3 "expected ≈ 30–80 mV" goes into a procedure.
+- The dry run needs the user at the bench; the Orchestrator can't verify it alone.
+
+**Decisions for you (the user)**, to answer at Planner kickoff:
+1. Launch before topic 6 and Stage B decisioning, or let `decisioning.md` sequence it?
+2. Cloud backup for gitignored captures: which service, if any?
+3. The capture tool: build our own, or adopt the third-party DHO800 project if it checks out?
+4. Does the old scope guide get deleted, or archived with a pointer to the new procedure?
+
+### 6.2 Draft relay for the Planner
+
+This is a draft. Answer the decisions in §6.1 first and edit them into "Open questions", or leave them for the Planner to ask you. To launch: save the block below as `docs/initiatives/test-workflow-setup/RELAY-planner.md`, then start a session with `--agent planner`. The initiative name is a suggestion.
+
+````markdown
+# Relay — research → planner — <date>
+
+role:planner
+
+## Context
+Topic 4 of the v7-retry research (`docs/research/v7-retry/test-workflow-audit.md`) audited past oscilloscope work on the v7 I²C fault and the bench workflow around it. Key scope readings (Phase 21, Phase 23) can't be trusted or re-audited: no setup validation, no setup metadata, no saved captures, no firmware commit per test. Getting images into AI sessions was the user's biggest pain. This initiative builds the bench workflow that every future v7 measurement depends on.
+
+## Load these files
+- .context/PROTOCOL.md
+- docs/research/v7-retry/test-workflow-audit.md — **the source of truth for scope**. Read §3, §4, §5 and §6 in full; §6.1 is the planner input. §2.5 defines the firmware baselines.
+- docs/research/v7-retry/v6-v7-changelist.md — CL-25 (v6 firmware `4da1c67`) and CL-26 (v7 test points: TP4 = GND only)
+- docs/debugging/i2c-oscilloscope-debugging.md — the guide being replaced (skim)
+- firmware/src/components/sensor/SensorManager.cpp:641-685 and platformio.ini (v7 envs) — what `v7-clean` must strip
+- docs/research/v7-retry/context-strategy.md, if topic 6 is complete — where `lab/` lives
+
+## State
+Branch: n/a (the Orchestrator cuts `feat/test-workflow-setup` from main at run time)
+Build: n/a at kickoff; the firmware builds at HEAD
+TASKS.md current: n/a — not yet written
+Initiative folder `docs/initiatives/test-workflow-setup/` holds only this relay.
+
+## What was done
+- Audited Phases 20–23: Phase 20 trustworthy (by margin); Phase 21 suspect; Phase 23 unknown, leaning plausible. No old captures can be tied to phases, so re-measurement is the only route (and is out of scope here).
+- Found Phase 25 unrecorded (treated as not tested) and HEAD firmware carrying five stacked I²C debug changes, three missing from the investigation doc's revert list.
+- Proposed concrete formats: setup-validation checklist (§4.2), known-good reference on v6 (§4.3), filenames (§4.4), capture layout (§4.5), YAML log (§4.6), test card (§4.7), instruction block (§4.8), image handoff (§4.9).
+- Scope: Rigol DHO804, firmware 00.01.05, never networked; the user wants LAN control.
+
+## Your task
+Write BRIEF.md, PLAN.md and TASKS.md in `docs/initiatives/test-workflow-setup/`, using audit §4–§5 (what to build) and §6.1 (scope, acceptance criteria, dependencies).
+
+- Carry the §6.1 acceptance table into the PLAN.
+- Instrument facts marked [verify] in the audit must be confirmed on the scope before anything is built on them.
+- Steps the user performs at the bench must use the §4.8 instruction format, and the PLAN must show where the Orchestrator waits for the user.
+- Keep each phase Worker-session-sized; split with a `🔄 Handoff` if not.
+
+This initiative builds workflow and tooling only. It must not take v7 measurements or form conclusions about the v7 I²C fault; that is Stage B's job.
+
+## Open questions
+1. Launch before topic 6 and Stage B decisioning, or let `decisioning.md` sequence it?
+2. Cloud backup for gitignored captures: which service, if any?
+3. Build our own capture tool, or adopt the third-party DHO800 project if it checks out?
+4. Delete the old scope guide, or archive it with a pointer?
+5. Where `lab/` lives, if topic 6 hasn't decided.
+````
 
 ---
 
