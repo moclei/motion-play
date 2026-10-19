@@ -140,3 +140,23 @@ Tasks assigned (from TASKS.md Phase 3):
 - [ ] Add a `tools/lab/` section to `tools/CONTEXT.md` (what each script does, and the one-time hooksPath setup)
 - [ ] 🔄 Handoff
 ```
+
+#### Notes
+
+**Task 5: hook acceptance (scratch clone, real `lab/` untouched).** The clone of `feat/test-workflow-setup` @ `4882bd7` is under the scratchpad, with `core.hooksPath .githooks`. `V7R-001-dummy.md` was made from the template and pre-registered (`58739ee`, STATE `open_cards: [V7R-001]`). Then status was set to `recorded`, `lab/evidence/V7R-001/A1_01.csv` was cited in the Conclusion and staged, and `Result commit: self` was kept.
+
+Attempt 1, card + evidence staged, STATE not edited:
+```
+lab pre-commit: REJECTED
+  - lab/cards/V7R-001-dummy.md (recorded) moves to recorded|abandoned, but lab/STATE.md is not staged. Update STATE.md (as_of: V7R-001, map cells, open_cards) in the same commit.
+  (rules: docs/research/v7-retry/context-strategy.md §4.2; card template: lab/templates/card.md)
+exit=1
+```
+Attempt 2, with STATE `as_of: V7R-001`, `open_cards: []` staged:
+```
+[feat/test-workflow-setup a38c80d] record V7R-001 + STATE as_of
+ 3 files changed, 5 insertions(+), 3 deletions(-)
+ create mode 100644 lab/evidence/V7R-001/A1_01.csv
+exit=0
+```
+Afterwards, `check_state.py --load` on the clone gave `RESULT: OK (0 warnings)` and resolved `prereg_commit self = 58739ee; Result commit self = a38c80d`, which are the right commits. Extra negative checks, all rejected (exit 1): a duplicate `V7R-001-other.md`; a recorded card with `Result commit: <hash>` and no evidence citation (two errors); a card moved to `abandoned` with STATE unchanged. A commit that stages nothing under `lab/` skips the hook (exit 0).
