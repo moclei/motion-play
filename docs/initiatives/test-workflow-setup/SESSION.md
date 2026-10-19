@@ -205,3 +205,24 @@ Afterwards, `check_state.py --load` on the clone gave `RESULT: OK (0 warnings)` 
 4. PROTOCOL.md touch points are applied at W2, with the Debugger row marked draft and pointing to the draft and its ad-hoc invocation.
 
 `[ORCH] Spawning Planner — debugger role install deferred out of initiative; BRIEF goal, Phase 4 and Phase 9 need re-scoping`
+
+`[ORCH] Planner → REPLANNED: ready to continue` — commit `4277e74`. Verified: no `claude --agent debugger` wording left in BRIEF/PLAN/TASKS; Phase 4 W1 task removed; budget check uses the draft; install + edit-pass suggestions in Deferred; PLAN has no date-stamped headings.
+
+---
+
+### Worker #4 — Phase 4: Touch points, milestone (W2 preparation)
+
+**Dispatch:**
+```
+Initiative: Test Workflow Setup
+Phase: 4 — Touch points, milestone
+Initiative path: docs/initiatives/test-workflow-setup/
+Additional reading: PLAN "Touch points (Phase 4)"; docs/research/v7-retry/context-strategy.md §2.4, §8.2, §8.3, §9 as the items name. Phase notes: W2 is a user-approval gate and Workers do not talk to the user. This dispatch is W2 preparation only: draft every touch-point edit as a proposed unified diff (or exact new text) in your SESSION.md Notes block, one numbered item each, with the target file. Do NOT apply any of them. The memory files live outside the repo (~/.claude/projects/-Users-marcocleirigh-Workspace-motion-play/memory/); for those, write the proposed deletions and edits as text and do not touch the files. For item (IINLIM memory), draft both options (reword/move to firmware/CONTEXT.md vs keep as accepted warning). Commit SESSION.md, leave the W2 task [~], and return PARTIAL: "W2 diffs ready". The Orchestrator presents them to the user and re-dispatches to apply the approved ones and finish the phase.
+
+Tasks assigned (from TASKS.md Phase 4):
+- [~] **W2:** present each touch point as a diff for approval and apply only the approved ones: PROTOCOL.md (§9 of context-strategy; the Debugger row is marked draft and points to the draft file and the ad-hoc invocation), the PROJECT.md pointer line, the `tools/CONTEXT.md` kiutils rule and source-hash rule (show the existing Phase 3 `tools/lab/` section alongside; don't add another), banners on the §2.4 items except the scope guide, auto-memory deletions and the C90862 stock tip moved to `hardware/CONTEXT.md`, and the user's choice for `project_bq24195_iinlim_fix.md` + its index line (reword/move, or keep as an accepted `[MEMORY]` warning). Record each outcome in SESSION.md
+- [ ] Budget check … (not in this dispatch)
+- [ ] Run `python3 tools/lab/check_state.py` … (not in this dispatch)
+- [ ] **W3:** … (not in this dispatch)
+- [ ] 🔄 Handoff
+```
