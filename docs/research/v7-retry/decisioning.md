@@ -283,6 +283,17 @@ Topic 6 §10.2's relay supersedes topic 4 §6.2's. `RELAY-planner.md` (next to t
 
 None of these needs a decision on mechanism. They are the swap fixtures P2 asks for.
 
+### 3.2a Initiative queue (where to look)
+
+This table is the queue until `lab/STATE.md` exists. After that, STATE section 8 ("Blocked on") carries the live version, and the debugger proposes the next Planner relay when a trigger fires.
+
+| Order | Initiative | Starts when | Relay |
+|---|---|---|---|
+| 1 | `test-workflow-setup` (merged with topic 6 scaffolding) | now | `docs/initiatives/test-workflow-setup/RELAY-planner.md` (ready) |
+| — | Debug track (not an initiative) | baselines + `lab/` containers + debugger role land | first debugger session transcribes §2 into `lab/STATE.md` |
+| 2 | `pcb-board-model` | a card makes a layout question load-bearing, or #1 closes | draft in `kicad-extraction-audit.md` §6.2; fill `<date>`, answer its 4 decisions (decision 4 is answered here), save to `docs/initiatives/pcb-board-model/RELAY-planner.md` |
+| later | Fix / v8 initiatives | §4.2 respin criteria hold, or a checkpoint opens a parallel respin track | written by the debug track at that point |
+
 ### 3.3 Input 9: any bench test before `test-workflow-setup` lands?
 
 **Not before any of it lands. Yes, before its scope tooling lands.**
