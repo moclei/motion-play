@@ -160,3 +160,24 @@ Attempt 2, with STATE `as_of: V7R-001`, `open_cards: []` staged:
 exit=0
 ```
 Afterwards, `check_state.py --load` on the clone gave `RESULT: OK (0 warnings)` and resolved `prereg_commit self = 58739ee; Result commit self = a38c80d`, which are the right commits. Extra negative checks, all rejected (exit 1): a duplicate `V7R-001-other.md`; a recorded card with `Result commit: <hash>` and no evidence citation (two errors); a card moved to `abandoned` with STATE unchanged. A commit that stages nothing under `lab/` skips the hook (exit 0).
+
+**Task 1 (`bf3e294`).** Convention: `prereg_commit` and `Result commit` are both written as the literal `self`, meaning "the commit that made this transition" (the commit that adds the file, and the commit that sets `status: recorded`). A real hash is also accepted. The resolution rule is the oldest `--diff-filter=A` commit for prereg and the latest `-G'^status: recorded'` commit for result. It is anchored at line start because the template's rules comment contains the literal text "status: recorded". The template and the PLAN Technical Note are updated, and the Open Question is struck through.
+
+**Task 2 (`51205d2`).** `tools/lab/check_state.py` and `tools/lab/lablib.py` (shared parser). Findings print as `[TAG] msg`. The tags are STALE (exit 1), OPEN-CARDS, LOST-RESULT, CHECKPOINT-DUE, CAP, STALE-HASH and MEMORY, plus housekeeping tags CARD and AS-OF. Judgement calls:
+- **Cap counting rule:** a section's count excludes the field-definition line, the table header and separator rows, and blank lines. `rows` caps count table data rows. The whole file warns past 150 lines.
+- **CHECKPOINT DUE by gap:** "gap" is measured from the newest `## YYYY-MM-DD` notebook entry. It applies only once `as_of > V7R-000`, so the sentinel state doesn't nag.
+- **LOST-RESULT:** this check uses the newest commit touching the card *or* `lab/evidence/<ID>/` (falling back to mtime if nothing is committed).
+- **Path resolution:** Lookups paths and `_provenance.source` resolve against `--root`'s parent (the repo root for the real lab). Lookups files without provenance count as hand-written and are skipped.
+- **Memory:** the default memory dir is derived from the repo path. The regex is case-insensitive.
+
+**Task 3 (`5ad41a4`).** There are 9 fixtures: clean, stale, open_cards, lost_result, checkpoint_due, checkpoint_gap, cap, stale_hash, memory. The runner asserts the expected tag exactly once and *no other tag*, plus four `--fresh` exit-code cases (JSON stale, MD fresh, PNG+sidecar fresh, hand-written = none) and mini-parser parity with PyYAML on the card template. Result: 14/14 pass. The fixtures were generated from the real `lab/STATE.md` skeleton. If that skeleton changes, the cap fixture's section-1 lines still apply.
+
+**Task 4 (`4882bd7`).** `.githooks/pre-commit` (POSIX sh) runs only when something under `lab/` is staged, then execs `tools/lab/precommit.py`, which reads the index, not the working tree. Rule 2 also *warns* (it does not reject) when the cited `lab/evidence/<ID>/` has no files in the index. `git config core.hooksPath .githooks` is set in the real repo. `.git/hooks` held only samples, so nothing was displaced.
+
+**Task 6 (`065dcc2`).** `tools/CONTEXT.md` has a new "Lab Tools → lab/" section: the script table, the one-time hooksPath setup and the `self` convention. The Dependencies line now reads "All KiCad Python tools…", since the lab tools don't use kiutils.
+
+**For Phase 4.**
+- **Memory check on the real lab.** `check_state.py` currently returns `RESULT: OK (4 warnings)`, all of them MEMORY. Deleting the two planned memory files doesn't clear this: `project_bq24195_iinlim_fix.md` ("v6 + v7 main PCB need firmware…") and its MEMORY.md index line also match `v7`. The "expect a clean output" task will still see those two warnings unless the user rewords or moves that memory, or accepts them as known.
+- **W2 and tools/CONTEXT.md.** W2 lists "a `tools/lab/` entry" for `tools/CONTEXT.md`. That entry has already landed here (task 6). W2 should show it to the user alongside the kiutils and source-hash rule diffs rather than add a second one.
+- **Not enforced.** §4.3's "a new card can't be pre-registered while a checkpoint is due" is enforced by neither the hook nor the checker. The checker's CHECKPOINT-DUE message states the rule. Add a hook rule later if wanted.
+- **Debugger role setup.** The debugger role should tell the session to run `git config core.hooksPath .githooks` if `git config core.hooksPath` is empty.
