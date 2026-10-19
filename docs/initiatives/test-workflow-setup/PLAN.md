@@ -187,6 +187,22 @@ Status values: **desk-verified** means it comes from a vendor document, cited be
 | LAN | `:LAN:IPADdress?`, `:LAN:DHCP?`, `:LAN:STATus?`, `:LAN:MAC?`, `:LAN:VISA?`; menu `Utility > IO` | Transport is not stated in [PG]. Raw socket port **5555** is from the third-party README (**needs bench**) | 6–7, 139–148 |
 | LAN file drop (alternative) | `:SAVe:SMB:SERVerpath \\<ip>\<share>`, `:SAVe:SMB:USERname`, `:SAVe:SMB:PASSword`, `:SAVe:SMB:CONNect`, `:SAVe:SMB:CONState?`; the share appears as drive `I:` ([UG] p.212) | The scope can write native PNG/CSV/STP files straight into a Mac SMB share. An option for Phase 7 (**needs bench**) | 242–245 |
 
+**Scope and probe facts**
+
+| Fact | Value | Source | Status |
+|---|---|---|---|
+| DHO804 Cal output | **1 kHz, 3 Vpp square wave**. No amplitude tolerance is given | [DS] p.17 "Probe Compensation Output"; terminal described in [UG] p.23 | Nominal: desk-verified. Base/top levels (0→3 V or otherwise), and so whether V4 reads Vamp or Vtop: **needs bench**. V4's ±3 % is our own tolerance, not Rigol's |
+| Setup-file extension | **`.stp`**, the only type offered on load | [UG] p.214 (Save Setup), p.219 (Load Setup: "default file type is *.stp, and no other options"), p.244 (defaults); [PG] p.238, 246 | Desk-verified (00.01.03). **Needs bench** on 00.01.05 |
+| CSV save path (menu) | **Storage → Save tab → Choose "Save Wave" → Data Source `Screen` or `Memory` → Format `*.csv`** (Screen offers .bin/.csv; Memory offers .bin/.csv/.wfm) → File Path (`D:` once a stick is detected) → Save. Storage is opened from the lower-left function navigation icon or the toolbar Storage button. The audit's "Waveform/Trace" label does not appear in [UG]: **corrected** | [UG] pp.210–213 (§20.1, §20.2.2) | Desk-verified (00.01.03). **Needs bench** on 00.01.05 |
+| Default save location | "Local Disk" (C:). Switches to `D:` automatically when a USB device is detected, or `I:` when an SMB share is connected | [UG] p.212 | Desk-verified. Needs bench |
+| Scope-side filename limit | ≤ 16 characters when the name is given over SCPI. §4.4 names (≥ 25 chars) can only be applied at ingest, which matches §4.4 ("renaming happens at ingest") | [PG] pp.238–242 | Desk-verified |
+| SQ500 bandwidth | DC to 500 MHz (−3 dB) | Sensepeek *User's Guide SQ200/SQ350/SQ500* Rev 1.1, p.16 (`welectron.com/mediafiles/manuals/sensepeek/Sensepeek_SQ200-SQ350-SQ500_Manual.pdf`, sha256 `d35edf84…`) | Desk-verified. The system bandwidth is set by the DHO804's 70 MHz (§4.1) |
+| SQ500 attenuation | **10:1, fixed** (no 1×/10× switch). Tip resistance 10 MΩ ±2 % at DC; scope input 1 MΩ; has a "scope x10 pin" | same, p.16 | Desk-verified. V2's "probe switch position" does not apply: record "fixed 10:1". Whether the DHO804 reads the x10 pin and sets Probe Ratio itself: **needs bench** |
+| SQ500 tip capacitance | **9 pF**. Compensation range 9–54 pF (the DHO804's 15 pF input is inside it) | same, p.16 | Desk-verified |
+| SQ10 bandwidth | **> 10 MHz** ("not impedance matched … suitable below 10 MHz"); rise time 34 ns (calculated) | Sensepeek *User's Guide SQ10* Rev 1.1, p.8 (`evision-webshop.de/media/43/df/0a/1710364194/UG SQ10 Rev1.1.pdf`, sha256 `3d297273…`) | Desk-verified |
+| SQ10 attenuation | **1:1** (passive; needle resistance < 0.02 Ω) | same, pp.1, 8 | Desk-verified. **Not for edge or V_OL work** (§4.1 rule stands): 1× puts the scope's 15 pF plus the unmatched cable's capacitance on the node, which slows the very edge being measured. Its 34 ns rise time is not the limit |
+| SQ10 tip capacitance | **Not specified** by Sensepeek | same, p.8 (absent) | Needs bench, or treat as unknown. Expect the scope's 15 pF plus the cable |
+
 ## Rejected Approaches
 - A separate context-scaffolding initiative: both topics build `lab/`, and one dry run validates both (decisioning §3.1).
 - A Claude Code hook for the STATE rule: it isn't versioned (`.claude/*` is gitignored) and only fires inside Claude; git `core.hooksPath` only (user, 2026-10-18).
