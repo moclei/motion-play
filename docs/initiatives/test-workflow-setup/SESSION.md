@@ -197,3 +197,11 @@ Afterwards, `check_state.py --load` on the clone gave `RESULT: OK (0 warnings)` 
 ---
 
 **W1 — loop paused before Phase 4.** Awaiting the user: is `docs/research/v7-retry/debugger-role-draft.md` final, and does its checkpoint section carry the `decisioning.md` §4.2 criteria table or a pointer?
+
+**W1 outcome (user, 2026-10-19):** the debugger role draft is not final; the user wants more review time and does not want it to block. Decisions:
+1. Installing the debugger role (`.claude/agents/debugger.md`) is deferred **out of this initiative**.
+2. Until it is installed, debugger work runs as ad-hoc `claude` sessions that read `docs/research/v7-retry/debugger-role-draft.md` and act as that role.
+3. The Phase 4 L0 budget check measures the current draft as a stand-in for `debugger.md`.
+4. PROTOCOL.md touch points are applied at W2, with the Debugger row marked draft and pointing to the draft and its ad-hoc invocation.
+
+`[ORCH] Spawning Planner — debugger role install deferred out of initiative; BRIEF goal, Phase 4 and Phase 9 need re-scoping`
