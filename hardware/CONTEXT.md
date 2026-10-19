@@ -35,6 +35,7 @@ Houses the system controller and power management:
 - **DWEII USB-C power module** — Development power module providing 5V @ ~2.4A with battery charging. Will be replaced with a custom solution eventually.
 - **SN74AHCT125** logic level shifter — Between MCU (3.3V) and WS2818B LED strip (5V). 72 LEDs, 1.2m strip.
 - **3× JST-SH 4-pin connectors** (SM04B-SRSS-TB) — One per sensor PCB (Pin 1 = 3.3V, Pin 2 = GND, Pin 3 = SDA, Pin 4 = SCL)
+- **Sourcing:** BQ24195 (LCSC C90862) stock is chronically low. Check it before every main PCB order.
 
 ### 2. Sensor Rigid Base (`hardware/sensor-rigid/`)
 
