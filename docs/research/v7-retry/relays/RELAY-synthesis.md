@@ -144,7 +144,7 @@ Suggested structure for `decisioning.md`:
 - Topics 1–6 complete. See `README.md`.
 - User decisions to date:
   - **2026-10-18 (topic 4):** `decisioning.md` sequences `test-workflow-setup`.
-  - **2026-10-18 (topic 6):** a formal `debugger` role, drafted in `context-strategy.md` Appendix A; the user will edit it before first launch and may pivot.
+  - **2026-10-18 (topic 6):** a formal `debugger` role, drafted in `debugger-role-draft.md`; the user will edit it before first launch and may pivot.
   - **2026-10-18 (topic 6):** `lab/` at the repo root.
   - **2026-10-18 (topic 6):** one continuous debug track that spawns build initiatives.
   - **2026-10-18 (topic 6):** no v7 state in auto-memory.

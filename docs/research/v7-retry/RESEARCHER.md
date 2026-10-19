@@ -30,6 +30,7 @@ docs/research/v7-retry/
 │   ├── RELAY-expert-approaches.md
 │   └── RELAY-context-strategy.md
 ├── <topic>.md                             # one artifact per completed topic
+├── debugger-role-draft.md                 # topic 6 spin-out: draft agent file, user-edited before install
 └── RELAY-<topic>-continue.md              # only if a session ended mid-topic
 ```
 
