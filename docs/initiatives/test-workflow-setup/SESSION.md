@@ -106,3 +106,37 @@ Tasks assigned (from TASKS.md Phase 2):
 - `prereg_commit:` in the card template ("filled by the commit") has the same self-reference problem as `Result commit`. Settle both with one convention.
 - A front-matter parser must split on the first two `---` *lines*. A naive `split('---')` works on these files only because `--- RUN ---` comes after the front matter.
 - `lab/cards/.gitkeep` sits beside the cards. The counter and the duplicate-ID check should match `V7R-NNN-*.md` only.
+
+#### Result
+| # | Phase | Result | Escalation evaluated? | Commit | Notes |
+|---|-------|--------|-----------------------|--------|-------|
+| 2 | Phase 2: lab/ containers and templates | DONE | No — clean completion | d76f0d3 | 6 tasks; dummy card 9bc9d0c/91b482f |
+
+#### Verification
+- `lab/` tree matches PLAN; `lab/inbox/` and `lab/captures/` in `.gitignore` (L81–82).
+- `lab/STATE.md` 52 lines, 9 sections; sections 1–8 carry only table header rows (no data rows); front matter sentinels `V7R-000`, `open_cards: []`; Lookups has the three true-now rows.
+- Re-parsed with `yaml.safe_load`: card template front matter and `log.yaml` both load (`kind` present).
+- `9bc9d0c` adds only `lab/cards/V7R-999-dummy.md`; `91b482f` removes it.
+- PLAN.md untouched this phase; no date-stamped headings.
+- Carry forward to Phase 3: the Worker #2 Notes' four carry-forwards (prereg_commit self-reference, front-matter split, `V7R-NNN-*.md`-only glob, cap counting rule).
+
+---
+
+### Worker #3 — Phase 3: Checker and pre-commit hook
+
+**Dispatch:**
+```
+Initiative: Test Workflow Setup
+Phase: 3 — Checker and pre-commit hook
+Initiative path: docs/initiatives/test-workflow-setup/
+Additional reading: SESSION.md "Worker #2" Notes block (carry-forwards for this phase: prereg_commit has the same self-reference problem as Result commit — settle both with one convention; front-matter split; V7R-NNN-*.md-only glob since cards/ holds .gitkeep; cap-count rule). docs/research/v7-retry/context-strategy.md §4.2, §8.2 as the tasks name. Phase notes: hook acceptance runs in a scratch clone (under your scratchpad), never by recording a card in the real lab/. Work on branch feat/test-workflow-setup.
+
+Tasks assigned (from TASKS.md Phase 3):
+- [~] Settle the `Result commit` self-reference convention (PLAN Technical Notes). Update `lab/templates/card.md` to match
+- [ ] Write `tools/lab/check_state.py` with every §4.2 check (STALE is the only hard failure), plus `--root`, `--fresh <file>` and `--load`
+- [ ] Build fixtures under `tools/lab/tests/fixtures/`, one per condition (STALE, open-card mismatch, CHECKPOINT DUE, cap overrun, stale hash, memory hit), and a test runner asserting each fires exactly once. All pass
+- [ ] Write `.githooks/pre-commit` and its Python helper (card status → STATE `as_of` rule, recorded-card evidence/result rule, duplicate ID). Run `git config core.hooksPath .githooks`
+- [ ] Hook acceptance in a scratch clone: recording a dummy card without a STATE edit is rejected; with the edit, it passes. Log both outputs in SESSION.md
+- [ ] Add a `tools/lab/` section to `tools/CONTEXT.md` (what each script does, and the one-time hooksPath setup)
+- [ ] 🔄 Handoff
+```
