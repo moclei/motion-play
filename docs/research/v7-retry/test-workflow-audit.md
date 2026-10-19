@@ -507,15 +507,17 @@ This section is not a PLAN. It lists what the Planner needs to settle when writi
 - The ESP32-S3 V_OL datasheet figure behind §2.1 must be checked before the §4.3 "expected ≈ 30–80 mV" goes into a procedure.
 - The dry run needs the user at the bench; the Orchestrator can't verify it alone.
 
-**Decisions for you (the user)**, to answer at Planner kickoff:
-1. Launch before topic 6 and Stage B decisioning, or let `decisioning.md` sequence it?
+**Sequencing (decided by the user, 2026-10-18):** `decisioning.md` sequences this initiative. The remaining decisions are left for the Planner to raise at kickoff.
+
+**Decisions for the Planner to put to the user:**
+1. (Removed: sequencing is decided above.)
 2. Cloud backup for gitignored captures: which service, if any?
 3. The capture tool: build our own, or adopt the third-party DHO800 project if it checks out?
 4. Does the old scope guide get deleted, or archived with a pointer to the new procedure?
 
 ### 6.2 Draft relay for the Planner
 
-This is a draft. Answer the decisions in §6.1 first and edit them into "Open questions", or leave them for the Planner to ask you. To launch: save the block below as `docs/initiatives/test-workflow-setup/RELAY-planner.md`, then start a session with `--agent planner`. The initiative name is a suggestion.
+This is a draft. The user chose to leave the §6.1 decisions for the Planner to ask, so they appear unanswered under "Open questions"; the synthesis session fills in `<date>` and ordering. To launch: save the block below as `docs/initiatives/test-workflow-setup/RELAY-planner.md`, then start a session with `--agent planner`. The initiative name is a suggestion.
 
 ````markdown
 # Relay — research → planner — <date>
@@ -556,7 +558,7 @@ Write BRIEF.md, PLAN.md and TASKS.md in `docs/initiatives/test-workflow-setup/`,
 This initiative builds workflow and tooling only. It must not take v7 measurements or form conclusions about the v7 I²C fault; that is Stage B's job.
 
 ## Open questions
-1. Launch before topic 6 and Stage B decisioning, or let `decisioning.md` sequence it?
+1. Sequencing is set by `decisioning.md` (user decision, 2026-10-18); check it before starting.
 2. Cloud backup for gitignored captures: which service, if any?
 3. Build our own capture tool, or adopt the third-party DHO800 project if it checks out?
 4. Delete the old scope guide, or archive it with a pointer?
