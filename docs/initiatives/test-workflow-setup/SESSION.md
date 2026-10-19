@@ -466,3 +466,12 @@ Worker recommendation, for the Orchestrator to pass on or drop: **B**. It is a d
 - Apply only the approved items, one commit per file group, and re-run `check_state.py` afterwards. Expected `[MEMORY]` counts: 0 if 5a+5b and 6A or 6B are applied; 2 if 6C.
 - The memory edits sit outside git, so record them in SESSION.md, since there is no commit for them.
 - The out-of-scope finding (stale `firmware/CONTEXT.md` Power Flow and stale `hardware/CONTEXT.md` Main PCB bullets, which still describe T-Display/DWEII/AP2112K) is noted here only. It belongs to the Organizer or GARDEN, not this initiative's Deferred list.
+
+#### Result
+| # | Phase | Result | Escalation evaluated? | Commit | Notes |
+|---|-------|--------|-----------------------|--------|-------|
+| 4 | Phase 4: Touch points (W2 prep) | PARTIAL | Yes — planned stop at the W2 gate, resolvable: re-dispatch after approvals | d1e9de4 | Items 1–6 drafted, none applied |
+
+#### Verification
+- `git diff f567168 d1e9de4`: only SESSION.md changed. No touch point applied. The memory directory was not touched. W2 is still `[~]`.
+- Drafts read in full and presented to the user as items 1–6, plus the housekeeping-list question from 5b.
