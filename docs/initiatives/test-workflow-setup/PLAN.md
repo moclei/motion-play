@@ -203,6 +203,21 @@ Status values: **desk-verified** means it comes from a vendor document, cited be
 | SQ10 attenuation | **1:1** (passive; needle resistance < 0.02 Ω) | same, pp.1, 8 | Desk-verified. **Not for edge or V_OL work** (§4.1 rule stands): 1× puts the scope's 15 pF plus the unmatched cable's capacitance on the node, which slows the very edge being measured. Its 34 ns rise time is not the limit |
 | SQ10 tip capacitance | **Not specified** by Sensepeek | same, p.8 (absent) | Needs bench, or treat as unknown. Expect the scope's 15 pF plus the cable |
 
+**ESP32-S3 V_OL (the check behind §2.1's "≈ 30–80 mV").**
+- **Source:** *ESP32-S3 Series Datasheet* v1.7 (Espressif, 2023), Table 4-4 "DC Characteristics (3.3 V, 25 °C)", p.57, and Table 2-1 note 6, p.12. **The datasheet is not in `docs/references/`.** It was read from the user's local copy `~/Downloads/esp32-s3_datasheet_en.pdf` (sha256 `049b83bb…`). See TASKS Deferred.
+- **What the datasheet says:**
+  - V_OL max = 0.1 × VDD = **0.33 V**, measured "using high-impedance load" (note 2). That makes it a no-load figure, not a bound at our ~2 mA sink.
+  - I_OL **typ 28 mA at V_OL = 0.495 V**, with VDD = 3.3 V and **PAD_DRIVER = 3 only**.
+  - Default drive strength is 20 mA (p.12). That is the setting `v6-ref` uses. **No V_OL or I_OL figure is given for it.**
+- **What follows:**
+  - At CAP_3 the typical R_on is ≈ 0.495 V / 28 mA ≈ **18 Ω**, so ≈ **35 mV** at 2 mA. This assumes the low-current linear region and is a typ value at 25 °C, not a guarantee.
+  - The audit's 15–40 Ω range is anchored only at the CAP_3 end. The 40 Ω end (default drive, so the upper ~80 mV) is our own extrapolation.
+- **Verdict: partly supported.** The order of magnitude (tens of mV) follows from a typical datasheet figure. The 30–80 mV band is not a datasheet spec.
+- **What the §4.3 procedure may claim:**
+  - Pass/fail stays **V_OL ≤ 0.4 V** (UM10204, 3 mA).
+  - "Expect tens of mV (≈ 35 mV at CAP_3, from the datasheet's typical I_OL; default drive not specified)" may appear only as a labelled **estimate [own]**. The "> 0.2 V = investigate the setup" line stays as our own heuristic.
+  - The procedure must not present 30–80 mV as a pass band.
+
 ## Rejected Approaches
 - A separate context-scaffolding initiative: both topics build `lab/`, and one dry run validates both (decisioning §3.1).
 - A Claude Code hook for the STATE rule: it isn't versioned (`.claude/*` is gitignored) and only fires inside Claude; git `core.hooksPath` only (user, 2026-10-18).
@@ -222,5 +237,5 @@ Status values: **desk-verified** means it comes from a vendor document, cited be
 - ~~Hook mechanism~~ → git only. ~~Caps~~ → soft except `as_of`. ~~Legacy artefacts~~ → banner in place. ~~Card filename~~ → `V7R-NNN-<slug>.md`.
 - ~~Does the debugger role's checkpoint section carry the `decisioning.md` §4.2 criteria table, or a pointer to it?~~ Moved out of this initiative with the role install (TASKS.md Deferred).
 - ~~Does `4da1c67` still build with today's PlatformIO and library versions?~~ Yes: env `lilygo-t-display-s3` builds clean, no fix needed (Phase 1, 2026-10-19).
-- Is the ESP32-S3 V_OL expectation (≈ 30–80 mV) supported by the datasheet? To be found in Phase 5.
+- ~~Is the ESP32-S3 V_OL expectation (≈ 30–80 mV) supported by the datasheet?~~ Partly. The CAP_3 typical figure gives ≈ 35 mV, and the band is not a spec. The pass limit stays ≤ 0.4 V and the expectation is a labelled estimate (Verified instrument facts; Phase 5, 2026-10-19).
 - ~~`Result commit` self-reference convention~~ → literal `self` for both `prereg_commit` and `Result commit`, resolved from git (Phase 3, 2026-10-19).
