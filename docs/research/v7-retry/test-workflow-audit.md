@@ -123,7 +123,7 @@ To judge whether a reading is plausible, compare it with what a correctly driven
     2. The ratio to Phase 21 (650 → 50 mV, ≈ 13×) is close enough to 10 that a CH1 attenuation change between sessions **cannot be excluded from the record**, because no high level was recorded in Phase 23. The user's confident memory of 10×/10× argues against it.
 - **Verdict: unknown, leaning plausible.** The SDA number is physically reasonable, but the session isn't internally consistent and has no capture.
 - **Inherits:** PM row 19's "Ph 23 refutation = strong *if the measurement is valid*". Keep the conditional and change the strength label to **measured-refuted, pending R1** in the Stage B hypothesis map. The "~13× swing" between Phases 21 and 23 stays **unresolved**: at least one of the two sessions mis-read, or the setup changed.
-- **To re-establish:** see §2.4, R1 (same procedure as Phase 21). A saved Phase 23 capture on the USB stick showing the SDA high level would settle the attenuation question retroactively (§2.4, R0).
+- **To re-establish:** see §2.4, R1 (same procedure as Phase 21). No Phase 23 capture survives, so the attenuation question can only be settled by re-measuring.
 
 #### Phase 24 (both entries): Arduino-as-master; glitch filter
 
@@ -131,13 +131,7 @@ Both conclusions rest on firmware/serial-log ACK/NACK results, not on the scope.
 
 ### 2.4 Re-establishment procedures (plans, not runs)
 
-- **R0, salvage before anything else (zero hardware risk):**
-  1. Copy the whole USB stick into the capture inbox (§4.5).
-  2. List files with their timestamps. The DHO804 clock may be wrong, so note the offset against a known date.
-  3. Match files to Phases 20–23 by date and content.
-  4. For each match, read: probe ratio/V/div from the channel labels, the SDA *high* level (attenuation check), whether a BW-limit indicator is shown, and what the cursors sat on.
-
-  This can upgrade or downgrade the §2.3 verdicts at no cost. Record what was found even if nothing matches.
+- **R0, salvage old captures: ruled out (user, 2026-10-18).** The USB stick has no images that can be tied to Phase 23 (or reliably to 20–22), and matching them by guesswork would be worse than nothing. The §2.3 verdicts are final as far as the record goes; **R1 carries the whole weight**. Leftover stick images are not evidence for any phase.
 - **R1, re-measure SDA/SCL V_OL at BQ pins 5/6 on v7:**
   1. Run the §4.2 setup-validation checklist and the §4.3 known-good reference first.
   2. Declare the baseline: the firmware commit, with `Wire.setClock`, drive capability, filters and pulls stated explicitly (§2.5).
@@ -175,9 +169,9 @@ Both conclusions rest on firmware/serial-log ACK/NACK results, not on the scope.
 |---|---|---|---|
 | Ph 20 V_IH margin (3.01 V vs 1.3 V) | **trustworthy** (by margin) | D-revised refuted | none required |
 | Ph 20 visual ACK/NACK identical, no kink | unknown | nothing current | R2 if needed |
-| Ph 21 V_OL ~650/750 mV, cable +100 mV | **suspect** | G-revised "confirmed" (already invalid), "effective V_IL 800–900 mV" | withdraw fitted V_IL; R0, R1 |
+| Ph 21 V_OL ~650/750 mV, cable +100 mV | **suspect** | G-revised "confirmed" (already invalid), "effective V_IL 800–900 mV" | withdraw fitted V_IL; R1 |
 | Ph 22 scope remark | unknown | nothing (null result is log-based) | none |
-| Ph 23 V_OL ~50 mV (SDA) | **unknown, leaning plausible** | G-revised refuted | R0, R1; label "pending R1" |
+| Ph 23 V_OL ~50 mV (SDA) | **unknown, leaning plausible** | G-revised refuted | R1; label "pending R1" |
 | Ph 23 SCL V_OL ~300 mV | **suspect** (inconsistent with SDA, same driver) | nothing | R1 channel swap |
 | Phase 25 | **not tested** | nothing | re-run individually if still relevant |
 | Firmware baseline | **HEAD = stacked Ph 23–25 changes** | every future test | define `v7-clean` / `v6-ref` |
@@ -226,7 +220,7 @@ Both conclusions rest on firmware/serial-log ACK/NACK results, not on the scope.
   - Also save the **setup file** (Storage → Setup **[verify]**) with every capture. It records every channel/trigger setting, which answers most of §2's "not recorded" items automatically.
   - Turn on the measurement and cursor readout panels before saving, so the numbers are burned into the PNG and an AI session can read them.
   - **Never phone-photograph the screen** (glare, perspective, unreadable small text).
-- **Clock:** set the scope's date/time correctly. File timestamps are how R0 and later ingest match files to tests.
+- **Clock:** set the scope's date/time correctly. File timestamps are how ingest matches files to tests; R0 failed partly because old files couldn't be tied to phases.
 - **Remote control (tooling opportunity):** DHO800-series scopes support SCPI over LAN (VXI-11/LXI, raw socket) and USB-TMC, per third-party tool support. Typical queries are `:DISPlay:DATA?` (screenshot) and `:WAVeform:DATA?` (samples). **[verify** exact syntax against Rigol's *DHO800/DHO900 Programming Guide*; a third-party DHO800 LAN control/MCP project exists but is unverified on hardware**]**.
   - The user wants this.
   - **Recommendation:** connect the scope to LAN in the first implementation initiative and build the §5 capture tool. It removes the USB-stick step entirely and records setup metadata by querying the scope.
@@ -475,18 +469,30 @@ The user's biggest pain point. Proposed flow:
 
 ## 6. Does this spawn an implementation initiative?
 
-**Yes: one initiative, "test-workflow setup", with an optional second for re-measurement.**
+**Yes: one concrete initiative, `test-workflow-setup`.** It is a precondition for any v7 bench work. The re-measurement (R1) is *not* a separate initiative; it becomes the first test cards of the Stage B debugging initiative.
 
-- **Test-workflow setup** (precondition for any v7 bench work):
-  1. R0 USB-stick salvage and verdict update.
-  2. Define `v7-clean` / `v6-ref` baseline commits.
-  3. Scope on LAN plus the SCPI capture tool (§5.1).
-  4. Adopt §4.2–§4.9 templates as files (validator optional).
-  5. Rewrite the scope guide as a DHO804-only procedure referencing these.
-  6. A dry run of §4.2 + §4.3 on the v6 board as acceptance.
-- **Re-measurement (R1, maybe R2):** better run as the first test cards of the Stage B debugging initiative than as its own initiative, since it needs the hypothesis map. The synthesis session should decide.
+### Initiative: `test-workflow-setup`
 
-The user placed no limits on scope. Sequencing is Stage B's call.
+**Goal:** before any new v7 measurement is recorded, the bench produces captures that are validated, self-describing, filed by test ID, and readable by an AI session without manual transcription.
+
+| Phase | Deliverables | Done when |
+|---|---|---|
+| 1. Baselines | Two firmware baseline commits/envs: `v7-clean` (HEAD minus the five I²C-init debug changes, §2.5) and `v6-ref` (`4da1c67`, CL-25). Both build. | `pio run` succeeds for both; each baseline's I²C init diff is written into its commit message. |
+| 2. Scope connectivity | DHO804 on the LAN, SCPI reachable from the Mac. Confirm on firmware 00.01.05: CSV save path, setup-file save, `:DISPlay:DATA?`, `:WAVeform:DATA?`, per-channel probe-ratio/BW-limit queries (§4.1 [verify] items). | A screenshot and a CSV pulled over LAN match ones saved to USB. |
+| 3. Capture tool | SCPI capture CLI (§5 item 1): pulls PNG + CSV + setup, names per §4.4 into `lab/captures/<test-id>/`, appends a pre-filled log entry (§4.6). Interim USB ingest script (§5 item 5) as fallback. | One command produces correctly named files and a log entry with every required §4.6 field filled from the scope. |
+| 4. Templates and layout | `lab/` structure and `.gitignore` (§4.5, final location per topic 6); test-card template (§4.7); log template (§4.6); instruction/report block (§4.8); `V7R-NNN` counter. Optional: card scaffolder and validator (§5 items 3–4). | A dummy card can be created, pre-registered and committed end to end. |
+| 5. Bench procedure | DHO804-only scope procedure replacing `docs/debugging/i2c-oscilloscope-debugging.md`, containing §4.2 setup validation and §4.3 known-good reference. Identify the closest GND pad to U5 (§5 item 6). Ground springs on hand. | Document reviewed by the user. |
+| 6. Acceptance dry run | Run §4.2 + §4.3 on the v6 board with `v6-ref` firmware, using the new card, log, tool and instruction format end to end. Test ID `V7R-001`. | v6 reads within §4.3 spec (V_OL ≤ 0.4 V, expected ≈ 30–80 mV; idle high 3.3 V ± 5%; rise time within limit), and the user confirms the handoff was workable. If v6 fails spec, the setup is fixed before the initiative closes. |
+
+**Out of scope for this initiative:** any v7 measurement, any hypothesis work, and the R1 re-measurement.
+
+### Follow-on, inside the Stage B debugging initiative (not separate)
+
+- **R1 as the first v7 test cards** (`V7R-002`+): SDA/SCL V_OL at U5 pins 5/6 with cable A/B/A on `v7-clean`, then CAP_2 vs CAP_3 as its own card (§2.4). These cards decide whether Story G-revised stays "measured-refuted" and resolve the Phase 21→23 swing.
+- **Phase 25 Experiments 2/3,** only if the hypothesis map still needs them, as individual cards against `v7-clean`.
+- **R2** only if a Phase 20 visual claim becomes load-bearing.
+
+The synthesis session confirms ordering. The user placed no limits on scope.
 
 ---
 
