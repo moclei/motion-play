@@ -247,6 +247,31 @@ Status values: **desk-verified** means it comes from a vendor document, cited be
 
 **Recommendation (for the user at W5): build our own `capture.py`.** Either vendor `mattjax16`'s `ScpiClient` with its MIT notice, or write the equivalent. Don't adopt the MCP server as the capture path. Use the Phase 6 smoke test (port 5555, `*IDN?`, `:DISPlay:DATA? PNG` via `rigol-dho-cli`) to validate the transport on 00.01.05 whichever way W5 goes. Registering the MCP server for interactive debugger sessions is a separate, later choice, outside this initiative.
 
+**PCB probe points (Phase 5 kiutils probe).**
+- **Method:** a read-only scratch script (kiutils 1.4.8 + shapely), run on `hardware/pcb-main/kicad/motion-play-main.kicad_pcb` **@`c2acffc`** (v7; HEAD is identical) and **@`fd632ef`** (v6). Both were extracted with `git show`.
+- **Distances** are copper pad edge to copper pad edge. Pads are modelled as rotated rectangles or circles, and roundrect corners are ignored, so the distances run slightly low.
+- **Vias are excluded:** both boards have `(tenting front back)`, and the nearest GND vias sit under U5's exposed pad.
+
+v7, the closest GND-net pad to U5 (BQ24195) pin 5 (`/I2C_SCL`) and pin 6 (`/I2C_SDA`), front side:
+
+| Pad | Value | Edge-to-edge | Centre-to-centre | Note |
+|---|---|---|---|---|
+| **C21.2** | 4.7 µF (0603-size pads, ~0.95 × 0.9 mm) | **2.64 mm** (to U5.5) | 3.67 mm | **Closest usable GND.** C21.1 next to it is `Protected_VBUS`, so the ground contact must not bridge the two |
+| R32.2 | 330 Ω (BQ_ILIM) | 3.44 mm (to U5.6) | 4.19 mm | |
+| C20.2 | 1 µF | 3.66 mm (to U5.5) | 4.70 mm | Its pad 1 is also `Protected_VBUS` |
+| TP4.1 | PGND test pad | 12.09 mm | 13.26 mm | Today's V6 ground (§4.2) |
+| U5.2 / U5.3 (own pins on the GND net), U5.25 (EP) | — | 1.20 / 0.70 / 0.24 mm | — | Not usable: 0.5 mm-pitch QFN pins beside the signal pins, and the EP is under the package |
+
+**v6 names** (from `fd632ef`):
+- **Master SDA/SCL test points:** **TPIO43** = `/I2C_SDA`, **TPIO44** = `/I2C_SCL`. These are the same names as v7. The master is U2 (T-Display-S3, pins 15/16).
+- **BQ24195:** **U5**, pin 5 = `/I2C_SCL` and pin 6 = `/I2C_SDA`, the same as v7. On v6 the package is rotated, but C21.2 is again 2.64 mm edge-to-edge (R32.2 3.44, C20.2 3.66).
+- **GND pads:** **TP4** (value `PGND`, net GND), 6.85 mm from U5 pins 5/6, and **TP_GND1** (net GND), about 36 mm from U5. Note: TP4 is 6.85 mm from U5 on v6 but 12.09 mm on v7, so "TP4 on both boards" would not be the same ground length. Correction to CL-26's wording: v6 *has* TP4; TP_GND1 was the second GND pad.
+- **Other v6 pads:** TP_3V1 (+3.3V) and TP_5V1 (+5V).
+- **Master-side GND, for the same-ground-length rule:**
+  - v6: the nearest GND to TPIO43/44 is U2.14, a T-Display header pin (through-hole), 8.26 mm away. TP_GND1 is about 38–41 mm centre-to-centre.
+  - v7: U3.40, an ESP32 module pad, is 1.19 mm away (not a practical clip point), and C9.1 (100 nF) is 3.05 mm away.
+- **Implication for §4.3:** C21.2 gives an identical 2.64 mm ground on both boards at the BQ end. That makes it the natural "same ground length" point for the U5 pin 5/6 arms, if the probe ground (spring or ≤ 10 mm wire) can land on a 0603 pad. Whether it can **needs bench**.
+
 ## Rejected Approaches
 - A separate context-scaffolding initiative: both topics build `lab/`, and one dry run validates both (decisioning §3.1).
 - A Claude Code hook for the STATE rule: it isn't versioned (`.claude/*` is gitignored) and only fires inside Claude; git `core.hooksPath` only (user, 2026-10-18).
