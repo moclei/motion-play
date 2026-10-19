@@ -510,10 +510,9 @@ This section is not a PLAN. It lists what the Planner needs to settle when writi
 **Sequencing (decided by the user, 2026-10-18):** `decisioning.md` sequences this initiative. The remaining decisions are left for the Planner to raise at kickoff.
 
 **Decisions for the Planner to put to the user:**
-1. (Removed: sequencing is decided above.)
-2. Cloud backup for gitignored captures: which service, if any?
-3. The capture tool: build our own, or adopt the third-party DHO800 project if it checks out?
-4. Does the old scope guide get deleted, or archived with a pointer to the new procedure?
+1. Cloud backup for gitignored captures: which service, if any?
+2. The capture tool: build our own, or adopt the third-party DHO800 project if it checks out?
+3. Does the old scope guide get deleted, or archived with a pointer to the new procedure?
 
 ### 6.2 Draft relay for the Planner
 
