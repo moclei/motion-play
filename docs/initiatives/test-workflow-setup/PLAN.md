@@ -4,7 +4,7 @@
 
 One initiative merging topic 4 (`docs/research/v7-retry/test-workflow-audit.md` §6.1) with topic 6 (`context-strategy.md` §10.1). The work is in two tracks, separated by a milestone merge.
 
-**Track 1: log-only ready (Phases 1–4).** This is everything a log-only debug card needs (`decisioning.md` §3.3): the baselines, the `lab/` containers and templates, the checker and hook that stop a Phase-25-style lost result, and the installed debugger role. At the end of Phase 4 the Orchestrator opens a PR and the user merges it to main with a **merge commit**. The debug track can then start (first debugger session transcribes `decisioning.md` §2 into STATE.md). The Orchestrator re-cuts `feat/test-workflow-setup` from the new main for Track 2.
+**Track 1: log-only ready (Phases 1–4).** This is everything a log-only debug card needs (`decisioning.md` §3.3): the baselines, the `lab/` containers and templates, the checker and hook that stop a Phase-25-style lost result, and the touch points that let debugger work run from the role draft (`docs/research/v7-retry/debugger-role-draft.md`) as ad-hoc sessions. The role is not installed in this initiative. At the end of Phase 4 the Orchestrator opens a PR and the user merges it to main with a **merge commit**. The debug track can then start as ad-hoc sessions off the draft (first debugger session transcribes `decisioning.md` §2 into STATE.md). The Orchestrator re-cuts `feat/test-workflow-setup` from the new main for Track 2.
 
 **Track 2: scope ready (Phases 5–9).** Verify the instrument facts, choose the capture tool, build the capture and ingest tooling, write the procedures, then run the v6 dry run. These phases touch only `tools/lab/`, `lab/procedures/`, `lab/templates/` and docs. The one exception is the Phase 9 dry-run card, which goes through the normal debugger lifecycle, so there is no conflict with a debug track running on main. Rebase onto main at the start of each Track 2 phase.
 
@@ -27,13 +27,13 @@ tools/lab/                         # check_state.py, capture tool, ingest, valid
 
 | Wait | Phase | What the user does | Orchestrator resumes when |
 |---|---|---|---|
-| W1 | before 4 | Edit pass on `docs/research/v7-retry/debugger-role-draft.md`, including whether the checkpoint section carries the `decisioning.md` §4.2 criteria table | User says the draft is final |
+| W1 | — | Removed. The role install is deferred out of this initiative (see Rejected Approaches). The number is kept so W2–W7 stay stable | — |
 | W2 | 4 | Approve or apply each touch point: PROTOCOL.md, PROJECT.md pointer, tools/CONTEXT.md, banners, auto-memory deletions | Each item is approved or declined |
 | W3 | end of 4 | Merge the milestone PR (merge commit) | PR merged |
 | W4 | 6 | Bench: scope on the LAN, SCPI smoke tests, USB saves for comparison (§4.8 blocks) | All REPORT blocks returned |
 | W5 | 6→7 | **Decision gate:** build our own capture tool or adopt the third-party one, based on the Phase 5 + 6 findings | User decides |
 | W6 | 7 | Bench: one capture-tool acceptance capture vs USB | REPORT returned |
-| W7 | 9 | User runs the dry run as a `claude --agent debugger` session, then a second fresh debugger session for the L0 test | User reports both sessions done |
+| W7 | 9 | User runs the dry run as an ad-hoc debugger session off the draft, then a second fresh ad-hoc debugger session for the L0 test | User reports both sessions done |
 
 Bench instructions for the user always use the `test-workflow-audit.md` §4.8 block: STEP / DO / CHECK / CAPTURE / REPORT / STOP IF, one step at a time. The Orchestrator writes them into SESSION.md and relays them. Workers do not talk to the bench.
 
@@ -53,9 +53,9 @@ Bench instructions for the user always use the `test-workflow-audit.md` §4.8 bl
 |---|---|
 | Hook | Recording a dummy card without a STATE.md edit is rejected. With the edit, it passes. |
 | Checker | On a fixture `lab/`, it reports STALE, open-card mismatch, CHECKPOINT DUE, a cap overrun, a stale hash and a memory hit, once each. |
-| Budget | A fresh debugger session's L0 measures < 500 lines and ≤ ~12k tokens (counting the actual files). |
-| Dry run | The v6 dry run runs as a debugger session: card pre-registered, raw data committed per arm, recorded with STATE updated in the same commit, notebook entry written. A second fresh debugger session then states the bench state correctly from L0 + default L1 alone, without asking the user. |
-| Retirement | No v7 lines in the memory index; banners on the §2.4 items; PROJECT.md pointer present. |
+| Budget | A fresh ad-hoc debugger session's L0 (the role draft standing in for `debugger.md`) measures < 500 lines and ≤ ~12k tokens (counting the actual files). |
+| Dry run | The v6 dry run runs as an ad-hoc debugger session off the draft: card pre-registered, raw data committed per arm, recorded with STATE updated in the same commit, notebook entry written. A second fresh ad-hoc debugger session then states the bench state correctly from L0 + default L1 alone, without asking the user. |
+| Retirement | No v7 lines in the memory index, except a line the user kept as accepted at W2; banners on the §2.4 items; PROJECT.md pointer present. |
 
 ## Technical Notes
 
@@ -95,18 +95,18 @@ Bench instructions for the user always use the `test-workflow-audit.md` §4.8 bl
   - rejects a `recorded` card with an empty `Result commit` or no `lab/evidence/<ID>/` citation;
   - rejects a duplicate `V7R-NNN`.
   
-  One-time setup is `git config core.hooksPath .githooks`, documented in `tools/CONTEXT.md` (the tools/lab section) and in the debugger role.
+  One-time setup is `git config core.hooksPath .githooks`, documented in `tools/CONTEXT.md` (the tools/lab section). Telling debugger sessions to set it when unset is a suggestion for the user's draft edit pass (TASKS.md Deferred).
 - **Self-reference convention (settled, Phase 3):** a commit can't contain its own hash. Both `prereg_commit` (front matter) and `Result commit` (Conclusion) are written as the literal `self`, meaning "the commit that made this transition": the commit that adds the card file, and the commit that sets `status: recorded`. `check_state.py --load` resolves them from git (`--diff-filter=A` for prereg; latest `-G'^status: recorded'` for result). A real hash is also accepted. The hook's Result-commit check means "present, non-empty and not the template's `<hash>`". Written into `lab/templates/card.md`.
 
-**Role install and touch points (Phase 4).**
-- Copy the user-finalised draft to `.claude/agents/debugger.md` verbatim (it is allowed in by `!.claude/agents/`).
+**Touch points (Phase 4).**
+- No role install. Debugger work runs as an ad-hoc `claude` session opened with "Read `docs/research/v7-retry/debugger-role-draft.md` and act as that role for this session." Installing `.claude/agents/debugger.md` is in TASKS.md Deferred.
 - Touch-point edits are each shown to the user as a diff and applied only on approval (W2):
-  - PROTOCOL.md: Debugger row in the roles table, a `lab/` non-initiative-documents entry, a Debugger → Planner relay row and an escalation line (`context-strategy.md` §9);
+  - PROTOCOL.md: Debugger row in the roles table, marked draft, pointing to the draft file and the ad-hoc invocation, a `lab/` non-initiative-documents entry, a Debugger → Planner relay row and an escalation line (`context-strategy.md` §9);
   - PROJECT.md: the pointer line `**v7 main PCB I²C fault:** open, see lab/STATE.md.`;
-  - `tools/CONTEXT.md`: the §8.3 kiutils rule replacement, the §8.2 source-hash rule and a `tools/lab/` entry;
+  - `tools/CONTEXT.md`: the §8.3 kiutils rule replacement and the §8.2 source-hash rule. The `tools/lab/` entry already landed in Phase 3; show it to the user alongside these, do not add a second one;
   - banners on the §2.4 items: investigation (frozen), session-resume and fresh-perspective prompt (retired), the two explorations, `v7-main-i2c.audit.md`, `REVIEW-HANDOFF.md`. **Not the scope guide yet**; that is Phase 8;
-  - auto-memory: delete `project_v7_i2c_bq_debug.md` and `project_pcb_revision_apr2026.md` and their index lines, and move the BQ24195 C90862 stock tip into `hardware/CONTEXT.md`. Memory is outside the repo, so the user may prefer to do this by hand.
-- Budget check: count the lines and bytes/4 of the actual L0 files (CLAUDE.md, PROJECT.md, MEMORY.md, debugger.md, PROTOCOL §Session Management + §Git, STATE.md at cap) and record the numbers in SESSION.md.
+  - auto-memory: delete `project_v7_i2c_bq_debug.md` and `project_pcb_revision_apr2026.md` and their index lines, and move the BQ24195 C90862 stock tip into `hardware/CONTEXT.md`. Also ask about `project_bq24195_iinlim_fix.md`: it and its index line match the checker's `v7` memory grep. The user rewords or moves it (a durable firmware fact, so `firmware/CONTEXT.md` fits) or keeps it as an accepted `[MEMORY]` warning. Memory is outside the repo, so the user may prefer to do this by hand.
+- Budget check: count the lines and bytes/4 of the actual L0 files (CLAUDE.md, PROJECT.md, MEMORY.md, the role draft `docs/research/v7-retry/debugger-role-draft.md` standing in for `debugger.md`, PROTOCOL §Session Management + §Git, STATE.md at cap) and record the numbers in SESSION.md.
 
 **Instrument verification (Phases 5–6).**
 - Desk items (Phase 5), recorded in this file under a "Verified instrument facts" subsection with a source for each:
@@ -138,8 +138,8 @@ The rest of Phase 7:
 - Put a RETIRED banner on the old scope guide pointing to `lab/procedures/`. Do not touch its body.
 
 **Dry run (Phase 9).**
-- The user runs `claude --agent debugger`. The session pre-registers a card (next `V7R-NNN`; title "Setup validation + known-good reference on v6 (`v6-ref`)"; `variable_changed: none — instrument validation`; `structure: single (justified)`), flashes `v6-ref` to v6, runs §4.2 then §4.3, captures with the tool, ingests, and records with STATE + notebook.
-- The user then opens a second fresh debugger session and asks for the bench state.
+- The user opens an ad-hoc `claude` session opened with "Read `docs/research/v7-retry/debugger-role-draft.md` and act as that role for this session." The session pre-registers a card (next `V7R-NNN`; title "Setup validation + known-good reference on v6 (`v6-ref`)"; `variable_changed: none — instrument validation`; `structure: single (justified)`), flashes `v6-ref` to v6, runs §4.2 then §4.3, captures with the tool, ingests, and records with STATE + notebook.
+- The user then opens a second fresh ad-hoc debugger session, opened the same way, and asks for the bench state.
 - The Orchestrator verifies afterwards from git: the card's commits per arm, the recording commit touching STATE, the notebook entry, the evidence files.
 
 ## Rejected Approaches
@@ -151,6 +151,7 @@ The rest of Phase 7:
 - Holding the debug track until the whole initiative closes: log-only cards start after the Phase 4 milestone merge (user, 2026-10-18).
 - A separate counter file for V7R IDs: the `lab/cards/` directory is the counter (context-strategy §6.2).
 - Squash-merging initiative PRs: it would orphan the baseline tags.
+- Installing the debugger role inside this initiative: the draft needs more user review and must not block. Ad-hoc sessions run off the draft instead, and the install is tracked in TASKS.md Deferred (user, W1 outcome).
 
 ## Open Questions
 - ~~Phasing: role and containers before scope tooling?~~ Yes, with a milestone merge after Phase 4 (user, 2026-10-18).
@@ -158,7 +159,7 @@ The rest of Phase 7:
 - ~~Build vs adopt the capture tool~~ → evaluate first. The gate is W5, after Phase 6.
 - ~~Old scope guide~~ → banner + pointer.
 - ~~Hook mechanism~~ → git only. ~~Caps~~ → soft except `as_of`. ~~Legacy artefacts~~ → banner in place. ~~Card filename~~ → `V7R-NNN-<slug>.md`.
-- Does the debugger role's checkpoint section carry the `decisioning.md` §4.2 criteria table, or a pointer to it? The user decides during the W1 edit pass.
+- ~~Does the debugger role's checkpoint section carry the `decisioning.md` §4.2 criteria table, or a pointer to it?~~ Moved out of this initiative with the role install (TASKS.md Deferred).
 - ~~Does `4da1c67` still build with today's PlatformIO and library versions?~~ Yes: env `lilygo-t-display-s3` builds clean, no fix needed (Phase 1, 2026-10-19).
 - Is the ESP32-S3 V_OL expectation (≈ 30–80 mV) supported by the datasheet? To be found in Phase 5.
 - ~~`Result commit` self-reference convention~~ → literal `self` for both `prereg_commit` and `Result commit`, resolved from git (Phase 3, 2026-10-19).
