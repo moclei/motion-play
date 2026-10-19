@@ -4,6 +4,7 @@ Stdlib only. PyYAML is used when importable; otherwise a minimal parser
 handles the subset our front matter uses (scalars, comments, nested maps,
 flow lists like `[]` or `[V7R-001, V7R-002]`).
 """
+import datetime
 import re
 
 try:
@@ -57,6 +58,8 @@ def _scalar(v):
         return [_scalar(x.strip()) for x in inner.split(",")] if inner else []
     if re.fullmatch(r"-?\d+", v):
         return int(v)
+    if re.fullmatch(r"\d{4}-\d{2}-\d{2}", v):
+        return datetime.date(*map(int, v.split("-")))
     return v
 
 
