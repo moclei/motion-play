@@ -96,7 +96,7 @@ Bench instructions for the user always use the `test-workflow-audit.md` §4.8 bl
   - rejects a duplicate `V7R-NNN`.
   
   One-time setup is `git config core.hooksPath .githooks`, documented in `tools/CONTEXT.md` (the tools/lab section) and in the debugger role.
-- **`Result commit` chicken-and-egg:** the commit can't contain its own hash. The hook's check means "the line is present and non-empty". Convention: the recording commit writes `Result commit: this commit (see git log -- <card>)`, and the checker resolves it from git. A Phase 3 Worker must settle this and write it into the card template.
+- **Self-reference convention (settled, Phase 3):** a commit can't contain its own hash. Both `prereg_commit` (front matter) and `Result commit` (Conclusion) are written as the literal `self`, meaning "the commit that made this transition": the commit that adds the card file, and the commit that sets `status: recorded`. `check_state.py --load` resolves them from git (`--diff-filter=A` for prereg; latest `-G'^status: recorded'` for result). A real hash is also accepted. The hook's Result-commit check means "present, non-empty and not the template's `<hash>`". Written into `lab/templates/card.md`.
 
 **Role install and touch points (Phase 4).**
 - Copy the user-finalised draft to `.claude/agents/debugger.md` verbatim (it is allowed in by `!.claude/agents/`).
@@ -161,4 +161,4 @@ The rest of Phase 7:
 - Does the debugger role's checkpoint section carry the `decisioning.md` §4.2 criteria table, or a pointer to it? The user decides during the W1 edit pass.
 - ~~Does `4da1c67` still build with today's PlatformIO and library versions?~~ Yes: env `lilygo-t-display-s3` builds clean, no fix needed (Phase 1, 2026-10-19).
 - Is the ESP32-S3 V_OL expectation (≈ 30–80 mV) supported by the datasheet? To be found in Phase 5.
-- `Result commit` self-reference convention (see Technical Notes). Settled in Phase 3.
+- ~~`Result commit` self-reference convention~~ → literal `self` for both `prereg_commit` and `Result commit`, resolved from git (Phase 3, 2026-10-19).

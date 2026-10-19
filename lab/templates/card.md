@@ -3,7 +3,7 @@ test_id: V7R-012              # allocated from a counter; never reused, never re
 title: SDA V_OL at U5.6, cable out/in/out, v7-clean
 status: pre-registered        # pre-registered | run | recorded | abandoned
 created: 2026-11-04
-prereg_commit:                # hash of the commit that added this card (filled by the commit)
+prereg_commit: self           # `self` = the commit that adds this file; resolved from git (check_state.py --load)
 baseline:
   name: v7-clean              # v7-clean | v6-ref | other (describe)
   firmware_commit: "1a2b3c4"   # quoted: an all-digit hash would parse as an int
@@ -52,7 +52,7 @@ revert_on_null: n/a           # yes | no (justify) | n/a (no firmware/hardware c
 - Hypotheses excluded: ...
 - **Strength:** measured-refuted | measured-supported | argued | not tested
 - Revert-on-null done: yes/no (commit)
-- Result commit: <hash>
+- Result commit: self   <!-- `self` = the commit that sets status: recorded; resolved from git -->
 
 <!-- Card rules (test-workflow-audit §4.7):
 - `test_id` uses the form `V7R-NNN`, allocated monotonically (next = highest lab/cards/ filename + 1). Abandoned tests keep their ID with `status: abandoned`.
@@ -61,4 +61,5 @@ revert_on_null: n/a           # yes | no (justify) | n/a (no firmware/hardware c
 - `M` (measurement artefact) is always a listed hypothesis.
 - Everything above `--- RUN ---` is written and committed before the test runs.
 - Filename: lab/cards/V7R-NNN-<slug>.md. A conclusion cites only files under lab/evidence/V7R-NNN/.
+- Self-reference: a commit can't contain its own hash, so `prereg_commit` and `Result commit` are written as the literal `self`. `self` means "the commit that made this transition": for prereg_commit, the commit that adds this file; for Result commit, the commit that sets `status: recorded`. Resolve with `python3 tools/lab/check_state.py --load`, or by hand with `git log --diff-filter=A --format=%h -- <card>` (prereg) and `git log -1 -G'^status: recorded' --format=%h -- <card>` (result). A real hash is also accepted, e.g. when correcting a card later. The pre-commit hook rejects a recorded card whose Result commit is empty or still `<hash>`.
 -->
