@@ -109,3 +109,4 @@ Append notes here as research sessions complete. One line per observation. Keep 
 - Topic 3: committed generated outputs (layout context, DRC report) had silently gone stale; any artifact derived from a source file needs a source hash.
 - Topic 6: memory notes corrected the same day still carried interpretation in the MEMORY.md index *line* (L0); audit index lines, not just note bodies.
 - Topic 5: no authoritative source exists for "when to respin" or "when to hire a consultant"; vendor blogs only. Expect to label such heuristics as our own.
+- Stage B: running a per-row IS / IS NOT audit (✓/✗/?) beside the map showed that no row explains every column alone; that, not a favourite story, is what drove the first test choice (half-split the master context).

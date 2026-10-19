@@ -19,6 +19,12 @@ See `RESEARCHER.md` for conventions. Kickoff relay drafts are in `relays/`.
 
 **Recommended order:** 1 and 2 first (highest leverage, independent). 3, 4, 5 next (any order). 6 last — it synthesizes patterns from the others.
 
+## Stage B
+
+| Session | Status | Artifacts |
+|---|---|---|
+| Synthesis | complete | `decisioning.md`, `RELAY-planner.md` (first initiative: `test-workflow-setup`, merged with topic 6 scaffolding) |
+
 ## Stage transition
 
 When topics 1–6 are complete, a synthesis session reads the whole folder and produces `decisioning.md` + `RELAY-planner.md` for the first implementation initiative. See `RESEARCHER.md` for details.
