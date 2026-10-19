@@ -798,3 +798,20 @@ All Phase 5 work was done at the desk. Every fact is in PLAN → Technical Notes
 | # | Phase | Result | Escalation evaluated? | Commit | Notes |
 |---|-------|--------|-----------------------|--------|-------|
 | 6 | Phase 5: Instrument facts (desk) | DONE | No — clean completion | (handoff commit) | All 6 tasks + handoff; needs-bench items listed for Phase 6 |
+
+#### Verification
+- 7 commits, one per task plus the handoff (`bf902e6`…`0277e00`). Phase 5 is fully ticked. The tree is clean.
+- PLAN: a new "Verified instrument facts" subsection (L145). The V_OL Open Question is struck. No date-stamped headings.
+- Process note: the Worker wrote the `#### Result` row itself. That row is Orchestrator-owned. It is accurate, so I left it in place; the commit is `0277e00`.
+- Carry forward:
+  - (a) Every SCPI row is desk-verified against fw 00.01.03. S2/S4 settle 00.01.05.
+  - (b) The topic-4 "Dry run" acceptance row still says "once the datasheet check confirms it". The check came back *partly supported*, so Phase 8 limits the claim to ≤ 0.4 V plus a labelled estimate. Flag this at Phase 9 when the acceptance is ticked.
+  - (c) The CL-26 TP4 error in `v6-v7-changelist.md` goes to the user. That research artefact is frozen.
+  - (d) W5 recommendation: build our own `capture.py`.
+
+**Housekeeping answer (user, 2026-10-19):** none of the `project_pcb_revision_apr2026.md` housekeeping items are still live. Nothing goes to GARDEN.md.
+
+---
+
+### W4 — Phase 6 bench relay (Orchestrator)
+Branch is current with main (no rebase needed). Relaying Worker #6's S1–S9 one step at a time. Each REPORT is recorded below, verbatim.
