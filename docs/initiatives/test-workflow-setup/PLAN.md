@@ -142,6 +142,51 @@ The rest of Phase 7:
 - The user then opens a second fresh ad-hoc debugger session, opened the same way, and asks for the bench state.
 - The Orchestrator verifies afterwards from git: the card's commits per arm, the recording commit touching STATE, the notebook entry, the evidence files.
 
+### Verified instrument facts
+
+Status values: **desk-verified** means it comes from a vendor document, cited below. **needs bench** means no document settles it on our hardware or firmware, so Phase 6 must confirm it. Nothing below is **verified** until Phase 6 marks it so.
+
+**Sources** (downloaded 2026-10-19; local copies were in the Phase 5 scratchpad only, so re-download by URL):
+- **[PG]** Rigol *DHO800/DHO900 Programming Guide*, PGA39106-1110, written for software 00.01.03. `rigol.com/dam/global/downloads/brochures/en/program-guide/oscilloscopes/DHO800900_ProgrammingGuide_EN.pdf`, sha256 `e252bc1c…`. Page numbers are the printed numbers (PDF page = printed + 22).
+- **[UG]** Rigol *DHO800 User Guide*, UGA36105-1110, also for software 00.01.03. `…/en/user-manual/oscillosopes/DHO800_UserGuide_EN.pdf`, sha256 `dc2b1c28…`. Printed pages (PDF page = printed + 14).
+- **[DS]** Rigol *DHO800 Data Sheet* (PDF created 2024-10-16). `…/en/data-sheet/oscilloscopes/DHO800_DataSheet_EN.pdf`, sha256 `e55177dc…`.
+- **Firmware gap:** both [PG] and [UG] cover 00.01.03, but our scope runs 00.01.05. Every SCPI row below is desk-verified against 00.01.03 and still **needs bench** on 00.01.05 (Phase 6, one live query each).
+
+**SCPI, by the needs in PLAN and §5 item 1.** All of these are desk-verified against [PG].
+
+| Need | Exact syntax | Returns / notes | [PG] p. |
+|---|---|---|---|
+| Identity | `*IDN?` | `RIGOL TECHNOLOGIES,<model>,<serial>,<software version>` | 126 |
+| Screenshot | `:DISPlay:DATA? PNG` (also `BMP`, `JPG`; **default BMP**) | TMC block `#N<len><bytes>` | 112–113 |
+| Screenshot (alt) | `:SAVE:IMAGe:FORMat PNG` then `:SAVE:IMAGe:DATA?` | Same TMC block. `:SAVE:IMAGe:HEADer ON` adds the model and date to saved images | 235–237 |
+| Save image to stick | `:SAVE:IMAGe D:/<name>.png` | `C:/` is internal, `D:/` is USB. **Filename ≤ 16 chars.** `:SAVE:OVERlap ON` overwrites | 237–238, 241 |
+| Waveform source/mode | `:WAVeform:SOURce CHANnel<n>`; `:WAVeform:MODE {NORMal\|MAXimum\|RAW}`; `:WAVeform:FORMat {WORD\|BYTE\|ASCii}` | NORMal = screen, 1–1000 points. RAW = memory and needs `:STOP` first | 404–406 |
+| Waveform range | `:WAVeform:POINts <n>`, `:WAVeform:STARt <n>`, `:WAVeform:STOP <n>` | RAW: from 1 to the memory depth | 406–407, 411–413 |
+| Waveform data | `:WAVeform:DATA?` | TMC block (BYTE/WORD), or comma-separated volts (ASCii). Volts = `(raw − YORigin − YREFerence) × YINCrement` | 403, 407–408 |
+| Waveform scaling | `:WAVeform:PREamble?` (10 fields: format, type, points, count, xinc, xorg, xref, yinc, yorg, yref); also `:WAVeform:XINCrement?` / `XORigin?` / `XREFerence?` / `YINCrement?` / `YORigin?` / `YREFerence?` | | 408–414 |
+| Save waveform to stick | `:SAVE:WAVeform D:/<name>.csv` (screen, `.bin`/`.csv`); `:SAVE:MEMory:WAVeform D:/<name>.csv` (memory, `.bin`/`.csv`/`.wfm`); `:SAVE:STATus?` → 1 when done | **There is no SCPI command that reads a file back.** A LAN CSV has to be built from `:WAVeform:DATA?` + `PREamble?`, unless the SMB share route is used (below) | 239–241 |
+| Setup save / load (file) | `:SAVE:SETup D:/<name>.stp`; `:LOAD:SETup D:/<name>.stp` | Extension `.stp` | 238–239, 246 |
+| Setup over LAN | `:SYSTem:SETup?` (read); `:SYSTem:SETup <block>` (write) | TMC block whose payload "is expressed in ASCII". Whether it is byte-identical to the `.stp` file **needs bench** | 270–271 |
+| Setup registers | `*SAV <0..49>`; `*RCL` | | 129–130 |
+| Probe ratio | `:CHANnel<n>:PROBe?` | One of 0.001 … 50000, e.g. `10` | 76–77 |
+| BW limit | `:CHANnel<n>:BWLimit?` | `20M` or `OFF`. 20 MHz is the only limit | 71 |
+| V/div | `:CHANnel<n>:SCALe?` | Scientific notation, V/div | 75–76 |
+| Offset | `:CHANnel<n>:OFFSet?` | Scientific notation, V | 74 |
+| Coupling / on / invert / units | `:CHANnel<n>:COUPling?` (AC/DC/GND), `:CHANnel<n>:DISPlay?`, `:CHANnel<n>:INVert?`, `:CHANnel<n>:UNITs?` | Input impedance has no SCPI setting (fixed 1 MΩ) | 72–73, 78 |
+| Timebase | `:TIMebase[:MAIN]:SCALe?`; `:TIMebase[:MAIN][:OFFSet]?`; `:TIMebase:MODE?` | s/div; s; `MAIN` or `ROLL` | 291–293 |
+| Acquisition | `:ACQuire:SRATe?`; `:ACQuire:MDEPth?`; `:ACQuire:TYPE?` | | 20–22 |
+| Trigger (common) | `:TRIGger:MODE?` (EDGE, IIC, …); `:TRIGger:SWEep?` (AUTO/NORM/SING); `:TRIGger:STATus?` (TD/WAIT/RUN/AUTO/STOP); `:TRIGger:COUPling?` | | 300–302 |
+| Trigger (edge) | `:TRIGger:EDGE:SOURce?`, `:TRIGger:EDGE:SLOPe?`, `:TRIGger:EDGE:LEVel?` | | 305–306 |
+| Trigger (I²C) | `:TRIGger:IIC:SCL?`, `:TRIGger:IIC:SDA?`, `:TRIGger:IIC:CLEVel?`, `:TRIGger:IIC:DLEVel?`, `:TRIGger:IIC:WHEN?` (`STAR`/`REST`/`STOP`/**`NACK`**/`ADDR`/`DATA`/`ADAT`), `:TRIGger:IIC:AWIDth?`, `:TRIGger:IIC:ADDRess?`, `:TRIGger:IIC:DIRection?` | The audit's "MissedAck" is `NACK` in SCPI | 365–370 |
+| I²C decode | `:BUS<n>:MODE?`, `:BUS<n>:IIC:SCLK:SOURce?`, `:BUS<n>:IIC:SDA:SOURce?`, `:BUS<n>:IIC:ADDRess?` (NORM/RW), `:BUS<n>:THReshold? SDA` / `? SCL` (the decode threshold, ~1.65 V per §4.1) | | 25, 31, 46–48 |
+| Measurement (one value) | `:MEASure:ITEM? <item>,CHANnel<n>`, with items such as `VBASe`, `VTOP`, `VAMP`, `VPP`, `VMIN`, `RTIMe`, `FTIMe` | Scientific notation. About `9.9e37` means invalid (third-party note, needs bench) | 192, 195–196 |
+| Measurement statistics | `:MEASure:STATistic:ITEM? {MAXimum\|MINimum\|CURRent\|AVERages\|DEViation\|CNT},<item>[,<src>]` | | 199–201 |
+| Measurement thresholds | `:MEASure:SETup:MAX\|MID\|MIN <pct>` with `:MEASure:THReshold:SOURce`, `:MEASure:THReshold:TYPE {PERCent\|ABSolute}` | §4.3's 30 %→70 % rise time needs `MIN 30`, `MAX 70`. The defaults are not stated in [PG] (**needs bench**) | 201–203, 206–207 |
+| All-measure panel | `:MEASure:AMSource?` | CHAN1–4 or OFF | 197 |
+| **Active measurement list** | **No such query in [PG].** | The capture tool must query a named item list (taken from the card or a default set). Parsing `:SYSTem:SETup?` might recover the panel's items (**needs bench**) | — |
+| LAN | `:LAN:IPADdress?`, `:LAN:DHCP?`, `:LAN:STATus?`, `:LAN:MAC?`, `:LAN:VISA?`; menu `Utility > IO` | Transport is not stated in [PG]. Raw socket port **5555** is from the third-party README (**needs bench**) | 6–7, 139–148 |
+| LAN file drop (alternative) | `:SAVe:SMB:SERVerpath \\<ip>\<share>`, `:SAVe:SMB:USERname`, `:SAVe:SMB:PASSword`, `:SAVe:SMB:CONNect`, `:SAVe:SMB:CONState?`; the share appears as drive `I:` ([UG] p.212) | The scope can write native PNG/CSV/STP files straight into a Mac SMB share. An option for Phase 7 (**needs bench**) | 242–245 |
+
 ## Rejected Approaches
 - A separate context-scaffolding initiative: both topics build `lab/`, and one dry run validates both (decisioning §3.1).
 - A Claude Code hook for the STATE rule: it isn't versioned (`.claude/*` is gitignored) and only fires inside Claude; git `core.hooksPath` only (user, 2026-10-18).
