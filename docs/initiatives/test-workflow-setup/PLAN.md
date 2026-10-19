@@ -159,6 +159,6 @@ The rest of Phase 7:
 - ~~Old scope guide~~ → banner + pointer.
 - ~~Hook mechanism~~ → git only. ~~Caps~~ → soft except `as_of`. ~~Legacy artefacts~~ → banner in place. ~~Card filename~~ → `V7R-NNN-<slug>.md`.
 - Does the debugger role's checkpoint section carry the `decisioning.md` §4.2 criteria table, or a pointer to it? The user decides during the W1 edit pass.
-- Does `4da1c67` still build with today's PlatformIO and library versions? To be found in Phase 1.
+- ~~Does `4da1c67` still build with today's PlatformIO and library versions?~~ Yes: env `lilygo-t-display-s3` builds clean, no fix needed (Phase 1, 2026-10-19).
 - Is the ESP32-S3 V_OL expectation (≈ 30–80 mV) supported by the datasheet? To be found in Phase 5.
 - `Result commit` self-reference convention (see Technical Notes). Settled in Phase 3.
