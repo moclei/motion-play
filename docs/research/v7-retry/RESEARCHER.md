@@ -98,9 +98,11 @@ Append notes here as research sessions complete. One line per observation. Keep 
 - Topic 1: surfacing top findings to the user before writing caught nothing wrong but surfaced four user concerns (measurement validity, layout understanding, synthesis, context budget) that became major sections.
 - Topic 2: kicad-cli (`/Applications/KiCad/KiCad.app/Contents/MacOS/kicad-cli`) XML netlist + pos export on `git archive`d refs gave a clean component/pin/net diff in seconds; regenerating gerbers and matching against the fabricated zips verified the anchors. Note zsh: quote `"${ref}:path"` — `$r:h` is a zsh modifier.
 - Topic 3: answering one concrete question ("where does SDA route, what's near it?") with throwaway read-only kiutils+shapely probes exposed every extraction gap in under an hour; better than auditing scripts line by line.
+- Topic 4: a back-of-envelope "what should a healthy bus read?" estimate made it fast to sort past scope readings into trustworthy/suspect/unknown without forming fault hypotheses; asking the user to separate confident vs forgotten recollections kept verdicts honest.
 - Topic 5: fanning web research out to 3 parallel subagents with a strict "tag each claim [read]/[secondary]/[unverified]" instruction kept main context small and made the citation bar enforceable.
 
 ### What didn't
+- Topic 4: the original April–May debug sessions ran in Cursor and their chat store isn't greppable, so unrecorded results (Phase 25) are unrecoverable. Anything not in the repo is lost.
 
 - Topic 3: committed generated outputs (layout context, DRC report) had silently gone stale; any artifact derived from a source file needs a source hash.
 - Topic 5: no authoritative source exists for "when to respin" or "when to hire a consultant"; vendor blogs only. Expect to label such heuristics as our own.
