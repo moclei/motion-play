@@ -507,3 +507,70 @@ Tasks assigned (from TASKS.md Phase 4):
 - [ ] **W3:** (Orchestrator)
 - [ ] 🔄 Handoff
 ```
+
+#### Notes
+
+**W2 applied.** Every approved item went in with the drafted text verbatim. Only the line anchors moved. One commit per file group:
+
+| # | Item | Target | Outcome |
+|---|---|---|---|
+| 1a–1d | PROTOCOL.md roles row / lab entry / relay row / escalation | `.context/PROTOCOL.md` | Approved, applied: `59d6ed5` |
+| 2 | Pointer line | `.context/PROJECT.md` | Approved, applied (unbackticked path, as drafted): `89f2195` |
+| 3a–3b | kiutils rule / source-hash rule (3c: shown only) | `tools/CONTEXT.md` | Approved, applied: `2e177f1`. 3a without the optional rationale sentence. 3c: no change, no second `tools/lab/` entry |
+| 4a–4g | Banners | the 7 files in Worker #4's item 4 | Approved, applied: `07b7d59`. 4f caveat accepted: a `routing_audit.py` re-run would drop the banner. No tool edit |
+| 5a–5c | Memory deletions, stock tip | memory dir, `hardware/CONTEXT.md` | Approved. 5a and 5b applied (memory, outside git, see below). 5c: `306438b`. Housekeeping-list question still open (below) |
+| 6 | IINLIM memory | memory dir + `firmware/CONTEXT.md` | Option B. Subsection added under `## Power Management`: `7c41a96`. Memory file and its index line deleted (below) |
+
+TASKS W2 ticked in `74693a4`.
+
+**Memory edits** in `~/.claude/projects/-Users-marcocleirigh-Workspace-motion-play/memory/`. No commit covers these.
+- Deleted `project_v7_i2c_bq_debug.md` (5a).
+- Deleted `project_pcb_revision_apr2026.md` (5b).
+- Deleted `project_bq24195_iinlim_fix.md` (6B). Its content now lives in `firmware/CONTEXT.md` (`7c41a96`).
+- `MEMORY.md`: removed the three matching index lines. It now has 3 lines: user profile, enclosure feedback, SPICE feedback.
+- None of the remaining memory files links to a deleted file (grep checked).
+- Pre-deletion copies of all four files are in the session scratchpad (`/private/tmp/claude-501/-Users-marcocleirigh-Workspace-motion-play/212d4cc0-97d5-46f4-abb7-0f1b4279e2c9/scratchpad/memory-backup/`). That folder is temporary, so don't count on it.
+
+**Preserved from `project_pcb_revision_apr2026.md` before deletion**, verbatim:
+```
+**Housekeeping still needed:**
+- Re-extract circuit-context.json and pcb-layout-context.json (stale, extracted mid-session)
+- Update LCSC fields in schematic for substituted parts
+- Update preflight-review-v2.md with resolved blockers
+- Commit all changes
+- 22 components still lack AI annotations
+```
+The "substituted parts" are listed in the same file's section just above it, also verbatim:
+```
+**LCSC substitutions at JLCPCB checkout (not yet updated in schematic):**
+- C22, C30: C7469958 → C72522 (47µF 35V 6.3x5.4mm)
+- C34, C35, C36, C42: C109314 → C45783 (22µF 25V 0805 Samsung)
+```
+**Still open for the user (Orchestrator to ask again):** which of these items are still live? Live items go to `docs/initiatives/GARDEN.md`. Nothing has been written to GARDEN.md.
+
+**Budget check (L0, bytes ÷ 4, measured on this branch after W2):**
+
+| L0 item | Lines | Bytes | Tokens |
+|---|---|---|---|
+| `CLAUDE.md` | 3 | 123 | ~31 |
+| `.context/PROJECT.md` (with the pointer line) | 151 | 10,972 | ~2,743 |
+| `MEMORY.md` index | 3 | 373 | ~93 |
+| `docs/research/v7-retry/debugger-role-draft.md` (stand-in for `debugger.md`) | 75 | 5,052 | ~1,263 |
+| PROTOCOL §Session Management (L155–162) + §Git (L246–257) | 20 | 1,137 | ~284 |
+| `lab/STATE.md`, actual skeleton | 52 | 3,365 | ~841 |
+| **Total, actual** | **304** | **21,022** | **~5.3k** |
+| `lab/STATE.md` at cap instead (150 lines, ~4k tokens per context-strategy §11.2) | 150 | ~16,000 | ~4,000 |
+| **Total, STATE at cap** | **402** | **~33,700** | **~8.4k** |
+
+**PASS** on both measures (< 500 lines, ≤ ~12k tokens).
+- Read strictly, "§Session Management" stops at `## Relays`. If Relays through the Relay template is counted too (L155–213), the total at cap is 441 lines and ~8.8k tokens, which still passes.
+- PROJECT.md's bytes include multi-byte emoji, so its token figure runs slightly high. The error is in the safe direction.
+
+**Checker:** `python3 tools/lab/check_state.py` on the real `lab/` gives `RESULT: OK (0 warnings)`, exit 0, `as_of=V7R-000`, `cards=0`.
+- That matches the sentinel state. W2 accepted no `[MEMORY]` warning, and 5a, 5b and 6B cleared all four.
+- `tools/lab/tests/run_tests.py` also passes (0 failures).
+- `--fresh hardware/pcb-main/kicad/circuit-context.json` still gives NO PROVENANCE (exit 2), as the 3b Scope bullet says.
+
+**For the Orchestrator / W3:**
+- W3 and Handoff are left unchecked. The branch is ready for the milestone PR.
+- Out-of-scope note, carried over from Worker #4: the existing `### Power Flow` text in `firmware/CONTEXT.md` and the Main PCB bullets in `hardware/CONTEXT.md` still describe the pre-v6 path (T-Display, DWEII, AP2112K). The new IINLIM subsection now sits beside that stale text. This is for the Organizer or GARDEN, and is not added to Deferred.
