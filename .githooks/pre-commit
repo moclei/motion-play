@@ -1,0 +1,13 @@
+#!/bin/sh
+# lab/ pre-commit hook (context-strategy.md §4.2). Enable once per clone:
+#   git config core.hooksPath .githooks
+# Rules live in tools/lab/precommit.py. Commits that stage nothing under lab/ skip it.
+
+git diff --cached --name-only | grep -q '^lab/' || exit 0
+
+top=$(git rev-parse --show-toplevel) || exit 1
+if ! command -v python3 >/dev/null 2>&1; then
+    echo "lab pre-commit: python3 not found; cannot check lab/ rules. Commit rejected." >&2
+    exit 1
+fi
+exec python3 "$top/tools/lab/precommit.py"
