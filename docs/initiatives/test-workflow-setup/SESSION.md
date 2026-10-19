@@ -426,7 +426,7 @@ New index line:
 ```
 - [BQ24195 IINLIM firmware fix](project_bq24195_iinlim_fix.md) — Main PCB (v6 onward) needs firmware to lift BQ24195 IINLIM or ESP32 browns out under load
 ```
-Checked mentally against the regex: no `v7`, no `V7R-`, no `BQ…NACK`. The Worker that applies it should re-run the checker to confirm. Wording edits: "T-Display resets" → "the MCU resets" (v7 has no T-Display), and "v7 has identical wiring" → "Later revisions…".
+Grep-checked: the proposed file and index line contain no match for `v7|V7R-|BQ.*NACK` (case-insensitive). The applying Worker re-runs the checker to confirm. Wording edits: "T-Display resets" → "the MCU resets" (v7 has no T-Display), and "v7 has identical wiring" → "Later revisions…".
 
 **Option B: move to `firmware/CONTEXT.md`.** Delete the memory file and its index line, and add a subsection under `## Power Management` (after `### Power Flow`). In-repo text can name v7; the checker only greps memory. 0 `[MEMORY]` warnings.
 ```diff
