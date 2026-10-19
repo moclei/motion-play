@@ -226,3 +226,243 @@ Tasks assigned (from TASKS.md Phase 4):
 - [ ] **W3:** … (not in this dispatch)
 - [ ] 🔄 Handoff
 ```
+
+#### Notes
+
+**W2 preparation only. Nothing below has been applied.** Every repo file named here is unchanged, and the memory directory was not touched. Each item is approved or declined on its own. Sub-items marked (a)/(b) can be split. Line numbers are at `f567168`.
+
+Baseline: `python3 tools/lab/check_state.py` on the real `lab/` gives `RESULT: OK (4 warnings)`, all `[MEMORY]`: MEMORY.md L2,5,6; `project_bq24195_iinlim_fix.md` L2,3,7,11; `project_pcb_revision_apr2026.md`; `project_v7_i2c_bq_debug.md`. The grep is case-insensitive `v7|V7R-|BQ.*NACK`.
+
+---
+
+**Item 1: `.context/PROTOCOL.md` (context-strategy §9). Four hunks.**
+
+(1a) Agent Roles: add a Debugger row marked draft, plus a draft/invocation note.
+```diff
+@@ -17,9 +17,12 @@
+ | Bugfix       | —                | Diagnoses user-found issues; proposes fixes, applies only on approval |
+ | Gardener     | GARDEN.md, HAZARDS.md | Clears accumulated cross-cutting refinements via orchestrated sub-agents |
++| Debugger *(draft)* | `lab/` (STATE, NOTEBOOK, cards, log) | Runs pre-registered bench experiments with the user and keeps state current |
+ 
+ Each role's full definition lives in its own file under `.claude/agents/`; this document holds only the sections shared across roles. 
+ 
+ **Invocation:** The user runs Planner, Orchestrator, Organizer, Bugfix, and Gardener as their own top-level sessions with `claude --agent <role>` — the active agent is fixed for a session's lifetime. The Worker is spawned by the Orchestrator via the Task tool (`subagent_type: worker`), never by the user or another role.
++
++**Debugger (draft):** not installed yet. Its definition is the user's draft at `docs/research/v7-retry/debugger-role-draft.md`, not a file under `.claude/agents/`. Until it is installed, the user runs it as an ad-hoc `claude` session opened with "Read `docs/research/v7-retry/debugger-role-draft.md` and act as that role for this session."
+ 
+ ---
+```
+
+(1b) Non-Initiative Documents: add a `lab/` entry after HAZARDS.md.
+```diff
+@@ -146,6 +149,10 @@
+ Rules: one trap per entry, a line or two, no history. Route here when the value is *knowing before you start*; route a scoped fix to GARDEN, a durable "always do X" rule to a CONTEXT.md, and a decision or feature to MASTER. If an item is both a warning and a fix, HAZARDS holds the warning and links the GARDEN item that owns the fix.
+ 
++**lab/:** Bench-debug state, owned by the Debugger, at the repo root. `lab/STATE.md` is the single live handoff document and is loaded at the start of every debugger session. It must be updated in the same commit that records or abandons a card: the pre-commit hook rejects the commit otherwise, and `tools/lab/check_state.py` reports a stale `as_of` at session start. `lab/NOTEBOOK.md` is append-only and is grepped by test ID or date, never loaded whole. Cards (`lab/cards/V7R-NNN-<slug>.md`), session logs (`lab/log/`) and evidence (`lab/evidence/`) are committed. `lab/captures/` and `lab/inbox/` are gitignored. Templates live in `lab/templates/`. `lab/` is not an initiative folder, so the "no orphan documents" rule does not apply to it.
++
+ ---
+ 
+ ## Session Management
+```
+
+(1c) Relays table: add a Debugger → Planner row.
+```diff
+@@ -168,6 +175,7 @@
+ | Research / ideation session | `role:planner` | `RELAY-planner.md` | Enough explored to start an initiative |
+ | Planner session | `role:orchestrator` | `RELAY-orchestrator.md` | Initiative docs complete, ready to build |
+ | Orchestrator session | Bugfix / playtesting session | `RELAY-bugfix-<date>.md` | Build complete, testing needed |
++| Debugger session | `role:planner` | `RELAY-planner.md` (in the new initiative's folder) | A fix, a design change or a tool is needed |
+```
+
+(1d) Escalation Paths: add a Debugger entry after the Worker-blocker entry.
+```diff
+@@ -217,6 +225,11 @@
+ → Document in `## Rejected Approaches` in PLAN.md → add to `## Open Questions`
+ → Return `BLOCKED` → Orchestrator emits evaluation line, escalates to Planner
+ 
++**Debugger finds that build work is needed (a fix, a tool, a design change)**
++→ Do not implement it → propose a Planner relay
++→ Exception: a firmware change that *is* the experiment (a card's declared delta) is allowed with the user's approval and is reverted on a null result
++→ Anything that outlives the card goes to the Planner
++
+ **Orchestrator sees repeated failure or drift**
+ → Stop dispatching → send replan request to Planner with specifics
+```
+Not proposed: the Initiatives principle at L30 ("the only agent roles that directly interact with initiatives…"). The Debugger only suggests initiatives through a relay, which that principle already allows. When the Deferred install happens, (1a) becomes: drop "*(draft)*", delete the Debugger (draft) paragraph, and add Debugger to the `claude --agent` list.
+
+---
+
+**Item 2: `.context/PROJECT.md`, the pointer line (context-strategy §2.5 item 3).**
+```diff
+@@ -19,6 +19,7 @@
+ ## Current Project Status
+ 
+ **Hardware:** ✅ Custom PCBs operational with dual-MUX architecture (TCA→PCA→Sensors). AI-optimized `circuit-context.json` available for all three PCBs (main, sensor-rigid, sensor-flex).
++**v7 main PCB I²C fault:** open, see lab/STATE.md.
+ **Firmware:** ✅ Full data collection pipeline (1000 Hz, PSRAM buffering, MQTT transmission)
+```
+The text is verbatim from PLAN. §2.5 rule: the line only ever says `open` or `closed`. Optional for the user: backtick the path (`` `lab/STATE.md` ``) to match the file's other path styling. The `*Last Updated*` footer is not touched.
+
+---
+
+**Item 3: `tools/CONTEXT.md`. Two hunks, shown with the existing Phase 3 section.**
+
+(3a) Replace the Critical Rule (L5) with the §8.3 proposed text, verbatim.
+```diff
+@@ -3,6 +3,6 @@
+ ## Critical Rule
+ 
+-**DO NOT read or edit `.kicad_sch` or `.kicad_pcb` files directly.** These files are large, verbose S-expression formats that waste context window budget and produce unreliable edits. Instead, use the tools described below — they extract compact JSON context files and perform programmatic CRUD through kiutils.
++**Never read `.kicad_sch` or `.kicad_pcb` text into context, and never edit them directly.** Use the tools below. Exception: targeted read-only kiutils or `kicad-cli` probes are allowed when no tool output answers the question (e.g. zones, stackup). Run them from a scratch script, print only the numbers you need, and cite the probe and file commit.
+ 
+ ## KiCad Schematic Tools
+```
+Option for the user: also keep the old rationale as a second sentence ("These files are large, verbose S-expression formats that waste context window budget and produce unreliable edits."). The §8.3 sunset rule (once board-model phase 1 lands, probes are only for its gaps) is left out of the line, as §8.3's own proposed text leaves it out.
+
+(3b) Add the §8.2 source-hash rule as a standing section after the Critical Rule.
+```diff
+@@ -6,4 +6,15 @@
+ **Never read `.kicad_sch` or `.kicad_pcb` text into context, and never edit them directly.** …
+ 
++## Source-Hash Rule
++
++**Every generated context file carries provenance, and every reader checks it.**
++
++- **JSON:** a top-level `_provenance` object: `source`, `source_sha256`, `generator`, `generator_commit`, `generated`.
++- **Markdown:** the same fields as a front-matter block.
++- **Images:** a sidecar `<name>.meta.json`, or the provenance block of the narrative that embeds them.
++- **Check:** `python3 tools/lab/check_state.py --fresh <file>` recomputes the source hash (exit 0 fresh, 1 stale, 2 no provenance). Run it before citing a generated file in a card or a design decision.
++- **Scope:** all generated context, including the existing `circuit-context.json` outputs. Those have no `_provenance` yet (the retrofit belongs to the board-model initiative), so `--fresh` reports them as having none (exit 2). Until the retrofit, judge their freshness from git.
++
+ ## KiCad Schematic Tools
+```
+Checked: `--fresh hardware/pcb-main/kicad/circuit-context.json` gives `NO PROVENANCE`, exit 2, which matches the Scope bullet.
+
+(3c) For reference only, no change: the existing Phase 3 section, `## Lab Tools` → `### lab/` (L83–98). It has the script table (`check_state.py`, `precommit.py`, `lablib.py`, `tests/run_tests.py`), the one-time setup `git config core.hooksPath .githooks`, and the `self` convention. The Dependencies line (L102) already says "All KiCad Python tools…" (Phase 3). No second `tools/lab/` entry is proposed.
+
+---
+
+**Item 4: banners on the §2.4 items (not the scope guide).** Each banner is a blockquote inserted as the first lines of the file (above any H1), followed by one blank line. The body is not touched (BRIEF scope).
+
+(4a) `docs/debugging/v7-i2c-investigation.md`, frozen:
+```
+> **FROZEN 2026-10. Historical only. Current state: `lab/STATE.md`.** This is the legacy notebook (volume 0). Its summary sections (Fastest read, TL;DR, Current working theory, Candidate fixes, Firmware state, Revert list, Immediate next steps) and the status line below are not current. Look up a phase by heading (`grep -n "^### Phase"`) and cite it as `L-PhNN` (`L-Ph24a` = Arduino-as-master, `L-Ph24b` = Exp 1 glitch filter).
+```
+(4b) `docs/debugging/v7-i2c-session-resume.md`, retired (the file currently starts with a blank line; the banner goes above it):
+```
+> **RETIRED, superseded by `lab/STATE.md`; do not load.** Kept in place because other documents cite this path.
+```
+(4c) `docs/debugging/v7-i2c-fresh-perspective-prompt.md`, retired:
+```
+> **RETIRED, superseded by `lab/STATE.md`; do not load.** A future outside-review prompt is generated from `lab/STATE.md` (context-strategy §7.3), not maintained by hand.
+```
+(4d) `docs/explorations/esp32-s3-i2c-master-deep-dive.md` and (4e) `docs/explorations/bq_solder_sda-catmull.md`, the same banner on both:
+```
+> **Pre-retry interpretation: conclusions not authoritative; see `lab/STATE.md`.** Reference facts may be cited from this file; its conclusions may not.
+```
+(4f) `tools/pcb-context/audit-specs/v7-main-i2c.audit.md`, retired for numbers:
+```
+> **RETIRED for numbers.** Clearances here are centreline to centreline and overstate the real copper gap by roughly half the combined trace widths (`docs/research/v7-retry/kicad-extraction-audit.md`). Don't quote them. Use edge-to-edge figures from a read-only probe (tools/CONTEXT.md Critical Rule) until the board model lands.
+```
+**Caveat on 4f:** this file is generated. `tools/pcb-context/routing_audit.py` (L685) writes `<spec_stem>.audit.md` and would overwrite the banner on any re-run. The options are to accept that (re-runs are unlikely before the board model replaces it) or to also put a one-line comment in `audit-specs/v7-main-i2c.json`. The second option is a tool edit and is not drafted here.
+
+(4g) `hardware/pcb-main/REVIEW-HANDOFF.md`, not debug context:
+```
+> **Not debug context.** This is the April 2026 pre-order review prompt for v7. Do not load it for the v7 I²C fault; see `lab/STATE.md`.
+```
+
+---
+
+**Item 5: auto-memory deletions plus the C90862 tip (context-strategy §2.5 items 1–2).** The memory files are outside the repo. The user may do (5a)–(5c) by hand, or approve them for the next Worker.
+
+(5a) Delete `~/.claude/projects/-Users-marcocleirigh-Workspace-motion-play/memory/project_v7_i2c_bq_debug.md` and remove its MEMORY.md index line:
+```
+- [V7 I2C BQ debug status](project_v7_i2c_bq_debug.md) — Paused at Ph25: S3 master implicated (Arduino master ACKs); retry via docs/research/v7-retry
+```
+Nothing is lost. Each durable fact in it already has a home in the repo: the bodge warning (decisioning/postmortem), Board 3 (test-workflow-audit), the v6 0-error reference and device-002 (v6-v7-changelist), the refuted "noise antenna" framing (postmortem), and the firmware baseline (`v6-ref` tag). The first debugger session's STATE fill carries them forward.
+
+(5b) Delete `project_pcb_revision_apr2026.md` and remove its index line:
+```
+- [PCB revision Apr 2026](project_pcb_revision_apr2026.md) — Main PCB v7 ordered: ESP32 WROOM, custom power, 3 critical bugs fixed
+```
+The v6→v7 facts are covered by `v6-v7-changelist.md`, and the SPICE lesson by `feedback_spice_symbols.md`. **Question for the user:** its "Housekeeping still needed" list (re-extract context JSONs; update LCSC fields in the schematic for the C22/C30 → C72522 and C34–36/C42 → C45783 substitutions; update `preflight-review-v2.md`; 22 components unannotated). Per §2.5, any item that is still live moves to `docs/initiatives/GARDEN.md`. Which items, if any, are still live? The LCSC substitutions are the likeliest.
+
+(5c) `hardware/CONTEXT.md`: move the stock tip in, as a new bullet at the end of the "### 1. Main PCB" list.
+```diff
+@@ -36,4 +36,5 @@
+ - **SN74AHCT125** logic level shifter — Between MCU (3.3V) and WS2818B LED strip (5V). 72 LEDs, 1.2m strip.
+ - **3× JST-SH 4-pin connectors** (SM04B-SRSS-TB) — One per sensor PCB (Pin 1 = 3.3V, Pin 2 = GND, Pin 3 = SDA, Pin 4 = SCL)
++- **Sourcing:** BQ24195 (LCSC C90862) stock is chronically low. Check it before every main PCB order.
+ 
+ ### 2. Sensor Rigid Base (`hardware/sensor-rigid/`)
+```
+C90862 = `BQ24195RGER` confirmed in `hardware/pcb-main/kicad/circuit-context.json` (L2454–2456).
+
+After (5a)+(5b), `[MEMORY]` warnings drop from 4 to 2: MEMORY.md (the IINLIM index line) and `project_bq24195_iinlim_fix.md`. Item 6 decides those two.
+
+---
+
+**Item 6: `project_bq24195_iinlim_fix.md` and its index line. The user picks one option.** The facts were checked against `firmware/src/main.cpp`: `configureBQ24195()` at L283, called at L128 before `display.init()` at L140; REG00 0x36 at L105; REG05 0x8A at L107; address 0x6B at L101.
+
+**Option A: reword in place** (stays in memory, no `v7` string, so 0 `[MEMORY]` warnings). New file:
+```
+---
+name: BQ24195 IINLIM firmware fix (main PCB, v6 onward)
+description: Every main PCB revision since v6 ties BQ24195 D+/D- to GND, requiring firmware to lift IINLIM at boot or the ESP32 browns out
+type: project
+---
+
+Every main PCB revision since v6 (the current one included) ties U5 (BQ24195) D+ and D− pins directly to GND. Without USB BC1.2 detection, the BQ defaults to ~500 mA IINLIM and clamps VSYS the moment the ESP32 + display draw more than that — VSYS thrashes 4.2 V → 2.6 V, +5 V/+3.3 V brown out, the MCU resets in a loop.
+
+**Firmware fix (in `firmware/src/main.cpp`):** `configureBQ24195()` runs in `setup()` before `display.init()`. Writes BQ24195 REG00=0x36 (IINLIM=2 A, EN_HIZ=0) and REG05=0x8A (40 s I²C watchdog disabled). I²C addr 0x6B on the same bus as the TCA9548A (SDA=43, SCL=44). Probes for the chip first so bare T-Display test setups still boot cleanly.
+
+**Why:** Without this the brownout is unrecoverable on USB-only power (no battery to fall back on). Confirmed on the v6 board on 2026-04-10: VSYS held steady, display booted normally after the firmware change. Later revisions have identical D+/D− wiring, so the same fix is mandatory on first flash of any of them.
+
+**How to apply:** Do not delete `configureBQ24195()` or move it after `display.init()`. Hardware ILIM ceiling is ~1.6 A via R32=330 Ω (530/RILIM), so register IINLIM=2 A is effectively 1.6 A — that's the realistic max on this board until R32 is changed.
+
+**v8 candidate fix (no firmware dependency):** short U5 D+ to U5 D− (instead of both to GND). BQ24195 then detects a DCP via built-in BC1.2 and sets IINLIM=1.5 A in hardware. Removes the firmware dependency entirely.
+```
+New index line:
+```
+- [BQ24195 IINLIM firmware fix](project_bq24195_iinlim_fix.md) — Main PCB (v6 onward) needs firmware to lift BQ24195 IINLIM or ESP32 browns out under load
+```
+Checked mentally against the regex: no `v7`, no `V7R-`, no `BQ…NACK`. The Worker that applies it should re-run the checker to confirm. Wording edits: "T-Display resets" → "the MCU resets" (v7 has no T-Display), and "v7 has identical wiring" → "Later revisions…".
+
+**Option B: move to `firmware/CONTEXT.md`.** Delete the memory file and its index line, and add a subsection under `## Power Management` (after `### Power Flow`). In-repo text can name v7; the checker only greps memory. 0 `[MEMORY]` warnings.
+```diff
+@@ -94,6 +94,14 @@
+ - +5V → T-Display via pin 12 (5V pin)
+ 
++### BQ24195 Input Current Limit (main PCB v6 and v7)
++
++Both boards tie U5 (BQ24195) D+ and D− to GND, so BC1.2 detection never runs and the BQ defaults to ~500 mA IINLIM. Above that it clamps VSYS (4.2 V → 2.6 V), +5 V/+3.3 V brown out and the MCU reset-loops. This is unrecoverable on USB-only power.
++
++- **Fix:** `configureBQ24195()` in `firmware/src/main.cpp` runs in `setup()` **before** `display.init()`. It probes 0x6B (on the TCA9548A bus, SDA=43/SCL=44; bare T-Display setups skip it), then writes REG00=0x36 (IINLIM=2 A, EN_HIZ=0) and REG05=0x8A (I²C watchdog disabled). Do not delete it or move it after `display.init()`. Confirmed on v6, 2026-04-10.
++- **Ceiling:** the hardware ILIM is ~1.6 A via R32=330 Ω (530/R_ILIM), so the register's 2 A is effectively 1.6 A until R32 changes.
++- **v8 candidate:** short D+ to D− instead of both to GND. The BQ then detects a DCP and sets 1.5 A in hardware, with no firmware dependency.
++
+ ### Power Isolation Challenge
+```
+Note on B: the surrounding `### Power Flow` text (DWEII module, AP2112K, T-Display pin 12) describes the pre-v6 power path and is stale. This subsection would sit beside it. Fixing the stale text is not in this initiative's scope; it is an Organizer/GARDEN item.
+
+**Option C: keep as is, as an accepted `[MEMORY]` warning.** No change. The Phase 4 checker task then expects exactly 2 `[MEMORY]` warnings (MEMORY.md L5 index line, and `project_bq24195_iinlim_fix.md`), and these count as accepted. The cost: every session-start check prints them, and the PLAN Retirement acceptance ("no v7 lines in the memory index, except a line the user kept as accepted at W2") is met only through its exception.
+
+Worker recommendation, for the Orchestrator to pass on or drop: **B**. It is a durable firmware fact that a firmware session should find without memory, and it fits §2.5's "durable facts belong in the repo".
+
+---
+
+**Outcome table, for the applying Worker to fill:**
+
+| # | Item | Target | Outcome |
+|---|---|---|---|
+| 1a–1d | PROTOCOL.md roles row / lab entry / relay row / escalation | `.context/PROTOCOL.md` | pending |
+| 2 | Pointer line | `.context/PROJECT.md` | pending |
+| 3a–3b | kiutils rule / source-hash rule (3c: shown only) | `tools/CONTEXT.md` | pending |
+| 4a–4g | Banners | 7 files listed above | pending |
+| 5a–5c | Memory deletions, stock tip | memory dir, `hardware/CONTEXT.md` | pending (+ housekeeping-list question) |
+| 6 | IINLIM memory: A / B / C | memory dir (+ `firmware/CONTEXT.md` if B) | pending |
+
+**For the next Worker.**
+- Apply only the approved items, one commit per file group, and re-run `check_state.py` afterwards. Expected `[MEMORY]` counts: 0 if 5a+5b and 6A or 6B are applied; 2 if 6C.
+- The memory edits sit outside git, so record them in SESSION.md, since there is no commit for them.
+- The out-of-scope finding (stale `firmware/CONTEXT.md` Power Flow and stale `hardware/CONTEXT.md` Main PCB bullets, which still describe T-Display/DWEII/AP2112K) is noted here only. It belongs to the Organizer or GARDEN, not this initiative's Deferred list.
