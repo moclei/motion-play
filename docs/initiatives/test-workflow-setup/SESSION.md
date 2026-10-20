@@ -1518,3 +1518,17 @@ All Phase 7 tasks are done and ticked. Commits: `500c323` (backup script + tests
 - The W6 files live only in the gitignored `lab/captures/V7R-999/` and `lab/inbox/` (now backed up). No `lab/log/` file was created.
 - `lab/inbox/w6/2026-10-20_s01.yaml` still has its TODOs. That is expected for a dummy ID.
 - PLAN's "Inputs for Phase 7" bullet still says to allow for the ≈ 1 h offset. I left it as the historical input; the Phase 8 list supersedes it.
+
+#### Result
+| # | Phase | Result | Escalation evaluated? | Commit | Notes |
+|---|-------|--------|-----------------------|--------|-------|
+| 10 | Phase 7: Capture, ingest, validation, backup (task 4, W6 analysis, handoff) | DONE | No — clean completion | 946e12a | Capture-tool acceptance met (CSV 10000/10000, PNG graticule 0 px); iCloud backup 59 files; CONTEXT updated |
+
+#### Verification
+- Commits `500c323`, `ce5f216`, `d192212` and `946e12a`; the tree is clean. Phase 7 is fully ticked. `run_tests.py`: `OK: 0 failure(s)`.
+- `backup_captures.sh` has no `--delete` flag (the only match is a comment saying so). `~/Library/Mobile Documents/com~apple~CloudDocs/motion-play-lab/{captures,inbox}` exists.
+- No date-stamped PLAN headings, and no open Open Questions. origin/main has not moved, so no rebase is needed for Phase 8.
+- Carry forward to Phase 8:
+  - Every "Inputs for Phase 8" bullet in PLAN.
+  - The VPP-invalid hypothesis (untested): put every measured item on the panel while running.
+  - Topic-4 "Dry run" acceptance wording (carried from Phase 5 (b)): the procedure limits the V_OL claim; the acceptance tick stays with Phase 9.
