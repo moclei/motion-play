@@ -64,6 +64,8 @@ Pass table per `known-good-reference.md` (V_DD = 3.3 V). Evaluated per arm (S1, 
 - Step F power config (operator): "Main board is plugged in to a usb-c cable plugged into a standard plug socket (I don't know the ratings)". "The T-display USB-c is plugged into my mac via a cable with a \"data only\" function, so no power can pass through". Session: `/dev/cu.usbmodem14401` enumerated; `pio run -e lilygo-t-display-s3 -t upload` from a worktree at `v6-ref` (4da1c67): "Wrote 1842416 bytes ... Hash of data verified." Serial read for 12 s after reset: no output.
 - S1 (post-flash + V1): display "on the previously mentioned screen, stopped at the \"Sensor init failed\" step". `*IDN?` → `RIGOL TECHNOLOGIES,DHO804,DHO8A282M00872,00.01.05`; `:SYSTem:ERRor?` → `0,"No error"`.
 
+- S2 (V2): ":CHANnel1:PROBe?/DISPlay? and :CHANnel2:PROBe?/DISPlay?": "The first two both printed \"10\" and \"1\". The error one showed `0,\"No error\"`". Probes unmarked; "I tell them apart just by looking at them and seeing which sockets they are plugged into on the scope (CH1 or CH2)."
+
 ### Measured values (from log; cite `lab/evidence/V7R-001/...`)
 ### Interpretation (session; labelled as such)
 
