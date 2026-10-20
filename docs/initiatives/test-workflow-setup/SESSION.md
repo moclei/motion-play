@@ -1060,3 +1060,16 @@ This was a planned PARTIAL: tasks 2 and 3 are done, and W5 and the handoff are u
 **For the Orchestrator / W5:**
 - The S9 smoke test was never run, so the W5 recommendation's line "use the Phase 6 smoke test to validate the transport" has no result behind it. Port 5555 itself is verified (S2b).
 - The `:SAVE:SETup` Open Question and the LAN CSV Open Question both bear on what `capture.py` writes. They are worth raising alongside W5.
+
+#### Result
+| # | Phase | Result | Escalation evaluated? | Commit | Notes |
+|---|-------|--------|-----------------------|--------|-------|
+| 7 | Phase 6: Scope on the LAN (tasks 2–3) | PARTIAL (planned) | Yes — two new Open Questions; the LAN-capture acceptance is not met | c2bed11 | Facts marked; PNG matches; CSV does not match sample for sample; setup consistent where comparable |
+
+#### Verification
+- Commits `2e7161d` and `c2bed11`; the tree is clean. Tasks 2 and 3 are ticked; W5 and the handoff are `[ ]`. PLAN has no date-stamped headings. The two new Open Questions are in PLAN (`:SAVE:SETup`; LAN CSV ≠ USB CSV).
+- [ORCH] Evaluating: resolvable without replanning? Partly.
+  - The CSV question needs evidence first. The Orchestrator relays the re-capture bench step S10: RAW memory over the LAN vs `:SAVE:MEMory:WAVeform` CSV on one frozen trace.
+  - The setup-file option is a user decision. If it changes the Phase 7 task wording, the Planner is engaged at that point.
+- **W5 decision (user, verbatim, 2026-10-20):** "build + borrow the socket client". Our own `capture.py`, with a credited copy of the MIT `ScpiClient` from `mattjax16/rigol-dho-mcp` @ f9ac719. The next Phase 6 Worker records this in PLAN, along with the handoff.
+- Carry forward: stick file timestamps run about 1 h ahead of Mac local time after the S4b clock set. This goes to Phase 7 ingest.
