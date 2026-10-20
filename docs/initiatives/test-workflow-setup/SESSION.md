@@ -825,3 +825,12 @@ Branch is current with main (no rebase needed). Relaying Worker #6's S1–S9 one
 Orchestrator notes on S1:
 - LAN is a direct point-to-point link, not a DHCP reservation. It meets the PLAN requirement of a fixed IP, recorded: `192.168.50.2`, with the Mac on `192.168.50.1/24`. Firmware 00.01.05 is confirmed.
 - **The clock CHECK failed: there is no on-device date/time setting.** That rules out NTP, because the scope has no internet. This matters for Phase 7: `ingest_usb.py` matches files by timestamp, and the log's capture times come from the scope. Probe added to S4: `:SYSTem:DATE?` and `:SYSTem:TIME?` (not desk-verified, so the result is recorded as observed only). Phase 7 handles the offset or uses Mac-side time. This is not a STOP condition, so the relay continues.
+
+**S2 REPORT (user, verbatim):**
+> I ran the terminal command, nothing appeared after I entered the two commands.
+> I opened the IP address in the browser and sent that command, it showed the following:
+> `-> *IDN?` / `<- (Return Count:50)` / `RIGOL TECHNOLOGIES,DHO804,DHO8A282M00872,00.01.05` / `* Connected to: TCPIP::192.168.50.2::INSTR`
+
+Orchestrator notes on S2:
+- SCPI works over LAN through the web panel, which uses VXI-11 (`::INSTR`). The raw socket path (`nc` to port 5555) returned nothing. Fallback route succeeded, so STOP IF did not fire.
+- The capture tool needs a scriptable route, so I'm inserting diagnostic step S2b before S3. Two likely causes: macOS `nc` closes the connection when stdin ends, before the scope replies; or port 5555 is closed or disabled. If the socket can't be made to work, VXI-11 (e.g. pyvisa-py) is the alternative and becomes an input to W5 and Phase 7.
