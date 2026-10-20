@@ -1316,3 +1316,24 @@ STOP IF: nothing — report either way.
 ```
 
 Expected for the Worker (not shown to the operator): S6 gives `PENDING (TODOs)`, exit 3, and no `ERROR` lines. The tool CSV should equal the `w6mem` values 10 000 / 10 000.
+
+#### Result
+| # | Phase | Result | Escalation evaluated? | Commit | Notes |
+|---|-------|--------|-----------------------|--------|-------|
+| 9 | Phase 7: Capture, ingest, validation (tasks 1–3) | PARTIAL (planned) | Yes — planned stop; two user decisions open (backup destination, TODO-warn hook policy) | bbe6022 | capture.py + vendored ScpiClient, validate_log.py + hook rule 4, ingest_usb.py; 48 checks pass |
+
+#### Verification
+- Commits `04a124d`, `f0c781e`, `2d48cee` and `bbe6022`; the tree is clean. Tasks 1–3 are ticked, and the W6 wording in TASKS is aligned to PLAN. No date-stamped headings.
+- Re-derived checks:
+  - `run_tests.py` passes (`OK: 0 failure(s)`).
+  - The vendored body hashes to `9fface90…5066`, matching upstream @ f9ac719. The MIT licence and attribution are present. PyYAML 6.0.1 is on python3 3.7.3. `capture.py --help` runs.
+- Caveat on "the template validates clean": `validate_log.py lab/templates/log.yaml` exits **1** at the CLI because of the session_id/filename rule. A copy named `2026-11-04_s01.yaml` validates OK. The test checks errors other than the filename. This is harmless (the hook only checks `lab/log/*.yaml`), but the claim was overstated.
+- [ORCH] Evaluating: resolvable without replanning? Yes, for W6, which is relayed now. Task 4 is waiting on the user's backup-destination answer. Anything other than Google Drive changes a BRIEF line, so the Planner is engaged when the answer arrives.
+- The user is asked to confirm the pre-commit policy: errors block, TODOs only warn.
+- W6 relay adjustments to the Worker's script:
+  - S1 replaces the panel setup with AUTO, a CH1 probe-ratio readback, and CH2 turned off. CH2 was left displayed in S8c, and capture.py measures every displayed channel.
+
+---
+
+### W6 — Phase 7 bench relay (Orchestrator)
+Relaying Worker #9's W6 script (S1 adjusted as noted above), one step at a time. REPORTs are verbatim.
