@@ -1105,3 +1105,41 @@ Orchestrator notes on S10b:
 **Setup-file decision (user, verbatim, 2026-10-20):** "Let's go with option a". Each capture saves the `:SYSTem:SETup?` binary blob over the LAN, and the log entry records the readable settings from the S4 queries. No per-capture menu save. This keeps to the Phase 7 scope, so no Planner is needed.
 
 **User clarification on PLAN edits (verbatim):** "Workers can update the plan of what they are actively working on, yes. They're not supposed to plan *new* initiatives, which is what I thought you meant. So you can forget about my comment."
+
+---
+
+### Worker #8 — Phase 6: Scope on the LAN (bench), W5 + handoff
+
+**Dispatch:**
+```
+Initiative: test-workflow-setup
+Phase: 6 — Scope on the LAN (bench)
+Initiative path: docs/initiatives/test-workflow-setup/
+Additional reading: SESSION.md sections "### Worker #7 — Phase 6" (its #### Notes, Result and Verification, including the W5 decision) and "### W4b — Phase 6 bench relay, follow-up"; PLAN.md Open Questions and "Verified instrument facts"; lab/inbox/phase6/lan_raw_preamble.txt, lan_raw_ascii.txt, usb/p6mem0.csv; Worker #7's scratch scripts in /private/tmp/claude-501/-Users-marcocleirigh-Workspace-motion-play/212d4cc0-97d5-46f4-abb7-0f1b4279e2c9/scratchpad/p6cmp/ (reuse them if useful)
+
+Tasks assigned (from TASKS.md Phase 6):
+- [x] **W4:** the Orchestrator relays the Phase 5 bench blocks to the user one step at a time and records each REPORT in SESSION.md
+- [x] Mark each [verify] item verified or corrected in PLAN "Verified instrument facts". Any item that fails goes to Open Questions, and the dependent tool or procedure work is blocked
+- [x] LAN-vs-USB comparison: a scratch script compares the PNG and CSV from the same capture. Record the result (acceptance: LAN capture)
+- [~] **W5:** present the build-vs-adopt evidence and get the user's decision. Record it in PLAN (strike through the question, add a Rejected Approaches line)
+- [ ] 🔄 Handoff
+
+The first open task is marked `[~]` because it was dispatched to you — it is not someone else's work in progress.
+
+Phase-specific notes:
+- Follow-up to the completed comparison task, before W5: compare the S10 LAN RAW pull (`lan_raw_ascii.txt` with `lan_raw_preamble.txt`) sample by sample against the S10b menu memory CSV (`usb/p6mem0.csv`). Both come from one frozen acquisition (S10b TRIGger:STATus = STOP).
+  - Report equal count, max abs diff, alignment offset if any, and whether t0/tInc match the preamble.
+  - Check whether the S5 LAN screen ASCII and the S6/S7 screen CSV are subsets of this 10 k set. They aren't the same acquisition as S10, so this can only be a structural or decimation check unless you can show otherwise. Don't overclaim.
+  - Update the comparison result and the LAN CSV Open Question in PLAN with the outcome. If the two memory sets match sample for sample, the acceptance is met on memory data: strike the Open Question and state that the capture tool writes RAW memory data and that W6 compares against a menu memory CSV. If they don't match, keep the Open Question open and return PARTIAL with the numbers.
+- Bench facts from W4b to add to PLAN "Verified instrument facts":
+  - `:WAVeform:MODE RAW` ASCII at 10 kpts reads in one go with STARt 1/STOP 10000; there's no TMC header. (bench W4b S10)
+  - `:SAVE:MEMory:WAVeform` fails silently, like `:SAVE:SETup`. (S10)
+  - The menu memory save path uses exact labels DATA SOURCE = MEMORY, FORMAT = *.csv. (S10b)
+  - The memory CSV header is `CH1V,t0 =…, tInc = …,`, a different layout from the screen CSV.
+- W5: the user's decision is recorded verbatim in SESSION (Worker #7 Verification): "build + borrow the socket client". Record it in PLAN as the task says. The decision is our own `capture.py` plus a credited, vendored copy of the MIT `ScpiClient` from `mattjax16/rigol-dho-mcp` @ f9ac7191869845ae46ca714de69a877c388b2530. The Rejected Approaches line covers adopting the tool as-is: untested on 00.01.05, writes no files, no setup pull, no I²C configuration, and the S9 smoke test was not run.
+- Setup-file decision (user, verbatim in SESSION W4b): "Let's go with option a". Strike the `:SAVE:SETup` Open Question with this resolution: the capture tool saves the `:SYSTem:SETup?` binary blob over the LAN, and the log entry records the readable settings from the S4 queries; no per-capture menu save. Adjust the Phase 7 "pulls the … setup file" wording in PLAN and TASKS so it names the blob. This is within scope; don't change other Phase 7 tasks.
+- Then do the 🔄 Handoff.
+
+You are not the Orchestrator. Do not create documents, work across phases, or replan.
+Return DONE, PARTIAL, or BLOCKED with specifics.
+```
