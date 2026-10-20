@@ -1165,3 +1165,58 @@ Phase 6 is complete: W5 and the handoff are ticked. All results are in PLAN → 
 - The W6 task in TASKS still says "Compare it with a USB save of the same screen". By PLAN, the comparison is now against a menu **memory** CSV (DATA SOURCE = MEMORY) of the same frozen capture, plus a PNG. I left the task text alone, as instructed ("don't change other Phase 7 tasks"). You may want to reword it, or have the Phase 7 Worker read PLAN for it.
 - RAW single-read is verified only at 10 kpts. Deeper memory may need `STARt`/`STOP` chunking, and that is noted in the Phase 7 inputs.
 - Commit mechanics: the W5 and setup PLAN edits went into the comparison commit `39d6f88`. The W5 tick is in `f301ef2`.
+
+#### Result
+| # | Phase | Result | Escalation evaluated? | Commit | Notes |
+|---|-------|--------|-----------------------|--------|-------|
+| 8 | Phase 6: Scope on the LAN (W5 + handoff) | DONE | No — clean completion | 935787e | RAW memory LAN vs menu memory CSV 10000/10000 equal; acceptance met on memory data; W5 and setup (a) recorded |
+
+#### Verification
+- Commits `39d6f88`, `f301ef2` and `935787e`; the tree is clean. Phase 6 is fully ticked. Every PLAN Open Question is struck. No date-stamped headings. origin/main has not moved, so no rebase is needed for Phase 7.
+- Carry forward to Phase 7:
+  - (a) The TASKS W6 wording "USB save of the same screen" is behind PLAN. Per PLAN, W6 compares against a **menu memory CSV** of the same frozen capture, plus the PNG. The Phase 7 Worker aligns the TASKS wording, since it is a Worker-owned doc and the change is within scope.
+  - (b) A single RAW read is verified only at 10 kpts.
+  - (c) Stick file timestamps run about 1 h ahead of Mac local time.
+  - (d) Task 4 needs the user's Google Drive path. The Orchestrator asks the user in parallel with tasks 1–3.
+
+---
+
+### Worker #9 — Phase 7: Capture, ingest, validation, backup (tasks 1–3)
+
+**Dispatch:**
+```
+Initiative: test-workflow-setup
+Phase: 7 — Capture, ingest, validation, backup
+Initiative path: docs/initiatives/test-workflow-setup/
+Additional reading: SESSION.md "### Worker #8" (Notes + Verification carry-forward) and "### W4b"; PLAN.md "Verified instrument facts" with its "Inputs for Phase 7" list, and the Capture tooling section (W5 decision); tools/CONTEXT.md Lab Tools section; existing tools/lab/ (lablib.py, precommit.py, run_tests.py, fixtures); bench samples in lab/inbox/phase6/ (usable as test inputs)
+
+Tasks assigned (from TASKS.md Phase 7):
+- [~] Write the capture tool (or the wrapper around the adopted one) per PLAN: files named per §4.4, log entry with every required §4.6 field filled from scope queries, operator fields left as TODO
+- [ ] Write `tools/lab/validate_log.py` (branches on `kind`). Wire it into the pre-commit helper for staged `lab/log/*.yaml`. Add a passing and a failing fixture
+- [ ] Write `tools/lab/ingest_usb.py` (copy to inbox, timestamp-match, rename into captures)
+- [ ] Ask the user for the Google Drive for desktop folder path. Write `tools/lab/backup_captures.sh` (rsync captures/ + inbox/), with the path as one config value
+- [ ] **W6:** one bench capture with the tool. Compare it with a USB save of the same screen, and run the validator on the generated entry (acceptance: capture tool). Update the `tools/CONTEXT.md` tools/lab section
+- [ ] 🔄 Handoff
+
+The first task is marked `[~]` because it was dispatched to you — it is not someone else's work in progress.
+
+Scope for this dispatch: tasks 1–3 only. Stop after task 3 with a planned PARTIAL. The Orchestrator is getting the Drive path (task 4) from the user, and W6 is a bench step the Orchestrator relays.
+
+Phase-specific notes:
+- W5 decision (PLAN): build our own `capture.py`, with a credited vendored copy of the MIT `ScpiClient` from `mattjax16/rigol-dho-mcp` @ f9ac7191869845ae46ca714de69a877c388b2530. Fetch the file at that exact commit. Keep the MIT licence text and attribution in the vendored file, and note its provenance (URL, commit, sha256) in tools/CONTEXT.md when you update it. Read the vendored code fully before using it.
+- The capture tool works only against facts PLAN marks verified on 00.01.05. Key points:
+  - Use the hold-open socket and don't rely on EOF.
+  - Set the scope clock from the Mac at the start.
+  - Waveform: RAW memory ASCii, STARt 1/STOP = memory depth. A single read is verified only at 10 kpts; for deeper memory, chunk or refuse with a clear message. Don't guess.
+  - Write the PNG from `:DISPlay:DATA? PNG` with the TMC header stripped.
+  - Setup: the `:SYSTem:SETup?` binary blob (option a), plus readable settings from the S4 queries in the log entry.
+  - Never use `:SAVE:SETup`, `:SAVE:MEMory:WAVeform` or `:SAVE:STATus?` as proof of a save.
+  - `:MEASure:ITEM?` returns 9.9E37 when invalid. Record it as invalid, not as a number.
+- The tool can't be tested on the bench in this dispatch: the scope isn't attached for Workers. Test it against a local fake SCPI server or recorded responses, using the phase6 bench files. Add those tests to run_tests.py. W6 is the real bench check.
+- The TASKS W6 wording "USB save of the same screen" is behind PLAN, which says to compare against a menu memory CSV (DATA SOURCE = MEMORY) of the same frozen capture, plus the PNG. Align the W6 wording in TASKS to PLAN. Don't change anything else in Phase 7's task list.
+- ingest_usb.py: saved filenames get an appended index digit, and stick timestamps ran about 1 h ahead of Mac local time after the S4b clock set (Worker #7 note; cause unknown). Match tolerantly and report ambiguity rather than guessing. Never delete from the stick.
+- Draft the W6 bench script for the Orchestrator to relay, in the same STEP/DO/CHECK/CAPTURE/REPORT/STOP IF format as the Phase 5 script. Put it in your #### Notes block. Menu steps must be spelled out button by button with the exact labels from PLAN. The operator must keep the trace frozen between the tool run and the menu memory save.
+
+You are not the Orchestrator. Do not create documents, work across phases, or replan.
+Return DONE, PARTIAL, or BLOCKED with specifics.
+```
