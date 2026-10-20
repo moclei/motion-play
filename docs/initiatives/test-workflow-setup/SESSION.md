@@ -1143,3 +1143,25 @@ Phase-specific notes:
 You are not the Orchestrator. Do not create documents, work across phases, or replan.
 Return DONE, PARTIAL, or BLOCKED with specifics.
 ```
+
+#### Notes
+Phase 6 is complete: W5 and the handoff are ticked. All results are in PLAN → "Verified instrument facts" (SCPI table, CSV save path row, LAN-vs-USB comparison, Inputs for Phase 7), Technical Notes → Capture tooling, Rejected Approaches and Open Questions.
+
+**RAW memory comparison (W4b S10 vs S10b, one frozen acquisition):**
+- `lan_raw_ascii.txt` and `usb/p6mem0.csv` both have 10 000 values. **10 000 / 10 000 are equal**, as numbers and as text. Max abs difference is 0 and the alignment offset is 0. Shifts of ±1…5 samples match only 397–645 values, so the zero offset is not a coincidence.
+- The memory CSV header gives `t0 = -2.000000e-03` and `tInc = 4.000000e-07`. Both equal the RAW preamble's xorg and xinc exactly.
+- **Screen sets vs the 10 k memory:** this is a structural check only, because S5–S7 was a different acquisition. The screen window (xorg −1 ms, xinc 2 µs) corresponds to RAW indices 2 500–7 499 at stride 5. At that stride, its 1.5 V crossings fall at 1/251/501/751, the same as both screen sets, and all three sets have the same ≈ 2.5–2.7 mV value steps. But **no screen value occurs in the RAW value set** (the grids are offset; I didn't check why). So a value-level subset test isn't possible, and I don't claim one. Which memory samples each screen path takes is still a hypothesis.
+- **Outcome:** the acceptance "LAN capture" is met on memory data (PNG match plus RAW = menu memory CSV). The LAN CSV Open Question is struck. PLAN now states that the capture tool writes RAW memory data and that W6 compares against a menu memory CSV.
+- The scratch script is `/private/tmp/claude-501/-Users-marcocleirigh-Workspace-motion-play/212d4cc0-97d5-46f4-abb7-0f1b4279e2c9/scratchpad/p6raw/rawcmp.py`. It is temporary, stdlib only, and takes the `lab/inbox/phase6` path as its argument.
+
+**W4b facts added to PLAN:** the RAW ASCii 10 kpt single read with STARt 1/STOP 10000 and no TMC header; `:SAVE:MEMory:WAVeform` failing silently; the menu memory path with the exact labels DATA SOURCE = MEMORY and FORMAT = \*.csv; and the memory CSV layout (`CH1V,t0 =…, tInc = …,` then `value,,` per line, with no time column).
+
+**W5 and setup:**
+- W5 is recorded: the Open Question is struck, the decision is quoted, there is a Rejected Approaches line for adopting `mattjax16/rigol-dho-mcp` as-is, and the Capture tooling heading names the vendored `ScpiClient` @ `f9ac7191869845ae46ca714de69a877c388b2530`.
+- The `:SAVE:SETup` Open Question is struck with option (a). PLAN's Phase 7 bullet now reads "pulls the PNG, the RAW memory CSV and the `:SYSTem:SETup?` binary blob".
+
+**For the Orchestrator:**
+- TASKS.md Phase 7 has no "setup file" wording, so I made no TASKS change for the blob.
+- The W6 task in TASKS still says "Compare it with a USB save of the same screen". By PLAN, the comparison is now against a menu **memory** CSV (DATA SOURCE = MEMORY) of the same frozen capture, plus a PNG. I left the task text alone, as instructed ("don't change other Phase 7 tasks"). You may want to reword it, or have the Phase 7 Worker read PLAN for it.
+- RAW single-read is verified only at 10 kpts. Deeper memory may need `STARt`/`STOP` chunking, and that is noted in the Phase 7 inputs.
+- Commit mechanics: the W5 and setup PLAN edits went into the comparison commit `39d6f88`. The W5 tick is in `f301ef2`.
