@@ -1576,3 +1576,34 @@ Phase-specific notes:
 You are not the Orchestrator. Do not create documents, work across phases, or replan.
 Return DONE, PARTIAL, or BLOCKED with specifics.
 ```
+
+#### Notes
+All four Phase 8 tasks done, one commit each: `d4f158c` (setup validation), `c4e51e5` (known-good reference), `ae2ce7d` (Lookups row), `08fdecc` (banner). `tools/lab/tests/run_tests.py` passes with 0 failures, and `check_state.py` reports OK with 0 warnings.
+
+**How the procedures are built:**
+- `lab/procedures/dho804-setup-validation.md` covers §0 preparation (Local Network, the link, the `q` nc helper from W4 S2b, the bench rules) and then V1–V9. Each step says which `validation.*` log field it fills, and validation captures use `capture.py --arm val_V<n>`.
+- `lab/procedures/known-good-reference.md` covers the prerequisites, the v6/v7 point table, the same-ground-length table with the C21 bridging warning, arms S1 (master end) and S2 (BQ end), the steps, the pass table, and recording.
+- There are no `[verify]` marks. Facts are cited as *[facts: row]* rows of PLAN "Verified instrument facts". Own figures are marked **[own]**.
+
+**Settings use SCPI set + read-back, not menus.** PLAN records exact on-screen labels only for **Utility → IO**, **AUTO**, **RUN/STOP**, the **Storage → Save → Choose** paths ("Save wave" with DATA SOURCE/FORMAT, and "Save setup") and the Result panel names. The channel, trigger, measure, decode, memory-depth and cursor menus have no recorded labels. So every setting is a `q '<set>'` followed by its verified `?` query, and the read-back is the CHECK. Most *set* forms are untested on 00.01.05, but a wrong read-back is caught at once.
+- Where a read-back fails, or an item doesn't appear on the Result panel, the operator sets it by hand and writes the button path in REPORT. **Phase 9 should collect those paths** and fold them back into the procedures.
+- Measurement items are added with `:MEASure:ITEM <item>,CHANnel<n>` (the set form of the verified query). The CHECK is that the item appears on the Result panel. Whether the set form does that is untested.
+- Untested items the procedures depend on, each guarded by a read-back or a fallback: `:MEASure:SETup:MAX/MIN` set; `:BUS1:MODE IIC` and the IIC source and threshold queries; the `:TRIGger:IIC:*` sets; `:TRIGger:SWEep SING`; `RTIMe` (the CSV rise time is the primary value, RTIMe a cross-check); the spring on a 0603 pad.
+- The audit's "cursor confirmation" is replaced by the session reading V_OL and the rise time from the capture CSV (gated to a master-driven 0-bit), because the cursor menus are not recorded.
+
+**Findings from the source that Phase 9 needs:**
+- **`v6-ref` addresses the BQ24195 only at boot** (`configureBQ24195()` in `firmware/src/main.cpp` @ `4da1c67`: an address-only probe to 0x6B, then REG00/REG05 writes). Afterwards the bus carries only TCA 0x70 and VCNL 0x60 traffic. So the reference frame is caught with `:TRIGger:SWEep SING` armed and the board restarted with the RIGHT button (GPIO 14 → `ESP.restart()`) or a power cycle. The expected decode is `D6` then ACK, and the master-driven 0-bits in `D6` are address bits 5, 3 and R/W.
+- V1 doesn't load a setup file, because `:LOAD:SETup` and the menu load are untested. The clock pass is `capture.py`'s `scope_clock.ok` (Δ ≤ 10 s).
+- V5's "tip and ground on the same point" on a 0603 pad may not be physical. The procedure lets the tip go on R32.2 (GND) with the spring on C21.2, marked **[own]**.
+- Master-end grounds differ by board (v6 U2.14 at 8.26 mm, v7 C9.1 at 3.05 mm). The rule is therefore the same wire type and length (≤ 10 mm **[own]**) on both boards. Only C21.2 at the U5 end is identical by distance.
+
+**Lookups row:** `lab/STATE.md` is still the skeleton (`as_of: V7R-000`), and there is no separate STATE template in `lab/templates/`. The row went into the skeleton's section 9 (PLAN: "the STATE.md template section 9"). `updated:` was bumped to 2026-10-20. No other STATE content was touched.
+
+**Acceptance wording (not edited):** the topic-4 "Dry run" row still says "expect ≈ 30–80 mV *once the datasheet check confirms it*". The procedure gives no 30–80 mV band. Its pass is V_OL ≤ 0.4 V, with "≈ 35 mV at CAP_3" as a labelled estimate and "default drive not specified". Phase 9 should judge the dry run on ≤ 0.4 V and may want the row reworded to match.
+
+**Not done / out of scope:** no PLAN approach change. No v7 measurements. No new Deferred items.
+
+#### Result
+| # | Phase | Result | Escalation evaluated? | Commit | Notes |
+|---|-------|--------|-----------------------|--------|-------|
+| 11 | Phase 8: Procedures and scope-guide retirement | DONE | No — clean completion | (handoff commit) | 4 tasks + handoff; unrecorded menu labels covered by SCPI read-back, to be collected in Phase 9 |
