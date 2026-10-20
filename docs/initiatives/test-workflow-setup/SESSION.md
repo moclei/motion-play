@@ -1399,3 +1399,16 @@ Orchestrator notes on S3: no error, and the scope showed a save message. The Mac
 > 2. No
 
 Orchestrator notes on S4: the trace stayed frozen from S2 through S4, so the tool files, `w6img*.png` and `w6mem0.csv` all come from one acquisition. Next is S5.
+
+**S5 REPORT (user, verbatim):**
+> ```
+> ingest: 39 stick file(s), 39 new copied to /Users/marcocleirigh/Workspace/motion-play/lab/inbox/usb-20261020-115051
+>   wrote /Users/marcocleirigh/Workspace/motion-play/lab/captures/V7R-999/2026-10-20_V7R-999_A1usb_01.png <- w6img0.png (stick 2026-10-20T11:43:04, offset +0 min)
+>   wrote /Users/marcocleirigh/Workspace/motion-play/lab/captures/V7R-999/2026-10-20_V7R-999_A1usb_01.csv <- w6mem0.csv (stick 2026-10-20T11:45:56, offset +0 min)
+>   captures: [2026-10-20_V7R-999_A1usb_01.png, 2026-10-20_V7R-999_A1usb_01.csv]
+> ```
+
+Orchestrator notes on S5:
+- Ingest matched both files and renamed them per §4.4. **The stick timestamps matched the Mac at offset +0**: `w6img0.png` at 11:43:04 is exactly the S3 Mac time. Worker #7's "about 1 h ahead" observation is not reproduced. Its cause is unknown; one possibility is how the earlier listing rendered times. Ingest still tries +60, which does no harm. Phase 8 should not state an offset.
+- All 39 stick files were copied into the inbox, including the old ones and system folders. That is acceptable, since the inbox is gitignored and backed up.
+- Next is S6.
