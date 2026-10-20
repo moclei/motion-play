@@ -1807,3 +1807,5 @@ If it skips a step or changes the order, say so and stop it.
   - So the front-matter-only reading (`open_cards`, `as_of`, `updated`) is consistent with both. No escalation.
 - The instructions keep the BRIEF constraints: v6 only, `v7-clean` is never flashed, and no v7 measurement. The flash runs from a detached worktree, so the branch stays put.
 - Open items for the user: an optional STATE §6 "bench state" line (default is to leave §6 empty, per BRIEF), the 2026-11-02 checkpoint date, and the topic-4 acceptance wording (raised at the acceptance tick).
+
+**W7 pre-run note (user):** found a v6 board, believed working. CH1 is now the *other* Rigol stock probe, because the first one's hook tip wouldn't take a ground spring; the spring is now fitted. Orchestrator: no separate recalibration step. The dry run's V2 (ratio read-back) and V3 (compensation on Cal, per probe) cover a changed probe, and the W6 tool acceptance doesn't depend on which probe is fitted. The user flags SESSION.md length (1800+ lines) as too long to scan; this is a closeout item.
