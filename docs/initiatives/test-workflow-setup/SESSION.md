@@ -936,3 +936,11 @@ Orchestrator notes on S8:
 - What `1` means depends on the SQ500's actual attenuation, which has not been confirmed. Inserting S8b: read CH2 Vpp/Vamp on the 3 V Cal signal. About 3 V means a 1:1 probe and a correct ratio. About 0.3 V means a 10:1 probe that the scope does not detect, so the ratio must be set by hand in every procedure.
 - **Ground springs: present** in the Rigol stock-probe bags. The "buy ground springs before Phase 9" item is closed, unless they turn out not to fit the probe barrel; Phase 8 to check the fit at first use.
 - S9 has not been answered yet.
+
+**S8b REPORT (user, verbatim):**
+> 1. VAMP is 9.9000E+37, VPP is 9.9000E+37
+> 2. Yes, I have a ground spring for both types of probes. The SQ500 one has the same kind of spring needle head as the main probe.
+
+Orchestrator notes on S8b:
+- `9.9E37` is the scope's "invalid measurement" value. The report doesn't say whether AUTO was pressed before re-running, so the ratio question is still open. Likely causes: CH2 not displayed, CH2 off-screen or clipped, or the trigger still on CH1. Inserting S8c, which turns CH2 on explicitly, sets the trigger source to CH2, presses AUTO and re-reads.
+- **Ground springs: verified present and fitting both probes** (the Rigol stock probe and the SQ500). The ground-spring purchase is closed.
