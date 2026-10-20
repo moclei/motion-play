@@ -1350,3 +1350,5 @@ Relaying Worker #9's W6 script (S1 adjusted as noted above), one step at a time.
 > 2. All yes
 
 Orchestrator notes on S1: CH1 is at 10X, the scope is running, CH1 only, and the stick is present. All CHECKs pass.
+
+**Planner (backup replan):** REPLANNED `30f5058`. BRIEF L15, PLAN (tree comments, backup bullet, Open Question history) and TASKS Phase 7 task 4 now name iCloud Drive at `~/Library/Mobile Documents/com~apple~CloudDocs/motion-play-lab/`; the `.gitignore` comment was updated too. RELAY-orchestrator.md and older SESSION entries are left as historical records. Verified with `git show --stat`; the tree is clean.
