@@ -15,8 +15,8 @@ lab/                               # repo root (context-strategy §6.1)
 ├── cards/                         # V7R-NNN-<slug>.md ; counter = highest filename + 1
 ├── log/                           # YYYY-MM-DD_sNN.yaml
 ├── evidence/V7R-NNN/              # committed
-├── captures/V7R-NNN/              # gitignored, backed up to Google Drive
-├── inbox/                         # gitignored, backed up to Google Drive
+├── captures/V7R-NNN/              # gitignored, backed up to iCloud Drive
+├── inbox/                         # gitignored, backed up to iCloud Drive
 ├── procedures/                    # Phase 8
 └── templates/                     # card.md, log.yaml, instruction.md
 tools/lab/                         # check_state.py, capture tool, ingest, validator, backup
@@ -139,7 +139,7 @@ As built (Phase 7):
 The rest of Phase 7:
 - `tools/lab/ingest_usb.py` is the fallback: copy a stick into `lab/inbox/`, match by timestamp, rename into `captures/`.
 - `tools/lab/validate_log.py` checks the required §4.6 fields (branching on `kind`). The hook runs it on staged `lab/log/*.yaml`.
-- `tools/lab/backup_captures.sh` rsyncs `lab/captures/` and `lab/inbox/` to a Google Drive for desktop folder (path is one config value, set by the user).
+- `tools/lab/backup_captures.sh` rsyncs `lab/captures/` and `lab/inbox/` to an iCloud Drive folder, `~/Library/Mobile Documents/com~apple~CloudDocs/motion-play-lab/` by default (the path is one config value in the script).
 - Card scaffolder (§5 item 3): include it only if Phase 7 has room; otherwise `ls lab/cards | tail -1` is enough.
 
 **Procedures (Phase 8).**
@@ -333,7 +333,7 @@ v7, the closest GND-net pad to U5 (BQ24195) pin 5 (`/I2C_SCL`) and pin 6 (`/I2C_
 
 ## Open Questions
 - ~~Phasing: role and containers before scope tooling?~~ Yes, with a milestone merge after Phase 4 (user, 2026-10-18).
-- ~~Cloud backup service~~ → Google Drive (user, 2026-10-18). Still open: the exact local Drive folder path (asked in Phase 7).
+- ~~Cloud backup service~~ → ~~Google Drive (user, 2026-10-18)~~ → iCloud Drive, folder `~/Library/Mobile Documents/com~apple~CloudDocs/motion-play-lab/` (one config value). Changed at W6 because the user uninstalled Google Drive for desktop (user, 2026-10-20: "A - icloud folder"; SESSION.md, W6 user decisions).
 - ~~Build vs adopt the capture tool~~ → build our own `capture.py`, vendoring the MIT `ScpiClient` from `mattjax16/rigol-dho-mcp` @ `f9ac719` (user, W5, 2026-10-20: "build + borrow the socket client").
 - ~~Old scope guide~~ → banner + pointer.
 - ~~Hook mechanism~~ → git only. ~~Caps~~ → soft except `as_of`. ~~Legacy artefacts~~ → banner in place. ~~Card filename~~ → `V7R-NNN-<slug>.md`.
