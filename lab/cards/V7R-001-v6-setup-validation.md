@@ -61,6 +61,9 @@ Pass table per `known-good-reference.md` (V_DD = 3.3 V). Evaluated per arm (S1, 
 ### Raw observations (operator, verbatim; symptoms not interpretations)
 - Step F (before flashing; firmware on the board unknown), 2026-10-20: "v6 confirmed". Display: "Motion play" title; boxes labelled "Boot", "Wifi", "MQTT", "Sens", "Done"; "Initializing sensors..."; "Error"; "Sensor init failed". "The display started and worked through each of the boxes until it got to \"Sens\", when it stopped and showed the error message." Operator note: no sensor PCB connected.
 - Step F, session: after plug-in, no ESP32 serial port enumerated on the Mac (`ls /dev/cu.*` shows only Bluetooth ports; `system_profiler SPUSBDataType` lists no Espressif device).
+- Step F power config (operator): "Main board is plugged in to a usb-c cable plugged into a standard plug socket (I don't know the ratings)". "The T-display USB-c is plugged into my mac via a cable with a \"data only\" function, so no power can pass through". Session: `/dev/cu.usbmodem14401` enumerated; `pio run -e lilygo-t-display-s3 -t upload` from a worktree at `v6-ref` (4da1c67): "Wrote 1842416 bytes ... Hash of data verified." Serial read for 12 s after reset: no output.
+- S1 (post-flash + V1): display "on the previously mentioned screen, stopped at the \"Sensor init failed\" step". `*IDN?` → `RIGOL TECHNOLOGIES,DHO804,DHO8A282M00872,00.01.05`; `:SYSTem:ERRor?` → `0,"No error"`.
+
 ### Measured values (from log; cite `lab/evidence/V7R-001/...`)
 ### Interpretation (session; labelled as such)
 
