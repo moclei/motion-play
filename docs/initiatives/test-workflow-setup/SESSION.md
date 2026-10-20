@@ -1487,3 +1487,34 @@ Phase-specific notes:
 You are not the Orchestrator. Do not create documents, work across phases, or replan.
 Return DONE, PARTIAL, or BLOCKED with specifics.
 ```
+
+#### Notes
+All Phase 7 tasks are done and ticked. Commits: `500c323` (backup script + tests), `ce5f216` (connect-error wrap + test), `d192212` (W6 comparison, PLAN inputs, tools/CONTEXT.md), then this handoff commit. `python3 tools/lab/tests/run_tests.py` passes: the 9 checker fixtures plus 46 tool checks (6 new backup checks, 1 new connect-error check).
+
+**Backup (task 4).** `tools/lab/backup_captures.sh [--dry-run]`. The destination is one config value (`BACKUP_DIR`, default `~/Library/Mobile Documents/com~apple~CloudDocs/motion-play-lab`), overridden by `$LAB_BACKUP_DIR`; `$LAB_REPO` overrides the source root (tests only). It runs `rsync -a -i` (macOS openrsync) for `lab/captures/` and `lab/inbox/`, never `--delete`, and exits 1 with a message if the iCloud root is missing.
+- I ran a dry run, then one real run. It created `motion-play-lab/{captures,inbox}` in iCloud Drive and copied **59 files, 6.6 MB**: captures 6 (`V7R-999`: the 5 W6 files + `INGEST.tsv`), inbox 53 (`phase6/` 13, `usb-20261020-115051/` 39, `w6/` 1). `diff -r` shows the copy is identical to the source. A second run sent 0 files.
+
+**W6 comparison: acceptance "Capture tool" met** (the numbers are in PLAN → Verified instrument facts → "Capture-tool comparison (W6…)"):
+- CSV: 10 000 / 10 000 values equal, as text and as numbers, at offset 0. The memory CSV's t0/tInc equal the preamble's xorg/xinc.
+- PNG: 0 differing pixels over the graticule and trace. All 2 217 differing pixels (0.36 %) sit outside it: the header overlay, ±2 noise on the STOP badge, ±1 anti-aliasing on two Result values, and a focus border on the Vpp(C2) panel item.
+- Validator: exit 3, TODOs only, no errors. I re-ran it with the same result.
+
+**VPP CH1 = 9.9E37 (observation, in PLAN).** It is not clipping: every sample lies inside the screen window, and the ADC codes are mid-range. The Result panel showed Vamp/Vtop/Vbase on C1 and stale Vamp/Vpp on C2, with **no Vpp(C1)**. My hypothesis is untested: `:MEASure:ITEM?` for an item that isn't already being measured returns invalid on a stopped trace. I added a Phase 8 input line: put every measured item on the panel while the scope is running, before the capture. I did not change the tool's invalid-handling.
+
+**capture.py connect error.** `connect_error()` replaces the vendored message (cause `OSError`, text "Could not connect…"). The new message gives `host:port`, the OS error, `--host (or $DHO_HOST)` and the Local Network hint. The vendored logger (`vendor.scpi`) is set to CRITICAL, so its duplicate stderr lines are gone. The vendored file is unchanged, and its body still hashes to `9fface90…5066`.
+
+**PLAN edits.**
+- The W6 comparison block.
+- "Inputs for Phase 8": Cursor's terminal, the Local Network setup, the stick offset +0 (no offset to be stated), and the measurement-panel line.
+- The timestamps row now says "not reproduced in W6 S5".
+- "As built" gained the connect-error line, and the backup bullet gained its as-built details.
+
+**tools/CONTEXT.md Lab Tools.**
+- New rows: capture.py; vendor/scpi.py with its URL, commit, sha256 and the recheck one-liner (pipes escaped for the table); validate_log.py with its exit codes; ingest_usb.py; and backup_captures.sh.
+- The precommit row now carries rule 4 with "errors block, TODOs warn", and the run_tests row now covers the tool tests.
+- A one-line "Scope on the LAN (Mac)" note.
+
+**For the Orchestrator / Phase 8.**
+- The W6 files live only in the gitignored `lab/captures/V7R-999/` and `lab/inbox/` (now backed up). No `lab/log/` file was created.
+- `lab/inbox/w6/2026-10-20_s01.yaml` still has its TODOs. That is expected for a dummy ID.
+- PLAN's "Inputs for Phase 7" bullet still says to allow for the ≈ 1 h offset. I left it as the historical input; the Phase 8 list supersedes it.
