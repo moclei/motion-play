@@ -1029,3 +1029,34 @@ Phase-specific notes:
 You are not the Orchestrator. Do not create documents, work across phases, or replan.
 Return DONE, PARTIAL, or BLOCKED with specifics.
 ```
+
+#### Notes
+This was a planned PARTIAL: tasks 2 and 3 are done, and W5 and the handoff are untouched. All results are in PLAN → "Verified instrument facts". It has a new Bench column in the SCPI table, updated scope/probe rows, a "LAN-vs-USB comparison" paragraph, and "Inputs for Phase 7" and "Inputs for Phase 8" lists. There are two new Open Questions.
+
+**Task 2 (facts):**
+- Every needs-bench row is now marked verified, corrected, failed or not tested, each with a W4 step cited. I checked each against the verbatim REPORTs and not only the W4 Verification list.
+- Points where I differ from or add to the Verification list:
+  - `:SAVE:STATus?` = 1 is **not** proof of a write (S7b). Recorded as a correction.
+  - The `9.9E37` fix in S8c changed three things at once (CH2 on, trigger source, AUTO). Which one mattered was not isolated. The procedure rule (turn the channel on and set the trigger source) stands, but it is recorded as not isolated.
+  - The S8c report doesn't say how the trigger source was set, so an SCPI trigger-source set is still not tested.
+  - The ground springs are verified from S8b (not S8).
+- The one **failed** item is `:SAVE:SETup` (silent no-write). It is in Open Questions, and Phase 7's "pull the setup file" bullet is blocked as written. The options are listed there; the choice is for W5 or the start of Phase 7.
+- New observation: the files on the stick are dated about **1 h ahead** of Mac local time after the S4b clock set (stick 00:27–00:45 on 10-20; Mac commits 23:22–23:47 on 10-19, PDT). Phase 7 ingest needs this. I found it by listing `/Volumes/HANTEK` (listing only).
+- The TASKS.md "buy ground springs" note is struck as closed.
+
+**Task 3 (comparison):**
+- **Same capture: yes.** The scope was STOPPED from S5 to S7. The two PNGs have 0 differing pixels across the graticule, trace and Result panel, and the three USB CSVs are byte-identical. This resolves the W4 "may not be the same acquisition" note.
+- **PNG matches.** The only differences are the saved file's "DHO804" header overlay, the USB icon, and 63 pixels of ±2-level noise on the STOP badge.
+- **CSV does not match sample for sample.** The format, time axis, steps, edge indices and levels all agree, but only 145 of 1 000 samples are equal. The difference is noise-sized (≤ 64 mV) away from the edges and up to 0.82 V within ±2 samples of an edge.
+- **Acceptance "LAN capture" is recorded as NOT MET (CSV half).** I did not tick the acceptance table; Phase 9 does that.
+- **Proposed bench step for the Orchestrator to relay:**
+  1. With the trace frozen, set `:WAVeform:SOURce CHANnel1`, `:WAVeform:MODE RAW`, `:WAVeform:FORMat ASCii` (or BYTE plus PREamble), then pull `:WAVeform:DATA?`.
+  2. Save `:SAVE:MEMory:WAVeform D:/p6mem.csv`.
+  3. Copy the CSV off the stick, then compare sample for sample, and check whether both 1 000-point sets are subsets of the RAW data.
+  - RAW reads may need `:WAVeform:STARt`/`STOP` chunking. That isn't tested; [PG] pp.406–413.
+- **Setup:** the `:SYSTem:SETup?` blob is a 20 B header plus 29 records, each with a binary header and a zlib stream (6 745 B decoded). It holds packed LE integers and `$<len>` strings, with no field names. Its values agree with the `.stp` XML wherever both have them (214 of 215 distinctive integers). I recorded this as "consistent where comparable", not "identical".
+- The scratch scripts (`compare.py`, `setup_cmp.py`) are in the session scratchpad (`p6cmp/`) and are temporary. Re-running needs only Python 3.7 stdlib: there is a pure-Python PNG decoder, because PIL is absent.
+
+**For the Orchestrator / W5:**
+- The S9 smoke test was never run, so the W5 recommendation's line "use the Phase 6 smoke test to validate the transport" has no result behind it. Port 5555 itself is verified (S2b).
+- The `:SAVE:SETup` Open Question and the LAN CSV Open Question both bear on what `capture.py` writes. They are worth raising alongside W5.
