@@ -904,3 +904,14 @@ Orchestrator notes on S6:
 - **All three SCPI saves to `D:` succeeded** (`:SAVE:STATus?` = 1 for each, and no error). `:SAVE:IMAGe`, `:SAVE:WAVeform` and `:SAVE:SETup` are bench-verified on 00.01.05.
 - **The menu path "Choose > Save Setup" from [UG] p.214 does not appear as described on 00.01.05.** S7 lists what the "Choose" control actually offers. The SCPI `.stp` save is enough for the comparison, so the menu setup save is not repeated.
 - The scope adds an index to menu-save file names (`p6menu0`, `p6menu1`). The extensions are still to be confirmed in S7. This matters for Phase 7 ingest naming.
+
+**S7 REPORT (user, verbatim):**
+> 1. "Save wave", "Save image" and "Save setup"
+> 2. done. The stick's name is "HANTEK" btw
+
+Orchestrator notes on S7 (`lab/inbox/phase6/usb/` and `/Volumes/HANTEK` checked by listing only):
+- Files copied: `p6img0.png` (97 347 B, 1024×600 RGBA PNG), `p6wav0.csv`, `p6menu0.csv` and `p6menu1.csv` (26 985 B each). The CSV header is `Time(s),CH1V`.
+- **The scope appends an index digit to every saved name**, SCPI saves included: `p6img.png` became `p6img0.png` and `p6wav.csv` became `p6wav0.csv`. This feeds Phase 7 ingest naming.
+- **No `p6set.stp` on the stick**, even though `:SAVE:SETup D:/p6set.stp` returned `:SAVE:STATus?` = 1 and no error. The SCPI setup save is therefore *not* verified. The menu "Save setup" option exists in the "Choose" list (user item 1). Step c was ambiguously worded, which led to a second CSV save. An older `main-pcb/mainpcb_ack0.stp` exists on the stick, which suggests the menu save does write `.stp` files.
+- The stick shows file dates of Oct 20 2026 for the new files, so the S4b clock set carried into file timestamps. The older `nack_bq_full0.png` is dated Jan 18 2013.
+- Inserting S7b: put the stick back, retry the SCPI setup save and read back the error, then do the menu setup save with corrected wording. The trace is now RUN; the setup comparison concerns settings, not trace data.
