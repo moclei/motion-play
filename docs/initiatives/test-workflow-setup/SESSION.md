@@ -1385,3 +1385,11 @@ Orchestrator notes on S2a:
 - Files, checked by listing: PNG 109 506 B, CSV 305 013 B, setup.bin 2 883 B, all in `lab/captures/V7R-999/`.
 - The log has VAMP CH1 = 3003.7 mV, which matches S3's 3.0037 V. **VPP CH1 is recorded as `valid: false` (9.9E37)**, so the tool handled it correctly. VPP on CH2 was valid in S8c, though, so why VPP is invalid here is unknown. The next Worker should look at the frozen CSV: clipping at the top or bottom of the screen after AUTO is one possibility.
 - The trace is frozen (STOPPED). Next is S3.
+
+**S3 REPORT (user, verbatim):**
+> 1. 0,"No error"
+> 2026-10-20T11:43:04
+>
+> 2. It showed something like "Saving to D:/w6img.png"
+
+Orchestrator notes on S3: no error, and the scope showed a save message. The Mac time is 2026-10-20T11:43:04, which is the `--at` value for S5. Whether the file was written gets checked in S5; `:SAVE:IMAGe` was bench-verified in S6/S7. Next is S4.
