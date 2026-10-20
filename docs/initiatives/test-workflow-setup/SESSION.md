@@ -881,3 +881,16 @@ Orchestrator notes on S4:
 - **Measurement thresholds default to 90/50/10 %.** §4.3's 30→70 % rise time therefore needs `:MEASure:SETup:MAX 70` / `MIN 30` set explicitly. This resolves a needs-bench item for Phase 8.
 - **The scope clock reads 2013-01-18 09:52:08 against a Mac time of ≈ 2026-10-19 23:17, so it is wrong by ≈ 13.75 years.** Before S5 I'm adding an optional `:SYSTem:DATE`/`:SYSTem:TIME` set attempt. The syntax is not desk-verified, so this is a try-and-observe step. The Phase 7 tool must not trust scope timestamps unless the set works.
 - The S5/S6 one-liners have been rewritten to the hold-open `nc` pattern from S2b.
+
+**S4b REPORT (user, verbatim):** "For s4b, the first and second commands produced "2026-10-19", the third: `23:19:26` / `-109,"Missing parameter"`"
+
+Orchestrator notes on S4b:
+- **The scope clock can be set over SCPI.** `:SYSTem:DATE <Y>,<M>,<D>` and `:SYSTem:TIME <H>,<M>,<S>` both took effect: the date read back 2026-10-19 and the time read back 23:19:26, which matches the Mac.
+- One of the three sets raised `-109 Missing parameter`. The most likely candidate is the dashed date form, but the error queue doesn't say which command caused it. Phase 7 uses the comma form and confirms it with a read-back.
+- Still unknown: whether the setting survives a power cycle. Phase 7's tool should set the clock (or check it) at the start of each session.
+
+**S5 REPORT (user, verbatim):** "I ran that and those files are there for you to examine". The Orchestrator examined `lab/inbox/phase6/`:
+- `lan_shot.tmc` is 93 801 B. It is a TMC block (`#9000093789`) wrapping a valid **1024×600 PNG**. The PNG shows STOP, 200 µs/div, 2.50 MSa/s, 10 kpts, CH1 1.00 V/div with offset −2.99 V, trigger CH1 rising edge at 1.62 V, and the Result panel reading Vamp 3.0037 V, Vtop 2.9774 V, Vbase −26.266 mV. This is the same frozen trace as S3/S4.
+- `lan_setup.tmc` is 2 879 B: a TMC block of 2 867 B. **Its contents are binary and zlib-compressed, not ASCII**, which contradicts [PG] "expressed in ASCII". S7 compares it byte-for-byte with the `.stp` file.
+- Preamble is `2,0,1000,1,2.000000E-6,-1.000000E-3,0.000000,1.3333E-04,-22459,32768`: ASCII format, NORMal mode, **1000 points**, xinc 2 µs, xorg −1 ms.
+- `lan_wave_ascii.txt` has **1000 comma-separated values with no TMC header**, ranging from −0.120 V to 3.078 V. That is consistent with the Cal square wave at the screen's 1 000-point resolution.
