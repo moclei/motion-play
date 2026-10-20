@@ -858,3 +858,26 @@ Orchestrator notes on S3:
 - Vbase flickers between two values about 70 mV apart. This is recorded as observed and not interpreted; Phase 8 notes it when it sets V4.
 - The revised `nc` helper is confirmed working.
 - The menu walk-through was given in more detail than the drafted block; Phase 8's procedure needs that level of step detail.
+
+**S4 REPORT (user):** "Read the txt file for the output" (the ledger is `lab/inbox/phase6/s4_queries.txt`, 1728 B, gitignored). The Orchestrator read the output and transcribed it verbatim:
+```
+:CHANnel1:PROBe? 10 | :CHANnel1:BWLimit? OFF | :CHANnel1:SCALe? 1.000000E+00 | :CHANnel1:OFFSet? -2.994604E+00
+:CHANnel1:COUPling? DC | :CHANnel1:DISPlay? 1 | :CHANnel1:INVert? 0 | :CHANnel1:UNITs? VOLT
+:TIMebase:MAIN:SCALe? 2.000000E-4 | :TIMebase:MAIN:OFFSet? 0.000000 | :TIMebase:MODE? MAIN
+:ACQuire:SRATe? 2.500000E+6 | :ACQuire:MDEPth? 1.0000E+04 | :ACQuire:TYPE? NORM
+:TRIGger:MODE? EDGE | :TRIGger:SWEep? AUTO | :TRIGger:STATus? TD | :TRIGger:EDGE:SOURce? CHAN1
+:TRIGger:EDGE:SLOPe? POS | :TRIGger:EDGE:LEVel? 1.617302E0 | :TRIGger:IIC:WHEN? STAR | :TRIGger:IIC:CLEVel? 1.617302E0
+:BUS1:MODE? PAR | :BUS1:THReshold? SDA 0.000000 | :MEASure:AMSource? OFF | :MEASure:THReshold:TYPE? PERC
+:MEASure:SETup:MAX? 9.000000E+01 | :MEASure:SETup:MID? 5.000000E+01 | :MEASure:SETup:MIN? 1.000000E+01
+:MEASure:ITEM? VAMP,CHANnel1 3.0037E+00 | VTOP 2.9775E+00 | VBASe -2.6267E-02
+:SAVE:IMAGe:HEADer? 1 | :LAN:IPADdress? 192.168.50.2 | :LAN:VISA? TCPIP::192.168.50.2::INSTR
+:SYSTem:VERSion? 3.0 | :SYSTem:DATE? 2013-01-18 | :SYSTem:TIME? 09:52:08 | :SYSTem:ERRor? 0,"No error"
+```
+(The file mtime on the Mac was 2026-10-19 23:17 local.)
+
+Orchestrator notes on S4:
+- **All 39 queries answered and no errors were raised.** Every PLAN SCPI query row in S4 is **bench-verified on 00.01.05**.
+- The measurement values match the S3 panel.
+- **Measurement thresholds default to 90/50/10 %.** §4.3's 30→70 % rise time therefore needs `:MEASure:SETup:MAX 70` / `MIN 30` set explicitly. This resolves a needs-bench item for Phase 8.
+- **The scope clock reads 2013-01-18 09:52:08 against a Mac time of ≈ 2026-10-19 23:17, so it is wrong by ≈ 13.75 years.** Before S5 I'm adding an optional `:SYSTem:DATE`/`:SYSTem:TIME` set attempt. The syntax is not desk-verified, so this is a try-and-observe step. The Phase 7 tool must not trust scope timestamps unless the set works.
+- The S5/S6 one-liners have been rewritten to the hold-open `nc` pattern from S2b.
