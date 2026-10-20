@@ -1,7 +1,7 @@
 # Test Workflow Setup — Tasks
 
 > Track 1 (Phases 1–4) ends at the milestone merge that unblocks log-only debug cards. Track 2 (Phases 5–9) is the scope tooling. Waits W2–W7 are defined in PLAN.md (W1 was removed: the role install is deferred). Until the role is installed, a "debugger session" means an ad-hoc `claude` session opened with "Read `docs/research/v7-retry/debugger-role-draft.md` and act as that role for this session."
-> **User, at any time before Phase 9:** buy ground springs that fit the Sensepeek and Rigol probe tips (`test-workflow-audit.md` §4.1).
+> ~~**User, at any time before Phase 9:** buy ground springs that fit the Sensepeek and Rigol probe tips (`test-workflow-audit.md` §4.1).~~ Closed: springs are on hand and fit both probes (W4 S8b).
 
 ## Phase 1: Firmware baselines
 
@@ -63,7 +63,7 @@
 ## Phase 6: Scope on the LAN (bench)
 
 - [x] **W4:** the Orchestrator relays the Phase 5 bench blocks to the user one step at a time and records each REPORT in SESSION.md
-- [~] Mark each [verify] item verified or corrected in PLAN "Verified instrument facts". Any item that fails goes to Open Questions, and the dependent tool or procedure work is blocked
+- [x] Mark each [verify] item verified or corrected in PLAN "Verified instrument facts". Any item that fails goes to Open Questions, and the dependent tool or procedure work is blocked
 - [ ] LAN-vs-USB comparison: a scratch script compares the PNG and CSV from the same capture. Record the result (acceptance: LAN capture)
 - [ ] **W5:** present the build-vs-adopt evidence and get the user's decision. Record it in PLAN (strike through the question, add a Rejected Approaches line)
 - [ ] 🔄 Handoff
