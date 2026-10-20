@@ -1607,3 +1607,17 @@ All four Phase 8 tasks done, one commit each: `d4f158c` (setup validation), `c4e
 | # | Phase | Result | Escalation evaluated? | Commit | Notes |
 |---|-------|--------|-----------------------|--------|-------|
 | 11 | Phase 8: Procedures and scope-guide retirement | DONE | No — clean completion | (handoff commit) | 4 tasks + handoff; unrecorded menu labels covered by SCPI read-back, to be collected in Phase 9 |
+
+#### Result
+| # | Phase | Result | Escalation evaluated? | Commit | Notes |
+|---|-------|--------|-----------------------|--------|-------|
+| 11 | Phase 8: Procedures and scope-guide retirement | DONE | No — clean completion | 9b1c746 | Two procedures, Lookups row, RETIRED banner |
+
+#### Verification
+- Commits `d4f158c`, `c4e51e5`, `ae2ce7d`, `08fdecc` and `9b1c746`; the tree is clean. `run_tests.py` passes with 0 failures. `check_state.py` reports OK (0 warnings). Neither procedure has a `[verify]` mark. The banner commit touches only the first line of the old guide.
+- The Lookups row went into the `lab/STATE.md` skeleton, since no separate STATE template exists. The diff is one table row plus the `updated:` date. That is structure, not debug content, so it is compatible with the BRIEF constraint "no STATE.md content".
+- Carry forward to Phase 9:
+  - (a) Six SCPI *set* forms are untested and guarded by read-backs: `:MEASure:ITEM`, `:MEASure:SETup:MAX/MIN`, `:BUS1:MODE IIC`, `:TRIGger:IIC:*`, `:TRIGger:SWEep SING`, `RTIMe`. The dry run is their first use, and any menu paths it collects go back into the procedures.
+  - (b) `v6-ref` talks to the BQ only at boot, so the frame is caught with SINGLE + reset. Expected decode is `D6` then ACK.
+  - (c) The topic-4 "Dry run" acceptance wording (≈ 30–80 mV) differs from the procedure's ≤ 0.4 V judgement. Raise it with the user when the acceptance is ticked.
+  - (d) The Deferred hooksPath suggestion: the dry-run instructions should tell the session to check `git config core.hooksPath`.

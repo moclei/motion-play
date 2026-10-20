@@ -93,7 +93,7 @@
 
 ## Phase 9: v6 dry run (bench, as an ad-hoc debugger session)
 
-- [ ] Write the dry-run instructions for the user in SESSION.md: open an ad-hoc `claude` session with "Read `docs/research/v7-retry/debugger-role-draft.md` and act as that role for this session."; the session pre-registers the v6 validation card, flashes `v6-ref` to v6, runs setup validation then the known-good reference, captures with the tool, ingests, and records with STATE + notebook
+- [~] Write the dry-run instructions for the user in SESSION.md: open an ad-hoc `claude` session with "Read `docs/research/v7-retry/debugger-role-draft.md` and act as that role for this session."; the session pre-registers the v6 validation card, flashes `v6-ref` to v6, runs setup validation then the known-good reference, captures with the tool, ingests, and records with STATE + notebook
 - [ ] **W7:** the user runs the dry run, then a second fresh ad-hoc debugger session (opened the same way) asked only "what is the bench state?". The user reports whether the answer was correct and whether the image handoff was workable
 - [ ] Verify from git: pre-registration commit before the raw-data commits, per-arm raw commits, recording commit touching STATE with `as_of` set, notebook entry, evidence files present, `check_state.py` clean. If v6 is out of spec, stop: the setup gets fixed before close (replan if needed)
 - [ ] Tick both acceptance tables in PLAN. Open the final PR (merge commit)
