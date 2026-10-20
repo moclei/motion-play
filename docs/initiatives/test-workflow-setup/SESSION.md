@@ -1366,3 +1366,22 @@ Orchestrator notes on S2 (diagnosed from the Orchestrator's shell; TCP connect o
 - From the user's terminal, `nc` worked in S1, but Python fails with EHOSTUNREACH. On macOS 26.6.2 this fits **Local Network privacy**. Apple system binaries such as `/usr/bin/nc` are exempt; a third-party binary (the pyenv python) launched from a terminal app is attributed to that app, and it is refused if the app lacks Local Network permission. This is the leading hypothesis and has not been confirmed.
 - The tool behaved correctly: one retry, then "Nothing was written". Its error text comes from the vendored client and mentions "server log" and `RIGOL_HOST`, which don't apply to capture.py (it uses `--host`/`$DHO_HOST`). The next Worker should wrap that message. This is a cosmetic issue.
 - Inserting S2a: check the Local Network toggle for the user's terminal app, then re-run S2 unchanged. The trace is still RUN, since nothing reached the scope.
+
+**S2a REPORT (user, verbatim):**
+> Ok I think it worked. I toggled "Cursor" off and on again
+> The output was:
+> ```
+> capture: V7R-999 A1, DHO804, fw 00.01.05, memory 10000 pts, channels CH1
+>   wrote /Users/marcocleirigh/Workspace/motion-play/lab/captures/V7R-999/2026-10-20_V7R-999_A1_01.png
+>   wrote /Users/marcocleirigh/Workspace/motion-play/lab/captures/V7R-999/2026-10-20_V7R-999_A1_01.csv
+>   wrote /Users/marcocleirigh/Workspace/motion-play/lab/captures/V7R-999/2026-10-20_V7R-999_A1_01.setup.bin
+>   log   /Users/marcocleirigh/Workspace/motion-play/lab/inbox/w6/2026-10-20_s01.yaml (measurement appended; fill feature, raw_observation and any other TODO)
+>   NOTE: 1 measurement(s) invalid (9.9E37 or no reply): VPP CH1
+>   The scope is left STOPPED.
+> ```
+
+Orchestrator notes on S2a:
+- **Cause confirmed: macOS Local Network privacy for Cursor.** Toggling Cursor off and on in Privacy & Security → Local Network fixed it. Phase 8 procedures need a one-time setup line: "allow your terminal app under Local Network; `nc` working does not prove Python will".
+- Files, checked by listing: PNG 109 506 B, CSV 305 013 B, setup.bin 2 883 B, all in `lab/captures/V7R-999/`.
+- The log has VAMP CH1 = 3003.7 mV, which matches S3's 3.0037 V. **VPP CH1 is recorded as `valid: false` (9.9E37)**, so the tool handled it correctly. VPP on CH2 was valid in S8c, though, so why VPP is invalid here is unknown. The next Worker should look at the frozen CSV: clipping at the top or bottom of the screen after AUTO is one possibility.
+- The trace is frozen (STOPPED). Next is S3.
