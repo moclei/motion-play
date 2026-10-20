@@ -815,3 +815,13 @@ All Phase 5 work was done at the desk. Every fact is in PLAN → Technical Notes
 
 ### W4 — Phase 6 bench relay (Orchestrator)
 Branch is current with main (no rebase needed). Relaying Worker #6's S1–S9 one step at a time. Each REPORT is recorded below, verbatim.
+
+**S1 REPORT (user, verbatim):**
+> 1. IP: 192.168.50.2, fixed IP on the scope (DHCP and Auto IP off). The scope is on a direct Ethernet link to the Mac through a USB-C Ethernet adapter (Mac en7, fixed at 192.168.50.1/24, no router). The router isn't near the bench. The Mac's internet stays on Wi-Fi (192.168.86.x). The scope has no internet access and is only reachable while the adapter is plugged into the Mac.
+> 2. 00:19:AF:A5:19:A7
+> 3. Firmware version 00.01.05
+> 4. I don't see a way to change the date or time on the device itself. Looking online I found nothing either. My best guess is that it's supposed to get it's date and time via the network
+
+Orchestrator notes on S1:
+- LAN is a direct point-to-point link, not a DHCP reservation. It meets the PLAN requirement of a fixed IP, recorded: `192.168.50.2`, with the Mac on `192.168.50.1/24`. Firmware 00.01.05 is confirmed.
+- **The clock CHECK failed: there is no on-device date/time setting.** That rules out NTP, because the scope has no internet. This matters for Phase 7: `ingest_usb.py` matches files by timestamp, and the log's capture times come from the scope. Probe added to S4: `:SYSTem:DATE?` and `:SYSTem:TIME?` (not desk-verified, so the result is recorded as observed only). Phase 7 handles the offset or uses Mac-side time. This is not a STOP condition, so the relay continues.
