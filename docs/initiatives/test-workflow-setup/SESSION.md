@@ -834,3 +834,15 @@ Orchestrator notes on S1:
 Orchestrator notes on S2:
 - SCPI works over LAN through the web panel, which uses VXI-11 (`::INSTR`). The raw socket path (`nc` to port 5555) returned nothing. Fallback route succeeded, so STOP IF did not fire.
 - The capture tool needs a scriptable route, so I'm inserting diagnostic step S2b before S3. Two likely causes: macOS `nc` closes the connection when stdin ends, before the scope replies; or port 5555 is closed or disabled. If the socket can't be made to work, VXI-11 (e.g. pyvisa-py) is the alternative and becomes an input to W5 and Phase 7.
+
+**S2b REPORT (user, verbatim):**
+> 1. Connection to 192.168.50.2 port 5555 [tcp/personal-agent] succeeded!
+> 2. RIGOL TECHNOLOGIES,DHO804,DHO8A282M00872,00.01.05
+> 3. Connection to 192.168.50.2 port 111 [tcp/sunrpc] succeeded!
+> 4. I opened Utility/IO and did not see anything tagged with any of those words. The screen looks no different than it did before I ran the commands. (screenshot: IO page shows Network status CONNECTED, VISA address TCPIP::192.168.50.2::INSTR, Static IP 192.168.50.2/24, gateway 192.168.50.1, DNS 0.0.0.0, mDNS OFF, Host Name RIGOL_DHO8A282M00…; left menu IO/Setup/About/Other/Auto Config/SelfCal/Options/Quick/Self Check)
+> 5. Didn't nothing anything like that
+
+Orchestrator notes on S2b:
+- **Raw socket on port 5555 is confirmed on 00.01.05** (fact "port 5555" → bench-verified). VXI-11 portmapper (111) is also open.
+- Cause of the S2 silence: macOS `nc` half-closes on stdin EOF before the scope replies. Holding stdin open (`; sleep`) fixes it. For S3 onward the helper becomes `q(){ (printf '%s\n' "$1"; sleep "${2:-1}") | nc -G 3 "$SCOPE" 5555; }`. S5/S6 one-liners use the same pattern, with a longer hold for binary reads. Phase 7's tool must keep the socket open until it has read the full reply; it should not rely on EOF.
+- The scope has no user-visible socket-port setting on the IO page.
