@@ -1864,3 +1864,26 @@ Don't change any number, limit or fact. This is a readability fix, not a content
 You are not the Orchestrator. Do not create documents, work across phases, or replan.
 Return DONE, PARTIAL, or BLOCKED with specifics.
 ```
+
+#### Notes
+- **Fix to delivered Phase 8 work** (W7 readability defect). No tasks unticked or added. Commits `2288a19` (pictures), `667cc0c` (procedures).
+- **Pictures.** `lab/procedures/img/v6-probe-points.png` is the Orchestrator's approved file, byte-identical (806 KB, under 1 MB, so not recompressed). `v7-probe-points.png` was made the same way from `c2acffc`:
+  - kicad-cli 9.0.4 `pcb render --side top --quality high` at 6360×4760.
+  - Calibration from the measured alpha bbox (867–5491 × 1371–3389 px) against Edge.Cuts 75.7–163.9 × 101.0–139.5 mm: 52.438 / 52.442 px/mm in x / y.
+  - Pad centres from the footprint data (rotation applied; the parser reproduces the Orchestrator's v6 coordinates exactly).
+  - Rendered by headless Chrome, checked by eye at full resolution (every marker sits on its pad), then pngquant to 426 KB.
+  - The overview plus two zooms, because v7's C (C9.1) is a small 0603 pad. Labels: A=TPIO43, B=TPIO44, C=C9.1 (the v7 master-end ground, different part from v6's U2.14), D=U5.6, E=U5.5, F=C21.2, X=C21.1 and C20.1. All points located; none left off. Scripts are in the scratchpad `annot7/` (temporary).
+- **Procedures.**
+  - Glossary and both pictures at the top of `known-good-reference.md`. Every board point is named by letter + designator, and "outer end" is gone from both files.
+  - Trigger "arm" wording renamed to "single trigger", to avoid a third meaning of "arm". The glossary separates S1/S2 arms from the PCBite arms.
+  - Bench note: two SQ500s (CH1 SDA, CH2 SCL), with the Rigol still allowed.
+- **Sequencing interpretation (Orchestrator to confirm).** "Probes stay off the board until the reference step" can't hold literally, because V5, V7 and V8 measure on the powered board before V9. What I wrote:
+  - V1–V4 are off-board (scope and Cal only).
+  - V5 is the first on-board step.
+  - Every placement or move is done with the board unplugged (USB out, no battery), and then checked under the microscope before power-on.
+  - KGR step 1 reuses the probes if V5–V8 left them on this arm's pads.
+- **Not changed (flag).**
+  - KGR still says "On v6 its [U5] package is rotated". The layouts have U5 at 0° on v6 and 90° on v7. The picture text says neutrally "turned 90° between the two layouts".
+  - R32.2 (the V5 fallback ground) is not marked in either picture. The text now says so.
+  - `RELAY-v6-dry-run.md` was not touched. It already points at the v6 image path and A–F.
+- run_tests.py OK (0 failures); check_state.py OK.
