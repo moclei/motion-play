@@ -66,6 +66,8 @@ Pass table per `known-good-reference.md` (V_DD = 3.3 V). Evaluated per arm (S1, 
 
 - S2 (V2): ":CHANnel1:PROBe?/DISPlay? and :CHANnel2:PROBe?/DISPlay?": "The first two both printed \"10\" and \"1\". The error one showed `0,\"No error\"`". Probes unmarked; "I tell them apart just by looking at them and seeing which sockets they are plugged into on the scope (CH1 or CH2)."
 
+- S3 (V3/V4 CH1, CH1 on Cal): read-backs "`1.000000E+00`, `2.000000E-4`, `CHAN1`, `AUTO`, `0,"No error"`". "Result panel shows Vamp(C1), Vtop(C1), VBase(C1), Vamp(C2), Vpp(C2), Vpp(C1), Vtop(C2), Vbase(C2) -- some of them might have been there before we did this? Not sure". capture.py: wrote `2026-10-20_V7R-001_val_V3_01.{png,csv,setup.bin}`; "NOTE: 1 measurement(s) invalid (9.9E37 or no reply): VTOP CH2"; "The scope is left STOPPED."; no clock WARNING line. "The Ch1 square wave's top and corners.. look like squares I guess. There's a \"T\" tag on the top left of one of the waves, and on the right of the screen about halfway up a square wave"
+
 ### Measured values (from log; cite `lab/evidence/V7R-001/...`)
 ### Interpretation (session; labelled as such)
 

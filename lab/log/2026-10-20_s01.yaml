@@ -1,0 +1,61 @@
+# 2026-10-20_s01.yaml — session log written by tools/lab/capture.py. Fill every TODO (template: lab/templates/log.yaml).
+session_id: "2026-10-20_s01"
+kind: "scope"
+operator: "user"
+ai_session: "debugger 09e07cd0 (V7R-001 v6 dry run)"
+dut: {board_id: "v6", firmware_commit: "4da1c67", firmware_env: "lilygo-t-display-s3", declared_baseline: "v6-ref"}
+scope: {model: "Rigol DHO804", serial: "DHO8A282M00872", firmware: "00.01.05", setup_file: "2026-10-20_V7R-001_val_V3_01.setup.bin"}
+validation:
+  passed: "TODO"
+  V2_probe_ratio: {CH1: "10x/fixed 10:1", CH2: "10x/fixed 10:1"}
+  V3_comp_png: ["2026-10-20_V7R-001_val_V3_01.png (CH1)"]
+  V5_noise_floor_mVpp: "TODO"
+  V6_ground: {method: "TODO", point: "TODO", length_mm: "TODO"}
+  V7_idle_high_V: {CH1: "TODO", CH2: "TODO"}
+  V8_decode_ok: "TODO"
+  notes: "V1 clock ok (delta 0.0 s); no setup loaded. V2 SQ500 on CH1 and CH2, unmarked, identified by scope socket. V4 Vamp CH1 = 3.0208 V."
+channels:
+  CH1: {probe: "SQ500 (CH1 socket)", ratio: "10x", signal: "TODO", point: "TODO", bw_limit: "OFF", v_div_V: 1.0, offset_V: 0.0, coupling: "DC"}
+  CH2: {probe: "SQ500 (CH2 socket)", ratio: "10x", signal: "TODO", point: "TODO", bw_limit: "OFF", v_div_V: 0.05, offset_V: 0.0, coupling: "DC"}
+measurements:
+  - test_id: "V7R-001"
+    arm: "val_V3"
+    time: "2026-10-20T15:47:45"
+    trigger: {type: "EDGE", sweep: "AUTO", source: "CHAN1", slope: "POS", level_V: 1.5}
+    timebase_s_div: 0.0002
+    method: "auto"
+    feature: "CH1 on scope Cal (1 kHz 3 Vpp square); V3 compensation look + V4 amplitude. CH2 probe not on Cal (floating)."
+    values:
+      - {name: "VAMP", ch: "CH1", value_mV: 3020.8, raw: "3.0208E+00"}
+      - {name: "VTOP", ch: "CH1", value_mV: 2986.7, raw: "2.9867E+00"}
+      - {name: "VBASe", ch: "CH1", value_mV: -34.133, raw: "-3.4133E-02"}
+      - {name: "VAMP", ch: "CH2", value_mV: 65.273, raw: "6.5273E-02"}
+      - {name: "VTOP", ch: "CH2", valid: false, raw: "9.9000E+37"}
+      - {name: "VBASe", ch: "CH2", value_mV: 26.08, raw: "2.6080E-02"}
+    captures: ["2026-10-20_V7R-001_val_V3_01.png", "2026-10-20_V7R-001_val_V3_01.csv", "2026-10-20_V7R-001_val_V3_01.setup.bin"]
+    raw_observation: "The Ch1 square wave's top and corners.. look like squares I guess. There's a \"T\" tag on the top left of one of the waves, and on the right of the screen about halfway up a square wave"
+    ai_read:
+      - capture: 2026-10-20_V7R-001_val_V3_01.png
+        settings_seen: {CH1_v_div: 1.00V, CH2_v_div: 50.00mV, timebase: 200us/div, srate: 2.50MSa/s, mdepth: 10.00kpts, trigger: "edge CH1 rising 1.50V", status: STOP}
+        values_seen: {CH1_Vamp_V: 3.0208, CH1_Vtop_V: 2.9866, CH1_Vbase_mV: -34.133, CH2_Vamp_mV: 65.273}
+        shape_seen: "CH1 square ~0 to ~3 V, flat top, square corners, no visible overshoot or rounding at 1 V/div; CH2 noise band only"
+        mismatch: "none vs operator. Panel Vtop(C1) 2.9866 V vs log VTOP 2.9867 V (0.1 mV, read at a different refresh)"
+    source: "tools/lab/capture.py"
+    scope_settings:
+      channels:
+        CH1: {probe: "10", bw_limit: "OFF", scale: "1.000000E+00", offset: "0.000000E+00", coupling: "DC", invert: "0", units: "VOLT"}
+        CH2: {probe: "10", bw_limit: "OFF", scale: "5.000000E-02", offset: "0.000000E+00", coupling: "DC", invert: "0", units: "VOLT"}
+      timebase: {scale: "2.000000E-4", offset: "0.000000", mode: "MAIN"}
+      acquire: {srate: "2.500000E+6", mdepth: "1.0000E+04", type: "NORM"}
+      trigger: {mode: "EDGE", sweep: "AUTO", source: "CHAN1", slope: "POS", level: "1.500000E0"}
+      bus1: {mode: "PAR"}
+      measure: {threshold_type: "PERC", max_pct: "9.000000E+01", mid_pct: "5.000000E+01", min_pct: "1.000000E+01", amsource: "OFF"}
+      trigger_status: {before: "RUN", after_stop: "STOP"}
+    waveform:
+      mode: "RAW"
+      format: "ASCii"
+      points: 10000
+      read: "single"
+      preamble: {CH1: "2,2,10000,1,4.000000E-7,-2.000000E-3,0.000000,1.3333E-04,0,32768", CH2: "2,2,10000,1,4.000000E-7,-2.000000E-3,0.000000,6.6667E-06,0,32768"}
+    scope_clock: {set_to: "2026-10-20T15:47:45", read_back: "2026-10-20 15:47:45", ok: true, delta_s: 0.0}
+    scpi_errors: []
