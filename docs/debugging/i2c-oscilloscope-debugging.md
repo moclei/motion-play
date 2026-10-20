@@ -1,3 +1,5 @@
+> **RETIRED, superseded by `lab/procedures/` (`dho804-setup-validation.md`, `known-good-reference.md`); do not follow.** Kept in place because other documents cite this path.
+
 # Debugging v7 I2C Communication with an Oscilloscope
 
 Step-by-step guide for using an oscilloscope to diagnose the v7 main-PCB I2C fault chain. Originally written for a Hantek DSO5202P; the **Rigol DHO804** that arrived 2026-04-28 is now the working scope, so DHO804-specific notes have been added at the top of each major section. The button-name walkthroughs below sometimes still reflect Hantek conventions — when in doubt, follow the DHO804 notes. Written assuming no prior oscilloscope experience.
