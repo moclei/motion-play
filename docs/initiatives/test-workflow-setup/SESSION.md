@@ -981,3 +981,51 @@ Re-derived from the reports above. The Worker takes these to PLAN "Verified inst
   - Measure thresholds default to 90/50/10, so rise-time procedures must set 70/30.
   - There is no front-panel clock setting. The clock is set over SCPI.
 - **Open for the Worker:** the LAN-vs-USB data comparison. The LAN set (S5) and the USB set (S6/S7) may not come from the same acquisition: the first CSV values differ at index 1 (2.986 vs 2.7136).
+
+---
+
+### Worker #7 — Phase 6: Scope on the LAN (bench)
+
+**Dispatch:**
+```
+Initiative: test-workflow-setup
+Phase: 6 — Scope on the LAN (bench)
+Initiative path: docs/initiatives/test-workflow-setup/
+Additional reading: SESSION.md section "### W4 — Phase 6 bench relay (Orchestrator)", including its #### Verification list; PLAN.md → Technical Notes → "Verified instrument facts"; bench files in lab/inbox/phase6/ (LAN: lan_shot.tmc, lan_setup.tmc, lan_wave_ascii.txt, s4_queries.txt; USB: usb/p6img0.png, usb/p6wav0.csv, usb/p6menu0.csv, usb/p6menu1.csv, usb/p6menu0.stp)
+
+Tasks assigned (from TASKS.md Phase 6):
+- [x] **W4:** the Orchestrator relays the Phase 5 bench blocks to the user one step at a time and records each REPORT in SESSION.md
+- [~] Mark each [verify] item verified or corrected in PLAN "Verified instrument facts". Any item that fails goes to Open Questions, and the dependent tool or procedure work is blocked
+- [ ] LAN-vs-USB comparison: a scratch script compares the PNG and CSV from the same capture. Record the result (acceptance: LAN capture)
+- [ ] **W5:** present the build-vs-adopt evidence and get the user's decision. Record it in PLAN (strike through the question, add a Rejected Approaches line)
+- [ ] 🔄 Handoff
+
+The first task is marked `[~]` because it was dispatched to you — it is not someone else's work in progress.
+
+Scope for this dispatch: tasks 2 and 3 only. W5 needs the user's decision, which the Orchestrator is getting in parallel. Stop after task 3 with a planned PARTIAL. Don't touch W5 or the handoff.
+
+Phase-specific notes:
+- Bench evidence lives only in the W4 REPORTs and the Orchestrator notes. Cite them as the source for each row, e.g. "bench W4 S7b, 2026-10-20". Mark each row verified, corrected (with the corrected fact) or failed. The W4 #### Verification list summarises the outcomes, but check each one against the verbatim REPORTs.
+- Phase 7 inputs to record as facts or notes:
+  - The scope clock is set over SCPI at the start of every session; persistence across power cycles is unknown.
+  - Don't rely on the socket reaching EOF.
+  - The scope adds an index digit to every saved filename.
+  - `:SAVE:SETup` is unusable on 00.01.05.
+  - The SMB drop (`:SAVe:SMB:*`) is still an alternative that hasn't been tested.
+- Phase 8 inputs to record:
+  - The SQ500 is 10:1 and the scope doesn't detect it, so set `:CHANnel<n>:PROBe 10` and read it back.
+  - Turn the channel on and set the trigger source before running `:MEASure:ITEM?`; otherwise it returns 9.9E37.
+  - Measure thresholds default to 90/50/10, so set 70/30 for rise time.
+  - Ground springs fit both probes.
+  - The user needs menu steps spelled out button by button.
+- Comparison:
+  - Keep the script in the session scratchpad. Only the results go into PLAN or SESSION.
+  - The LAN set (S5) and USB set (S6/S7) may not be the same acquisition, since the trace was in RUN at some points. Work out from the REPORTs which pairs are truly from the same capture, and say so.
+  - If no clean pair exists, compare format, scaling, length and value range, and leave "identical data" unclaimed.
+  - The setup formats differ: LAN is zlib binary, the file is `.stp` XML. Decompress the blob, report what it contains, and compare settings only where both sides expose them. Don't call the setup "verified identical".
+  - If the acceptance cannot be met because no same-capture pair exists, record it as not met, with the reason. A short re-capture becomes a bench step the Orchestrator relays later. Do not fabricate a pass.
+- The Rigol probe-bag ground-spring purchase item (if it appears in PLAN/BRIEF/Deferred) is resolved: springs are on hand and fit both probes.
+
+You are not the Orchestrator. Do not create documents, work across phases, or replan.
+Return DONE, PARTIAL, or BLOCKED with specifics.
+```
