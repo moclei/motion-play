@@ -8,6 +8,8 @@ Run this at the start of every scope session, before any number from that sessio
 - **Where the numbers come from.** Every scope fact used here is a row of `docs/initiatives/test-workflow-setup/PLAN.md` → "Verified instrument facts", cited as *[facts: row]*. Tolerances marked **[own]** are ours, not a vendor's.
 - **Recording.** Results go into the session log `lab/log/YYYY-MM-DD_sNN.yaml`, block `validation` (`lab/templates/log.yaml`). Validation captures use the arm `val_V<n>` (§4.4), for example `2026-11-04_V7R-012_val_V3_01.png`.
 - **Terminal.** Every command runs in Cursor's integrated terminal, at the repo root.
+- **Board points and words.** Points on the board are named by the letters **A–F** (and **X**, keep clear) in the pictures `lab/procedures/img/v6-probe-points.png` and `v7-probe-points.png`. The glossary and the pictures are at the top of `known-good-reference.md`: it explains I²C (SDA, SCL), "master end", "BQ end", "arm" and pad numbers such as C21.2. **DUT** (device under test) means the board being measured. **Cal** is the probe-calibration output on the scope's front panel. Capital **V1–V9** are the steps below; lower-case **v6/v7** are the board versions (so "the V6 ground" is step V6's ground, not the v6 board).
+- **When probes touch the board.** V1–V4 need no board: the probes are plugged into the scope, and V3–V4 put them on the Cal output. V5 is the first step with probes on the board. Every time probes or grounds go on or move on the board, **unplug the board first** and **look before powering on**.
 
 ---
 
@@ -55,6 +57,8 @@ Every setting below is **set, then read back**. The read-back is the check, beca
 
 Ground springs are on hand for both the Rigol stock probe and the SQ500 *[facts: Ground springs]*. Use one wherever it reaches.
 
+The usual bench is **two SQ500s in PCBite arms, CH1 = SDA, CH2 = SCL**. Nothing in V1–V9 needs the Rigol stock probe; it remains allowed on either channel.
+
 ---
 
 ## V1 — Clock and starting settings
@@ -86,7 +90,7 @@ For each channel `<n>` that will be used (CH1 and CH2 in most cards):
 
 Do it once for each probe, **on the channel that probe will use**. Move the probe to the next channel only after its capture.
 
-1. Clip the probe tip onto the **Cal** terminal on the front of the scope, and its ground clip onto the Cal ground terminal.
+1. Clip the probe tip onto the **Cal** terminal on the front of the scope, and its ground (clip or spring) onto the Cal ground terminal.
 2. Set the channel, the timebase and an edge trigger on that channel:
    ```
    q ':CHANnel<n>:SCALe 1'; q ':CHANnel<n>:BWLimit OFF'; q ':CHANnel<n>:COUPling DC'
@@ -131,9 +135,9 @@ Do this with the board powered and running, at the V/div and BW-limit settings t
    q ':CHANnel<n>:SCALe?'; q ':CHANnel<n>:BWLimit?'; q ':TRIGger:EDGE:SOURce?'; q ':TRIGger:SWEep?'
    ```
    Sweep has to be **AUTO**: a shorted tip gives nothing to trigger on, and AUTO keeps the trace updating.
-2. Put the probe **tip and its ground on the same ground point**, the one the V6 ground method uses. Land the ground first, with the board's power off, then power on.
-   - At the BQ24195 (U5) end on v6 or v7, that point is **C21.2**. See the bridging warning in V6.
-   - If the tip and the spring can't both sit on that one 0603 pad, put the spring on C21.2 and the tip on the nearest other GND pad, **R32.2** (GND net, 3.44 mm from U5.6). Write down which pads you used. That fallback is our suggestion **[own]**.
+2. Put the probe **tip and its ground on the same ground point**, the one the V6 ground method uses. **Unplug the board** (USB out, no battery), land the ground first, then the tip, look under the microscope, then power on.
+   - At the BQ end (charger chip U5) on v6 or v7, that point is pad **F** (C21.2, the end of C21 farther from U5). See the bridging warning in V6.
+   - If the tip and the spring can't both sit on that one small 0603 pad, put the spring on pad F and the tip on the nearest other GND pad, **R32.2** (one end of resistor R32, GND net, 3.44 mm from U5.6; it is not marked in the pictures, so find it in the layout first). Write down which pads you used. That fallback is our suggestion **[own]**.
 3. Add **Vpp** for this channel with the scope running: `q ':MEASure:ITEM VPP,CHANnel<n>'`. **CHECK:** `Vpp(C<n>)` is on the Result panel with a number.
 4. Capture:
    ```
@@ -150,11 +154,11 @@ Use the shortest ground the probe can land: a **ground spring**, or a wire of **
 
 | Probing at | Ground point | Distance (edge to edge) | Source |
 |---|---|---|---|
-| U5 (BQ24195) pins 5/6, v6 **and** v7 | **C21.2** (4.7 µF, 0603-size pad) | **2.64 mm** on both boards | *[facts: PCB probe points]* |
-| Master test points TPIO43/44, v6 | U2.14 (T-Display header pin, through-hole) | 8.26 mm | same |
-| Master test points TPIO43/44, v7 | C9.1 (100 nF) | 3.05 mm | same |
+| BQ end: pads **D/E** (U5 pins 6/5), v6 **and** v7 | pad **F** (C21.2; C21 is 4.7 µF, 0603-size pad) | **2.64 mm** on both boards | *[facts: PCB probe points]* |
+| Master end: pads **A/B** (test pads TPIO43/44), v6 | pad **C** (U2.14, a GND hole of the T-Display header, through-hole) | 8.26 mm | same |
+| Master end: pads **A/B** (test pads TPIO43/44), v7 | pad **C** (C9.1, one end of the 100 nF capacitor C9) | 3.05 mm | same |
 
-> **Bridging warning (C21).** C21.1, the other end of the same capacitor, is **`Protected_VBUS`**. C20.1 next to it is `Protected_VBUS` too. A spring or wire touching both ends of C21 shorts the charger input to ground. Land the ground on the **outer end of C21.2, away from C21.1**, with the board powered off. Look at it before you power on.
+> **Bridging warning (C21).** Pad F (C21.2) is ground, but the other end of the same capacitor (C21.1, an **X** pad in the pictures) is **`Protected_VBUS`**, USB power. One end of C20 next to it (C20.1, the other **X** pad) is `Protected_VBUS` too. A spring or wire touching both ends of C21 shorts the charger input to ground. Land the ground on **pad F, on the side of the pad away from the X pad**, with the board **unplugged**. Look at it under the microscope before you power on.
 
 - Don't use TP4 as a "same ground" on both boards. It is 6.85 mm from U5 on v6 but 12.09 mm on v7 *[facts: PCB probe points, v6 names]*.
 - Whether a spring stays on a 0603 pad has not been tried yet. If it won't stay, use a ≤ 10 mm wire to the same pad and record the length.
@@ -165,7 +169,7 @@ Use the shortest ground the probe can land: a **ground spring**, or a wire of **
 
 ## V7 — Idle-high level on the DUT
 
-1. Probes on the measurement points (for example SDA on CH1, SCL on CH2), with the V6 ground. Board powered and running.
+1. Probes on the measurement points (for example SDA on CH1 at pad A or D, SCL on CH2 at pad B or E), with the V6 ground. If they have to move, unplug the board first and look before powering on. Board powered and running.
 2. Set an edge trigger on the channel, sweep AUTO, and put **Vtop** on the panel, for each channel in use:
    ```
    q ':TRIGger:EDGE:SOURce CHANnel<n>'; q ':TRIGger:SWEep AUTO'; q ':MEASure:ITEM VTOP,CHANnel<n>'
