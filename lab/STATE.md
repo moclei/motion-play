@@ -1,6 +1,6 @@
 ---
 as_of: V7R-000            # highest card ID with status recorded|abandoned that this file reflects (V7R-000 = sentinel, nothing recorded)
-updated: 2026-10-19       # date of the last edit
+updated: 2026-10-20       # date of the last edit
 last_checkpoint: V7R-000  # card ID at which the last step-back checkpoint ran (context-strategy §4.3)
 open_cards: []            # cards with status pre-registered|run; must match lab/cards/ (checked)
 ---
@@ -50,3 +50,4 @@ Where to go for detail that is not L0; load only the named section or query.
 | a v6/v7 difference | docs/research/v7-retry/v6-v7-changelist.md | §3 by CL-ID (`grep -n "CL-NN"`); §5 observations |
 | a legacy phase (`L-PhNN`) | docs/debugging/v7-i2c-investigation.md | `grep -n "^### Phase NN"` |
 | the STATE seed (until transcribed) | docs/research/v7-retry/decisioning.md | §2 (sections 1–8 seed); §4 standing criteria |
+| scope setup (validation V1–V9, known-good reference) | lab/procedures/ | `dho804-setup-validation.md` every scope session; `known-good-reference.md` for V9 |
