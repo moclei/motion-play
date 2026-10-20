@@ -1220,3 +1220,99 @@ Phase-specific notes:
 You are not the Orchestrator. Do not create documents, work across phases, or replan.
 Return DONE, PARTIAL, or BLOCKED with specifics.
 ```
+
+#### Notes
+Tasks 1–3 are done and ticked. This is a planned PARTIAL: task 4 (the Drive path), W6 and the handoff are still open. Commits: `04a124d` (capture), `f0c781e` (validator + hook), `2d48cee` (ingest + tests). `python3 tools/lab/tests/run_tests.py` passes: the 9 checker fixtures plus 39 tool checks.
+
+**What was built** (PLAN Technical Notes → Capture tooling → "As built" has the details):
+- `tools/lab/capture.py --test V7R-NNN --arm A1 [--session …]` writes `<stem>.png`, `<stem>.csv` (`Time(s),CH1V…`, RAW values verbatim) and `<stem>.setup.bin` (the `:SYSTem:SETup?` blob, not named `.stp` because it is not the XML format). It appends one measurement entry to the session log, or creates the log. Every scope-sourced field is filled. `dut.*`, `validation.*`, `signal`/`point`/`probe`, `feature` and `raw_observation` are left as `TODO`. On a fresh capture the validator returns exit 3 (TODOs only, no errors).
+- The vendored client is `tools/lab/vendor/scpi.py`: the MIT licence and provenance header, then the upstream file **unmodified**. Source: `https://github.com/mattjax16/rigol-dho-mcp/blob/f9ac7191869845ae46ca714de69a877c388b2530/rigol_dho_mcp/scpi.py`, upstream sha256 `9fface904495086784322b44cdfac4edaa35ea215f1c87ccdfe5b0d4004a5066`. The header gives the one-liner that rechecks the hash. I read it in full; it runs on the repo's Python 3.7. **Task 5 needs this provenance in `tools/CONTEXT.md`.** I did not touch CONTEXT.md, because that edit belongs to the W6 task.
+- One hazard in the vendored client: after a binary block it reads the trailing `\n` with a 0.5 s timeout. A late `\n` would shift every later reply by one. capture.py resyncs with `*IDN?` after each block, and a test confirms that without the resync the capture fails.
+- `validate_log.py` branches on `kind`. Exit codes: 0 valid, 1 errors, 3 TODOs only, 2 PyYAML missing. Pre-commit rule 4 rejects a staged `lab/log/*.yaml` with errors and only **warns** on TODOs, so mid-session per-arm commits aren't blocked. The Orchestrator may want to confirm that choice with the user. `lab/templates/log.yaml` itself validates clean.
+- `ingest_usb.py` requires `--at` (the Mac time, which also dates the name) and takes `--files` as an option (the scope names; the index digit may be left off). It tries stick offsets of 0 and +60 min within ±300 s. When the match is ambiguous it lists the candidates and renames nothing. It never writes to the stick. The inbox copy is kept, and a mapping is appended to `captures/<ID>/INGEST.tsv`.
+- Test inputs: five Phase 6 bench recordings, committed in `tools/lab/tests/scope_fixtures/` (≈ 240 KB), so the tests don't depend on the gitignored inbox. Log fixtures are in `tools/lab/tests/log_fixtures/{pass,fail}/`.
+
+**Not bench-verified, and flagged in the tool:**
+- `--chunked` (memory deeper than 10 kpts). Without it, deeper memory is refused with a message.
+- The I²C trigger/decode queries other than WHEN/CLEVel. They are tolerated: a missing reply is recorded, not fatal.
+- `:SYSTem:SETup?` and PNG over the vendored client. Phase 6 pulled them with `nc`/scratch code, so W6 is the first real run of the vendored client (the S9 smoke test was never run).
+
+**For W6 comparison (the Worker after the bench):**
+- Compare the CSV column `CH1V` as text against the `w6mem*.csv` value column (drop the trailing `,,`). The memory CSV's `t0`/`tInc` should equal the entry's PREamble xorg/xinc.
+- Compare the PNG pixels over the graticule. The header overlay and the USB icon differ by design (Phase 6).
+
+**W6 bench script (draft, §4.8 blocks; relay one at a time).** It uses the dummy ID `V7R-999` (the Phase 2 precedent) and puts the session log in the gitignored inbox, so nothing lands in `lab/log/`. Run every command in a Mac terminal at the repo root, with the scope on the direct link (`192.168.50.2`).
+
+```
+STEP S1 of 6 — W6 (known signal, scope running)
+DO:      Insert the USB stick into the scope. Rigol stock probe on CH1, probe switch at 10×, tip and ground clip on the Cal output terminal.
+         CH1 1 V/div, timebase 200 µs/div, edge trigger on CH1 (the Phase 6 S3 setup). Measurement panel showing Vamp, Vtop and Vbase on CH1.
+         Press RUN/STOP until the scope is running. Close every other menu.
+CHECK:   A stable square wave is on screen, the panel shows three numbers, and the stick icon is shown.
+CAPTURE: Nothing.
+REPORT:  1. Vamp / Vtop / Vbase CH1 from the panel: ___ / ___ / ___
+         2. Anything you noticed that wasn't asked for, described as what you see, not why
+STOP IF: no stable wave, or the stick icon is missing → report and wait.
+```
+
+```
+STEP S2 of 6 — W6 (capture tool; this freezes the trace)
+DO:      Run:
+           python3 tools/lab/capture.py --test V7R-999 --arm A1 --session lab/inbox/w6/$(date +%F)_s01.yaml
+         From here until S4 is done, do not press any scope button and do not touch the probe.
+CHECK:   The command ends with "The scope is left STOPPED." and the scope screen shows STOP.
+CAPTURE: The tool writes the files itself.
+REPORT:  1. The tool's full output, verbatim: ___
+         2. Anything you noticed that wasn't asked for, described as what you see, not why
+STOP IF: the output starts "capture: REFUSED" or "capture: scope error" → paste it and wait (nothing was written). If it says memory depth > 10k, report the number and wait.
+```
+
+```
+STEP S3 of 6 — W6 (PNG of the same frozen screen to USB, by SCPI)
+DO:      Run (one line):
+           python3 -c "import sys; sys.path.insert(0,'tools/lab'); from vendor.scpi import ScpiClient as C; c=C('192.168.50.2'); c.write(':SAVE:IMAGe:FORMat PNG'); c.write(':SAVE:IMAGe D:/w6img.png'); print(c.query(':SYSTem:ERRor?'))"; date +%FT%T
+         Still do not press any scope button.
+CHECK:   The screen still shows STOP and the same trace.
+CAPTURE: The scope saves w6img<digit>.png to the stick.
+REPORT:  1. Output, verbatim (an error line and a date/time): ___
+         2. Anything the scope showed on screen while saving: ___
+STOP IF: the error line is not 0,"No error", or the screen no longer shows STOP → report and wait.
+```
+
+```
+STEP S4 of 6 — W6 (menu memory CSV of the same frozen trace)
+DO:      Open Storage: the lower-left function navigation icon, or the toolbar Storage button.
+         Select the Save tab. Under Choose, select "Save wave".
+         Set DATA SOURCE to MEMORY. Set FORMAT to *.csv.
+         Set File Name to w6mem. Press Save.
+CHECK:   The screen still shows STOP before and after the save.
+CAPTURE: The scope saves w6mem<digit>.csv to the stick.
+REPORT:  1. The file name the scope shows after saving: ___
+         2. Any label you saw that differs from the ones above (Storage, Save, Choose, "Save wave", DATA SOURCE, MEMORY, FORMAT, *.csv, File Name, Save): ___
+         3. Anything you noticed that wasn't asked for, described as what you see, not why
+STOP IF: the scope left STOP at any point (the trace changed) → report and wait; S2–S4 must be redone.
+```
+
+```
+STEP S5 of 6 — W6 (USB ingest)
+DO:      Press RUN/STOP so the scope runs again. Remove the stick and plug it into the Mac.
+         Run, putting the date/time from S3 REPORT 1 after --at:
+           python3 tools/lab/ingest_usb.py --src /Volumes/HANTEK --test V7R-999 --arm A1usb --at <S3 date/time> --files w6img.png w6mem.csv
+         Leave the stick in the Mac.
+CHECK:   The output ends with a "captures: [...]" line naming two files.
+CAPTURE: The tool copies the stick to lab/inbox/ and renames the two files into lab/captures/V7R-999/.
+REPORT:  1. The full output, verbatim: ___
+STOP IF: the output says "ambiguous" or "nothing renamed" → paste it and wait. The stick is not modified either way.
+```
+
+```
+STEP S6 of 6 — W6 (validator on the generated entry)
+DO:      Run:
+           python3 tools/lab/validate_log.py lab/inbox/w6/*_s01.yaml; echo "exit $?"
+CHECK:   The command prints a result line and "exit <n>".
+CAPTURE: Nothing.
+REPORT:  1. The full output, verbatim: ___
+STOP IF: nothing — report either way.
+```
+
+Expected for the Worker (not shown to the operator): S6 gives `PENDING (TODOs)`, exit 3, and no `ERROR` lines. The tool CSV should equal the `w6mem` values 10 000 / 10 000.
