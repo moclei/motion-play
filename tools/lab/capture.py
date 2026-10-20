@@ -30,6 +30,7 @@ import argparse
 import datetime
 import decimal
 import json
+import logging
 import math
 import os
 import re
@@ -46,7 +47,22 @@ try:
 except ImportError:  # pragma: no cover
     yaml = None
 
+# The vendored client logs each failed connect to stderr and raises a message written for its
+# MCP server ("server log", RIGOL_HOST). capture.py reports the address and cause itself.
+logging.getLogger("vendor.scpi").setLevel(logging.CRITICAL)
+
 DEFAULT_HOST = os.environ.get("DHO_HOST", "192.168.50.2")
+LOCAL_NETWORK_HINT = ("macOS: allow your terminal app in System Settings → Privacy & Security → "
+                      "Local Network; nc working does not prove Python can connect")
+
+
+def connect_error(e, host, port):
+    """Our text for the vendored client's connect failure, or None if e is another error."""
+    cause = e.__cause__
+    if not (isinstance(cause, OSError) and str(e).startswith("Could not connect")):
+        return None
+    return ("could not connect to the scope at %s:%s (%s). Check --host (or $DHO_HOST), the cable "
+            "and that the scope's LAN is up. %s" % (host, port, cause, LOCAL_NETWORK_HINT))
 VERIFIED_FW = "00.01.05"
 SINGLE_READ_MAX = 10000          # RAW ASCii single read verified at 10 kpts only (PLAN, W4b S10)
 DEFAULT_ITEMS = ["VTOP", "VBASe", "VAMP", "VPP"]   # items verified on 00.01.05 (W4 S4, S8c)
@@ -623,7 +639,8 @@ def main(argv=None):
         print("capture: REFUSED: %s. Nothing was written." % e, file=sys.stderr)
         return 2
     except (ScpiError, OSError) as e:
-        print("capture: scope error: %s. Nothing was written." % e, file=sys.stderr)
+        msg = connect_error(e, args.host, args.port) if isinstance(e, ScpiError) else None
+        print("capture: scope error: %s. Nothing was written." % (msg or e), file=sys.stderr)
         return 1
     finally:
         client.close()

@@ -118,6 +118,20 @@ def capture_tests(tmp):
           rc == 0 and (cap / "2026-11-04_V7R-012_A1_02.png").exists() and len(data["measurements"]) == 2
           and log.read_text().startswith("# operator comment kept"), out)
 
+    # 2b. connect failure: our message (--host/$DHO_HOST, Local Network hint), not the vendored one
+    import socket
+    s = socket.socket()
+    s.bind(("127.0.0.1", 0))
+    dead = s.getsockname()[1]
+    s.close()
+    root = tmp / "c_conn"
+    rc, out = run([sys.executable, str(LAB / "capture.py"), "--test", "V7R-012", "--arm", "A1",
+                   "--host", "127.0.0.1", "--port", str(dead), "--root", str(root), "--now", NOW])
+    check("capture: connect failure names --host/$DHO_HOST and the Local Network hint, exit 1",
+          rc == 1 and "--host" in out and "$DHO_HOST" in out and "Local Network" in out
+          and "127.0.0.1:%d" % dead in out and "RIGOL_HOST" not in out and "server log" not in out
+          and "Nothing was written" in out and not root.exists(), out)
+
     # 3. deeper memory is refused, nothing written
     root3 = tmp / "c3"
     f = FakeScope(mdepth=100000)
