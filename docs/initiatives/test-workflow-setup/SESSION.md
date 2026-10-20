@@ -1393,3 +1393,9 @@ Orchestrator notes on S2a:
 > 2. It showed something like "Saving to D:/w6img.png"
 
 Orchestrator notes on S3: no error, and the scope showed a save message. The Mac time is 2026-10-20T11:43:04, which is the `--at` value for S5. Whether the file was written gets checked in S5; `:SAVE:IMAGe` was bench-verified in S6/S7. Next is S4.
+
+**S4 REPORT (user, verbatim):**
+> 1. Yes, it showed w6mem0.csv
+> 2. No
+
+Orchestrator notes on S4: the trace stayed frozen from S2 through S4, so the tool files, `w6img*.png` and `w6mem0.csv` all come from one acquisition. Next is S5.
