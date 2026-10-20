@@ -1621,3 +1621,52 @@ All four Phase 8 tasks done, one commit each: `d4f158c` (setup validation), `c4e
   - (b) `v6-ref` talks to the BQ only at boot, so the frame is caught with SINGLE + reset. Expected decode is `D6` then ACK.
   - (c) The topic-4 "Dry run" acceptance wording (≈ 30–80 mV) differs from the procedure's ≤ 0.4 V judgement. Raise it with the user when the acceptance is ticked.
   - (d) The Deferred hooksPath suggestion: the dry-run instructions should tell the session to check `git config core.hooksPath`.
+
+---
+
+### Worker #12 — Phase 9: v6 dry run (task 1: instructions)
+
+**Dispatch:**
+```
+Initiative: test-workflow-setup
+Phase: 9 — v6 dry run (bench, as an ad-hoc debugger session)
+Initiative path: docs/initiatives/test-workflow-setup/
+Additional reading: SESSION.md "### Worker #11" (Notes, Result, Verification carry-forward a–d); docs/research/v7-retry/debugger-role-draft.md (read in full; do not edit, it is the user's draft); lab/procedures/*.md; lab/STATE.md, lab/NOTEBOOK.md, lab/templates/; tools/CONTEXT.md Lab Tools; PLAN acceptance tables (topic 4 "Dry run" row)
+
+Tasks assigned (from TASKS.md Phase 9):
+- [~] Write the dry-run instructions for the user in SESSION.md: open an ad-hoc `claude` session with "Read `docs/research/v7-retry/debugger-role-draft.md` and act as that role for this session."; the session pre-registers the v6 validation card, flashes `v6-ref` to v6, runs setup validation then the known-good reference, captures with the tool, ingests, and records with STATE + notebook
+- [ ] **W7:** the user runs the dry run, then a second fresh ad-hoc debugger session (opened the same way) asked only "what is the bench state?". The user reports whether the answer was correct and whether the image handoff was workable
+- [ ] Verify from git: pre-registration commit before the raw-data commits, per-arm raw commits, recording commit touching STATE with `as_of` set, notebook entry, evidence files present, `check_state.py` clean. If v6 is out of spec, stop: the setup gets fixed before close (replan if needed)
+- [ ] Tick both acceptance tables in PLAN. Open the final PR (merge commit)
+- [ ] 🔄 Handoff
+
+The first task is marked `[~]` because it was dispatched to you — it is not someone else's work in progress.
+
+Scope for this dispatch: task 1 only. Stop after it with a planned PARTIAL. W7 is the user's bench session; the Orchestrator relays it.
+
+Phase-specific notes:
+- Write the instructions in your #### Notes block in SESSION.md, under a clear heading so the Orchestrator can hand them to the user verbatim. They're for the user, not an agent: plain steps, in order.
+  1. Before opening the session:
+     - the bench setup (v6 board, which probe on which channel, ground springs, scope on the direct link, Cursor's terminal with Local Network allowed);
+     - `git config core.hooksPath` must print `.githooks` (if empty, run `git config core.hooksPath .githooks`; Deferred suggestion);
+     - be on branch `feat/test-workflow-setup`.
+  2. The exact opening prompt, verbatim: "Read `docs/research/v7-retry/debugger-role-draft.md` and act as that role for this session." Add one line telling the session what this session is for: the v6 dry run of the setup-validation and known-good-reference procedures, card V7R-001 or whatever the role's numbering gives. Check against the role draft how the first session is supposed to start; STATE.md is still the skeleton, so `as_of: V7R-000`.
+     - Earlier the Orchestrator told the user that the first debug-track session transcribes decisioning.md §2 into STATE.md. Decide from the role draft and BRIEF whether this dry run is that first session or should avoid touching the debug STATE content. BRIEF says no v7 measurements and no STATE.md *content* in this initiative, yet this task asks for "records with STATE + notebook". Resolve this against BRIEF and PLAN. If they truly conflict, say so plainly in your return, because the Orchestrator must escalate rather than guess.
+  3. What the user should expect the session to do, in order:
+     - pre-register the card (a commit before any raw data);
+     - flash `v6-ref` (which env, which command; warn that this is v6 and **never `v7-clean` on v7** in this initiative);
+     - setup validation V1–V9;
+     - the known-good reference, with SINGLE trigger + reset (RIGHT button, GPIO 14, or power cycle), because `v6-ref` only talks to the BQ at boot;
+     - capture.py per arm; ingest if USB was used; per-arm raw commits; the recording commit with STATE `as_of` + notebook.
+  4. What the user should do when an untested SCPI set form fails its read-back: set it by hand and write down the button path (carry-forward a).
+  5. After the dry run: open a second fresh session the same way and ask only "what is the bench state?". Then report back to the Orchestrator:
+     - whether the answer was correct;
+     - whether the image handoff (screenshots to the session) was workable;
+     - the session's final commit hash;
+     - any setting set by hand, with its button path.
+  6. Stop conditions: v6 out of spec, anything hot or smelling, or a bus that won't decode.
+- Don't run anything on the bench and don't create card files yourself. The debugger session does that.
+
+You are not the Orchestrator. Do not create documents, work across phases, or replan.
+Return DONE, PARTIAL, or BLOCKED with specifics.
+```
