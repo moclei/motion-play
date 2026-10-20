@@ -1887,3 +1887,14 @@ Return DONE, PARTIAL, or BLOCKED with specifics.
   - R32.2 (the V5 fallback ground) is not marked in either picture. The text now says so.
   - `RELAY-v6-dry-run.md` was not touched. It already points at the v6 image path and A–F.
 - run_tests.py OK (0 failures); check_state.py OK.
+
+#### Result
+| # | Phase | Result | Escalation evaluated? | Commit | Notes |
+|---|-------|--------|-----------------------|--------|-------|
+| 13 | Phase 8 fix: procedure readability | DONE | No — clean completion | ba78fc6 | v6 + v7 probe-point pictures; glossary; A–F labels; sequencing |
+
+#### Verification
+- Commits `2288a19`, `667cc0c` and `ba78fc6`; the tree is clean. `run_tests.py` passes with 0 failures. `check_state.py` reports OK.
+- `img/v6-probe-points.png` is byte-identical to the user-approved picture. The Orchestrator viewed `img/v7-probe-points.png`: markers sit on the SDA/SCL pads, C9.1, U5 bottom-side pins and the C21/C20 ends. "Outer end" no longer appears in either procedure.
+- Sequencing as written: V1–V4 run on Cal only, V5 onwards on the board, and the board is unplugged before every probe or ground placement. The relay was updated to match.
+- Carry forward: `known-good-reference.md` L51 says "On v6 its [U5] package is rotated". Per the layouts, U5 is at 0° on v6 and 90° on v7. This is a minor fact-wording fix for the closeout. The V5 fallback ground R32.2 isn't pictured; the text says so.

@@ -31,7 +31,11 @@ If the session skips a step or changes the order, stop it and say so.
 
 1. It **pre-registers card V7R-001 and commits**, before any bench step.
 2. It **flashes `v6-ref` onto v6.** Plug the board into the Mac when it asks, and check that it's v6 before the upload starts.
-3. **Scope checks V1–V9.** The probes go on the scope's Cal output first. If a setting doesn't take, set it by hand and **write down the button path**.
+3. **Scope checks V1–V9.**
+   - V1–V4 use only the scope's Cal output. The probes don't touch the board yet.
+   - From V5 on, the probes go on the board's pads.
+   - **Every time a probe or ground goes on the board or moves, unplug the board first**, check it under the microscope, then plug it back in.
+   - If a setting doesn't take, set it by hand and **write down the button path**.
 4. **Reference measurements:**
    - **S1** at pads **A/B/C**.
    - **S2** at pads **D/E/F**. Place F with the board **unplugged**, and look before powering on.
