@@ -915,3 +915,13 @@ Orchestrator notes on S7 (`lab/inbox/phase6/usb/` and `/Volumes/HANTEK` checked 
 - **No `p6set.stp` on the stick**, even though `:SAVE:SETup D:/p6set.stp` returned `:SAVE:STATus?` = 1 and no error. The SCPI setup save is therefore *not* verified. The menu "Save setup" option exists in the "Choose" list (user item 1). Step c was ambiguously worded, which led to a second CSV save. An older `main-pcb/mainpcb_ack0.stp` exists on the stick, which suggests the menu save does write `.stp` files.
 - The stick shows file dates of Oct 20 2026 for the new files, so the S4b clock set carried into file timestamps. The older `nack_bq_full0.png` is dated Jan 18 2013.
 - Inserting S7b: put the stick back, retry the SCPI setup save and read back the error, then do the menu setup save with corrected wording. The trace is now RUN; the setup comparison concerns settings, not trace data.
+
+**S7b REPORT (user, verbatim):**
+> 1. printed `1` / `0,"No error"`
+> 2. File is p6menu0.stp
+> 3. done
+
+Orchestrator notes on S7b:
+- **The SCPI `:SAVE:SETup D:/p6set.stp` failed silently a second time.** It returned `:SAVE:STATus?` = 1 and no error, but no file appeared on the stick. → **`:SAVE:SETup` is not usable on 00.01.05**, and the setup-file row is corrected accordingly.
+- The menu path **Storage > Save > Choose "Save setup" > File Name > Save** works and wrote `p6menu0.stp` (43 839 B). The user's `cp` did not land the file, so the Orchestrator copied it from `/Volumes/HANTEK` into `lab/inbox/phase6/usb/`.
+- **The `.stp` file is XML** (`<?xml version="1.0" encoding="UTF-8"?>` …, Android-style). The LAN `:SYSTem:SETup?` block is 2 867 B of zlib-compressed binary. **They are different formats, not the same bytes.** Over LAN the setup can only be captured as the binary blob; the human-readable `.stp` file needs a USB menu save. The settings themselves are fully readable through the S4 queries, so the Phase 7 log entry does not depend on either file.
