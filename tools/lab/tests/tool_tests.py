@@ -1,4 +1,5 @@
-"""Tests for capture.py, validate_log.py (+ its pre-commit rule) and ingest_usb.py.
+"""Tests for capture.py, validate_log.py (+ its pre-commit rule), ingest_usb.py and
+backup_captures.sh.
 
 Called from run_tests.py. capture.py runs against fake_scope.FakeScope, which replays the
 Phase 6 bench recordings in scope_fixtures/. No real scope is needed.
@@ -290,6 +291,51 @@ def ingest_tests(tmp):
     check("ingest: stick untouched (names and mtimes)", before == after, (before, after))
 
 
+# ---------------------------------------------------------------- backup_captures.sh
+
+def backup_tests(tmp):
+    sh = str(LAB / "backup_captures.sh")
+    repo = tmp / "b_repo"
+    (repo / "lab" / "captures" / "V7R-012").mkdir(parents=True)
+    (repo / "lab" / "inbox" / "usb-x").mkdir(parents=True)
+    (repo / "lab" / "captures" / "V7R-012" / "a.csv").write_text("1")
+    (repo / "lab" / "inbox" / "usb-x" / "b.png").write_text("2")
+    home = tmp / "b_home"
+    icloud = home / "Library" / "Mobile Documents" / "com~apple~CloudDocs"
+
+    def bk(*args, **env):
+        e = dict(os.environ, HOME=str(home), LAB_REPO=str(repo))
+        e.pop("LAB_BACKUP_DIR", None)
+        e.update(env)
+        p = subprocess.run(["/bin/sh", sh] + list(args), stdout=subprocess.PIPE,
+                           stderr=subprocess.STDOUT, universal_newlines=True, env=e)
+        return p.returncode, p.stdout
+
+    home.mkdir()
+    rc, out = bk()
+    check("backup: missing iCloud root -> exit 1, clear message",
+          rc == 1 and "iCloud Drive root not found" in out and not (home / "Library").exists(), out)
+    icloud.mkdir(parents=True)
+    dst = icloud / "motion-play-lab"
+    rc, out = bk("--dry-run")
+    check("backup: --dry-run copies nothing", rc == 0 and not dst.exists(), out)
+    rc, out = bk()
+    check("backup: copies captures/ and inbox/ to the default folder",
+          rc == 0 and (dst / "captures" / "V7R-012" / "a.csv").read_text() == "1"
+          and (dst / "inbox" / "usb-x" / "b.png").read_text() == "2", out)
+    os.remove(str(repo / "lab" / "captures" / "V7R-012" / "a.csv"))
+    rc, out = bk()
+    check("backup: a file deleted locally is kept in the backup (no --delete)",
+          rc == 0 and (dst / "captures" / "V7R-012" / "a.csv").exists(), out)
+    alt = tmp / "b_alt"
+    alt.mkdir()
+    rc, out = bk(LAB_BACKUP_DIR=str(alt / "lab"))
+    check("backup: $LAB_BACKUP_DIR overrides the destination",
+          rc == 0 and (alt / "lab" / "inbox" / "usb-x" / "b.png").exists(), out)
+    rc, out = bk("--delete")
+    check("backup: unknown argument -> exit 2", rc == 2, out)
+
+
 def main():
     if yaml is None:
         print("FAIL tool tests need PyYAML")
@@ -299,6 +345,7 @@ def main():
         capture_tests(tmp)
         validator_tests(tmp)
         ingest_tests(tmp)
+        backup_tests(tmp)
     finally:
         shutil.rmtree(str(tmp), ignore_errors=True)
     return sum(1 for r in _results if not r)
