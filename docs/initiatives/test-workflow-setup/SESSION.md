@@ -846,3 +846,15 @@ Orchestrator notes on S2b:
 - **Raw socket on port 5555 is confirmed on 00.01.05** (fact "port 5555" → bench-verified). VXI-11 portmapper (111) is also open.
 - Cause of the S2 silence: macOS `nc` half-closes on stdin EOF before the scope replies. Holding stdin open (`; sleep`) fixes it. For S3 onward the helper becomes `q(){ (printf '%s\n' "$1"; sleep "${2:-1}") | nc -G 3 "$SCOPE" 5555; }`. S5/S6 one-liners use the same pattern, with a longer hold for binary reads. Phase 7's tool must keep the socket open until it has read the full reply; it should not rely on EOF.
 - The scope has no user-visible socket-port setting on the IO page.
+
+**S3 (given to the user as a step-by-step menu walk-through, using AUTO first, then 1 V/div, 200 µs/div, an edge trigger on CH1, and the Vamp/Vtop/Vbase panel). REPORT (user, verbatim):**
+> 1. Ch1 probe is 10x
+> 2. Vamp = 3.0037V, Vtop = 2.9774V, Vbase = -26.266mV / 43.333mV alternating
+> 3. It printed RIGOL TECHNOLOGIES,DHO804,DHO8A282M00872,00.01.05
+> 4. Nothing
+
+Orchestrator notes on S3:
+- The Cal output is a ≈ 0 → 3 V square wave, so V4 should read **Vamp** (3.0037 V, +0.12 % vs the 3 Vpp nominal). This answers the PLAN fact "Base/top levels … needs bench".
+- Vbase flickers between two values about 70 mV apart. This is recorded as observed and not interpreted; Phase 8 notes it when it sets V4.
+- The revised `nc` helper is confirmed working.
+- The menu walk-through was given in more detail than the drafted block; Phase 8's procedure needs that level of step detail.
