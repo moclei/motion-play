@@ -70,6 +70,9 @@ Pass table per `known-good-reference.md` (V_DD = 3.3 V). Evaluated per arm (S1, 
 
 - S4 (V3/V4 CH2, CH2 on Cal): read-backs "`1.000000E+00`, `2.000000E-4`, `CHAN2`, `AUTO`, `0,"No error"`". "CH1 is parked". capture.py: wrote `2026-10-20_V7R-001_val_V3_02.{png,csv,setup.bin}`; "NOTE: 3 measurement(s) invalid (9.9E37 or no reply): VAMP CH1, VTOP CH1, VBASe CH1"; "NOTE: channel settings differ from the session block: CH2.v_div_V: session 0.05, scope 1.0"; "The scope is left STOPPED." CH2 shape: "They look pretty much the same as CH1 had -- square"
 
+- S5 (S1 look, board unpowered): pad C "Yes" visible/reachable from top. Ground: "The probes have a ~150mm cable coming out of them with alligator clips at the end, for ground. Those would reach C. Also, the hole ... is currently being filled by a pin from the t-display, which is soldered in, and I think one alligator clip would be able to clip onto the through-hole pin if done on the underside of the board". Tip on C: "I could probably get a probe tip to touch the soldered mound that covers C, yes".
+- Decision (user, 2026-10-20): 150 mm alligator lead fails V6 (≤ 10 mm); S1 run first, as planned, with a ≤ 10 mm wire per probe ground to the top-side solder mound on C.
+
 ### Measured values (from log; cite `lab/evidence/V7R-001/...`)
 ### Interpretation (session; labelled as such)
 
