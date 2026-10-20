@@ -1073,3 +1073,20 @@ This was a planned PARTIAL: tasks 2 and 3 are done, and W5 and the handoff are u
   - The setup-file option is a user decision. If it changes the Phase 7 task wording, the Planner is engaged at that point.
 - **W5 decision (user, verbatim, 2026-10-20):** "build + borrow the socket client". Our own `capture.py`, with a credited copy of the MIT `ScpiClient` from `mattjax16/rigol-dho-mcp` @ f9ac719. The next Phase 6 Worker records this in PLAN, along with the handoff.
 - Carry forward: stick file timestamps run about 1 h ahead of Mac local time after the S4b clock set. This goes to Phase 7 ingest.
+
+---
+
+### W4b — Phase 6 bench relay, follow-up (Orchestrator)
+This step answers the Worker #7 Open Question "LAN CSV ≠ USB CSV". The same rules as W4 apply.
+
+**S10 REPORT (user, verbatim):**
+> 1. Both error results were `0,"No error"`, the status result was "1"
+> 2. You can check the size of those yourself. The USB stick did not have anything named p6mem...csv
+
+Orchestrator notes on S10 (checked by listing and reading only):
+- **The LAN RAW pull works:**
+  - `lan_raw_ascii.txt` is 140 000 B and holds 10 000 comma-separated values, with no TMC header. It ends at +0.572 V, which is mid-edge.
+  - Preamble `2,2,10000,1,4.000000E-7,-2.000000E-3,0.000000,1.3333E-04,0,32768`: format ASCII, mode RAW, 10 000 points, xinc 0.4 µs.
+  - `:WAVeform:STARt 1`/`STOP 10000` worked in a single read at 10 kpts.
+- **`:SAVE:MEMory:WAVeform D:/p6mem.csv` failed silently**, the same way `:SAVE:SETup` did: `:SAVE:STATus?` = 1, no error, no file. `/Volumes/HANTEK` lists no `p6mem*`. So the SCPI *memory* save is unusable on 00.01.05, while the SCPI *screen* wave save (S6) works.
+- Inserting S10b: a menu save of memory data from the same frozen trace.
