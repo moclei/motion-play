@@ -944,3 +944,40 @@ Orchestrator notes on S8:
 Orchestrator notes on S8b:
 - `9.9E37` is the scope's "invalid measurement" value. The report doesn't say whether AUTO was pressed before re-running, so the ratio question is still open. Likely causes: CH2 not displayed, CH2 off-screen or clipped, or the trigger still on CH1. Inserting S8c, which turns CH2 on explicitly, sets the trigger source to CH2, presses AUTO and re-reads.
 - **Ground springs: verified present and fitting both probes** (the Rigol stock probe and the SQ500). The ground-spring purchase is closed.
+
+**S8c REPORT (user, verbatim):**
+> 1. VAMP:2.9781E-01 , VPP:3.0744E-01 , CH2 SCALe: 5.000000E-02, ERRor: 0,"No error"
+> 2. Square wave
+
+Orchestrator notes on S8c:
+- With the ratio at 1X, the 3 Vpp Cal signal reads 0.298 V VAMP and 0.307 V VPP, a factor of about 10 low. → **The SQ500 is 10:1, and the DHO804 does not detect it; CH2 stayed at 1X.** This matches the desk fact "SQ500: 10:1 fixed (no switch)". **Every procedure must set the channel's probe ratio to 10X by hand** (`:CHANnel<n>:PROBe 10`) and check it with `:CHANnel<n>:PROBe?` before measuring. V2 is worded as "probe ratio (switch or fixed)".
+- The S8b `9.9E37` came from CH2 being off or not the trigger source. Procedures must turn the channel on and set the trigger source explicitly before running `:MEASure:ITEM?`.
+- The bench is left with CH2 at 1X and the trigger source on CH2. The next session sets both explicitly.
+
+**S9:** not run. The optional third-party smoke test was offered three times and the user didn't take it up. It doesn't block anything. W5 goes ahead on the desk evidence, and a later result can be appended here.
+
+#### Result
+| # | Phase | Result | Escalation evaluated? | Commit | Notes |
+|---|-------|--------|-----------------------|--------|-------|
+| W4 | Phase 6: bench relay | DONE | No — every STOP IF stayed clear; inserted S2b, S4b, S7b, S8b, S8c to resolve CHECK misses | 3d03458 (+ this commit) | S1–S8c recorded; S9 optional, not run |
+
+#### Verification
+Re-derived from the reports above. The Worker takes these to PLAN "Verified instrument facts":
+- **Verified on 00.01.05:**
+  - LAN is a fixed IP over a direct link, and port 5555 answers. macOS `nc` needs the hold-open form.
+  - All 39 S4 queries answered.
+  - `:SYSTem:DATE`/`:TIME` set works (persistence across a power cycle is unknown).
+  - `:DISPlay:DATA? PNG` returns a TMC block with a 1024×600 PNG.
+  - `:WAVeform:DATA?` ASCII has no TMC header.
+  - SCPI image and wave saves to the USB stick work.
+  - The menu setup save writes `.stp` XML.
+  - Cal output measures 3.0 V Vamp on the 10X Rigol probe.
+  - SQ500 is 10:1 and not auto-detected.
+  - Ground springs are on hand for both probes.
+- **Corrected:**
+  - `:SAVE:SETup` silently writes nothing, so it is unusable.
+  - `:SYSTem:SETup?` is zlib binary, not ASCII, and a different format from `.stp`.
+  - The scope appends an index digit to every saved filename.
+  - Measure thresholds default to 90/50/10, so rise-time procedures must set 70/30.
+  - There is no front-panel clock setting. The clock is set over SCPI.
+- **Open for the Worker:** the LAN-vs-USB data comparison. The LAN set (S5) and the USB set (S6/S7) may not come from the same acquisition: the first CSV values differ at index 1 (2.986 vs 2.7136).
