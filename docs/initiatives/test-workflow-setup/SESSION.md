@@ -1670,3 +1670,126 @@ Phase-specific notes:
 You are not the Orchestrator. Do not create documents, work across phases, or replan.
 Return DONE, PARTIAL, or BLOCKED with specifics.
 ```
+
+#### Notes
+Task 1 only, as dispatched (planned PARTIAL). Nothing was run on the bench, and no card, log or STATE file was created. The user instructions are below under **"Dry-run instructions for the user (W7)"**, ready to hand over verbatim.
+
+**STATE scope (BRIEF vs PLAN): resolved, not a conflict.**
+- BRIEF Out says "STATE.md content (the first debugger session transcribes `decisioning.md` §2)". That parenthetical defines what "content" means here: the debug content of sections 1–8, which the debug track's first session writes.
+- PLAN Track 2 names "the Phase 9 dry-run card" as the one exception that "goes through the normal debugger lifecycle". The topic-6 Dry run acceptance requires "recorded with STATE updated in the same commit". The pre-commit hook needs only `as_of` = the recorded ID (`tools/lab/precommit.py`).
+- **Resolution:** this dry run is **not** the first debug-track session. It touches only the STATE **front matter**: `open_cards: [V7R-001]` (and `updated`) in the pre-register commit, then `as_of: V7R-001`, `open_cards: []`, `updated` in the recording commit. Sections 1–9, the "Skeleton only" banner and the notebook s00 `next:` line stay as they are. Worker #11 used the same structure-vs-content line for the Lookups row.
+- **Consequence for the L0 test:** STATE §6 (bench state) stays empty, so the second session has to get the bench state from the s01 notebook entry ("bench state at end") and the V7R-001 card. Step 4 of the role draft's session start reads exactly that ("bench state at last stop (from the last notebook entry)"), so the test is still fair. Judgement call for the Orchestrator: if the user wants the `flashed now` line in §6 as well, that is one line of §6 content and needs the user's OK against BRIEF.
+- **Role draft step 6** lists "map row cells, tombstones, measurement trust" as STATE updates. For this card they are out of scope (no hypothesis map exists yet), and the instructions tell the session so.
+
+**Facts checked for the instructions:**
+- The card ID is **V7R-001**. `lab/cards/` holds only `.gitkeep`, origin/main has no newer `lab/` commits, and the counter rule is highest + 1 after the `V7R-000` sentinel. Session log `lab/log/<date>_s01.yaml` (notebook s00 exists).
+- Flash: tag `v6-ref` → `4da1c67`, env `lilygo-t-display-s3` (the only env there; `platformio.ini` is at the repo root at that commit). `pio` is at `/usr/local/bin/pio`. The instructions flash from a throwaway detached worktree, so the working branch is never checked out to `4da1c67`.
+- The restart is the RIGHT button, GPIO 14 (`BUTTON_2 14`, banner "Press RIGHT button (GPIO 14) to restart anytime", `ESP.restart()` in `main.cpp` @ `4da1c67`). The BQ 0x6B probe runs at boot only.
+- `git config core.hooksPath` prints `.githooks` in this clone today.
+- `check_state.py` warns CHECKPOINT-DUE when more than 14 days have passed since the last notebook entry (s00, 2026-10-19). If the dry run starts after 2026-11-02, the session would hit "no new card while it's due" before pre-registering. The instructions say to run before then, or to stop and report.
+- Card front matter per PLAN Dry run: title "Setup validation + known-good reference on v6 (`v6-ref`)", `variable_changed: none — instrument validation`, `structure: single (justified)`.
+
+**Carry-forward for tasks 3–4:** (c) from Worker #11 still stands. The topic-4 Dry run row says "≈ 30–80 mV once the datasheet check confirms it", while the procedure judges V_OL ≤ 0.4 V. The instructions use ≤ 0.4 V.
+
+---
+
+##### Dry-run instructions for the user (W7)
+
+This runs the two new scope procedures end to end on the **v6** board, as a debugger session working from your draft role. The session drives everything one step at a time. You do the physical steps and type the commands it gives you. Expect a few hours. You can stop at any safe point and it will commit what it has.
+
+**A. Before you open the session**
+
+1. **Bench**
+   - **Board:** the surviving **v6** main board, on its usual USB-C cable to the Mac. That cable flashes it and powers it. **Not v7.** This initiative never flashes `v7-clean` onto v7 (that would be debug card 1).
+   - **Probes:** Rigol stock probe on **CH1** (SDA), switch on the probe body at **10×**. Sensepeek **SQ500** on **CH2** (SCL); it is fixed 10:1. Don't use the SQ10 (1:1) for any of this.
+   - **Ground springs** on both probes. For the BQ-end arm the ground goes on **C21.2**. The other end of that capacitor, C21.1, is the charger input (`Protected_VBUS`), so land the spring on the **outer end of C21.2**, with the board **off**, and look at it before powering on. For the master-end arm you need a short ground wire (≤ 10 mm) to U2.14; the session will ask you its length.
+   - **Scope:** on the direct Ethernet link (USB-C Ethernet adapter in the Mac). **Utility → IO** shows CONNECTED at 192.168.50.2. Have a USB stick in your pocket, only as a fallback.
+   - **Terminal:** Cursor's integrated terminal at the repo root. **System Settings → Privacy & Security → Local Network → Cursor** must be on. If it's on but Python can't reach the scope later, switch it off and on again.
+2. **Git hook:** in that terminal run `git config core.hooksPath`. It must print `.githooks`. If it prints nothing, run `git config core.hooksPath .githooks`.
+3. **Branch:** run `git status`. It must say `On branch feat/test-workflow-setup` with a clean tree. If not, `git checkout feat/test-workflow-setup` first.
+4. **Date:** run the dry run **before 2026-11-02**. After that, the session-start check reports CHECKPOINT DUE (more than 14 days since the last notebook entry), and the role won't open a new card. If you see CHECKPOINT DUE anyway, stop and tell the Orchestrator.
+
+**B. Open the session**
+
+5. Start a new `claude` session in that terminal (plain `claude`, no `--agent`). Paste this as your first message, both lines exactly:
+
+   > Read `docs/research/v7-retry/debugger-role-draft.md` and act as that role for this session.
+   > This session is the v6 dry run of `lab/procedures/dho804-setup-validation.md` (V1–V9) and `lab/procedures/known-good-reference.md` on the v6 board with `v6-ref`, as card V7R-001 (title "Setup validation + known-good reference on v6 (`v6-ref`)", `variable_changed: none — instrument validation`, `structure: single (justified)`). It is not the first debug-track session: don't transcribe `decisioning.md` §2, and in STATE.md change only the front matter (`open_cards`, `as_of`, `updated`), with no map cells, tombstones or measurement-trust rows.
+
+6. **What you should see first:**
+   - The session runs `python3 tools/lab/check_state.py` and pastes the result. Expect `OK`, because STATE.md is still the empty skeleton (`as_of: V7R-000`, no open cards).
+   - It gives you a five-line orientation and asks what bench time and boards you have today. Answer: the v6 board, the DHO804, the two probes, and how long you have.
+   - Its orientation may say the next step is transcribing `decisioning.md` §2. Your second line already overrides that. If it argues, repeat the second line.
+
+**C. What the session should do, in order**
+
+If it skips a step or changes the order, say so and stop it.
+
+7. **Pre-register the card.** It creates `lab/cards/V7R-001-<slug>.md` from the template, filling everything above `--- RUN ---`: hypotheses (including `M`, measurement artefact), numeric predictions including a "void" row, setup and steps. It sets STATE.md `open_cards: [V7R-001]` and commits (`V7R-001: pre-register`) **before any bench step**. Check that the commit happened before you touch the board.
+8. **Flash `v6-ref` onto v6.** v6 is on USB. The session should give you, or run, something like this:
+   ```
+   git worktree add --detach /tmp/mp-v6-ref v6-ref
+   pio run -d /tmp/mp-v6-ref -e lilygo-t-display-s3 -t upload
+   git worktree remove --force /tmp/mp-v6-ref
+   ```
+   The env is `lilygo-t-display-s3` and the tag is `v6-ref` (commit `4da1c67`). Your branch stays checked out the whole time. **Confirm that the board on the cable is v6 before upload.** Never flash `v7-clean`, and never flash anything onto v7, in this session. After the flash, the display should boot normally. If it boot-loops or browns out, stop.
+9. **Setup validation, V1–V9** (`dho804-setup-validation.md`):
+   - Press **AUTO** first.
+   - V2: probe ratio 10 on both channels, read back.
+   - V3: compensation on the Cal output, per probe on its own channel.
+   - V4: Cal Vamp 2.91–3.09 V.
+   - V5: shorted-tip noise on the powered board, ≤ 20 mV.
+   - V6: ground method recorded.
+   - V7: idle high 3.135–3.465 V.
+   - V8: I²C decode shows `D6`.
+   - The validation captures are `val_V3`, `val_V5` and `val_V7`.
+10. **Known-good reference (V9)**, two arms. **S1:** master end, SDA at TPIO43, SCL at TPIO44. **S2:** BQ end, SDA at U5.6, SCL at U5.5, ground on C21.2. On `v6-ref` the BQ is only talked to at **boot**, so for each arm:
+    - the session has you arm a **SINGLE** trigger (`q ':TRIGger:SWEep SING'`);
+    - you press the board's **RIGHT button (GPIO 14)** to restart it, or unplug and replug its USB;
+    - the scope fires once and stops, and the decode row should read **`D6` then ACK**. If it shows another address, arm and restart again.
+
+    Press the button gently. A probe that moves means re-checking V8.
+11. **Captures.** Each capture is one `python3 tools/lab/capture.py --test V7R-001 --arm <arm> --items … --session lab/log/<today>_s01.yaml`. It leaves the scope **STOPPED**; press **RUN/STOP** once afterwards. If you had to save to the USB stick instead, the session runs `tools/lab/ingest_usb.py` on it.
+12. **Raw commits per arm.** After each step where you report data, the session appends your words verbatim to the card and commits (`V7R-001: <arm> raw`). There should be one commit per arm (val_V3/V5/V7, S1, S2) **before** any result is written.
+13. **The session reads the images.** It opens each capture PNG itself and writes what it reads into the log's `ai_read` block. If what it reads disagrees with your numbers, that is a stop condition, and it should say so.
+14. **Recording commit.** One commit that:
+    - fills Actual result and Conclusion;
+    - copies the cited captures into `lab/evidence/V7R-001/`;
+    - sets the card's `status: recorded`;
+    - sets STATE.md `as_of: V7R-001` and `open_cards: []`.
+
+    The pre-commit hook rejects it if STATE isn't in the same commit. Pass is judged on: V_OL ≤ 0.4 V on a master-driven 0-bit, idle high 3.135–3.465 V, rise time 30→70 % ≤ 300 ns, decode `D6` + ACK.
+15. **Notebook entry**, appended to `lab/NOTEBOOK.md` as session `s01`. Its "bench state at end" line must say what is powered, where the probes are, and what is flashed on v6. Then a final commit. At the end, run `tools/lab/backup_captures.sh` (or ask the session to).
+
+**D. When a scope command doesn't take**
+
+16. Most of the scope *set* commands in the procedures have never been tried on this firmware. Every one is followed by a read-back. When a read-back shows the wrong value, or an item doesn't appear on the Result panel:
+    - set it on the scope **by hand**;
+    - **write down the exact button path** you used, with the on-screen labels (for example: Measure → … → …);
+    - tell the session, so it goes into your REPORT and the card.
+
+    The ones most likely to need this are `:MEASure:ITEM` (adding Vamp/Vtop/Vbase/Vpp/Rise time to the panel), `:MEASure:SETup:MAX 70` / `MIN 30` (rise-time thresholds), `:BUS1:MODE IIC` and its sources, the `:TRIGger:IIC:*` settings, `:TRIGger:SWEep SING`, and memory depth if it doesn't read 10k.
+
+**E. Stop at once** (power the board off if it's safe, tell the session, then tell the Orchestrator)
+
+17. Stop if:
+    - **v6 reads out of spec** on any pass-table row with a validated setup. Don't widen a limit; the setup gets fixed before this initiative closes.
+    - **Anything gets hot, smells, or smokes**, or a spring slips toward C21.1.
+    - **The bus won't decode**: no `D6` after a few restarts, or decode stays garbled.
+    - The flashed v6 board boot-loops or browns out.
+
+**F. After the dry run: the bench-state test**
+
+18. Close the session. Open a **new** `claude` session the same way. Paste only line 1:
+    > Read `docs/research/v7-retry/debugger-role-draft.md` and act as that role for this session.
+
+    When it has finished its start-up (check and orientation), ask only:
+    > what is the bench state?
+
+    Don't add any other information. Note whether it answered without asking you anything.
+19. **Report back to the Orchestrator:**
+    - whether that answer was **correct** (board, what's flashed, probes and power as you left them), and whether it asked you anything first;
+    - whether the **image handoff** was workable: the session reading the capture PNGs, plus any photos you dragged or pasted into the terminal. Say what was awkward;
+    - the dry-run session's **final commit hash** (`git log -1 --format=%h`);
+    - every setting you set **by hand**, with its **button path**;
+    - pass or fail per row (V_OL, idle high, rise time, decode) as the card records them.
