@@ -1090,3 +1090,18 @@ Orchestrator notes on S10 (checked by listing and reading only):
   - `:WAVeform:STARt 1`/`STOP 10000` worked in a single read at 10 kpts.
 - **`:SAVE:MEMory:WAVeform D:/p6mem.csv` failed silently**, the same way `:SAVE:SETup` did: `:SAVE:STATus?` = 1, no error, no file. `/Volumes/HANTEK` lists no `p6mem*`. So the SCPI *memory* save is unusable on 00.01.05, while the SCPI *screen* wave save (S6) works.
 - Inserting S10b: a menu save of memory data from the same frozen trace.
+
+**S10b REPORT (user, verbatim):**
+> 1. STOP
+> 2. There's a field labelled "DATA SOURCE" which has the options "SCREEN" and  "MEMORY". I presumed that was what you were referring to and selected MEMORY. The menu has another field labeled "FORMAT" from which I selected "*.csv".
+>
+> The file from the USB stick is in place at `lab/inbox/phase6/usb/p6mem0.csv`
+
+Orchestrator notes on S10b:
+- The trace was still frozen, so S10 and S10b come from the same acquisition.
+- The menu wording is **Storage → Save → Choose "Save wave" → DATA SOURCE = MEMORY → FORMAT = \*.csv → File Name → Save**. Phase 8 should use these exact labels.
+- `p6mem0.csv` is 160 045 B with 10 001 lines. Its header is `CH1V,t0 =-2.000000e-03, tInc = 4.000000e-07,`, a different layout from the screen CSV's `Time(s),CH1V`. The first two values match the LAN RAW pull exactly (+1.223733, +1.679333), and t0/tInc match the RAW preamble. The full comparison is the Worker's job.
+
+**Setup-file decision (user, verbatim, 2026-10-20):** "Let's go with option a". Each capture saves the `:SYSTem:SETup?` binary blob over the LAN, and the log entry records the readable settings from the S4 queries. No per-capture menu save. This keeps to the Phase 7 scope, so no Planner is needed.
+
+**User clarification on PLAN edits (verbatim):** "Workers can update the plan of what they are actively working on, yes. They're not supposed to plan *new* initiatives, which is what I thought you meant. So you can forget about my comment."
