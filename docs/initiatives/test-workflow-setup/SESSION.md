@@ -1532,3 +1532,47 @@ All Phase 7 tasks are done and ticked. Commits: `500c323` (backup script + tests
   - Every "Inputs for Phase 8" bullet in PLAN.
   - The VPP-invalid hypothesis (untested): put every measured item on the panel while running.
   - Topic-4 "Dry run" acceptance wording (carried from Phase 5 (b)): the procedure limits the V_OL claim; the acceptance tick stays with Phase 9.
+
+---
+
+### Worker #11 — Phase 8: Procedures and scope-guide retirement
+
+**Dispatch:**
+```
+Initiative: test-workflow-setup
+Phase: 8 — Procedures and scope-guide retirement
+Initiative path: docs/initiatives/test-workflow-setup/
+Additional reading: PLAN.md "Verified instrument facts" (incl. "Inputs for Phase 8", the W6 comparison and the VPP observation) and the Phase 5 GND/point-name findings; SESSION.md "### Worker #6" Notes (Phase 5 findings), "### W4", "### W4b" and "### W6" Orchestrator notes; the §4.2/§4.3 sections of the audit doc that PLAN cites; lab/templates/; docs/debugging/i2c-oscilloscope-debugging.md (banner only)
+
+Tasks assigned (from TASKS.md Phase 8):
+- [~] Write `lab/procedures/dho804-setup-validation.md` (§4.2 V1–V9). Every number and menu path comes from PLAN "Verified instrument facts"; no remaining [verify] marks
+- [ ] Write `lab/procedures/known-good-reference.md` (§4.3), using the v6/v7 point names from Phase 5, the same-ground-length rule, and the pass table with the V_OL claim limited to what the datasheet check supports
+- [ ] Add the "scope setup → lab/procedures/" Lookups row (template; STATE.md too if the debug track has filled it, that row only)
+- [ ] Put a RETIRED banner on `docs/debugging/i2c-oscilloscope-debugging.md` pointing to `lab/procedures/` (body untouched)
+- [ ] 🔄 Handoff
+
+The first task is marked `[~]` because it was dispatched to you — it is not someone else's work in progress.
+
+Phase-specific notes:
+- The operator is the user, and needs every scope menu step spelled out button by button, with the exact on-screen labels PLAN records. Examples: Storage → Save → Choose "Save wave" → DATA SOURCE = MEMORY → FORMAT = *.csv → File Name → Save; AUTO before anything else. Write the procedures for someone who doesn't know the DHO804 menus. Terminal commands run in Cursor's terminal at the repo root.
+- Bench rules learned in Phase 6/7 that the procedures must carry (all in PLAN; cite the rows, don't copy whole tables):
+  - Set the probe ratio by hand and read it back: the SQ500 is 10:1 and is not detected.
+  - Turn the channel on and set the trigger source before measuring.
+  - Thresholds default to 90/50/10, so set 70/30 for rise time.
+  - Put every measured item on the panel while the scope is running, before capture. This rests on an untested hypothesis; label it as one.
+  - A one-time macOS Local Network setup for the terminal app.
+  - Set the clock each session (capture.py does it).
+  - Never trust `:SAVE:STATus?`.
+  - Ground springs fit both probes.
+  - Don't state a stick clock offset.
+- Known-good reference:
+  - The nearest GND to U5 pins 5/6 is C21.2 (2.64 mm on v7 and v6). Warn about the bridging risk to C21.1 (`Protected_VBUS`).
+  - Use the v6 point names from Phase 5.
+  - V_OL: pass ≤ 0.4 V. "Tens of mV (≈ 35 mV at CAP_3)" appears only as a labelled estimate. The "> 0.2 V = investigate" line stays our own heuristic.
+- No v7 measurements and no STATE.md content (BRIEF constraint). `lab/STATE.md` is still the skeleton (`as_of: V7R-000`), so the Lookups row goes into the template only.
+- The topic-4 "Dry run" acceptance row in PLAN still says "once the datasheet check confirms it". Don't tick or edit acceptance; Phase 9 handles it. Mention it in your Notes if the procedure wording bears on it.
+- The pre-commit hook and `check_state.py` must stay green. Run `tools/lab/tests/run_tests.py` before the handoff.
+
+You are not the Orchestrator. Do not create documents, work across phases, or replan.
+Return DONE, PARTIAL, or BLOCKED with specifics.
+```
