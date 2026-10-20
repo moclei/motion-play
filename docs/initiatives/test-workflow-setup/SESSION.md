@@ -1412,3 +1412,36 @@ Orchestrator notes on S5:
 - Ingest matched both files and renamed them per §4.4. **The stick timestamps matched the Mac at offset +0**: `w6img0.png` at 11:43:04 is exactly the S3 Mac time. Worker #7's "about 1 h ahead" observation is not reproduced. Its cause is unknown; one possibility is how the earlier listing rendered times. Ingest still tries +60, which does no harm. Phase 8 should not state an offset.
 - All 39 stick files were copied into the inbox, including the old ones and system folders. That is acceptable, since the inbox is gitignored and backed up.
 - Next is S6.
+
+**S6 REPORT (user, verbatim):**
+> ```
+> lab/inbox/w6/2026-10-20_s01.yaml: PENDING (TODOs)
+>   TODO    ai_session
+>   TODO    dut.board_id
+>   TODO    dut.firmware_commit
+>   TODO    dut.firmware_env
+>   TODO    dut.declared_baseline
+>   TODO    validation.passed
+>   TODO    validation.V2_probe_ratio.CH1
+>   TODO    validation.V3_comp_png
+>   TODO    validation.V5_noise_floor_mVpp
+>   TODO    validation.V6_ground.method
+>   TODO    validation.V6_ground.point
+>   TODO    validation.V6_ground.length_mm
+>   TODO    validation.V7_idle_high_V.CH1
+>   TODO    validation.V8_decode_ok
+>   TODO    channels.CH1.probe
+>   TODO    channels.CH1.signal
+>   TODO    channels.CH1.point
+>   TODO    measurements[0].feature
+>   TODO    measurements[0].raw_observation
+>   warning measurements[0]: no ai_read entry for 2026-10-20_V7R-999_A1_01.png yet
+> exit 3
+> ```
+
+Orchestrator notes on S6: this matches Worker #9's expectation exactly: exit 3, TODOs only, **no ERROR lines**. Every TODO is an operator field. The single warning (no `ai_read` yet) is expected for an unreviewed capture. **W6 bench relay complete.** The comparison and the rest of Phase 7 go to Worker #10.
+
+#### Result
+| # | Phase | Result | Escalation evaluated? | Commit | Notes |
+|---|-------|--------|-----------------------|--------|-------|
+| W6 | Phase 7: bench relay | DONE | No — S2 STOP IF hit, resolved by inserted S2a (Local Network privacy) | (this commit) | Tool capture + USB PNG + menu memory CSV from one frozen trace; ingest OK; validator exit 3 |

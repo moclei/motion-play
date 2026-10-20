@@ -75,7 +75,7 @@
 - [x] Write the capture tool (or the wrapper around the adopted one) per PLAN: files named per §4.4, log entry with every required §4.6 field filled from scope queries, operator fields left as TODO
 - [x] Write `tools/lab/validate_log.py` (branches on `kind`). Wire it into the pre-commit helper for staged `lab/log/*.yaml`. Add a passing and a failing fixture
 - [x] Write `tools/lab/ingest_usb.py` (copy to inbox, timestamp-match, rename into captures)
-- [ ] Write `tools/lab/backup_captures.sh` (rsync captures/ + inbox/) to the iCloud Drive folder `~/Library/Mobile Documents/com~apple~CloudDocs/motion-play-lab/`, with the path as one config value (user, 2026-10-20: iCloud Drive replaces Google Drive)
+- [~] Write `tools/lab/backup_captures.sh` (rsync captures/ + inbox/) to the iCloud Drive folder `~/Library/Mobile Documents/com~apple~CloudDocs/motion-play-lab/`, with the path as one config value (user, 2026-10-20: iCloud Drive replaces Google Drive)
 - [~] **W6:** one bench capture with the tool. Keep the trace frozen and save a menu memory CSV (DATA SOURCE = MEMORY) and a PNG of the same capture to USB. Compare the tool's CSV against the memory CSV sample for sample and its PNG against the USB PNG, then run the validator on the generated entry (acceptance: capture tool). Update the `tools/CONTEXT.md` tools/lab section
 - [ ] 🔄 Handoff
 
