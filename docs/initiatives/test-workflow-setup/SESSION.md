@@ -1337,3 +1337,16 @@ Expected for the Worker (not shown to the operator): S6 gives `PENDING (TODOs)`,
 
 ### W6 — Phase 7 bench relay (Orchestrator)
 Relaying Worker #9's W6 script (S1 adjusted as noted above), one step at a time. REPORTs are verbatim.
+
+**User decisions (verbatim, 2026-10-20):**
+> 1. A - icloud folder
+> 2. sounds good
+
+- Backup destination: **iCloud Drive** (option A). `~/Library/Mobile Documents/com~apple~CloudDocs` exists on this Mac (Desktop and Documents already sync). The default subfolder is `motion-play-lab/`, kept as one config value. This changes the BRIEF line "Google Drive backup for gitignored captures" → Planner.
+- Pre-commit policy confirmed: errors block, TODOs warn.
+
+**S1 REPORT (user, verbatim):**
+> 1. "10"
+> 2. All yes
+
+Orchestrator notes on S1: CH1 is at 10X, the scope is running, CH1 only, and the stick is present. All CHECKs pass.
