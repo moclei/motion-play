@@ -1793,3 +1793,17 @@ If it skips a step or changes the order, say so and stop it.
     - the dry-run session's **final commit hash** (`git log -1 --format=%h`);
     - every setting you set **by hand**, with its **button path**;
     - pass or fail per row (V_OL, idle high, rise time, decode) as the card records them.
+
+#### Result
+| # | Phase | Result | Escalation evaluated? | Commit | Notes |
+|---|-------|--------|-----------------------|--------|-------|
+| 12 | Phase 9: v6 dry run (task 1: instructions) | PARTIAL (planned) | Yes — the STATE-scope question checked against BRIEF/PLAN, no conflict | 3a6f06a | User instructions A–F written; W7 handed to the user |
+
+#### Verification
+- Commit `3a6f06a`; the tree is clean. Task 1 is ticked.
+- STATE scope re-derived:
+  - BRIEF L16 puts "STATE.md content (the first debugger session transcribes `decisioning.md` §2)" out of scope.
+  - PLAN L9 makes "the Phase 9 dry-run card" the one exception that runs the normal debugger lifecycle.
+  - So the front-matter-only reading (`open_cards`, `as_of`, `updated`) is consistent with both. No escalation.
+- The instructions keep the BRIEF constraints: v6 only, `v7-clean` is never flashed, and no v7 measurement. The flash runs from a detached worktree, so the branch stays put.
+- Open items for the user: an optional STATE §6 "bench state" line (default is to leave §6 empty, per BRIEF), the 2026-11-02 checkpoint date, and the topic-4 acceptance wording (raised at the acceptance tick).
