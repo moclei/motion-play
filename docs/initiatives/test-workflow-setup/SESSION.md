@@ -1445,3 +1445,45 @@ Orchestrator notes on S6: this matches Worker #9's expectation exactly: exit 3, 
 | # | Phase | Result | Escalation evaluated? | Commit | Notes |
 |---|-------|--------|-----------------------|--------|-------|
 | W6 | Phase 7: bench relay | DONE | No — S2 STOP IF hit, resolved by inserted S2a (Local Network privacy) | (this commit) | Tool capture + USB PNG + menu memory CSV from one frozen trace; ingest OK; validator exit 3 |
+
+---
+
+### Worker #10 — Phase 7: Capture, ingest, validation, backup (task 4, W6 analysis, handoff)
+
+**Dispatch:**
+```
+Initiative: test-workflow-setup
+Phase: 7 — Capture, ingest, validation, backup
+Initiative path: docs/initiatives/test-workflow-setup/
+Additional reading: SESSION.md "### Worker #9" (Notes, incl. "For W6 comparison") and "### W6 — Phase 7 bench relay (Orchestrator)" (all REPORTs and Orchestrator notes, plus the Planner backup replan entry); PLAN.md Capture tooling ("As built") and "Inputs for Phase 7/8"; tools/CONTEXT.md Lab Tools section. Bench files: lab/captures/V7R-999/ (tool: *_A1_01.{png,csv,setup.bin}; USB: *_A1usb_01.{png,csv}), lab/inbox/w6/2026-10-20_s01.yaml
+
+Tasks assigned (from TASKS.md Phase 7):
+- [x] Write the capture tool (or the wrapper around the adopted one) per PLAN: files named per §4.4, log entry with every required §4.6 field filled from scope queries, operator fields left as TODO
+- [x] Write `tools/lab/validate_log.py` (branches on `kind`). Wire it into the pre-commit helper for staged `lab/log/*.yaml`. Add a passing and a failing fixture
+- [x] Write `tools/lab/ingest_usb.py` (copy to inbox, timestamp-match, rename into captures)
+- [~] Write `tools/lab/backup_captures.sh` (rsync captures/ + inbox/) to the iCloud Drive folder `~/Library/Mobile Documents/com~apple~CloudDocs/motion-play-lab/`, with the path as one config value (user, 2026-10-20: iCloud Drive replaces Google Drive)
+- [~] **W6:** one bench capture with the tool. Keep the trace frozen and save a menu memory CSV (DATA SOURCE = MEMORY) and a PNG of the same capture to USB. Compare the tool's CSV against the memory CSV sample for sample and its PNG against the USB PNG, then run the validator on the generated entry (acceptance: capture tool). Update the `tools/CONTEXT.md` tools/lab section
+- [ ] 🔄 Handoff
+
+The first open task is marked `[~]` because it was dispatched to you — it is not someone else's work in progress. W6 is `[~]` because the bench part (Orchestrator relay) is done. Your part is the comparison, the CONTEXT.md update and the acceptance record.
+
+Phase-specific notes:
+- Backup script: the path is a single config value at the top, overridable by env var. rsync `lab/captures/` and `lab/inbox/` into it. Never use `--delete`: a backup must not remove files because they were deleted locally. Support `--dry-run`. Fail clearly if the iCloud root (`~/Library/Mobile Documents/com~apple~CloudDocs`) is missing.
+  - The user chose this destination, so you may run it for real once after a `--dry-run`, which creates `motion-play-lab/` in their iCloud Drive. Report what it copied.
+  - Running it from the Orchestrator/Worker shell is fine. Local Network privacy doesn't apply to local file copies.
+- W6 comparison (all files are from one frozen trace, S2–S4):
+  - Tool CSV vs `*_A1usb_01.csv` (the menu memory CSV): sample for sample, as text and as numbers; check t0/tInc against the log entry's preamble.
+  - Tool PNG vs `*_A1usb_01.png`: pixels over the graticule (the header overlay and USB icon differ by design, see Phase 6).
+  - Record the acceptance "capture tool" as met or not met, with numbers, in PLAN. Don't fabricate a pass. If it fails, return PARTIAL with specifics.
+- VPP CH1 came back 9.9E37 (`valid: false`) in S2a while VAMP CH1 = 3003.7 mV. VPP on CH2 was valid in S8c. Look at the frozen CSV (clipping at the screen limits after AUTO?) and record what you find as an observation. Don't change the tool's invalid-handling: it behaved correctly.
+- Small fix allowed in capture.py: the vendored client's connect-error text mentions "server log" and `RIGOL_HOST`, which don't apply. Wrap it in capture.py, without editing the vendored file, so the message names `--host`/`$DHO_HOST` and adds the hint "macOS: allow your terminal app in System Settings → Privacy & Security → Local Network; nc working does not prove Python can connect". Add or adjust a test.
+- Record in PLAN "Inputs for Phase 8":
+  - The Local Network privacy setup (confirmed in W6 S2a, Cursor).
+  - The stick clock matched the Mac at offset +0 in W6 S5. Worker #7's ~1 h observation was not reproduced, so procedures should not state an offset.
+  - Terminal commands run in Cursor's terminal.
+- tools/CONTEXT.md Lab Tools section: add capture.py, validate_log.py (exit codes, hook rule 4 policy "errors block, TODOs warn", which the user confirmed in W6), ingest_usb.py, backup_captures.sh, and the vendored client's provenance (URL, commit, upstream sha256, and the recheck one-liner).
+- Then do the 🔄 Handoff.
+
+You are not the Orchestrator. Do not create documents, work across phases, or replan.
+Return DONE, PARTIAL, or BLOCKED with specifics.
+```
