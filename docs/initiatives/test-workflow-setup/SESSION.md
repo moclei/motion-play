@@ -925,3 +925,14 @@ Orchestrator notes on S7b:
 - **The SCPI `:SAVE:SETup D:/p6set.stp` failed silently a second time.** It returned `:SAVE:STATus?` = 1 and no error, but no file appeared on the stick. → **`:SAVE:SETup` is not usable on 00.01.05**, and the setup-file row is corrected accordingly.
 - The menu path **Storage > Save > Choose "Save setup" > File Name > Save** works and wrote `p6menu0.stp` (43 839 B). The user's `cp` did not land the file, so the Orchestrator copied it from `/Volumes/HANTEK` into `lab/inbox/phase6/usb/`.
 - **The `.stp` file is XML** (`<?xml version="1.0" encoding="UTF-8"?>` …, Android-style). The LAN `:SYSTem:SETup?` block is 2 867 B of zlib-compressed binary. **They are different formats, not the same bytes.** Over LAN the setup can only be captured as the binary blob; the human-readable `.stp` file needs a USB menu save. The settings themselves are fully readable through the S4 queries, so the Phase 7 log entry does not depend on either file.
+
+**S8 REPORT (user, verbatim):**
+> 1. "1"
+> 2. Not sure
+> 3. Yes, a few of them
+
+Orchestrator notes on S8:
+- `:CHANnel2:PROBe?` returns `1` with the SQ500 on CH2. The user is not sure whether the ratio changed by itself, so **auto-detection is not verified**. Before this run CH2's ratio was never set by hand, so `1` is probably just the default value.
+- What `1` means depends on the SQ500's actual attenuation, which has not been confirmed. Inserting S8b: read CH2 Vpp/Vamp on the 3 V Cal signal. About 3 V means a 1:1 probe and a correct ratio. About 0.3 V means a 10:1 probe that the scope does not detect, so the ratio must be set by hand in every procedure.
+- **Ground springs: present** in the Rigol stock-probe bags. The "buy ground springs before Phase 9" item is closed, unless they turn out not to fit the probe barrel; Phase 8 to check the fit at first use.
+- S9 has not been answered yet.
