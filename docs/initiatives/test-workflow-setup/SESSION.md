@@ -1352,3 +1352,17 @@ Relaying Worker #9's W6 script (S1 adjusted as noted above), one step at a time.
 Orchestrator notes on S1: CH1 is at 10X, the scope is running, CH1 only, and the stick is present. All CHECKs pass.
 
 **Planner (backup replan):** REPLANNED `30f5058`. BRIEF L15, PLAN (tree comments, backup bullet, Open Question history) and TASKS Phase 7 task 4 now name iCloud Drive at `~/Library/Mobile Documents/com~apple~CloudDocs/motion-play-lab/`; the `.gitignore` comment was updated too. RELAY-orchestrator.md and older SESSION entries are left as historical records. Verified with `git show --stat`; the tree is clean.
+
+**S2 REPORT (user, verbatim):**
+> The capture script failed, here's what the terminal showed:
+> ```
+> Could not connect to scope at 192.168.50.2:5555 — [Errno 65] No route to host
+> Could not connect to scope at 192.168.50.2:5555 — [Errno 65] No route to host
+> capture: scope error: Could not connect to the oscilloscope (address and underlying error are in the server log). Check that RIGOL_HOST is correct, the scope is on the network, and LAN control is enabled.. Nothing was written.
+> ```
+
+Orchestrator notes on S2 (diagnosed from the Orchestrator's shell; TCP connect only, no SCPI sent):
+- The link is healthy: en7 is active at 192.168.50.1/24, the route to 192.168.50.2 is via en7, ping gets 2/2 at about 1.1 ms, `nc -z` to port 5555 succeeds, and a plain Python 3.7.3 (pyenv) `socket.create_connection` to :5555 succeeds **from the Orchestrator's shell**.
+- From the user's terminal, `nc` worked in S1, but Python fails with EHOSTUNREACH. On macOS 26.6.2 this fits **Local Network privacy**. Apple system binaries such as `/usr/bin/nc` are exempt; a third-party binary (the pyenv python) launched from a terminal app is attributed to that app, and it is refused if the app lacks Local Network permission. This is the leading hypothesis and has not been confirmed.
+- The tool behaved correctly: one retry, then "Nothing was written". Its error text comes from the vendored client and mentions "server log" and `RIGOL_HOST`, which don't apply to capture.py (it uses `--host`/`$DHO_HOST`). The next Worker should wrap that message. This is a cosmetic issue.
+- Inserting S2a: check the Local Network toggle for the user's terminal app, then re-run S2 unchanged. The trace is still RUN, since nothing reached the scope.
