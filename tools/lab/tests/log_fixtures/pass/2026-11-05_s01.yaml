@@ -1,0 +1,13 @@
+# Passing fixture (kind: log-only): only dut.* and test_id/feature/raw_observation are required.
+session_id: 2026-11-05_s01
+kind: log-only
+operator: user
+dut:
+  board_id: v7-B3
+  firmware_commit: "1a2b3c4"
+  firmware_env: motion-play-v7-diag
+  declared_baseline: v7-clean
+measurements:
+  - test_id: V7R-002
+    feature: "serial diag loop, BQ probe line"
+    raw_observation: "BQ:X(2) every iteration"
