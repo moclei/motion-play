@@ -72,11 +72,11 @@
 
 ## Phase 7: Capture, ingest, validation, backup
 
-- [~] Write the capture tool (or the wrapper around the adopted one) per PLAN: files named per §4.4, log entry with every required §4.6 field filled from scope queries, operator fields left as TODO
+- [x] Write the capture tool (or the wrapper around the adopted one) per PLAN: files named per §4.4, log entry with every required §4.6 field filled from scope queries, operator fields left as TODO
 - [ ] Write `tools/lab/validate_log.py` (branches on `kind`). Wire it into the pre-commit helper for staged `lab/log/*.yaml`. Add a passing and a failing fixture
 - [ ] Write `tools/lab/ingest_usb.py` (copy to inbox, timestamp-match, rename into captures)
 - [ ] Ask the user for the Google Drive for desktop folder path. Write `tools/lab/backup_captures.sh` (rsync captures/ + inbox/), with the path as one config value
-- [ ] **W6:** one bench capture with the tool. Compare it with a USB save of the same screen, and run the validator on the generated entry (acceptance: capture tool). Update the `tools/CONTEXT.md` tools/lab section
+- [ ] **W6:** one bench capture with the tool. Keep the trace frozen and save a menu memory CSV (DATA SOURCE = MEMORY) and a PNG of the same capture to USB. Compare the tool's CSV against the memory CSV sample for sample and its PNG against the USB PNG, then run the validator on the generated entry (acceptance: capture tool). Update the `tools/CONTEXT.md` tools/lab section
 - [ ] 🔄 Handoff
 
 # --- handoff point ---

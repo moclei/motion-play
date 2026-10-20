@@ -125,6 +125,17 @@ Bench instructions for the user always use the `test-workflow-audit.md` §4.8 bl
 - queries the channel and trigger settings;
 - appends a measurement entry with every required §4.6 field filled from the scope, leaving operator-only fields (`feature`, `raw_observation`) as explicit `TODO` blanks.
 
+As built (Phase 7):
+- Files are `<stem>.png`, `<stem>.csv` and `<stem>.setup.bin`. The blob is not the `.stp` XML format, so it is not given the `.stp` extension.
+- The CSV is `Time(s),CH1V[,CH2V…]`, one row per RAW memory point. The values are the scope's ASCii text verbatim, so W6 compares them as text against the menu memory CSV. The time is xorg + i × xinc, taken from PREamble. Channels with different time axes are refused.
+- The tool sends `:STOP` first and leaves the scope stopped. It sets the clock and reads it back. It refuses firmware other than 00.01.05 unless `--any-firmware` is passed. It refuses memory deeper than 10 kpts unless `--chunked` is passed (10 kpt windows, marked unverified in the entry). It has a guard that refuses to send `:SAVE:SETup`, `:SAVE:MEMory` or `:SAVE:STATus?`. Nothing is written until every query has succeeded.
+- After each binary block, the tool sends `*IDN?` to resync. The vendored client drops the block's trailing `\n` with a 0.5 s read. If that `\n` arrives late, it would otherwise shift every later reply by one.
+- Measurements default to `VTOP,VBASe,VAMP,VPP` (`--items`) on each displayed channel. ~9.9E37, or no reply, is recorded as `valid: false` with the raw reply, never as a number. Each entry also carries a `scope_settings` block (the S4 queries, raw), the preambles, the clock read-back and any `:SYSTem:ERRor?` entries.
+- A new session log is created with the scope-sourced `scope:` and `channels:` blocks filled. `dut.*`, `validation.*`, `signal`/`point`/`probe` are left as `TODO`.
+- `validate_log.py` reports a `TODO` as pending, not missing (exit 3). The pre-commit hook rejects errors and only warns on TODOs, so per-arm commits made mid-session are not blocked. A PNG with no `ai_read` entry is a warning.
+- `ingest_usb.py` takes `--at` (the Mac time of the save, also used for the date in the name) and optionally `--files` (REPORT field 3, index digit optional). It tries the stick clock offsets 0 and +60 min. When the match is ambiguous it stops and lists the candidates. It never writes to the stick. The inbox copy is kept, and the renamed copies go into `captures/<ID>/` together with an `INGEST.tsv` mapping.
+- Tests: `tools/lab/tests/run_tests.py` runs everything. The capture tests use a local fake SCPI server that replays the Phase 6 bench recordings, which are committed in `tools/lab/tests/scope_fixtures/`.
+
 The rest of Phase 7:
 - `tools/lab/ingest_usb.py` is the fallback: copy a stick into `lab/inbox/`, match by timestamp, rename into `captures/`.
 - `tools/lab/validate_log.py` checks the required §4.6 fields (branching on `kind`). The hook runs it on staged `lab/log/*.yaml`.

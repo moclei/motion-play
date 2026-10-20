@@ -1,0 +1,78 @@
+:CHANnel1:PROBe?                   10
+
+:CHANnel1:BWLimit?                 OFF
+
+:CHANnel1:SCALe?                   1.000000E+00
+
+:CHANnel1:OFFSet?                  -2.994604E+00
+
+:CHANnel1:COUPling?                DC
+
+:CHANnel1:DISPlay?                 1
+
+:CHANnel1:INVert?                  0
+
+:CHANnel1:UNITs?                   VOLT
+
+:TIMebase:MAIN:SCALe?              2.000000E-4
+
+:TIMebase:MAIN:OFFSet?             0.000000
+
+:TIMebase:MODE?                    MAIN
+
+:ACQuire:SRATe?                    2.500000E+6
+
+:ACQuire:MDEPth?                   1.0000E+04
+
+:ACQuire:TYPE?                     NORM
+
+:TRIGger:MODE?                     EDGE
+
+:TRIGger:SWEep?                    AUTO
+
+:TRIGger:STATus?                   TD
+
+:TRIGger:EDGE:SOURce?              CHAN1
+
+:TRIGger:EDGE:SLOPe?               POS
+
+:TRIGger:EDGE:LEVel?               1.617302E0
+
+:TRIGger:IIC:WHEN?                 STAR
+
+:TRIGger:IIC:CLEVel?               1.617302E0
+
+:BUS1:MODE?                        PAR
+
+:BUS1:THReshold? SDA               0.000000
+
+:MEASure:AMSource?                 OFF
+
+:MEASure:THReshold:TYPE?           PERC
+
+:MEASure:SETup:MAX?                9.000000E+01
+
+:MEASure:SETup:MID?                5.000000E+01
+
+:MEASure:SETup:MIN?                1.000000E+01
+
+:MEASure:ITEM? VAMP,CHANnel1       3.0037E+00
+
+:MEASure:ITEM? VTOP,CHANnel1       2.9775E+00
+
+:MEASure:ITEM? VBASe,CHANnel1      -2.6267E-02
+
+:SAVE:IMAGe:HEADer?                1
+
+:LAN:IPADdress?                    192.168.50.2
+
+:LAN:VISA?                         TCPIP::192.168.50.2::INSTR
+
+:SYSTem:VERSion?                   3.0
+
+:SYSTem:DATE?                      2013-01-18
+
+:SYSTem:TIME?                      09:52:08
+
+:SYSTem:ERRor?                     0,"No error"
+
