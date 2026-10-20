@@ -1816,3 +1816,51 @@ If it skips a step or changes the order, say so and stop it.
 - Orchestrator: confirmed. Both the relayed instructions and `known-good-reference.md` use designators and audit jargon (master end, BQ end, arm, C21.1/.2, "outer end") with no picture. The Phase 8 verification checked facts but not whether the user could follow it at the bench. That was a miss. The ground placement was also wrongly listed under "before you start".
 - Stopgap: annotated v6 probe-point pictures rendered from the KiCad layout at `fd632ef` (kicad-cli 9.0.4 3D render + SVG overlay, coordinates computed from the footprint positions, markers checked against the render). They are in the scratchpad (`annot/v6_probe_points_1_overview.png`, `annot/v6_probe_points_2_S2_zoom.png`) and are temporary.
 - Proposed fix (awaiting the user): a Worker adds the pictures plus a plain-language glossary to `known-good-reference.md` before the dry run. A closeout lesson follows: user-facing procedures get a readability check.
+
+User (verbatim): "Yes have a worker add them." The relay for the user is `RELAY-v6-dry-run.md` (the user asked for the prompt in a file). The picture is now a single file, `scratchpad/annot/v6_probe_points.png` (all markers red, at the user's request); the earlier cropped files were deleted.
+
+---
+
+### Worker #13 — Phase 8 fix: procedure readability + probe-point pictures
+
+**Dispatch:**
+```
+Initiative: test-workflow-setup
+Phase: 8 — Procedures and scope-guide retirement (readability fix; Phase 8 was handed off, and this re-dispatch fixes a defect found at W7)
+Initiative path: docs/initiatives/test-workflow-setup/
+Additional reading: SESSION.md, the last ~60 lines ("W7 pre-run note", "W7 probe change", "W7 readability problem"); RELAY-v6-dry-run.md (the user's relay, which references the image path and A–F labels below); lab/procedures/*.md; the Orchestrator's picture and scripts in /private/tmp/claude-501/-Users-marcocleirigh-Workspace-motion-play/212d4cc0-97d5-46f4-abb7-0f1b4279e2c9/scratchpad/annot/ (v6_probe_points.png, make_svg3.py, bbox.py) and the renders in .../scratchpad/boards/
+
+Tasks assigned (from TASKS.md Phase 8):
+- [x] Write `lab/procedures/dho804-setup-validation.md` (§4.2 V1–V9). Every number and menu path comes from PLAN "Verified instrument facts"; no remaining [verify] marks
+- [x] Write `lab/procedures/known-good-reference.md` (§4.3), using the v6/v7 point names from Phase 5, the same-ground-length rule, and the pass table with the V_OL claim limited to what the datasheet check supports
+- [x] Add the "scope setup → lab/procedures/" Lookups row (template; STATE.md too if the debug track has filled it, that row only)
+- [x] Put a RETIRED banner on `docs/debugging/i2c-oscilloscope-debugging.md` pointing to `lab/procedures/` (body untouched)
+- [x] 🔄 Handoff
+
+All tasks are ticked. This is a fix to delivered work: don't untick or add tasks. Note the fix in your Notes.
+
+The defect: the user could not follow the procedures at the bench. They use designators and jargon ("master end", "BQ end", "arm", C21.1/C21.2, "outer end", U2.14) with no picture. The procedures are reusable across all future scope sessions (v6 and v7), not one-off.
+
+Fix:
+1. Commit the Orchestrator's annotated v6 picture as `lab/procedures/img/v6-probe-points.png`. The user approved it ("This picture is perfect"), so keep its content and labels A–F/X. Reduce the file size if it's over ~1 MB without losing legibility. The coordinates came from the v6 layout at fd632ef (kicad-cli 9.0.4 at /Applications/KiCad/KiCad.app/Contents/MacOS/kicad-cli). Render with headless Chrome; qlmanage crops.
+2. Make the matching v7 picture, `lab/procedures/img/v7-probe-points.png`, from the v7 layout at c2acffc, using the same method:
+   - calibrate pixel↔mm from the measured board bbox in the render, not by eye;
+   - compute pad positions from the footprint data;
+   - view the result and check every marker sits on its pad.
+   The v7 points come from known-good-reference.md: BQ end U5.6/U5.5 with ground on C21.2, the same labels D/E/F/X as v6 where the parts are the same, and the master-end points and ground for v7. If a v7 point can't be located with certainty, leave it off and say so. Don't guess.
+3. In known-good-reference.md, add a short plain-language glossary at the top:
+   - the I²C bus (SDA/SCL);
+   - "master end" = the ESP32's end (on v6, the T-Display);
+   - "BQ end" = the charger chip U5's end;
+   - "arm" = one measurement setup (S1, S2);
+   - pad numbering (C21.1/C21.2 = the two ends of capacitor C21).
+   Embed both pictures. Refer to every probe point by its picture label as well as its designator, e.g. "pad F (C21.2, the end of C21 farther from U5)". Remove "outer end".
+4. In dho804-setup-validation.md, the same readability pass where it names board points or uses undefined terms.
+5. Fix the sequencing: probes stay off the board until the reference step. Place the S2 ground (pad F) with the board unplugged, and look before powering on.
+6. The bench now uses two SQ500s (CH1 SDA, CH2 SCL) in PCBite arms. Make sure nothing in the procedures requires the Rigol probe. The Rigol probe stays allowed.
+
+Don't change any number, limit or fact. This is a readability fix, not a content change. Keep run_tests.py and check_state.py green. Commit, write your #### Notes block, and return.
+
+You are not the Orchestrator. Do not create documents, work across phases, or replan.
+Return DONE, PARTIAL, or BLOCKED with specifics.
+```
