@@ -894,3 +894,13 @@ Orchestrator notes on S4b:
 - `lan_setup.tmc` is 2 879 B: a TMC block of 2 867 B. **Its contents are binary and zlib-compressed, not ASCII**, which contradicts [PG] "expressed in ASCII". S7 compares it byte-for-byte with the `.stp` file.
 - Preamble is `2,0,1000,1,2.000000E-6,-1.000000E-3,0.000000,1.3333E-04,-22459,32768`: ASCII format, NORMal mode, **1000 points**, xinc 2 µs, xorg −1 ms.
 - `lan_wave_ascii.txt` has **1000 comma-separated values with no TMC header**, ranging from −0.120 V to 3.078 V. That is consistent with the Cal square wave at the screen's 1 000-point resolution.
+
+**S6 REPORT (user, verbatim):**
+> 1. `1` / `1` / `1` / `0,"No error"`
+> 2. Your step 9c didn't really make sense -- the Save tab didn't have a "Save setup" button or anything with that label
+> 3. The file names were like p6menu0 and p6menu1, but like I said above I don't think I did step 9c right so p6menu1 might just be the same as the other one.
+
+Orchestrator notes on S6:
+- **All three SCPI saves to `D:` succeeded** (`:SAVE:STATus?` = 1 for each, and no error). `:SAVE:IMAGe`, `:SAVE:WAVeform` and `:SAVE:SETup` are bench-verified on 00.01.05.
+- **The menu path "Choose > Save Setup" from [UG] p.214 does not appear as described on 00.01.05.** S7 lists what the "Choose" control actually offers. The SCPI `.stp` save is enough for the comparison, so the menu setup save is not repeated.
+- The scope adds an index to menu-save file names (`p6menu0`, `p6menu1`). The extensions are still to be confirmed in S7. This matters for Phase 7 ingest naming.
