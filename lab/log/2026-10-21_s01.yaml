@@ -15,8 +15,8 @@ validation:
     excess_rms_mV: {CH1: 1.11, CH2: 0.0}
     offset_mV: {CH1: -9.08, CH2: -13.02}
     vpp_panel_mV: {CH1: 24.067, CH2: 21.867}
-  V6_ground: {method: "TODO", point: "TODO", length_mm: "TODO"}
-  V7_idle_high_V: {CH1: "TODO", CH2: "TODO"}
+  V6_ground: {method: wire, point: U2.14, length_mm: 4}   # springs on the ~10 mm soldered wire, ~4 mm from pad C (operator estimate), both probes
+  V7_idle_high_V: {CH1: 3.303, CH2: 3.290}   # CSV mean of all 10000 samples of val_V7_01 (bus idle); panel VTOP returned 9.9E37 on both channels
   V8_decode_ok: "TODO"
   notes: "V1 clock ok (Δ 0.0 s); no setup loaded. V4 Vamp CH1 = 3.0208 V. V4 Vamp CH2 = 3.0208 V. Data-only cable Mac ↔ T-Display: in. Probes identified by scope socket. V5 PASS (noise_floor.py): ctl 2026-10-21_V7R-002_val_V5ctl_01.png, dut 2026-10-21_V7R-002_val_V5_01.png; V5b tips + springs on the soldered wire at C, springs ~4-5 mm from C (operator estimate)."
 channels:
@@ -179,4 +179,50 @@ measurements:
       read: "single"
       preamble: {CH1: "2,2,10000,1,1.600000E-8,-8.000000E-5,0.000000,6.6667E-05,-24750,32768", CH2: "2,2,10000,1,1.600000E-8,-8.000000E-5,0.000000,6.6667E-05,-24750,32768"}
     scope_clock: {set_to: "2026-10-21T11:14:19", read_back: "2026-10-21 11:14:19", ok: true, delta_s: 0.0}
+    scpi_errors: []
+  - test_id: "V7R-002"
+    arm: "val_V7"
+    time: "2026-10-21T11:25:47"
+    trigger: {type: "EDGE", sweep: "AUTO", source: "CHAN1", slope: "POS", level_V: 1.5}
+    timebase_s_div: 1.0e-05
+    method: "auto"
+    feature: "V7 idle high, S1: CH1 SDA at pad A (TPIO43), CH2 SCL at pad B (TPIO44), springs on the wire at C; bus idle (no traffic after boot)"
+    values:
+      - {name: "VTOP", ch: "CH1", valid: false, raw: "9.9000E+37"}
+      - {name: "VBASe", ch: "CH1", valid: false, raw: "9.9000E+37"}
+      - {name: "VTOP", ch: "CH2", valid: false, raw: "9.9000E+37"}
+      - {name: "VBASe", ch: "CH2", valid: false, raw: "9.9000E+37"}
+    captures: ["2026-10-21_V7R-002_val_V7_01.png", "2026-10-21_V7R-002_val_V7_01.csv", "2026-10-21_V7R-002_val_V7_01.setup.bin"]
+    raw_observation: "Spring position: I estimate about 4mm. Display: \"Sensor init failed!\" screen. Panel: Oh, I didn't look at the panel for Vtop after step 6. That instruction was in the \"Check\" section which I only read after following the \"Do:\" steps."
+    values_csv:
+      - {name: mean, ch: CH1, value_mV: 3302.9, gate: "all 10000 samples, -50..+50 us, bus idle"}
+      - {name: mean, ch: CH2, value_mV: 3290.2, gate: "all 10000 samples, -50..+50 us, bus idle"}
+      - {name: sd, ch: CH1, value_mV: 3.18}
+      - {name: sd, ch: CH2, value_mV: 8.73}
+      - {name: min_max, ch: CH1, value: "3.2894..3.3197 V"}
+      - {name: min_max, ch: CH2, value: "3.2441..3.3650 V"}
+    ai_read:
+      - capture: 2026-10-21_V7R-002_val_V7_01.png
+        settings_seen: {CH1_v_div: 500.00mV, CH1_offset: -1.65V, CH2_v_div: 500.00mV, CH2_offset: -1.65V, timebase: 10.00us/div, srate: 62.50MSa/s, mdepth: 10.00kpts, trigger: "edge CH1 rising 1.50V, A (auto)", status: STOP}
+        values_seen: {CH1_Vpp_mV: 26.866, CH2_Vpp_mV: 74.000, Vtop_C1: "*****", Vbase_C1: "*****", Vamp_C1: "*****", Vamp_C2: "*****", Vtop_C2: "off panel bottom"}
+        notes: "Both traces flat just above the 3.15 V label, no edges in the record; CH2 Vpp (74 mV) larger than CH1 (26.9 mV)."
+        mismatch: none
+    source: "tools/lab/capture.py"
+    scope_settings:
+      channels:
+        CH1: {probe: "10", bw_limit: "OFF", scale: "5.000000E-01", offset: "-1.650000E+00", coupling: "DC", invert: "0", units: "VOLT"}
+        CH2: {probe: "10", bw_limit: "OFF", scale: "5.000000E-01", offset: "-1.650000E+00", coupling: "DC", invert: "0", units: "VOLT"}
+      timebase: {scale: "1.000000E-5", offset: "0.000000", mode: "MAIN"}
+      acquire: {srate: "6.250000E+7", mdepth: "1.0000E+04", type: "NORM"}
+      trigger: {mode: "EDGE", sweep: "AUTO", source: "CHAN1", slope: "POS", level: "1.500000E0"}
+      bus1: {mode: "PAR"}
+      measure: {threshold_type: "PERC", max_pct: "9.000000E+01", mid_pct: "5.000000E+01", min_pct: "1.000000E+01", amsource: "OFF"}
+      trigger_status: {before: "AUTO", after_stop: "STOP"}
+    waveform:
+      mode: "RAW"
+      format: "ASCii"
+      points: 10000
+      read: "single"
+      preamble: {CH1: "2,2,10000,1,1.600000E-8,-8.000000E-5,0.000000,6.6667E-05,-24750,32768", CH2: "2,2,10000,1,1.600000E-8,-8.000000E-5,0.000000,6.6667E-05,-24750,32768"}
+    scope_clock: {set_to: "2026-10-21T11:25:47", read_back: "2026-10-21 11:25:47", ok: true, delta_s: 0.0}
     scpi_errors: []

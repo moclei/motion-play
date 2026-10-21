@@ -75,6 +75,11 @@ Pass table per `known-good-reference.md` (V_DD = 3.3 V). Evaluated per arm (S1, 
 - S1 V5b (board unplugged → both tips + springs on the soldered wire at C → microscope → main-board USB-C in): spring position: "Like 4mm or 5mm I guess, hard to tell exactly. Maybe less." Display: "The \"Sensor init failed!\" screen". Data-only cable in: "Yes". capture.py: wrote `2026-10-21_V7R-002_val_V5_01.{png,csv,setup.bin}`; "The scope is left STOPPED." (no NOTE lines). Log: VPP CH1 24.067 mV, CH2 21.867 mV.
 - S1 V5 result, session (`noise_floor.py` on val_V5ctl_01 / val_V5_01): CH1 ctl sd 5.04, dut sd 5.16, excess 1.11 mV rms; CH2 ctl sd 4.81, dut sd 4.71, excess 0.00 mV rms; offset CH1 −9.08, CH2 −13.02 mV; tool verdict "V5 PASS".
 
+- S1 V6/V7 (board unplugged → tips to A (CH1) and B (CH2), springs on the wire → microscope → main-board USB-C in): spring position: "I estimate about 4mm". Display: "\"Sensor init failed!\" screen". Panel Vtop before capture: "Oh, I didn't look at the panel for Vtop after step 6. That instruction was in the \"Check\" section which I only read after following the \"Do:\" steps." capture.py: wrote `2026-10-21_V7R-002_val_V7_01.{png,csv,setup.bin}`; "NOTE: 4 measurement(s) invalid (9.9E37 or no reply): VTOP CH1, VBASe CH1, VTOP CH2, VBASe CH2"; "The scope is left STOPPED."
+- S1 V7, session (CSV `val_V7_01`, all 10000 samples, bus idle): CH1 mean 3.3029 V (sd 3.18 mV, 3.2894–3.3197 V); CH2 mean 3.2902 V (sd 8.73 mV, 3.2441–3.3650 V). PNG: both traces flat, no edges; panel Vpp C1 26.866 mV, C2 74.000 mV.
+- Deviation: V7 says "put Vtop on the panel" and passes on Vtop; panel VTOP is 9.9E37 on a flat (idle) trace, as CH2's Vtop/Vbase were on the flat parked trace in V3a. V7 value taken as the CSV mean (known-good-reference.md step 7 "Idle high: Vtop, or the mean of the samples before the START"). Limit unchanged. → procedure question for the Planner.
+- Operator note on the instruction block: CHECK lines that fall between DO sub-steps were read only after the DO steps were done.
+
 ### Measured values (from log; cite `lab/evidence/V7R-002/...`)
 ### Interpretation (session; labelled as such)
 
