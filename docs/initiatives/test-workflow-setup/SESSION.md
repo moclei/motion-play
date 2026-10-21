@@ -2291,3 +2291,13 @@ exit 0
 - **For S2:** `python3 tools/lab/i2c_frame.py <S2 csv> --expect D6`. Then paste the `values_csv` block under the capture entry, fill `offset_mV` from that log's `validation.V5.offset_mV`, and record the panel RTIMe beside it by hand. On the V7 capture, run it with no `--expect` and paste `V7_idle_high_V`.
 - **PLAN:** unchanged; the approach matched §4 and §6. Two places where §6 is unspecific were filled in and are listed under Task 1: the byte alignment with no START, and the idle window starting at the last edge with no settle margin. Nothing new for Rejected Approaches or Deferred.
 - **Untouched:** lab/cards, lab/log, lab/evidence, lab/STATE.md and the procedures.
+
+#### Result
+| # | Phase | Result | Escalation evaluated? | Commit | Notes |
+|---|-------|--------|-----------------------|--------|-------|
+| 16 | Phase 13: Frame tool | DONE, acceptance not met | Yes — No: the gate definition (PLAN §6) is a method decision → Planner | 62ee15f | Byte/ACK, period, 15 rise times and V7 match exactly. V_OL is −7 to −9 mV vs hand; CH1 idle high is −5.8 mV vs hand |
+
+#### Verification
+- Commits 09cdd5d..62ee15f. The tree is clean. Only tools/, tools/CONTEXT.md, TASKS and SESSION were touched. `run_tests.py`: OK, 0 failures.
+- The Orchestrator re-ran `i2c_frame.py` on S1_01 with `--expect D6` and got D6 + ACK, V_OL 64.6 / 63.3 / 66.6 mV, and idle high 3296.7 / 3292.6 mV, as reported. All verdicts pass either way.
+- The task's 3 mV acceptance criterion is not met. The cause is the gate choice, not a computation error: the hand gates applied in the tool reproduce the hand numbers. Choosing the gate is a measurement-method decision in PLAN §6, and Phase 14's step 7 depends on it. Sent to the Planner.
