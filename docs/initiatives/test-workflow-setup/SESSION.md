@@ -2139,3 +2139,26 @@ Full text is in `RELAY-v6-dry-run-2-return.md` (72329ef), not copied here. Summa
 - Evaluating the stop-rule departure: the user changed the trigger with SCPI read-back recorded and a committed decision (8eeaf54) before acting on it. The procedure is wrong about this bus, so the departure is a procedure gap for the Planner and not a validity problem.
 
 [ORCH] Spawning Planner — W8 interim Q1–Q5, plus advice on whether S2 runs on the current procedure
+
+---
+
+### Planner — replan after V7R-002 S1
+
+**Result:** REPLANNED (0c62c42). PLAN "After V7R-002 S1" §1–8:
+- the address-0x6B trigger becomes the method;
+- 100 kHz is explained by the code, and the ≤ 300 ns rise-time limit is kept;
+- V7 uses the CSV mean;
+- a decode-setup step uses the menu path;
+- the CSV 0.3→0.7 V_DD rise time is the recorded metric;
+- the friction rules are added;
+- a new `i2c_frame.py` tool.
+
+New Phases 13 (tool), 14 (procedures), 15 (S2 relay) and 16 (W8 continuation plus close). Recommendation: S2 waits for the revision. No user decision is needed, and BRIEF is unchanged.
+
+**Orchestrator:** origin/main is contained, so no rebase is needed. Following the recommendation and proceeding with Phase 13. The user has been told S2 waits; they can choose to run it now instead.
+
+---
+
+### Worker #16 — Phase 13: Frame tool
+
+**Dispatch:** standard template. Additional reading: PLAN "After V7R-002 S1" §1–8; SESSION "### W8" and "### Worker #14" Notes (noise_floor.py CSV loader).
