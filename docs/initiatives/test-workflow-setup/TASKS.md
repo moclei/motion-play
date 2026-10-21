@@ -160,7 +160,7 @@
   - **Step 5:** CHECK the scope status reads STOP. An empty decode band at 10 µs/div is expected, because the decode comes from the CSV. Stop after 3 replugs with no trigger.
   - **Step 7:** run `i2c_frame.py --expect D6`. Name the gates as in PLAN §6: V_OL over the bit's SCL-high interval shrunk by 10 % at each end (replacing "the flat middle of a master-driven 0-bit"); idle high from 5 µs after the last edge (replacing "Vtop, or the mean of the samples before the START"). Rise time as in PLAN §4, with the panel RTIMe recorded beside it and no pass role. Decode from the CSV bits.
   - **Pass table:** the rise row reads ≤ 300 ns, with the note that the reference frame runs at 100 kHz and why the Fast-mode limit is kept (PLAN §2); ≤ 1000 ns stays only for the secondary reference. The Decode row's source is the CSV. Apply the step split rule from PLAN §7. No limit changes
-- [ ] `lab/templates/instruction.md`: add the CHECK-placement rule and the screen-naming rule (PLAN §7)
+- [x] `lab/templates/instruction.md`: add the CHECK-placement rule and the screen-naming rule (PLAN §7)
 - [ ] Read both procedures end to end for steps that contradict each other, and for any remaining "screen", START or "bus goes quiet" wording. List the result in SESSION.md
 - [ ] 🔄 Handoff
 
