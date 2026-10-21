@@ -17,8 +17,8 @@ validation:
     vpp_panel_mV: {CH1: 24.067, CH2: 21.867}
   V6_ground: {method: wire, point: U2.14, length_mm: 4}   # springs on the ~10 mm soldered wire, ~4 mm from pad C (operator estimate), both probes
   V7_idle_high_V: {CH1: 3.303, CH2: 3.290}   # CSV mean of all 10000 samples of val_V7_01 (bus idle); panel VTOP returned 9.9E37 on both channels
-  V8_decode_ok: "TODO"
-  notes: "V1 clock ok (Δ 0.0 s); no setup loaded. V4 Vamp CH1 = 3.0208 V. V4 Vamp CH2 = 3.0208 V. Data-only cable Mac ↔ T-Display: in. Probes identified by scope socket. V5 PASS (noise_floor.py): ctl 2026-10-21_V7R-002_val_V5ctl_01.png, dut 2026-10-21_V7R-002_val_V5_01.png; V5b tips + springs on the soldered wire at C, springs ~4-5 mm from C (operator estimate)."
+  V8_decode_ok: true   # address byte d6 (R/W With) + A:0, val_V8_03; trigger IIC ADDR 0x6B write (deviation, see card)
+  notes: "V1 clock ok (Δ 0.0 s); no setup loaded. V4 Vamp CH1 = 3.0208 V. V4 Vamp CH2 = 3.0208 V. Data-only cable Mac ↔ T-Display: in. Probes identified by scope socket. V5 PASS (noise_floor.py): ctl 2026-10-21_V7R-002_val_V5ctl_01.png, dut 2026-10-21_V7R-002_val_V5_01.png; V5b tips + springs on the soldered wire at C, springs ~4-5 mm from C (operator estimate). V8: decode Write:d6 then A:0 (val_V8_03, 20 us/div, IIC address trigger 0x6B; decode menu set by hand: Bus status On, SCL/SDA Thre 1.65 V, R/W With)."
 channels:
   CH1: {probe: "SQ500 (CH1 socket)", ratio: "10x", signal: "Cal (V3a) / Cal ground (V3b)", point: "scope Cal", bw_limit: "OFF", v_div_V: 1.0, offset_V: -3.3, coupling: "DC"}
   CH2: {probe: "SQ500 (CH2 socket)", ratio: "10x", signal: "Cal ground (V3a) / Cal (V3b)", point: "scope Cal", bw_limit: "OFF", v_div_V: 0.5, offset_V: -1.65, coupling: "DC"}
@@ -306,4 +306,41 @@ measurements:
       read: "single"
       preamble: {CH1: "2,2,10000,1,1.600000E-8,-8.000000E-5,0.000000,6.6667E-05,-24750,32768", CH2: "2,2,10000,1,1.600000E-8,-8.000000E-5,0.000000,6.6667E-05,-24750,32768"}
     scope_clock: {set_to: "2026-10-21T14:05:53", read_back: "2026-10-21 14:05:53", ok: true, delta_s: 0.0}
+    scpi_errors: []
+  - test_id: "V7R-002"
+    arm: "val_V8"
+    time: "2026-10-21T14:13:51"
+    trigger: {type: "IIC", sweep: "NORM", when: "ADDR", scl: "CHAN2", sda: "CHAN1", address: "107", direction: "WRIT", awidth: "7", clevel_V: 1.5, dlevel_V: 1.5}
+    timebase_s_div: 2.0e-05
+    method: "auto"
+    feature: "V8 S1: single trigger, IIC address 0x6B write, after replug, 20 us/div (V8 only) so the START is in the record"
+    values:
+      - {name: "VPP", ch: "CH1", value_mV: 3368.5, raw: "3.3685E+00"}
+      - {name: "VPP", ch: "CH2", value_mV: 3765.9, raw: "3.7659E+00"}
+    captures: ["2026-10-21_V7R-002_val_V8_03.png", "2026-10-21_V7R-002_val_V8_03.csv", "2026-10-21_V7R-002_val_V8_03.setup.bin"]
+    raw_observation: "Decode band shows \"B1\" and \"I2C\" on the left side of the display, and \"Write:d6\" followed by \"A:0\" towards the center of the display"
+    ai_read:
+      - capture: 2026-10-21_V7R-002_val_V8_03.png
+        settings_seen: {CH1_v_div: 500.00mV, CH1_offset: -1.65V, CH2_v_div: 500.00mV, CH2_offset: -1.65V, timebase: 20.00us/div, srate: 31.25MSa/s, mdepth: 10.00kpts, trigger: "I2C on CH1, 1.50V, N", status: STOP, bus: "B1 I2C"}
+        values_seen: {decode: "Write:d6 | A:0", CH1_Vamp_V: 3.2341, CH1_Vtop_V: 3.2969, CH1_Vbase_mV: 62.800, CH1_Vpp_V: 3.3684, CH2_Vamp_V: 3.2256, CH2_Vpp_V: 3.7659}
+        notes: "Decode label Write:d6 spans ~-68..+3 us, A:0 at ~+5..+15 us; bus idle high from ~+25 us to the end of the record."
+        mismatch: none
+    source: "tools/lab/capture.py"
+    scope_settings:
+      channels:
+        CH1: {probe: "10", bw_limit: "OFF", scale: "5.000000E-01", offset: "-1.650000E+00", coupling: "DC", invert: "0", units: "VOLT"}
+        CH2: {probe: "10", bw_limit: "OFF", scale: "5.000000E-01", offset: "-1.650000E+00", coupling: "DC", invert: "0", units: "VOLT"}
+      timebase: {scale: "2.000000E-5", offset: "0.000000", mode: "MAIN"}
+      acquire: {srate: "3.125000E+7", mdepth: "1.0000E+04", type: "NORM"}
+      trigger: {mode: "IIC", sweep: "NORM", when: "ADDR", clevel: "1.500000E0", scl: "CHAN2", sda: "CHAN1", dlevel: "1.500000E0", awidth: "7", address: "107", direction: "WRIT"}
+      bus1: {mode: "IIC", scl_source: "CHAN2", sda_source: "CHAN1", address: "RW", threshold_sda: "1.650000E0", threshold_scl: "1.650000E0"}
+      measure: {threshold_type: "PERC", max_pct: "9.000000E+01", mid_pct: "5.000000E+01", min_pct: "1.000000E+01", amsource: "OFF"}
+      trigger_status: {before: "STOP", after_stop: "STOP"}
+    waveform:
+      mode: "RAW"
+      format: "ASCii"
+      points: 10000
+      read: "single"
+      preamble: {CH1: "2,2,10000,1,3.200000E-8,-1.600000E-4,0.000000,6.6667E-05,-24750,32768", CH2: "2,2,10000,1,3.200000E-8,-1.600000E-4,0.000000,6.6667E-05,-24750,32768"}
+    scope_clock: {set_to: "2026-10-21T14:13:51", read_back: "2026-10-21 14:13:51", ok: true, delta_s: 0.0}
     scpi_errors: []
