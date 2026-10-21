@@ -63,6 +63,8 @@ Pass table per `known-good-reference.md` (V_DD = 3.3 V). Evaluated per arm (S1, 
 - Step F, session: `/dev/cu.usbmodem14401` enumerated; `pio run -e lilygo-t-display-s3 -t upload` from a scratch worktree at `v6-ref` (4da1c67): "Wrote 1842416 bytes ... Hash of data verified." "Hard resetting via RTS pin..." [SUCCESS].
 - V1: `*IDN?` → "RIGOL TECHNOLOGIES,DHO804,DHO8A282M00872,00.01.05"; `:SYSTem:ERRor?` → "0,\"No error\""; AUTO pressed: "yes". No setup loaded.
 
+- V2: read-backs "10 1 10 1 0,\"No error\"" (CH1 PROBe?, DISPlay?, CH2 PROBe?, DISPlay?, ERRor?). Probe identity, operator: "I don't tell them apart.. why would I need to? One is plugged in to Ch1, the other plugged in to Ch2". Session: probes are identified by scope socket (CH1/CH2) for this card; neither is unplugged from its socket during the card.
+
 ### Measured values (from log; cite `lab/evidence/V7R-002/...`)
 ### Interpretation (session; labelled as such)
 
