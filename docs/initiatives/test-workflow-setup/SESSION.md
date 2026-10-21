@@ -2318,3 +2318,69 @@ exit 0
 ### Worker #17 — Phase 13 rework: idle-high margin + revised acceptance
 
 **Dispatch:** standard template. Additional reading: PLAN "After V7R-002 S1" §6 (the gate bullets, "Acceptance (revised after Worker #16)", "The S1 record"); SESSION "### Worker #16" Notes.
+
+#### Notes
+
+**Task 1, rework** (a427a66). V_OL is unchanged. For idle high in frame mode, the window now starts at the first sample at or after (last edge + 5 µs). The last edge is the latest 0.5 V_DD crossing on either channel; Worker #16 used the sample past 0.7 V_DD. The window must still hold ≥ 5 µs of samples, or the row is n/a. The tool now says "from 5 us after the last edge" in the PASS line, the gate string and the not-reported text (`IDLE_MARGIN_S = 5e-6`).
+- **Tests.** The D6 test now checks that the idle gate string starts with "from 5 us after the last edge, t=" and that the window starts at +35 + the SDA 1.65 V offset (± 0.02 µs). It also checks the PASS line text and the idle levels to ± 0.05 mV; these are exact now, because the window is past the ramp. A new test puts the STOP's SDA rise at +72 µs (`frame(..., stop_us=72)`). That leaves 8 µs after the edge but under 5 µs after the margin. Result: an `n/a  Idle high` row, no `idle_high` snippet entry, and exit 0. `run_tests.py`: OK, 0 failures.
+
+**Task 2, acceptance on `S1_01.csv --expect D6`** (sha256 prefix `a3e6d1469aeffae0`, same file as Worker #16). **All parts met. Nothing tuned.**
+
+| Quantity | Hand (S1 log) | Hand gate | Tool | Tool gate | Δ (tool − hand) | Criterion |
+|---|---|---|---|---|---|---|
+| decode | D6, ACK | SCL rising −69.97…+10.03 | D6, ACK | same | same | met |
+| SCL period | 10.0 µs | same | 10.000 µs | same | 0 | met |
+| rise CH1 / CH2 | 5 + 10 edges as W#16 | every rise | identical | same | 0 ns | met (≤ 3 ns) |
+| idle high CH1 | 3302.5 mV | +35…+80 µs | 3302.7 mV (n 2785, sd 5.88) | +35.44…+79.98 µs | **+0.2 mV** | met (≤ 3 mV) |
+| idle high CH2 | 3292.9 mV | +35…+80 µs | 3292.9 mV (n 2785, sd 13.94) | +35.44…+79.98 µs | 0.0 mV | met |
+| V_OL bit 5 / 3 / R/W | 72.4 / 70.2 / 75.4 mV | whole bit | 64.6 / 63.3 / 66.6 mV | SCL high −10 % | −7.8 / −6.9 / −8.8 mV | gate difference by PLAN §6, not compared |
+
+The V_OL check script is at `/private/tmp/claude-501/-Users-marcocleirigh-Workspace-motion-play/212d4cc0-97d5-46f4-abb7-0f1b4279e2c9/scratchpad/vol_gate_check.py` and is not committed. It has its own CSV parser and does not use the tool's code. Gates are inclusive, with 1 ps of slack. Its output:
+
+```
+tool's printed gates (expect = tool value, within 0.1 mV):
+  V_OL address bit 5           CH1 t=-49.47..-45.53 us  n= 246  mean   64.60 mV  sd  7.06 mV  expect   64.6  diff -0.00 mV  OK
+  V_OL address bit 3           CH1 t=-29.48..-25.53 us  n= 247  mean   63.34 mV  sd  6.58 mV  expect   63.3  diff +0.04 mV  OK
+  V_OL R/W bit 0               CH1 t=+0.52..+4.47 us  n= 247  mean   66.56 mV  sd  7.59 mV  expect   66.6  diff -0.04 mV  OK
+hand gates, S1 log values_csv (expect = hand value, within 0.1 mV):
+  V_OL address bit 5           CH1 t=-52.00..-45.50 us  n= 407  mean   72.36 mV  sd 12.42 mV  expect   72.4  diff -0.04 mV  OK
+  V_OL address bit 3           CH1 t=-32.00..-25.50 us  n= 407  mean   70.19 mV  sd 11.23 mV  expect   70.2  diff -0.01 mV  OK
+  V_OL R/W bit 0               CH1 t=-2.00..+4.00 us  n= 376  mean   75.42 mV  sd 12.23 mV  expect   75.4  diff +0.02 mV  OK
+idle high, for reference (not part of the V_OL check):
+  idle high tool gate          CH1 t=+35.44..+79.98 us  n=2784  mean 3302.70 mV  sd  5.88 mV  expect 3302.7  diff +0.00 mV  OK
+  idle high tool gate          CH2 t=+35.44..+79.98 us  n=2784  mean 3292.94 mV  sd 13.94 mV  expect 3292.9  diff +0.04 mV  OK
+  idle high hand gate          CH1 t=+35.00..+80.00 us  n=2812  mean 3302.48 mV  sd  6.26 mV  expect 3302.5  diff -0.02 mV  OK
+  idle high hand gate          CH2 t=+35.00..+80.00 us  n=2812  mean 3292.92 mV  sd 13.89 mV  expect 3292.9  diff +0.02 mV  OK
+```
+
+- **Every difference, recorded.**
+  - On the tool's printed gates the script counts one sample fewer than the tool: bit 5 gives 246 against 247, and idle high 2784 against 2785. The printed gate is rounded to 0.01 µs, and the tool gates on the unrounded SCL times. The effect on the mean is < 0.05 mV.
+  - The hand gates give n = 407 / 407 / 376, matching the S1 log.
+  - The idle-high gates differ by 0.44 µs at the start (+35.44 against +35) and by 0.02 µs at the end, because the record ends at +79.98 µs.
+  - The CH1 idle sd is 5.88 mV now, against 31.9 mV at Worker #16, because the window has left the settling tail.
+- Full tool output: it matches Worker #16's S1_01 output line for line, except for the idle-high lines and rows below.
+
+```
+  idle high CH1: 3302.7 mV, t=+35.44..+79.98 us, n=2785, sd 5.88 mV
+  idle high CH2: 3292.9 mV, t=+35.44..+79.98 us, n=2785, sd 13.94 mV
+  PASS  Idle high     CH1  3.3027 V (from 5 us after the last edge)  (limit 3.135-3.465 V)
+  PASS  Idle high     CH2  3.2929 V (from 5 us after the last edge)  (limit 3.135-3.465 V)
+      - {name: idle_high, ch: CH1, value_mV: 3302.7, gate: "from 5 us after the last edge, t=+35.44..+79.98 us (n=2785)"}
+      - {name: idle_high, ch: CH2, value_mV: 3292.9, gate: "from 5 us after the last edge, t=+35.44..+79.98 us (n=2785)"}
+  frame PASS
+exit 0
+```
+- **`tools/CONTEXT.md`.** In the `i2c_frame.py` row, the idle-high sentence now reads "from 5 µs after the last edge (its 0.5 V_DD crossing, either channel) … ≥ 5 µs of samples after that margin, else n/a".
+
+**Handoff (for the Orchestrator, Phase 14 and the card close).**
+- **For Phase 14's step 7 wording:**
+  - V_OL: "SCL-high interval shrunk by 10 %".
+  - Idle high (frame mode): "the `i2c_frame.py` mean from 5 µs after the last edge".
+  - V7 (idle mode): unchanged, the mean of all samples.
+- **For the Phase 16 card close, the S1_01 values at the method gates, tool commit a427a66:**
+  - V_OL 64.6 / 63.3 / 66.6 mV
+  - idle high 3302.7 / 3292.9 mV
+  - rise max 98.4 / 94.2 ns
+  - D6 + ACK, period 10.00 µs
+- **PLAN:** unchanged; the change is the one §6 specifies. Nothing new for Rejected Approaches or Deferred.
+- **Untouched:** lab/cards, lab/log, lab/evidence, lab/STATE.md and the procedures.
