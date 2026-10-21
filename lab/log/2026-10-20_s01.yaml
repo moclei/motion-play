@@ -13,7 +13,7 @@ validation:
   V6_ground: {method: "TODO", point: "TODO", length_mm: "TODO"}
   V7_idle_high_V: {CH1: "TODO", CH2: "TODO"}
   V8_decode_ok: "TODO"
-  notes: "V1 clock ok (delta 0.0 s); no setup loaded. V2 SQ500 on CH1 and CH2, unmarked, identified by scope socket. V4 Vamp CH1 = 3.0208 V. V4 Vamp CH2 = 3.0037 V. V3 SQ500 has no trimmer: look only, both flat/square. V5 S1 (shorted tip at C, 0.5 V/div, BW OFF): Vpp CH1 = 25.8 mV, CH2 = 23.6 mV (val_V5_01.png) - above 20 mV limit; setup investigation. Control a (board unpowered, same probes): Vpp CH1 21.8 mV, CH2 23.1 mV (val_V5_02.png)."
+  notes: "V1 clock ok (delta 0.0 s); no setup loaded. V2 SQ500 on CH1 and CH2, unmarked, identified by scope socket. V4 Vamp CH1 = 3.0208 V. V4 Vamp CH2 = 3.0037 V. V3 SQ500 has no trimmer: look only, both flat/square. V5 S1 (shorted tip at C, 0.5 V/div, BW OFF): Vpp CH1 = 25.8 mV, CH2 = 23.6 mV (val_V5_01.png) - above 20 mV limit; setup investigation. Control a (board unpowered, same probes): Vpp CH1 21.8 mV, CH2 23.1 mV (val_V5_02.png). Control b (probes on scope Cal ground, off board): Vpp CH1 21.9 mV, CH2 21.9 mV (val_V5_03.png)."
 channels:
   CH1: {probe: "SQ500 (CH1 socket)", ratio: "10x", signal: "TODO", point: "TODO", bw_limit: "OFF", v_div_V: 1.0, offset_V: 0.0, coupling: "DC"}
   CH2: {probe: "SQ500 (CH2 socket)", ratio: "10x", signal: "TODO", point: "TODO", bw_limit: "OFF", v_div_V: 0.05, offset_V: 0.0, coupling: "DC"}
@@ -175,5 +175,43 @@ measurements:
       read: "single"
       preamble: {CH1: "2,2,10000,1,1.600000E-8,-8.000000E-5,0.000000,6.6667E-05,-24750,32768", CH2: "2,2,10000,1,1.600000E-8,-8.000000E-5,0.000000,6.6667E-05,-24750,32768"}
     scope_clock: {set_to: "2026-10-20T22:39:22", read_back: "2026-10-20 22:39:22", ok: true, delta_s: 0.0}
+    scpi_errors: []
+    channel_drift: ["CH1.v_div_V: session 1.0, scope 0.5", "CH1.offset_V: session 0.0, scope -1.65", "CH2.v_div_V: session 0.05, scope 0.5", "CH2.offset_V: session 0.0, scope -1.65"]
+  - test_id: "V7R-001"
+    arm: "val_V5"
+    time: "2026-10-20T22:45:27"
+    trigger: {type: "EDGE", sweep: "AUTO", source: "CHAN1", slope: "POS", level_V: 1.5}
+    timebase_s_div: 1.0e-05
+    method: "auto"
+    feature: "V5 control b: probes OFF the board; each probe tip and ground spring both on scope Cal GROUND terminal; board unpowered. Same settings. CSV: CH1 pp 25.7 mV, mean -10.4 mV, sd 4.97 mV; CH2 pp 27.6 mV, mean -14.1 mV, sd 4.77 mV"
+    values:
+      - {name: "VPP", ch: "CH1", value_mV: 21.933, raw: "2.1933E-02"}
+      - {name: "VPP", ch: "CH2", value_mV: 21.867, raw: "2.1867E-02"}
+    captures: ["2026-10-20_V7R-001_val_V5_03.png", "2026-10-20_V7R-001_val_V5_03.csv", "2026-10-20_V7R-001_val_V5_03.setup.bin"]
+    raw_observation: "1. Yes, both [tip+spring on Cal ground]"
+    ai_read:
+      - capture: 2026-10-20_V7R-001_val_V5_03.png
+        settings_seen: {CH1_v_div: 500.00mV, CH1_offset: -1.65V, CH2_v_div: 500.00mV, CH2_offset: -1.65V, timebase: 10.00us/div, srate: 62.50MSa/s, mdepth: 10.00kpts, trigger: "edge CH1 rising 1.50V", status: STOP}
+        values_seen: {CH1_Vpp_mV: 21.933, CH2_Vpp_mV: 21.866}
+        shape_seen: "both traces flat at 0 V, no visible structure at 0.5 V/div"
+        mismatch: "none vs operator. Panel Vpp(C2) 21.866 mV vs log 21.867 mV (display rounding)"
+    source: "tools/lab/capture.py"
+    scope_settings:
+      channels:
+        CH1: {probe: "10", bw_limit: "OFF", scale: "5.000000E-01", offset: "-1.650000E+00", coupling: "DC", invert: "0", units: "VOLT"}
+        CH2: {probe: "10", bw_limit: "OFF", scale: "5.000000E-01", offset: "-1.650000E+00", coupling: "DC", invert: "0", units: "VOLT"}
+      timebase: {scale: "1.000000E-5", offset: "0.000000", mode: "MAIN"}
+      acquire: {srate: "6.250000E+7", mdepth: "1.0000E+04", type: "NORM"}
+      trigger: {mode: "EDGE", sweep: "AUTO", source: "CHAN1", slope: "POS", level: "1.500000E0"}
+      bus1: {mode: "PAR"}
+      measure: {threshold_type: "PERC", max_pct: "9.000000E+01", mid_pct: "5.000000E+01", min_pct: "1.000000E+01", amsource: "OFF"}
+      trigger_status: {before: "AUTO", after_stop: "STOP"}
+    waveform:
+      mode: "RAW"
+      format: "ASCii"
+      points: 10000
+      read: "single"
+      preamble: {CH1: "2,2,10000,1,1.600000E-8,-8.000000E-5,0.000000,6.6667E-05,-24750,32768", CH2: "2,2,10000,1,1.600000E-8,-8.000000E-5,0.000000,6.6667E-05,-24750,32768"}
+    scope_clock: {set_to: "2026-10-20T22:45:27", read_back: "2026-10-20 22:45:27", ok: true, delta_s: 0.0}
     scpi_errors: []
     channel_drift: ["CH1.v_div_V: session 1.0, scope 0.5", "CH1.offset_V: session 0.0, scope -1.65", "CH2.v_div_V: session 0.05, scope 0.5", "CH2.offset_V: session 0.0, scope -1.65"]

@@ -80,6 +80,8 @@ Pass table per `known-good-reference.md` (V_DD = 3.3 V). Evaluated per arm (S1, 
 
 - S8 (V5 control a, board unpowered, probes unchanged): "yes" (in place). capture.py wrote `2026-10-20_V7R-001_val_V5_02.*`; same drift note; "The scope is left STOPPED." Log: VPP CH1 21.8 mV, CH2 23.133 mV.
 
+- S9 (V5 control b, probes tip+spring on scope Cal ground, off board, board unpowered): "Yes, both". capture.py wrote `2026-10-20_V7R-001_val_V5_03.*`; same drift note; "The scope is left STOPPED." Log: VPP CH1 21.933 mV, CH2 21.867 mV.
+
 ### Measured values (from log; cite `lab/evidence/V7R-001/...`)
 ### Interpretation (session; labelled as such)
 
