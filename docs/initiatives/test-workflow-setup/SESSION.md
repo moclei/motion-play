@@ -2162,3 +2162,123 @@ New Phases 13 (tool), 14 (procedures), 15 (S2 relay) and 16 (W8 continuation plu
 ### Worker #16 — Phase 13: Frame tool
 
 **Dispatch:** standard template. Additional reading: PLAN "After V7R-002 S1" §1–8; SESSION "### W8" and "### Worker #14" Notes (noise_floor.py CSV loader).
+
+#### Notes
+
+**Task 1, `tools/lab/i2c_frame.py`** (09cdd5d). It reuses `noise_floor.load` for the CSV, plus a two-line read of the first time stamp, because `load` returns only dt. `noise_floor.py` is unchanged.
+- **Edges.** An edge moves from below 0.3 V_DD to above 0.7 V_DD (hysteresis) or back. Its listed time is the 0.5 V_DD crossing. The rise time runs from the last 0.3 V_DD crossing to the first 0.7 V_DD crossing, linearly interpolated (PLAN §4).
+- **Bits.** There is one bit per SCL-high interval with no SDA edge inside it, with SDA read at the SCL rise. An SDA fall inside an SCL-high interval is a START, and a rise is a STOP. When there is no START in the record, the bits before the first STOP or repeated START are used only if they form whole 9-bit groups. Otherwise the tool reports NO FRAME (exit 2). S1_01 is anchored on its STOP, and val_V8_03 (20 µs/div) on its START.
+- **Idle high (frame mode)** is taken over the samples after the last edge on either channel. The window starts at the sample past 0.7 V_DD on that edge, and needs at least 5 µs of samples, with no settle margin (PLAN §6 names none). When it is not reported, its row is "n/a" and does not fail the exit code.
+- **Limits** are copied from the `known-good-reference.md` pass table and cited in the output. Rise uses ≤ 300 ns (PLAN §2, the limit V7R-002 registered), not the table's current "≤ 1000 ns at 100 kHz" wording, which Phase 14 rewrites. The tool also prints a > 0.2 V V_OL FLAG (the table's investigate heuristic).
+- **Snippet.** The frame snippet is headed `values_csv:` because S1 keeps its hand CSV numbers under that key. `offset_mV: TODO` is filled from `validation.V5.offset_mV`, since the tool does not read the log. A `max_ns` key is added to each `rise_30_70` entry.
+- **Other captures.** val_V8_01 (the boot UART on SDA, SCL flat) gives NO FRAME, exit 2. val_V8_02, val_V8_03 and S1_01 all decode D6+ACK.
+
+**Task 2, tests** (beeac16). These are 9 checks in `tool_tests.py` `i2c_frame_tests`, on synthetic 10 kpt, 16 ns CSVs with linear ramps, so the expected values are analytic:
+- D6+ACK with START: rise 81.5 / 61.7 ns ± 0.2, edge times ± 0.02 µs, V_OL 60.0 mV on bits 5, 3 and R/W (the ACK is at 120 mV and is excluded), n 240–252, idle ± 0.5 mV, exit 0.
+- Flat idle and 3.0 V idle (exit 0 / 1).
+- NACK with START outside the record (anchored on the STOP, exit 1).
+- D4 vs `--expect D6` (exit 1, V_OL on 4 zero bits).
+- Single channel (exit 2).
+- Boot-UART-like SDA with SCL flat (exit 2).
+- Bad `--expect` (exit 2).
+
+`run_tests.py`: OK, 0 failures.
+
+**Task 3, acceptance on real data.** Capture sha256 prefixes: S1_01 `a3e6d1469aeffae0`, val_V7_01 `d021949ebf1fb43c`.
+
+**Result: not met for V_OL (all three bits) and CH1 idle high. Met for everything else.** Every pass/fail verdict is the same as the hand verdict. The tool was not tuned.
+
+| Quantity | Hand (S1 log, `values_csv` / validation) | Hand gate | Tool | Tool gate | Δ (tool − hand) |
+|---|---|---|---|---|---|
+| decode | 1 1 0 1 0 1 1 0 \| 0, D6, ACK | SCL rising −69.97…+10.03 µs | same, D6, ACK | same edges | same |
+| SCL period | 10.0 µs | rising −69.97…+10.03 | 10.00 µs | same | 0 |
+| rise CH1 (5 edges) | 97.7, 98.3, 97.8, 98.4, 98.4 ns | every SDA rise, 0.99→2.31 V | 97.7, 98.3, 97.8, 98.4, 98.4 ns | same | 0 ns (edge times differ by ≤ 0.01 µs: −73.73 vs −73.74 etc.) |
+| rise CH2 (10 edges) | 91.4, 91.8, 93.1, 91.4, 91.3, 91.2, 94.2, 91.1, 91.5, 92.0 ns | every SCL rise | identical | same | 0 ns |
+| V_OL bit 5 | 72.4 mV (n 407, sd 12.4) | t = −52…−45.5 µs | 64.6 mV (n 247, sd 7.0) | −49.47…−45.53 µs (SCL high −10 %) | **−7.8 mV** |
+| V_OL bit 3 | 70.2 mV (n 407, sd 11.2) | −32…−25.5 µs | 63.3 mV (n 247, sd 6.6) | −29.48…−25.53 µs | **−6.9 mV** |
+| V_OL R/W bit 0 | 75.4 mV (n 376, sd 12.2) | −2…+4 µs | 66.6 mV (n 247, sd 7.6) | +0.52…+4.47 µs | **−8.8 mV** |
+| idle high CH1 | 3302.5 mV | +35…+80 µs | 3296.7 mV (n 3092, sd 31.9) | +30.53…+79.98 µs (after the last edge) | **−5.8 mV** |
+| idle high CH2 | 3292.9 mV | +35…+80 µs | 3292.6 mV (sd 14.7) | +30.53…+79.98 µs | −0.3 mV |
+| V7 CH1 / CH2 | 3.303 / 3.290 V (means 3302.9 / 3290.2 mV, CH1 sd 3.18) | all 10000 samples | 3.303 / 3.290 V (3302.9 / 3290.2 mV, sd 3.18 / 8.73) | all 10000 samples | 0 |
+
+- **The differences come from the gates alone.** Applied to the same CSV, the hand gates give back the hand numbers exactly: 72.4, 70.2 and 75.4 mV, and 3302.5 / 3292.9 mV (a check script, not in the tool).
+- **V_OL.** Over bit 5, SDA reads 87.7 mV (n 113) in the SCL-low part, −52…−50.2 µs, and 64.6 mV in the SCL-high part. So the SDA low level is not flat across the bit: it sits about 20 mV higher while SCL is low. The hand gate takes in both parts; the PLAN §6 gate takes only the SCL-high part. *Interpretation, not tested:* coupling from SCL or ground movement.
+- **Idle high CH1.** The 4.5 µs from +30.53 to +35 µs, right after the STOP's SDA rise, read 3240.8 mV with sd 73.9 mV: the line is still settling. The tool's gate starts there because PLAN §6 says "after the last edge" with no settle time.
+- **Decision for the Planner / Orchestrator.**
+  - V_OL: accept the PLAN §6 gate (SCL high, shrunk by 10 %) as the method, so S2 and v7 use it and S1's hand numbers stand as recorded. Or change the gate definition.
+  - Idle high: accept "after the last edge", or add a settle margin to §6 (for example, start 5 µs after the last edge).
+  - All verdicts are the same either way: V_OL is far below 0.4 V and the 0.2 V heuristic, and idle high is inside 3.135–3.465 V.
+- One gate-text difference with no effect on the value: the hand V7 gate says "−50…+50 us", but val_V7_01 spans −80…+79.98 µs at 16 ns (10000 samples, the same set).
+- The S1 log and the card are not edited.
+
+Full outputs:
+
+```
+$ python3 tools/lab/i2c_frame.py lab/captures/V7R-002/2026-10-21_V7R-002_S1_01.csv --expect D6
+i2c_frame: lab/captures/V7R-002/2026-10-21_V7R-002_S1_01.csv
+  10000 points at 1.6e-08 s per sample, -80.00..+79.98 us; SDA CH1, SCL CH2; V_DD 3.3 V -> 0.990 / 1.650 / 2.310 V
+
+  mode: frame (no START in record; 9 bits before the STOP at +30.44 us)
+  STOP at +30.44 us
+  SDA at SCL rising: 1 1 0 1 0 1 1 0 | 0  -> D6, 9th bit low (ACK)
+  SCL rising edges of the address byte: -69.97, -59.97, -49.97, -39.97, -29.97, -19.97, -9.97, +0.03, +10.03 us
+  SCL period 10.000 us (min 9.996, max 10.002)
+  rise 30->70 % CH1: 97.7 ns @ -73.74 us, 98.3 ns @ -43.74 us, 97.8 ns @ -23.74 us, 98.4 ns @ +15.18 us, 98.4 ns @ +30.44 us
+  rise 30->70 % CH2: 91.4 ns @ -69.97 us, 91.8 ns @ -59.97 us, 93.1 ns @ -49.97 us, 91.4 ns @ -39.97 us, 91.3 ns @ -29.97 us, 91.2 ns @ -19.97 us, 94.2 ns @ -9.97 us, 91.1 ns @ +0.03 us, 91.5 ns @ +10.03 us, 92.0 ns @ +23.01 us
+  V_OL address bit 5: 64.6 mV, t=-49.47..-45.53 us, n=247, sd 7.0 mV
+  V_OL address bit 3: 63.3 mV, t=-29.48..-25.53 us, n=247, sd 6.6 mV
+  V_OL R/W bit 0: 66.6 mV, t=+0.52..+4.47 us, n=247, sd 7.6 mV
+  idle high CH1: 3296.7 mV, t=+30.53..+79.98 us, n=3092, sd 31.91 mV
+  idle high CH2: 3292.6 mV, t=+30.53..+79.98 us, n=3092, sd 14.67 mV
+
+  pass table (lab/procedures/known-good-reference.md; limits copied from it):
+  PASS  V_OL          CH1  address bit 5: 64.6 mV  (limit <= 0.4 V)
+  PASS  V_OL          CH1  address bit 3: 63.3 mV  (limit <= 0.4 V)
+  PASS  V_OL          CH1  R/W bit 0: 66.6 mV  (limit <= 0.4 V)
+  PASS  Idle high     CH1  3.2967 V (after the last edge)  (limit 3.135-3.465 V)
+  PASS  Idle high     CH2  3.2926 V (after the last edge)  (limit 3.135-3.465 V)
+  PASS  Rise 30->70 % CH1  max 98.4 ns of 5 edges  (limit <= 300 ns)
+  PASS  Rise 30->70 % CH2  max 94.2 ns of 10 edges  (limit <= 300 ns)
+  PASS  Decode        CH1  D6 ACK  (limit D6 then ACK)
+  note: record the scope panel RTIMe beside the CSV rise time; it has no pass role.
+
+  frame PASS
+
+# values_csv entries (paste under the capture's log entry; offset_mV is validation.V5.offset_mV of CH1)
+    values_csv:
+      - {name: V_OL, ch: CH1, value_mV: 64.6, gate: "address bit 5, t=-49.47..-45.53 us (n=247, sd 7.0 mV)", offset_mV: TODO}
+      - {name: V_OL, ch: CH1, value_mV: 63.3, gate: "address bit 3, t=-29.48..-25.53 us (n=247, sd 6.6 mV)", offset_mV: TODO}
+      - {name: V_OL, ch: CH1, value_mV: 66.6, gate: "R/W bit 0, t=+0.52..+4.47 us (n=247, sd 7.6 mV)", offset_mV: TODO}
+      - {name: idle_high, ch: CH1, value_mV: 3296.7, gate: "after the last edge, t=+30.53..+79.98 us (n=3092)"}
+      - {name: idle_high, ch: CH2, value_mV: 3292.6, gate: "after the last edge, t=+30.53..+79.98 us (n=3092)"}
+      - {name: rise_30_70, ch: CH1, value: "97.7, 98.3, 97.8, 98.4, 98.4 ns", max_ns: 98.4, gate: "every SDA rising edge in the record (-73.74, -43.74, -23.74, +15.18, +30.44 us); 0.99->2.31 V, linear interpolation"}
+      - {name: rise_30_70, ch: CH2, value: "91.4, 91.8, 93.1, 91.4, 91.3, 91.2, 94.2, 91.1, 91.5, 92.0 ns", max_ns: 94.2, gate: "every SCL rising edge in the record (-69.97, -59.97, -49.97, -39.97, -29.97, -19.97, -9.97, +0.03, +10.03, +23.01 us); 0.99->2.31 V, linear interpolation"}
+      - {name: decode_bits, ch: CH1, value: "SDA at SCL rising: 1 1 0 1 0 1 1 0 | 0 (D6, 9th clock low = ACK)", gate: "SCL rising -69.97 ... +10.03 us"}
+      - {name: SCL_period, ch: CH2, value_us: 10.00, gate: "rising edges -69.97 ... +10.03 us"}
+exit 0
+
+$ python3 tools/lab/i2c_frame.py lab/captures/V7R-002/2026-10-21_V7R-002_val_V7_01.csv
+i2c_frame: lab/captures/V7R-002/2026-10-21_V7R-002_val_V7_01.csv
+  10000 points at 1.6e-08 s per sample, -80.00..+79.98 us; SDA CH1, SCL CH2; V_DD 3.3 V -> 0.990 / 1.650 / 2.310 V
+
+  mode: idle (no channel crosses 1.650 V)
+  ch       mean_V    sd_mV      min_V      max_V
+  CH1      3.3029     3.18     3.2894     3.3197
+  CH2      3.2902     8.73     3.2441     3.3650
+
+  pass table (lab/procedures/known-good-reference.md; limits copied from it):
+  PASS  Idle high     CH1  3.3029 V (mean of all 10000 samples)  (limit 3.135-3.465 V)
+  PASS  Idle high     CH2  3.2902 V (mean of all 10000 samples)  (limit 3.135-3.465 V)
+
+  V7 PASS
+
+# validation snippet (paste under validation:)
+  V7_idle_high_V: {CH1: 3.303, CH2: 3.290}   # CSV mean of all 10000 samples of 2026-10-21_V7R-002_val_V7_01 (i2c_frame.py, bus idle)
+# values_csv entries (paste under the capture's log entry)
+    values_csv:
+      - {name: mean, ch: CH1, value_mV: 3302.9, gate: "all 10000 samples, -80..+79.98 us, no channel crosses 1.65 V"}
+      - {name: mean, ch: CH2, value_mV: 3290.2, gate: "all 10000 samples, -80..+79.98 us, no channel crosses 1.65 V"}
+      - {name: sd, ch: CH1, value_mV: 3.18}
+      - {name: sd, ch: CH2, value_mV: 8.73}
+exit 0
+```
