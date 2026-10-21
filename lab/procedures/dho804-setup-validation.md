@@ -6,10 +6,26 @@ Run this at the start of every scope session, before any number from that sessio
 
 - **Who does what.** The debugger session relays each step to the operator as a §4.8 block (`lab/templates/instruction.md`), one step at a time, and fills the log. The operator does the physical steps and types the commands.
 - **Where the numbers come from.** Every scope fact used here is a row of `docs/initiatives/test-workflow-setup/PLAN.md` → "Verified instrument facts", cited as *[facts: row]*. Tolerances marked **[own]** are ours, not a vendor's.
-- **Recording.** Results go into the session log `lab/log/YYYY-MM-DD_sNN.yaml`, block `validation` (`lab/templates/log.yaml`). Validation captures use the arm `val_V<n>` (§4.4), for example `2026-11-04_V7R-012_val_V3_01.png`.
+- **Recording.** Results go into the session log `lab/log/YYYY-MM-DD_sNN.yaml`, block `validation` (`lab/templates/log.yaml`). **One log per arm**: S1 writes `_s01`, S2 writes `_s02` (see "Closing the validation"). Validation captures use the arm `val_V<n>` (§4.4), for example `2026-11-04_V7R-012_val_V3_01.png`.
 - **Terminal.** Every command runs in Cursor's integrated terminal, at the repo root.
-- **Board points and words.** Points on the board are named by the letters **A–F** (and **X**, keep clear) in the pictures `lab/procedures/img/v6-probe-points.png` and `v7-probe-points.png`. The glossary and the pictures are at the top of `known-good-reference.md`: it explains I²C (SDA, SCL), "master end", "BQ end", "arm" and pad numbers such as C21.2. **DUT** (device under test) means the board being measured. **Cal** is the probe-calibration output on the scope's front panel. Capital **V1–V9** are the steps below; lower-case **v6/v7** are the board versions (so "the V6 ground" is step V6's ground, not the v6 board).
-- **When probes touch the board.** V1–V4 need no board: the probes are plugged into the scope, and V3–V4 put them on the Cal output. V5 is the first step with probes on the board. Every time probes or grounds go on or move on the board, **unplug the board first** and **look before powering on**.
+- **When probes touch the board.** V1–V4 and V5a need no board: the probes are plugged into the scope, and V3, V4 and V5a put them on the Cal terminals. V5b is the first step with probes on the board. Every time probes or grounds go on or move on the board, **unplug the board first** and **look before powering on**.
+
+## Words used here
+
+Points on the board are named by the letters **A–F** (and **X**, keep clear) in the pictures `lab/procedures/img/v6-probe-points.png` and `v7-probe-points.png`. The pictures and more words (I²C, SDA, SCL, "master end", "BQ end", "arm", pad numbers such as C21.2) are at the top of `known-good-reference.md`.
+
+- **DUT** (device under test). The board being measured.
+- **Cal.** The probe-calibration output on the scope's front panel: a signal terminal and a ground terminal next to it.
+- **V1–V9 vs v6/v7.** Capital V1–V9 are the steps below; lower-case v6/v7 are the board versions. So "the V6 ground" is step V6's ground, not the v6 board.
+- **Unplug the board.** The **main-board USB-C cable out**, and **no battery** connected. On v6, the data-only cable from the Mac to the T-Display may stay in. It passes no power, but it may still join the Mac's ground to the board, so write in `validation.notes` whether it was in.
+- **Data-only cable.** On v6, the cable from the Mac to the T-Display's USB-C, used for flashing and the serial port. It does not power the board.
+- **Noise.** The fuzz on a flat trace. **sd** (standard deviation) is a number for how big that fuzz is, worked out from the CSV samples by `noise_floor.py`. For noise, "mV rms" means the same as the sd in mV.
+- **Control (V5a).** The noise the scope and probes show on their own, with both probes on the Cal ground and no board.
+- **Excess noise.** The noise the board and its ground add on top of the control. `noise_floor.py` works it out per channel.
+- **Zero offset (`offset_mV`).** The average the control reads with the tips on ground. That is how far this channel reads from 0 V. It is not the channel's OFFSet setting (−1.65 V).
+- **Soldered wire (v6).** A ~10 mm solid-core wire soldered to pad C on v6. It is the v6 ground at the master end (S1). The probe springs touch the wire, not the pad.
+- **Unequal ground.** A comparison at the master end between v6 (wire) and v7 (spring straight on pad C). The two grounds are not the same, so the comparison carries this label.
+- **`not_run`.** What you write for a step that was not done, with the reason (see "Closing the validation").
 
 ---
 
@@ -125,28 +141,62 @@ The Cal output is a **1 kHz, 3 Vpp** square wave, about 0 → 3 V *[facts: DHO80
 **Pass:** **Vamp = 2.91 V to 3.09 V** (3 Vpp ± 3 % **[own]**) on every channel in use.
 **Record:** `validation.notes`: "V4 Vamp CH<n> = <value> V".
 
-## V5 — Shorted-tip noise floor, on the powered DUT
+## V5 — Noise check: what the board and its ground add
 
-Do this with the board powered and running, at the V/div and BW-limit settings the measurement will use (the card's channel settings).
+**Why.** A long or looping ground picks up noise from the switching charger. It rides on every level as a fuzzy band. The scope and probes show some noise even with no board (about 5 mV sd on our scope at the reference settings). So V5 measures in two parts, and `noise_floor.py` works out the difference:
 
-1. Set the channel to the measurement's V/div and BW limit, for example:
+- **V5a, control:** both probes on the scope's Cal ground, no board.
+- **V5b, DUT:** both probes on this arm's ground point, board powered.
+
+**Run V5 once per arm** (S1 and S2 each), because the ground point is different for each arm. Do V5a and then V5b in the same session, with the same scope settings. **Don't change any scope setting between V5a and V5b**, or the tool refuses to compare them.
+
+1. **Settings.** Set both channels to the card's channel settings. For the reference settings (`known-good-reference.md` step 2):
    ```
-   q ':CHANnel<n>:SCALe 0.5'; q ':CHANnel<n>:BWLimit OFF'; q ':TRIGger:EDGE:SOURce CHANnel<n>'; q ':TRIGger:SWEep AUTO'
-   q ':CHANnel<n>:SCALe?'; q ':CHANnel<n>:BWLimit?'; q ':TRIGger:EDGE:SOURce?'; q ':TRIGger:SWEep?'
+   q ':CHANnel1:DISPlay ON'; q ':CHANnel2:DISPlay ON'
+   q ':CHANnel1:SCALe 0.5'; q ':CHANnel2:SCALe 0.5'; q ':CHANnel1:OFFSet -1.65'; q ':CHANnel2:OFFSet -1.65'
+   q ':CHANnel1:BWLimit OFF'; q ':CHANnel2:BWLimit OFF'
+   q ':TIMebase:MAIN:SCALe 1e-5'
+   q ':TRIGger:MODE EDGE'; q ':TRIGger:EDGE:SOURce CHANnel1'; q ':TRIGger:SWEep AUTO'
+   q ':CHANnel1:SCALe?'; q ':CHANnel2:SCALe?'; q ':CHANnel1:OFFSet?'; q ':CHANnel2:OFFSet?'; q ':CHANnel1:BWLimit?'; q ':CHANnel2:BWLimit?'; q ':TIMebase:MAIN:SCALe?'; q ':ACQuire:MDEPth?'; q ':TRIGger:SWEep?'; q ':SYSTem:ERRor?'
    ```
-   Sweep has to be **AUTO**: a shorted tip gives nothing to trigger on, and AUTO keeps the trace updating.
-2. Put the probe **tip and its ground on the same ground point**, the one the V6 ground method uses. **Unplug the board** (USB out, no battery), land the ground first, then the tip, look under the microscope, then power on.
-   - At the BQ end (charger chip U5) on v6 or v7, that point is pad **F** (C21.2, the end of C21 farther from U5). See the bridging warning in V6.
-   - If the tip and the spring can't both sit on that one small 0603 pad, put the spring on pad F and the tip on the nearest other GND pad, **R32.2** (one end of resistor R32, GND net, 3.44 mm from U5.6; it is not marked in the pictures, so find it in the layout first). Write down which pads you used. That fallback is our suggestion **[own]**.
-3. Add **Vpp** for this channel with the scope running: `q ':MEASure:ITEM VPP,CHANnel<n>'`. **CHECK:** `Vpp(C<n>)` is on the Result panel with a number.
+   **CHECK:** `5.000000E-01` twice, about `-1.65` twice, `OFF` twice, `1.000000E-5`, `1.0000E+04`, `AUTO`, `0,"No error"` *[facts: V/div, Offset, BW limit, Timebase, Acquisition]*. Sweep has to be **AUTO**: a tip on ground gives nothing to trigger on, and AUTO keeps the trace updating.
+2. **Vpp on the panel** (optional, for the record only): `q ':MEASure:ITEM VPP,CHANnel1'; q ':MEASure:ITEM VPP,CHANnel2'`. Vpp is not the pass test: it swings too much from one capture to the next.
+
+### V5a — control, no board
+
+3. Put **both probe tips and both ground springs on the Cal ground terminal** on the scope's front panel (not the Cal signal terminal). No probe touches the board.
 4. Capture:
+   ```
+   python3 tools/lab/capture.py --test <V7R-NNN> --arm val_V5ctl --items VPP --session lab/log/<YYYY-MM-DD_sNN>.yaml
+   ```
+   Then press **RUN/STOP** once. Note the `.csv` name it prints.
+
+### V5b — on this arm's ground point, board powered
+
+5. **Unplug the board.** Put each probe's **tip and its spring on the same ground point**: the one this arm uses in V6. Land the ground first, then the tip. Look under the microscope, then power on.
+   - **S1 (master end), v6:** the soldered wire on pad **C**. The tips and springs touch the wire, as the springs will in the reference.
+   - **S1 (master end), v7:** pad **C** (C9.1, one end of capacitor C9).
+   - **S2 (BQ end), v6 or v7:** pad **F** (C21.2, the end of C21 farther from U5). See the bridging warning in V6. If a tip and a spring can't both sit on that small pad, put the spring on pad F and the tip on the nearest other ground pad, **R32.2** (one end of resistor R32, 3.44 mm from U5.6). It is not marked in the pictures, so find it in the layout first. Write down which pads you used. That fallback is our suggestion **[own]**.
+6. Board powered and running. On v6 with `v6-ref` and no sensor PCB, the screen shows "Sensor init failed". That is expected.
+7. Capture:
    ```
    python3 tools/lab/capture.py --test <V7R-NNN> --arm val_V5 --items VPP --session lab/log/<YYYY-MM-DD_sNN>.yaml
    ```
-   Then press **RUN/STOP** once.
+   Then press **RUN/STOP** once. Note the `.csv` name.
 
-**Pass:** **Vpp ≤ 20 mV** **[own]**. If it is larger, the ground method is too long or loops near the charger. Fix it before measuring any tens-of-mV feature.
-**Record:** `validation.V5_noise_floor_mVpp` (from the entry's `VPP` value, in mV), and the PNG name in `validation.notes`.
+### V5 result
+
+8. Run the tool on the two CSVs (both are in `lab/captures/<V7R-NNN>/`):
+   ```
+   python3 tools/lab/noise_floor.py --ctl lab/captures/<V7R-NNN>/<YYYY-MM-DD>_<V7R-NNN>_val_V5ctl_<nn>.csv --dut lab/captures/<V7R-NNN>/<YYYY-MM-DD>_<V7R-NNN>_val_V5_<nn>.csv
+   ```
+   It prints, per channel, the average, the sd, the spread (max − min) and the excess noise, all in mV. Then PASS or FAIL, and a `validation.V5` block to paste into the log. If it refuses because the sample interval or the point count differ (the time between samples, or the number of samples), a setting changed between V5a and V5b: redo both. If it warns that the smallest level step differs (the size of one step in the sample values), the V/div probably changed: check the settings and redo both.
+
+**Pass:** **excess noise ≤ 5 mV rms on each channel** **[own]**. Why 5 mV: noise of 5 mV rms is about 14 mV from peak to peak, which is below the 20 mV difference in the low level (V_OL) that our measurements need to tell apart (`test-workflow-audit.md` §4.7). If it fails, the ground is too long or loops near the charger. Fix it before measuring anything tens of mV in size. Never raise the limit.
+
+**Scope sanity check [own]:** at the reference settings above, the control sd should be between **2.5 and 10 mV** on each channel (half to double the ≈ 5 mV seen in V7R-001). Outside that band, stop and look at the scope and probes before going on. The tool prints a flag when it is outside the band; at other settings the flag does not apply, and the control sd is just recorded.
+
+**Record:** paste the tool's block as `validation.V5`. It holds four per-channel values: `ctl_sd_mV` (control sd), `dut_sd_mV` (board sd), `excess_rms_mV` (excess noise) and `offset_mV` (the zero offset: the control's average). Optionally add `vpp_panel_mV`, the panel Vpp of the V5b capture. Put both PNG names in `validation.notes`. The zero offset is used again in `known-good-reference.md` step 7.
 
 ## V6 — Ground method
 
@@ -155,17 +205,18 @@ Use the shortest ground the probe can land: a **ground spring**, or a wire of **
 | Probing at | Ground point | Distance (edge to edge) | Source |
 |---|---|---|---|
 | BQ end: pads **D/E** (U5 pins 6/5), v6 **and** v7 | pad **F** (C21.2; C21 is 4.7 µF, 0603-size pad) | **2.64 mm** on both boards | *[facts: PCB probe points]* |
-| Master end: pads **A/B** (test pads TPIO43/44), v6 | pad **C** (U2.14, a GND hole of the T-Display header, through-hole) | 8.26 mm | same |
-| Master end: pads **A/B** (test pads TPIO43/44), v7 | pad **C** (C9.1, one end of the 100 nF capacitor C9) | 3.05 mm | same |
+| Master end: pads **A/B** (test pads TPIO43/44), v6 | the **soldered wire** on pad **C** (U2.14, a ground hole of the T-Display header). The springs touch the wire about 8–9 mm from C | pad C is 8.26 mm from A/B | *[facts: PCB probe points]*; PLAN "After V7R-001" §2 |
+| Master end: pads **A/B** (test pads TPIO43/44), v7 | a **spring straight on pad C** (C9.1, one end of the 100 nF capacitor C9). No soldering on v7 | 3.05 mm | *[facts: PCB probe points]*; user decision, 2026-10-20 |
 
 > **Bridging warning (C21).** Pad F (C21.2) is ground, but the other end of the same capacitor (C21.1, an **X** pad in the pictures) is **`Protected_VBUS`**, USB power. One end of C20 next to it (C20.1, the other **X** pad) is `Protected_VBUS` too. A spring or wire touching both ends of C21 shorts the charger input to ground. Land the ground on **pad F, on the side of the pad away from the X pad**, with the board **unplugged**. Look at it under the microscope before you power on.
 
 - Don't use TP4 as a "same ground" on both boards. It is 6.85 mm from U5 on v6 but 12.09 mm on v7 *[facts: PCB probe points, v6 names]*.
 - Whether a spring stays on a 0603 pad has not been tried yet. If it won't stay, use a ≤ 10 mm wire to the same pad and record the length.
-- Use the **same ground type and length** on every board you will compare (the same-ground-length rule, `known-good-reference.md`).
+- Use the **same ground type and length** on every board you will compare (the same-ground-length rule, `known-good-reference.md`). The one exception is the master end: v6 uses the wire and v7 a spring. A v6–v7 comparison there is labelled **"unequal ground"**, and it counts only when V5 passed at S1 on **both** boards.
+- On v6 the soldered wire is a board change. The card lists it in `hardware_config`.
 
 **Pass:** recorded.
-**Record:** `validation.V6_ground: {method: spring | wire, point: C21.2, length_mm: <n>}`, per probe if they differ.
+**Record:** `validation.V6_ground: {method: spring | wire, point: <pad>, length_mm: <n>}`, per probe if they differ. Examples: v6 S1 `{method: wire, point: U2.14, length_mm: <distance from where the springs touch the wire to pad C>}`; S2 `{method: spring, point: C21.2, length_mm: <n>}`.
 
 ## V7 — Idle-high level on the DUT
 
@@ -217,7 +268,13 @@ Run `known-good-reference.md` at the start of a campaign, and again whenever the
 ## Closing the validation
 
 - Set `validation.passed: true` only when V1–V8 pass (and V9 when it is due). Any fail: `passed: false`, stop, and fix the setup.
-- Run `python3 tools/lab/validate_log.py lab/log/<YYYY-MM-DD_sNN>.yaml`. TODOs are reported as pending (exit 3), and the pre-commit hook only warns about them. Errors block.
+- **Steps not done.** When a fail stops the validation, write each step you did not run as `{not_run: "<reason>"}` in place of its value, for example `V7_idle_high_V: {not_run: "V5 failed"}`. This is allowed **only** with `passed: false`. With `passed: true`, the validator reports an error.
+- **One log per arm.** A card that runs S1 and S2 writes two session logs: `_s01` for S1 and `_s02` for S2. Each has its own `validation` block.
+  - V1–V4 run once, at the start of the session, and are recorded in the first log.
+  - The second log records a fresh V2 read-back, and `validation.notes` says "V1, V3, V4: see `<first log>`".
+  - V5–V9 run again for the second arm and go in the second log.
+  - Give `capture.py` the right log every time with `--session lab/log/<YYYY-MM-DD_sNN>.yaml`. Without it, the tool writes to today's latest log.
+- Run `python3 tools/lab/validate_log.py lab/log/<YYYY-MM-DD_sNN>.yaml` on each log. TODOs are reported as pending (exit 3), and the pre-commit hook only warns about them. Errors block.
 
 ## Fallback: saving to the USB stick
 
