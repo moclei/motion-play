@@ -137,7 +137,10 @@
 - [x] Tests in `tools/lab/tests/tool_tests.py`, on synthetic CSVs that the test writes: a 100 kHz `D6`+ACK frame with known edge times, rise times and low levels; a flat idle record; a frame with NACK (9th bit high); a byte that differs from `--expect`; a record with a single channel. Each asserts the printed values within stated tolerances and the exit code. `tools/lab/tests/run_tests.py` passes
 - [x] Acceptance on real data: run it on `lab/captures/V7R-002/2026-10-21_V7R-002_S1_01.csv` (`--expect D6`) and on `..._val_V7_01.csv`. Compare with the S1 log `lab/log/2026-10-21_s01.yaml` (the S1 entry's values; `V7_idle_high_V`). Record both outputs and every difference in SESSION.md. Pass: within 3 mV and 3 ns of the hand numbers, and the same byte and ACK. If not, report the difference and both gates, and don't tune the tool to match. If the captures are missing, stop and report (they are gitignored; the iCloud backup holds them). Do not edit the S1 log or the card — *run; not within 3 mV on V_OL (−6.9…−8.8 mV) and CH1 idle high (−5.8 mV), gate differences only, same verdicts; see SESSION Worker #16*
 - [x] Add an `i2c_frame.py` row to the `tools/CONTEXT.md` tools/lab table, and the `tests/run_tests.py` row's list
-- [x] 🔄 Handoff
+- [x] 🔄 Handoff (Worker #16, 62ee15f)
+- [ ] Rework after Worker #16 (PLAN "After V7R-002 S1" §6, the gate bullets). V_OL: no change to the tool; the SCL-high gate shrunk by 10 % is the method. Idle high in frame mode: start the window 5 µs after the last edge (its 0.5 V_DD crossing, either channel), keep the ≥ 5 µs minimum after the margin, and change the gate string and the PASS line text to say "from 5 us after the last edge". Update the synthetic tests to match (idle window start, and a record where fewer than 5 µs remain after the margin gives "n/a"). `run_tests.py` passes
+- [ ] Re-run acceptance per PLAN §6 "Acceptance (revised after Worker #16)" on `S1_01.csv --expect D6`: byte, ACK, period and rise times as before; idle high within 3 mV of 3302.5 / 3292.9 mV; for V_OL, a one-off check script (in the scratchpad, not committed) computes the mean over the tool's printed gates (must match the tool within 0.1 mV) and over the hand gates (must give 72.4 / 70.2 / 75.4 within 0.1 mV). Record the tool output, the check output and every difference in SESSION.md. If any part is not met, report it with both gates; don't tune. Do not edit the S1 log or the card. Update the `tools/CONTEXT.md` `i2c_frame.py` row if its gate wording changed
+- [ ] 🔄 Handoff
 
 # --- handoff point ---
 
@@ -155,7 +158,7 @@
   - **Step 2:** correct the record to −80…+80 µs at 16 ns per sample at 10 µs/div, and say the START falls just outside it while the edges, the 0-bits, the ACK and the idle level after the STOP are inside.
   - **Step 3:** the address trigger in place of START. The MAX/MIN 70/30 set is now verified.
   - **Step 5:** CHECK the scope status reads STOP. An empty decode band at 10 µs/div is expected, because the decode comes from the CSV. Stop after 3 replugs with no trigger.
-  - **Step 7:** run `i2c_frame.py --expect D6`. Rise time as in PLAN §4, with the panel RTIMe recorded beside it and no pass role. Idle high after the frame. Decode from the CSV bits.
+  - **Step 7:** run `i2c_frame.py --expect D6`. Name the gates as in PLAN §6: V_OL over the bit's SCL-high interval shrunk by 10 % at each end (replacing "the flat middle of a master-driven 0-bit"); idle high from 5 µs after the last edge (replacing "Vtop, or the mean of the samples before the START"). Rise time as in PLAN §4, with the panel RTIMe recorded beside it and no pass role. Decode from the CSV bits.
   - **Pass table:** the rise row reads ≤ 300 ns, with the note that the reference frame runs at 100 kHz and why the Fast-mode limit is kept (PLAN §2); ≤ 1000 ns stays only for the secondary reference. The Decode row's source is the CSV. Apply the step split rule from PLAN §7. No limit changes
 - [ ] `lab/templates/instruction.md`: add the CHECK-placement rule and the screen-naming rule (PLAN §7)
 - [ ] Read both procedures end to end for steps that contradict each other, and for any remaining "screen", START or "bus goes quiet" wording. List the result in SESSION.md
@@ -173,7 +176,7 @@
   - Stop rules, including "no `d6` after 3 replugs".
   - Run before the CHECKPOINT DUE date that `check_state.py` reports, and stop and report if it fires.
   - Analysis with `i2c_frame.py`.
-  - Then close the card: the recording commit touches STATE with `as_of`; a notebook entry; evidence for both arms, S1's captures included, promoted to `lab/evidence/V7R-002/`.
+  - Then close the card: the recording commit touches STATE with `as_of`; a notebook entry; evidence for both arms, S1's captures included, promoted to `lab/evidence/V7R-002/`. Measured values: S1 cites its log as recorded (hand values), with the `i2c_frame.py` values for S1_01 beside them, labelled as PLAN §6 "The S1 record" says; S2 cites the tool values from its log; any S1-vs-S2 comparison uses the tool values for both. The S1 log is not edited.
   - Then the fresh-session L0 test ("what is the bench state?").
   - The report list: L0 answer, image handoff, final commit, hand-set settings with button paths, and pass or fail per V5–V9 row per arm.
 - [ ] Check that every file path in the relay's paste text exists (`ls` each one) and record the list in SESSION.md (PLAN §7)
@@ -184,7 +187,7 @@
 ## Phase 16: v6 re-run S2 and close (bench, then desk)
 
 - [ ] **W8, part 2:** the user runs `RELAY-v6-dry-run-2-s2.md` as an ad-hoc debugger session (S2, close card V7R-002), then a second fresh ad-hoc debugger session asked only "what is the bench state?". The user reports whether the answer was correct and whether the image handoff was workable
-- [ ] Verify from git, for V7R-002: the pre-registration commit comes before the raw-data commits; there are per-arm raw commits; the recording commit touches STATE with `as_of` set; the notebook entry exists; the evidence files for both arms are present; the card notes the procedure commits S2 ran on; `check_state.py` is clean; `validate_log.py` passes both arm logs (`2026-10-21_s01` and the S2 log). If v6 is out of spec on a validated setup (V1–V8 pass for that arm), stop: the setup gets fixed before close (replan if needed). If V5 fails again, stop and replan; no limit is widened
+- [ ] Verify from git, for V7R-002: the pre-registration commit comes before the raw-data commits; there are per-arm raw commits; the recording commit touches STATE with `as_of` set; the notebook entry exists; the evidence files for both arms are present; the card notes the procedure commits S2 ran on; the card's S1 Measured values cite the S1 log with the tool values beside them (PLAN §6 "The S1 record"); `check_state.py` is clean; `validate_log.py` passes both arm logs (`2026-10-21_s01` and the S2 log). If v6 is out of spec on a validated setup (V1–V8 pass for that arm), stop: the setup gets fixed before close (replan if needed). If V5 fails again, stop and replan; no limit is widened
 - [ ] Tick both acceptance tables in PLAN. The Dry run rows cite V7R-002, with V7R-001 noted as the void first attempt. Open the final PR (merge commit)
 - [ ] 🔄 Handoff
 
