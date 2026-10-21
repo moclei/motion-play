@@ -73,6 +73,9 @@ Pass table per `known-good-reference.md` (V_DD = 3.3 V). Evaluated per arm (S1, 
 - S5 (S1 look, board unpowered): pad C "Yes" visible/reachable from top. Ground: "The probes have a ~150mm cable coming out of them with alligator clips at the end, for ground. Those would reach C. Also, the hole ... is currently being filled by a pin from the t-display, which is soldered in, and I think one alligator clip would be able to clip onto the through-hole pin if done on the underside of the board". Tip on C: "I could probably get a probe tip to touch the soldered mound that covers C, yes".
 - Decision (user, 2026-10-20): 150 mm alligator lead fails V6 (≤ 10 mm); S1 run first, as planned, with a ≤ 10 mm wire per probe ground to the top-side solder mound on C.
 
+- S6 (S1 ground): hook-clip assembly (~80 mm, stranded Dupont) proposed, not used (exceeds V6 ≤ 10 mm). Then, operator: "I solder a short piece of solid core wire, something like 28 or 26 AWG, to the GND mound. The wire was 10mm long. I positioned the GND springs on the probes to touch that wire when it sticks out of the mound (not touching anything else). The distance from where the ground springs touch to where the wire connects to the mound is about 8mm or 9mm"
+- Deviation: hardware_config said "No mods". Board now carries a ~10 mm solid-core wire soldered to the top-side solder mound of pad C (U2.14, GND). Ground net only; not on the I²C nets. Removable.
+
 ### Measured values (from log; cite `lab/evidence/V7R-001/...`)
 ### Interpretation (session; labelled as such)
 
