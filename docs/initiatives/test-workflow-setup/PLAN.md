@@ -348,7 +348,7 @@ Source: card V7R-001 (`lab/cards/V7R-001-v6-setup-validation.md`, recorded at `4
   - **Pass: excess ≤ 5 mV rms on each channel [own].** Rationale: a sinusoidal pickup of 5 mV rms is 14 mV peak to peak, below the 20 mV V_OL difference that the audit's example predictions resolve (`test-workflow-audit.md` §4.7). The limit comes from that 20 mV, not from the W7 data. For information only, the W7 S1 data give ≈ 1.4 / 0 mV.
   - **Scope sanity [own]:** at the V7R-001 reference settings, a control sd outside 2.5–10 mV (half to double V7R-001's ≈ 5 mV) means stop and investigate the scope and probes. At other settings the control is recorded only.
   - **Record:** `validation.V5: {ctl_sd_mV, dut_sd_mV, excess_rms_mV, offset_mV}`, each a per-channel map; optional `vpp_panel_mV`. `offset_mV` is the control mean (V7R-001: −10.4 / −14.1 mV).
-  - **Offset use:** `known-good-reference.md` step 7 records V_OL as measured and cites that channel's V5 offset beside it. It does not subtract it. The 0.4 V pass limit is far away, but the ≈ 35 mV estimate is the same order as the offset, so the record matters.
+  - **Offset use:** `known-good-reference.md` step 9 (step 7 before Phase 14) records V_OL as measured and cites that channel's V5 offset beside it. It does not subtract it. The 0.4 V pass limit is far away, but the ≈ 35 mV estimate is the same order as the offset, so the record matters.
 - **Unchanged:** BW limit stays OFF in the reference settings; V5 still runs per arm, because the ground point differs between arms.
 - **User confirmation pending** (Open Questions): this changes a pass rule after a failure.
 

@@ -4,7 +4,7 @@ Purpose: prove that the probe, ground and scope chain reads a healthy I²C bus a
 
 **Outcome rule.** If the v6 reference fails these numbers with a validated setup, either the setup or the expectation is wrong. Resolve that before any v7 measurement is recorded. Never widen a pass limit to make the reference pass.
 
-- Same conventions as `dho804-setup-validation.md`: steps are relayed as §4.8 blocks, commands run in Cursor's terminal at the repo root with the `q` helper (§0.3 there), every setting is set and read back, and every measured item goes on the Result panel while the scope is running (§0.4 there; the panel rule rests on an untested hypothesis).
+- Same conventions as `dho804-setup-validation.md`: steps are relayed as §4.8 blocks (one numbered step = one block, its CHECK read after all of its DO), every step names the screen it means (scope screen, board display or terminal), commands run in Cursor's terminal at the repo root with the `q` helper (§0.3 there), every setting is set and read back, and every measured item goes on the Result panel while the scope is running (§0.4 there; the panel rule rests on an untested hypothesis).
 - Scope facts are cited as *[facts: row]*, meaning `docs/initiatives/test-workflow-setup/PLAN.md` → "Verified instrument facts". **[own]** marks our own figures and heuristics.
 
 ## Words used here
@@ -21,6 +21,13 @@ Purpose: prove that the probe, ground and scope chain reads a healthy I²C bus a
 - **Unplug the board.** The **main-board USB-C cable out**, and **no battery** connected. On v6, the data-only cable to the T-Display may stay in (see Prerequisites); write in `validation.notes` whether it was in.
 - **Replug.** Unplug the main-board USB-C and plug it back in, with the probes left where they are. This restarts the board.
 - **V_OL.** The low level: the voltage on a line while a chip holds it low.
+- **Frame, START, STOP, ACK.** A frame is one I²C message. It begins with a **START** (SDA falls while SCL is high) and ends with a **STOP** (SDA rises while SCL is high). After each byte, the chip that receives it pulls SDA low for the 9th clock: that is the **ACK**.
+- **The three screens.** The **scope screen** (the DHO804's display), the **board display** (the T-Display on v6) and the **terminal** (Cursor's terminal on the Mac). Every step names one.
+- **Decode band.** The row labelled **B1** / **I2C** at the left edge of the scope screen. Byte labels such as `Write:d6` appear in that row, but only when the frame's START is inside the record.
+- **Record.** The 10 000 samples the scope keeps for one capture. At 10 µs/div: −80 µs to +80 µs around the trigger, 16 ns per sample.
+- **Address trigger, SINGLE.** The address trigger fires only when the chosen address (here 0x6B, write) is sent. **SINGLE** sweep keeps the first record that triggers and stops the scope.
+- **Gate.** The stretch of samples a value is averaged over, given as a time range with the number of samples (n). `i2c_frame.py` prints it.
+- **Rise time, 30 → 70 %.** How long a line takes to rise from 0.99 V to 2.31 V (0.3 and 0.7 of the 3.3 V supply).
 - **Zero offset.** How far a channel reads from 0 V with its tip on ground. Step V5 of the setup validation measures it (`validation.V5.offset_mV`).
 
 ## Pictures: where the probe points are
@@ -40,10 +47,10 @@ On both boards D is U5 pin 6, E is U5 pin 5, F is the end of C21 farther from U5
 
 ## Prerequisites
 
-1. `dho804-setup-validation.md` V1–V8 passed **in this session**, with the probes, ground method and channel settings used below. Change any of them and V2–V8 have to be redone.
-2. **Reference DUT:** the surviving **v6** main board, flashed with the **`v6-ref`** tag (`4da1c67`, env `lilygo-t-display-s3`; its I²C init is in the tag message: `Wire.begin(43, 44)`, 400 kHz, default drive, no filters, default pulls). Flashing it is the card's step, not this procedure's.
+1. `dho804-setup-validation.md` V1–V8 and its decode setup passed **in this session**, with the probes, ground method and channel settings used below. Change any of them and V2–V8 have to be redone.
+2. **Reference DUT:** the surviving **v6** main board, flashed with the **`v6-ref`** tag (`4da1c67`, env `lilygo-t-display-s3`; its I²C init is in the tag message: `Wire.begin(43, 44)`, default drive, no filters, default pulls). The tag message says 400 kHz. That clock is set later, in sensor init. The 0x6B frames this procedure measures run at **100 kHz**, the Arduino default, because `Wire.begin(43, 44)` sets no clock (PLAN "After V7R-002 S1" §2). Flashing it is the card's step, not this procedure's.
    - **Re-flash `v6-ref` at the start of every card.** Without a sensor PCB the boot screen ("Sensor init failed") looks the same under any firmware, so it can't tell you which build is on the board.
-   - **No sensor PCB.** The reference runs with no sensor PCB plugged in. With no sensor PCB, `v6-ref` stops early in start-up ("Sensor init failed!", `firmware/src/main.cpp` @ `4da1c67`, l.463–464). By then it has already talked to the BQ24195 (l.123), so each power-up sends the `D6` frame once and then the bus goes quiet. With a sensor PCB fitted, the firmware keeps running and the bus carries other traffic (TCA9548A, VCNL4040).
+   - **No sensor PCB.** The reference runs with no sensor PCB plugged in. With no sensor PCB, `v6-ref` halts early in start-up ("Sensor init failed!" on the board display, `firmware/src/main.cpp` @ `4da1c67`, l.463–464). Before it halts, it sends the 0x6B frames once (l.123) and then tries sensor init at 400 kHz. After the halt the bus stays idle. With a sensor PCB fitted, the firmware keeps running and the bus carries traffic all the time (TCA9548A, VCNL4040).
    - **The soldered wire stays on pad C.** It is the v6 S1 ground. The card lists it in `hardware_config` as a board change.
 3. **v6 power and flash path.**
    - **Power:** a mains USB-C charger into the **main-board USB-C**.
@@ -94,19 +101,26 @@ Either probe type works on either channel: the SQ500 (fixed 10:1, the usual benc
 
 ## Which transaction to capture
 
-On `v6-ref` the BQ24195 is addressed **only at boot**. `configureBQ24195()` in `firmware/src/main.cpp` @ `4da1c67` first sends an address-only probe to 0x6B, then writes REG00 and REG05. With no sensor PCB, the firmware stops after that, so the bus goes quiet (Prerequisites). The reference frame is caught by setting the scope to trigger once (single sweep) and then **replugging the main-board USB-C**, with the probes left in place. Don't press the board's RIGHT button: the firmware reads it only after start-up, which it never reaches without a sensor PCB.
+On `v6-ref` the BQ24195 is addressed **only at start-up**. `configureBQ24195()` (`firmware/src/main.cpp` @ `4da1c67`, l.123) first sends an address-only probe to 0x6B, then writes REG00 and REG05. These 0x6B frames run at **100 kHz**: one SCL clock every 10 µs, so the address byte and its ACK take about 90 µs.
+
+The bus is **not** quiet around them (PLAN "After V7R-002 S1" §1):
+- **Before them**, SDA toggles while SCL stays high, in steps of about 8.68 µs. That is one bit of serial at 115 200 baud. It fits the ESP32-S3's start-up code (boot ROM) sending serial text on GPIO43, the same pin as SDA. *This fits the data; it is not proven.* A START trigger fires on it, and the scope decodes nothing (V7R-002 S1).
+- **After them**, sensor init runs at 400 kHz (the TCA9548A at 0x70, then a scan of 0x71–0x77) before the firmware halts.
+
+So the scope uses the **address trigger** on 0x6B write with **SINGLE** sweep. It fires only on a 0x6B write frame, at its R/W bit, and stops, so later frames can't replace the record. The board is restarted by a **replug** of the main-board USB-C, with the probes left in place. Don't press the board's RIGHT button: the firmware reads it only after start-up, which it never reaches without a sensor PCB.
 
 The expected address byte on the wire is **`D6`** (0x6B, write), followed by ACK.
 
 ## Steps, per arm
 
-1. **Probes on.** If V5–V8 left the probes on this arm's pads, check them under the microscope against the picture and go to 1.5. Otherwise:
-   1. **Unplug the board**: main-board USB-C out, and no battery connected (the data-only cable may stay in). It stays unplugged until step 1.4.
-   2. Land the ground first, per the arm table: for S1 the springs on the soldered wire at pad **C** (v6), or a spring on pad **C** (v7); for S2 the spring on pad **F** (C21.2, the end of C21 farther from U5), away from the X pad (bridging warning above).
-   3. Then the tips: CH1 (SDA) on pad **A** or **D**, CH2 (SCL) on pad **B** or **E**.
-   4. **Look before powering on.** Under the microscope, check that each tip sits on its lettered pad and nothing touches an X pad. Only then plug in the main-board USB-C.
-   5. Confirm the ground method matches what you recorded at step V6 of the setup validation for this arm.
-2. **Channels and timebase:**
+1. **Probes on.**
+   - If V5–V8 left the probes on this arm's pads, leave the board as it is and only look (the CHECK below).
+   - Otherwise **unplug the board** (main-board USB-C out, no battery; the data-only cable may stay in). Land the ground first, per the arm table: for S1 the springs on the soldered wire at pad **C** (v6), or a spring on pad **C** (v7); for S2 the spring on pad **F** (C21.2, the end of C21 farther from U5), away from the X pad (bridging warning above). Then the tips: CH1 (SDA) on pad **A** or **D**, CH2 (SCL) on pad **B** or **E**.
+
+   **CHECK:** under the microscope, each tip sits on its lettered pad, the ground is as in the arm table and as recorded at step V6 for this arm, and nothing touches an **X** pad.
+2. **Power.** If you unplugged the board in step 1, plug in the main-board USB-C now.
+   **CHECK:** the board display shows "Sensor init failed!".
+3. **Channels and timebase:**
    ```
    q ':CHANnel1:DISPlay ON'; q ':CHANnel2:DISPlay ON'
    q ':CHANnel1:PROBe 10'; q ':CHANnel2:PROBe 10'
@@ -115,57 +129,75 @@ The expected address byte on the wire is **`D6`** (0x6B, write), followed by ACK
    q ':TIMebase:MAIN:SCALe 1e-5'
    q ':CHANnel1:PROBe?'; q ':CHANnel2:PROBe?'; q ':CHANnel1:SCALe?'; q ':CHANnel1:OFFSet?'; q ':TIMebase:MAIN:SCALe?'; q ':ACQuire:MDEPth?'; q ':SYSTem:ERRor?'
    ```
-   **CHECK:** `10`, `10`, `5.000000E-01`, about `-1.65`, `1.000000E-5`, `1.0000E+04`, `0,"No error"`.
+   **CHECK:** in the terminal, `10`, `10`, `5.000000E-01`, about `-1.65`, `1.000000E-5`, `1.0000E+04`, `0,"No error"`.
    - These are the reference's settings. Whatever they are, they must be the same as the settings planned for the board under test (the card states them), and V5 must have been run at them.
    - Memory depth must read **10 kpts**: `capture.py` refuses deeper memory, because a single read is verified only at 10 kpts *[facts: Waveform range]*. If it reads more, set the memory depth to 10k in the scope's acquire menu and write the button path in REPORT.
-   - At 10 µs/div the 10 kpt record covers 100 µs at 10 ns per sample. That holds the whole address frame (about 25 µs at 400 kHz) with room to resolve a 300 ns edge.
-3. **Decode and trigger** (as in V8), then thresholds for the rise time:
+   - At 10 µs/div the record runs from **−80 µs to +80 µs** around the trigger, at **16 ns per sample** *[facts: Timebase]*. The trigger fires at the R/W bit, about 80 µs after the START, so the START falls just before the record. Every rising edge, every master-driven 0-bit, the ACK and the idle level after the STOP are inside it. 16 ns per sample resolves the ≈ 95 ns edges seen in V7R-002.
+4. **Address trigger and rise-time thresholds** (the trigger as in V8):
    ```
-   q ':BUS1:MODE IIC'; q ':BUS1:IIC:SCLK:SOURce CHANnel2'; q ':BUS1:IIC:SDA:SOURce CHANnel1'
-   q ':TRIGger:MODE IIC'; q ':TRIGger:IIC:SCL CHANnel2'; q ':TRIGger:IIC:SDA CHANnel1'; q ':TRIGger:IIC:WHEN STAR'
+   q ':TRIGger:MODE IIC'; q ':TRIGger:IIC:SCL CHANnel2'; q ':TRIGger:IIC:SDA CHANnel1'
+   q ':TRIGger:IIC:WHEN ADDR'; q ':TRIGger:IIC:AWIDth 7'; q ':TRIGger:IIC:ADDRess 107'; q ':TRIGger:IIC:DIRection WRITe'
    q ':MEASure:SETup:MAX 70'; q ':MEASure:SETup:MIN 30'
-   q ':BUS1:MODE?'; q ':TRIGger:MODE?'; q ':TRIGger:IIC:WHEN?'; q ':MEASure:SETup:MAX?'; q ':MEASure:SETup:MIN?'; q ':SYSTem:ERRor?'
+   q ':TRIGger:MODE?'; q ':TRIGger:IIC:WHEN?'; q ':TRIGger:IIC:AWIDth?'; q ':TRIGger:IIC:ADDRess?'; q ':TRIGger:IIC:DIRection?'; q ':MEASure:SETup:MAX?'; q ':MEASure:SETup:MIN?'; q ':SYSTem:ERRor?'
    ```
-   **CHECK:** `IIC`, `IIC`, `STAR`, `7.000000E+01`, `3.000000E+01`, `0,"No error"`. The thresholds default to 90/50/10 %, so the 30 → 70 % rise time is wrong unless they read back 70 and 30 *[facts: Measurement thresholds]*. Setting them has not been tried yet. If the read-back is wrong, set them in the measure menu and write the button path in REPORT.
-4. **Result panel, scope running.** Put **Vtop, Vbase and Rise time** for CH1 and CH2 on the panel:
+   **CHECK:** in the terminal, `IIC`, `ADDR`, `7`, `107`, `WRIT`, `7.000000E+01`, `3.000000E+01`, `0,"No error"` *[facts: Trigger (I²C), Measurement thresholds]*. The thresholds default to 90/50/10 %, so the panel rise time is 10 → 90 % unless they read back 70 and 30.
+5. **Result panel, scope running.** Put **Vtop, Vbase and Rise time** for CH1 and CH2 on the panel:
    ```
    for c in 1 2; do for i in VTOP VBASe RTIMe; do q ":MEASure:ITEM $i,CHANnel$c"; done; done
    ```
-   **CHECK:** the Result panel shows the six items, each with a number. If one is missing, add it by hand and note the path. (`RTIMe` has not been queried on this scope yet. If it reads `9.9E37`, the CSV check in step 7 still gives the rise time.)
-5. **Catch one frame (single trigger):** `q ':TRIGger:SWEep SING'`, then `q ':TRIGger:SWEep?'`. **CHECK:** `SING`, and the screen waits for a trigger. **Replug** the main-board USB-C: unplug it, wait a second, plug it back in. Leave the probes where they are. **CHECK:** the scope triggers once and stops, and the decode row reads **`D6`** then ACK. If it shows another address, set SINGLE again and replug again.
-6. **Capture:**
+   **CHECK:** the Result panel on the scope screen shows the six items, each with a number. If one is missing, add it by hand and note the path. These panel values are recorded only; the pass rows come from the CSV in step 9.
+6. **Arm the single trigger:**
+   ```
+   q ':TRIGger:SWEep SING'; q ':TRIGger:SWEep?'
+   ```
+   **CHECK:** in the terminal, `SING`.
+7. **Replug** the main-board USB-C: unplug it, wait a second, plug it back in. Leave the probes where they are. Then run `q ':TRIGger:STATus?'`.
+   **CHECK:**
+   - In the terminal: `STOP` (the scope triggered once and stopped).
+   - On the scope screen, the decode band shows **no byte labels**. That is expected at 10 µs/div, because the START is outside the record. The decode is read from the CSV in step 9; V8 showed it on the scope screen.
+
+   If the status is not `STOP`: run step 6 again and replug again. **Stop rule:** no trigger after **3 replugs** → stop and report what the status and the board display showed.
+8. **Capture:**
    ```
    python3 tools/lab/capture.py --test <V7R-NNN> --arm <S1|S2> --items VTOP,VBASe,RTIMe --session lab/log/<YYYY-MM-DD_sNN>.yaml
    ```
-   **CHECK:** the output ends `The scope is left STOPPED.` and lists the `.png`, `.csv` and `.setup.bin`. Note any `NOTE: … invalid` line in REPORT.
-7. **Session work (no operator action):** open the PNG and write the `ai_read` entry. Then, from the CSV:
-   - **V_OL:** the mean of SDA over the flat middle of a **master-driven 0-bit**. In `D6` = `1101 0110`, those are address bits 5 and 3 and the R/W bit (bit 0). The 9th-clock **ACK low is driven by the BQ24195, so exclude it**. Record the bit and the sample range as the value's `gate`. Record V_OL **as measured**, and write that channel's zero offset from V5 (`validation.V5.offset_mV`) beside it. Don't subtract it. The 0.4 V limit is far away, but the ≈ 35 mV estimate is about the same size as the offset (V7R-001: −10.4 / −14.1 mV), so the reader needs both numbers. Vbase alone is only a cross-check, because it also includes the ACK low.
-   - **Rise time:** 30 → 70 % on each SDA and SCL rising edge in the frame, from the samples. Record the RTIMe panel value next to it. The scope's percentages are of its own Vbase–Vtop span, while UM10204 uses 0.3–0.7 V_DD. With Vbase near 0 V and Vtop near 3.3 V the two agree within a few per cent **[own]**.
-   - **Idle high:** Vtop, or the mean of the samples before the START.
-   - **Decode:** the address byte and ACK, as read from the PNG.
-   This CSV reading stands in for the audit's cursor confirmation; the cursor menus have not been recorded.
-8. Press **RUN/STOP** once, set the sweep back with `q ':TRIGger:SWEep AUTO'`, and move to the next arm. To move the probes: **unplug the board first**, then lift the tips and the ground, then go back to step 1.
+   **CHECK:** in the terminal, the output ends `The scope is left STOPPED.` and lists the `.png`, `.csv` and `.setup.bin`. Note any `NOTE: … invalid` line in REPORT.
+9. **Session work (no operator action):** open the PNG and write the `ai_read` entry. Then run the frame tool on the CSV:
+   ```
+   python3 tools/lab/i2c_frame.py lab/captures/<V7R-NNN>/<YYYY-MM-DD>_<V7R-NNN>_<S1|S2>_<nn>.csv --expect D6
+   ```
+   It prints each value with its gate and a PASS or FAIL per row of the pass table below (exit 0 all pass, 1 a fail, 2 bad input or no frame in the record). On exit 2, report it; don't read the CSV by hand. What it measures (PLAN "After V7R-002 S1" §4, §6):
+   - **Decode:** SDA read at each SCL rising edge gives the address byte and the 9th bit (ACK when low). It must read `D6` then ACK. This replaces reading the decode band.
+   - **V_OL:** on each **master-driven 0-bit** of the address byte. In `D6` = `1101 0110`, those are address bits 5 and 3 and the R/W bit (bit 0). The 9th-clock **ACK low is driven by the BQ24195, so it is left out**. The gate is the time **SCL is high** in that bit, **shrunk by 10 % at each end**. SCL high is when the receiver reads SDA, and the shrink keeps the SCL edges out. Record V_OL **as measured**, and write that channel's zero offset from V5 (`validation.V5.offset_mV`) beside it, in place of the tool's `offset_mV: TODO`. Don't subtract it. The 0.4 V limit is far away, but the ≈ 35 mV estimate is about the same size as the offset (V7R-001: −10.4 / −14.1 mV), so the reader needs both numbers.
+   - **Rise time:** every SDA and SCL rising edge in the record, from 0.99 V to 2.31 V (0.3 and 0.7 of V_DD = 3.3 V, as UM10204 defines them), with linear interpolation between samples. The tool gives each edge and the largest per channel. Write the panel RTIMe value (from the capture's log entry) beside it. The panel value has **no pass role**: in V7R-002 it read up to about 3× the CSV value.
+   - **Idle high:** the mean of each channel from **5 µs after the last edge** to the end of the record (the tool needs at least 5 µs of samples left). 5 µs is UM10204's bus-free time after a STOP (4.7 µs), rounded up: just after the STOP the line is still settling.
+   - **SCL period:** about 10 µs (100 kHz). For the record only.
+
+   Paste the tool's `values_csv` block under the capture's log entry. This CSV reading stands in for the audit's cursor confirmation; the cursor menus have not been recorded.
+10. Press **RUN/STOP** once, set the sweep back with `q ':TRIGger:SWEep AUTO'`, and move to the next arm. To move the probes: **unplug the board first**, then lift the tips and the ground, then go back to step 1.
 
 ## Pass table (UM10204, V_DD = 3.3 V)
 
+All rows come from the CSV, through `i2c_frame.py` (step 9). No limit here changed after V7R-002 S1.
+
 | Quantity | Pass | Note |
 |---|---|---|
-| V_OL, master-driven 0-bit | **≤ 0.4 V** (UM10204, at 3 mA sink) | **Estimate [own], not a pass band:** tens of mV, ≈ 35 mV at drive CAP_3, from the ESP32-S3 datasheet's typical I_OL (28 mA at 0.495 V). `v6-ref` runs the default drive, for which the datasheet gives no figure. **> 0.2 V on a working bus = investigate the setup [own heuristic].** |
+| V_OL, master-driven 0-bit | **≤ 0.4 V** (UM10204, at 3 mA sink) | Gate: the SCL-high part of the bit, shrunk by 10 % at each end. **Estimate [own], not a pass band:** tens of mV, ≈ 35 mV at drive CAP_3, from the ESP32-S3 datasheet's typical I_OL (28 mA at 0.495 V). `v6-ref` runs the default drive, for which the datasheet gives no figure. **> 0.2 V on a working bus = investigate the setup [own heuristic].** |
 | V_IL threshold | 0.3 V_DD = 0.99 V | reference only, not measured |
 | V_IH threshold | 0.7 V_DD = 2.31 V | reference only, not measured |
-| Idle high | **3.135 V to 3.465 V** (3.3 V ± 5 %) | same limit as step V7 |
-| Rise time, 30 → 70 % | **≤ 300 ns** at 400 kHz (`v6-ref` runs 400 kHz); ≤ 1000 ns at 100 kHz | from the CSV; the RTIMe panel value is a cross-check |
-| Decode | **`D6`** then ACK | the BQ24195 probe at boot |
+| Idle high | **3.135 V to 3.465 V** (3.3 V ± 5 %) | from 5 µs after the last edge; same limit as step V7 |
+| Rise time, 30 → 70 % | **≤ 300 ns** | Every SDA and SCL rising edge, 0.99 → 2.31 V. The reference frame runs at 100 kHz, but the Fast-mode (400 kHz) limit is kept: rise time is set by the pull-ups and the bus capacitance, not by the clock rate; the bus runs at 400 kHz once the firmware is running; and the v7 comparison is at 400 kHz. So the stricter limit is the one that matters. The panel RTIMe is recorded beside it, with no pass role |
+| Decode | **`D6`** then ACK | from the CSV bits (SDA at each SCL rising edge); the BQ24195 probe at start-up |
 
 The V_OL estimate and its limits are in *[facts: ESP32-S3 V_OL]*. The datasheet's V_OL max (0.33 V) is a no-load figure, so it is not a bound at our ≈ 2 mA. Don't quote 30–80 mV as an expectation; only the order of magnitude follows from the datasheet.
 
 ## Secondary reference (optional)
 
-A bench I²C bus, such as the Arduino Nano 33 IoT with any breakout, at 100 kHz. Same probes, same ground method, same settings. The rise-time limit there is ≤ 1000 ns.
+A bench I²C bus, such as the Arduino Nano 33 IoT with any breakout, at 100 kHz. Same probes, same ground method, same settings. The rise-time limit there is ≤ 1000 ns (UM10204 Standard mode). That limit is for this secondary reference only, not for the v6 reference.
 
 ## Recording
 
 - **One session log per arm**: S1 in `_s01`, S2 in `_s02`, each with its own `validation` block (`dho804-setup-validation.md`, "Closing the validation"). Pass the arm's log to `capture.py` with `--session`.
-- One log entry per arm, from `capture.py`. Fill `feature` (for example "SDA, master-driven 0-bit, address bit 3, flat region"), `raw_observation` (operator, verbatim), `channels.CH<n>.{probe, signal, point}` (for example `point: U5.6`), and the CSV-derived values with their `gate`.
+- One log entry per arm, from `capture.py`. Fill `feature` (for example "S2 reference frame, address trigger 0x6B write"), `raw_observation` (operator, verbatim), `channels.CH<n>.{probe, signal, point}` (for example `point: U5.6`), and paste the `values_csv` block from `i2c_frame.py` (each value carries its `gate`).
 - In the card: pass or fail per row of the pass table, citing the evidence files.
 - Set `validation.notes` in each arm's log to "V9 <card ID> pass" or "fail".

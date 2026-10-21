@@ -153,7 +153,7 @@
   - **V8** (PLAN §1, §2): the address trigger (`WHEN ADDR`, `AWIDth 7`, `ADDRess 107`, `DIRection WRITe`, sweep SING), each set and read back; 20 µs/div for V8, then back to 10 µs/div and read back; replug; CHECK on the scope screen's decode band: `Write:d6` then `A:0`. Stop rule: no `d6` after 3 replugs. Remove the START trigger and sweep NORM.
   - **V4:** one line that identical panel digits on CH1 and CH2 were seen in V7R-002 and are not a fail (PLAN §4).
   - **Every step:** a CHECK that must happen before a later action ends its step, and the action becomes the next step (PLAN §7).
-- [ ] `lab/procedures/known-good-reference.md`:
+- [x] `lab/procedures/known-good-reference.md`:
   - **Prerequisites and "Which transaction to capture"** (PLAN §1, §2): the 0x6B frames at 100 kHz; sensor init at 400 kHz after them, so the bus is not quiet; the boot-ROM UART on SDA; hence the address trigger and SINGLE. Remove "the bus goes quiet" and the "if it shows another address" retry.
   - **Step 2:** correct the record to −80…+80 µs at 16 ns per sample at 10 µs/div, and say the START falls just outside it while the edges, the 0-bits, the ACK and the idle level after the STOP are inside.
   - **Step 3:** the address trigger in place of START. The MAX/MIN 70/30 set is now verified.
