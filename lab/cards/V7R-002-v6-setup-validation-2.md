@@ -84,6 +84,8 @@ Pass table per `known-good-reference.md` (V_DD = 3.3 V). Evaluated per arm (S1, 
 
 - S1 V8b (decode menu by hand): fields before: "Bus type: I2C, Bus status: off, Clock: Ch2, SDA: Ch1, Format: Hex, SCL Thre: 0.00v (1), SDA Thre: 0.00v (2), Label: On, Exchange: SCL/SDA (other option is SDA/SCL), R/W: Without (other option is \"with\"), Event table: off, Copy trig (a button)". Path/changes: "Changed Bus status to on, set both \"SCL Thre\" and \"SDA Thre\" to 1.65V. The other ones were already correct." (menu reached via the lower-left function navigation icon → Decode → Decode 1, per instruction). Read-backs "1.650000E0 / 1.650000E0 / IIC / NORM". After replug (sweep NORM): "I see the decode band, and one label from it is \"in frame\" on the scope display. It says \"write 74\"". Session: with sweep NORM the screen holds the last START of the boot burst, not the first; R/W "Without" shows the 7-bit address, so the BQ write would read `6B`, not `D6`. Not yet a V8 pass/fail.
 
+- S1 V8c: "I went into the Decode screen, Decode 1 tab, and I set \"R/W\" to \"with\"". `:TRIGger:SWEep?` → "SING". After replug: "I don't think I see any decode band labels. There are tags over on the left of the scope screen saying \"B1\" and \"I2C\" but I'm not sure if they are the \"decode band\" per se." Display: "The usual \"Sensor init failed!\"". Then RUN/STOP pressed (per step). Whether the scope triggered: not reported.
+
 ### Measured values (from log; cite `lab/evidence/V7R-002/...`)
 ### Interpretation (session; labelled as such)
 
