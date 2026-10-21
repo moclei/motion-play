@@ -6,7 +6,7 @@ One initiative merging topic 4 (`docs/research/v7-retry/test-workflow-audit.md` 
 
 **Track 1: log-only ready (Phases 1–4).** This is everything a log-only debug card needs (`decisioning.md` §3.3): the baselines, the `lab/` containers and templates, the checker and hook that stop a Phase-25-style lost result, and the touch points that let debugger work run from the role draft (`docs/research/v7-retry/debugger-role-draft.md`) as ad-hoc sessions. The role is not installed in this initiative. At the end of Phase 4 the Orchestrator opens a PR and the user merges it to main with a **merge commit**. The debug track can then start as ad-hoc sessions off the draft (first debugger session transcribes `decisioning.md` §2 into STATE.md). The Orchestrator re-cuts `feat/test-workflow-setup` from the new main for Track 2.
 
-**Track 2: scope ready (Phases 5–9).** Verify the instrument facts, choose the capture tool, build the capture and ingest tooling, write the procedures, then run the v6 dry run. These phases touch only `tools/lab/`, `lab/procedures/`, `lab/templates/` and docs. The one exception is the Phase 9 dry-run card, which goes through the normal debugger lifecycle, so there is no conflict with a debug track running on main. Rebase onto main at the start of each Track 2 phase.
+**Track 2: scope ready (Phases 5–12).** Verify the instrument facts, choose the capture tool, build the capture and ingest tooling, write the procedures, then run the v6 dry run. These phases touch only `tools/lab/`, `lab/procedures/`, `lab/templates/` and docs. The one exception is the Phase 9 dry-run card, which goes through the normal debugger lifecycle, so there is no conflict with a debug track running on main. Rebase onto main at the start of each Track 2 phase.
 
 ```
 lab/                               # repo root (context-strategy §6.1)
@@ -33,7 +33,8 @@ tools/lab/                         # check_state.py, capture tool, ingest, valid
 | W4 | 6 | Bench: scope on the LAN, SCPI smoke tests, USB saves for comparison (§4.8 blocks) | All REPORT blocks returned |
 | W5 | 6→7 | **Decision gate:** build our own capture tool or adopt the third-party one, based on the Phase 5 + 6 findings | User decides |
 | W6 | 7 | Bench: one capture-tool acceptance capture vs USB | REPORT returned |
-| W7 | 9 | User runs the dry run as an ad-hoc debugger session off the draft, then a second fresh ad-hoc debugger session for the L0 test | User reports both sessions done |
+| W7 | 9 | User runs the dry run as an ad-hoc debugger session off the draft, then a second fresh ad-hoc debugger session for the L0 test | Done: V7R-001 void at V5 (4736a4a). The L0 test and the image-handoff report moved to W8 |
+| W8 | 12 | User runs the re-run (new card, V5–V9 at S1 and S2 on v6 with `v6-ref`) from `RELAY-v6-dry-run-2.md`, then the fresh-session L0 test | User reports both sessions done |
 
 Bench instructions for the user always use the `test-workflow-audit.md` §4.8 block: STEP / DO / CHECK / CAPTURE / REPORT / STOP IF, one step at a time. The Orchestrator writes them into SESSION.md and relays them. Workers do not talk to the bench.
 
@@ -332,6 +333,45 @@ v7, the closest GND-net pad to U5 (BQ24195) pin 5 (`/I2C_SCL`) and pin 6 (`/I2C_
   - v7: U3.40, an ESP32 module pad, is 1.19 mm away (not a practical clip point), and C9.1 (100 nF) is 3.05 mm away.
 - **Implication for §4.3:** C21.2 gives an identical 2.64 mm ground on both boards at the BQ end. That makes it the natural "same ground length" point for the U5 pin 5/6 arms, if the probe ground (spring or ≤ 10 mm wire) can land on a 0603 pad. Whether it can **needs bench** (not tested in Phase 6; the springs fit the probes, W4 S8b).
 
+### After V7R-001: setup-validation and reference changes
+
+Source: card V7R-001 (`lab/cards/V7R-001-v6-setup-validation.md`, recorded at `4736a4a`), its log `lab/log/2026-10-20_s01.yaml`, evidence `lab/evidence/V7R-001/`, and SESSION.md "W7". V1–V4 passed; V5 failed at S1; V6 was recorded; V7–V9 were not run.
+
+**1. V5 measures the noise the board and ground add, not the scope's own floor.**
+- **Finding.** At the reference settings (0.5 V/div, −1.65 V offset, BW OFF, 10 µs/div, 10 kpts, two channels on, so 16 ns per sample), the no-board control (tips and springs on the scope's Cal ground) read panel Vpp 21.9 / 21.9 mV. That is above the old ≤ 20 mV **[own]** limit, so V5 could not tell a good ground from a bad one. CSV sd, CH1 / CH2: control 4.97 / 4.77 mV; S1 board unpowered 4.99 / 4.71 mV; S1 board powered 5.17 / 4.72 mV (planner check of the three `val_V5_0n.csv` files).
+- **Vpp is the wrong statistic.** It is an extreme value, so it is unstable. For the same capture the panel Vpp (25.8 mV) and the CSV max − min (32.7 mV) also differ, cause not checked. V5 uses the sd of the CSV samples instead.
+- **V5's purpose** (`test-workflow-audit.md` §2.2, "Long ground lead"): catch loop pickup from the switching charger, which rides on every level as a noise band. Independent noise sources add in quadrature, so the noise the board and ground path add is **excess = √(max(0, sd_DUT² − sd_ctl²))**, per channel.
+- **New V5, per arm, at the card's channel settings, in the same session:**
+  - **V5a, control:** tips and springs on the scope's Cal ground terminal, off the board. Arm `val_V5ctl`.
+  - **V5b, DUT:** tip and ground on the arm's ground point (as before), board powered and running. Arm `val_V5`.
+  - `tools/lab/noise_floor.py --ctl <csv> --dut <csv>` prints per channel mean, sd, max − min and excess (mV), and a `validation.V5` snippet. It refuses when the sample interval or point count differ, and warns when the smallest level step differs (a sign of a different V/div).
+  - **Pass: excess ≤ 5 mV rms on each channel [own].** Rationale: a sinusoidal pickup of 5 mV rms is 14 mV peak to peak, below the 20 mV V_OL difference that the audit's example predictions resolve (`test-workflow-audit.md` §4.7). The limit comes from that 20 mV, not from the W7 data. For information only, the W7 S1 data give ≈ 1.4 / 0 mV.
+  - **Scope sanity [own]:** at the V7R-001 reference settings, a control sd outside 2.5–10 mV (half to double V7R-001's ≈ 5 mV) means stop and investigate the scope and probes. At other settings the control is recorded only.
+  - **Record:** `validation.V5: {ctl_sd_mV, dut_sd_mV, excess_rms_mV, offset_mV}`, each a per-channel map; optional `vpp_panel_mV`. `offset_mV` is the control mean (V7R-001: −10.4 / −14.1 mV).
+  - **Offset use:** `known-good-reference.md` step 7 records V_OL as measured and cites that channel's V5 offset beside it. It does not subtract it. The 0.4 V pass limit is far away, but the ≈ 35 mV estimate is the same order as the offset, so the record matters.
+- **Unchanged:** BW limit stays OFF in the reference settings; V5 still runs per arm, because the ground point differs between arms.
+- **User confirmation pending** (Open Questions): this changes a pass rule after a failure.
+
+**2. S1 ground on v6: the soldered wire is the v6 reference ground.**
+- Pad C on v6 (U2.14) is a through-hole header hole filled by the T-Display's soldered pin. No probe-mounted ≤ 10 mm wire was practical. The user soldered a ~10 mm solid-core wire (26–28 AWG) to C's top-side solder mound, and the springs touch it ~8–9 mm from C. GND net only, removable.
+- The v6 reference keeps that wire. Cards on v6 state it in `hardware_config` as a board mod. V6 records `{method: wire, point: U2.14, length_mm: <spring-to-pad distance>}`.
+- **What the same-ground rule means for v7 at S1 (pad C = C9.1) is a user decision** (Open Questions). Every option leaves the v6 re-run the same, so only the procedure wording waits on it.
+
+**3. Restart for the reference frame: unplug and replug the main-board USB-C.**
+- On `v6-ref` with no sensor PCB, `setup()` halts at "Sensor init failed!" (`firmware/src/main.cpp` @ `4da1c67`, l.463–464, `while (1)`). The RIGHT button is read only in `loop()` (l.1434–1440), so pressing RIGHT does nothing. `configureBQ24195()` runs earlier in `setup()` (l.123), so every power-up sends the `D6` frame and then the bus goes quiet. That makes the SINGLE trigger clean.
+- The procedure restarts the board by unplugging and replugging the main-board USB-C (power), with the probes left in place. It runs without a sensor PCB, because with one fitted `loop()` runs and the bus carries TCA/VCNL traffic. The T-Display's own reset button is an untested alternative and is not written into the procedure.
+
+**4. v6 power and flash path (as used in W7).**
+- **Power:** a mains USB-C charger into the main-board USB-C. **Flash and serial:** a data-only cable from the Mac to the T-Display USB-C. The user reports it passes no power (W7, step F). The ESP32 port (`/dev/cu.usbmodem…`) enumerated only once the main board was powered.
+- "Unplug the board" in both procedures means: the main-board USB-C out and no battery. The data-only cable may stay in. Whether it is in is recorded in `validation.notes`, because it may still join the Mac's ground to the board (not checked for this cable).
+- Each re-run card re-flashes `v6-ref` at its start. The boot screen ("Sensor init failed") looks the same under any firmware without a sensor PCB, so it can't confirm which build is on the board.
+
+**5. Tool gaps.**
+- **"Not run":** `validate_log.py` accepts `not_run: "<reason>"` as the value of any `validation.V<n>` item, only when `validation.passed` is false. It is then neither a TODO nor an error. With `passed: true` it is an ERROR.
+- **Legacy V5:** a log that has only `V5_noise_floor_mVpp` (V7R-001) gets a WARNING, not an error, so committed logs stay valid unedited.
+- **Channel drift:** `capture.py` compares each capture's channels with the most recent earlier entry that has the same `--arm`, not with the session's first capture. With no earlier entry for that arm, there is no drift check. The validation skeleton writes the new V5 block.
+- **One log per arm:** a card that runs S1 and S2 uses one session log per arm (`_s01` for S1, `_s02` for S2). Each log gets its own `validation` block. V1–V4 are run once at the session start and recorded in the first log. The second log records a fresh V2 read-back and puts "V1, V3, V4: see `<first log>`" in `validation.notes`. The validator needs no change for this (it requires V2, V5, V6, V7 only).
+
 ## Rejected Approaches
 - A separate context-scaffolding initiative: both topics build `lab/`, and one dry run validates both (decisioning §3.1).
 - A Claude Code hook for the STATE rule: it isn't versioned (`.claude/*` is gitignored) and only fires inside Claude; git `core.hooksPath` only (user, 2026-10-18).
@@ -343,6 +383,10 @@ v7, the closest GND-net pad to U5 (BQ24195) pin 5 (`/I2C_SCL`) and pin 6 (`/I2C_
 - Squash-merging initiative PRs: it would orphan the baseline tags.
 - Installing the debugger role inside this initiative: the draft needs more user review and must not block. Ad-hoc sessions run off the draft instead, and the install is tracked in TASKS.md Deferred (user, W1 outcome).
 - Adopting `mattjax16/rigol-dho-mcp` as the capture tool as-is: untested on 00.01.05 (the S9 smoke test was not run), writes no files, has no setup pull and no I²C configuration; we build `capture.py` and vendor only its MIT `ScpiClient` (user, W5).
+- Raising the V5 Vpp limit until the W7 reading passes: it would still measure the scope, not the ground, and it is a limit fitted to a failed reading (Planner, after V7R-001).
+- Turning the 20 MHz BW limit on for the reference settings to get V5 under 20 mV: the effect is not measured on our scope, and it is not needed once V5 measures the excess over a control (Planner, after V7R-001).
+- A gated mean as the V5 metric: V5 checks pickup on every level, and the V_OL gate already averages broadband noise (Planner, after V7R-001).
+- Pressing RIGHT to restart `v6-ref` for the reference frame: with no sensor PCB, `setup()` halts before `loop()` reads the button (V7R-001).
 
 ## Open Questions
 - ~~Phasing: role and containers before scope tooling?~~ Yes, with a milestone merge after Phase 4 (user, 2026-10-18).
@@ -356,3 +400,5 @@ v7, the closest GND-net pad to U5 (BQ24195) pin 5 (`/I2C_SCL`) and pin 6 (`/I2C_
 - ~~`Result commit` self-reference convention~~ → literal `self` for both `prereg_commit` and `Result commit`, resolved from git (Phase 3, 2026-10-19).
 - ~~**`:SAVE:SETup` fails silently on 00.01.05** (W4 S7, S7b): what does the capture tool save as the setup file?~~ → the `:SYSTem:SETup?` binary blob over the LAN, and the log entry records the readable settings from the S4 queries; no per-capture menu save (user, W4b, 2026-10-20: "Let's go with option a").
 - ~~**LAN CSV ≠ USB CSV for the same capture** (Phase 6 comparison; screen data, 145/1 000 equal)~~ → compare memory data instead. The LAN RAW pull matches the menu memory CSV 10 000/10 000 (W4b S10/S10b). The capture tool writes RAW memory data, and W6 compares against a menu memory CSV (Verified instrument facts, LAN-vs-USB comparison). `:SAVE:MEMory:WAVeform` fails silently on 00.01.05 (W4b S10), so the memory CSV for W6 is a menu save; nothing in the tool depends on it.
+- **V5 rule change (user to confirm).** V5 changes from "total noise ≤ 20 mV Vpp" to "the board and ground add ≤ 5 mV rms over a no-board control at the same settings" (Technical Notes, "After V7R-001" §1). Because this changes a pass rule after a failure, the user confirms it before the procedure is edited (gates Phase 11).
+- **S1 ground on v7 (user decision).** v6 keeps the soldered ~10 mm wire at pad C. For v7 at S1, the procedure says one of: (a) solder a matching ~10 mm wire to C9.1 in a later debug card; (b) use a spring straight on C9.1, record the ground as unequal, and accept it only when V5 passes on both boards; (c) make no v6/v7 comparison at S1, only at S2 (identical 2.64 mm pad F on both). Planner recommends (b). Gates Phase 11.
