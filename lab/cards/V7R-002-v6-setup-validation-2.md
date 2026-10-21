@@ -91,6 +91,9 @@ Pass table per `known-good-reference.md` (V_DD = 3.3 V). Evaluated per arm (S1, 
 
 - Decision (user, 2026-10-21): continue with an I²C address trigger (0x6B, write, SINGLE, replug) for V8 and V9 at S1 and S2, in place of the procedure's START trigger. Deviation from dho804-setup-validation.md V8 step 2 and known-good-reference.md steps 3/5; pass limits unchanged. Planner follow-up.
 
+- S1 V8e (address trigger): read-backs "IIC / ADDR / 7 / 107 / WRIT / 0,\"No error\""; menu labels: "None"; status: "STOP"; decode: "Still just \"B1\" and \"I2C\" at the left edge of the scope display". capture.py: wrote `2026-10-21_V7R-002_val_V8_02.{png,csv,setup.bin}`; "The scope is left STOPPED."
+- Session (CSV val_V8_02): SCL period ≈ 10 µs (rising edges −69.98 … +10.02 µs, 10.00 µs apart). SDA sampled at the 9 SCL rising edges −69.98 … +10.02 µs: 1 1 0 1 0 1 1 0 | 0 (= byte D6, then 9th-clock low). No START in the record (first SCL edge is falling, at −75.04 µs; record −80 … +80 µs). Scope decode band shows no labels.
+
 ### Measured values (from log; cite `lab/evidence/V7R-002/...`)
 ### Interpretation (session; labelled as such)
 

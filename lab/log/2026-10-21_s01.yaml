@@ -266,3 +266,44 @@ measurements:
       preamble: {CH1: "2,2,10000,1,1.600000E-8,-8.000000E-5,0.000000,6.6667E-05,-24750,32768", CH2: "2,2,10000,1,1.600000E-8,-8.000000E-5,0.000000,6.6667E-05,-24750,32768"}
     scope_clock: {set_to: "2026-10-21T13:22:45", read_back: "2026-10-21 13:22:45", ok: true, delta_s: 0.0}
     scpi_errors: []
+  - test_id: "V7R-002"
+    arm: "val_V8"
+    time: "2026-10-21T14:05:53"
+    trigger: {type: "IIC", sweep: "NORM", when: "ADDR", scl: "CHAN2", sda: "CHAN1", address: "107", direction: "WRIT", awidth: "7", clevel_V: 1.5, dlevel_V: 1.5}
+    timebase_s_div: 1.0e-05
+    method: "auto"
+    feature: "V8 S1: single trigger, IIC address 0x6B write (7-bit), after replug (SDA pad A, SCL pad B)"
+    values:
+      - {name: "VPP", ch: "CH1", value_mV: 3388.1, raw: "3.3881E+00"}
+      - {name: "VPP", ch: "CH2", value_mV: 3927.3, raw: "3.9273E+00"}
+    captures: ["2026-10-21_V7R-002_val_V8_02.png", "2026-10-21_V7R-002_val_V8_02.csv", "2026-10-21_V7R-002_val_V8_02.setup.bin"]
+    raw_observation: "Trigger read-backs: IIC ADDR 7 107 WRIT 0,\"No error\". Status badge is \"STOP\". Decode: Still just \"B1\" and \"I2C\" at the left edge of the scope display"
+    values_csv:
+      - {name: SCL_edges_1p65V, ch: CH2, value: "F -75.04, R -69.98, F -65.04, R -59.98, F -55.04, R -49.98, F -45.04, R -39.98, F -35.04, R -29.98, F -25.04, R -19.98, F -15.06, R -9.98, F -5.06, R 0.02, F 4.94, R 10.02, F 14.94, R 22.99 us", gate: "full record -80..+80 us"}
+      - {name: SDA_edges_1p65V, ch: CH1, value: "R -73.74, F -53.82, R -43.74, F -33.82, R -23.74, F -3.82, R 15.17, F 19.15, R 30.43 us", gate: "full record"}
+      - {name: SDA_at_SCL_rising, ch: CH1, value: "1 1 0 1 0 1 1 0 | 0 (9th clock)", gate: "SCL rising -69.98..+10.02 us"}
+    ai_read:
+      - capture: 2026-10-21_V7R-002_val_V8_02.png
+        settings_seen: {CH1_v_div: 500.00mV, CH1_offset: -1.65V, CH2_v_div: 500.00mV, CH2_offset: -1.65V, timebase: 10.00us/div, srate: 62.50MSa/s, mdepth: 10.00kpts, trigger: "I2C on CH1, 1.50V, N", status: STOP, bus: "B1 I2C"}
+        values_seen: {CH1_Vamp_V: 3.2426, CH1_Vtop_V: 3.2969, CH1_Vbase_mV: 54.266, CH1_Vpp_V: 3.3881, CH2_Vamp_V: 3.2000, CH2_Vpp_V: 3.9273}
+        notes: "SCL clocking with ~10 us period across the screen; SDA changes while SCL low. Decode band B1 I2C shows no byte labels. First SCL edge in the record is a falling edge at -75 us; no START visible in the record. Ringing on CH2 near +30 us."
+        mismatch: none
+    source: "tools/lab/capture.py"
+    scope_settings:
+      channels:
+        CH1: {probe: "10", bw_limit: "OFF", scale: "5.000000E-01", offset: "-1.650000E+00", coupling: "DC", invert: "0", units: "VOLT"}
+        CH2: {probe: "10", bw_limit: "OFF", scale: "5.000000E-01", offset: "-1.650000E+00", coupling: "DC", invert: "0", units: "VOLT"}
+      timebase: {scale: "1.000000E-5", offset: "0.000000", mode: "MAIN"}
+      acquire: {srate: "6.250000E+7", mdepth: "1.0000E+04", type: "NORM"}
+      trigger: {mode: "IIC", sweep: "NORM", when: "ADDR", clevel: "1.500000E0", scl: "CHAN2", sda: "CHAN1", dlevel: "1.500000E0", awidth: "7", address: "107", direction: "WRIT"}
+      bus1: {mode: "IIC", scl_source: "CHAN2", sda_source: "CHAN1", address: "RW", threshold_sda: "1.650000E0", threshold_scl: "1.650000E0"}
+      measure: {threshold_type: "PERC", max_pct: "9.000000E+01", mid_pct: "5.000000E+01", min_pct: "1.000000E+01", amsource: "OFF"}
+      trigger_status: {before: "STOP", after_stop: "STOP"}
+    waveform:
+      mode: "RAW"
+      format: "ASCii"
+      points: 10000
+      read: "single"
+      preamble: {CH1: "2,2,10000,1,1.600000E-8,-8.000000E-5,0.000000,6.6667E-05,-24750,32768", CH2: "2,2,10000,1,1.600000E-8,-8.000000E-5,0.000000,6.6667E-05,-24750,32768"}
+    scope_clock: {set_to: "2026-10-21T14:05:53", read_back: "2026-10-21 14:05:53", ok: true, delta_s: 0.0}
+    scpi_errors: []
