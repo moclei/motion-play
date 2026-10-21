@@ -19,6 +19,10 @@ docs/initiatives/test-workflow-setup/PLAN.md "Verified instrument facts"):
      as `valid: false`, never as a number.
   8. Writes lab/captures/<ID>/YYYY-MM-DD_<ID>_<arm>_<nn>.{png,csv,setup.bin} (test-workflow-audit §4.4)
      and appends one measurement entry to the session log, with operator-only fields as TODO.
+  9. Compares the channel settings with the most recent earlier entry in the session log that has
+     the same --arm (its scope_settings) and prints a NOTE on any difference (`channel_drift` in the
+     entry). No earlier entry for that arm means no check: arms may differ (e.g. val_V3 at Cal
+     settings, val_V5 at the card's settings).
 
 It never sends `:SAVE:SETup`, `:SAVE:MEMory:...` or `:SAVE:STATus?` (they fail silently on 00.01.05).
 Nothing is written to disk until every query has succeeded.
@@ -477,7 +481,8 @@ def new_session(stem, cap, setup_name):
             "passed": TODO,
             "V2_probe_ratio": {n: "%s/TODO" % ratio_str(c["probe"]) for n, c in cap["settings"]["channels"].items()},
             "V3_comp_png": TODO,
-            "V5_noise_floor_mVpp": TODO,
+            "V5": {k: {n: TODO for n in cap["settings"]["channels"]}
+                   for k in ("ctl_sd_mV", "dut_sd_mV", "excess_rms_mV", "offset_mV")},
             "V6_ground": {"method": TODO, "point": TODO, "length_mm": TODO},
             "V7_idle_high_V": {n: TODO for n in cap["settings"]["channels"]},
             "V8_decode_ok": TODO,
@@ -487,7 +492,21 @@ def new_session(stem, cap, setup_name):
     }
 
 
-def measurement_entry(args, cap, names, session_channels, now):
+def last_arm_channels(sdata, arm):
+    """channels_block of the most recent earlier entry with this arm that carries scope_settings
+    (written by this tool), or None when there is none."""
+    for m in reversed((sdata or {}).get("measurements") or []):
+        if isinstance(m, dict) and m.get("arm") == arm:
+            ss = m.get("scope_settings")
+            if isinstance(ss, dict) and isinstance(ss.get("channels"), dict):
+                try:
+                    return channels_block({"channels": ss["channels"]})
+                except (KeyError, TypeError):
+                    return None
+    return None
+
+
+def measurement_entry(args, cap, names, earlier_channels, now):
     s = cap["settings"]
     tb = num(s["timebase"]["scale"])
     entry = {
@@ -518,15 +537,15 @@ def measurement_entry(args, cap, names, session_channels, now):
         "scpi_errors": cap["errors"],
     }
     drift = []
-    if session_channels:
+    if earlier_channels:
         for name, cur in channels_block(s).items():
-            old = session_channels.get(name)
+            old = earlier_channels.get(name)
             if not isinstance(old, dict):
-                drift.append("%s not in the session channels block" % name)
+                drift.append("%s not in the earlier %s entry" % (name, args.arm))
                 continue
             for k in ("ratio", "bw_limit", "v_div_V", "offset_V", "coupling"):
                 if k in old and str(old[k]) != str(cur[k]):
-                    drift.append("%s.%s: session %s, scope %s" % (name, k, old[k], cur[k]))
+                    drift.append("%s.%s: earlier %s entry %s, scope %s" % (name, k, args.arm, old[k], cur[k]))
     if drift:
         entry["channel_drift"] = drift
     return entry
@@ -584,14 +603,14 @@ def write_outputs(root, args, cap, now):
         sdata = yaml.safe_load(session.read_text(encoding="utf-8")) or {}
         if sdata.get("kind") == "log-only":
             raise Refused("%s is a log-only session; captures need kind: scope" % session)
-        sess_channels = sdata.get("channels") or {}
+        earlier = last_arm_channels(sdata, args.arm)
     else:
-        sess_channels = None
+        earlier = None
 
     for name, data in files.items():
         (cap_dir / name).write_bytes(data)
     names = list(files)
-    entry = measurement_entry(args, cap, names, sess_channels, now)
+    entry = measurement_entry(args, cap, names, earlier, now)
     if session.exists():
         append_measurement(session, entry)
     else:
@@ -668,7 +687,7 @@ def main(argv=None):
     if cap["errors"]:
         print("  NOTE: SCPI errors recorded in the entry: %s" % cap["errors"])
     if entry.get("channel_drift"):
-        print("  NOTE: channel settings differ from the session block: %s" % "; ".join(entry["channel_drift"]))
+        print("  NOTE: channel settings differ from the last %s entry: %s" % (args.arm, "; ".join(entry["channel_drift"])))
     print("  The scope is left STOPPED.")
     return 0
 

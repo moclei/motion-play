@@ -118,6 +118,37 @@ def capture_tests(tmp):
           rc == 0 and (cap / "2026-11-04_V7R-012_A1_02.png").exists() and len(data["measurements"]) == 2
           and log.read_text().startswith("# operator comment kept"), out)
 
+    # 2a. channel drift is checked per arm: against the last entry with the same --arm only
+    root = tmp / "c_drift"
+    (root / "lab" / "log").mkdir(parents=True)
+
+    def at_vdiv(arm, vdiv):
+        f = FakeScope()
+        f.table[":CHANNEL1:SCALE?"] = vdiv
+        rc, out = run_capture(root, f, "--arm", arm)
+        f.close()
+        return rc, out
+    rc1, out1 = at_vdiv("val_V3", "1.000000E+00")
+    rc2, out2 = at_vdiv("val_V5", "5.000000E-01")
+    check("capture: two arms at different V/div -> no drift NOTE",
+          rc1 == 0 and rc2 == 0 and "NOTE: channel settings" not in out1 + out2, out1 + out2)
+    rc3, out3 = at_vdiv("val_V5", "2.000000E-01")
+    check("capture: same arm with a changed V/div -> drift NOTE naming v_div_V",
+          rc3 == 0 and "NOTE: channel settings differ from the last val_V5 entry" in out3
+          and "CH1.v_div_V" in out3 and "0.5" in out3 and "0.2" in out3, out3)
+    d = yaml.safe_load((root / "lab" / "log" / "2026-11-04_s01.yaml").read_text())
+    ms = d["measurements"]
+    check("capture: channel_drift recorded only on the changed same-arm entry",
+          [("channel_drift" in m) for m in ms] == [False, False, True], [m.get("channel_drift") for m in ms])
+    v5 = d["validation"].get("V5")
+    check("capture: validation skeleton writes the V5 block as per-channel TODOs, no legacy key",
+          v5 == {k: {"CH1": "TODO"} for k in ("ctl_sd_mV", "dut_sd_mV", "excess_rms_mV", "offset_mV")}
+          and "V5_noise_floor_mVpp" not in d["validation"], d["validation"])
+    rep = validate_log.validate_text((root / "lab" / "log" / "2026-11-04_s01.yaml").read_text(), "2026-11-04_s01")
+    check("capture: skeleton V5 TODOs are pending in the validator, no error or legacy warning",
+          not rep.errors and "validation.V5.excess_rms_mV.CH1" in rep.todos
+          and not any("legacy" in w for w in rep.warnings), rep.errors + rep.warnings)
+
     # 2b. connect failure: our message (--host/$DHO_HOST, Local Network hint), not the vendored one
     import socket
     s = socket.socket()
