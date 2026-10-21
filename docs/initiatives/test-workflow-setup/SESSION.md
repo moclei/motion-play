@@ -2384,3 +2384,23 @@ exit 0
   - D6 + ACK, period 10.00 µs
 - **PLAN:** unchanged; the change is the one §6 specifies. Nothing new for Rejected Approaches or Deferred.
 - **Untouched:** lab/cards, lab/log, lab/evidence, lab/STATE.md and the procedures.
+
+#### Result
+| # | Phase | Result | Escalation evaluated? | Commit | Notes |
+|---|-------|--------|-----------------------|--------|-------|
+| 17 | Phase 13 rework | DONE | No — clean completion | e1d49ab | idle high 5 µs margin; revised acceptance met in every part |
+
+#### Verification
+- Commits a427a66..e1d49ab. The tree is clean. Only the tool, the tests, tools/CONTEXT.md, TASKS and SESSION were touched. `run_tests.py`: OK.
+- Orchestrator re-run on S1_01: idle high 3302.7 / 3292.9 mV over +35.44…+79.98 µs. That is within 3 mV of the hand values 3302.5 / 3292.9. Phase 13 has no open tasks.
+- Carry to Phase 16: the S1_01 values at the method gates, with tool commit a427a66, are in Worker #17's Notes.
+
+---
+
+### Worker #18 — Phase 14: Procedure revision
+
+**Dispatch:** standard template. Additional reading:
+- PLAN "After V7R-002 S1" §1–§8;
+- SESSION "### W8" (the friction notes) and "### Worker #15" Notes.
+
+Phase-specific note: plain language for the user at the bench.
