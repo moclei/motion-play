@@ -2485,3 +2485,23 @@ Phase-specific note: plain language; cite the new KGR step numbers; the relay sa
   - Named on purpose as not existing: `2026-10-21_s02.yaml`, the card's Setup-line name, cited as the one that differs.
   - `lab/evidence/V7R-002/` is not named in the paste text, because it doesn't exist until the close. The paste text says "`lab/evidence/` under the card ID".
 - **PLAN:** unchanged. Nothing for Rejected Approaches or Deferred.
+
+#### Result
+| # | Phase | Result | Escalation evaluated? | Commit | Notes |
+|---|-------|--------|-----------------------|--------|-------|
+| 19 | Phase 15: S2 relay | DONE | No — clean completion | f99196a | RELAY-v6-dry-run-2-s2.md (c55877a); 14 paths checked |
+
+#### Verification
+- Commits c55877a and f99196a; the tree is clean. Only the relay, TASKS and SESSION changed.
+- Re-derived:
+  - `git log -1 --format=%h -- lab/procedures` gives 16c1ed1.
+  - `check_state.py --now 2026-10-29` gives a LOST-RESULT warning, and `--now 2026-11-05` gives CHECKPOINT-DUE. The relay's "before 2026-11-05" is correct.
+- The Orchestrator read the full relay. It covers every item in the Phase 15 task.
+- The Worker's call that LOST-RESULT is not a stop is accepted. The role draft's start-up stops only on STALE or CHECKPOINT DUE (debugger-role-draft.md L16), and the card is legitimately in `run` waiting for S2.
+- Carry to the Phase 16 verification: the S2 log will be `<date>_s01.yaml` (capture.py naming), not `_s02`.
+
+---
+
+### W8 part 2 — Phase 16: v6 re-run S2 + close V7R-002 (user bench session)
+
+**Dispatch:** user bench session via `RELAY-v6-dry-run-2-s2.md` (c55877a). Run before 2026-11-05.
