@@ -349,10 +349,10 @@ def wave(start, steps, rise):
     return out
 
 
-def frame(byte, ack=True, start_in_record=True):
+def frame(byte, ack=True, start_in_record=True, stop_us=30):
     """SDA/SCL steps for one address byte + 9th bit + STOP at 100 kHz. Bit k: SDA set at
     -73 + 10k us, SCL high -70 + 10k .. -65 + 10k us. STOP: SDA low at +17, SCL up at +23,
-    SDA up at +30 us. Master-driven lows at SDA_LO, the ACK low at ACK_LO."""
+    SDA up at +stop_us (default +30) us. Master-driven lows at SDA_LO, the ACK low at ACK_LO."""
     sda = [((-78e-6 if start_in_record else -85e-6), SDA_LO)]
     scl = [(-75e-6, SCL_LO)]
     bits = [(byte >> (7 - k)) & 1 for k in range(8)] + [0 if ack else 1]
@@ -360,7 +360,7 @@ def frame(byte, ack=True, start_in_record=True):
         lo = ACK_LO if k == 8 else SDA_LO
         sda.append(((-73 + 10 * k) * 1e-6, SDA_HI if b else lo))
         scl += [((-70 + 10 * k) * 1e-6, SCL_HI), ((-65 + 10 * k) * 1e-6, SCL_LO)]
-    sda += [(17e-6, SDA_LO), (30e-6, SDA_HI)]
+    sda += [(17e-6, SDA_LO), (stop_us * 1e-6, SDA_HI)]
     scl += [(23e-6, SCL_HI)]
     s = wave(SDA_HI, sda, SDA_RAMP)
     c = wave(SCL_HI, scl, SCL_RAMP)
@@ -403,6 +403,8 @@ def i2c_frame_tests(tmp):
         scl_t = [float(x) for x in rise["CH2"]["gate"].split("(")[1].split(" us")[0].split(",")]
         sda_t = [float(x) for x in rise["CH1"]["gate"].split("(")[1].split(" us")[0].split(",")]
         idle = {e["ch"]: e["value_mV"] for e in by["idle_high"]}
+        idle_g = by["idle_high"][0]["gate"]
+        idle_t0 = float(idle_g.split("t=")[1].split("..")[0])
         ok = (rc == 0 and "START at -77.99 us" in out and "-> D6, 9th bit low (ACK)" in out
               and "frame PASS" in out
               and by["SCL_period"][0]["value_us"] == 10.0
@@ -417,17 +419,29 @@ def i2c_frame_tests(tmp):
               and [e["gate"].split(",")[0] for e in vol] == ["address bit 5", "address bit 3", "R/W bit 0"]
               and all(e["value_mV"] == 60.0 and "sd 0.0 mV" in e["gate"] for e in vol)
               and all(240 <= int(e["gate"].split("n=")[1].split(",")[0]) <= 252 for e in vol)
-              # idle after the last edge: within 0.5 mV (the gate starts past 0.7 V_DD, so it
-              # holds the last ~60 ns of the SDA ramp)
-              and near(idle["CH1"], 3300.0, 0.5) and near(idle["CH2"], 3290.0, 0.5))
+              # idle from 5 us after the last edge (the STOP's SDA 1.65 V crossing): the window
+              # starts at +30 + sda_mid + 5 us (+-0.02), past the ramp, so the levels are exact
+              and idle_g.startswith("from 5 us after the last edge, t=")
+              and near(idle_t0, 35 + sda_mid_us, 0.02)
+              and "PASS  Idle high     CH1  3.3000 V (from 5 us after the last edge)" in out
+              and near(idle["CH1"], 3300.0, 0.05) and near(idle["CH2"], 3290.0, 0.05))
     except (ValueError, KeyError, IndexError, TypeError) as e:
         ok, out = False, "%r\n%s" % (e, out)
     check("i2c_frame: synthetic D6+ACK frame -> byte, ACK, period 10 us, rise %.1f/%.1f ns (+-0.2), "
-          "edge times (+-0.02 us), V_OL 60.0 mV x3 (ACK excluded), idle 3300/3290 mV (+-0.5), exit 0"
+          "edge times (+-0.02 us), V_OL 60.0 mV x3 (ACK excluded), idle from 5 us after the last edge "
+          "(start +-0.02 us) 3300.0/3290.0 mV, exit 0"
           % (sda_rise, scl_rise), ok, out)
     v = values_csv(out) if "values_csv" in out else []
     check("i2c_frame: frame snippet entries all carry a gate",
           bool(v) and all("gate" in e for e in v), out)
+
+    # STOP's SDA rise at +72 us: 8 us of record after the last edge, but < 5 us after the margin
+    f = write_csv(tmp / "late_stop.csv", frame(0xD6, stop_us=72))
+    rc, out = run(tool + [str(f), "--expect", "D6"])
+    check("i2c_frame: last edge at +72 us (< 5 us left after the 5 us margin) -> idle high n/a, exit 0",
+          rc == 0 and "n/a   Idle high     -    not reported (< 5 us of samples from 5 us after the last edge)" in out
+          and "idle high: not reported (last edge at +72.1" in out and "idle_high" not in out
+          and "frame PASS" in out, out)
 
     f = write_csv(tmp / "idle.csv", {"CH1": [SDA_HI + (0.002 if i % 2 else -0.002) for i in range(NPTS)],
                                      "CH2": [SCL_HI] * NPTS})

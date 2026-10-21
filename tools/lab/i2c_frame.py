@@ -24,8 +24,10 @@ Frame mode (otherwise):
   - V_OL: SDA mean on each master-driven 0-bit of the address byte (the ACK excluded),
     gated on that bit's SCL-high interval shrunk by 10 % at each end; n and sd (n - 1) in
     the gate.
-  - idle high: per channel mean of the samples after the last edge on either channel, when
-    at least 5 us of samples remain; else not reported (and that row not evaluated).
+  - idle high: per channel mean of the samples from 5 us after the last edge (its 0.5 V_DD
+    crossing, on either channel) to the record end, when at least 5 us of samples remain
+    after that margin; else not reported (and that row not evaluated). PLAN §6: 5 us is
+    UM10204's t_BUF (4.7 us, Standard mode) rounded up.
   - a `values_csv` snippet with gates, in the style of lab/log/2026-10-21_s01.yaml.
 
 Pass/fail per row of the known-good-reference.md pass table (limits copied below; that file
@@ -51,6 +53,7 @@ VOL_INVESTIGATE_V = 0.2          # REF: "> 0.2 V on a working bus = investigate 
 IDLE_LO_V, IDLE_HI_V = 3.135, 3.465
 RISE_MAX_NS = 300.0              # Fast mode; kept for the 100 kHz reference frame (PLAN "After V7R-002 S1" §2)
 IDLE_MIN_S = 5e-6
+IDLE_MARGIN_S = 5e-6           # settle margin after the last edge (PLAN "After V7R-002 S1" §6)
 GATE_SHRINK = 0.10
 
 
@@ -213,8 +216,8 @@ def analyse(path, args):
             continue
         vol.append(dict(stats(xs), name=name, g0=g0, g1=g1))
     res["vol"] = vol
-    last = max(e["end"] for e in e_sda + e_scl)
-    after = [i for i, tt in enumerate(t) if tt > last]
+    last = max(e["t"] for e in e_sda + e_scl)
+    after = [i for i, tt in enumerate(t) if tt >= last + IDLE_MARGIN_S]
     res["idle_after"] = None
     if after and t[-1] - t[after[0]] >= IDLE_MIN_S:
         res["idle_after"] = {"g0": t[after[0]], "g1": t[-1], "ch": [
@@ -230,10 +233,10 @@ def analyse(path, args):
                          "<= %.1f V" % VOL_MAX_V, v["mean"] <= VOL_MAX_V))
     if res["idle_after"]:
         for ch, s in res["idle_after"]["ch"]:
-            rows.append(("Idle high", ch, "%.4f V (after the last edge)" % s["mean"],
+            rows.append(("Idle high", ch, "%.4f V (from 5 us after the last edge)" % s["mean"],
                          "%.3f-%.3f V" % (IDLE_LO_V, IDLE_HI_V), IDLE_LO_V <= s["mean"] <= IDLE_HI_V))
     else:
-        rows.append(("Idle high", "-", "not reported (< 5 us of samples after the last edge)",
+        rows.append(("Idle high", "-", "not reported (< 5 us of samples from 5 us after the last edge)",
                      "%.3f-%.3f V" % (IDLE_LO_V, IDLE_HI_V), None))
     for ch, es in res["rise"].items():
         if es:
@@ -289,7 +292,7 @@ def report(res, args):
                 p("  idle high %s: %.1f mV, t=%s..%s us, n=%d, sd %.2f mV" % (
                     ch, s["mean"] * 1e3, us(ia["g0"]), us(ia["g1"]), s["n"], s["sd"] * 1e3))
         else:
-            p("  idle high: not reported (last edge ends at %s us; fewer than 5 us after it)" % us(res["last_edge"]))
+            p("  idle high: not reported (last edge at %s us; fewer than 5 us of samples from 5 us after it)" % us(res["last_edge"]))
     p("")
     p("  pass table (%s; limits copied from it):" % REF)
     fail = False
@@ -335,7 +338,7 @@ def snippet(res, args):
     ia = res["idle_after"]
     if ia:
         for ch, s in ia["ch"]:
-            p('      - {name: idle_high, ch: %s, value_mV: %.1f, gate: "after the last edge, t=%s..%s us (n=%d)"}'
+            p('      - {name: idle_high, ch: %s, value_mV: %.1f, gate: "from 5 us after the last edge, t=%s..%s us (n=%d)"}'
               % (ch, s["mean"] * 1e3, us(ia["g0"]), us(ia["g1"]), s["n"]))
     for ch, role in ((sda, "SDA"), (scl, "SCL")):
         es = res["rise"][ch]
