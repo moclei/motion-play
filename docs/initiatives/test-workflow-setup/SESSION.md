@@ -2404,3 +2404,30 @@ exit 0
 - SESSION "### W8" (the friction notes) and "### Worker #15" Notes.
 
 Phase-specific note: plain language for the user at the bench.
+
+#### Notes
+- Commits: `27fb0ff` (setup validation), `1f1bd5d` (known-good reference), `4431653` (template), plus the handoff commit (read-through fixes, these notes). Nothing under lab/cards, lab/log, lab/evidence, STATE.md, tools or any RELAY file was touched. `run_tests.py`: OK. `check_state.py`: OK.
+- **`dho804-setup-validation.md`.**
+  - Words: the three screens (scope screen, board display, terminal), Result panel, status badge, decode band (row labelled B1 / I2C at the left edge of the scope screen), record, sweep, address trigger, replug. §0.4 has a "name the screen" rule. The header says one numbered item = one block, with CHECK read after all of DO.
+  - New section **"Decode setup (before V8, every scope session)"**, in two steps. Step 1 is the menu path and the field table, with a CHECK on the scope screen before the menu closes, because Bus status and R/W can't be read back. Step 2 is the verified queries. It has no SCPI sets.
+  - V7: unplug and move the tips (microscope CHECK), then power (board display CHECK), then the edge trigger, then **VPP on the panel as its own step**, then capture, then `i2c_frame.py` idle mode with a CHECK for `mode: idle`. Pass is on the tool mean, and the limit is unchanged.
+  - V8: address trigger set and read back, then 20 µs/div + SING, then replug with a CHECK of `:TRIGger:STATus?` = STOP and `Write:d6` / `A:0` in the decode band, then capture `val_V8`, then back to 10 µs/div read back. Stop rule: no `d6` after 3 replugs. START and NORM are gone.
+  - V4: added the identical-digits line. V5: split per the CHECK rule. The Vpp panel CHECK became its own CHECK, and "look, then power on" became two steps (5 and 6). V2's lone CHECK item was folded into step 2. `passed: true` now also needs the decode setup.
+- **`known-good-reference.md`.**
+  - Glossary additions: frame/START/STOP/ACK, the three screens, decode band, record, address trigger/SINGLE, gate, rise time 30→70 %.
+  - Prerequisites: the 100 kHz frame vs the 400 kHz in the tag message. "Bus goes quiet" is replaced by "halts after sensor init at 400 kHz; idle after the halt".
+  - "Which transaction" rewritten (boot-ROM UART before, sensor init after, hence the address trigger + SINGLE; the retry for another address is removed). "Address-only probe" became "0x6B with no data", to avoid the clash with scope probes.
+  - **Steps renumbered 1–10** by the split rule: 1 probes + microscope CHECK, 2 power, 3 channels (record −80…+80 µs, 16 ns), 4 address trigger + 70/30 (verified), 5 panel, 6 SING, 7 replug (STOP CHECK, empty band expected, stop after 3), 8 capture, 9 `i2c_frame.py --expect D6` with the PLAN §6 gates, 10 RUN/STOP + AUTO. The old step 7 is now **step 9**. I updated the two cross-references in the setup validation (V5 → steps 3 and 9) and PLAN "After V7R-001" §1 "Offset use" (now "step 9 (step 7 before Phase 14)").
+  - Pass table: every row is from the CSV. Rise ≤ 300 ns with the 100 kHz / Fast-mode reason. ≤ 1000 ns is the secondary reference only. No limit changed.
+- **Read-through (task 4) result:**
+  - No remaining bare "screen". The only bare one is the glossary's "small screen on the board", which defines the board display.
+  - No START trigger and no NORM sweep anywhere. START appears only to explain why it isn't used, or that it falls outside the 10 µs/div record.
+  - No "bus goes quiet". "Quiet" appears only as "not quiet around them".
+  - No 400 kHz claim for the reference frame, no "100 µs at 10 ns per sample", and no "decode row" or "from the PNG" decode source.
+  - Contradictions found and fixed: (1) KGR prerequisite 5 said KGR step 1 places the probes, but V7 now places them. It now says V7 moves them and step 1 checks them. (2) KGR's "boot screen" became "board display". (3) The setup validation's §0.4 RUN/STOP rule now names V8/V9 as the exception (sweep SINGLE), matching V8 step 4 ("don't press RUN/STOP") and KGR step 10.
+  - None remain that I found. V8 ends stopped at 10 µs/div, and KGR steps 4–6 re-set the trigger and SING, so the hand-over is consistent. The stop rules differ on purpose: V8 is "no `d6` after 3 replugs" and KGR step 7 is "no trigger after 3 replugs", as tasked.
+- **For Phase 15 / the Orchestrator:**
+  - The relay should cite KGR **steps 1–10** (new numbering), plus the setup validation's "Decode setup" section.
+  - Observation, no change made: the S1 log records `sweep: "NORM"` for every captured address-trigger entry, although `:TRIGger:SWEep?` read `SING` before the replug. So after a SINGLE trigger fires, the scope seems to report NORM. The procedures re-arm SING before each replug, so this doesn't matter for the run. But a reader of a log entry might think NORM was used.
+  - Still open from Worker #15: R32.2 is not pictured, and there is no v7 S1 fallback if a tip and a spring don't both fit on C9.1.
+  - Two expectations are written in that have no bench read-back yet: `:TRIGger:IIC:SCL?` / `SDA?` → `CHAN2` / `CHAN1` (seen through `capture.py`'s log, not typed by hand), and "the Decode 1 tab fields as left at V7R-002" (Label On, Exchange SCL/SDA, Event table Off).

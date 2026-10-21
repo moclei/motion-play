@@ -13,7 +13,7 @@ Run this at the start of every scope session, before any number from that sessio
 
 ## Words used here
 
-Points on the board are named by the letters **A–F** (and **X**, keep clear) in the pictures `lab/procedures/img/v6-probe-points.png` and `v7-probe-points.png`. The pictures and more words (I²C, SDA, SCL, "master end", "BQ end", "arm", pad numbers such as C21.2) are at the top of `known-good-reference.md`.
+Points on the board are named by the letters **A–F** (and **X**, keep clear) in the pictures `lab/procedures/img/v6-probe-points.png` and `v7-probe-points.png`. The pictures and more words (I²C, SDA, SCL, START, STOP, ACK, "master end", "BQ end", "arm", pad numbers such as C21.2) are at the top of `known-good-reference.md`.
 
 - **The three screens.** The bench has three, and every step names the one it means:
   - the **scope screen**: the DHO804's own display;
@@ -249,7 +249,7 @@ The bus is idle here: on v6 with `v6-ref` and no sensor PCB, the firmware halts 
    q ':TRIGger:MODE EDGE'; q ':TRIGger:EDGE:SOURce CHANnel1'; q ':TRIGger:SWEep AUTO'
    q ':TRIGger:MODE?'; q ':TRIGger:EDGE:SOURce?'; q ':TRIGger:SWEep?'; q ':SYSTem:ERRor?'
    ```
-   **CHECK:** `EDGE`, `CHAN1`, `AUTO`, `0,"No error"` *[facts: Trigger (edge), Trigger (common)]*. The channel settings are still V5's (0.5 V/div, offset −1.65 V, 10 µs/div).
+   **CHECK:** in the terminal, `EDGE`, `CHAN1`, `AUTO`, `0,"No error"` *[facts: Trigger (edge), Trigger (common)]*. The channel settings are still V5's (0.5 V/div, offset −1.65 V, 10 µs/div).
 4. **Vpp on the panel**, for each channel in use:
    ```
    q ':MEASure:ITEM VPP,CHANnel1'; q ':MEASure:ITEM VPP,CHANnel2'

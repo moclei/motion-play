@@ -49,7 +49,7 @@ On both boards D is U5 pin 6, E is U5 pin 5, F is the end of C21 farther from U5
 
 1. `dho804-setup-validation.md` V1–V8 and its decode setup passed **in this session**, with the probes, ground method and channel settings used below. Change any of them and V2–V8 have to be redone.
 2. **Reference DUT:** the surviving **v6** main board, flashed with the **`v6-ref`** tag (`4da1c67`, env `lilygo-t-display-s3`; its I²C init is in the tag message: `Wire.begin(43, 44)`, default drive, no filters, default pulls). The tag message says 400 kHz. That clock is set later, in sensor init. The 0x6B frames this procedure measures run at **100 kHz**, the Arduino default, because `Wire.begin(43, 44)` sets no clock (PLAN "After V7R-002 S1" §2). Flashing it is the card's step, not this procedure's.
-   - **Re-flash `v6-ref` at the start of every card.** Without a sensor PCB the boot screen ("Sensor init failed") looks the same under any firmware, so it can't tell you which build is on the board.
+   - **Re-flash `v6-ref` at the start of every card.** Without a sensor PCB the board display ("Sensor init failed!") looks the same under any firmware, so it can't tell you which build is on the board.
    - **No sensor PCB.** The reference runs with no sensor PCB plugged in. With no sensor PCB, `v6-ref` halts early in start-up ("Sensor init failed!" on the board display, `firmware/src/main.cpp` @ `4da1c67`, l.463–464). Before it halts, it sends the 0x6B frames once (l.123) and then tries sensor init at 400 kHz. After the halt the bus stays idle. With a sensor PCB fitted, the firmware keeps running and the bus carries traffic all the time (TCA9548A, VCNL4040).
    - **The soldered wire stays on pad C.** It is the v6 S1 ground. The card lists it in `hardware_config` as a board change.
 3. **v6 power and flash path.**
@@ -57,7 +57,7 @@ On both boards D is U5 pin 6, E is U5 pin 5, F is the end of C21 farther from U5
    - **Flash and serial:** a **data-only cable** from the Mac to the **T-Display's USB-C**. It passes no power. The ESP32's port (`/dev/cu.usbmodem…`) shows up on the Mac only once the main board is powered.
    - "Unplug the board" means the main-board USB-C out and no battery. The data-only cable may stay in, but it may still join the Mac's ground to the board (not checked for this cable), so write in `validation.notes` whether it was in.
 4. The card names the arms, the probes and the channels. This procedure gives the points and the pass table.
-5. **Probes stay off the board until a step puts them there.** V1–V4 and V5a use only the scope and its Cal terminals; V5b of the setup validation is the first step on the board, and step 1 below is where each arm's probes are placed. Every time probes or grounds go on or move, the board is unplugged first and checked under the microscope before it is powered on.
+5. **Probes stay off the board until a step puts them there.** V1–V4 and V5a use only the scope and its Cal terminals; V5b of the setup validation is the first step on the board, V7 there moves the tips onto this arm's pads, and step 1 below checks them (or places them, if they are not there). Every time probes or grounds go on or move, the board is unplugged first and checked under the microscope before it is powered on.
 
 ## Points (from the board files, not from memory)
 
@@ -101,7 +101,7 @@ Either probe type works on either channel: the SQ500 (fixed 10:1, the usual benc
 
 ## Which transaction to capture
 
-On `v6-ref` the BQ24195 is addressed **only at start-up**. `configureBQ24195()` (`firmware/src/main.cpp` @ `4da1c67`, l.123) first sends an address-only probe to 0x6B, then writes REG00 and REG05. These 0x6B frames run at **100 kHz**: one SCL clock every 10 µs, so the address byte and its ACK take about 90 µs.
+On `v6-ref` the BQ24195 is addressed **only at start-up**. `configureBQ24195()` (`firmware/src/main.cpp` @ `4da1c67`, l.123) first sends 0x6B with no data (a check that the chip answers), then writes REG00 and REG05. These 0x6B frames run at **100 kHz**: one SCL clock every 10 µs, so the address byte and its ACK take about 90 µs.
 
 The bus is **not** quiet around them (PLAN "After V7R-002 S1" §1):
 - **Before them**, SDA toggles while SCL stays high, in steps of about 8.68 µs. That is one bit of serial at 115 200 baud. It fits the ESP32-S3's start-up code (boot ROM) sending serial text on GPIO43, the same pin as SDA. *This fits the data; it is not proven.* A START trigger fires on it, and the scope decodes nothing (V7R-002 S1).
@@ -187,7 +187,7 @@ All rows come from the CSV, through `i2c_frame.py` (step 9). No limit here chang
 | V_IH threshold | 0.7 V_DD = 2.31 V | reference only, not measured |
 | Idle high | **3.135 V to 3.465 V** (3.3 V ± 5 %) | from 5 µs after the last edge; same limit as step V7 |
 | Rise time, 30 → 70 % | **≤ 300 ns** | Every SDA and SCL rising edge, 0.99 → 2.31 V. The reference frame runs at 100 kHz, but the Fast-mode (400 kHz) limit is kept: rise time is set by the pull-ups and the bus capacitance, not by the clock rate; the bus runs at 400 kHz once the firmware is running; and the v7 comparison is at 400 kHz. So the stricter limit is the one that matters. The panel RTIMe is recorded beside it, with no pass role |
-| Decode | **`D6`** then ACK | from the CSV bits (SDA at each SCL rising edge); the BQ24195 probe at start-up |
+| Decode | **`D6`** then ACK | from the CSV bits (SDA at each SCL rising edge); the BQ24195's first frame at start-up |
 
 The V_OL estimate and its limits are in *[facts: ESP32-S3 V_OL]*. The datasheet's V_OL max (0.33 V) is a no-load figure, so it is not a bound at our ≈ 2 mA. Don't quote 30–80 mV as an expectation; only the order of magnitude follows from the datasheet.
 
