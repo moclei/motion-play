@@ -107,7 +107,7 @@
 - [x] `validate_log.py` and `lab/templates/log.yaml`: add the `validation.V5` block (required per-channel maps `ctl_sd_mV`, `dut_sd_mV`, `excess_rms_mV`, `offset_mV`; optional `vpp_panel_mV`). A log with only the legacy `V5_noise_floor_mVpp` gets a WARNING. Accept `not_run: "<reason>"` for any `validation.V<n>` value only when `validation.passed` is false, and raise an ERROR when `passed` is true. Add fixtures: new V5 passes; legacy V5 warns; `not_run` with `passed: false` is valid; `not_run` with `passed: true` errors. Run the validator on `lab/log/2026-10-20_s01.yaml` without editing it, and record the output (expect the legacy warning, with the existing TODOs unchanged)
 - [x] `capture.py`: check channel drift against the most recent earlier entry with the same `--arm` (no earlier entry for that arm means no check), and write the new V5 block as TODOs in the validation skeleton. Using `tests/fake_scope.py`, test that two arms at different V/div give no NOTE and that one arm with a changed V/div gives a NOTE
 - [x] Run `tools/lab/tests/run_tests.py` and `tools/lab/tests/tool_tests.py`; all pass. Update the `tools/CONTEXT.md` tools/lab section: `noise_floor.py`, `not_run`, the per-arm drift rule, one log per arm
-- [ ] 🔄 Handoff
+- [x] 🔄 Handoff
 
 # --- handoff point ---
 
