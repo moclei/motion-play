@@ -6,7 +6,7 @@ ai_session: "debugger (V7R-002, v6 re-run)"
 dut: {board_id: "v6", firmware_commit: "4da1c67", firmware_env: "lilygo-t-display-s3", declared_baseline: "v6-ref"}
 scope: {model: "Rigol DHO804", serial: "DHO8A282M00872", firmware: "00.01.05", setup_file: "2026-10-21_V7R-002_val_V3_01.setup.bin"}
 validation:
-  passed: "TODO"
+  passed: true   # V1-V8 pass and V9 pass at S1 (deviations: V7 from CSV mean; V8/V9 IIC address trigger 0x6B; see card V7R-002)
   V2_probe_ratio: {CH1: "10x/fixed 10:1", CH2: "10x/fixed 10:1"}
   V3_comp_png: ["2026-10-21_V7R-002_val_V3_01.png", "2026-10-21_V7R-002_val_V3_02.png"]  # CH1, CH2
   V5:
@@ -18,10 +18,10 @@ validation:
   V6_ground: {method: wire, point: U2.14, length_mm: 4}   # springs on the ~10 mm soldered wire, ~4 mm from pad C (operator estimate), both probes
   V7_idle_high_V: {CH1: 3.303, CH2: 3.290}   # CSV mean of all 10000 samples of val_V7_01 (bus idle); panel VTOP returned 9.9E37 on both channels
   V8_decode_ok: true   # address byte d6 (R/W With) + A:0, val_V8_03; trigger IIC ADDR 0x6B write (deviation, see card)
-  notes: "V1 clock ok (Δ 0.0 s); no setup loaded. V4 Vamp CH1 = 3.0208 V. V4 Vamp CH2 = 3.0208 V. Data-only cable Mac ↔ T-Display: in. Probes identified by scope socket. V5 PASS (noise_floor.py): ctl 2026-10-21_V7R-002_val_V5ctl_01.png, dut 2026-10-21_V7R-002_val_V5_01.png; V5b tips + springs on the soldered wire at C, springs ~4-5 mm from C (operator estimate). V8: decode Write:d6 then A:0 (val_V8_03, 20 us/div, IIC address trigger 0x6B; decode menu set by hand: Bus status On, SCL/SDA Thre 1.65 V, R/W With)."
+  notes: "V1 clock ok (Δ 0.0 s); no setup loaded. V4 Vamp CH1 = 3.0208 V. V4 Vamp CH2 = 3.0208 V. Data-only cable Mac ↔ T-Display: in. Probes identified by scope socket. V5 PASS (noise_floor.py): ctl 2026-10-21_V7R-002_val_V5ctl_01.png, dut 2026-10-21_V7R-002_val_V5_01.png; V5b tips + springs on the soldered wire at C, springs ~4-5 mm from C (operator estimate). V8: decode Write:d6 then A:0 (val_V8_03, 20 us/div, IIC address trigger 0x6B; decode menu set by hand: Bus status On, SCL/SDA Thre 1.65 V, R/W With). V9 V7R-002 pass (S1_01)."
 channels:
-  CH1: {probe: "SQ500 (CH1 socket)", ratio: "10x", signal: "Cal (V3a) / Cal ground (V3b)", point: "scope Cal", bw_limit: "OFF", v_div_V: 1.0, offset_V: -3.3, coupling: "DC"}
-  CH2: {probe: "SQ500 (CH2 socket)", ratio: "10x", signal: "Cal ground (V3a) / Cal (V3b)", point: "scope Cal", bw_limit: "OFF", v_div_V: 0.5, offset_V: -1.65, coupling: "DC"}
+  CH1: {probe: "SQ500 (CH1 socket)", ratio: "10x", signal: "SDA", point: "TPIO43 (pad A); V3a/V3b on scope Cal, V5a Cal ground, V5b ground wire", bw_limit: "OFF", v_div_V: 0.5, offset_V: -1.65, coupling: "DC"}
+  CH2: {probe: "SQ500 (CH2 socket)", ratio: "10x", signal: "SCL", point: "TPIO44 (pad B); V3a/V3b on scope Cal, V5a Cal ground, V5b ground wire", bw_limit: "OFF", v_div_V: 0.5, offset_V: -1.65, coupling: "DC"}
 measurements:
   - test_id: "V7R-002"
     arm: "val_V3"
@@ -343,4 +343,55 @@ measurements:
       read: "single"
       preamble: {CH1: "2,2,10000,1,3.200000E-8,-1.600000E-4,0.000000,6.6667E-05,-24750,32768", CH2: "2,2,10000,1,3.200000E-8,-1.600000E-4,0.000000,6.6667E-05,-24750,32768"}
     scope_clock: {set_to: "2026-10-21T14:13:51", read_back: "2026-10-21 14:13:51", ok: true, delta_s: 0.0}
+    scpi_errors: []
+  - test_id: "V7R-002"
+    arm: "S1"
+    time: "2026-10-21T14:58:36"
+    trigger: {type: "IIC", sweep: "NORM", when: "ADDR", scl: "CHAN2", sda: "CHAN1", address: "107", direction: "WRIT", awidth: "7", clevel_V: 1.5, dlevel_V: 1.5}
+    timebase_s_div: 1.0e-05
+    method: "auto"
+    feature: "V9 S1 reference: BQ24195 address frame at boot (address trigger 0x6B write, SINGLE, replug); SDA master-driven 0-bits = address bits 5, 3, 0; ACK (BQ-driven) excluded"
+    values:
+      - {name: "VTOP", ch: "CH1", value_mV: 3296.9, raw: "3.2969E+00"}
+      - {name: "VBASe", ch: "CH1", value_mV: 54.267, raw: "5.4267E-02"}
+      - {name: "RTIMe", ch: "CH1", value_ns: 285.71, raw: "2.8571E-07"}
+      - {name: "VTOP", ch: "CH2", value_mV: 3288.4, raw: "3.2884E+00"}
+      - {name: "VBASe", ch: "CH2", value_mV: 62.8, raw: "6.2800E-02"}
+      - {name: "RTIMe", ch: "CH2", value_ns: 114.29, raw: "1.1429E-07"}
+    captures: ["2026-10-21_V7R-002_S1_01.png", "2026-10-21_V7R-002_S1_01.csv", "2026-10-21_V7R-002_S1_01.setup.bin"]
+    raw_observation: "Status badge is STOP. Only decode band labels are \"B1\" and \"I2C\" at the left edge of the display"
+    values_csv:
+      - {name: V_OL, ch: CH1, value_mV: 72.4, gate: "address bit 5, t=-52..-45.5 us (n=407, sd 12.4 mV)", offset_mV: -9.08}
+      - {name: V_OL, ch: CH1, value_mV: 70.2, gate: "address bit 3, t=-32..-25.5 us (n=407, sd 11.2 mV)", offset_mV: -9.08}
+      - {name: V_OL, ch: CH1, value_mV: 75.4, gate: "R/W bit 0, t=-2..+4 us (n=376, sd 12.2 mV)", offset_mV: -9.08}
+      - {name: idle_high, ch: CH1, value_mV: 3302.5, gate: "after the frame, t=+35..+80 us (no START in record)"}
+      - {name: idle_high, ch: CH2, value_mV: 3292.9, gate: "after the frame, t=+35..+80 us"}
+      - {name: rise_30_70, ch: CH1, value: "97.7, 98.3, 97.8, 98.4, 98.4 ns", gate: "every SDA rising edge in the record (-73.73, -43.73, -23.73, +15.18, +30.45 us); 0.99->2.31 V, linear interpolation"}
+      - {name: rise_30_70, ch: CH2, value: "91.4, 91.8, 93.1, 91.4, 91.3, 91.2, 94.2, 91.1, 91.5, 92.0 ns", gate: "every SCL rising edge in the record (-69.97 ... +23.02 us); 0.99->2.31 V, linear interpolation"}
+      - {name: decode_bits, ch: CH1, value: "SDA at SCL rising: 1 1 0 1 0 1 1 0 | 0 (D6, 9th clock low = ACK)", gate: "SCL rising -69.97 ... +10.03 us"}
+      - {name: SCL_period, ch: CH2, value_us: 10.0, gate: "rising edges -69.97 ... +10.03 us"}
+    ai_read:
+      - capture: 2026-10-21_V7R-002_S1_01.png
+        settings_seen: {CH1_v_div: 500.00mV, CH1_offset: -1.65V, CH2_v_div: 500.00mV, CH2_offset: -1.65V, timebase: 10.00us/div, srate: 62.50MSa/s, mdepth: 10.00kpts, trigger: "I2C on CH1, 1.50V, N", status: STOP, bus: "B1 I2C"}
+        values_seen: {CH2_Vtop_V: 3.2884, CH2_Vbase_mV: 62.800, CH1_RiseTime_ns: 285.71, CH2_RiseTime_ns: 114.28, RiseTime_Cnt: 1}
+        notes: "Same frame shape as val_V8_02 (SCL ~10 us period, address byte ending near the trigger, then the bus idles high). Decode band shows no byte labels (START before the record). Panel RiseTime(C1) 285.71 ns vs CSV 30->70 % ~98 ns; panel RiseTime(C2) 114.28 ns vs CSV ~92 ns."
+        mismatch: none
+    source: "tools/lab/capture.py"
+    scope_settings:
+      channels:
+        CH1: {probe: "10", bw_limit: "OFF", scale: "5.000000E-01", offset: "-1.650000E+00", coupling: "DC", invert: "0", units: "VOLT"}
+        CH2: {probe: "10", bw_limit: "OFF", scale: "5.000000E-01", offset: "-1.650000E+00", coupling: "DC", invert: "0", units: "VOLT"}
+      timebase: {scale: "1.000000E-5", offset: "0.000000", mode: "MAIN"}
+      acquire: {srate: "6.250000E+7", mdepth: "1.0000E+04", type: "NORM"}
+      trigger: {mode: "IIC", sweep: "NORM", when: "ADDR", clevel: "1.500000E0", scl: "CHAN2", sda: "CHAN1", dlevel: "1.500000E0", awidth: "7", address: "107", direction: "WRIT"}
+      bus1: {mode: "IIC", scl_source: "CHAN2", sda_source: "CHAN1", address: "RW", threshold_sda: "1.650000E0", threshold_scl: "1.650000E0"}
+      measure: {threshold_type: "PERC", max_pct: "7.000000E+01", mid_pct: "5.000000E+01", min_pct: "3.000000E+01", amsource: "OFF"}
+      trigger_status: {before: "STOP", after_stop: "STOP"}
+    waveform:
+      mode: "RAW"
+      format: "ASCii"
+      points: 10000
+      read: "single"
+      preamble: {CH1: "2,2,10000,1,1.600000E-8,-8.000000E-5,0.000000,6.6667E-05,-24750,32768", CH2: "2,2,10000,1,1.600000E-8,-8.000000E-5,0.000000,6.6667E-05,-24750,32768"}
+    scope_clock: {set_to: "2026-10-21T14:58:36", read_back: "2026-10-21 14:58:36", ok: true, delta_s: 0.0}
     scpi_errors: []
