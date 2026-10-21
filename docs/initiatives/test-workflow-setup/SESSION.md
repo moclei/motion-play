@@ -2064,3 +2064,10 @@ exit 3
   - `check_state.py`: OK.
 - All five Phase 10 tasks are `[x]`. PLAN has no date-stamped headings.
 - Carry forward to Phase 11: `dho804-setup-validation.md` l.149 still records the legacy `V5_noise_floor_mVpp`. The `not_run` form is a one-key map for the whole item and needs `passed: false`.
+
+---
+
+### User decisions — Planner Q1/Q2 (2026-10-20)
+
+- Q2 (v7 S1 ground): "b". No soldering on v7: the spring goes on C9.1 and comparisons are labelled "unequal ground". This matches the Planner's recommendation.
+- Q1 (V5 rule): the user asked for a simpler explanation ("I don't understand, explain what your suggesting and what your not recommending in simple, short terms"). Re-explained; the answer is pending.
