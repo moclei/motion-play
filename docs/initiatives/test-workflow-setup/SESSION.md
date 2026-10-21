@@ -2098,3 +2098,14 @@ exit 3
 - **Relay date differs from the task text.** `check_state.py --now` now fires CHECKPOINT DUE from **2026-11-04**, not 2026-11-02. The V7R-001 notebook entry (2026-10-20) moved the 14-day window. The relay says "before 2026-11-04". The 3-card trigger doesn't apply: V7R-002 would be the 2nd recorded card since V7R-000.
 - **Card ID.** V7R-002: `lab/cards/` holds only V7R-001 on this branch, and origin/main has none. The relay tells the user to check `ls lab/cards/` and take the next free number if the debug track has used 002.
 - **Not done / flag.** R32.2 (the S2 fallback ground) is still not pictured. The V5b text for v7 S1 (both tips and springs on C9.1) gives no fallback if they don't fit: none is in PLAN, so I didn't invent one. PLAN is unchanged, and nothing was deferred.
+
+#### Result
+| # | Phase | Result | Escalation evaluated? | Commit | Notes |
+|---|-------|--------|-----------------------|--------|-------|
+| 15 | Phase 11: Procedure fixes and re-run relay | DONE | No — clean completion | 719e603 | V5a/V5b; replug restart; power path; RELAY-v6-dry-run-2 (V7R-002) |
+
+#### Verification
+- Commits 7ad3a4f..719e603. The tree is clean. Only the two procedures, the new relay, TASKS and SESSION changed. RELAY-v6-dry-run.md and lab/cards, log, evidence and STATE are untouched.
+- `run_tests.py` OK. Deadline re-derived: `check_state.py --now 2026-11-03` reports OK, and `--now 2026-11-04` reports CHECKPOINT-DUE. So the relay's "before 2026-11-04" is correct, superseding the task text's 2026-11-02.
+- KGR: RIGHT appears only as "don't press". The U5 wording is fixed. The Orchestrator read the relay in full: order, stop rules and report list match the Phase 11 task.
+- Carry forward (not blocking W8, which is v6 only): no fallback is written for v7 S1 if a tip and a spring don't both fit on C9.1, and R32.2 is still not pictured. These are for the first v7 card or the closeout list.
