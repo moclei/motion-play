@@ -98,6 +98,8 @@ Pass table per `known-good-reference.md` (V_DD = 3.3 V). Evaluated per arm (S1, 
 
 - S1 V9 step 2 read-backs: "10 / 10 / 5.000000E-01 / -1.650000E+00 / 1.000000E-5 / 1.0000E+04 / IIC / IIC / ADDR / 7.000000E+01 / 3.000000E+01 / 0,\"No error\"". Operator: "I'm not sure if the response shows the 70/30 or not." No menu change.
 
+- S1 V9 step 5 (panel before the replug): "Vtop(ch1): 3.2969V, Vbase(ch1): 62.800mV, Rise time (c1): Cur = 300.00ns, Avg = 300.00ns, Max = 300.00ns, Min = 300.00ns, Dev = 0.0000s, Cnt = 1." / "Vtop(ch2): 3.2628V, Vbase(ch2): 62.800mV, Rise time (c2): Cur = 100.00ns, Avg = 100.00ns, Max = 100.00ns, Min = 100.00ns, Dev = 0.0000s, Cnt = 1". Session: Vtop(C1) and Vbase(C1) equal the val_V8_03 panel values; Cnt = 1. Pre-capture panel state, not a V9 value.
+
 ### Measured values (from log; cite `lab/evidence/V7R-002/...`)
 ### Interpretation (session; labelled as such)
 
