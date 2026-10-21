@@ -80,6 +80,8 @@ Pass table per `known-good-reference.md` (V_DD = 3.3 V). Evaluated per arm (S1, 
 - Deviation: V7 says "put Vtop on the panel" and passes on Vtop; panel VTOP is 9.9E37 on a flat (idle) trace, as CH2's Vtop/Vbase were on the flat parked trace in V3a. V7 value taken as the CSV mean (known-good-reference.md step 7 "Idle high: Vtop, or the mean of the samples before the START"). Limit unchanged. → procedure question for the Planner.
 - Operator note on the instruction block: CHECK lines that fall between DO sub-steps were read only after the DO steps were done.
 
+- S1 V8 attempt 1: decode read-backs "IIC / CHAN2 / CHAN1 / 0.000000 / 0.000000 / 0,\"No error\"" (MODE?, SCLK:SOURce?, SDA:SOURce?, THReshold? SDA, THReshold? SCL, ERRor?). Trigger read-backs "IIC, STAR, NORM". After replug: "I don't see a decode row. Where would I see it? You say screen, but there are three screens to look at: The scope screen, the v6 main board screen, the terminal where I ran the commands... I don't see anything about \"decode\" on any of them though." Display: "the usual \"Sensor init failed!\" screen". Session: thresholds read 0.000000, not ≈ 1.65 V (CHECK not met); no decode row shown on the scope. V8 not passed; redo via the scope's decode menu.
+
 ### Measured values (from log; cite `lab/evidence/V7R-002/...`)
 ### Interpretation (session; labelled as such)
 
