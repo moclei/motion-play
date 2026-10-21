@@ -2456,3 +2456,32 @@ Phase-specific note: plain language for the user at the bench.
 - `RELAY-v6-dry-run-2.md` and `RELAY-v6-dry-run-2-return.md`.
 
 Phase-specific note: plain language; cite the new KGR step numbers; the relay says to read back the two unconfirmed values by hand when first used.
+
+#### Notes
+- Commits: `c55877a` (the relay, task 1), plus the handoff commit (path check, these notes). Only the RELAY file, TASKS and SESSION were touched. lab/cards, lab/log, lab/evidence, STATE.md, the procedures and the tools are untouched.
+- **`RELAY-v6-dry-run-2-s2.md`** follows the model's five sections. Its paste text tells the session these things:
+  - It continues V7R-002 at S2, with no new pre-registration, and the predictions and limits stay as registered.
+  - The method is the procedures at `16c1ed1` (Phase 14: 27fb0ff, 1f1bd5d, 16c1ed1), with deviations (a) and (b) as the method. KGR is cited as steps 1–10.
+  - A card note, committed before any bench step, names those commits and the S2 log name.
+  - The order: re-flash, V1–V4 in the S2 log, decode setup, V5a, V5b on F, V6, V7 on D/E, V8, V9.
+  - The two hand read-backs at first use: the Decode 1 Label / Exchange / Event table fields, and `:TRIGger:IIC:SCL?` / `SDA?`. Both are recorded in `validation.notes` and in the card's raw observations.
+  - The `sweep: NORM` log note.
+  - The close, with the S1 record label taken word for word from PLAN §6 and tool commit a427a66.
+- **Dates, from `check_state.py --now`:**
+  - 2026-11-04 gives no CHECKPOINT-DUE; 2026-11-05 gives "15 days since the last notebook entry (2026-10-21)". So the relay says "before 2026-11-05".
+  - From 2026-10-29, the check also gives `[LOST-RESULT] V7R-002 is in run with no commit for 7 days`. The relay calls this expected, not a stop. That is my call, made so the session doesn't stop on a warning the open card causes by design. The Orchestrator may want to confirm it.
+- **S2 log name.** `capture.py` `pick_session` takes the latest log for today, or else `<today>_s01.yaml`. So on any day after 2026-10-21, the S2 log will be `<date>_s01.yaml`. That clashes with the procedure's wording "S2 writes `_s02`", which reads as a per-arm suffix. The relay says sNN is the next free number for that date and has the card note the difference. The Phase 16 verification should expect `<date>_s01.yaml` (or `2026-10-21_s02.yaml` if it runs today).
+- **Decode setup placement.** It is placed right after V4, before V5, following the task's order. The procedure only requires "before V8"; it needs no board, so the order is valid.
+- **Small additions beyond the task list.** Each is tied to a stop or a check already in the procedures:
+  - a `git log -1 --format=%h -- lab/procedures` = `16c1ed1` pre-check;
+  - stop rules for `i2c_frame.py` exit 2 and for SCL?/SDA? not reading CHAN2/CHAN1;
+  - the KGR step 7 stop ("no trigger after 3 replugs") beside V8's "no `d6` after 3 replugs";
+  - a reminder that R32.2 (the pad-F fallback) is not pictured;
+  - report item 6 (the two hand read-backs) and "V1–V4 for the S2 session" in item 5.
+- **Checked at the desk.** `i2c_frame.py` at HEAD on `S1_01.csv --expect D6` reproduces Worker #17's values exactly: V_OL 64.6 / 63.3 / 66.6 mV, idle high 3302.7 / 3292.9 mV, rise max 98.4 / 94.2 ns, D6 + ACK, 10.00 µs. The tool hasn't changed since a427a66. Idle mode on S1 `val_V7_01` gives 3.303 / 3.290 V, the same as the S1 hand value, which gives the tool-vs-tool V7 comparison its S1 number.
+- **Path check (task 2).** Every path in the paste text, each checked with `ls` / `test -e`:
+  - OK: `docs/research/v7-retry/debugger-role-draft.md`, `lab/cards/V7R-002-v6-setup-validation-2.md`, `lab/log/2026-10-21_s01.yaml`, `lab/procedures/dho804-setup-validation.md`, `lab/procedures/known-good-reference.md`, `docs/initiatives/test-workflow-setup/PLAN.md`, `tools/lab/noise_floor.py`, `tools/lab/i2c_frame.py`, `tools/lab/validate_log.py`, `tools/lab/backup_captures.sh`, `lab/captures/V7R-002/`, `lab/captures/V7R-002/2026-10-21_V7R-002_S1_01.csv`, `lab/evidence/`, `lab/procedures/img/v6-probe-points.png`.
+  - Pattern, not a file: `lab/log/<date>_sNN.yaml`. Its directory `lab/log/` exists.
+  - Named on purpose as not existing: `2026-10-21_s02.yaml`, the card's Setup-line name, cited as the one that differs.
+  - `lab/evidence/V7R-002/` is not named in the paste text, because it doesn't exist until the close. The paste text says "`lab/evidence/` under the card ID".
+- **PLAN:** unchanged. Nothing for Rejected Approaches or Deferred.

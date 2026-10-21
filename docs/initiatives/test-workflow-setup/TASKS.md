@@ -179,8 +179,8 @@
   - Then close the card: the recording commit touches STATE with `as_of`; a notebook entry; evidence for both arms, S1's captures included, promoted to `lab/evidence/V7R-002/`. Measured values: S1 cites its log as recorded (hand values), with the `i2c_frame.py` values for S1_01 beside them, labelled as PLAN §6 "The S1 record" says; S2 cites the tool values from its log; any S1-vs-S2 comparison uses the tool values for both. The S1 log is not edited.
   - Then the fresh-session L0 test ("what is the bench state?").
   - The report list: L0 answer, image handoff, final commit, hand-set settings with button paths, and pass or fail per V5–V9 row per arm.
-- [ ] Check that every file path in the relay's paste text exists (`ls` each one) and record the list in SESSION.md (PLAN §7)
-- [ ] 🔄 Handoff
+- [x] Check that every file path in the relay's paste text exists (`ls` each one) and record the list in SESSION.md (PLAN §7)
+- [x] 🔄 Handoff
 
 # --- handoff point ---
 
