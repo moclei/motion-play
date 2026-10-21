@@ -5,14 +5,18 @@ markers in lab/templates/log.yaml). Branches on `kind`:
   both kinds   session_id (YYYY-MM-DD_sNN, equal to the file stem), kind, every dut.* field
                (declared_baseline is v7-clean | v6-ref | other), at least one measurement, and per
                measurement test_id (V7R-NNN), feature, raw_observation.
-  kind: scope  also scope.model/firmware; validation.passed (bool) + V2_probe_ratio, V5_noise_floor_mVpp
-               (number), V6_ground {method, point, length_mm}, V7_idle_high_V; every channel's
-               ratio/bw_limit/signal/point; per measurement method (auto|cursor|both), values (each
-               with name, ch and a value_<unit> key, or valid: false) and captures (§4.4 names
+  kind: scope  also scope.model/firmware; validation.passed (bool) + V2_probe_ratio, V5 (per-channel
+               maps ctl_sd_mV, dut_sd_mV, excess_rms_mV, offset_mV; optional vpp_panel_mV; written by
+               tools/lab/noise_floor.py), V6_ground {method, point, length_mm}, V7_idle_high_V; every
+               channel's ratio/bw_limit/signal/point; per measurement method (auto|cursor|both), values
+               (each with name, ch and a value_<unit> key, or valid: false) and captures (§4.4 names
                carrying the measurement's test_id).
 
 A string containing TODO (what capture.py leaves for the operator) is reported as pending, not as
-missing. Warnings never fail: validation.passed false, and a PNG capture with no ai_read entry.
+missing. Any validation.V<n> item may be `{not_run: "<reason>"}`, but only with validation.passed:
+false (an ERROR with passed: true); it is then neither a TODO nor an error. A log with only the
+legacy `V5_noise_floor_mVpp` (mVpp number, V7R-001) gets a warning, not an error. Warnings never
+fail: validation.passed false, legacy V5, and a PNG capture with no ai_read entry.
 
     python3 tools/lab/validate_log.py lab/log/2026-11-04_s01.yaml [...] [--allow-todo]
 
@@ -36,6 +40,9 @@ KINDS = ("log-only", "scope")
 BASELINES = ("v7-clean", "v6-ref", "other")
 METHODS = ("auto", "cursor", "both")
 TODO_RE = re.compile(r"\bTODO\b")
+VITEM_RE = re.compile(r"^V\d+")
+V5_REQUIRED = ("ctl_sd_mV", "dut_sd_mV", "excess_rms_mV", "offset_mV")
+V5_OPTIONAL = ("vpp_panel_mV",)
 
 
 class Report:
@@ -71,6 +78,34 @@ def _walk_todos(obj, path, out):
 
 def _is_num(v):
     return isinstance(v, (int, float)) and not isinstance(v, bool)
+
+
+def is_not_run(v):
+    return isinstance(v, dict) and list(v) == ["not_run"]
+
+
+def check_v5(v5, r, path="validation.V5"):
+    """The V5 block written by noise_floor.py: per-channel maps of numbers (or TODO)."""
+    if not isinstance(v5, dict):
+        r.errors.append("%s: must be a mapping {%s}" % (path, ", ".join(V5_REQUIRED)))
+        return
+    for k in V5_REQUIRED + V5_OPTIONAL:
+        m = v5.get(k)
+        if k in V5_OPTIONAL and m is None:
+            continue
+        if _empty(m):
+            r.errors.append("%s.%s: required, missing or empty" % (path, k))
+        elif _is_todo(m):
+            continue
+        elif not isinstance(m, dict):
+            r.errors.append("%s.%s: must map channels to mV, got %r" % (path, k, m))
+        else:
+            for ch, x in m.items():
+                if not _is_todo(x) and not _is_num(x):
+                    r.errors.append("%s.%s.%s: must be a number (mV), got %r" % (path, k, ch, x))
+    for k in v5:
+        if k not in V5_REQUIRED + V5_OPTIONAL:
+            r.warnings.append("%s.%s: unknown key" % (path, k))
 
 
 def validate(data, stem=None):
@@ -128,13 +163,33 @@ def validate(data, stem=None):
                 r.errors.append("validation.passed: must be true or false, got %r" % p)
             elif p is False:
                 r.warnings.append("validation.passed is false: no measurement in this log is trusted")
-        if need("validation.V2_probe_ratio", val.get("V2_probe_ratio")) and not isinstance(val["V2_probe_ratio"], dict):
+        # {not_run: "<reason>"} stands in for any V<n> item, only when the validation failed.
+        skip = set()
+        for k, v in val.items():
+            if not (VITEM_RE.match(str(k)) and is_not_run(v)):
+                continue
+            skip.add(k)
+            if p is not False:
+                r.errors.append("validation.%s: not_run needs validation.passed: false (passed is %r)" % (k, p))
+            if _empty(v["not_run"]) or not isinstance(v["not_run"], str):
+                r.errors.append("validation.%s.not_run: give the reason as a string" % k)
+        if "V2_probe_ratio" not in skip and need("validation.V2_probe_ratio", val.get("V2_probe_ratio")) \
+                and not isinstance(val["V2_probe_ratio"], dict):
             r.errors.append("validation.V2_probe_ratio: must map channels to ratios")
-        v5 = val.get("V5_noise_floor_mVpp")
-        if need("validation.V5_noise_floor_mVpp", v5) and not _is_num(v5):
-            r.errors.append("validation.V5_noise_floor_mVpp: must be a number (mVpp), got %r" % v5)
+        legacy = val.get("V5_noise_floor_mVpp")
+        if "V5" in skip:
+            pass
+        elif "V5" in val or legacy is None:
+            check_v5(val.get("V5"), r)
+        elif "V5_noise_floor_mVpp" not in skip:
+            r.warnings.append("validation: only the legacy V5_noise_floor_mVpp (Vpp); new logs record "
+                              "validation.V5 from tools/lab/noise_floor.py")
+        if legacy is not None and "V5_noise_floor_mVpp" not in skip and not _is_todo(legacy) and not _is_num(legacy):
+            r.errors.append("validation.V5_noise_floor_mVpp: must be a number (mVpp), got %r" % legacy)
         g = val.get("V6_ground")
-        if need("validation.V6_ground", g):
+        if "V6_ground" in skip:
+            pass
+        elif need("validation.V6_ground", g):
             if not isinstance(g, dict):
                 r.errors.append("validation.V6_ground: must be {method, point, length_mm}")
             else:
@@ -142,7 +197,7 @@ def validate(data, stem=None):
                     if need("validation.V6_ground." + k, g.get(k)) and k == "length_mm" and not _is_num(g[k]):
                         r.errors.append("validation.V6_ground.length_mm: must be a number, got %r" % g[k])
         v7 = val.get("V7_idle_high_V")
-        if need("validation.V7_idle_high_V", v7):
+        if "V7_idle_high_V" not in skip and need("validation.V7_idle_high_V", v7):
             if not isinstance(v7, dict):
                 r.errors.append("validation.V7_idle_high_V: must map channels to volts")
             else:

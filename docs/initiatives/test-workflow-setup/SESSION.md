@@ -2024,3 +2024,17 @@ noise_floor: V5 excess noise over a no-board control
     offset_mV: {CH1: -10.39, CH2: -14.06}
     # vpp_panel_mV: {CH1: TODO, CH2: TODO}   # optional: the scope panel Vpp of the DUT capture
 ```
+
+**Task 2, validator on the unedited V7R-001 log.** The legacy-V5 warning is the only change; the two V7 TODOs are unchanged (they were written as `"TODO"` strings, not `not_run`, and the log is not edited).
+
+```
+$ python3 tools/lab/validate_log.py lab/log/2026-10-20_s01.yaml
+lab/log/2026-10-20_s01.yaml: PENDING (TODOs)
+  TODO    validation.V7_idle_high_V.CH1
+  TODO    validation.V7_idle_high_V.CH2
+  warning validation.passed is false: no measurement in this log is trusted
+  warning validation: only the legacy V5_noise_floor_mVpp (Vpp); new logs record validation.V5 from tools/lab/noise_floor.py
+exit 3
+```
+
+`not_run` form: `V7_idle_high_V: {not_run: "<reason>"}` (a one-key map as the item value). The existing pass fixture `2026-11-04_s01` now carries the new V5 block; legacy-only is `log_fixtures/warn/2026-11-06_s01.yaml`; `not_run` + `passed: false` is `pass/2026-11-07_s01.yaml`; `not_run` + `passed: true` is `fail/2026-11-08_s01.yaml`. A V5 block with only TODO values (the capture skeleton) is pending, not an error.

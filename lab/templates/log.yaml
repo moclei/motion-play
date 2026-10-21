@@ -26,11 +26,18 @@ scope:                                # [REQ scope]
   firmware: 00.01.05
   setup_file: 2026-11-04_V7R-012_A1_01.stp   # extension per DHO804 [verify, Phase 5/6]
 
-validation:                           # [REQ scope] test-workflow-audit §4.2; every item below is required
+validation:                           # [REQ scope] test-workflow-audit §4.2; one validation block per arm (one log per arm)
   passed: true                        # [REQ scope] must be true before any measurement is trusted
   V2_probe_ratio: {CH1: 10x/10x, CH2: 10x/10x}   # [REQ scope] scope setting / probe switch
   V3_comp_png: 2026-11-04_V7R-012_val_V3_01.png
-  V5_noise_floor_mVpp: 12             # [REQ scope]
+  V5:                                 # [REQ scope] tools/lab/noise_floor.py --ctl <val_V5ctl csv> --dut <val_V5 csv> prints this block
+    ctl_sd_mV: {CH1: 4.97, CH2: 4.77}       # [REQ scope] per channel: sd of the no-board control (probes on the scope's Cal ground)
+    dut_sd_mV: {CH1: 5.17, CH2: 4.72}       # [REQ scope] per channel: sd at the arm's ground point, board powered
+    excess_rms_mV: {CH1: 1.44, CH2: 0.0}    # [REQ scope] sqrt(max(0, dut^2 - ctl^2)); pass <= 5 mV rms
+    offset_mV: {CH1: -10.39, CH2: -14.06}   # [REQ scope] control mean
+    vpp_panel_mV: {CH1: 25.8, CH2: 23.6}    # optional: scope panel Vpp of the DUT capture
+  # Any V<n> item may instead be {not_run: "<reason>"}, only with passed: false (validate_log.py errors otherwise).
+  # Logs from before V5 changed (V7R-001) carry V5_noise_floor_mVpp instead; the validator warns on it.
   V6_ground: {method: spring, point: TP4, length_mm: 8}   # [REQ scope]
   V7_idle_high_V: {CH1: 3.29, CH2: 3.30}                  # [REQ scope]
   V8_decode_ok: true

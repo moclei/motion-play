@@ -209,16 +209,38 @@ def validator_tests(tmp):
     for p in sorted((lf / "pass").glob("*.yaml")):
         rc, out = run([sys.executable, str(LAB / "validate_log.py"), str(p)])
         check("validate_log: pass/%s -> exit 0" % p.name, rc == 0, out)
-    fail = lf / "fail" / "2026-11-04_s02.yaml"
-    rep = validate_log.validate_text(fail.read_text(), fail.stem)
-    expected = fail.read_text().count("# FAIL")
-    check("validate_log: fail fixture -> one error per FAIL marker (%d)" % expected,
-          len(rep.errors) == expected and rep.exit_code() == 1, "\n  ".join(rep.errors))
+    for p in sorted((lf / "fail").glob("*.yaml")):
+        rep = validate_log.validate_text(p.read_text(), p.stem)
+        expected = p.read_text().count("# FAIL")
+        check("validate_log: fail/%s -> one error per FAIL marker (%d)" % (p.name, expected),
+              len(rep.errors) == expected and rep.exit_code() == 1, "\n  ".join(rep.errors))
+    legacy = "only the legacy V5_noise_floor_mVpp"
+    p = lf / "pass" / "2026-11-04_s01.yaml"
+    rep = validate_log.validate_text(p.read_text(), p.stem)
+    check("validate_log: new validation.V5 block -> valid, no warning", not rep.errors and not rep.warnings,
+          rep.errors + rep.warnings)
+    p = lf / "warn" / "2026-11-06_s01.yaml"
+    rep = validate_log.validate_text(p.read_text(), p.stem)
+    check("validate_log: legacy V5_noise_floor_mVpp only -> valid, one legacy warning",
+          not rep.errors and rep.exit_code() == 0 and [w for w in rep.warnings if legacy in w] == rep.warnings
+          and len(rep.warnings) == 1, rep.errors + rep.warnings)
+    p = lf / "pass" / "2026-11-07_s01.yaml"
+    rep = validate_log.validate_text(p.read_text(), p.stem)
+    check("validate_log: not_run with passed: false -> valid, not a TODO",
+          not rep.errors and not rep.todos and rep.exit_code() == 0, rep.errors + rep.todos)
+    s01 = LAB.parents[1] / "lab" / "log" / "2026-10-20_s01.yaml"
+    if s01.exists():
+        rep = validate_log.validate_text(s01.read_text(), s01.stem)
+        check("validate_log: lab/log/2026-10-20_s01.yaml (V7R-001) -> no errors, legacy warning, V7 TODOs",
+              not rep.errors and any(legacy in w for w in rep.warnings)
+              and rep.todos == ["validation.V7_idle_high_V.CH1", "validation.V7_idle_high_V.CH2"],
+              rep.errors + rep.todos + rep.warnings)
     tpl = LAB.parents[1] / "lab" / "templates" / "log.yaml"
     rep = validate_log.validate_text(tpl.read_text(), "2026-11-04_s01")
     check("validate_log: lab/templates/log.yaml is valid", not rep.errors, rep.errors)
 
     # pre-commit rule 4, in a scratch repo
+    fail = lf / "fail" / "2026-11-04_s02.yaml"
     repo = tmp / "hookrepo"
     (repo / "lab" / "log").mkdir(parents=True)
     run(["git", "init", "-q"], cwd=str(repo))
@@ -253,6 +275,11 @@ def noise_floor_tests(tmp):
     check("noise_floor: V7R-001 S1 vs control -> sd 4.97/5.17, 4.77/4.72, excess 1.44/0, PASS",
           rc == 0 and "ctl_sd_mV: {CH1: 4.97, CH2: 4.77}" in out and "dut_sd_mV: {CH1: 5.17, CH2: 4.72}" in out
           and "excess_rms_mV: {CH1: 1.44, CH2: 0.0}" in out and "V5 PASS" in out, out)
+    snip = out[out.index("  V5:"):]
+    v5 = yaml.safe_load(snip)["V5"]
+    rep = validate_log.Report()
+    validate_log.check_v5(v5, rep)
+    check("noise_floor: snippet parses and passes the validator's V5 check", not rep.errors, rep.errors)
     rows = dut.read_text().splitlines()
     x2 = tmp / "x2.csv"
     x2.write_text("\n".join([rows[0]] + [r.split(",")[0] + "," + ",".join(
