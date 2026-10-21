@@ -86,6 +86,9 @@ Pass table per `known-good-reference.md` (V_DD = 3.3 V). Evaluated per arm (S1, 
 
 - S1 V8c: "I went into the Decode screen, Decode 1 tab, and I set \"R/W\" to \"with\"". `:TRIGger:SWEep?` → "SING". After replug: "I don't think I see any decode band labels. There are tags over on the left of the scope screen saying \"B1\" and \"I2C\" but I'm not sure if they are the \"decode band\" per se." Display: "The usual \"Sensor init failed!\"". Then RUN/STOP pressed (per step). Whether the scope triggered: not reported.
 
+- S1 V8d: `:TRIGger:SWEep?` → "SING"; status after replug: "STOP". capture.py: wrote `2026-10-21_V7R-002_val_V8_01.{png,csv,setup.bin}`; "The scope is left STOPPED". Session (CSV/PNG): SDA (CH1) edges at 0.24 F, 8.91 R, 17.58 F, 26.26 R, 34.94 F, 60.99 R, 69.66 F, 78.37 R µs (intervals multiples of ≈ 8.68 µs); SCL (CH2) has no crossing of 1.65 V (min 3.021 V); decode band shows no bytes.
+- Interpretation (V7R-002): the single START trigger fires on a non-I²C waveform on SDA with SCL idle; the ≈ 8.68 µs unit interval equals one bit at 115 200 baud, consistent with ESP32-S3 boot-ROM UART0 TX on GPIO43. Not an I²C frame; V8/V9 single-START-after-replug recipe does not catch the BQ frame on this setup. → procedure question for the Planner.
+
 ### Measured values (from log; cite `lab/evidence/V7R-002/...`)
 ### Interpretation (session; labelled as such)
 
