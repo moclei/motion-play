@@ -146,7 +146,7 @@
 
 ## Phase 14: Procedure revision (desk)
 
-- [~] `lab/procedures/dho804-setup-validation.md`:
+- [x] `lab/procedures/dho804-setup-validation.md`:
   - **Words / §0.4:** the screen rule from PLAN §7 (scope screen, board display, terminal), and the decode band defined as the row labelled B1 / I2C at the left edge of the scope screen.
   - **New decode-setup step before V8**, run in every scope session (PLAN §5): the menu path field by field, then the verified queries as the CHECK (`:BUS1:MODE?`, both sources, `:BUS1:THReshold? SDA` and `? SCL` reading about `1.65`). No SCPI set for Bus status, thresholds or R/W.
   - **V7** (PLAN §3): the panel item is VPP; the "VPP on the panel" check is its own step before the capture step; the value is the `i2c_frame.py` idle mean; limit unchanged.

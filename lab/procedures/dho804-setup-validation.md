@@ -5,6 +5,7 @@ Run this at the start of every scope session, before any number from that sessio
 **If any step fails, stop and investigate the setup. Never adjust an interpretation, a threshold or an "effective" parameter to make a reading fit.**
 
 - **Who does what.** The debugger session relays each step to the operator as a §4.8 block (`lab/templates/instruction.md`), one step at a time, and fills the log. The operator does the physical steps and types the commands.
+- **One numbered item = one block.** You read its CHECK after you have done all of its DO. So when something has to be checked before the next action, the check ends the item and the action is the next item.
 - **Where the numbers come from.** Every scope fact used here is a row of `docs/initiatives/test-workflow-setup/PLAN.md` → "Verified instrument facts", cited as *[facts: row]*. Tolerances marked **[own]** are ours, not a vendor's.
 - **Recording.** Results go into the session log `lab/log/YYYY-MM-DD_sNN.yaml`, block `validation` (`lab/templates/log.yaml`). **One log per arm**: S1 writes `_s01`, S2 writes `_s02` (see "Closing the validation"). Validation captures use the arm `val_V<n>` (§4.4), for example `2026-11-04_V7R-012_val_V3_01.png`.
 - **Terminal.** Every command runs in Cursor's integrated terminal, at the repo root.
@@ -14,6 +15,17 @@ Run this at the start of every scope session, before any number from that sessio
 
 Points on the board are named by the letters **A–F** (and **X**, keep clear) in the pictures `lab/procedures/img/v6-probe-points.png` and `v7-probe-points.png`. The pictures and more words (I²C, SDA, SCL, "master end", "BQ end", "arm", pad numbers such as C21.2) are at the top of `known-good-reference.md`.
 
+- **The three screens.** The bench has three, and every step names the one it means:
+  - the **scope screen**: the DHO804's own display;
+  - the **board display**: the small screen on the board (the T-Display on v6), which shows "Sensor init failed!" with `v6-ref` and no sensor PCB;
+  - the **terminal**: Cursor's terminal on the Mac, where you type the commands.
+- **Result panel.** The list of measurements on the scope screen, such as `Vamp(C1)` with its value.
+- **Status badge.** The word on the scope screen that says what the scope is doing, for example `STOP` when it has stopped. `q ':TRIGger:STATus?'` prints the same state in the terminal.
+- **Decode band.** The row labelled **B1** / **I2C** at the left edge of the scope screen. When the decode works, byte labels such as `Write:d6` and `A:0` appear in that row, towards the middle of the scope screen. It shows labels only when the start of the I²C frame is inside the record.
+- **Record.** The 10 000 samples the scope keeps for one capture. At 10 µs/div it runs from −80 µs to +80 µs around the trigger, at 16 ns per sample; at 20 µs/div from −160 µs to +160 µs, at 32 ns *[facts: Timebase]*.
+- **Sweep.** How the scope triggers. **AUTO** keeps the trace updating even with nothing to trigger on. **SINGLE** (`SING`) waits for one trigger, keeps that record and stops.
+- **Address trigger.** An I²C trigger that fires only when a chosen address is sent. Here it is the BQ24195's address 0x6B (107 in decimal), write. See V8.
+- **Replug.** Unplug the main-board USB-C and plug it back in, with the probes left where they are. This restarts the board, and every start-up sends the 0x6B frames once.
 - **DUT** (device under test). The board being measured.
 - **Cal.** The probe-calibration output on the scope's front panel: a signal terminal and a ground terminal next to it.
 - **V1–V9 vs v6/v7.** Capital V1–V9 are the steps below; lower-case v6/v7 are the board versions. So "the V6 ground" is step V6's ground, not the v6 board.
@@ -56,10 +68,11 @@ Every setting below is **set, then read back**. The read-back is the check, beca
 
 ### 0.4 Rules that apply to every step
 
+- **Name the screen.** Never "the screen" on its own: say the scope screen, the board display or the terminal ("Words used here"). The decode band is always "the decode band on the scope screen".
 - **Probe ratio by hand.** The DHO804 does **not** detect the Sensepeek SQ500. It left CH2 at `1` with the SQ500 attached, and the Cal signal read about 10× low *[facts: SQ500 attenuation]*. Set every channel's ratio yourself and read it back (V2).
 - **Channel on, and the trigger on that channel, before measuring.** A measurement on a channel that is off, or that isn't the trigger source, returned `9.9E37` (invalid) *[facts: Measurement (one value)]*.
 - **Every measured item goes on the Result panel while the scope is running, before any capture.** `capture.py` stops the scope and then asks for each value. In W6, the one item that was not already on the panel came back `9.9E37`, while the items on the panel were valid. **This is a hypothesis, not tested**: an item that isn't already being measured may have no value on a stopped trace *[facts: Capture-tool comparison, VPP observation]*. Following the rule costs nothing.
-- **`capture.py` leaves the scope STOPPED.** After each capture, press **RUN/STOP** once so the scope runs again (the screen's status badge leaves STOP).
+- **`capture.py` leaves the scope STOPPED.** After each capture, press **RUN/STOP** once so the scope runs again (the status badge on the scope screen leaves STOP). The exception is V8 and V9, where the sweep is SINGLE: those steps say what to do instead.
 - **Never trust `:SAVE:STATus?`.** It returns `1` even when no file was written. `:SAVE:SETup` and `:SAVE:MEMory:WAVeform` fail silently on 00.01.05 *[facts: Save waveform to stick; Setup save / load]*. `capture.py` refuses to send them. Check that a file exists by listing it.
 - **Clock.** The scope has no front-panel date/time setting. `capture.py` sets the clock from the Mac on every run and reads it back *[facts: Scope clock]*. Don't assume a time held across a power cycle. Don't assume any fixed offset between the USB stick's file times and the Mac either. `ingest_usb.py` tries both +0 and +60 min *[facts: Saved-file timestamps; Inputs for Phase 8]*.
 
@@ -79,7 +92,7 @@ The usual bench is **two SQ500s in PCBite arms, CH1 = SDA, CH2 = SCL**. Nothing 
 
 ## V1 — Clock and starting settings
 
-1. Power the scope on. Wait for the waveform screen.
+1. Power the scope on. Wait until the scope screen shows the waveform view.
 2. Press **AUTO** on the front panel. Do this before anything else in the session, so the scope starts from a known, triggered state.
 3. Don't load a saved setup file. Loading (`:LOAD:SETup` or the menu) has not been tested on 00.01.05 *[facts: Setup save / load]*. The settings are set explicitly in V2–V8, and `capture.py` records every one of them in the log entry's `scope_settings` block.
 4. The clock is set by the first `capture.py` run of the session (V3).
@@ -97,7 +110,7 @@ For each channel `<n>` that will be used (CH1 and CH2 in most cards):
    q ':CHANnel<n>:DISPlay ON'; q ':CHANnel<n>:PROBe 10'; q ':CHANnel<n>:PROBe?'; q ':CHANnel<n>:DISPlay?'; q ':SYSTem:ERRor?'
    ```
    (`<n>` is the channel number, for example `:CHANnel2:PROBe 10`.)
-3. **CHECK:** `:CHANnel<n>:PROBe?` prints `10`, and `:CHANnel<n>:DISPlay?` prints `1`.
+   **CHECK:** in the terminal, `:CHANnel<n>:PROBe?` prints `10`, and `:CHANnel<n>:DISPlay?` prints `1`.
 
 **Pass:** the probe and the scope channel both say 10×, for every channel in use.
 **Record:** `validation.V2_probe_ratio`, for example `{CH1: 10x/10x, CH2: "fixed 10:1/10x"}`. The scope setting comes first, then the probe (switch position, or "fixed 10:1" for the SQ500).
@@ -114,18 +127,18 @@ Do it once for each probe, **on the channel that probe will use**. Move the prob
    q ':TRIGger:MODE EDGE'; q ':TRIGger:EDGE:SOURce CHANnel<n>'; q ':TRIGger:EDGE:SLOPe POSitive'; q ':TRIGger:EDGE:LEVel 1.5'; q ':TRIGger:SWEep AUTO'
    q ':CHANnel<n>:SCALe?'; q ':TIMebase:MAIN:SCALe?'; q ':TRIGger:EDGE:SOURce?'; q ':TRIGger:SWEep?'; q ':SYSTem:ERRor?'
    ```
-   **CHECK:** `1.000000E+00`, `2.000000E-4`, `CHAN<n>`, `AUTO`, `0,"No error"` *[facts: V/div, Timebase, Trigger (edge), Trigger (common)]*. If the trace is off screen, press **AUTO** once, then check the four read-backs again.
+   **CHECK:** in the terminal, `1.000000E+00`, `2.000000E-4`, `CHAN<n>`, `AUTO`, `0,"No error"` *[facts: V/div, Timebase, Trigger (edge), Trigger (common)]*. If the trace is off the scope screen, press **AUTO** once, then check the four read-backs again.
 3. Put **Vamp, Vtop and Vbase** for this channel on the Result panel (these are also V4's items), with the scope running:
    ```
    q ':MEASure:ITEM VAMP,CHANnel<n>'; q ':MEASure:ITEM VTOP,CHANnel<n>'; q ':MEASure:ITEM VBASe,CHANnel<n>'
    ```
-   This is the set form of the verified query. Whether it adds the item to the panel has not been tested. **CHECK:** the Result panel on the screen shows `Vamp(C<n>)`, `Vtop(C<n>)` and `Vbase(C<n>)`, each with a number. If one is missing, add it from the scope's measure menu by hand and write the button path in REPORT.
-4. Look at the square wave's top and corners. On a probe with a compensation trimmer, turn the trimmer with the plastic tool until the top is flat and the corners square, with no overshoot or rounding.
-5. Capture:
+   This is the set form of the verified query. Whether it adds the item to the panel has not been tested. **CHECK:** the Result panel on the scope screen shows `Vamp(C<n>)`, `Vtop(C<n>)` and `Vbase(C<n>)`, each with a number. If one is missing, add it from the scope's measure menu by hand and write the button path in REPORT.
+4. On the scope screen, look at the square wave's top and corners. On a probe with a compensation trimmer, turn the trimmer with the plastic tool until the top is flat and the corners square, with no overshoot or rounding.
+5. Capture, then press **RUN/STOP** once to run the scope again:
    ```
    python3 tools/lab/capture.py --test <V7R-NNN> --arm val_V3 --items VAMP,VTOP,VBASe --session lab/log/<YYYY-MM-DD_sNN>.yaml
    ```
-   **CHECK:** the output ends `The scope is left STOPPED.`, it has no `NOTE: … invalid` line and no clock `WARNING` line, and it lists a `.png`. Then press **RUN/STOP** once to run again.
+   **CHECK:** in the terminal, the output ends `The scope is left STOPPED.`, it has no `NOTE: … invalid` line and no clock `WARNING` line, and it lists a `.png`.
 
 **Pass:** flat top, square corners, no visible overshoot or rounding at 1 V/div in the PNG.
 **Record:** `validation.V3_comp_png`: the PNG name (one per probe or channel; list them if more than one).
@@ -137,6 +150,7 @@ The Cal output is a **1 kHz, 3 Vpp** square wave, about 0 → 3 V *[facts: DHO80
 1. Use the V3 capture. Its log entry already holds `VAMP`, `VTOP` and `VBASe` for the channel. Don't re-capture.
 2. **Read Vamp**, not Vtop: the Phase 6 check read Vamp 3.0037 V, Vtop 2.9774 V, Vbase −26.3 mV on this scope.
 3. Vbase may jump between two values tens of mV apart from one refresh to the next. Phase 6 saw −26.3 mV and +43.3 mV alternating. That was recorded as observed, not explained. Note it if you see it; it is not a fail on its own.
+4. CH1 and CH2 may show the same Vamp, Vtop and Vbase on the Result panel to every digit, even though their CSVs differ. V7R-002 saw this. It is not a fail (PLAN "After V7R-002 S1" §4).
 
 **Pass:** **Vamp = 2.91 V to 3.09 V** (3 Vpp ± 3 % **[own]**) on every channel in use.
 **Record:** `validation.notes`: "V4 Vamp CH<n> = <value> V".
@@ -150,7 +164,7 @@ The Cal output is a **1 kHz, 3 Vpp** square wave, about 0 → 3 V *[facts: DHO80
 
 **Run V5 once per arm** (S1 and S2 each), because the ground point is different for each arm. Do V5a and then V5b in the same session, with the same scope settings. **Don't change any scope setting between V5a and V5b**, or the tool refuses to compare them.
 
-1. **Settings.** Set both channels to the card's channel settings. For the reference settings (`known-good-reference.md` step 2):
+1. **Settings.** Set both channels to the card's channel settings. For the reference settings (`known-good-reference.md` step 3):
    ```
    q ':CHANnel1:DISPlay ON'; q ':CHANnel2:DISPlay ON'
    q ':CHANnel1:SCALe 0.5'; q ':CHANnel2:SCALe 0.5'; q ':CHANnel1:OFFSet -1.65'; q ':CHANnel2:OFFSet -1.65'
@@ -159,30 +173,34 @@ The Cal output is a **1 kHz, 3 Vpp** square wave, about 0 → 3 V *[facts: DHO80
    q ':TRIGger:MODE EDGE'; q ':TRIGger:EDGE:SOURce CHANnel1'; q ':TRIGger:SWEep AUTO'
    q ':CHANnel1:SCALe?'; q ':CHANnel2:SCALe?'; q ':CHANnel1:OFFSet?'; q ':CHANnel2:OFFSet?'; q ':CHANnel1:BWLimit?'; q ':CHANnel2:BWLimit?'; q ':TIMebase:MAIN:SCALe?'; q ':ACQuire:MDEPth?'; q ':TRIGger:SWEep?'; q ':SYSTem:ERRor?'
    ```
-   **CHECK:** `5.000000E-01` twice, about `-1.65` twice, `OFF` twice, `1.000000E-5`, `1.0000E+04`, `AUTO`, `0,"No error"` *[facts: V/div, Offset, BW limit, Timebase, Acquisition]*. Sweep has to be **AUTO**: a tip on ground gives nothing to trigger on, and AUTO keeps the trace updating.
-2. **Vpp on the panel** (optional, for the record only): `q ':MEASure:ITEM VPP,CHANnel1'; q ':MEASure:ITEM VPP,CHANnel2'`. Vpp is not the pass test: it swings too much from one capture to the next.
+   **CHECK:** in the terminal, `5.000000E-01` twice, about `-1.65` twice, `OFF` twice, `1.000000E-5`, `1.0000E+04`, `AUTO`, `0,"No error"` *[facts: V/div, Offset, BW limit, Timebase, Acquisition]*. Sweep has to be **AUTO**: a tip on ground gives nothing to trigger on, and AUTO keeps the trace updating.
+2. **Vpp on the panel** (for the record only): `q ':MEASure:ITEM VPP,CHANnel1'; q ':MEASure:ITEM VPP,CHANnel2'`. Vpp is not the pass test: it swings too much from one capture to the next.
+   **CHECK:** the Result panel on the scope screen shows `Vpp(C1)` and `Vpp(C2)`, each with a number. If one is missing, add it from the scope's measure menu by hand and write the button path in REPORT.
 
 ### V5a — control, no board
 
 3. Put **both probe tips and both ground springs on the Cal ground terminal** on the scope's front panel (not the Cal signal terminal). No probe touches the board.
-4. Capture:
+4. Capture, then press **RUN/STOP** once:
    ```
    python3 tools/lab/capture.py --test <V7R-NNN> --arm val_V5ctl --items VPP --session lab/log/<YYYY-MM-DD_sNN>.yaml
    ```
-   Then press **RUN/STOP** once. Note the `.csv` name it prints.
+   **CHECK:** in the terminal, the output ends `The scope is left STOPPED.` and lists a `.csv`. Note the `.csv` name.
 
 ### V5b — on this arm's ground point, board powered
 
-5. **Unplug the board.** Put each probe's **tip and its spring on the same ground point**: the one this arm uses in V6. Land the ground first, then the tip. Look under the microscope, then power on.
+5. **Unplug the board.** Put each probe's **tip and its spring on the same ground point**: the one this arm uses in V6. Land the ground first, then the tip.
    - **S1 (master end), v6:** the soldered wire on pad **C**. The tips and springs touch the wire, as the springs will in the reference.
    - **S1 (master end), v7:** pad **C** (C9.1, one end of capacitor C9).
    - **S2 (BQ end), v6 or v7:** pad **F** (C21.2, the end of C21 farther from U5). See the bridging warning in V6. If a tip and a spring can't both sit on that small pad, put the spring on pad F and the tip on the nearest other ground pad, **R32.2** (one end of resistor R32, 3.44 mm from U5.6). It is not marked in the pictures, so find it in the layout first. Write down which pads you used. That fallback is our suggestion **[own]**.
-6. Board powered and running. On v6 with `v6-ref` and no sensor PCB, the screen shows "Sensor init failed". That is expected.
-7. Capture:
+
+   **CHECK:** under the microscope, each tip and spring sits on the ground point above, and nothing touches an **X** pad. The board is still unplugged.
+6. Power the board: plug in the main-board USB-C.
+   **CHECK:** on v6 with `v6-ref` and no sensor PCB, the board display shows "Sensor init failed!". That is expected.
+7. Capture, then press **RUN/STOP** once:
    ```
    python3 tools/lab/capture.py --test <V7R-NNN> --arm val_V5 --items VPP --session lab/log/<YYYY-MM-DD_sNN>.yaml
    ```
-   Then press **RUN/STOP** once. Note the `.csv` name.
+   **CHECK:** in the terminal, the output ends `The scope is left STOPPED.` and lists a `.csv`. Note the `.csv` name.
 
 ### V5 result
 
@@ -196,7 +214,7 @@ The Cal output is a **1 kHz, 3 Vpp** square wave, about 0 → 3 V *[facts: DHO80
 
 **Scope sanity check [own]:** at the reference settings above, the control sd should be between **2.5 and 10 mV** on each channel (half to double the ≈ 5 mV seen in V7R-001). Outside that band, stop and look at the scope and probes before going on. The tool prints a flag when it is outside the band; at other settings the flag does not apply, and the control sd is just recorded.
 
-**Record:** paste the tool's block as `validation.V5`. It holds four per-channel values: `ctl_sd_mV` (control sd), `dut_sd_mV` (board sd), `excess_rms_mV` (excess noise) and `offset_mV` (the zero offset: the control's average). Optionally add `vpp_panel_mV`, the panel Vpp of the V5b capture. Put both PNG names in `validation.notes`. The zero offset is used again in `known-good-reference.md` step 7.
+**Record:** paste the tool's block as `validation.V5`. It holds four per-channel values: `ctl_sd_mV` (control sd), `dut_sd_mV` (board sd), `excess_rms_mV` (excess noise) and `offset_mV` (the zero offset: the control's average). Optionally add `vpp_panel_mV`, the panel Vpp of the V5b capture. Put both PNG names in `validation.notes`. The zero offset is used again in `known-good-reference.md` step 9.
 
 ## V6 — Ground method
 
@@ -220,41 +238,106 @@ Use the shortest ground the probe can land: a **ground spring**, or a wire of **
 
 ## V7 — Idle-high level on the DUT
 
-1. Probes on the measurement points (for example SDA on CH1 at pad A or D, SCL on CH2 at pad B or E), with the V6 ground. If they have to move, unplug the board first and look before powering on. Board powered and running.
-2. Set an edge trigger on the channel, sweep AUTO, and put **Vtop** on the panel, for each channel in use:
-   ```
-   q ':TRIGger:EDGE:SOURce CHANnel<n>'; q ':TRIGger:SWEep AUTO'; q ':MEASure:ITEM VTOP,CHANnel<n>'
-   ```
-   **CHECK:** `Vtop(C<n>)` shows on the Result panel for every channel in use.
-3. Capture:
-   ```
-   python3 tools/lab/capture.py --test <V7R-NNN> --arm val_V7 --items VTOP,VBASe --session lab/log/<YYYY-MM-DD_sNN>.yaml
-   ```
-   Then press **RUN/STOP** once.
+The bus is idle here: on v6 with `v6-ref` and no sensor PCB, the firmware halts at start-up ("Sensor init failed!") and sends nothing more. V7 reads the level the pull-ups hold.
 
-**Pass:** **3.135 V to 3.465 V** (3.3 V ± 5 %) on every channel in use. This catches a ×10 ratio error. It is the check Phase 23 lacked.
-**Record:** `validation.V7_idle_high_V`, for example `{CH1: 3.29, CH2: 3.30}`.
+1. **Unplug the board.** Move the probe tips onto the measurement points for this arm: CH1 (SDA) on pad **A** (S1) or **D** (S2), CH2 (SCL) on pad **B** (S1) or **E** (S2). The grounds stay as in V6.
+   **CHECK:** under the microscope, each tip sits on its lettered pad, the grounds are as in V6, and nothing touches an **X** pad. The board is still unplugged.
+2. Power the board: plug in the main-board USB-C.
+   **CHECK:** the board display shows "Sensor init failed!".
+3. Edge trigger on CH1, sweep AUTO:
+   ```
+   q ':TRIGger:MODE EDGE'; q ':TRIGger:EDGE:SOURce CHANnel1'; q ':TRIGger:SWEep AUTO'
+   q ':TRIGger:MODE?'; q ':TRIGger:EDGE:SOURce?'; q ':TRIGger:SWEep?'; q ':SYSTem:ERRor?'
+   ```
+   **CHECK:** `EDGE`, `CHAN1`, `AUTO`, `0,"No error"` *[facts: Trigger (edge), Trigger (common)]*. The channel settings are still V5's (0.5 V/div, offset −1.65 V, 10 µs/div).
+4. **Vpp on the panel**, for each channel in use:
+   ```
+   q ':MEASure:ITEM VPP,CHANnel1'; q ':MEASure:ITEM VPP,CHANnel2'
+   ```
+   Vpp, not Vtop: on a flat trace Vtop and Vbase come back `9.9E37` (invalid) *[facts: Measurement (one value)]*. Vpp works on a flat trace, so it is a check that the trace is flat. It has no pass role.
+   **CHECK:** the Result panel on the scope screen shows `Vpp(C1)` and `Vpp(C2)`, each with a number. If one is missing, add it from the scope's measure menu by hand and write the button path in REPORT.
+5. Capture, then press **RUN/STOP** once:
+   ```
+   python3 tools/lab/capture.py --test <V7R-NNN> --arm val_V7 --items VPP --session lab/log/<YYYY-MM-DD_sNN>.yaml
+   ```
+   **CHECK:** in the terminal, the output ends `The scope is left STOPPED.` and lists a `.csv`.
+6. **Session work (no operator action):** run the frame tool on the CSV:
+   ```
+   python3 tools/lab/i2c_frame.py lab/captures/<V7R-NNN>/<YYYY-MM-DD>_<V7R-NNN>_val_V7_<nn>.csv
+   ```
+   **CHECK:** it prints `mode: idle` (no edge in the record). If it prints `mode: frame`, the bus was not idle during the capture: redo steps 5 and 6, and write in REPORT what the board display showed.
+
+**Pass:** the tool's **mean of all samples is 3.135 V to 3.465 V** (3.3 V ± 5 %) on every channel in use. This catches a ×10 ratio error. It is the check Phase 23 lacked.
+**Record:** paste the tool's `validation.V7_idle_high_V` line, for example `{CH1: 3.303, CH2: 3.290}`, and its `values_csv` block under the capture's log entry. The panel Vpp values are already in that entry, from `capture.py`.
+
+## Decode setup (before V8, every scope session)
+
+The scope's decode does not come up ready. In V7R-002 the bus status was Off and both thresholds were 0.00 V, and `:BUS1:MODE IIC` did not switch it on *[facts: I²C decode]*. So set it in the menu, by hand, in every scope session. There are no SCPI commands here for Bus status, the thresholds or R/W: they have not been tried on this scope.
+
+1. On the scope screen, open the **function navigation icon** at the lower left → **Decode** → the **Decode 1** tab. Set these fields:
+
+   | Field | Set to |
+   |---|---|
+   | Bus type | I2C |
+   | Bus status | **On** |
+   | Clock | CH2 |
+   | SDA | CH1 |
+   | Format | Hex |
+   | SCL Thre | **1.65 V** |
+   | SDA Thre | **1.65 V** |
+   | R/W | **With** (so the byte shows as `d6`; Without shows the 7-bit address, `6b`) |
+
+   Leave the other fields as they are (at V7R-002 they were Label On, Exchange SCL/SDA, Event table Off).
+   **CHECK:** on the scope screen, before you close the menu, the Decode 1 tab shows every field as in the table. Bus status **On** and R/W **With** matter most, because no command can read them back: `:BUS1:MODE?` reads `IIC` even with Bus status Off.
+2. Close the menu and run:
+   ```
+   q ':BUS1:MODE?'; q ':BUS1:IIC:SCLK:SOURce?'; q ':BUS1:IIC:SDA:SOURce?'; q ':BUS1:THReshold? SDA'; q ':BUS1:THReshold? SCL'; q ':SYSTem:ERRor?'
+   ```
+   **CHECK:**
+   - In the terminal: `IIC`, `CHAN2`, `CHAN1`, `1.650000E0`, `1.650000E0`, `0,"No error"` *[facts: I²C decode]*.
+   - On the scope screen, the decode band (the row labelled **B1** / **I2C** at the left edge) is there.
+
+**Pass:** both CHECKs.
+**Record:** in `validation.notes`: "Decode setup by menu: Bus status On, SCL/SDA Thre 1.65 V, R/W With", plus any field that was not as listed before you changed it.
 
 ## V8 — Contact check: I²C decode
 
 Needle probes can sit on a pad without making contact. Decode proves they do.
 
-1. Turn on bus 1 decode for I²C, with SCL and SDA on the channels you are using, and check it:
-   ```
-   q ':BUS1:MODE IIC'; q ':BUS1:IIC:SCLK:SOURce CHANnel2'; q ':BUS1:IIC:SDA:SOURce CHANnel1'
-   q ':BUS1:MODE?'; q ':BUS1:IIC:SCLK:SOURce?'; q ':BUS1:IIC:SDA:SOURce?'; q ':BUS1:THReshold? SDA'; q ':BUS1:THReshold? SCL'; q ':SYSTem:ERRor?'
-   ```
-   **CHECK:** mode `IIC`; sources CH2 (SCL) and CH1 (SDA); both thresholds about **1.65 V** (V_DD/2, §4.1). Only `:BUS1:MODE?` has been verified on this scope (it read `PAR` with decode off) *[facts: I²C decode]*. If a value is wrong, set it in the scope's decode menu and write the button path in REPORT.
-2. Trigger on an I²C START so each frame starts at the trigger:
-   ```
-   q ':TRIGger:MODE IIC'; q ':TRIGger:IIC:SCL CHANnel2'; q ':TRIGger:IIC:SDA CHANnel1'; q ':TRIGger:IIC:WHEN STAR'; q ':TRIGger:SWEep NORM'
-   q ':TRIGger:MODE?'; q ':TRIGger:IIC:WHEN?'; q ':TRIGger:SWEep?'
-   ```
-   **CHECK:** `IIC`, `STAR`, `NORM` *[facts: Trigger (I²C)]*.
-3. Look at the decode row on the screen.
+Why this trigger: a trigger on an I²C START fires at power-up on something that is not I²C (V7R-002: the ESP32's start-up serial output on the SDA pin), and the bus carries other frames after the 0x6B frames. So V8 triggers on the BQ24195's address, 0x6B write, and uses SINGLE, which keeps the first such frame and stops *[facts: Trigger (I²C)]*.
 
-**Pass:** the decoded address byte is the one the card expects. For the BQ24195 (7-bit address 0x6B), a write shows **`D6`**. Repeat this check after any bump or reseat, and at the start of every day.
-**Record:** `validation.V8_decode_ok: true`, and the address byte seen, in `validation.notes`.
+1. **Address trigger:**
+   ```
+   q ':TRIGger:MODE IIC'; q ':TRIGger:IIC:SCL CHANnel2'; q ':TRIGger:IIC:SDA CHANnel1'
+   q ':TRIGger:IIC:WHEN ADDR'; q ':TRIGger:IIC:AWIDth 7'; q ':TRIGger:IIC:ADDRess 107'; q ':TRIGger:IIC:DIRection WRITe'
+   q ':TRIGger:MODE?'; q ':TRIGger:IIC:SCL?'; q ':TRIGger:IIC:SDA?'; q ':TRIGger:IIC:WHEN?'; q ':TRIGger:IIC:AWIDth?'; q ':TRIGger:IIC:ADDRess?'; q ':TRIGger:IIC:DIRection?'; q ':SYSTem:ERRor?'
+   ```
+   107 is 0x6B in decimal. **CHECK:** in the terminal, `IIC`, `CHAN2`, `CHAN1`, `ADDR`, `7`, `107`, `WRIT`, `0,"No error"`.
+2. **20 µs/div and SINGLE:**
+   ```
+   q ':TIMebase:MAIN:SCALe 2e-5'; q ':TRIGger:SWEep SING'
+   q ':TIMebase:MAIN:SCALe?'; q ':TRIGger:SWEep?'
+   ```
+   Why 20 µs/div: the trigger fires at the R/W bit, about 80 µs after the frame's START. At 10 µs/div the START falls just before the record, and the decode band then shows no labels. At 20 µs/div it is inside *[facts: Timebase]*. **CHECK:** in the terminal, `2.000000E-5`, `SING`.
+3. **Replug** the main-board USB-C: unplug it, wait a second, plug it back in. Leave the probes where they are. Then run `q ':TRIGger:STATus?'`.
+   **CHECK:**
+   - In the terminal: `STOP` (the scope triggered once and stopped).
+   - On the scope screen, in the decode band: **`Write:d6`** then **`A:0`**. `Write:d6` is the address byte D6 (0x6B with the write bit); `A:0` is the ACK, the 9th bit, low.
+
+   If the status is not `STOP`, or the labels are not there: run step 2 again and replug again. **Stop rule:** no `d6` after **3 replugs** → stop, V8 fails, and report what the decode band and the status showed.
+4. Capture (don't press RUN/STOP after it: the scope stays stopped until V9 arms the trigger again):
+   ```
+   python3 tools/lab/capture.py --test <V7R-NNN> --arm val_V8 --items VPP --session lab/log/<YYYY-MM-DD_sNN>.yaml
+   ```
+   **CHECK:** in the terminal, the output ends `The scope is left STOPPED.` and lists a `.png`. The PNG shows the decode band with `Write:d6` and `A:0`.
+5. **Back to 10 µs/div** for V9:
+   ```
+   q ':TIMebase:MAIN:SCALe 1e-5'; q ':TIMebase:MAIN:SCALe?'
+   ```
+   **CHECK:** in the terminal, `1.000000E-5`.
+
+**Pass:** the decode band on the scope screen showed `Write:d6` then `A:0` (for the BQ24195, 7-bit address 0x6B, write). Repeat V8 after any bump or reseat, and at the start of every day.
+**Record:** `validation.V8_decode_ok: true`, and in `validation.notes`: "V8 decode Write:d6 then A:0 (<PNG name>, 20 µs/div, address trigger 0x6B write)".
 
 ## V9 — Reference measurement
 
@@ -267,7 +350,7 @@ Run `known-good-reference.md` at the start of a campaign, and again whenever the
 
 ## Closing the validation
 
-- Set `validation.passed: true` only when V1–V8 pass (and V9 when it is due). Any fail: `passed: false`, stop, and fix the setup.
+- Set `validation.passed: true` only when V1–V8 and the decode setup pass (and V9 when it is due). Any fail: `passed: false`, stop, and fix the setup.
 - **Steps not done.** When a fail stops the validation, write each step you did not run as `{not_run: "<reason>"}` in place of its value, for example `V7_idle_high_V: {not_run: "V5 failed"}`. This is allowed **only** with `passed: false`. With `passed: true`, the validator reports an error.
 - **One log per arm.** A card that runs S1 and S2 writes two session logs: `_s01` for S1 and `_s02` for S2. Each has its own `validation` block.
   - V1–V4 run once, at the start of the session, and are recorded in the first log.
