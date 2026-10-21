@@ -65,6 +65,8 @@ Pass table per `known-good-reference.md` (V_DD = 3.3 V). Evaluated per arm (S1, 
 
 - V2: read-backs "10 1 10 1 0,\"No error\"" (CH1 PROBe?, DISPlay?, CH2 PROBe?, DISPlay?, ERRor?). Probe identity, operator: "I don't tell them apart.. why would I need to? One is plugged in to Ch1, the other plugged in to Ch2". Session: probes are identified by scope socket (CH1/CH2) for this card; neither is unplugged from its socket during the card.
 
+- V3a (CH1 on Cal, CH2 parked on Cal ground): read-backs "1.000000E+00 / 2.000000E-4 / CHAN1 / AUTO / 0,\"No error\"". Panel: "For c1 I see Vamp, Vtop, Vbase, Vpp. For C2 the same ones." capture.py: wrote `2026-10-21_V7R-002_val_V3_01.{png,csv,setup.bin}`; "NOTE: 3 measurement(s) invalid (9.9E37 or no reply): VAMP CH2, VTOP CH2, VBASe CH2"; "The scope is left STOPPED."; no clock WARNING line. Shape: "Tops look flat, corners looks square". Log: VAMP CH1 3.0208 V, VTOP CH1 2.9757 V, VBASe CH1 −45.067 mV; scope_clock delta 0.0 s ok.
+
 ### Measured values (from log; cite `lab/evidence/V7R-002/...`)
 ### Interpretation (session; labelled as such)
 
