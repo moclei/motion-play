@@ -1,6 +1,6 @@
 # Test Workflow Setup — Tasks
 
-> Track 1 (Phases 1–4) ends at the milestone merge that unblocks log-only debug cards. Track 2 (Phases 5–12) is the scope tooling. Waits W2–W8 are defined in PLAN.md (W1 was removed: the role install is deferred). Until the role is installed, a "debugger session" means an ad-hoc `claude` session opened with "Read `docs/research/v7-retry/debugger-role-draft.md` and act as that role for this session."
+> Track 1 (Phases 1–4) ends at the milestone merge that unblocks log-only debug cards. Track 2 (Phases 5–16) is the scope tooling. Waits W2–W8 are defined in PLAN.md (W1 was removed: the role install is deferred). Until the role is installed, a "debugger session" means an ad-hoc `claude` session opened with "Read `docs/research/v7-retry/debugger-role-draft.md` and act as that role for this session."
 > ~~**User, at any time before Phase 9:** buy ground springs that fit the Sensepeek and Rigol probe tips (`test-workflow-audit.md` §4.1).~~ Closed: springs are on hand and fit both probes (W4 S8b).
 
 ## Phase 1: Firmware baselines
@@ -122,15 +122,74 @@
 
 # --- handoff point ---
 
-## Phase 12: v6 re-run and close (bench, then desk)
+## Phase 12: v6 re-run, S1 (bench)
 
-- [~] **W8:** the user runs `RELAY-v6-dry-run-2.md` as an ad-hoc debugger session, then a second fresh ad-hoc debugger session asked only "what is the bench state?". The user reports whether the answer was correct and whether the image handoff was workable
-- [ ] Verify from git, for the new card: the pre-registration commit comes before the raw-data commits; there are per-arm raw commits; the recording commit touches STATE with `as_of` set; the notebook entry exists; the evidence files are present; `check_state.py` is clean; `validate_log.py` passes both arm logs. If v6 is out of spec on a validated setup (V1–V8 pass for that arm), stop: the setup gets fixed before close (replan if needed). If V5 fails again, stop and replan; no limit is widened
-- [ ] Tick both acceptance tables in PLAN. The Dry run rows cite the new card, with V7R-001 noted as the void first attempt. Open the final PR (merge commit)
+- [x] **W8, part 1:** the user ran `RELAY-v6-dry-run-2.md` as an ad-hoc debugger session. Card V7R-002 is pre-registered and open; S1 ran V1–V9 and passed, with deviations (a) V7 from the CSV mean and (b) V8/V9 on an I²C address trigger, both decided on the card. S2, the card close and the L0 test moved to Phase 16. Interim return: `RELAY-v6-dry-run-2-return.md` (72329ef), SESSION.md "W8"
+- [x] 🔄 Handoff (the interim return relay and SESSION.md "W8", ca5a1ab)
+
+# --- handoff point ---
+
+## Phase 13: Frame tool (desk)
+
+> Source for this phase and the next two: PLAN "After V7R-002 S1" §1–§8. No pass limit and no card prediction changes anywhere.
+
+- [ ] Write `tools/lab/i2c_frame.py` per PLAN "After V7R-002 S1" §6, with the rise-time metric of §4 (0.99 V → 2.31 V, linear interpolation, every rising edge per channel). Args: `<csv>`, `--sda CH1`, `--scl CH2`, `--vdd 3.3`, `--expect <hex byte>`. Idle mode when no channel crosses V_DD/2; frame mode otherwise. Print the numbers, a YAML snippet for the log (`validation.V7_idle_high_V`, or `values` entries with `gate` strings in the S1 log's style), and pass/fail per `known-good-reference.md` pass-table row, citing that file for the limits. Stdlib only, Python 3.7. Reuse the CSV loader in `noise_floor.py` or `lablib.py` if it fits; don't refactor `noise_floor.py` otherwise. Exit 0 all pass, 1 any fail, 2 bad input or no frame found
+- [ ] Tests in `tools/lab/tests/tool_tests.py`, on synthetic CSVs that the test writes: a 100 kHz `D6`+ACK frame with known edge times, rise times and low levels; a flat idle record; a frame with NACK (9th bit high); a byte that differs from `--expect`; a record with a single channel. Each asserts the printed values within stated tolerances and the exit code. `tools/lab/tests/run_tests.py` passes
+- [ ] Acceptance on real data: run it on `lab/captures/V7R-002/2026-10-21_V7R-002_S1_01.csv` (`--expect D6`) and on `..._val_V7_01.csv`. Compare with the S1 log `lab/log/2026-10-21_s01.yaml` (the S1 entry's values; `V7_idle_high_V`). Record both outputs and every difference in SESSION.md. Pass: within 3 mV and 3 ns of the hand numbers, and the same byte and ACK. If not, report the difference and both gates, and don't tune the tool to match. If the captures are missing, stop and report (they are gitignored; the iCloud backup holds them). Do not edit the S1 log or the card
+- [ ] Add an `i2c_frame.py` row to the `tools/CONTEXT.md` tools/lab table, and the `tests/run_tests.py` row's list
+- [ ] 🔄 Handoff
+
+# --- handoff point ---
+
+## Phase 14: Procedure revision (desk)
+
+- [ ] `lab/procedures/dho804-setup-validation.md`:
+  - **Words / §0.4:** the screen rule from PLAN §7 (scope screen, board display, terminal), and the decode band defined as the row labelled B1 / I2C at the left edge of the scope screen.
+  - **New decode-setup step before V8**, run in every scope session (PLAN §5): the menu path field by field, then the verified queries as the CHECK (`:BUS1:MODE?`, both sources, `:BUS1:THReshold? SDA` and `? SCL` reading about `1.65`). No SCPI set for Bus status, thresholds or R/W.
+  - **V7** (PLAN §3): the panel item is VPP; the "VPP on the panel" check is its own step before the capture step; the value is the `i2c_frame.py` idle mean; limit unchanged.
+  - **V8** (PLAN §1, §2): the address trigger (`WHEN ADDR`, `AWIDth 7`, `ADDRess 107`, `DIRection WRITe`, sweep SING), each set and read back; 20 µs/div for V8, then back to 10 µs/div and read back; replug; CHECK on the scope screen's decode band: `Write:d6` then `A:0`. Stop rule: no `d6` after 3 replugs. Remove the START trigger and sweep NORM.
+  - **V4:** one line that identical panel digits on CH1 and CH2 were seen in V7R-002 and are not a fail (PLAN §4).
+  - **Every step:** a CHECK that must happen before a later action ends its step, and the action becomes the next step (PLAN §7).
+- [ ] `lab/procedures/known-good-reference.md`:
+  - **Prerequisites and "Which transaction to capture"** (PLAN §1, §2): the 0x6B frames at 100 kHz; sensor init at 400 kHz after them, so the bus is not quiet; the boot-ROM UART on SDA; hence the address trigger and SINGLE. Remove "the bus goes quiet" and the "if it shows another address" retry.
+  - **Step 2:** correct the record to −80…+80 µs at 16 ns per sample at 10 µs/div, and say the START falls just outside it while the edges, the 0-bits, the ACK and the idle level after the STOP are inside.
+  - **Step 3:** the address trigger in place of START. The MAX/MIN 70/30 set is now verified.
+  - **Step 5:** CHECK the scope status reads STOP. An empty decode band at 10 µs/div is expected, because the decode comes from the CSV. Stop after 3 replugs with no trigger.
+  - **Step 7:** run `i2c_frame.py --expect D6`. Rise time as in PLAN §4, with the panel RTIMe recorded beside it and no pass role. Idle high after the frame. Decode from the CSV bits.
+  - **Pass table:** the rise row reads ≤ 300 ns, with the note that the reference frame runs at 100 kHz and why the Fast-mode limit is kept (PLAN §2); ≤ 1000 ns stays only for the secondary reference. The Decode row's source is the CSV. Apply the step split rule from PLAN §7. No limit changes
+- [ ] `lab/templates/instruction.md`: add the CHECK-placement rule and the screen-naming rule (PLAN §7)
+- [ ] Read both procedures end to end for steps that contradict each other, and for any remaining "screen", START or "bus goes quiet" wording. List the result in SESSION.md
+- [ ] 🔄 Handoff
+
+# --- handoff point ---
+
+## Phase 15: S2 relay (desk)
+
+- [ ] Write `RELAY-v6-dry-run-2-s2.md` for the W8 continuation, modelled on `RELAY-v6-dry-run-2.md` (which stays as run). Contents:
+  - It continues card **V7R-002** at S2. It is not a new card, and the card's predictions and limits stay as registered.
+  - S2 runs on the procedures at the Phase 14 commit(s), and the card notes those commits. They write deviations (a) and (b) in as the method (PLAN §8).
+  - Re-flash `v6-ref` first. This is a new scope session, so V1–V4 run again and go in the S2 log. The S2 log is named by its session date (`<date>_sNN.yaml`), and the card notes that the name differs from its Setup line.
+  - Then decode setup, then S2: V2, V5–V9 at the BQ end. Pad F bridging warning. No sensor PCB. Restart by replugging the main-board USB-C.
+  - Stop rules, including "no `d6` after 3 replugs".
+  - Run before the CHECKPOINT DUE date that `check_state.py` reports, and stop and report if it fires.
+  - Analysis with `i2c_frame.py`.
+  - Then close the card: the recording commit touches STATE with `as_of`; a notebook entry; evidence for both arms, S1's captures included, promoted to `lab/evidence/V7R-002/`.
+  - Then the fresh-session L0 test ("what is the bench state?").
+  - The report list: L0 answer, image handoff, final commit, hand-set settings with button paths, and pass or fail per V5–V9 row per arm.
+- [ ] Check that every file path in the relay's paste text exists (`ls` each one) and record the list in SESSION.md (PLAN §7)
+- [ ] 🔄 Handoff
+
+# --- handoff point ---
+
+## Phase 16: v6 re-run S2 and close (bench, then desk)
+
+- [ ] **W8, part 2:** the user runs `RELAY-v6-dry-run-2-s2.md` as an ad-hoc debugger session (S2, close card V7R-002), then a second fresh ad-hoc debugger session asked only "what is the bench state?". The user reports whether the answer was correct and whether the image handoff was workable
+- [ ] Verify from git, for V7R-002: the pre-registration commit comes before the raw-data commits; there are per-arm raw commits; the recording commit touches STATE with `as_of` set; the notebook entry exists; the evidence files for both arms are present; the card notes the procedure commits S2 ran on; `check_state.py` is clean; `validate_log.py` passes both arm logs (`2026-10-21_s01` and the S2 log). If v6 is out of spec on a validated setup (V1–V8 pass for that arm), stop: the setup gets fixed before close (replan if needed). If V5 fails again, stop and replan; no limit is widened
+- [ ] Tick both acceptance tables in PLAN. The Dry run rows cite V7R-002, with V7R-001 noted as the void first attempt. Open the final PR (merge commit)
 - [ ] 🔄 Handoff
 
 ## Deferred
 
 [from: test-workflow-setup] Install the debugger role: after the user's edit pass, copy `docs/research/v7-retry/debugger-role-draft.md` verbatim to `.claude/agents/debugger.md`, check every path it names exists, re-run the L0 budget check against it, and flip the PROTOCOL.md Debugger row from draft to installed.
-[from: test-workflow-setup] Suggestions for the user's draft edit pass: tell sessions to run `git config core.hooksPath .githooks` when `git config core.hooksPath` is empty; decide whether the checkpoint section carries the `decisioning.md` §4.2 criteria table or a pointer.
+[from: test-workflow-setup] Suggestions for the user's draft edit pass: tell sessions to run `git config core.hooksPath .githooks` when `git config core.hooksPath` is empty; decide whether the checkpoint section carries the `decisioning.md` §4.2 criteria table or a pointer. From W8: the draft's §4.8 relay rules could carry the CHECK-placement and screen-naming rules (test-workflow-setup PLAN "After V7R-002 S1" §7).
 [from: test-workflow-setup] The ESP32-S3 datasheet (v1.7) is not in `docs/references/`; Phase 5 read it from `~/Downloads`. Add it (with a DATASHEET_REFERENCE.md like the BQ24195 one) so §4.3's V_OL citation points inside the repo.
