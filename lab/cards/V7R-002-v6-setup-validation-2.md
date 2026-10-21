@@ -103,6 +103,8 @@ Pass table per `known-good-reference.md` (V_DD = 3.3 V). Evaluated per arm (S1, 
 - S1 V9 (address trigger 0x6B write, SINGLE, replug): status "STOP"; decode: "Only decode band labels are \"B1\" and \"I2C\" at the left edge of the display". capture.py: wrote `2026-10-21_V7R-002_S1_01.{png,csv,setup.bin}`; "The scope is left STOPPED." Log panel: VTOP CH1 3.2969 V, VBASe CH1 54.267 mV, RTIMe CH1 285.71 ns; VTOP CH2 3.2884 V, VBASe CH2 62.8 mV, RTIMe CH2 114.29 ns. Bench time left: "30 mins".
 - S1 V9, session (CSV S1_01; values in log `2026-10-21_s01` entry S1): SDA at SCL rising edges 1 1 0 1 0 1 1 0 | 0. V_OL as measured, CH1 offset −9.08 mV beside it: bit 5 72.4 mV, bit 3 70.2 mV, bit 0 75.4 mV (sd 11–12 mV). Idle high after the frame: SDA 3.3025 V, SCL 3.2929 V. Rise 30→70 % (0.99→2.31 V): SDA 97.7–98.4 ns (5 edges), SCL 91.1–94.2 ns (10 edges). SCL period 10.0 µs. Panel RiseTime differs from CSV (C1 285.71 vs ≈ 98 ns; C2 114.28 vs ≈ 92 ns), Cnt = 1.
 
+- Session stop after S1 (bench time): operator: "powered off, data cable in, probes on Cal ground"; "scope still on". S2 not started; continues in the next session with fresh V1–V4 (new scope session).
+
 ### Measured values (from log; cite `lab/evidence/V7R-002/...`)
 ### Interpretation (session; labelled as such)
 
