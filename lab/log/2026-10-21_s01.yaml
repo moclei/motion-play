@@ -10,14 +10,15 @@ validation:
   V2_probe_ratio: {CH1: "10x/fixed 10:1", CH2: "10x/fixed 10:1"}
   V3_comp_png: ["2026-10-21_V7R-002_val_V3_01.png", "2026-10-21_V7R-002_val_V3_02.png"]  # CH1, CH2
   V5:
-    ctl_sd_mV: {CH1: "TODO", CH2: "TODO"}
-    dut_sd_mV: {CH1: "TODO", CH2: "TODO"}
-    excess_rms_mV: {CH1: "TODO", CH2: "TODO"}
-    offset_mV: {CH1: "TODO", CH2: "TODO"}
+    ctl_sd_mV: {CH1: 5.04, CH2: 4.81}
+    dut_sd_mV: {CH1: 5.16, CH2: 4.71}
+    excess_rms_mV: {CH1: 1.11, CH2: 0.0}
+    offset_mV: {CH1: -9.08, CH2: -13.02}
+    vpp_panel_mV: {CH1: 24.067, CH2: 21.867}
   V6_ground: {method: "TODO", point: "TODO", length_mm: "TODO"}
   V7_idle_high_V: {CH1: "TODO", CH2: "TODO"}
   V8_decode_ok: "TODO"
-  notes: "V1 clock ok (Δ 0.0 s); no setup loaded. V4 Vamp CH1 = 3.0208 V. V4 Vamp CH2 = 3.0208 V. Data-only cable Mac ↔ T-Display: in. Probes identified by scope socket."
+  notes: "V1 clock ok (Δ 0.0 s); no setup loaded. V4 Vamp CH1 = 3.0208 V. V4 Vamp CH2 = 3.0208 V. Data-only cable Mac ↔ T-Display: in. Probes identified by scope socket. V5 PASS (noise_floor.py): ctl 2026-10-21_V7R-002_val_V5ctl_01.png, dut 2026-10-21_V7R-002_val_V5_01.png; V5b tips + springs on the soldered wire at C, springs ~4-5 mm from C (operator estimate)."
 channels:
   CH1: {probe: "SQ500 (CH1 socket)", ratio: "10x", signal: "Cal (V3a) / Cal ground (V3b)", point: "scope Cal", bw_limit: "OFF", v_div_V: 1.0, offset_V: -3.3, coupling: "DC"}
   CH2: {probe: "SQ500 (CH2 socket)", ratio: "10x", signal: "Cal ground (V3a) / Cal (V3b)", point: "scope Cal", bw_limit: "OFF", v_div_V: 0.5, offset_V: -1.65, coupling: "DC"}
@@ -141,4 +142,41 @@ measurements:
       read: "single"
       preamble: {CH1: "2,2,10000,1,1.600000E-8,-8.000000E-5,0.000000,6.6667E-05,-24750,32768", CH2: "2,2,10000,1,1.600000E-8,-8.000000E-5,0.000000,6.6667E-05,-24750,32768"}
     scope_clock: {set_to: "2026-10-21T11:04:32", read_back: "2026-10-21 11:04:32", ok: true, delta_s: 0.0}
+    scpi_errors: []
+  - test_id: "V7R-002"
+    arm: "val_V5"
+    time: "2026-10-21T11:14:19"
+    trigger: {type: "EDGE", sweep: "AUTO", source: "CHAN1", slope: "POS", level_V: 1.5}
+    timebase_s_div: 1.0e-05
+    method: "auto"
+    feature: "V5b S1: both tips + springs on the soldered wire at pad C (U2.14), board powered"
+    values:
+      - {name: "VPP", ch: "CH1", value_mV: 24.067, raw: "2.4067E-02"}
+      - {name: "VPP", ch: "CH2", value_mV: 21.867, raw: "2.1867E-02"}
+    captures: ["2026-10-21_V7R-002_val_V5_01.png", "2026-10-21_V7R-002_val_V5_01.csv", "2026-10-21_V7R-002_val_V5_01.setup.bin"]
+    raw_observation: "Spring-to-C distance: Like 4mm or 5mm I guess, hard to tell exactly. Maybe less. Display: The \"Sensor init failed!\" screen. Data-only cable: Yes"
+    ai_read:
+      - capture: 2026-10-21_V7R-002_val_V5_01.png
+        settings_seen: {CH1_v_div: 500.00mV, CH1_offset: -1.65V, CH2_v_div: 500.00mV, CH2_offset: -1.65V, timebase: 10.00us/div, srate: 62.50MSa/s, mdepth: 10.00kpts, trigger: "edge CH1 rising 1.50V, A (auto)", status: STOP}
+        values_seen: {CH1_Vpp_mV: 24.066, CH2_Vpp_mV: 21.866, others: "*****"}
+        notes: "Both traces flat at the bottom graticule line; settings identical to val_V5ctl_01."
+        mismatch: none
+    source: "tools/lab/capture.py"
+    scope_settings:
+      channels:
+        CH1: {probe: "10", bw_limit: "OFF", scale: "5.000000E-01", offset: "-1.650000E+00", coupling: "DC", invert: "0", units: "VOLT"}
+        CH2: {probe: "10", bw_limit: "OFF", scale: "5.000000E-01", offset: "-1.650000E+00", coupling: "DC", invert: "0", units: "VOLT"}
+      timebase: {scale: "1.000000E-5", offset: "0.000000", mode: "MAIN"}
+      acquire: {srate: "6.250000E+7", mdepth: "1.0000E+04", type: "NORM"}
+      trigger: {mode: "EDGE", sweep: "AUTO", source: "CHAN1", slope: "POS", level: "1.500000E0"}
+      bus1: {mode: "PAR"}
+      measure: {threshold_type: "PERC", max_pct: "9.000000E+01", mid_pct: "5.000000E+01", min_pct: "1.000000E+01", amsource: "OFF"}
+      trigger_status: {before: "AUTO", after_stop: "STOP"}
+    waveform:
+      mode: "RAW"
+      format: "ASCii"
+      points: 10000
+      read: "single"
+      preamble: {CH1: "2,2,10000,1,1.600000E-8,-8.000000E-5,0.000000,6.6667E-05,-24750,32768", CH2: "2,2,10000,1,1.600000E-8,-8.000000E-5,0.000000,6.6667E-05,-24750,32768"}
+    scope_clock: {set_to: "2026-10-21T11:14:19", read_back: "2026-10-21 11:14:19", ok: true, delta_s: 0.0}
     scpi_errors: []

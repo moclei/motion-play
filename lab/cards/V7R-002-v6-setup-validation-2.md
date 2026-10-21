@@ -72,6 +72,9 @@ Pass table per `known-good-reference.md` (V_DD = 3.3 V). Evaluated per arm (S1, 
 
 - S1 V5a (both tips + springs on Cal ground, no board contact; board powered): read-backs "5.000000E-01 / 5.000000E-01 / -1.650000E+00 / -1.650000E+00 / OFF / OFF / 1.000000E-5 / 1.0000E+04 / AUTO / 0,\"No error\"". capture.py: wrote `2026-10-21_V7R-002_val_V5ctl_01.{png,csv,setup.bin}`; "The scope is left STOPPED." (no NOTE lines). Board: "Still powered, showing the \"Sensor init failed!\" screen". Log: VPP CH1 22.667 mV, CH2 24.067 mV.
 
+- S1 V5b (board unplugged → both tips + springs on the soldered wire at C → microscope → main-board USB-C in): spring position: "Like 4mm or 5mm I guess, hard to tell exactly. Maybe less." Display: "The \"Sensor init failed!\" screen". Data-only cable in: "Yes". capture.py: wrote `2026-10-21_V7R-002_val_V5_01.{png,csv,setup.bin}`; "The scope is left STOPPED." (no NOTE lines). Log: VPP CH1 24.067 mV, CH2 21.867 mV.
+- S1 V5 result, session (`noise_floor.py` on val_V5ctl_01 / val_V5_01): CH1 ctl sd 5.04, dut sd 5.16, excess 1.11 mV rms; CH2 ctl sd 4.81, dut sd 4.71, excess 0.00 mV rms; offset CH1 −9.08, CH2 −13.02 mV; tool verdict "V5 PASS".
+
 ### Measured values (from log; cite `lab/evidence/V7R-002/...`)
 ### Interpretation (session; labelled as such)
 
