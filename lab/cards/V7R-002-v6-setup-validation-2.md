@@ -96,6 +96,8 @@ Pass table per `known-good-reference.md` (V_DD = 3.3 V). Evaluated per arm (S1, 
 
 - S1 V8f (20 µs/div, V8 only): replies "2.000000E-5, SING". Decode: "Decode band shows \"B1\" and \"I2C\" on the left side of the display, and \"Write:d6\" followed by \"A:0\" towards the center of the display". capture.py: wrote `2026-10-21_V7R-002_val_V8_03.{png,csv,setup.bin}`; "The scope is left STOPPED." Timebase back: "1.000000E-5". PNG agrees (Write:d6 | A:0).
 
+- S1 V9 step 2 read-backs: "10 / 10 / 5.000000E-01 / -1.650000E+00 / 1.000000E-5 / 1.0000E+04 / IIC / IIC / ADDR / 7.000000E+01 / 3.000000E+01 / 0,\"No error\"". Operator: "I'm not sure if the response shows the 70/30 or not." No menu change.
+
 ### Measured values (from log; cite `lab/evidence/V7R-002/...`)
 ### Interpretation (session; labelled as such)
 
