@@ -105,3 +105,40 @@ measurements:
     scope_clock: {set_to: "2026-10-21T10:55:35", read_back: "2026-10-21 10:55:35", ok: true, delta_s: 0.0}
     scpi_errors: []
     channel_drift: ["CH2.v_div_V: earlier val_V3 entry 0.5, scope 1.0", "CH2.offset_V: earlier val_V3 entry -1.65, scope -3.3"]
+  - test_id: "V7R-002"
+    arm: "val_V5ctl"
+    time: "2026-10-21T11:04:32"
+    trigger: {type: "EDGE", sweep: "AUTO", source: "CHAN1", slope: "POS", level_V: 1.5}
+    timebase_s_div: 1.0e-05
+    method: "auto"
+    feature: "V5a control: both tips + springs on scope Cal ground, no board contact"
+    values:
+      - {name: "VPP", ch: "CH1", value_mV: 22.667, raw: "2.2667E-02"}
+      - {name: "VPP", ch: "CH2", value_mV: 24.067, raw: "2.4067E-02"}
+    captures: ["2026-10-21_V7R-002_val_V5ctl_01.png", "2026-10-21_V7R-002_val_V5ctl_01.csv", "2026-10-21_V7R-002_val_V5ctl_01.setup.bin"]
+    raw_observation: "Board: Still powered, showing the \"Sensor init failed!\" screen (probes not on the board)"
+    ai_read:
+      - capture: 2026-10-21_V7R-002_val_V5ctl_01.png
+        settings_seen: {CH1_v_div: 500.00mV, CH1_offset: -1.65V, CH2_v_div: 500.00mV, CH2_offset: -1.65V, timebase: 10.00us/div, srate: 62.50MSa/s, mdepth: 10.00kpts, trigger: "edge CH1 rising 1.50V, A (auto)", status: STOP}
+        values_seen: {CH1_Vpp_mV: 22.666, CH2_Vpp_mV: 24.066, others: "*****"}
+        notes: "Both traces flat at the bottom graticule line (0 V at -1.65 V offset)."
+        mismatch: none
+    source: "tools/lab/capture.py"
+    scope_settings:
+      channels:
+        CH1: {probe: "10", bw_limit: "OFF", scale: "5.000000E-01", offset: "-1.650000E+00", coupling: "DC", invert: "0", units: "VOLT"}
+        CH2: {probe: "10", bw_limit: "OFF", scale: "5.000000E-01", offset: "-1.650000E+00", coupling: "DC", invert: "0", units: "VOLT"}
+      timebase: {scale: "1.000000E-5", offset: "0.000000", mode: "MAIN"}
+      acquire: {srate: "6.250000E+7", mdepth: "1.0000E+04", type: "NORM"}
+      trigger: {mode: "EDGE", sweep: "AUTO", source: "CHAN1", slope: "POS", level: "1.500000E0"}
+      bus1: {mode: "PAR"}
+      measure: {threshold_type: "PERC", max_pct: "9.000000E+01", mid_pct: "5.000000E+01", min_pct: "1.000000E+01", amsource: "OFF"}
+      trigger_status: {before: "AUTO", after_stop: "STOP"}
+    waveform:
+      mode: "RAW"
+      format: "ASCii"
+      points: 10000
+      read: "single"
+      preamble: {CH1: "2,2,10000,1,1.600000E-8,-8.000000E-5,0.000000,6.6667E-05,-24750,32768", CH2: "2,2,10000,1,1.600000E-8,-8.000000E-5,0.000000,6.6667E-05,-24750,32768"}
+    scope_clock: {set_to: "2026-10-21T11:04:32", read_back: "2026-10-21 11:04:32", ok: true, delta_s: 0.0}
+    scpi_errors: []
