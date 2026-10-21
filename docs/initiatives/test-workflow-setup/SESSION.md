@@ -1992,3 +1992,35 @@ Items 1 (fresh-session bench-state answer) and 2 (image handoff, user side) are 
 ### Worker #14 — Phase 10: Tool fixes after V7R-001
 
 **Dispatch:** standard template. Additional reading: PLAN Technical Notes "After V7R-001" §1 and §5; SESSION "### W7" section.
+
+#### Notes
+
+**Task 1, `noise_floor.py` on V7R-001** (ctl `val_V5_03`, dut `val_V5_01`; exit 0). Matches the expected sd 4.97 / 4.77 and 5.17 / 4.72 mV and excess 1.44 / 0 mV. sd is the sample sd (n − 1).
+
+```
+$ python3 tools/lab/noise_floor.py --ctl lab/evidence/V7R-001/2026-10-20_V7R-001_val_V5_03.csv --dut lab/evidence/V7R-001/2026-10-20_V7R-001_val_V5_01.csv
+noise_floor: V5 excess noise over a no-board control
+  ctl  lab/evidence/V7R-001/2026-10-20_V7R-001_val_V5_03.csv
+  dut  lab/evidence/V7R-001/2026-10-20_V7R-001_val_V5_01.csv
+  10000 points at 1.6e-08 s per sample; limit excess <= 5 mV rms
+
+  ch   file   mean_mV   sd_mV  max-min
+  CH1  ctl     -10.39    4.97    25.67
+  CH1  dut     -10.58    5.17    32.67
+  CH2  ctl     -14.06    4.77    27.60
+  CH2  dut     -14.37    4.72    26.47
+
+  CH1 excess 1.44 mV rms -> PASS
+  CH2 excess 0.00 mV rms -> PASS
+  note: the control-sd sanity band 2.5-10 mV holds only at the V7R-001 reference settings (0.5 V/div, -1.65 V offset, BW OFF, 10 us/div, 10 kpts, 2 channels).
+
+  V5 PASS
+
+# validation.V5 snippet (paste under validation:)
+  V5:
+    ctl_sd_mV: {CH1: 4.97, CH2: 4.77}
+    dut_sd_mV: {CH1: 5.17, CH2: 4.72}
+    excess_rms_mV: {CH1: 1.44, CH2: 0.0}
+    offset_mV: {CH1: -10.39, CH2: -14.06}
+    # vpp_panel_mV: {CH1: TODO, CH2: TODO}   # optional: the scope panel Vpp of the DUT capture
+```

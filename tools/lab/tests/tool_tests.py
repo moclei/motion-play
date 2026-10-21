@@ -243,6 +243,31 @@ def validator_tests(tmp):
     check("precommit: TODO fields warn but do not reject", rc == 0 and "TODO" in out, out)
 
 
+# ---------------------------------------------------------------- noise_floor.py
+
+def noise_floor_tests(tmp):
+    ev = LAB.parents[1] / "lab" / "evidence" / "V7R-001"
+    ctl, dut = ev / "2026-10-20_V7R-001_val_V5_03.csv", ev / "2026-10-20_V7R-001_val_V5_01.csv"
+    nf = [sys.executable, str(LAB / "noise_floor.py"), "--ctl", str(ctl)]
+    rc, out = run(nf + ["--dut", str(dut)])
+    check("noise_floor: V7R-001 S1 vs control -> sd 4.97/5.17, 4.77/4.72, excess 1.44/0, PASS",
+          rc == 0 and "ctl_sd_mV: {CH1: 4.97, CH2: 4.77}" in out and "dut_sd_mV: {CH1: 5.17, CH2: 4.72}" in out
+          and "excess_rms_mV: {CH1: 1.44, CH2: 0.0}" in out and "V5 PASS" in out, out)
+    rows = dut.read_text().splitlines()
+    x2 = tmp / "x2.csv"
+    x2.write_text("\n".join([rows[0]] + [r.split(",")[0] + "," + ",".join(
+        "%.6e" % (float(v) * 2) for v in r.split(",")[1:]) for r in rows[1:]]) + "\n")
+    rc, out = run(nf + ["--dut", str(x2)])
+    check("noise_floor: doubled noise -> FAIL (exit 1) and a level-step warning",
+          rc == 1 and "FAIL" in out and "smallest level step differs" in out, out)
+    short = tmp / "short.csv"
+    short.write_text("\n".join(rows[:5001]) + "\n")
+    rc, out = run(nf + ["--dut", str(short)])
+    check("noise_floor: point count differs -> refused (exit 2)", rc == 2 and "point count" in out, out)
+    rc, out = run(nf + ["--dut", str(ev / "2026-10-20_V7R-001_val_V3_01.csv")])
+    check("noise_floor: sample interval differs -> refused (exit 2)", rc == 2 and "sample interval" in out, out)
+
+
 # ---------------------------------------------------------------- ingest_usb.py
 
 def ingest_tests(tmp):
@@ -358,6 +383,7 @@ def main():
     try:
         capture_tests(tmp)
         validator_tests(tmp)
+        noise_floor_tests(tmp)
         ingest_tests(tmp)
         backup_tests(tmp)
     finally:
