@@ -6,17 +6,17 @@ ai_session: "debugger 09e07cd0 (V7R-001 v6 dry run)"
 dut: {board_id: "v6", firmware_commit: "4da1c67", firmware_env: "lilygo-t-display-s3", declared_baseline: "v6-ref"}
 scope: {model: "Rigol DHO804", serial: "DHO8A282M00872", firmware: "00.01.05", setup_file: "2026-10-20_V7R-001_val_V3_01.setup.bin"}
 validation:
-  passed: "TODO"
+  passed: false
   V2_probe_ratio: {CH1: "10x/fixed 10:1", CH2: "10x/fixed 10:1"}
   V3_comp_png: ["2026-10-20_V7R-001_val_V3_01.png (CH1)", "2026-10-20_V7R-001_val_V3_02.png (CH2)"]
   V5_noise_floor_mVpp: 25.8
-  V6_ground: {method: "TODO", point: "TODO", length_mm: "TODO"}
-  V7_idle_high_V: {CH1: "TODO", CH2: "TODO"}
-  V8_decode_ok: "TODO"
-  notes: "V1 clock ok (delta 0.0 s); no setup loaded. V2 SQ500 on CH1 and CH2, unmarked, identified by scope socket. V4 Vamp CH1 = 3.0208 V. V4 Vamp CH2 = 3.0037 V. V3 SQ500 has no trimmer: look only, both flat/square. V5 S1 (shorted tip at C, 0.5 V/div, BW OFF): Vpp CH1 = 25.8 mV, CH2 = 23.6 mV (val_V5_01.png) - above 20 mV limit; setup investigation. Control a (board unpowered, same probes): Vpp CH1 21.8 mV, CH2 23.1 mV (val_V5_02.png). Control b (probes on scope Cal ground, off board): Vpp CH1 21.9 mV, CH2 21.9 mV (val_V5_03.png)."
+  V6_ground: {method: "wire (solid core, soldered to C mound; springs touch it)", point: "U2.14 (pad C)", length_mm: 9}
+  V7_idle_high_V: {CH1: "TODO", CH2: "TODO"}   # not run (V5 fail); validate_log.py has no "not run" value
+  V8_decode_ok: "not run"
+  notes: "V1 clock ok (delta 0.0 s); no setup loaded. V2 SQ500 on CH1 and CH2, unmarked, identified by scope socket. V4 Vamp CH1 = 3.0208 V. V4 Vamp CH2 = 3.0037 V. V3 SQ500 has no trimmer: look only, both flat/square. V5 S1 (shorted tip at C, 0.5 V/div, BW OFF): Vpp CH1 = 25.8 mV, CH2 = 23.6 mV (val_V5_01.png) - above 20 mV limit; setup investigation. Control a (board unpowered, same probes): Vpp CH1 21.8 mV, CH2 23.1 mV (val_V5_02.png). Control b (probes on scope Cal ground, off board): Vpp CH1 21.9 mV, CH2 21.9 mV (val_V5_03.png). V5 FAIL; V6 S1 wire ~8-9 mm (board mod: wire soldered to C). V7-V9 not run. V9 V7R-001 not run. passed: false."
 channels:
-  CH1: {probe: "SQ500 (CH1 socket)", ratio: "10x", signal: "TODO", point: "TODO", bw_limit: "OFF", v_div_V: 1.0, offset_V: 0.0, coupling: "DC"}
-  CH2: {probe: "SQ500 (CH2 socket)", ratio: "10x", signal: "TODO", point: "TODO", bw_limit: "OFF", v_div_V: 0.05, offset_V: 0.0, coupling: "DC"}
+  CH1: {probe: "SQ500 (CH1 socket)", ratio: "10x", signal: "SDA", point: "S1 shorted tip at C (U2.14); Cal for V3", bw_limit: "OFF", v_div_V: 0.5, offset_V: -1.65, coupling: "DC"}
+  CH2: {probe: "SQ500 (CH2 socket)", ratio: "10x", signal: "SCL", point: "S1 shorted tip at C (U2.14); Cal for V3", bw_limit: "OFF", v_div_V: 0.5, offset_V: -1.65, coupling: "DC"}
 measurements:
   - test_id: "V7R-001"
     arm: "val_V3"

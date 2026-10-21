@@ -1,7 +1,7 @@
 ---
 test_id: V7R-001
 title: "Setup validation + known-good reference on v6 (`v6-ref`)"
-status: pre-registered
+status: recorded
 created: 2026-10-20
 prereg_commit: self
 baseline:
@@ -83,11 +83,30 @@ Pass table per `known-good-reference.md` (V_DD = 3.3 V). Evaluated per arm (S1, 
 - S9 (V5 control b, probes tip+spring on scope Cal ground, off board, board unpowered): "Yes, both". capture.py wrote `2026-10-20_V7R-001_val_V5_03.*`; same drift note; "The scope is left STOPPED." Log: VPP CH1 21.933 mV, CH2 21.867 mV.
 
 ### Measured values (from log; cite `lab/evidence/V7R-001/...`)
+Log: `lab/log/2026-10-20_s01.yaml`, `validation.passed: false`.
+
+| Step | Condition | Value | Limit | Result | Evidence |
+|---|---|---|---|---|---|
+| V1 | scope clock set by capture.py | delta 0.0 s, ok: true | ≤ 10 s | pass | log entry val_V3 #1 `scope_clock` |
+| V2 | CH1, CH2 ratio | 10 / 10 (SQ500 fixed 10:1) | 10 | pass | raw S2 |
+| V3 | CH1 on Cal, 1 V/div | flat top, square corners | visual | pass | `lab/evidence/V7R-001/2026-10-20_V7R-001_val_V3_01.png` |
+| V3 | CH2 on Cal, 1 V/div | flat top, square corners | visual | pass | `lab/evidence/V7R-001/2026-10-20_V7R-001_val_V3_02.png` |
+| V4 | CH1 Vamp | 3.0208 V | 2.91–3.09 V | pass | `lab/evidence/V7R-001/2026-10-20_V7R-001_val_V3_01.png` |
+| V4 | CH2 Vamp | 3.0037 V | 2.91–3.09 V | pass | `lab/evidence/V7R-001/2026-10-20_V7R-001_val_V3_02.png` |
+| V5 | S1: tips on C, springs on ~8–9 mm wire to C, board powered; 0.5 V/div, −1.65 V offset, BW OFF, 10 µs/div | Vpp CH1 25.8 mV, CH2 23.6 mV (CSV sd 5.2 / 4.7 mV) | ≤ 20 mV | **fail** | `lab/evidence/V7R-001/2026-10-20_V7R-001_val_V5_01.png`, `.csv` |
+| V5 ctl a | as above, board unpowered | Vpp CH1 21.8 mV, CH2 23.1 mV (CSV sd 5.0 / 4.7 mV) | — | (control) | `lab/evidence/V7R-001/2026-10-20_V7R-001_val_V5_02.png`, `.csv` |
+| V5 ctl b | tips + springs on scope Cal ground, no board | Vpp CH1 21.9 mV, CH2 21.9 mV (CSV sd 5.0 / 4.8 mV) | — | (control) | `lab/evidence/V7R-001/2026-10-20_V7R-001_val_V5_03.png`, `.csv` |
+| V6 | S1 ground | wire, C (U2.14), ~8–9 mm spring-to-C | ≤ 10 mm | recorded | raw S6 |
+| V7, V8, V9 | — | not run | — | not run | — |
+
 ### Interpretation (session; labelled as such)
+Interpretation: at the reference settings (0.5 V/div, BW OFF) the scope + SQ500 floor with no board in the path (ctl b, 21.9 mV) is already above the V5 limit (20 mV, [own]); board power (ctl a vs 01) and the S1 ground path (ctl b vs ctl a) each change Vpp by ≤ 4 mV. No ground method can bring V5 under 20 mV at these settings. The limit and/or the settings are a procedure question (Planner); neither was changed in session.
 
 ## Conclusion
-- Outcome row matched: ...
-- Hypotheses excluded: ...
-- **Strength:** measured-refuted | measured-supported | argued | not tested
+- Outcome row matched: row 4 — V5 fails (Vpp CH1 25.8 mV, CH2 23.6 mV > 20 mV) at S1 → result void for S1; S2 not run. V1–V4 pass on CH1 and CH2.
+- Hypotheses excluded: none. H0 and E not tested (V9 not run). M: V5 at the reference settings does not pass; instrument floor without the board = 21.9 mV Vpp (`lab/evidence/V7R-001/2026-10-20_V7R-001_val_V5_03.png`).
+- **Strength:** not tested (H0, E); measured (V1–V4 pass, V5 fail; `lab/evidence/V7R-001/`)
+- Deviations: board mod — ~10 mm solid-core wire soldered to pad C (U2.14, GND) top-side mound, still fitted. S1 ground = that wire, not a probe-mounted ≤ 10 mm wire.
+- Follow-up: V5 limit / reference settings → Planner (via Orchestrator). Continuation is a new card.
 - Revert-on-null done: n/a
 - Result commit: self
