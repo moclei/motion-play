@@ -67,6 +67,9 @@ Pass table per `known-good-reference.md` (V_DD = 3.3 V). Evaluated per arm (S1, 
 
 - V3a (CH1 on Cal, CH2 parked on Cal ground): read-backs "1.000000E+00 / 2.000000E-4 / CHAN1 / AUTO / 0,\"No error\"". Panel: "For c1 I see Vamp, Vtop, Vbase, Vpp. For C2 the same ones." capture.py: wrote `2026-10-21_V7R-002_val_V3_01.{png,csv,setup.bin}`; "NOTE: 3 measurement(s) invalid (9.9E37 or no reply): VAMP CH2, VTOP CH2, VBASe CH2"; "The scope is left STOPPED."; no clock WARNING line. Shape: "Tops look flat, corners looks square". Log: VAMP CH1 3.0208 V, VTOP CH1 2.9757 V, VBASe CH1 −45.067 mV; scope_clock delta 0.0 s ok.
 
+- V3b (CH2 on Cal, CH1 parked on Cal ground): read-backs "1.000000E+00 / 2.000000E-4 / CHAN2 / AUTO / 0,\"No error\"". Panel: "Same as before: Vamp, Vtop, Vbase, Vpp -- for both Ch1 and Ch2". capture.py: wrote `2026-10-21_V7R-002_val_V3_02.{png,csv,setup.bin}`; "NOTE: 3 measurement(s) invalid (9.9E37 or no reply): VAMP CH1, VTOP CH1, VBASe CH1"; "NOTE: channel settings differ from the last val_V3 entry: CH2.v_div_V: earlier val_V3 entry 0.5, scope 1.0; CH2.offset_V: earlier val_V3 entry -1.65, scope -3.3"; "The scope is left STOPPED." Shape: "tops flat and corners square". Log: VAMP CH2 3.0208 V, VTOP CH2 2.9757 V, VBASe CH2 −45.067 mV.
+- Session observation (ai_read, val_V3_02): CH2 panel Vamp/Vtop/Vbase equal CH1's (val_V3_01) to every digit shown; Vpp differs (3.1361 V vs 3.1772 V); CSV level modes differ by channel (top 2.98853 / 2.98827 V; base −23.2 / −29.1 mV; sample step ≈ 2.5 mV). Recorded, not explained.
+
 ### Measured values (from log; cite `lab/evidence/V7R-002/...`)
 ### Interpretation (session; labelled as such)
 
