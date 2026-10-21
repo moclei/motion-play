@@ -61,6 +61,8 @@ Pass table per `known-good-reference.md` (V_DD = 3.3 V). Evaluated per arm (S1, 
 ### Raw observations (operator, verbatim; symptoms not interpretations)
 - Step F (main-board USB-C power in, before flashing), 2026-10-21: display: "It says: \"Motion play\", \"Initializing sensors\" \"error\" \"Sensor init failed!\"". Data-only cable Mac ↔ T-Display in: "Yes". Bench time: "2 hours".
 - Step F, session: `/dev/cu.usbmodem14401` enumerated; `pio run -e lilygo-t-display-s3 -t upload` from a scratch worktree at `v6-ref` (4da1c67): "Wrote 1842416 bytes ... Hash of data verified." "Hard resetting via RTS pin..." [SUCCESS].
+- V1: `*IDN?` → "RIGOL TECHNOLOGIES,DHO804,DHO8A282M00872,00.01.05"; `:SYSTem:ERRor?` → "0,\"No error\""; AUTO pressed: "yes". No setup loaded.
+
 ### Measured values (from log; cite `lab/evidence/V7R-002/...`)
 ### Interpretation (session; labelled as such)
 
