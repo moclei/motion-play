@@ -1978,3 +1978,17 @@ Items 1 (fresh-session bench-state answer) and 2 (image handoff, user side) are 
 - `validate_log.py lab/log/2026-10-20_s01.yaml` returns PENDING: TODO `validation.V7_idle_high_V.CH1/CH2`, plus the `validation.passed is false` warning. This matches the reported tool gap (no "not run" value).
 - The V5 failure is not "v6 out of spec". The no-board control (21.9 mV on Cal ground) is above the 20 mV limit, so the limit is below the instrument floor at the reference settings. The stop rule "v6 reads out of spec on a validated setup" did not fire, because the setup never validated.
 - The soldered ground wire on v6 pad C is a board mod. Doing the same on v7 (C9.1) would be a solder change on v7, which is outside anything this initiative has authorised. This goes to the Planner and possibly to the user.
+
+---
+
+### Planner — replan after V7R-001
+
+**Result:** BLOCKED: needs user decision (f63baa3). PLAN "After V7R-001" §1–5 added, along with Phases 10–12 and W8. Two Open Questions are for the user: Q1, the V5 excess-noise rule; Q2, the v7 S1 ground. Phase 10 does not depend on either answer. Phase 11 is gated on both. The fresh-session and image-handoff report items move to W8.
+
+**Orchestrator:** Phase 9 Handoff ticked; its remaining tasks are now in Phase 12. origin/main is already contained, so no rebase was needed. The questions have been relayed to the user.
+
+---
+
+### Worker #14 — Phase 10: Tool fixes after V7R-001
+
+**Dispatch:** standard template. Additional reading: PLAN Technical Notes "After V7R-001" §1 and §5; SESSION "### W7" section.
