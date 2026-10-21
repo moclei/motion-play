@@ -326,6 +326,151 @@ def noise_floor_tests(tmp):
     check("noise_floor: sample interval differs -> refused (exit 2)", rc == 2 and "sample interval" in out, out)
 
 
+# ---------------------------------------------------------------- i2c_frame.py
+
+DT, T0, NPTS = 16e-9, -80e-6, 10000          # 10 us/div, 10 kpts: the V9 record
+SDA_HI, SCL_HI, SDA_LO, ACK_LO, SCL_LO = 3.300, 3.290, 0.060, 0.120, 0.080
+SDA_RAMP, SCL_RAMP, FALL = 200e-9, 150e-9, 20e-9
+
+
+def wave(start, steps, rise):
+    """steps: [(t, level)]; each step is a linear ramp from the previous level, `rise` long when
+    going up, FALL when going down."""
+    out = []
+    for i in range(NPTS):
+        t = T0 + i * DT
+        v = start
+        for tc, lv in steps:
+            if t <= tc:
+                break
+            d = rise if lv > v else FALL
+            v = v + (lv - v) * min(1.0, (t - tc) / d)
+        out.append(v)
+    return out
+
+
+def frame(byte, ack=True, start_in_record=True):
+    """SDA/SCL steps for one address byte + 9th bit + STOP at 100 kHz. Bit k: SDA set at
+    -73 + 10k us, SCL high -70 + 10k .. -65 + 10k us. STOP: SDA low at +17, SCL up at +23,
+    SDA up at +30 us. Master-driven lows at SDA_LO, the ACK low at ACK_LO."""
+    sda = [((-78e-6 if start_in_record else -85e-6), SDA_LO)]
+    scl = [(-75e-6, SCL_LO)]
+    bits = [(byte >> (7 - k)) & 1 for k in range(8)] + [0 if ack else 1]
+    for k, b in enumerate(bits):
+        lo = ACK_LO if k == 8 else SDA_LO
+        sda.append(((-73 + 10 * k) * 1e-6, SDA_HI if b else lo))
+        scl += [((-70 + 10 * k) * 1e-6, SCL_HI), ((-65 + 10 * k) * 1e-6, SCL_LO)]
+    sda += [(17e-6, SDA_LO), (30e-6, SDA_HI)]
+    scl += [(23e-6, SCL_HI)]
+    s = wave(SDA_HI, sda, SDA_RAMP)
+    c = wave(SCL_HI, scl, SCL_RAMP)
+    return {"CH1": s, "CH2": c}
+
+
+def write_csv(path, cols):
+    names = list(cols)
+    lines = ["Time(s)," + ",".join(n + "V" for n in names)]
+    for i in range(NPTS):
+        lines.append("%.9e," % (T0 + i * DT) + ",".join("%+.6e" % cols[n][i] for n in names))
+    path.write_text("\n".join(lines) + "\n")
+    return path
+
+
+def values_csv(out):
+    return yaml.safe_load(out[out.index("    values_csv:"):])["values_csv"]
+
+
+def i2c_frame_tests(tmp):
+    tool = [sys.executable, str(LAB / "i2c_frame.py")]
+    near = lambda a, b, tol: abs(a - b) <= tol  # noqa: E731
+    # Expected from the ramps: the 0.99 -> 2.31 V time of a linear ramp, and the 1.65 V crossing.
+    sda_rise = 1.32 / (SDA_HI - SDA_LO) * SDA_RAMP * 1e9          # 81.48 ns
+    scl_rise = 1.32 / (SCL_HI - SCL_LO) * SCL_RAMP * 1e9          # 61.68 ns
+    scl_mid_us = (1.65 - SCL_LO) / (SCL_HI - SCL_LO) * SCL_RAMP * 1e6
+    sda_mid_us = (1.65 - SDA_LO) / (SDA_HI - SDA_LO) * SDA_RAMP * 1e6
+
+    f = write_csv(tmp / "d6.csv", frame(0xD6))
+    rc, out = run(tool + [str(f), "--expect", "D6"])
+    try:
+        v = values_csv(out)
+        by = {}
+        for e in v:
+            by.setdefault(e["name"], []).append(e)
+        vol = by["V_OL"]
+        rise = {e["ch"]: e for e in by["rise_30_70"]}
+        r1 = [float(x) for x in rise["CH1"]["value"].replace(" ns", "").split(",")]
+        r2 = [float(x) for x in rise["CH2"]["value"].replace(" ns", "").split(",")]
+        scl_t = [float(x) for x in rise["CH2"]["gate"].split("(")[1].split(" us")[0].split(",")]
+        sda_t = [float(x) for x in rise["CH1"]["gate"].split("(")[1].split(" us")[0].split(",")]
+        idle = {e["ch"]: e["value_mV"] for e in by["idle_high"]}
+        ok = (rc == 0 and "START at -77.99 us" in out and "-> D6, 9th bit low (ACK)" in out
+              and "frame PASS" in out
+              and by["SCL_period"][0]["value_us"] == 10.0
+              # rise times within 0.2 ns of the ramp's; 10 SCL edges (9 bits + STOP), 4 SDA edges
+              and len(r2) == 10 and all(near(x, scl_rise, 0.2) for x in r2)
+              and len(r1) == 4 and all(near(x, sda_rise, 0.2) for x in r1)
+              # edge times (1.65 V) within 0.02 us
+              and all(near(a, -70 + 10 * k + scl_mid_us, 0.02) for k, a in enumerate(scl_t[:9]))
+              and near(scl_t[9], 23 + scl_mid_us, 0.02)
+              and len(sda_t) == 4 and all(near(a, b + sda_mid_us, 0.02) for a, b in zip(sda_t, [-73, -43, -23, 30]))
+              # V_OL: bits 5, 3, R/W 0 at 60.0 mV (the 120 mV ACK excluded), n ~ 0.8 x 5 us / 16 ns
+              and [e["gate"].split(",")[0] for e in vol] == ["address bit 5", "address bit 3", "R/W bit 0"]
+              and all(e["value_mV"] == 60.0 and "sd 0.0 mV" in e["gate"] for e in vol)
+              and all(240 <= int(e["gate"].split("n=")[1].split(",")[0]) <= 252 for e in vol)
+              # idle after the last edge: within 0.5 mV (the gate starts past 0.7 V_DD, so it
+              # holds the last ~60 ns of the SDA ramp)
+              and near(idle["CH1"], 3300.0, 0.5) and near(idle["CH2"], 3290.0, 0.5))
+    except (ValueError, KeyError, IndexError, TypeError) as e:
+        ok, out = False, "%r\n%s" % (e, out)
+    check("i2c_frame: synthetic D6+ACK frame -> byte, ACK, period 10 us, rise %.1f/%.1f ns (+-0.2), "
+          "edge times (+-0.02 us), V_OL 60.0 mV x3 (ACK excluded), idle 3300/3290 mV (+-0.5), exit 0"
+          % (sda_rise, scl_rise), ok, out)
+    v = values_csv(out) if "values_csv" in out else []
+    check("i2c_frame: frame snippet entries all carry a gate",
+          bool(v) and all("gate" in e for e in v), out)
+
+    f = write_csv(tmp / "idle.csv", {"CH1": [SDA_HI + (0.002 if i % 2 else -0.002) for i in range(NPTS)],
+                                     "CH2": [SCL_HI] * NPTS})
+    rc, out = run(tool + [str(f)])
+    check("i2c_frame: flat idle record -> idle mode, V7_idle_high_V {CH1: 3.300, CH2: 3.290}, sd 2.00/0.00 mV, exit 0",
+          rc == 0 and "mode: idle" in out and "V7_idle_high_V: {CH1: 3.300, CH2: 3.290}" in out
+          and "{name: sd, ch: CH1, value_mV: 2.00}" in out and "V7 PASS" in out, out)
+    f = write_csv(tmp / "idle_low.csv", {"CH1": [3.0] * NPTS, "CH2": [SCL_HI] * NPTS})
+    rc, out = run(tool + [str(f)])
+    check("i2c_frame: idle record at 3.0 V -> idle high FAIL, exit 1",
+          rc == 1 and "FAIL  Idle high     CH1" in out and "V7 FAIL" in out, out)
+
+    f = write_csv(tmp / "nack.csv", frame(0xD6, ack=False, start_in_record=False))
+    rc, out = run(tool + [str(f), "--expect", "D6"])
+    check("i2c_frame: NACK frame, START before the record -> anchored on the STOP, D6 NACK, decode FAIL, exit 1",
+          rc == 1 and "no START in record; 9 bits before the STOP" in out
+          and "-> D6, 9th bit high (NACK)" in out and "FAIL  Decode        CH1  D6 NACK" in out, out)
+
+    f = write_csv(tmp / "d4.csv", frame(0xD4))
+    rc, out = run(tool + [str(f), "--expect", "D6"])
+    try:
+        vol = [e for e in values_csv(out) if e["name"] == "V_OL"]
+        ok = (rc == 1 and "-> D4, 9th bit low (ACK)" in out and "FAIL  Decode        CH1  D4 ACK  (limit D6 then ACK)" in out
+              and [e["gate"].split(",")[0] for e in vol] == ["address bit 5", "address bit 3", "address bit 1", "R/W bit 0"]
+              and "PASS  Rise" in out)
+    except (ValueError, KeyError) as e:
+        ok, out = False, "%r\n%s" % (e, out)
+    check("i2c_frame: byte D4 with --expect D6 -> decode FAIL, other rows PASS, V_OL on 4 zero bits, exit 1", ok, out)
+
+    f = write_csv(tmp / "one.csv", {"CH1": frame(0xD6)["CH1"]})
+    rc, out = run(tool + [str(f), "--expect", "D6"])
+    check("i2c_frame: single-channel record -> refused (no CH2 column), exit 2",
+          rc == 2 and "no such column" in out and "--scl CH2" in out, out)
+
+    uart = {"CH1": frame(0xD6)["CH1"], "CH2": [SCL_HI] * NPTS}
+    f = write_csv(tmp / "uart.csv", uart)
+    rc, out = run(tool + [str(f)])
+    check("i2c_frame: SDA toggling with SCL flat (boot UART) -> no frame, exit 2",
+          rc == 2 and "NO FRAME" in out, out)
+    rc, out = run(tool + [str(tmp / "d6.csv"), "--expect", "G1"])
+    check("i2c_frame: bad --expect -> exit 2", rc == 2, out)
+
+
 # ---------------------------------------------------------------- ingest_usb.py
 
 def ingest_tests(tmp):
@@ -442,6 +587,7 @@ def main():
         capture_tests(tmp)
         validator_tests(tmp)
         noise_floor_tests(tmp)
+        i2c_frame_tests(tmp)
         ingest_tests(tmp)
         backup_tests(tmp)
     finally:
