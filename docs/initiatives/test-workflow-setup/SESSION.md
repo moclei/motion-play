@@ -2079,3 +2079,22 @@ exit 3
 ### Worker #15 — Phase 11: Procedure fixes and re-run relay
 
 **Dispatch:** standard template. Additional reading: PLAN "After V7R-001" §1–5 and Open Questions (answers); SESSION Worker #13 (readability fixes) and Worker #14 Notes. Phase-specific note: user-facing text must be in plain language. Any term is either defined in the glossary or avoided, and probe points use the A–F labels (the user flagged jargon after Phase 8). Fix KGR L51 "On v6 its package is rotated" (U5 is at 0° on v6 and 90° on v7).
+
+#### Notes
+- Commits: `7ad3a4f` (setup validation), `598fb5b` (known-good reference), `c08015a` (relay), plus the handoff commit. Nothing under lab/cards, lab/log, lab/evidence, STATE.md or `RELAY-v6-dry-run.md` was touched. `run_tests.py` OK (0 failures); `check_state.py` OK.
+- **`dho804-setup-validation.md`.**
+  - New `## Words used here` section, which takes over the old "Board points and words" bullet. It defines DUT, Cal, V1–V9 vs v6/v7, unplug the board, data-only cable, noise / sd / mV rms, control, excess noise, zero offset (`offset_mV`, kept apart from the channel OFFSet setting), soldered wire, unequal ground and `not_run`.
+  - V5 is rewritten as V5a (control, `--arm val_V5ctl`) and V5b (`--arm val_V5`), with the `noise_floor.py` command, the ≤ 5 mV rms pass, the 2.5–10 mV sanity band and the `validation.V5` record.
+  - V5 step 1 now sets the full reference settings (both channels, offset, timebase) and reads back memory depth. Reason: `noise_floor.py` refuses when the sample interval or point count differ, so V5a and V5b must match on timebase and depth, not only V/div. All values and commands are the ones already in KGR step 2. The facts cite the Offset / BW limit / Timebase / Acquisition rows.
+  - V6: the v6 master-end row is the soldered wire, and the v7 row is a spring straight on C9.1. The same-ground bullet gets the "unequal ground, counts only when V5 passed at S1 on both boards" exception. The record has v6 S1 and S2 examples.
+  - "Closing the validation" gets the `{not_run: "<reason>"}` form (Worker #14) and one log per arm.
+- **`known-good-reference.md`.**
+  - Glossary additions: soldered wire, unequal ground, unplug the board, replug, V_OL, zero offset.
+  - Prerequisites: new items for re-flash at each card, no sensor PCB (with the firmware line cites from PLAN §3), the soldered wire, and the v6 power and flash path. Items are renumbered 1–5; nothing cites them by number.
+  - The restart is now a replug of the main-board USB-C, and RIGHT is removed (with the reason).
+  - The S1 ground is updated in the same-ground table, its intro and the Arms table.
+  - Step 7 cites the V5 offset beside V_OL and does not subtract it. Recording uses one log per arm.
+  - L51 now reads "0° on v6 and turned 90° on v7". The pass table is unchanged.
+- **Relay date differs from the task text.** `check_state.py --now` now fires CHECKPOINT DUE from **2026-11-04**, not 2026-11-02. The V7R-001 notebook entry (2026-10-20) moved the 14-day window. The relay says "before 2026-11-04". The 3-card trigger doesn't apply: V7R-002 would be the 2nd recorded card since V7R-000.
+- **Card ID.** V7R-002: `lab/cards/` holds only V7R-001 on this branch, and origin/main has none. The relay tells the user to check `ls lab/cards/` and take the next free number if the debug track has used 002.
+- **Not done / flag.** R32.2 (the S2 fallback ground) is still not pictured. The V5b text for v7 S1 (both tips and springs on C9.1) gives no fallback if they don't fit: none is in PLAN, so I didn't invent one. PLAN is unchanged, and nothing was deferred.
