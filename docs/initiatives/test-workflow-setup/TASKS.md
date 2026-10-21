@@ -124,7 +124,7 @@
 
 ## Phase 12: v6 re-run and close (bench, then desk)
 
-- [ ] **W8:** the user runs `RELAY-v6-dry-run-2.md` as an ad-hoc debugger session, then a second fresh ad-hoc debugger session asked only "what is the bench state?". The user reports whether the answer was correct and whether the image handoff was workable
+- [~] **W8:** the user runs `RELAY-v6-dry-run-2.md` as an ad-hoc debugger session, then a second fresh ad-hoc debugger session asked only "what is the bench state?". The user reports whether the answer was correct and whether the image handoff was workable
 - [ ] Verify from git, for the new card: the pre-registration commit comes before the raw-data commits; there are per-arm raw commits; the recording commit touches STATE with `as_of` set; the notebook entry exists; the evidence files are present; `check_state.py` is clean; `validate_log.py` passes both arm logs. If v6 is out of spec on a validated setup (V1–V8 pass for that arm), stop: the setup gets fixed before close (replan if needed). If V5 fails again, stop and replan; no limit is widened
 - [ ] Tick both acceptance tables in PLAN. The Dry run rows cite the new card, with V7R-001 noted as the void first attempt. Open the final PR (merge commit)
 - [ ] 🔄 Handoff

@@ -2109,3 +2109,9 @@ exit 3
 - `run_tests.py` OK. Deadline re-derived: `check_state.py --now 2026-11-03` reports OK, and `--now 2026-11-04` reports CHECKPOINT-DUE. So the relay's "before 2026-11-04" is correct, superseding the task text's 2026-11-02.
 - KGR: RIGHT appears only as "don't press". The U5 wording is fixed. The Orchestrator read the relay in full: order, stop rules and report list match the Phase 11 task.
 - Carry forward (not blocking W8, which is v6 only): no fallback is written for v7 S1 if a tip and a spring don't both fit on C9.1, and R32.2 is still not pictured. These are for the first v7 card or the closeout list.
+
+---
+
+### W8 — Phase 12: v6 re-run (user bench session, ad-hoc debugger)
+
+**Dispatch:** user bench session via `RELAY-v6-dry-run-2.md` (c08015a), card V7R-002. Run before 2026-11-04.
