@@ -2115,3 +2115,27 @@ exit 3
 ### W8 — Phase 12: v6 re-run (user bench session, ad-hoc debugger)
 
 **Dispatch:** user bench session via `RELAY-v6-dry-run-2.md` (c08015a), card V7R-002. Run before 2026-11-04.
+
+#### Report (interim, debugger session return relay)
+Full text is in `RELAY-v6-dry-run-2-return.md` (72329ef), not copied here. Summary:
+- Card V7R-002 is open (`status: run`). S1 ran V1–V9 and every row passed. Two rows passed with deviations: V8 and V9 decode used an I²C address-0x6B trigger instead of the procedure's START trigger, and V7 used the CSV mean. S2 was not started because of bench time.
+- Settings set by hand: the Decode menu (function navigation icon → Decode → Decode 1). Bus status was set On, both thresholds to 1.65 V, and R/W to With.
+- Image handoff: workable. Three frictions:
+  - the dispatch text had a typo'd image name;
+  - "decode row on the screen" was ambiguous with three screens on the bench;
+  - CHECK lines that fall between DO sub-steps were read late.
+- L0 test: not yet done, due after the card closes.
+- Questions Q1–Q5 for the Planner:
+  - Q1: START trigger vs address trigger, since the boot UART on GPIO43/SDA triggers the START.
+  - Q2: the BQ frame clock is 100 kHz, not 400 kHz.
+  - Q3: VTOP returns 9.9E37 on a flat trace.
+  - Q4: the decode defaults are off and 0 V.
+  - Q5: panel rise time vs CSV rise time.
+- The relay's §4 stop rule "no D6 after a few replugs" was met, but the user chose the address trigger and carried on.
+
+#### Interim verification
+- Commits e39f953 (pre-register) .. 7d208ba. The pre-registration comes before every raw commit, and there are per-step raw commits. W8 touched no files outside lab/.
+- `validate_log.py lab/log/2026-10-21_s01.yaml`: OK. `check_state.py`: OK. STATE `open_cards: [V7R-002]` and `as_of: V7R-001` are consistent with an open card.
+- Evaluating the stop-rule departure: the user changed the trigger with SCPI read-back recorded and a committed decision (8eeaf54) before acting on it. The procedure is wrong about this bus, so the departure is a procedure gap for the Planner and not a validity problem.
+
+[ORCH] Spawning Planner — W8 interim Q1–Q5, plus advice on whether S2 runs on the current procedure
