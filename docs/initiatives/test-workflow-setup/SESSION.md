@@ -2049,3 +2049,18 @@ exit 3
 - For a second-arm log, pass `--session lab/log/<date>_s02.yaml` to `capture.py`. With no `--session`, it appends to today's latest log, which is `_s02` once that file exists. The validator needs no change for one log per arm.
 - `noise_floor.py` uses the sample sd (n − 1). Its control-sd FLAG prints whenever the control sd is outside 2.5–10 mV, whatever the settings. The note says the band applies only at the reference settings. The tool does not read the settings, so the operator decides whether the flag applies.
 - No changes under lab/cards, lab/log, lab/evidence or lab/STATE.md. PLAN unchanged (the approach matched §1 and §5), and nothing deferred.
+
+#### Result
+| # | Phase | Result | Escalation evaluated? | Commit | Notes |
+|---|-------|--------|-----------------------|--------|-------|
+| 14 | Phase 10: Tool fixes after V7R-001 | DONE | No — clean completion | cb36988 | noise_floor.py; validator V5 + not_run; per-arm drift |
+
+#### Verification
+- Commits 48eb8d4..cb36988, one per task; the tree is clean. Nothing under lab/cards, lab/log, lab/evidence or STATE.md was touched.
+- I re-ran the following:
+  - `run_tests.py`: OK, 0 failures.
+  - `noise_floor.py` on the V7R-001 val_V5_03 (ctl) vs val_V5_01 (dut) CSVs: excess 1.44 / 0.00 mV, V5 PASS. This matches the Planner's expected values.
+  - `validate_log.py` on s01: exit 3, PENDING.
+  - `check_state.py`: OK.
+- All five Phase 10 tasks are `[x]`. PLAN has no date-stamped headings.
+- Carry forward to Phase 11: `dho804-setup-validation.md` l.149 still records the legacy `V5_noise_floor_mVpp`. The `not_run` form is a one-key map for the whole item and needs `passed: false`.
