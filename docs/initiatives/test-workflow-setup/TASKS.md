@@ -137,7 +137,7 @@
 - [x] Tests in `tools/lab/tests/tool_tests.py`, on synthetic CSVs that the test writes: a 100 kHz `D6`+ACK frame with known edge times, rise times and low levels; a flat idle record; a frame with NACK (9th bit high); a byte that differs from `--expect`; a record with a single channel. Each asserts the printed values within stated tolerances and the exit code. `tools/lab/tests/run_tests.py` passes
 - [x] Acceptance on real data: run it on `lab/captures/V7R-002/2026-10-21_V7R-002_S1_01.csv` (`--expect D6`) and on `..._val_V7_01.csv`. Compare with the S1 log `lab/log/2026-10-21_s01.yaml` (the S1 entry's values; `V7_idle_high_V`). Record both outputs and every difference in SESSION.md. Pass: within 3 mV and 3 ns of the hand numbers, and the same byte and ACK. If not, report the difference and both gates, and don't tune the tool to match. If the captures are missing, stop and report (they are gitignored; the iCloud backup holds them). Do not edit the S1 log or the card — *run; not within 3 mV on V_OL (−6.9…−8.8 mV) and CH1 idle high (−5.8 mV), gate differences only, same verdicts; see SESSION Worker #16*
 - [x] Add an `i2c_frame.py` row to the `tools/CONTEXT.md` tools/lab table, and the `tests/run_tests.py` row's list
-- [ ] 🔄 Handoff
+- [x] 🔄 Handoff
 
 # --- handoff point ---
 

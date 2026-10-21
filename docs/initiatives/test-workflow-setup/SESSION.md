@@ -2282,3 +2282,12 @@ i2c_frame: lab/captures/V7R-002/2026-10-21_V7R-002_val_V7_01.csv
       - {name: sd, ch: CH2, value_mV: 8.73}
 exit 0
 ```
+
+**Task 4.** In `tools/CONTEXT.md`, the tools/lab table has a new `i2c_frame.py` row, and the `tests/run_tests.py` row now lists it.
+
+**Handoff (for the Orchestrator, Phase 14 and S2).**
+- **Open, not mine to decide:** the acceptance gap above, on V_OL and on CH1 idle high. It comes from the gates, not from computation errors. Phase 14's step 7 text should name whichever gate is chosen. If the PLAN §6 gates stand, the procedure's "V_OL: the mean of SDA over the flat middle of a master-driven 0-bit" becomes "the SCL-high interval shrunk by 10 %". "Idle high: Vtop, or the mean of the samples before the START" becomes "the `i2c_frame.py` mean after the last edge".
+- **The rise limit** in the tool is 300 ns, per PLAN §2. The pass table still reads "≤ 300 ns at 400 kHz; ≤ 1000 ns at 100 kHz" until Phase 14.
+- **For S2:** `python3 tools/lab/i2c_frame.py <S2 csv> --expect D6`. Then paste the `values_csv` block under the capture entry, fill `offset_mV` from that log's `validation.V5.offset_mV`, and record the panel RTIMe beside it by hand. On the V7 capture, run it with no `--expect` and paste `V7_idle_high_V`.
+- **PLAN:** unchanged; the approach matched §4 and §6. Two places where §6 is unspecific were filled in and are listed under Task 1: the byte alignment with no START, and the idle window starting at the last edge with no settle margin. Nothing new for Rejected Approaches or Deferred.
+- **Untouched:** lab/cards, lab/log, lab/evidence, lab/STATE.md and the procedures.
