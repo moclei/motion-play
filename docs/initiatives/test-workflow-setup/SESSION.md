@@ -2071,3 +2071,11 @@ exit 3
 
 - Q2 (v7 S1 ground): "b". No soldering on v7: the spring goes on C9.1 and comparisons are labelled "unequal ground". This matches the Planner's recommendation.
 - Q1 (V5 rule): the user asked for a simpler explanation ("I don't understand, explain what your suggesting and what your not recommending in simple, short terms"). Re-explained; the answer is pending.
+- Q1 (V5 rule): "Ok lets go with option a". The excess-noise rule (≤ 5 mV rms over a no-board control) is accepted. This matches the Planner's recommendation.
+- Both answers match the recommendations, so the Planner is not re-engaged. Both questions are struck in PLAN Open Questions, and the Phase 11 gate is open.
+
+---
+
+### Worker #15 — Phase 11: Procedure fixes and re-run relay
+
+**Dispatch:** standard template. Additional reading: PLAN "After V7R-001" §1–5 and Open Questions (answers); SESSION Worker #13 (readability fixes) and Worker #14 Notes. Phase-specific note: user-facing text must be in plain language. Any term is either defined in the glossary or avoided, and probe points use the A–F labels (the user flagged jargon after Phase 8). Fix KGR L51 "On v6 its package is rotated" (U5 is at 0° on v6 and 90° on v7).
