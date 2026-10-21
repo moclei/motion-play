@@ -2301,3 +2301,20 @@ exit 0
 - Commits 09cdd5d..62ee15f. The tree is clean. Only tools/, tools/CONTEXT.md, TASKS and SESSION were touched. `run_tests.py`: OK, 0 failures.
 - The Orchestrator re-ran `i2c_frame.py` on S1_01 with `--expect D6` and got D6 + ACK, V_OL 64.6 / 63.3 / 66.6 mV, and idle high 3296.7 / 3292.6 mV, as reported. All verdicts pass either way.
 - The task's 3 mV acceptance criterion is not met. The cause is the gate choice, not a computation error: the hand gates applied in the tool reproduce the hand numbers. Choosing the gate is a measurement-method decision in PLAN §6, and Phase 14's step 7 depends on it. Sent to the Planner.
+
+---
+
+### Planner — gate decision after Worker #16
+
+**Result:** REPLANNED (2e32a2a).
+- V_OL: the tool's 10 %-trimmed SCL-high gate is the method.
+- Idle high: a 5 µs settle margin after the last edge (t_BUF 4.7 µs rounded up). This is a tool change.
+- The acceptance is revised: idle high within 3 mV of the hand values; V_OL is checked with a gate-reproduction script rather than against the hand values.
+- V7R-002's S1 log stays as recorded, and the tool values are cited beside it at the card close.
+- Phases 13–16 are adjusted. No limits or predictions changed.
+
+---
+
+### Worker #17 — Phase 13 rework: idle-high margin + revised acceptance
+
+**Dispatch:** standard template. Additional reading: PLAN "After V7R-002 S1" §6 (the gate bullets, "Acceptance (revised after Worker #16)", "The S1 record"); SESSION "### Worker #16" Notes.
