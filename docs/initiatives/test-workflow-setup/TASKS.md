@@ -168,7 +168,7 @@
 
 ## Phase 15: S2 relay (desk)
 
-- [ ] Write `RELAY-v6-dry-run-2-s2.md` for the W8 continuation, modelled on `RELAY-v6-dry-run-2.md` (which stays as run). Contents:
+- [~] Write `RELAY-v6-dry-run-2-s2.md` for the W8 continuation, modelled on `RELAY-v6-dry-run-2.md` (which stays as run). Contents:
   - It continues card **V7R-002** at S2. It is not a new card, and the card's predictions and limits stay as registered.
   - S2 runs on the procedures at the Phase 14 commit(s), and the card notes those commits. They write deviations (a) and (b) in as the method (PLAN §8).
   - Re-flash `v6-ref` first. This is a new scope session, so V1–V4 run again and go in the S2 log. The S2 log is named by its session date (`<date>_sNN.yaml`), and the card notes that the name differs from its Setup line.

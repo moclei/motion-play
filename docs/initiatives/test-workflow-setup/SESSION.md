@@ -2431,3 +2431,28 @@ Phase-specific note: plain language for the user at the bench.
   - Observation, no change made: the S1 log records `sweep: "NORM"` for every captured address-trigger entry, although `:TRIGger:SWEep?` read `SING` before the replug. So after a SINGLE trigger fires, the scope seems to report NORM. The procedures re-arm SING before each replug, so this doesn't matter for the run. But a reader of a log entry might think NORM was used.
   - Still open from Worker #15: R32.2 is not pictured, and there is no v7 S1 fallback if a tip and a spring don't both fit on C9.1.
   - Two expectations are written in that have no bench read-back yet: `:TRIGger:IIC:SCL?` / `SDA?` → `CHAN2` / `CHAN1` (seen through `capture.py`'s log, not typed by hand), and "the Decode 1 tab fields as left at V7R-002" (Label On, Exchange SCL/SDA, Event table Off).
+
+#### Result
+| # | Phase | Result | Escalation evaluated? | Commit | Notes |
+|---|-------|--------|-----------------------|--------|-------|
+| 18 | Phase 14: Procedure revision | DONE | No — clean completion | 16c1ed1 | decode setup; address trigger; KGR steps 1–10; template rules |
+
+#### Verification
+- Commits 27fb0ff..16c1ed1. The tree is clean. `run_tests.py`: OK. lab/cards, log, evidence, STATE, the tools and the RELAY files are untouched.
+- The PLAN edit is a single cross-reference ("step 9 (step 7 before Phase 14)"); there are no date-stamped headings. The only remaining "START trigger" mention is KGR L107, which explains why START is not used.
+- Carry to Phase 15:
+  - Cite KGR steps 1–10 and the "Decode setup" section.
+  - Logs record `sweep: NORM` after a SINGLE fires. This is a log-reading note.
+  - Two values are unconfirmed by a hand read-back: `:TRIGger:IIC:SCL?/SDA?`, and the Decode 1 "leave as found" fields.
+- Carry to the closeout: R32.2 has no picture, and there is no v7 S1 fallback if C9.1 won't take a tip and a spring.
+
+---
+
+### Worker #19 — Phase 15: S2 relay
+
+**Dispatch:** standard template. Additional reading:
+- PLAN "After V7R-002 S1" §6–§8;
+- SESSION "### Worker #17" Notes (S1_01 values at the method gates, tool a427a66) and "### Worker #18" Notes;
+- `RELAY-v6-dry-run-2.md` and `RELAY-v6-dry-run-2-return.md`.
+
+Phase-specific note: plain language; cite the new KGR step numbers; the relay says to read back the two unconfirmed values by hand when first used.
