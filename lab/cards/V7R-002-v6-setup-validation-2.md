@@ -89,6 +89,8 @@ Pass table per `known-good-reference.md` (V_DD = 3.3 V). Evaluated per arm (S1, 
 - S1 V8d: `:TRIGger:SWEep?` → "SING"; status after replug: "STOP". capture.py: wrote `2026-10-21_V7R-002_val_V8_01.{png,csv,setup.bin}`; "The scope is left STOPPED". Session (CSV/PNG): SDA (CH1) edges at 0.24 F, 8.91 R, 17.58 F, 26.26 R, 34.94 F, 60.99 R, 69.66 F, 78.37 R µs (intervals multiples of ≈ 8.68 µs); SCL (CH2) has no crossing of 1.65 V (min 3.021 V); decode band shows no bytes.
 - Interpretation (V7R-002): the single START trigger fires on a non-I²C waveform on SDA with SCL idle; the ≈ 8.68 µs unit interval equals one bit at 115 200 baud, consistent with ESP32-S3 boot-ROM UART0 TX on GPIO43. Not an I²C frame; V8/V9 single-START-after-replug recipe does not catch the BQ frame on this setup. → procedure question for the Planner.
 
+- Decision (user, 2026-10-21): continue with an I²C address trigger (0x6B, write, SINGLE, replug) for V8 and V9 at S1 and S2, in place of the procedure's START trigger. Deviation from dho804-setup-validation.md V8 step 2 and known-good-reference.md steps 3/5; pass limits unchanged. Planner follow-up.
+
 ### Measured values (from log; cite `lab/evidence/V7R-002/...`)
 ### Interpretation (session; labelled as such)
 
