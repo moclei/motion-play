@@ -76,6 +76,8 @@ Pass table per `known-good-reference.md` (V_DD = 3.3 V). Evaluated per arm (S1, 
 - S6 (S1 ground): hook-clip assembly (~80 mm, stranded Dupont) proposed, not used (exceeds V6 ≤ 10 mm). Then, operator: "I solder a short piece of solid core wire, something like 28 or 26 AWG, to the GND mound. The wire was 10mm long. I positioned the GND springs on the probes to touch that wire when it sticks out of the mound (not touching anything else). The distance from where the ground springs touch to where the wire connects to the mound is about 8mm or 9mm"
 - Deviation: hardware_config said "No mods". Board now carries a ~10 mm solid-core wire soldered to the top-side solder mound of pad C (U2.14, GND). Ground net only; not on the I²C nets. Removable.
 
+- S7 (S1 V5, shorted tips on C, board powered): "1. both 2. Same as before". Read-backs `5.000000E-01`, `5.000000E-01`, `OFF`, `OFF`, `1.000000E-5`, `CHAN1`, `AUTO`, `0,"No error"`. capture.py: wrote `2026-10-20_V7R-001_val_V5_01.{png,csv,setup.bin}`; channel-drift note (v_div/offset changed from V3); "The scope is left STOPPED." Log: VPP CH1 25.8 mV, CH2 23.6 mV.
+
 ### Measured values (from log; cite `lab/evidence/V7R-001/...`)
 ### Interpretation (session; labelled as such)
 

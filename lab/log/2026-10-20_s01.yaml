@@ -9,11 +9,11 @@ validation:
   passed: "TODO"
   V2_probe_ratio: {CH1: "10x/fixed 10:1", CH2: "10x/fixed 10:1"}
   V3_comp_png: ["2026-10-20_V7R-001_val_V3_01.png (CH1)", "2026-10-20_V7R-001_val_V3_02.png (CH2)"]
-  V5_noise_floor_mVpp: "TODO"
+  V5_noise_floor_mVpp: 25.8
   V6_ground: {method: "TODO", point: "TODO", length_mm: "TODO"}
   V7_idle_high_V: {CH1: "TODO", CH2: "TODO"}
   V8_decode_ok: "TODO"
-  notes: "V1 clock ok (delta 0.0 s); no setup loaded. V2 SQ500 on CH1 and CH2, unmarked, identified by scope socket. V4 Vamp CH1 = 3.0208 V. V4 Vamp CH2 = 3.0037 V. V3 SQ500 has no trimmer: look only, both flat/square."
+  notes: "V1 clock ok (delta 0.0 s); no setup loaded. V2 SQ500 on CH1 and CH2, unmarked, identified by scope socket. V4 Vamp CH1 = 3.0208 V. V4 Vamp CH2 = 3.0037 V. V3 SQ500 has no trimmer: look only, both flat/square. V5 S1 (shorted tip at C, 0.5 V/div, BW OFF): Vpp CH1 = 25.8 mV, CH2 = 23.6 mV (val_V5_01.png) - above 20 mV limit; setup investigation."
 channels:
   CH1: {probe: "SQ500 (CH1 socket)", ratio: "10x", signal: "TODO", point: "TODO", bw_limit: "OFF", v_div_V: 1.0, offset_V: 0.0, coupling: "DC"}
   CH2: {probe: "SQ500 (CH2 socket)", ratio: "10x", signal: "TODO", point: "TODO", bw_limit: "OFF", v_div_V: 0.05, offset_V: 0.0, coupling: "DC"}
@@ -101,3 +101,41 @@ measurements:
     scope_clock: {set_to: "2026-10-20T15:58:23", read_back: "2026-10-20 15:58:23", ok: true, delta_s: 0.0}
     scpi_errors: []
     channel_drift: ["CH2.v_div_V: session 0.05, scope 1.0"]
+  - test_id: "V7R-001"
+    arm: "val_V5"
+    time: "2026-10-20T22:32:55"
+    trigger: {type: "EDGE", sweep: "AUTO", source: "CHAN1", slope: "POS", level_V: 1.5}
+    timebase_s_div: 1.0e-05
+    method: "auto"
+    feature: "S1 shorted tip: CH1 and CH2 tips on pad C solder mound (U2.14, GND), springs on ~10 mm solid wire soldered to C, ~8-9 mm from C; board powered (main USB-C), v6-ref halted at sensor init. CSV over 10k pts: CH1 pp 32.7 mV, mean -10.6 mV, sd 5.2 mV; CH2 pp 26.5 mV, mean -14.4 mV, sd 4.7 mV"
+    values:
+      - {name: "VPP", ch: "CH1", value_mV: 25.8, raw: "2.5800E-02"}
+      - {name: "VPP", ch: "CH2", value_mV: 23.6, raw: "2.3600E-02"}
+    captures: ["2026-10-20_V7R-001_val_V5_01.png", "2026-10-20_V7R-001_val_V5_01.csv", "2026-10-20_V7R-001_val_V5_01.setup.bin"]
+    raw_observation: "1. both [tips on C] 2. Same as before [display]"
+    ai_read:
+      - capture: 2026-10-20_V7R-001_val_V5_01.png
+        settings_seen: {CH1_v_div: 500.00mV, CH1_offset: -1.65V, CH2_v_div: 500.00mV, CH2_offset: -1.65V, timebase: 10.00us/div, srate: 62.50MSa/s, mdepth: 10.00kpts, trigger: "edge CH1 rising 1.50V", status: STOP}
+        values_seen: {CH1_Vpp_mV: 25.800, CH2_Vpp_mV: 23.600}
+        shape_seen: "both traces flat at the bottom graticule line (0 V), no visible structure at 0.5 V/div"
+        mismatch: none
+    source: "tools/lab/capture.py"
+    scope_settings:
+      channels:
+        CH1: {probe: "10", bw_limit: "OFF", scale: "5.000000E-01", offset: "-1.650000E+00", coupling: "DC", invert: "0", units: "VOLT"}
+        CH2: {probe: "10", bw_limit: "OFF", scale: "5.000000E-01", offset: "-1.650000E+00", coupling: "DC", invert: "0", units: "VOLT"}
+      timebase: {scale: "1.000000E-5", offset: "0.000000", mode: "MAIN"}
+      acquire: {srate: "6.250000E+7", mdepth: "1.0000E+04", type: "NORM"}
+      trigger: {mode: "EDGE", sweep: "AUTO", source: "CHAN1", slope: "POS", level: "1.500000E0"}
+      bus1: {mode: "PAR"}
+      measure: {threshold_type: "PERC", max_pct: "9.000000E+01", mid_pct: "5.000000E+01", min_pct: "1.000000E+01", amsource: "OFF"}
+      trigger_status: {before: "AUTO", after_stop: "STOP"}
+    waveform:
+      mode: "RAW"
+      format: "ASCii"
+      points: 10000
+      read: "single"
+      preamble: {CH1: "2,2,10000,1,1.600000E-8,-8.000000E-5,0.000000,6.6667E-05,-24750,32768", CH2: "2,2,10000,1,1.600000E-8,-8.000000E-5,0.000000,6.6667E-05,-24750,32768"}
+    scope_clock: {set_to: "2026-10-20T22:32:55", read_back: "2026-10-20 22:32:55", ok: true, delta_s: 0.0}
+    scpi_errors: []
+    channel_drift: ["CH1.v_div_V: session 1.0, scope 0.5", "CH1.offset_V: session 0.0, scope -1.65", "CH2.v_div_V: session 0.05, scope 0.5", "CH2.offset_V: session 0.0, scope -1.65"]
