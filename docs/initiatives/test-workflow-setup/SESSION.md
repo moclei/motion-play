@@ -1898,3 +1898,83 @@ Return DONE, PARTIAL, or BLOCKED with specifics.
 - `img/v6-probe-points.png` is byte-identical to the user-approved picture. The Orchestrator viewed `img/v7-probe-points.png`: markers sit on the SDA/SCL pads, C9.1, U5 bottom-side pins and the C21/C20 ends. "Outer end" no longer appears in either procedure.
 - Sequencing as written: V1–V4 run on Cal only, V5 onwards on the board, and the board is unplugged before every probe or ground placement. The relay was updated to match.
 - Carry forward: `known-good-reference.md` L51 says "On v6 its [U5] package is rotated". Per the layouts, U5 is at 0° on v6 and 90° on v7. This is a minor fact-wording fix for the closeout. The V5 fallback ground R32.2 isn't pictured; the text says so.
+
+---
+
+### W7 — Phase 9: v6 dry run (user bench session, ad-hoc debugger)
+
+**Dispatch:** user bench session via `RELAY-v6-dry-run.md` (3988eba, step 3 updated 60853fb). No Worker spawned.
+
+#### Report (debugger session relay, verbatim as pasted by the user)
+
+```
+W7 v6 dry run — V7R-001 recorded, void at V5. Final commit: 4736a4a.
+
+1. Fresh-session bench-state answer correct? Asked anything first? ___ (user)
+2. Image handoff: ___ (user). Session side: probe-point picture used for every board step;
+   5 scope PNGs read at ingest (ai_read in the log), no mismatches beyond display rounding.
+3. Final commit: 4736a4a
+4. Settings set by hand: none. Every SCPI set read back as expected (V2, V3 both channels, V5).
+5. Pass/fail per row: V_OL / idle high / rise time / decode — all NOT RUN.
+   Validation: V1 pass (clock Δ 0 s), V2 pass, V3 pass (CH1, CH2), V4 pass (Vamp 3.0208 / 3.0037 V),
+   V5 FAIL at S1: Vpp 25.8 / 23.6 mV vs ≤ 20 mV [own].
+   Controls: board unpowered 21.8 / 23.1 mV; probes on scope Cal ground, no board 21.9 / 21.9 mV.
+   Evidence: lab/evidence/V7R-001/ (val_V3_01/02, val_V5_01/02/03, PNG + CSV).
+
+Deviations: S1 ground is a ~10 mm solid-core wire the user soldered to pad C (U2.14) on v6, with the
+springs touching it ~8–9 mm from C. It is sti. The 150 mm stock lead and an 80 mm hook-clip
+assembly were rejected under V6.
+
+Needs a Planner decision before the run continues (as a new card): see the relay prompt below.
+
+Suggested Planner relay prompt
+
+Context: W7 v6 dry run, card V7R-001 (lab/cards/V7R-001-v6-setup-validation.md, recorded at 4736a4a).
+Session log lab/log/2026-10-20_s01.yaml; evidence lab/evidence/V7R-001/. Hypotheses omitted.
+
+Raw facts:
+- V5 (dho804-setup-validation.md) at the reference settings (0.5 V/div, −1.65 V offset, BW OFF,
+  10 µs/div, 10 kpts, two SQ500): Vpp 25.8 / 23.6 mV (S1, board powered); 21.8 / 23.1 mV (board
+  unpowered); 21.9 / 21.9 mV (tips + springs on scope Cal ground, no board). CSV sd ≈ 5 mV in all three.
+  The V5 pass limit is ≤ 20 mV [own].
+- v6 S1 ground: pad C (U2.14) is 8.26 mm from A/B. No probe-mounted ≤ 10 mm wire was practical. The
+  user soldered a ~10 mm wire to C's top mound (springs touch it ~8–9 mm from C).
+- On v6-ref with no sensor PCB, setup() halts at "Sensor init failed" (while(1:463 @ 4da1c67).
+  The RIGHT button is read only in loop(), so known-good-reference.md step 5 "press RIGHT" can't restart
+  it; replugging main-board power can. The BQ probe runs earlier (main.cpp:123).
+- Flash/power path used: data-only cable Mac → T-Display USB-C; mains USB-C charger → main-board USB-C.
+  Neither procedure describes this.
+- validate_log.py has no value for "not run" in validation.V7_idle_high_V (number required), so a
+  validation stopped early leaves TODO.
+- capture.py takes the session `channels` block from the first capture (V3 at Cal settings), so every
+  later capture prints a channel-drift NOTE.
+
+Decisions needed (procedure / tool changes; nothing was changed in session):
+1. V5: the limit, the metric (Vpp vs sd, or a gated mean like the V_OL method), and/or the reference
+   settings (e.g. a 20 MHz BW limit, since V9's rise-time limit is 300 ns). It has to be a value the
+   instrument can meet, decided before the next card's predictions are written.
+2. S1 ground: accept a soldereound wire at C, and decide the same-ground-rule consequence for v7
+   (C9.1 would need an equivalent wire, which is a solder change on v7).
+3. Restart method in known-good-reference.md step 5 (replug power, or fit a sensor PCB).
+4. Document the v6 flash/power path.
+5. validate_log.py "not run" representation; capture.py channels-block behaviour (minor).
+Then: a new card for V5–V9 at S1 and S2 on v6 / v6-ref.
+
+Bench state at the end of this session:
+- Board: v6 unpowered, with v6-ref flashed. The data-only cable is still in the T-Display. The soldered wire is still on pad C.
+- Probes: both on the scope's Cal ground, off the board.
+- Scope: 0.5 V/div, −1.65 V offset, BW off, 10 µs/div.
+```
+
+Items 1 (fresh-session bench-state answer) and 2 (image handoff, user side) are still pending from the user.
+
+#### Result
+| # | Phase | Result | Escalation evaluated? | Commit | Notes |
+|---|-------|--------|-----------------------|--------|-------|
+| W7 | Phase 9: v6 dry run | BLOCKED | Yes — No, not resolvable without replanning: V5 limit unmeetable by the instrument itself; ground method and v7 consequence are scope decisions | 4736a4a | V1–V4 pass; V5 fail (instrument floor); KGR rows not run |
+
+#### Verification
+- Git trail 479270c..4736a4a: the pre-registration commit (479270c) comes before every raw commit; there is one raw commit per arm; the recording commit 4736a4a touches STATE front matter only (`as_of: V7R-001`, `open_cards: []`). `check_state.py` reports OK. The tree is clean.
+- `validate_log.py lab/log/2026-10-20_s01.yaml` returns PENDING: TODO `validation.V7_idle_high_V.CH1/CH2`, plus the `validation.passed is false` warning. This matches the reported tool gap (no "not run" value).
+- The V5 failure is not "v6 out of spec". The no-board control (21.9 mV on Cal ground) is above the 20 mV limit, so the limit is below the instrument floor at the reference settings. The stop rule "v6 reads out of spec on a validated setup" did not fire, because the setup never validated.
+- The soldered ground wire on v6 pad C is a board mod. Doing the same on v7 (C9.1) would be a solder change on v7, which is outside anything this initiative has authorised. This goes to the Planner and possibly to the user.
