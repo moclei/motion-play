@@ -132,6 +132,7 @@ Pass table per `known-good-reference.md` (V_DD = 3.3 V). Evaluated per arm (S1, 
 - S2 V5a redo, session (`noise_floor.py`, control stats only): CH1 mean −9.76, sd 12.05, max−min 227.27 mV; CH2 mean −12.48, sd 4.93, max−min 35.67 mV. Tool: "FLAG CH1 control sd 12.05 mV is outside the sanity band 2.5-10 mV".
 - Session (scratch script on the CH1 column; not a tool value): samples more than 40 mV from the median — val_V5ctl_02: 81 events, sd of the rest 9.89 mV; val_V5ctl_01: 51 events, sd of the rest 10.14 mV; S1 `2026-10-21_V7R-002_val_V5ctl_01`: 0 events, sd 5.04 mV. Event spacing irregular (≈ 0.3–10 µs).
 - Stop: CH1 control outside the sanity band on both V5a captures, the second after re-seating. S2 V5b–V9 not run; probes never on the board in S2. Log `2026-10-21_s02` closed `passed: false`.
+- S2 V5a used for S2 (user decision): `2026-10-22_V7R-002_dbg_ch1_01` — CH1 on an alligator clip to Cal ground, CH2 direct.
 
 ### Measured values (from log; cite `lab/evidence/V7R-002/...`)
 ### Interpretation (session; labelled as such)
