@@ -119,6 +119,8 @@ Pass table per `known-good-reference.md` (V_DD = 3.3 V). Evaluated per arm (S1, 
 - S2 decode setup, menu (function navigation icon → Decode → Decode 1), fields as found: "Bus type: I2C, Bus status: on, CLK: Ch2, SDA: Ch1, Format: Hex, Scl Thre: 1.65V, Sda Thre: 1.65V, label: on, exchange: SCL/SDA, R/W: With, Event table: Off". Changes: "They were already set to the correct settings, I didn't have to change anything".
 - S2 hand read-back (1), Decode 1 fields left as found, operator's own reading: Label "on", Exchange "SCL/SDA", Event table "Off".
 - Session note: the session crossed midnight; captures from here on carry the date 2026-10-22 in their file names; the S2 log stays `lab/log/2026-10-21_s02.yaml` (session date of S2's start).
+- S2 decode setup, terminal: "IIC / CHAN2 / CHAN1 / 1.650000E0 / 1.650000E0 / 0,\"No error\""; decode band present: "Yes". Scope or main-board USB-C off since V3b (2026-10-21 23:20 → 2026-10-22 ~13:50): "I don't think so".
+- Session: decode 1 was found as set at S1 (a power cycle leaves Bus status Off and thresholds 0.00 V, dho804-setup-validation.md "Decode setup"), consistent with no scope power cycle in the gap; V1–V4 of S2 are kept. Interpretation, not checked.
 
 ### Measured values (from log; cite `lab/evidence/V7R-002/...`)
 ### Interpretation (session; labelled as such)
