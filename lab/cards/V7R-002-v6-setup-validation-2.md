@@ -107,6 +107,9 @@ Pass table per `known-good-reference.md` (V_DD = 3.3 V). Evaluated per arm (S1, 
 
 - S2 method note (session, 2026-10-21, before any S2 bench step): S2 runs on `lab/procedures/dho804-setup-validation.md` and `lab/procedures/known-good-reference.md` at 16c1ed1 (Phase 14: 27fb0ff, 1f1bd5d, 16c1ed1), which write the S1 deviations in as the method: (a) V7 from the CSV mean (`i2c_frame.py`, idle mode); (b) V8 and V9 on the I²C address trigger 0x6B write, SINGLE, replug. known-good-reference.md steps are cited by their numbers at 16c1ed1 (1–10). Why they changed: `docs/initiatives/test-workflow-setup/PLAN.md`, "After V7R-002 S1" §1–§8. Predictions and limits unchanged. S2 is a new scope session: V1–V4 run again and are recorded in the S2 log. S2 log is named by its session date, `lab/log/<date>_sNN.yaml` (sNN = next free number for that date); S2 runs on 2026-10-21, so the next free name is `lab/log/2026-10-21_s02.yaml`, the same as in the Setup line. Every S2 `capture.py` run gets `--session lab/log/2026-10-21_s02.yaml`. Bench time: "About 2 hours"; boards: "just the v6 board".
 
+- S2 step F (main-board USB-C power in, before flashing): board is v6: "yes"; display: "\"Sensor init failed!\""; data-only cable in: "yes"; other: "nothing".
+- S2 step F, session: `/dev/cu.usbmodem14401` enumerated; `pio run -e lilygo-t-display-s3 -t upload` from a scratch worktree at `v6-ref` (4da1c67): "Wrote 1842416 bytes (1182730 compressed) at 0x00010000 ... Hash of data verified." "Hard resetting via RTS pin..." [SUCCESS].
+
 ### Measured values (from log; cite `lab/evidence/V7R-002/...`)
 ### Interpretation (session; labelled as such)
 
