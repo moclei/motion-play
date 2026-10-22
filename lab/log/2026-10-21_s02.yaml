@@ -17,7 +17,7 @@ validation:
   V6_ground: {method: "TODO", point: "TODO", length_mm: "TODO"}
   V7_idle_high_V: {CH1: "TODO", CH2: "TODO"}
   V8_decode_ok: "TODO"
-  notes: "V1 clock ok (Δ 0.0 s); no setup loaded. V4 Vamp CH1 = 3.0208 V. V4 Vamp CH2 = 3.0037 V. Data-only cable Mac ↔ T-Display: in. Probes identified by scope socket. S2 is a new scope session: V1–V4 run again here (procedures @ 16c1ed1)."
+  notes: "V1 clock ok (Δ 0.0 s); no setup loaded. V4 Vamp CH1 = 3.0208 V. V4 Vamp CH2 = 3.0037 V. Data-only cable Mac ↔ T-Display: in. Probes identified by scope socket. S2 is a new scope session: V1–V4 run again here (procedures @ 16c1ed1). Decode setup by menu: fields as found (operator read): Bus type I2C, Bus status On, Clock CH2, SDA CH1, Format Hex, SCL/SDA Thre 1.65 V, R/W With, Label On, Exchange SCL/SDA, Event table Off (hand read-back of the left-as-found fields: Label On, Exchange SCL/SDA, Event table Off); nothing changed (decode 1 left set from S1)."
 channels:
   CH1: {probe: "TODO", ratio: "10x", signal: "TODO", point: "TODO", bw_limit: "OFF", v_div_V: 1.0, offset_V: -3.3, coupling: "DC"}
   CH2: {probe: "TODO", ratio: "10x", signal: "TODO", point: "TODO", bw_limit: "OFF", v_div_V: 0.5, offset_V: -1.65, coupling: "DC"}

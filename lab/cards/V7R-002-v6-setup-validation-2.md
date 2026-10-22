@@ -116,6 +116,9 @@ Pass table per `known-good-reference.md` (V_DD = 3.3 V). Evaluated per arm (S1, 
 - S2 V3b (CH2 on Cal, CH1 parked on Cal ground): read-backs "1.000000E+00 / 2.000000E-4 / CHAN2 / AUTO / 0,\"No error\"". Panel: "What you described, all good". Hand-set: "All good".
 - S2 V3b: shape: "flat tops and square corners,". capture.py: wrote `2026-10-21_V7R-002_val_V3_04.{png,csv,setup.bin}`; "NOTE: 3 measurement(s) invalid (9.9E37 or no reply): VAMP CH1, VTOP CH1, VBASe CH1"; "NOTE: channel settings differ from the last val_V3 entry: CH2.v_div_V: earlier val_V3 entry 0.5, scope 1.0; CH2.offset_V: earlier val_V3 entry -1.65, scope -3.3"; "The scope is left STOPPED."; no clock WARNING line. Status after RUN/STOP: "TD". Log: VAMP CH2 3.0037 V, VTOP CH2 2.9757 V, VBASe CH2 −28.0 mV.
 - S2 V4 (from the V3 entries): Vamp CH1 3.0208 V (val_V3_03), CH2 3.0037 V (val_V3_04).
+- S2 decode setup, menu (function navigation icon → Decode → Decode 1), fields as found: "Bus type: I2C, Bus status: on, CLK: Ch2, SDA: Ch1, Format: Hex, Scl Thre: 1.65V, Sda Thre: 1.65V, label: on, exchange: SCL/SDA, R/W: With, Event table: Off". Changes: "They were already set to the correct settings, I didn't have to change anything".
+- S2 hand read-back (1), Decode 1 fields left as found, operator's own reading: Label "on", Exchange "SCL/SDA", Event table "Off".
+- Session note: the session crossed midnight; captures from here on carry the date 2026-10-22 in their file names; the S2 log stays `lab/log/2026-10-21_s02.yaml` (session date of S2's start).
 
 ### Measured values (from log; cite `lab/evidence/V7R-002/...`)
 ### Interpretation (session; labelled as such)
