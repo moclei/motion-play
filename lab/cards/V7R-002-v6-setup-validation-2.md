@@ -133,6 +133,9 @@ Pass table per `known-good-reference.md` (V_DD = 3.3 V). Evaluated per arm (S1, 
 - Session (scratch script on the CH1 column; not a tool value): samples more than 40 mV from the median — val_V5ctl_02: 81 events, sd of the rest 9.89 mV; val_V5ctl_01: 51 events, sd of the rest 10.14 mV; S1 `2026-10-21_V7R-002_val_V5ctl_01`: 0 events, sd 5.04 mV. Event spacing irregular (≈ 0.3–10 µs).
 - Stop: CH1 control outside the sanity band on both V5a captures, the second after re-seating. S2 V5b–V9 not run; probes never on the board in S2. Log `2026-10-21_s02` closed `passed: false`.
 - S2 V5a used for S2 (user decision): `2026-10-22_V7R-002_dbg_ch1_01` — CH1 on an alligator clip to Cal ground, CH2 direct.
+- S2 V5b (unplugged → both springs then both tips on the left half of pad F → main-board USB-C in): operator: "It's an incredibly tight space for all four probe points to be touching. I think I got them all on" / "All four are touching the pad I think." Clearance: "whatever the distance from the F pad to the X pads is, that's the clearance I suppose, because these probes are coming in from above." Data-only cable: "plugged in". Display: "the usual \"Sensor init failed!\"". capture.py: wrote `2026-10-22_V7R-002_val_V5_01.{png,csv,setup.bin}`; "The scope is left STOPPED." Log: VPP CH1 37.2 mV, CH2 47.133 mV.
+- S2 V5 result, session (`noise_floor.py --ctl dbg_ch1_01 --dut val_V5_01`): CH1 ctl sd 5.25, dut sd 5.62, excess 2.00 mV rms; CH2 ctl sd 4.85, dut sd 5.43, excess 2.44 mV rms; offset CH1 −10.53, CH2 −11.69 mV; tool verdict "V5 PASS".
+- S2 V6: springs directly on pad F (C21.2), left half; recorded as spring, length 0 mm.
 
 ### Measured values (from log; cite `lab/evidence/V7R-002/...`)
 ### Interpretation (session; labelled as such)
