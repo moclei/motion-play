@@ -127,6 +127,7 @@ Pass table per `known-good-reference.md` (V_DD = 3.3 V). Evaluated per arm (S1, 
 - Stop (relay §4, "control's noise outside the scope sanity band"; dho804-setup-validation.md V5 "Outside that band, stop and look at the scope and probes"). S2 V5b–V9 not run; probes never on the board in S2. Log `2026-10-21_s02` closed with `passed: false`, remaining items `not_run`.
 - Operator, after the flag: "My concern is that the probes might not have been fully seated on the Cal ground, as it's a little challenging to seat them all in there and be sure that they are all touching the metal of it." Alligator clip on the Cal ground tab proposed by the operator; not used (changes the control fixture; method question for the Planner).
 - Decision (user, 2026-10-22): "re-seat and redo V5a as a recorded deviation". Deviation from relay §4 (stop at once on the sanity flag); dho804-setup-validation.md V5 ("stop and look at the scope and probes before going on") is followed. Limits and band unchanged; val_V5ctl_01 stays in the record; V5 for S2 uses the redone control only if it is inside the band. Log `2026-10-21_s02` validation reopened (pending).
+- S2 V5a re-seat (no clip, no scope setting changed): "Both Ch1 and Ch2 tips and springs seem properly seated now". Status badge: not reported.
 
 ### Measured values (from log; cite `lab/evidence/V7R-002/...`)
 ### Interpretation (session; labelled as such)
