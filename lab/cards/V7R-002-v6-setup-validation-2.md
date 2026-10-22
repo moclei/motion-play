@@ -121,6 +121,7 @@ Pass table per `known-good-reference.md` (V_DD = 3.3 V). Evaluated per arm (S1, 
 - Session note: the session crossed midnight; captures from here on carry the date 2026-10-22 in their file names; the S2 log stays `lab/log/2026-10-21_s02.yaml` (session date of S2's start).
 - S2 decode setup, terminal: "IIC / CHAN2 / CHAN1 / 1.650000E0 / 1.650000E0 / 0,\"No error\""; decode band present: "Yes". Scope or main-board USB-C off since V3b (2026-10-21 23:20 → 2026-10-22 ~13:50): "I don't think so".
 - Session: decode 1 was found as set at S1 (a power cycle leaves Bus status Off and thresholds 0.00 V, dho804-setup-validation.md "Decode setup"), consistent with no scope power cycle in the gap; V1–V4 of S2 are kept. Interpretation, not checked.
+- S2 V5a setup (both tips + springs on Cal ground, no board contact; board powered): read-backs "5.000000E-01 / 5.000000E-01 / -1.650000E+00 / -1.650000E+00 / OFF / OFF / 1.000000E-5 / 1.0000E+04 / AUTO / 0,\"No error\"". Panel Vpp(C1)/Vpp(C2): "Both are showing, yes". Display: "the \"Sensor init failed!\" screen".
 
 ### Measured values (from log; cite `lab/evidence/V7R-002/...`)
 ### Interpretation (session; labelled as such)
