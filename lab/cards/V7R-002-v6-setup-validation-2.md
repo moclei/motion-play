@@ -122,6 +122,9 @@ Pass table per `known-good-reference.md` (V_DD = 3.3 V). Evaluated per arm (S1, 
 - S2 decode setup, terminal: "IIC / CHAN2 / CHAN1 / 1.650000E0 / 1.650000E0 / 0,\"No error\""; decode band present: "Yes". Scope or main-board USB-C off since V3b (2026-10-21 23:20 → 2026-10-22 ~13:50): "I don't think so".
 - Session: decode 1 was found as set at S1 (a power cycle leaves Bus status Off and thresholds 0.00 V, dho804-setup-validation.md "Decode setup"), consistent with no scope power cycle in the gap; V1–V4 of S2 are kept. Interpretation, not checked.
 - S2 V5a setup (both tips + springs on Cal ground, no board contact; board powered): read-backs "5.000000E-01 / 5.000000E-01 / -1.650000E+00 / -1.650000E+00 / OFF / OFF / 1.000000E-5 / 1.0000E+04 / AUTO / 0,\"No error\"". Panel Vpp(C1)/Vpp(C2): "Both are showing, yes". Display: "the \"Sensor init failed!\" screen".
+- S2 V5a: capture.py: wrote `2026-10-22_V7R-002_val_V5ctl_01.{png,csv,setup.bin}`; "The scope is left STOPPED." (no NOTE lines). Log: VPP CH1 129.33 mV, CH2 23.867 mV; scope_clock delta 0.0 s ok.
+- S2 V5a, session (`noise_floor.py --ctl val_V5ctl_01 --dut val_V5ctl_01`, control stats only; no DUT capture taken): CH1 mean −11.15, sd 11.17, max−min 138.73 mV; CH2 mean −13.56, sd 5.01, max−min 28.80 mV. Tool: "FLAG CH1 control sd 11.17 mV is outside the sanity band 2.5-10 mV". Settings are the reference settings (read-backs above). S1 control for comparison: CH1 sd 5.04, CH2 4.81 mV (log 2026-10-21_s01).
+- Stop (relay §4, "control's noise outside the scope sanity band"; dho804-setup-validation.md V5 "Outside that band, stop and look at the scope and probes"). S2 V5b–V9 not run; probes never on the board in S2. Log `2026-10-21_s02` closed with `passed: false`, remaining items `not_run`.
 
 ### Measured values (from log; cite `lab/evidence/V7R-002/...`)
 ### Interpretation (session; labelled as such)

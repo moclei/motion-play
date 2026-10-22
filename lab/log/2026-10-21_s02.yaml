@@ -6,21 +6,17 @@ ai_session: "debugger (V7R-002 S2, v6 re-run)"
 dut: {board_id: "v6", firmware_commit: "4da1c67", firmware_env: "lilygo-t-display-s3", declared_baseline: "v6-ref"}
 scope: {model: "Rigol DHO804", serial: "DHO8A282M00872", firmware: "00.01.05", setup_file: "2026-10-21_V7R-002_val_V3_03.setup.bin"}
 validation:
-  passed: "TODO"
+  passed: false   # V5a control sd CH1 11.17 mV outside the 2.5-10 mV sanity band (noise_floor.py FLAG) -> stop; S2 V5b-V9 not run
   V2_probe_ratio: {CH1: "10x/fixed 10:1", CH2: "10x/fixed 10:1"}
   V3_comp_png: ["2026-10-21_V7R-002_val_V3_03.png", "2026-10-21_V7R-002_val_V3_04.png"]  # CH1, CH2
-  V5:
-    ctl_sd_mV: {CH1: "TODO", CH2: "TODO"}
-    dut_sd_mV: {CH1: "TODO", CH2: "TODO"}
-    excess_rms_mV: {CH1: "TODO", CH2: "TODO"}
-    offset_mV: {CH1: "TODO", CH2: "TODO"}
-  V6_ground: {method: "TODO", point: "TODO", length_mm: "TODO"}
-  V7_idle_high_V: {CH1: "TODO", CH2: "TODO"}
-  V8_decode_ok: "TODO"
-  notes: "V1 clock ok (Δ 0.0 s); no setup loaded. V4 Vamp CH1 = 3.0208 V. V4 Vamp CH2 = 3.0037 V. Data-only cable Mac ↔ T-Display: in. Probes identified by scope socket. S2 is a new scope session: V1–V4 run again here (procedures @ 16c1ed1). Decode setup by menu: fields as found (operator read): Bus type I2C, Bus status On, Clock CH2, SDA CH1, Format Hex, SCL/SDA Thre 1.65 V, R/W With, Label On, Exchange SCL/SDA, Event table Off (hand read-back of the left-as-found fields: Label On, Exchange SCL/SDA, Event table Off); nothing changed (decode 1 left set from S1). Decode read-backs IIC / CHAN2 / CHAN1 / 1.650000E0 / 1.650000E0 / 0,\"No error\"; decode band present. Decode setup PASS. Gap between V3b (2026-10-21 23:20) and the decode setup (2026-10-22 ~13:50); scope or main-board power off in the gap, operator: \"I don't think so\"."
+  V5: {not_run: "V5a control CH1 sd 11.17 mV outside sanity band 2.5-10 mV (noise_floor.py FLAG); stop before V5b"}
+  V6_ground: {not_run: "stopped at V5a (control sd flag)"}
+  V7_idle_high_V: {not_run: "stopped at V5a (control sd flag)"}
+  V8_decode_ok: {not_run: "stopped at V5a (control sd flag)"}
+  notes: "V1 clock ok (Δ 0.0 s); no setup loaded. V4 Vamp CH1 = 3.0208 V. V4 Vamp CH2 = 3.0037 V. Data-only cable Mac ↔ T-Display: in. Probes identified by scope socket. S2 is a new scope session: V1–V4 run again here (procedures @ 16c1ed1). Decode setup by menu: fields as found (operator read): Bus type I2C, Bus status On, Clock CH2, SDA CH1, Format Hex, SCL/SDA Thre 1.65 V, R/W With, Label On, Exchange SCL/SDA, Event table Off (hand read-back of the left-as-found fields: Label On, Exchange SCL/SDA, Event table Off); nothing changed (decode 1 left set from S1). Decode read-backs IIC / CHAN2 / CHAN1 / 1.650000E0 / 1.650000E0 / 0,\"No error\"; decode band present. Decode setup PASS. Gap between V3b (2026-10-21 23:20) and the decode setup (2026-10-22 ~13:50); scope or main-board power off in the gap, operator: \"I don't think so\". V5a: control CH1 sd 11.17 mV, CH2 5.01 mV (noise_floor.py FLAG on CH1, sanity band 2.5-10 mV, reference settings); ctl 2026-10-22_V7R-002_val_V5ctl_01.png. Stop per relay §4 / procedure V5; probes never on the board in S2. V9 not run."
 channels:
-  CH1: {probe: "TODO", ratio: "10x", signal: "TODO", point: "TODO", bw_limit: "OFF", v_div_V: 1.0, offset_V: -3.3, coupling: "DC"}
-  CH2: {probe: "TODO", ratio: "10x", signal: "TODO", point: "TODO", bw_limit: "OFF", v_div_V: 0.5, offset_V: -1.65, coupling: "DC"}
+  CH1: {probe: "SQ500 (CH1 socket)", ratio: "10x", signal: "SDA", point: "V3 on scope Cal, V5a Cal ground; never on the board in S2 (stopped at V5a)", bw_limit: "OFF", v_div_V: 1.0, offset_V: -3.3, coupling: "DC"}
+  CH2: {probe: "SQ500 (CH2 socket)", ratio: "10x", signal: "SCL", point: "V3 on scope Cal, V5a Cal ground; never on the board in S2 (stopped at V5a)", bw_limit: "OFF", v_div_V: 0.5, offset_V: -1.65, coupling: "DC"}
 measurements:
   - test_id: "V7R-002"
     arm: "val_V3"
@@ -105,3 +101,41 @@ measurements:
     scope_clock: {set_to: "2026-10-21T23:20:03", read_back: "2026-10-21 23:20:03", ok: true, delta_s: 0.0}
     scpi_errors: []
     channel_drift: ["CH2.v_div_V: earlier val_V3 entry 0.5, scope 1.0", "CH2.offset_V: earlier val_V3 entry -1.65, scope -3.3"]
+  - test_id: "V7R-002"
+    arm: "val_V5ctl"
+    time: "2026-10-22T14:27:43"
+    trigger: {type: "EDGE", sweep: "AUTO", source: "CHAN1", slope: "POS", level_V: 1.5}
+    timebase_s_div: 1.0e-05
+    method: "auto"
+    feature: "V5a control (S2): both tips + springs on scope Cal ground, no board contact"
+    values:
+      - {name: "VPP", ch: "CH1", value_mV: 129.33, raw: "1.2933E-01"}
+      - {name: "VPP", ch: "CH2", value_mV: 23.867, raw: "2.3867E-02"}
+    captures: ["2026-10-22_V7R-002_val_V5ctl_01.png", "2026-10-22_V7R-002_val_V5ctl_01.csv", "2026-10-22_V7R-002_val_V5ctl_01.setup.bin"]
+    raw_observation: "Board display: the \"Sensor init failed!\" screen (probes not on the board)"
+    ai_read:
+      - capture: 2026-10-22_V7R-002_val_V5ctl_01.png
+        settings_seen: {CH1_v_div: 500.00mV, CH1_offset: -1.65V, CH2_v_div: 500.00mV, CH2_offset: -1.65V, timebase: 10.00us/div, srate: 62.50MSa/s, mdepth: 10.00kpts, trigger: "edge CH1 rising 1.50V, A (auto)", status: STOP}
+        values_seen: {CH1_Vpp_mV: 129.33, CH2_Vpp_mV: 23.866, others: "*****"}
+        notes: "Both traces flat at the bottom graticule line (0 V at -1.65 V offset); CH1 (yellow) shows small spikes along the trace, more than CH2. Panel Vpp matches log (CH1 129.33 mV, CH2 23.867 mV)."
+        mismatch: none
+    noise_floor_ctl_only: "noise_floor.py --ctl val_V5ctl_01 --dut val_V5ctl_01 (control stats only): CH1 mean -11.15 sd 11.17 max-min 138.73 mV; CH2 mean -13.56 sd 5.01 max-min 28.80 mV; FLAG CH1 control sd 11.17 mV outside the sanity band 2.5-10 mV at the reference settings"
+    source: "tools/lab/capture.py"
+    scope_settings:
+      channels:
+        CH1: {probe: "10", bw_limit: "OFF", scale: "5.000000E-01", offset: "-1.650000E+00", coupling: "DC", invert: "0", units: "VOLT"}
+        CH2: {probe: "10", bw_limit: "OFF", scale: "5.000000E-01", offset: "-1.650000E+00", coupling: "DC", invert: "0", units: "VOLT"}
+      timebase: {scale: "1.000000E-5", offset: "0.000000", mode: "MAIN"}
+      acquire: {srate: "6.250000E+7", mdepth: "1.0000E+04", type: "NORM"}
+      trigger: {mode: "EDGE", sweep: "AUTO", source: "CHAN1", slope: "POS", level: "1.500000E0"}
+      bus1: {mode: "IIC", scl_source: "CHAN2", sda_source: "CHAN1", address: "RW", threshold_sda: "1.650000E0", threshold_scl: "1.650000E0"}
+      measure: {threshold_type: "PERC", max_pct: "7.000000E+01", mid_pct: "5.000000E+01", min_pct: "3.000000E+01", amsource: "OFF"}
+      trigger_status: {before: "AUTO", after_stop: "STOP"}
+    waveform:
+      mode: "RAW"
+      format: "ASCii"
+      points: 10000
+      read: "single"
+      preamble: {CH1: "2,2,10000,1,1.600000E-8,-8.000000E-5,0.000000,6.6667E-05,-24750,32768", CH2: "2,2,10000,1,1.600000E-8,-8.000000E-5,0.000000,6.6667E-05,-24750,32768"}
+    scope_clock: {set_to: "2026-10-22T14:27:43", read_back: "2026-10-22 14:27:43", ok: true, delta_s: 0.0}
+    scpi_errors: []
