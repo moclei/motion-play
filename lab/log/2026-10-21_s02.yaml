@@ -6,14 +6,18 @@ ai_session: "debugger (V7R-002 S2, v6 re-run)"
 dut: {board_id: "v6", firmware_commit: "4da1c67", firmware_env: "lilygo-t-display-s3", declared_baseline: "v6-ref"}
 scope: {model: "Rigol DHO804", serial: "DHO8A282M00872", firmware: "00.01.05", setup_file: "2026-10-21_V7R-002_val_V3_03.setup.bin"}
 validation:
-  passed: false   # V5a control sd CH1 11.17 mV outside the 2.5-10 mV sanity band (noise_floor.py FLAG) -> stop; S2 V5b-V9 not run
+  passed: "TODO"
   V2_probe_ratio: {CH1: "10x/fixed 10:1", CH2: "10x/fixed 10:1"}
   V3_comp_png: ["2026-10-21_V7R-002_val_V3_03.png", "2026-10-21_V7R-002_val_V3_04.png"]  # CH1, CH2
-  V5: {not_run: "V5a control CH1 sd 11.17 mV outside sanity band 2.5-10 mV (noise_floor.py FLAG); stop before V5b"}
-  V6_ground: {not_run: "stopped at V5a (control sd flag)"}
-  V7_idle_high_V: {not_run: "stopped at V5a (control sd flag)"}
-  V8_decode_ok: {not_run: "stopped at V5a (control sd flag)"}
-  notes: "V1 clock ok (Δ 0.0 s); no setup loaded. V4 Vamp CH1 = 3.0208 V. V4 Vamp CH2 = 3.0037 V. Data-only cable Mac ↔ T-Display: in. Probes identified by scope socket. S2 is a new scope session: V1–V4 run again here (procedures @ 16c1ed1). Decode setup by menu: fields as found (operator read): Bus type I2C, Bus status On, Clock CH2, SDA CH1, Format Hex, SCL/SDA Thre 1.65 V, R/W With, Label On, Exchange SCL/SDA, Event table Off (hand read-back of the left-as-found fields: Label On, Exchange SCL/SDA, Event table Off); nothing changed (decode 1 left set from S1). Decode read-backs IIC / CHAN2 / CHAN1 / 1.650000E0 / 1.650000E0 / 0,\"No error\"; decode band present. Decode setup PASS. Gap between V3b (2026-10-21 23:20) and the decode setup (2026-10-22 ~13:50); scope or main-board power off in the gap, operator: \"I don't think so\". V5a: control CH1 sd 11.17 mV, CH2 5.01 mV (noise_floor.py FLAG on CH1, sanity band 2.5-10 mV, reference settings); ctl 2026-10-22_V7R-002_val_V5ctl_01.png. Stop per relay §4 / procedure V5; probes never on the board in S2. V9 not run."
+  V5:
+    ctl_sd_mV: {CH1: "TODO", CH2: "TODO"}
+    dut_sd_mV: {CH1: "TODO", CH2: "TODO"}
+    excess_rms_mV: {CH1: "TODO", CH2: "TODO"}
+    offset_mV: {CH1: "TODO", CH2: "TODO"}
+  V6_ground: {method: "TODO", point: "TODO", length_mm: "TODO"}
+  V7_idle_high_V: {CH1: "TODO", CH2: "TODO"}
+  V8_decode_ok: "TODO"
+  notes: "V1 clock ok (Δ 0.0 s); no setup loaded. V4 Vamp CH1 = 3.0208 V. V4 Vamp CH2 = 3.0037 V. Data-only cable Mac ↔ T-Display: in. Probes identified by scope socket. S2 is a new scope session: V1–V4 run again here (procedures @ 16c1ed1). Decode setup by menu: fields as found (operator read): Bus type I2C, Bus status On, Clock CH2, SDA CH1, Format Hex, SCL/SDA Thre 1.65 V, R/W With, Label On, Exchange SCL/SDA, Event table Off (hand read-back of the left-as-found fields: Label On, Exchange SCL/SDA, Event table Off); nothing changed (decode 1 left set from S1). Decode read-backs IIC / CHAN2 / CHAN1 / 1.650000E0 / 1.650000E0 / 0,\"No error\"; decode band present. Decode setup PASS. Gap between V3b (2026-10-21 23:20) and the decode setup (2026-10-22 ~13:50); scope or main-board power off in the gap, operator: \"I don't think so\". V5a: control CH1 sd 11.17 mV, CH2 5.01 mV (noise_floor.py FLAG on CH1, sanity band 2.5-10 mV, reference settings); ctl 2026-10-22_V7R-002_val_V5ctl_01.png. Stop per relay §4 / procedure V5. Decision (user): re-seat CH1 by hand (no clip) and redo V5a, recorded as a deviation on card V7R-002; val_V5ctl_01 stays in the record."
 channels:
   CH1: {probe: "SQ500 (CH1 socket)", ratio: "10x", signal: "SDA", point: "V3 on scope Cal, V5a Cal ground; never on the board in S2 (stopped at V5a)", bw_limit: "OFF", v_div_V: 1.0, offset_V: -3.3, coupling: "DC"}
   CH2: {probe: "SQ500 (CH2 socket)", ratio: "10x", signal: "SCL", point: "V3 on scope Cal, V5a Cal ground; never on the board in S2 (stopped at V5a)", bw_limit: "OFF", v_div_V: 0.5, offset_V: -1.65, coupling: "DC"}
