@@ -105,6 +105,8 @@ Pass table per `known-good-reference.md` (V_DD = 3.3 V). Evaluated per arm (S1, 
 
 - Session stop after S1 (bench time): operator: "powered off, data cable in, probes on Cal ground"; "scope still on". S2 not started; continues in the next session with fresh V1–V4 (new scope session).
 
+- S2 method note (session, 2026-10-21, before any S2 bench step): S2 runs on `lab/procedures/dho804-setup-validation.md` and `lab/procedures/known-good-reference.md` at 16c1ed1 (Phase 14: 27fb0ff, 1f1bd5d, 16c1ed1), which write the S1 deviations in as the method: (a) V7 from the CSV mean (`i2c_frame.py`, idle mode); (b) V8 and V9 on the I²C address trigger 0x6B write, SINGLE, replug. known-good-reference.md steps are cited by their numbers at 16c1ed1 (1–10). Why they changed: `docs/initiatives/test-workflow-setup/PLAN.md`, "After V7R-002 S1" §1–§8. Predictions and limits unchanged. S2 is a new scope session: V1–V4 run again and are recorded in the S2 log. S2 log is named by its session date, `lab/log/<date>_sNN.yaml` (sNN = next free number for that date); S2 runs on 2026-10-21, so the next free name is `lab/log/2026-10-21_s02.yaml`, the same as in the Setup line. Every S2 `capture.py` run gets `--session lab/log/2026-10-21_s02.yaml`. Bench time: "About 2 hours"; boards: "just the v6 board".
+
 ### Measured values (from log; cite `lab/evidence/V7R-002/...`)
 ### Interpretation (session; labelled as such)
 
