@@ -136,6 +136,8 @@ Pass table per `known-good-reference.md` (V_DD = 3.3 V). Evaluated per arm (S1, 
 - S2 V5b (unplugged → both springs then both tips on the left half of pad F → main-board USB-C in): operator: "It's an incredibly tight space for all four probe points to be touching. I think I got them all on" / "All four are touching the pad I think." Clearance: "whatever the distance from the F pad to the X pads is, that's the clearance I suppose, because these probes are coming in from above." Data-only cable: "plugged in". Display: "the usual \"Sensor init failed!\"". capture.py: wrote `2026-10-22_V7R-002_val_V5_01.{png,csv,setup.bin}`; "The scope is left STOPPED." Log: VPP CH1 37.2 mV, CH2 47.133 mV.
 - S2 V5 result, session (`noise_floor.py --ctl dbg_ch1_01 --dut val_V5_01`): CH1 ctl sd 5.25, dut sd 5.62, excess 2.00 mV rms; CH2 ctl sd 4.85, dut sd 5.43, excess 2.44 mV rms; offset CH1 −10.53, CH2 −11.69 mV; tool verdict "V5 PASS".
 - S2 V6: springs directly on pad F (C21.2), left half; recorded as spring, length 0 mm.
+- S2 V7 (unplugged → tips to D (CH1) and E (CH2), springs on F → main-board USB-C in): "Ch1 tip is on D, spring is on F. Ch2 tip is on E, spring is on F. Again, it's a tight space, so they may not be perfectly placed, but let's give it a go". Display: "The usual \"Sensor init failed!\" screen". Read-backs "EDGE / CHAN1 / AUTO / 0,\"No error\"". capture.py: wrote `2026-10-22_V7R-002_val_V7_01.{png,csv,setup.bin}`; "The scope is left STOPPED."
+- S2 V7, session (`i2c_frame.py`, mode idle): CH1 mean 3.3007 V, CH2 mean 3.2893 V; tool verdict "V7 PASS".
 
 ### Measured values (from log; cite `lab/evidence/V7R-002/...`)
 ### Interpretation (session; labelled as such)

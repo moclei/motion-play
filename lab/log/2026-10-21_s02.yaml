@@ -16,7 +16,7 @@ validation:
     offset_mV: {CH1: -10.53, CH2: -11.69}
     vpp_panel_mV: {CH1: 37.2, CH2: 47.133}
   V6_ground: {method: spring, point: C21.2, length_mm: 0}   # both springs directly on pad F (left half, away from the X pad); both tips on F for V5b
-  V7_idle_high_V: {CH1: "TODO", CH2: "TODO"}
+  V7_idle_high_V: {CH1: 3.301, CH2: 3.289}   # CSV mean of all 10000 samples of 2026-10-22_V7R-002_val_V7_01 (i2c_frame.py, bus idle)
   V8_decode_ok: "TODO"
   notes: "V1 clock ok (Δ 0.0 s); no setup loaded. V4 Vamp CH1 = 3.0208 V. V4 Vamp CH2 = 3.0037 V. Data-only cable Mac ↔ T-Display: in. Probes identified by scope socket. S2 is a new scope session: V1–V4 run again here (procedures @ 16c1ed1). Decode setup by menu: fields as found (operator read): Bus type I2C, Bus status On, Clock CH2, SDA CH1, Format Hex, SCL/SDA Thre 1.65 V, R/W With, Label On, Exchange SCL/SDA, Event table Off (hand read-back of the left-as-found fields: Label On, Exchange SCL/SDA, Event table Off); nothing changed (decode 1 left set from S1). Decode read-backs IIC / CHAN2 / CHAN1 / 1.650000E0 / 1.650000E0 / 0,\"No error\"; decode band present. Decode setup PASS. Gap between V3b (2026-10-21 23:20) and the decode setup (2026-10-22 ~13:50); scope or main-board power off in the gap, operator: \"I don't think so\". V5a: control CH1 sd 11.17 mV, CH2 5.01 mV (noise_floor.py FLAG on CH1, sanity band 2.5-10 mV, reference settings); ctl 2026-10-22_V7R-002_val_V5ctl_01.png. Stop per relay §4 / procedure V5. Decision (user): re-seat CH1 by hand (no clip) and redo V5a, recorded as a deviation on card V7R-002; val_V5ctl_01 stays in the record. V5a redo after re-seat: CH1 sd 12.05 mV, CH2 4.93 mV (FLAG on CH1 again); ctl 2026-10-22_V7R-002_val_V5ctl_02.png. V5a control used for S2: dbg_ch1_01 (CH1 on an alligator clip to Cal ground, CH2 direct; user decision). V5 PASS (noise_floor.py): ctl 2026-10-22_V7R-002_dbg_ch1_01.png, dut 2026-10-22_V7R-002_val_V5_01.png; V5b both tips + both springs on pad F (C21.2), left half, operator: \"All four are touching the pad I think\"."
 channels:
@@ -249,4 +249,46 @@ measurements:
       read: "single"
       preamble: {CH1: "2,2,10000,1,1.600000E-8,-8.000000E-5,0.000000,6.6667E-05,-24750,32768", CH2: "2,2,10000,1,1.600000E-8,-8.000000E-5,0.000000,6.6667E-05,-24750,32768"}
     scope_clock: {set_to: "2026-10-22T15:42:28", read_back: "2026-10-22 15:42:28", ok: true, delta_s: 0.0}
+    scpi_errors: []
+  - test_id: "V7R-002"
+    arm: "val_V7"
+    time: "2026-10-22T16:07:15"
+    trigger: {type: "EDGE", sweep: "AUTO", source: "CHAN1", slope: "POS", level_V: 1.5}
+    timebase_s_div: 1.0e-05
+    method: "auto"
+    feature: "V7 idle high (S2): CH1 tip on pad D (U5.6), CH2 tip on pad E (U5.5), springs on pad F (C21.2), board powered"
+    values:
+      - {name: "VPP", ch: "CH1", value_mV: 53.0, raw: "5.3000E-02"}
+      - {name: "VPP", ch: "CH2", value_mV: 66.267, raw: "6.6267E-02"}
+    captures: ["2026-10-22_V7R-002_val_V7_01.png", "2026-10-22_V7R-002_val_V7_01.csv", "2026-10-22_V7R-002_val_V7_01.setup.bin"]
+    raw_observation: "Ch1 tip is on D, spring is on F. Ch2 tip is on E, spring is on F. Again, it's a tight space, so they may not be perfectly placed, but let's give it a go. Display: The usual \"Sensor init failed!\" screen"
+    values_csv:
+      - {name: mean, ch: CH1, value_mV: 3300.7, gate: "all 10000 samples, -80..+79.98 us, no channel crosses 1.65 V"}
+      - {name: mean, ch: CH2, value_mV: 3289.3, gate: "all 10000 samples, -80..+79.98 us, no channel crosses 1.65 V"}
+      - {name: sd, ch: CH1, value_mV: 3.98}
+      - {name: sd, ch: CH2, value_mV: 5.66}
+    ai_read:
+      - capture: 2026-10-22_V7R-002_val_V7_01.png
+        settings_seen: {CH1_v_div: 500.00mV, CH1_offset: -1.65V, CH2_v_div: 500.00mV, CH2_offset: -1.65V, timebase: 10.00us/div, srate: 62.50MSa/s, mdepth: 10.00kpts, trigger: "edge CH1 rising 1.50V, A (auto)", status: STOP}
+        values_seen: {CH1_Vpp_mV: 53.000, CH2_Vpp_mV: 66.266, others: "*****"}
+        notes: "Both traces flat near the top graticule line (~3.3 V), no edges. Panel Vpp matches log."
+        mismatch: none
+    source: "tools/lab/capture.py"
+    scope_settings:
+      channels:
+        CH1: {probe: "10", bw_limit: "OFF", scale: "5.000000E-01", offset: "-1.650000E+00", coupling: "DC", invert: "0", units: "VOLT"}
+        CH2: {probe: "10", bw_limit: "OFF", scale: "5.000000E-01", offset: "-1.650000E+00", coupling: "DC", invert: "0", units: "VOLT"}
+      timebase: {scale: "1.000000E-5", offset: "0.000000", mode: "MAIN"}
+      acquire: {srate: "6.250000E+7", mdepth: "1.0000E+04", type: "NORM"}
+      trigger: {mode: "EDGE", sweep: "AUTO", source: "CHAN1", slope: "POS", level: "1.500000E0"}
+      bus1: {mode: "IIC", scl_source: "CHAN2", sda_source: "CHAN1", address: "RW", threshold_sda: "1.650000E0", threshold_scl: "1.650000E0"}
+      measure: {threshold_type: "PERC", max_pct: "7.000000E+01", mid_pct: "5.000000E+01", min_pct: "3.000000E+01", amsource: "OFF"}
+      trigger_status: {before: "WAIT", after_stop: "STOP"}
+    waveform:
+      mode: "RAW"
+      format: "ASCii"
+      points: 10000
+      read: "single"
+      preamble: {CH1: "2,2,10000,1,1.600000E-8,-8.000000E-5,0.000000,6.6667E-05,-24750,32768", CH2: "2,2,10000,1,1.600000E-8,-8.000000E-5,0.000000,6.6667E-05,-24750,32768"}
+    scope_clock: {set_to: "2026-10-22T16:07:15", read_back: "2026-10-22 16:07:15", ok: true, delta_s: 0.0}
     scpi_errors: []
