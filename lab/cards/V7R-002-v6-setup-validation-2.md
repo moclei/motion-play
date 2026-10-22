@@ -111,6 +111,7 @@ Pass table per `known-good-reference.md` (V_DD = 3.3 V). Evaluated per arm (S1, 
 - S2 step F, session: `/dev/cu.usbmodem14401` enumerated; `pio run -e lilygo-t-display-s3 -t upload` from a scratch worktree at `v6-ref` (4da1c67): "Wrote 1842416 bytes (1182730 compressed) at 0x00010000 ... Hash of data verified." "Hard resetting via RTS pin..." [SUCCESS].
 - S2 V1: `*IDN?` → "RIGOL TECHNOLOGIES,DHO804,DHO8A282M00872,00.01.05"; `:SYSTem:ERRor?` → "0,\"No error\""; AUTO pressed: "yes". No setup loaded. Display: "the usual \"Sensor init failed!\" screeb".
 - S2 V2: read-backs "10 1 10 1 0,\"No error\"" (CH1 PROBe?, DISPlay?, CH2 PROBe?, DISPlay?, ERRor?). Other: "nothing".
+- S2 V3a (CH1 on Cal, CH2 parked on Cal ground): read-backs "1.000000E+00 / 2.000000E-4 / CHAN1 / AUTO / 0,\"No error\"". Panel: "Vamp, Vtop, Vbase, Vpp, and RiseTime for both C1 and C2".
 
 ### Measured values (from log; cite `lab/evidence/V7R-002/...`)
 ### Interpretation (session; labelled as such)
