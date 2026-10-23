@@ -63,6 +63,8 @@ Controls in every counted iteration: PCA detection summary shows `TCA ch 2: PCA9
 
 ## Actual result
 ### Raw observations (operator, verbatim; symptoms not interpretations)
+- S1 (2026-10-23), operator: "1, The rigid connects to J6 through a cable - similar to the pigtail one but it has a connector on both ends. One end is in the rigid board, the other is in the main board. It's about 400mm long 2. The rigid doesn't have any identifying mark on it, so I wrote "#1" in black marker. Hopefully it survives handling. A flex PCB is plugged into the rigid, the flex has both sensors on it. The rigid has it's jumper switches thing set so that "1" is "on" and "2" is off (that's what sets it's I2C address)"
+- S1 (session): SW1 ON / SW2 OFF = PCA9546A 0x76 per hardware/CONTEXT.md §sensor rigid ("Board 3 (SW1 ON): 0x76"). Rigid marked "#1" by the operator (not a module number). Pigtail moved J6 → J5 per the card (operator did steps 2–3 without remark).
 ### Measured values (from log; cite `lab/evidence/V7R-005/...`)
 ### Interpretation (session; labelled as such)
 
