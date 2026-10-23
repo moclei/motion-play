@@ -5,7 +5,7 @@ For the user. This starts the **debug track**: ad-hoc debugger sessions that run
 ## 1. Before you start
 
 - **Terminal:** a new Cursor terminal at the repo root.
-  - `git status` must show a clean tree. Use a fresh branch, for example `git switch -c debug/v7-track main`.
+  - `git status` must show `On branch main`, up to date, with a clean tree. The session creates its own branch.
   - `git config core.hooksPath` must print `.githooks`.
 - **Bench:** nothing needs to be set up in advance. The session asks what you have and how long you've got. v6 is still on the bench from the dry run:
   - unpowered;
@@ -23,7 +23,7 @@ Run plain `claude`, then paste this as your first message:
 ```
 Read `docs/research/v7-retry/debugger-role-draft.md` and act as that role for this session.
 This is the first debug-track session on the v7 I²C fault. `test-workflow-setup` is closed (PR #80), and `v7-clean` may now be flashed onto v7 as a card's declared baseline.
-First, with no bench time: transcribe `docs/research/v7-retry/decisioning.md` §2 into `lab/STATE.md` sections 1–8, as STATE.md's header says. Leave out the material marked *(decisioning only)* and keep the section caps. Commit that on its own.
+First, cut a branch `debug/v7-track` from an up-to-date `main` and work on it. Then, with no bench time: transcribe `docs/research/v7-retry/decisioning.md` §2 into `lab/STATE.md` sections 1–8, as STATE.md's header says. Leave out the material marked *(decisioning only)* and keep the section caps. Commit that on its own.
 Then propose the first card from the queue in STATE §8 (decisioning §2.7, cards 1–4, all log-only). Weigh the cost of changing the bench as well as what each card cuts: board swaps and probe moves are slow, delicate manual work for me. Say which cards share a setup and could run back to back, and whether card 2 (v6 under the minimal repro) should come first, since v6 is already on the bench. I choose; then pre-register and commit before any bench step.
 Working rules for me at the bench:
 - Plain short language. Name the screen (scope screen, board display, terminal). Refer to pads with a labelled picture; `tools/lab/probe_points/` can make one (see `tools/CONTEXT.md`).
@@ -37,7 +37,7 @@ When it asks how long you have and which boards are available, tell it.
 
 ## 3. What should happen, in order
 
-1. **Start-up check and a five-line orientation.** It should be clean, with no open cards.
+1. **Start-up check and a five-line orientation.** It should be clean, with no open cards. Then it creates the branch `debug/v7-track`.
 2. **STATE.md filled in from decisioning §2,** in one commit, with no bench time.
 3. **A proposed first card,** with the setup cost weighed. You choose.
 4. **The card pre-registered and committed** before any bench step.
