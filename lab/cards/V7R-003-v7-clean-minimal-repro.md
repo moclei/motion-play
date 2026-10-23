@@ -66,6 +66,9 @@ Counts are over the TCA2-row `BQ:` field in the first 10 complete iterations of 
 - B, operator: "done, 30 seconds ago, 11:20am (don't know the seconds)". Session received the reply at ~11:21:00 (shell clock 11:21:10 on the next command).
 - B (session log), TCA2 `BQ:`: it 237 (11:20:28) X(2); it 238 (11:20:30) `.`; it 239–266 (11:20:32 → 11:21:27) X(2) every iteration. Controls in 237–266: BASE `BQ:.`, TCA0/1 `BQ:.`, TCA2 `INA:.` `TCA:.`. No code other than 2 anywhere in the log.
 - B counted window by the pre-registered boundary rule (report time, in-progress iteration 253 dropped): iterations 254–263, TCA2 `BQ:X(2)` 10/10. Deviation: the operator's report came ~30 s after the action, so the boundary rule places the window ~25 iterations after the first X(2).
+- B (session log, continued): TCA2 `BQ:X(2)` every iteration 239–712 (11:20:32 → 11:36:27).
+- A2, operator: "done". Session received the reply at ~11:36:47 (shell clock 11:36:47).
+- A2 (session log): TCA2 `BQ:.` from it 713 (11:36:29) on, every iteration through 733. Counted window (report time, in-progress iteration 722 dropped): iterations 723–732, TCA2 `BQ:.` 10/10. Controls 713–733: BASE `BQ:.`, TCA0/1 `BQ:.`, TCA2 `INA:.` `TCA:.`. No code other than 2 in the whole log (it 1–733).
 
 ### Measured values (from log; cite `lab/evidence/V7R-003/...`)
 ### Interpretation (session; labelled as such)
