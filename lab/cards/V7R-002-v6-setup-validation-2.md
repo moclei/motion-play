@@ -1,7 +1,7 @@
 ---
 test_id: V7R-002
 title: "Setup validation + known-good reference on v6 (`v6-ref`), second attempt"
-status: run
+status: recorded
 created: 2026-10-21
 prereg_commit: self
 baseline:
@@ -147,11 +147,42 @@ Pass table per `known-good-reference.md` (V_DD = 3.3 V). Evaluated per arm (S1, 
 - S2 V9 step 9, session (`i2c_frame.py --expect D6` on S2_01, exit 0, "frame PASS"; values in log `2026-10-21_s02` entry S2).
 
 ### Measured values (from log; cite `lab/evidence/V7R-002/...`)
+V1–V4 per session log (S1 `lab/log/2026-10-21_s01.yaml`, S2 `lab/log/2026-10-21_s02.yaml`):
+
+| Item | S1 (log `_s01`) | S2 (log `_s02`) | Limit | S1 | S2 |
+|---|---|---|---|---|---|
+| V1 clock Δ | 0.0 s | 0.0 s | ≤ 10 s | pass | pass |
+| V2 ratio CH1/CH2 | 10/10 | 10/10 | 10 | pass | pass |
+| V3 compensation | flat/square (`2026-10-21_V7R-002_val_V3_01/_02.png`) | flat/square (`2026-10-21_V7R-002_val_V3_03/_04.png`) | flat, square | pass | pass |
+| V4 Vamp CH1/CH2 | 3.0208 / 3.0208 V | 3.0208 / 3.0037 V | 2.91–3.09 V | pass | pass |
+| Decode setup | set by hand (Bus status, thresholds, R/W) | found as set; read-backs IIC/CHAN2/CHAN1/1.65/1.65 | as table | pass | pass |
+| V5 excess CH1/CH2 (control sd) | 1.11 / 0.00 mV rms (ctl 5.04 / 4.81) | 2.00 / 2.44 mV rms (ctl 5.25 / 4.85; ctl `2026-10-22_V7R-002_dbg_ch1_01`) | ≤ 5 mV rms; ctl 2.5–10 mV | pass | pass |
+| V6 ground | wire at U2.14, springs ~4 mm from C | springs directly on C21.2 (pad F), 0 mm | recorded | pass | pass |
+| V7 idle high CH1/CH2 | 3.303 / 3.290 V (CSV mean, `val_V7_01` 2026-10-21) | 3.301 / 3.289 V (`i2c_frame.py`, `2026-10-22_V7R-002_val_V7_01`) | 3.135–3.465 V | pass | pass |
+| V8 decode | Write:d6, A:0 (`2026-10-21_V7R-002_val_V8_03.png`) | Write:d6, A:0 (`2026-10-22_V7R-002_val_V8_01.png`) | D6 | pass | pass |
+
+V9 (`known-good-reference.md` pass table). S1 as recorded in log `_s01` (hand values); beside them the `i2c_frame.py` values for `lab/evidence/V7R-002/2026-10-21_V7R-002_S1_01.csv`, recomputed at the method gates (PLAN §6); differs from the hand values only by gate; verdicts unchanged; tool commit a427a66. S2: tool values from log `_s02` (`lab/evidence/V7R-002/2026-10-22_V7R-002_S2_01.csv`).
+
+| Row | S1 hand (log) | S1 tool (a427a66) | S2 tool (log) | Limit | S1 | S2 |
+|---|---|---|---|---|---|---|
+| V_OL bit 5 / bit 3 / R/W bit 0 (CH1, as measured) | 72.4 / 70.2 / 75.4 mV | 64.6 / 63.3 / 66.6 mV | 64.1 / 63.2 / 65.9 mV | ≤ 0.4 V (≤ 0.2 V row 1) | pass | pass |
+| CH1 zero offset (V5) | −9.08 mV | −9.08 mV | −10.53 mV | beside V_OL | — | — |
+| Idle high SDA / SCL | 3.3025 / 3.2929 V | 3.3027 / 3.2929 V | 3.3020 / 3.2923 V | 3.135–3.465 V | pass | pass |
+| Rise 30→70 % max SDA / SCL | 98.4 / 94.2 ns | 98.4 / 94.2 ns | 98.7 / 91.7 ns | ≤ 300 ns | pass | pass |
+| Panel RTIMe C1 / C2 (no pass role) | 285.71 / 114.29 ns | — | 271.43 / 100.0 ns | — | — | — |
+| Decode | D6 + ACK | D6 + ACK | D6 + ACK | D6 then ACK | pass | pass |
+| SCL period | 10.0 µs | 10.0 µs | 10.00 µs | record only | — | — |
+
+S1 vs S2 (tool values, both arms): V_OL 64.6/63.3/66.6 vs 64.1/63.2/65.9 mV; idle high SDA 3.3027 vs 3.3020 V, SCL 3.2929 vs 3.2923 V; rise max SDA 98.4 vs 98.7 ns, SCL 94.2 vs 91.7 ns.
+
 ### Interpretation (session; labelled as such)
+- Interpretation (V7R-002): with this setup and these settings, the master end (S1) and the BQ end (S2) of the v6 bus read the same to within ~1 mV on V_OL and idle high and ~3 ns on rise time.
+- Interpretation (V7R-002): the two S2 controls on direct Cal-ground contact (`2026-10-22_V7R-002_val_V5ctl_01/_02`) were outside the sanity band on CH1 only; the clip control was inside it. Treated as a contact issue at the Cal terminal (user decision); not tested further.
 
 ## Conclusion
-- Outcome row matched: ...
-- Hypotheses excluded: ...
-- **Strength:** ...
+- Outcome row matched: row 1 for S1 and for S2 — V1–V8 and the decode setup pass for each arm, V9 V_OL ≤ 0.2 V (S2 65.9 mV max), idle high, rise time and decode inside the pass table (`lab/evidence/V7R-002/2026-10-21_V7R-002_S1_01.csv`, `lab/evidence/V7R-002/2026-10-22_V7R-002_S2_01.csv`).
+- Hypotheses excluded: M for both arms at these settings (measured-refuted). E not supported (the pass-table expectation held). H0 measured-supported.
+- **Strength:** measured-supported (H0); measured-refuted (M, these settings and arms); `lab/evidence/V7R-002/`
+- Deviations: S1 — V7 from the CSV mean and V8/V9 on the address trigger (now the method at 16c1ed1). S2 — V5a control taken with CH1 on an alligator clip to Cal ground (`lab/evidence/V7R-002/2026-10-22_V7R-002_dbg_ch1_01.csv`) after two direct-contact controls outside the sanity band (user decision); S2 run on 2026-10-21 → 2026-10-22 (captures dated 2026-10-22 after midnight).
 - Revert-on-null done: n/a
 - Result commit: self
