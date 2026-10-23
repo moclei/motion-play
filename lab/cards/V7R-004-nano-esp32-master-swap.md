@@ -46,7 +46,7 @@ Counted field: TCA2-row `BQ:` in 10 complete iterations per arm. A1 and A2: the 
 ## Setup
 - Readout: two serial ports at 115200, logged by the session with host time on each line (scratch pyserial logger, reconnects on re-enumeration): v7 → `lab/captures/V7R-004/2026-10-23_V7R-004_v7_01.txt`, Nano → `lab/captures/V7R-004/2026-10-23_V7R-004_nano_01.txt`.
 - v7 flash: `pio run -e motion-play-v7-relbus -t upload` from a detached worktree at `v7-clean` (90053af), by the session. v7 resets between bursts by the session (esptool hard reset over USB); no physical step.
-- Nano flashes by the session (`arduino-cli upload --fqbn arduino:esp32:nano_nora`): blank sketch (`void setup(){}` / `loop(){delay(1000);}`, scratch, built with the same core) for A arms; probe sketch for B.
+- Nano flashes by the session. *Amended at S1, before any arm:* the Nano enumerates as Espressif USB-JTAG/serial (303A:1001), not Arduino DFU, so both sketches are built with `arduino:esp32:nano_nora:USBMode=hwcdc` (Hardware CDC, as v7's `ARDUINO_USB_MODE=1`) and written with esptool v4.5.1 (bootloader 0x0, partitions 0x8000, boot_app0 0xe000, app 0x10000). Sketches: blank sketch (`void setup(){}` / `loop(){delay(1000);}`, scratch, built with the same core) for A arms; probe sketch for B.
 - Arms run with no operator action; the 10 kΩ SDA → +3.3 V path stays connected throughout.
 - No scope.
 
@@ -65,6 +65,8 @@ Counted field: TCA2-row `BQ:` in 10 complete iterations per arm. A1 and A2: the 
 
 ## Actual result
 ### Raw observations (operator, verbatim; symptoms not interpretations)
+- S1 (2026-10-23), operator: "One LED is on I think, it's green-ish (or  maybe yellow)"
+- S1 (session): Nano on `/dev/cu.usbmodem14201`, USB "USB JTAG_serial debug unit" 303A:1001; esptool: ESP32-S3 (revision v0.1), MAC 34:85:18:7b:eb:38. Old firmware printed nothing in 4 s at 115200 (not identified). Blank sketch (hwcdc build) written, all four hashes verified, hard reset; port back, silent.
 ### Measured values (from log; cite `lab/evidence/V7R-004/...`)
 ### Interpretation (session; labelled as such)
 
