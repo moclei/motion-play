@@ -2679,3 +2679,18 @@ The Orchestrator recorded this as Phase 17 (user-directed; no Planner). The note
   - kicad-cli trims the requested 6400×4800 to 6384×4792, so the size is read from the PNG header.
 - **Not mine:** the untracked `RELAY-debug-track-start.md` and `RELAY-methodology-planner.md` were in the tree before I committed. I left them alone, so the tree is not clean because of them.
 - `tools/lab/tests/run_tests.py`: OK, 0 failures. The new tool has no tests. It needs kicad-cli and Chrome, and a run takes about 3 minutes.
+
+#### Result
+| # | Phase | Result | Escalation evaluated? | Commit | Notes |
+|---|-------|--------|-----------------------|--------|-------|
+| 22 | Phase 17: probe-point picture tool | DONE | No — clean completion | f94f185 | `tools/lab/probe_points/`; v6 and v7 points files; role-draft pointer |
+
+#### Verification
+- Commits 8cc2cb8 and f94f185. The role-draft diff is exactly the one authorised line. Only the four tool files are tracked; no pycache or renders. `run_tests.py`: OK. `--help` runs.
+- Regenerated pictures match the committed ones (red-pixel overlap 0.95 / 0.90, markers within 1 px). The committed PNGs were kept.
+
+### Closeout (2026-10-22)
+- PR #80 was merged by the user as a merge commit (d4acbb0).
+- The Orchestrator wrote `RELAY-methodology-planner.md` (lessons, for a methodology-pass Planner) and `RELAY-debug-track-start.md` (first debug-track session; user request). Phase 17 lands via a follow-up PR.
+
+**Outcome (final):** Loop complete — 22 workers dispatched, 0 unresolved blockers. Initiative closed.

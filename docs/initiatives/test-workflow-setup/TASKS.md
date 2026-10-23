@@ -200,8 +200,8 @@
 > User direction (2026-10-22): "put the lessons in a relay file for the methodology session. You copy the board-picture scripts somewhere and also note it somewhere - maybe in the debugger agent draft file. Those images were very useful and that script should be kept." The user explicitly authorises this one note in the role draft, which BRIEF otherwise puts out of scope.
 
 - [x] Move the probe-point picture scripts from the Orchestrator scratchpad into the repo as a re-runnable tool: `kicad-cli pcb render`, a board bbox from the PNG pixels, an SVG overlay with #ff1744 markers, headless Chrome to rasterise. Add a usage note to `tools/CONTEXT.md` and a one-line pointer in `docs/research/v7-retry/debugger-role-draft.md`
-- [ ] Orchestrator: write `RELAY-methodology-planner.md` (lessons from SESSION Outcome A, for a methodology-pass Planner)
-- [ ] Orchestrator: merge PR #80 with a merge commit
+- [x] Orchestrator: write `RELAY-methodology-planner.md` (lessons from SESSION Outcome A, for a methodology-pass Planner)
+- [x] Orchestrator: merge PR #80 with a merge commit (merged by the user, d4acbb0, merge commit); Phase 17 lands via a follow-up PR. Also `RELAY-debug-track-start.md` (user request)
 
 ## Deferred
 
