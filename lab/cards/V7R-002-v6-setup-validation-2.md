@@ -141,6 +141,8 @@ Pass table per `known-good-reference.md` (V_DD = 3.3 V). Evaluated per arm (S1, 
 - S2 V8 step 1: read-backs "IIC / ADDR / 7 / 107 / WRIT / 0,\"No error\"". Hand read-back (2), operator typed and read: `:TRIGger:IIC:SCL?` → "CHAN2"; `:TRIGger:IIC:SDA?` → "CHAN1".
 - S2 V8 steps 2–3: read-backs "2.000000E-5, SING"; `:TRIGger:STATus?` → "STOP"; decode band: "Write:D6, A:0"; replugs: "1".
 - S2 V8 capture: wrote `2026-10-22_V7R-002_val_V8_01.{png,csv,setup.bin}`; "NOTE: SCPI errors recorded in the entry: [{'after': 'connect', 'error': '-100,\"Command err\"'}]"; "The scope is left STOPPED." Timebase back: "1.000000E-5". PNG: decode band Write:d6 | A:0.
+- S2 V9 steps 3–5: read-backs "10 / 10 / 5.000000E-01 / -1.650000E+00 / 1.000000E-5 / 1.0000E+04 / 0,\"No error\"" and "IIC / ADDR / 7 / 107 / WRIT / 7.000000E+01 / 3.000000E+01 / 0,\"No error\"". Panel: "They're present, but I don't think they're showing active/live values".
+- Session: sweep was still SING from V8, so RUN/STOP armed a single address trigger on an idle bus and the panel had no new record to measure. Panel values have no pass role (known-good-reference.md step 5). Interpretation.
 
 ### Measured values (from log; cite `lab/evidence/V7R-002/...`)
 ### Interpretation (session; labelled as such)
