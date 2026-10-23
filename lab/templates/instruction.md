@@ -1,6 +1,6 @@
 # Bench instruction block
 
-Source: `docs/research/v7-retry/test-workflow-audit.md` §4.8. Every physical step the AI hands the user uses this block. The AI sends **one step (or one short group) at a time** and waits for the report.
+Source: `docs/research/v7-retry/test-workflow-audit.md` §4.8. Every physical step the AI hands the user uses this block. The AI sends **one step (or one short group) at a time** and waits for the report. Each instruction block goes in a message of its own, never under a results table or analysis.
 
 ```
 STEP S<n> of <total> — <V7R-NNN> arm <A1|B|A2|Sn|val> (<one-line condition>)

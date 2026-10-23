@@ -161,7 +161,7 @@ The expected address byte on the wire is **`D6`** (0x6B, write), followed by ACK
    ```
    python3 tools/lab/capture.py --test <V7R-NNN> --arm <S1|S2> --items VTOP,VBASe,RTIMe --session lab/log/<YYYY-MM-DD_sNN>.yaml
    ```
-   **CHECK:** in the terminal, the output ends `The scope is left STOPPED.` and lists the `.png`, `.csv` and `.setup.bin`. Note any `NOTE: … invalid` line in REPORT.
+   **CHECK:** in the terminal, the output ends `The scope is left STOPPED.` and lists the `.png`, `.csv` and `.setup.bin`. Note any `NOTE: … invalid` line in REPORT. After a fired SINGLE the logged sweep can read `NORM` or `AUTO`; the check is the `STOP` status. An SCPI error recorded `after: connect` was queued by an earlier terminal command: note it in REPORT and go on.
 9. **Session work (no operator action):** open the PNG and write the `ai_read` entry. Then run the frame tool on the CSV:
    ```
    python3 tools/lab/i2c_frame.py lab/captures/<V7R-NNN>/<YYYY-MM-DD>_<V7R-NNN>_<S1|S2>_<nn>.csv --expect D6

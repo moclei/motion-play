@@ -179,7 +179,7 @@ The Cal output is a **1 kHz, 3 Vpp** square wave, about 0 → 3 V *[facts: DHO80
 
 ### V5a — control, no board
 
-3. Put **both probe tips and both ground springs on the Cal ground terminal** on the scope's front panel (not the Cal signal terminal). No probe touches the board.
+3. Put **both probe tips and both ground springs on the Cal ground terminal** on the scope's front panel (not the Cal signal terminal). No probe touches the board. A tip or spring may go on an alligator clip on the Cal ground terminal instead of touching it directly.
 4. Capture, then press **RUN/STOP** once:
    ```
    python3 tools/lab/capture.py --test <V7R-NNN> --arm val_V5ctl --items VPP --session lab/log/<YYYY-MM-DD_sNN>.yaml
@@ -212,7 +212,7 @@ The Cal output is a **1 kHz, 3 Vpp** square wave, about 0 → 3 V *[facts: DHO80
 
 **Pass:** **excess noise ≤ 5 mV rms on each channel** **[own]**. Why 5 mV: noise of 5 mV rms is about 14 mV from peak to peak, which is below the 20 mV difference in the low level (V_OL) that our measurements need to tell apart (`test-workflow-audit.md` §4.7). If it fails, the ground is too long or loops near the charger. Fix it before measuring anything tens of mV in size. Never raise the limit.
 
-**Scope sanity check [own]:** at the reference settings above, the control sd should be between **2.5 and 10 mV** on each channel (half to double the ≈ 5 mV seen in V7R-001). Outside that band, stop and look at the scope and probes before going on. The tool prints a flag when it is outside the band; at other settings the flag does not apply, and the control sd is just recorded.
+**Scope sanity check [own]:** at the reference settings above, the control sd should be between **2.5 and 10 mV** on each channel (half to double the ≈ 5 mV seen in V7R-001). Outside that band, recapture V5a with the flagged channel on an alligator clip on the Cal ground terminal, and keep the flagged capture in the record. If the clip control is flagged too, stop. The tool prints a flag when it is outside the band; at other settings the flag does not apply, and the control sd is just recorded.
 
 **Record:** paste the tool's block as `validation.V5`. It holds four per-channel values: `ctl_sd_mV` (control sd), `dut_sd_mV` (board sd), `excess_rms_mV` (excess noise) and `offset_mV` (the zero offset: the control's average). Optionally add `vpp_panel_mV`, the panel Vpp of the V5b capture. Put both PNG names in `validation.notes`. The zero offset is used again in `known-good-reference.md` step 9.
 
@@ -329,7 +329,7 @@ Why this trigger: a trigger on an I²C START fires at power-up on something that
    ```
    python3 tools/lab/capture.py --test <V7R-NNN> --arm val_V8 --items VPP --session lab/log/<YYYY-MM-DD_sNN>.yaml
    ```
-   **CHECK:** in the terminal, the output ends `The scope is left STOPPED.` and lists a `.png`. The PNG shows the decode band with `Write:d6` and `A:0`.
+   **CHECK:** in the terminal, the output ends `The scope is left STOPPED.` and lists a `.png`. The PNG shows the decode band with `Write:d6` and `A:0`. After a fired SINGLE the logged sweep can read `NORM` or `AUTO`; the check is the `STOP` status. An SCPI error recorded `after: connect` was queued by an earlier terminal command: note it in REPORT and go on.
 5. **Back to 10 µs/div** for V9:
    ```
    q ':TIMebase:MAIN:SCALe 1e-5'; q ':TIMebase:MAIN:SCALe?'

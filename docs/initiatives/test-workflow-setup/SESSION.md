@@ -2561,3 +2561,11 @@ Full text is in the file; it is not copied here.
 ### Worker #20 — Phase 16: feedback edits from W8 part 2
 
 **Dispatch:** standard template, with only the feedback-edits task assigned (the tick and PR stay with the Orchestrator). Additional reading: PLAN "After V7R-002 S2: feedback placement".
+
+#### Notes
+- Done: the three PLAN "After V7R-002 S2" edits (§1, §3, §4), one commit.
+  - `lab/procedures/dho804-setup-validation.md`: V5a step 3 allows a tip or spring on an alligator clip on the Cal ground terminal. The "Scope sanity check" paragraph now says to recapture V5a with the flagged channel on the clip, keep the flagged capture in the record, and stop if the clip control is flagged too. The V8 step 4 capture CHECK has the two sentences about the logged sweep (`NORM`/`AUTO`, the check is `STOP`) and the `after: connect` SCPI error (note it in REPORT and go on).
+  - `lab/procedures/known-good-reference.md`: the same two sentences at the step 8 capture CHECK.
+  - `lab/templates/instruction.md`: each instruction block goes in a message of its own, never under a results table or analysis (intro paragraph).
+- No limit, band, card, log, evidence, STATE or tool edits. `run_tests.py` OK (0 failures), `check_state.py` OK (0 warnings).
+- Not done (Orchestrator): acceptance-table ticks, Handoff, PR. §2 and §5 remain Deferred per PLAN.
