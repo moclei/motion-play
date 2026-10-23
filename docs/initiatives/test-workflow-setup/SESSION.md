@@ -2505,3 +2505,41 @@ Phase-specific note: plain language; cite the new KGR step numbers; the relay sa
 ### W8 part 2 — Phase 16: v6 re-run S2 + close V7R-002 (user bench session)
 
 **Dispatch:** user bench session via `RELAY-v6-dry-run-2-s2.md` (c55877a). Run before 2026-11-05.
+
+#### Report (debugger session return, `RELAY-v6-dry-run-2-s2-return.md`, b341d87)
+Full text is in the file; it is not copied here.
+- V7R-002 is `recorded` (a2612d9), with outcome row 1 for both arms.
+- S2 passed V1–V9 and the decode setup:
+  - V5 excess 2.00 / 2.44 mV rms
+  - V_OL 64.1 / 63.2 / 65.9 mV
+  - idle high 3.3020 / 3.2923 V
+  - rise max 98.7 / 91.7 ns
+  - D6 + ACK on 1 replug
+- Settings set by hand: none.
+- Both hand read-backs match the expected values: Decode 1 shows Label On, Exchange SCL/SDA, Event table Off; `:TRIGger:IIC:SCL?/SDA?` returns CHAN2/CHAN1.
+- Deviations:
+  - The session was started from the relay file rather than the pasted §2 prompt.
+  - The S2 log is `2026-10-21_s02.yaml`; the session ran past midnight.
+  - V5a: two hand-seated controls were FLAGGED on CH1 (sd 11.17 and 12.05 mV). The user overrode the §4 stop and used CH1 on an alligator clip to Cal ground (`dbg_ch1_01`, sd 5.25 mV) as the control.
+- L0 test and image handoff (user side): pending from the user.
+- Open feedback:
+  - the V5a clip method;
+  - process weight (raw commits for steps with no data);
+  - instruction blocks should go in a message of their own;
+  - `sweep: AUTO` logged after SINGLE;
+  - a queued `-100` error recorded by capture.py.
+
+#### Verification (Phase 16 task 2, by the Orchestrator)
+- Pre-registration e39f953 comes before every raw commit. There are per-step raw commits for both arms (S1 032f21a and earlier; S2 0980b86..d40e0b4).
+- The recording commit a2612d9 touches the card and the evidence. In STATE it changes only the front matter: `as_of: V7R-002`, `open_cards: []`, `updated`.
+- The notebook has entries s01 and s02.
+- `lab/evidence/V7R-002/` holds 18 png+csv pairs covering both arms, including S1_01 and S2_01.
+- The card has `status: recorded`. It notes 16c1ed1 (L108), and its Measured table has S1 hand, S1 tool (a427a66) and S2 tool columns, with the PLAN §6 label verbatim.
+- `check_state.py`: OK, 0 warnings. `validate_log.py` reports OK on `2026-10-21_s01` and on `2026-10-21_s02`. `run_tests.py`: OK.
+- Independent recompute from the evidence:
+  - `i2c_frame.py` on S2_01 with `--expect D6`: frame PASS, matching the card values.
+  - `noise_floor.py` with ctl `dbg_ch1_01` and dut `val_V5_01`: excess 2.00 / 2.44 mV, control sd 5.25 / 4.85 mV, PASS, no flag.
+- Validity of the V5a override: it changed only the control fixture, with no contact to the device under test. Both flagged controls stay in the record. The decision is recorded on the card and in the log. The control used is in band and close to S1's 5.04 mV. No limit was widened. Accepted as a recorded deviation; the method question goes to the Planner.
+- Neither stop rule fired: v6 is in spec on a validated setup, and V5 passes on both arms.
+
+[ORCH] Spawning Planner — fold W8 part 2 feedback (V5a control method etc.) before acceptance tick + PR
