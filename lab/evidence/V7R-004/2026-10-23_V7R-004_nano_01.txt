@@ -1,0 +1,162 @@
+2026-10-23 15:30:21.243 [logger] start pattern=/dev/cu.usbmodem14201
+2026-10-23 15:30:21.245 [logger] open /dev/cu.usbmodem14201
+2026-10-23 15:31:54.552 [logger] paused
+2026-10-23 15:31:59.026 [logger] open /dev/cu.usbmodem14201
+2026-10-23 15:32:00.249 
+2026-10-23 15:32:00.249 ==============================================================
+2026-10-23 15:32:00.249 v7 BQ24195 master-probe (Arduino-as-master test)
+2026-10-23 15:32:00.249 ==============================================================
+2026-10-23 15:32:00.249 Companion to motion-play-v7-relbus. Confirm the main PCB
+2026-10-23 15:32:00.249 printed 'BUS RELEASED' and the failing-config cable is in J6
+2026-10-23 15:32:00.249 before reading these results.
+2026-10-23 15:32:00.249 
+2026-10-23 15:32:00.249 I2C clock: 100000 Hz
+2026-10-23 15:32:00.249 
+2026-10-23 15:32:00.249 Probing each row: INA(0x40)  VCNL(0x60)  BQ(0x6B)  TCA(0x70)
+2026-10-23 15:32:00.249 Legend:  '.' = ACK,  'X(n)' = error code n (2 = NACK on address)
+2026-10-23 15:32:00.250 
+2026-10-23 15:32:00.250 Decision matrix on TCA2 row (failing cable in J6):
+2026-10-23 15:32:00.250   BQ:X(2)  -> Story D-revised confirmed (bus-electrical fault)
+2026-10-23 15:32:00.250   BQ:.     -> Story F confirmed (ESP32-S3-specific behavior)
+2026-10-23 15:32:00.250 ==============================================================
+2026-10-23 15:32:00.250 
+2026-10-23 15:32:00.454 --- Iteration 1 (Arduino as master) ---
+2026-10-23 15:32:00.454 t=1531  BASE      INA:.    VCNL:X(2) BQ :.    TCA:.
+2026-10-23 15:32:00.454 t=1535  TCA0      INA:.    VCNL:X(2) BQ :.    TCA:.
+2026-10-23 15:32:00.454 t=1539  TCA1      INA:.    VCNL:X(2) BQ :.    TCA:.
+2026-10-23 15:32:00.454 t=1543  TCA2      INA:.    VCNL:X(2) BQ :.    TCA:.
+2026-10-23 15:32:00.454 
+2026-10-23 15:32:01.882 --- Iteration 2 (Arduino as master) ---
+2026-10-23 15:32:01.882 t=3048  BASE      INA:.    VCNL:X(2) BQ :.    TCA:.
+2026-10-23 15:32:01.882 t=3052  TCA0      INA:.    VCNL:X(2) BQ :.    TCA:.
+2026-10-23 15:32:01.882 t=3056  TCA1      INA:.    VCNL:X(2) BQ :.    TCA:.
+2026-10-23 15:32:01.882 t=3060  TCA2      INA:.    VCNL:X(2) BQ :.    TCA:.
+2026-10-23 15:32:01.882 
+2026-10-23 15:32:03.305 --- Iteration 3 (Arduino as master) ---
+2026-10-23 15:32:03.305 t=4565  BASE      INA:.    VCNL:X(2) BQ :.    TCA:.
+2026-10-23 15:32:03.305 t=4569  TCA0      INA:.    VCNL:X(2) BQ :.    TCA:.
+2026-10-23 15:32:03.305 t=4573  TCA1      INA:.    VCNL:X(2) BQ :.    TCA:.
+2026-10-23 15:32:03.305 t=4577  TCA2      INA:.    VCNL:X(2) BQ :.    TCA:.
+2026-10-23 15:32:03.305 
+2026-10-23 15:32:04.935 --- Iteration 4 (Arduino as master) ---
+2026-10-23 15:32:04.935 t=6082  BASE      INA:.    VCNL:X(2) BQ :.    TCA:.
+2026-10-23 15:32:04.935 t=6086  TCA0      INA:.    VCNL:X(2) BQ :.    TCA:.
+2026-10-23 15:32:04.935 t=6090  TCA1      INA:.    VCNL:X(2) BQ :.    TCA:.
+2026-10-23 15:32:04.935 t=6094  TCA2      INA:.    VCNL:X(2) BQ :.    TCA:.
+2026-10-23 15:32:04.935 
+2026-10-23 15:32:06.360 --- Iteration 5 (Arduino as master) ---
+2026-10-23 15:32:06.360 t=7599  BASE      INA:.    VCNL:X(2) BQ :.    TCA:.
+2026-10-23 15:32:06.360 t=7603  TCA0      INA:.    VCNL:X(2) BQ :.    TCA:.
+2026-10-23 15:32:06.360 t=7607  TCA1      INA:.    VCNL:X(2) BQ :.    TCA:.
+2026-10-23 15:32:06.361 t=7611  TCA2      INA:.    VCNL:X(2) BQ :.    TCA:.
+2026-10-23 15:32:06.361 
+2026-10-23 15:32:07.978 ==============================================================
+2026-10-23 15:32:07.979 Burst complete. Re-running indefinitely so you can hot-swap
+2026-10-23 15:32:07.979 cables (J6 plugged/unplugged) and watch live behavior.
+2026-10-23 15:32:07.979 ==============================================================
+2026-10-23 15:32:07.979 
+2026-10-23 15:32:07.979 --- Iteration 6 (Arduino as master) ---
+2026-10-23 15:32:07.979 t=9116  BASE      INA:.    VCNL:X(2) BQ :.    TCA:.
+2026-10-23 15:32:07.979 t=9120  TCA0      INA:.    VCNL:X(2) BQ :.    TCA:.
+2026-10-23 15:32:07.979 t=9124  TCA1      INA:.    VCNL:X(2) BQ :.    TCA:.
+2026-10-23 15:32:07.979 t=9128  TCA2      INA:.    VCNL:X(2) BQ :.    TCA:.
+2026-10-23 15:32:07.979 
+2026-10-23 15:32:10.017 --- Iteration 7 (Arduino as master) ---
+2026-10-23 15:32:10.017 t=11133  BASE      INA:.    VCNL:X(2) BQ :.    TCA:.
+2026-10-23 15:32:10.017 t=11137  TCA0      INA:.    VCNL:X(2) BQ :.    TCA:.
+2026-10-23 15:32:10.017 t=11141  TCA1      INA:.    VCNL:X(2) BQ :.    TCA:.
+2026-10-23 15:32:10.017 t=11145  TCA2      INA:.    VCNL:X(2) BQ :.    TCA:.
+2026-10-23 15:32:10.018 
+2026-10-23 15:32:12.055 --- Iteration 8 (Arduino as master) ---
+2026-10-23 15:32:12.055 t=13150  BASE      INA:.    VCNL:X(2) BQ :.    TCA:.
+2026-10-23 15:32:12.055 t=13154  TCA0      INA:.    VCNL:X(2) BQ :.    TCA:.
+2026-10-23 15:32:12.055 t=13158  TCA1      INA:.    VCNL:X(2) BQ :.    TCA:.
+2026-10-23 15:32:12.055 t=13162  TCA2      INA:.    VCNL:X(2) BQ :.    TCA:.
+2026-10-23 15:32:12.055 
+2026-10-23 15:32:14.084 --- Iteration 9 (Arduino as master) ---
+2026-10-23 15:32:14.085 t=15167  BASE      INA:.    VCNL:X(2) BQ :.    TCA:.
+2026-10-23 15:32:14.085 t=15171  TCA0      INA:.    VCNL:X(2) BQ :.    TCA:.
+2026-10-23 15:32:14.085 t=15175  TCA1      INA:.    VCNL:X(2) BQ :.    TCA:.
+2026-10-23 15:32:14.085 t=15179  TCA2      INA:.    VCNL:X(2) BQ :.    TCA:.
+2026-10-23 15:32:14.085 
+2026-10-23 15:32:15.918 --- Iteration 10 (Arduino as master) ---
+2026-10-23 15:32:15.918 t=17184  BASE      INA:.    VCNL:X(2) BQ :.    TCA:.
+2026-10-23 15:32:15.918 t=17188  TCA0      INA:.    VCNL:X(2) BQ :.    TCA:.
+2026-10-23 15:32:15.918 t=17192  TCA1      INA:.    VCNL:X(2) BQ :.    TCA:.
+2026-10-23 15:32:16.123 t=17196  TCA2      INA:.    VCNL:X(2) BQ :.    TCA:.
+2026-10-23 15:32:16.123 
+2026-10-23 15:32:17.952 --- Iteration 11 (Arduino as master) ---
+2026-10-23 15:32:17.953 t=19201  BASE      INA:.    VCNL:X(2) BQ :.    TCA:.
+2026-10-23 15:32:17.953 t=19205  TCA0      INA:.    VCNL:X(2) BQ :.    TCA:.
+2026-10-23 15:32:17.953 t=19209  TCA1      INA:.    VCNL:X(2) BQ :.    TCA:.
+2026-10-23 15:32:17.953 t=19213  TCA2      INA:.    VCNL:X(2) BQ :.    TCA:.
+2026-10-23 15:32:17.953 
+2026-10-23 15:32:19.989 --- Iteration 12 (Arduino as master) ---
+2026-10-23 15:32:19.989 t=21218  BASE      INA:.    VCNL:X(2) BQ :.    TCA:.
+2026-10-23 15:32:19.989 t=21222  TCA0      INA:.    VCNL:X(2) BQ :.    TCA:.
+2026-10-23 15:32:19.989 t=21226  TCA1      INA:.    VCNL:X(2) BQ :.    TCA:.
+2026-10-23 15:32:19.989 t=21230  TCA2      INA:.    VCNL:X(2) BQ :.    TCA:.
+2026-10-23 15:32:19.989 
+2026-10-23 15:32:22.012 --- Iteration 13 (Arduino as master) ---
+2026-10-23 15:32:22.012 t=23235  BASE      INA:.    VCNL:X(2) BQ :.    TCA:.
+2026-10-23 15:32:22.012 t=23239  TCA0      INA:.    VCNL:X(2) BQ :.    TCA:.
+2026-10-23 15:32:22.012 t=23243  TCA1      INA:.    VCNL:X(2) BQ :.    TCA:.
+2026-10-23 15:32:22.012 t=23247  TCA2      INA:.    VCNL:X(2) BQ :.    TCA:.
+2026-10-23 15:32:22.012 
+2026-10-23 15:32:24.049 --- Iteration 14 (Arduino as master) ---
+2026-10-23 15:32:24.050 t=25252  BASE      INA:.    VCNL:X(2) BQ :.    TCA:.
+2026-10-23 15:32:24.050 t=25256  TCA0      INA:.    VCNL:X(2) BQ :.    TCA:.
+2026-10-23 15:32:24.050 t=25260  TCA1      INA:.    VCNL:X(2) BQ :.    TCA:.
+2026-10-23 15:32:24.050 t=25264  TCA2      INA:.    VCNL:X(2) BQ :.    TCA:.
+2026-10-23 15:32:24.050 
+2026-10-23 15:32:26.083 --- Iteration 15 (Arduino as master) ---
+2026-10-23 15:32:26.084 t=27269  BASE      INA:.    VCNL:X(2) BQ :.    TCA:.
+2026-10-23 15:32:26.084 t=27273  TCA0      INA:.    VCNL:X(2) BQ :.    TCA:.
+2026-10-23 15:32:26.084 t=27277  TCA1      INA:.    VCNL:X(2) BQ :.    TCA:.
+2026-10-23 15:32:26.084 t=27281  TCA2      INA:.    VCNL:X(2) BQ :.    TCA:.
+2026-10-23 15:32:26.084 
+2026-10-23 15:32:28.119 --- Iteration 16 (Arduino as master) ---
+2026-10-23 15:32:28.119 t=29286  BASE      INA:.    VCNL:X(2) BQ :.    TCA:.
+2026-10-23 15:32:28.119 t=29290  TCA0      INA:.    VCNL:X(2) BQ :.    TCA:.
+2026-10-23 15:32:28.119 t=29294  TCA1      INA:.    VCNL:X(2) BQ :.    TCA:.
+2026-10-23 15:32:28.119 t=29298  TCA2      INA:.    VCNL:X(2) BQ :.    TCA:.
+2026-10-23 15:32:28.119 
+2026-10-23 15:32:30.155 --- Iteration 17 (Arduino as master) ---
+2026-10-23 15:32:30.155 t=31303  BASE      INA:.    VCNL:X(2) BQ :.    TCA:.
+2026-10-23 15:32:30.155 t=31307  TCA0      INA:.    VCNL:X(2) BQ :.    TCA:.
+2026-10-23 15:32:30.155 t=31311  TCA1      INA:.    VCNL:X(2) BQ :.    TCA:.
+2026-10-23 15:32:30.155 t=31315  TCA2      INA:.    VCNL:X(2) BQ :.    TCA:.
+2026-10-23 15:32:30.156 
+2026-10-23 15:32:32.186 --- Iteration 18 (Arduino as master) ---
+2026-10-23 15:32:32.186 t=33320  BASE      INA:.    VCNL:X(2) BQ :.    TCA:.
+2026-10-23 15:32:32.186 t=33324  TCA0      INA:.    VCNL:X(2) BQ :.    TCA:.
+2026-10-23 15:32:32.186 t=33328  TCA1      INA:.    VCNL:X(2) BQ :.    TCA:.
+2026-10-23 15:32:32.186 t=33332  TCA2      INA:.    VCNL:X(2) BQ :.    TCA:.
+2026-10-23 15:32:32.186 
+2026-10-23 15:32:34.218 --- Iteration 19 (Arduino as master) ---
+2026-10-23 15:32:34.218 t=35337  BASE      INA:.    VCNL:X(2) BQ :.    TCA:.
+2026-10-23 15:32:34.218 t=35341  TCA0      INA:.    VCNL:X(2) BQ :.    TCA:.
+2026-10-23 15:32:34.218 t=35345  TCA1      INA:.    VCNL:X(2) BQ :.    TCA:.
+2026-10-23 15:32:34.218 t=35349  TCA2      INA:.    VCNL:X(2) BQ :.    TCA:.
+2026-10-23 15:32:34.218 
+2026-10-23 15:32:36.255 --- Iteration 20 (Arduino as master) ---
+2026-10-23 15:32:36.255 t=37354  BASE      INA:.    VCNL:X(2) BQ :.    TCA:.
+2026-10-23 15:32:36.256 t=37358  TCA0      INA:.    VCNL:X(2) BQ :.    TCA:.
+2026-10-23 15:32:36.256 t=37362  TCA1      INA:.    VCNL:X(2) BQ :.    TCA:.
+2026-10-23 15:32:36.256 t=37366  TCA2      INA:.    VCNL:X(2) BQ :.    TCA:.
+2026-10-23 15:32:36.256 
+2026-10-23 15:32:38.277 --- Iteration 21 (Arduino as master) ---
+2026-10-23 15:32:38.277 t=39371  BASE      INA:.    VCNL:X(2) BQ :.    TCA:.
+2026-10-23 15:32:38.277 t=39375  TCA0      INA:.    VCNL:X(2) BQ :.    TCA:.
+2026-10-23 15:32:38.277 t=39379  TCA1      INA:.    VCNL:X(2) BQ :.    TCA:.
+2026-10-23 15:32:38.277 t=39383  TCA2      INA:.    VCNL:X(2) BQ :.    TCA:.
+2026-10-23 15:32:38.277 
+2026-10-23 15:32:40.310 --- Iteration 22 (Arduino as master) ---
+2026-10-23 15:32:40.310 t=41388  BASE      INA:.    VCNL:X(2) BQ :.    TCA:.
+2026-10-23 15:32:40.310 t=41392  TCA0      INA:.    VCNL:X(2) BQ :.    TCA:.
+2026-10-23 15:32:40.310 t=41396  TCA1      INA:.    VCNL:X(2) BQ :.    TCA:.
+2026-10-23 15:32:40.310 t=41400  TCA2      INA:.    VCNL:X(2) BQ :.    TCA:.
+2026-10-23 15:32:40.310 
+2026-10-23 15:32:41.119 [logger] paused
+2026-10-23 15:32:45.394 [logger] open /dev/cu.usbmodem14201
+2026-10-23 15:37:06.525 [logger] lost port: read failed: [Errno 6] Device not configured

@@ -1,7 +1,7 @@
 ---
 test_id: V7R-004
 title: "Same-family master swap: Arduino Nano ESP32 as master on the v7 bus (U3 released), L-Ph12 minimal repro, A/B/A"
-status: pre-registered
+status: recorded
 created: 2026-10-23
 prereg_commit: self
 baseline:
@@ -78,12 +78,25 @@ Counted field: TCA2-row `BQ:` in 10 complete iterations per arm. A1 and A2: the 
 - B limitation (session): the sketch does not read back the TCA control register, so "channel 2 open under the Nano" rests on the TCA select write returning 0 (address and data byte ACKed), not on a read-back.
 - A2 (session): blank sketch written to the Nano 15:32:41–15:32:45, 4 hashes verified; Nano log silent after. v7 esptool hard resets at 15:32:52 (boot 1) and 15:33:03 (boot 2), each followed by the 5-iteration burst and `BUS RELEASED`.
 - A2 (session log `..._v7_01.txt`): TCA2 `BQ:X(2)` 10/10 (boot 1 it 1–5, boot 2 it 1–5). BASE `INA:. BQ:. TCA:.` 10/10; TCA0/TCA1 `BQ:.` 10/10 each; TCA2 `INA:. TCA:.` 10/10. Codes seen: X(2) only.
+- S4 revert (session): `pio run -e motion-play-v7-diag -t upload` from worktree at 90053af, SUCCESS, 4 hashes verified, 15:36:30; v7 log: `I2C: 400 kHz, default drive, no filters, default pulls [v7-clean]`, `I2C BUS DIAGNOSTIC LOOP` at 15:36:31 (uncounted rows: TCA2 `BQ:X(2)`, U3 master, Nano blank). Loggers stopped after unplug.
+- S4, operator: "1. all off 2. Left as-is"
 ### Measured values (from log; cite `lab/evidence/V7R-004/...`)
+Sources: `lab/evidence/V7R-004/2026-10-23_V7R-004_v7_01.txt` (U3 relbus bursts, heartbeat), `lab/evidence/V7R-004/2026-10-23_V7R-004_nano_01.txt` (Nano probe sketch).
+
+| Arm | Master | Counted iterations | TCA2 `BQ:X(2)` | TCA2 `BQ:.` | Controls (BASE INA/BQ/TCA; TCA0/1 BQ; TCA2 INA/TCA) | Other codes |
+|---|---|---|---|---|---|---|
+| A1 | U3 (rev v0.2, core 2.0.14) | boot 1 it 1–5, boot 2 it 1–5 | 10/10 | 0/10 | pass | none |
+| B  | Nano ESP32 (rev v0.1, core 2.0.18-arduino.5) | it 1–10 | 0/10 | 10/10 | pass; no WARN; v7 heartbeat, no reboot | none (VCNL column X(2), not counted) |
+| A2 | U3 | boot 1 it 1–5, boot 2 it 1–5 | 10/10 | 0/10 | pass | none |
+
+Uncounted: B iterations 11–16 TCA2 `BQ:.` 6/6.
 ### Interpretation (session; labelled as such)
+Interpretation: on v7 #0003, with the same far-end SDA path, same TCA2 state, same 100 kHz and the same physical bus from TPIO43/44 to BQ, an ESP32-S3 master on its own module and supply gets BQ ACK and U3 gets NACK, live in both directions. "An S3 master as such" (die family, arduino-esp32 2.0.x legacy driver class, generic S3 controller) is not sufficient for the NACK. What stays bundled in the U3 side: WROOM-1 module and its pad path, U3's supply from the board's +3.3 V, the 5.9 mm of copper U3 → TPIO43/44, GPIO43/44 pin role (Nano drives from GPIO11/12), die revision v0.2 vs v0.1, core 2.0.14 vs 2.0.18, and the firmware image. This card does not separate them. The ~243 mm of pad wire + jumper was on the bus in all arms.
 
 ## Conclusion
-- Outcome row matched: ...
-- Hypotheses excluded: ...
-- **Strength:** ...
-- Revert-on-null done: ...
+- Outcome row matched: row 1 — A1 `BQ:X(2)` 10/10, B `BQ:.` 10/10, A2 `BQ:X(2)` 10/10; controls pass in every arm; no code other than 2 (`lab/evidence/V7R-004/2026-10-23_V7R-004_v7_01.txt`, `lab/evidence/V7R-004/2026-10-23_V7R-004_nano_01.txt`).
+- Hypotheses excluded: H2 (an S3 master on core 2.0.x, or the bus side with an S3 master, gives the NACK) — measured-refuted. H1 measured-supported as a bundle (module/path, supply, U3-side copper, pin role, die revision, core, image not separated). M not supported (controls pass; the A arms reproduce and switch with the master; v7 heartbeat through B).
+- **Strength:** measured-refuted (H2; one board, A/B/A, 10/10 per arm; confounds listed); measured-supported (H1, bundle); `lab/evidence/V7R-004/`
+- Deviations: Nano flash method amended at S1 (hwcdc build, esptool) before any arm. Fixture extended at S2 (tinned pad wires + ~175 mm Dupont jumpers) before any arm. TCA channel-open under the Nano not read back (write ACK only). Die revisions differ (v0.2 vs v0.1), found at S3.
+- Revert-on-null done: yes — v7 back on v7-clean motion-play-v7-diag (S4, 15:36:30, session flash log); Nano left on the blank sketch
 - Result commit: self
