@@ -2569,3 +2569,12 @@ Full text is in the file; it is not copied here.
   - `lab/templates/instruction.md`: each instruction block goes in a message of its own, never under a results table or analysis (intro paragraph).
 - No limit, band, card, log, evidence, STATE or tool edits. `run_tests.py` OK (0 failures), `check_state.py` OK (0 warnings).
 - Not done (Orchestrator): acceptance-table ticks, Handoff, PR. §2 and §5 remain Deferred per PLAN.
+
+#### Result
+| # | Phase | Result | Escalation evaluated? | Commit | Notes |
+|---|-------|--------|-----------------------|--------|-------|
+| 20 | Phase 16: feedback edits | DONE | No — clean completion | 25c5f20 | V5a clip; sweep/queued-error notes; instruction delivery |
+
+#### Verification
+- Commit 25c5f20; the tree is clean. The diff is only the three edits named in the task: the V5a step 3 and sanity-check paragraph, the V8 and KGR step 8 CHECK sentences, and the template line. No limits, bands, cards, logs or tools were touched. `run_tests.py` and `check_state.py` both pass.
+- Next: the acceptance tick plus PR, gated on the user's L0 and image answers.
