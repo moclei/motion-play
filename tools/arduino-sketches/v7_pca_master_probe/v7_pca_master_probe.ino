@@ -91,14 +91,16 @@
 #define I2C_CLOCK_HZ 400000
 #endif
 
+// A const array, not a #define per branch: PlatformIO's .ino pre-pass
+// (-fpreprocessed -dD) does not evaluate #if and warns on redefinition.
 #if defined(ARDUINO_BOARD)
-#define PROBE_BOARD ARDUINO_BOARD
+static const char PROBE_BOARD[] = ARDUINO_BOARD;
 #elif defined(ARDUINO_ARCH_SAMD)
-#define PROBE_BOARD "SAMD (Nano 33 IoT)"
+static const char PROBE_BOARD[] = "SAMD (Nano 33 IoT)";
 #elif defined(ARDUINO_ARCH_ESP32)
-#define PROBE_BOARD "ESP32 (Nano ESP32)"
+static const char PROBE_BOARD[] = "ESP32 (Nano ESP32)";
 #else
-#define PROBE_BOARD "unknown"
+static const char PROBE_BOARD[] = "unknown";
 #endif
 
 static const uint8_t TCA_ADDR = 0x70;
