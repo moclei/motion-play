@@ -2543,3 +2543,21 @@ Full text is in the file; it is not copied here.
 - Neither stop rule fired: v6 is in spec on a validated setup, and V5 passes on both arms.
 
 [ORCH] Spawning Planner — fold W8 part 2 feedback (V5a control method etc.) before acceptance tick + PR
+
+---
+
+### Planner — W8 part 2 feedback placement
+
+**Result:** REPLANNED (efec976). PLAN "After V7R-002 S2: feedback placement":
+- V5a: the clip is allowed and used on a flagged control, with a stop if the clip control is flagged too.
+- An instruction-block line is added to the template.
+- One sentence each covers the sweep NORM/AUTO note and the queued-error note.
+- Process weight is deferred to the role-draft suggestions.
+- The topic-4 Dry run row's wording is aligned with the resolved V_OL question.
+- The acceptance tick is gated on the user's L0 and image answers.
+
+---
+
+### Worker #20 — Phase 16: feedback edits from W8 part 2
+
+**Dispatch:** standard template, with only the feedback-edits task assigned (the tick and PR stay with the Orchestrator). Additional reading: PLAN "After V7R-002 S2: feedback placement".
