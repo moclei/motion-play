@@ -143,6 +143,8 @@ Pass table per `known-good-reference.md` (V_DD = 3.3 V). Evaluated per arm (S1, 
 - S2 V8 capture: wrote `2026-10-22_V7R-002_val_V8_01.{png,csv,setup.bin}`; "NOTE: SCPI errors recorded in the entry: [{'after': 'connect', 'error': '-100,\"Command err\"'}]"; "The scope is left STOPPED." Timebase back: "1.000000E-5". PNG: decode band Write:d6 | A:0.
 - S2 V9 steps 3–5: read-backs "10 / 10 / 5.000000E-01 / -1.650000E+00 / 1.000000E-5 / 1.0000E+04 / 0,\"No error\"" and "IIC / ADDR / 7 / 107 / WRIT / 7.000000E+01 / 3.000000E+01 / 0,\"No error\"". Panel: "They're present, but I don't think they're showing active/live values".
 - Session: sweep was still SING from V8, so RUN/STOP armed a single address trigger on an idle bus and the panel had no new record to measure. Panel values have no pass role (known-good-reference.md step 5). Interpretation.
+- S2 V9 steps 6–8: "SING, then STOP"; replugs: "1". capture.py: wrote `2026-10-22_V7R-002_S2_01.{png,csv,setup.bin}`; "The scope is left STOPPED." (no NOTE lines). Log panel: VTOP CH1 3.2969 V, VBASe CH1 62.8 mV, RTIMe CH1 271.43 ns; VTOP CH2 3.2884 V, VBASe CH2 62.8 mV, RTIMe CH2 100.0 ns.
+- S2 V9 step 9, session (`i2c_frame.py --expect D6` on S2_01, exit 0, "frame PASS"; values in log `2026-10-21_s02` entry S2).
 
 ### Measured values (from log; cite `lab/evidence/V7R-002/...`)
 ### Interpretation (session; labelled as such)
