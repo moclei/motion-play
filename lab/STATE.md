@@ -111,7 +111,7 @@ Baselines (tag → commit, I²C init in one line); boards (ID | condition | mods
 - Boards: v7 #0003 (panel marking; believed B3, not confirmed) | healthy | none known | the v7 on the bench (V7R-003); treated as the only good unit.
 - Legacy: v7 B1 | bodge-damaged (L-Ph7) | rework | none. v7 B2 | BQ I²C open (L-Ph8), never reflowed? | none known | symptom identity: causal, if it still exists. v7 B3 | healthy | none known | only good unit (no irreversible actions); likely #0003.
 - Flashed now: v6 → v6-ref 4da1c67, lilygo-t-display-s3 (V7R-002 S2 step F). v7 #0003 → v7-clean 90053af, motion-play-v7-diag (V7R-003 S3).
-- Bench at last stop (notebook 2026-10-23 s01): v7 #0003 unpowered, pigtail in J6 (black = pin 1 +3.3 V, red = pin 2 GND, blue = pin 3 SDA, yellow = pin 4 SCL), black in breadboard with the 10 kΩ, blue out; v6 off the bench; probes on scope Cal ground.
+- Bench at last stop (notebook 2026-10-23 s01): v7 #0003 unpowered (USB-C cable left in J7, Mac end unplugged = power toggle), pigtail in J6 (black = pin 1 +3.3 V, red = pin 2 GND, blue = pin 3 SDA, yellow = pin 4 SCL), black in breadboard with the 10 kΩ, blue out; v6 off the bench; probes on scope Cal ground.
 - Failing config fixtures: cable in J6 with 10 kΩ SDA→+3.3 V at the far end, SCL wire dangling (L-Ph12); sensor rigid on J4/J5/J6.
 
 ## 7. Measurement trust                         (≤ 10 rows; rows leave when re-measured)
