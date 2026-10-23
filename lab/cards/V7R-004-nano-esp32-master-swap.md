@@ -76,6 +76,8 @@ Counted field: TCA2-row `BQ:` in 10 complete iterations per arm. A1 and A2: the 
 - B (session): probe sketch (hwcdc build) written to the Nano 15:31:54–15:31:58, 4 hashes verified, hard reset; v7 untouched (still in `BUS RELEASED`, heartbeat). Nano log `..._nano_01.txt` from 15:32:00: banner `I2C clock: 100000 Hz`; iteration 1 at 15:32:00.454.
 - B (session log), iterations 1–10 (15:32:00 → 15:32:14): TCA2 row `INA:. VCNL:X(2) BQ :. TCA:.` in all 10 → TCA2 `BQ:.` 10/10. BASE, TCA0, TCA1 rows: `INA:. VCNL:X(2) BQ :. TCA:.` 10/10 each. No `WARN: TCA select` line. Codes seen: X(2) in the VCNL column only (no device at 0x60; not counted). Iterations 11–16 the same. v7 log during B: heartbeat every 5 s (t=33420 → 58420 ms), no reboot, no `DIAG_RELEASE_I2C` banner after 15:31:22.
 - B limitation (session): the sketch does not read back the TCA control register, so "channel 2 open under the Nano" rests on the TCA select write returning 0 (address and data byte ACKed), not on a read-back.
+- A2 (session): blank sketch written to the Nano 15:32:41–15:32:45, 4 hashes verified; Nano log silent after. v7 esptool hard resets at 15:32:52 (boot 1) and 15:33:03 (boot 2), each followed by the 5-iteration burst and `BUS RELEASED`.
+- A2 (session log `..._v7_01.txt`): TCA2 `BQ:X(2)` 10/10 (boot 1 it 1–5, boot 2 it 1–5). BASE `INA:. BQ:. TCA:.` 10/10; TCA0/TCA1 `BQ:.` 10/10 each; TCA2 `INA:. TCA:.` 10/10. Codes seen: X(2) only.
 ### Measured values (from log; cite `lab/evidence/V7R-004/...`)
 ### Interpretation (session; labelled as such)
 
