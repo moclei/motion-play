@@ -43,3 +43,34 @@ Hard limits restated: no edits to `lab/`, `v7-clean`, `v6-ref`, `v7_bq_master_pr
 - `tools/CONTEXT.md` doesn't list the Arduino sketches, so no row was added.
 
 **Environment side effect:** the first `pio ci` installed the `atmelsam` platform and replaced the global default `~/.platformio/packages/framework-arduinoespressif32` (was 2.0.15, now 3.20011.230801 / 2.0.11, the default for espressif32 6.4.0). Project envs pin 2.0.14 through git (`@src-` dirs), so they are unaffected. Phase 2 builds should still show `#2.0.14` in their output.
+
+#### Result
+| # | Phase | Result | Escalation evaluated? | Commit | Notes |
+|---|-------|--------|-----------------------|--------|-------|
+| 1 | Phase 1: PCA-aware external-master probe | DONE | No — clean completion | e91eedd (sketch: ee10efd) | 5 tasks; CONTEXT row skipped per task (sketches not listed) |
+
+#### Verification
+- All 5 Phase 1 tasks `[x]`; 4 commits ab5ed59..e91eedd; tree clean; no paths under `lab/`, `firmware/`, or `v7_bq_master_probe` touched.
+- Re-ran `pio ci --board nano_33_iot --board arduino_nano_esp32` on the sketch: both SUCCESS (400 kHz default). 100 kHz build taken on the Worker's word (flag confirmed on compile line per notes).
+- Spot-checked row/banner/iteration format strings against `v7-clean` SensorManager.cpp 1289–1397: identical.
+- Worker edited one PLAN line (Tool 1 → Content) to correct the TCA cache claim. Confirmed against `v7-clean:firmware/src/components/tca9548a/TCA9548A.cpp` (`selectChannel` skips when `_currentChannel == channel`; only a successful 0x00 write clears it). Accepted as a factual correction; no scope change. PLAN has no date-stamped headings.
+- Carry forward to Phase 2: global `framework-arduinoespressif32` default is now 2.0.11. Phase 2 must confirm its builds resolve the pinned `#2.0.14`.
+
+---
+
+### Worker #2 — Phase 2: v6 diag readout (card 2)
+
+**Dispatch:**
+```
+Initiative: v7-probe-tools
+Phase: 2 — v6 diag readout (card 2)
+Initiative path: docs/initiatives/v7-probe-tools/
+Additional reading: v7-clean sources for the port — `firmware/src/components/sensor/SensorManager.{h,cpp}` `runBusDiagnosticLoop()` (~1285), `firmware/src/main.cpp` DIAG_NO_WIFI blocks (~539, ~1639), `platformio.ini` motion-play-v7-diag env; `git show v6-ref` tag message for tag style. SESSION.md Worker #1 Verification (2.0.14 core check).
+
+Tasks assigned (from TASKS.md Phase 2):
+<Phase 2 task list as in TASKS.md>
+
+The first task is marked `[~]` ...
+You are not the Orchestrator. ...
+```
+Phase notes: worktree in session scratchpad; build output must show core #2.0.14; push only `feat/v7-probe-tools-v6diag` + tag `v6-diag` (not `feat/v7-probe-tools`); SESSION/TASKS writes go on `feat/v7-probe-tools` in the main checkout.
