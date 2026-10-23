@@ -1,0 +1,237 @@
+2026-10-23T11:00:03.248  # logger start
+2026-10-23T11:11:06.725  # open /dev/cu.usbmodem14401
+2026-10-23T11:11:07.097  
+2026-10-23T11:11:07.097  
+2026-10-23T11:11:07.097  =================================
+2026-10-23T11:11:07.097  Motion Play Device - BOOT
+2026-10-23T11:11:07.097  =================================
+2026-10-23T11:11:07.097  =================================
+2026-10-23T11:11:07.097  
+2026-10-23T11:11:07.097  === Configuring BQ24195 (input current limit) ===
+2026-10-23T11:11:07.115  [   780][I][esp32-hal-i2c.c:75] i2cInit(): Initialising I2C Master: sda=43 scl=44 freq=100000
+2026-10-23T11:11:07.115  [I2C SCAN] Scanning 0x03..0x77...
+2026-10-23T11:11:07.115  [I2C SCAN]   Found device at 0x40
+2026-10-23T11:11:07.115  [I2C SCAN]   Found device at 0x6B
+2026-10-23T11:11:07.115  [I2C SCAN]   Found device at 0x70
+2026-10-23T11:11:07.115  [I2C SCAN] Done. 3 device(s) responded.
+2026-10-23T11:11:07.115  BQ24195 configured: IINLIM=2A, watchdog disabled
+2026-10-23T11:11:07.119  [PowerMonitor] INA219 configured: 10mR shunt, 1mA/LSB, 8A max
+2026-10-23T11:11:07.119  [PWR after BQ config] VSYS=4.34 V, I=0 mA
+2026-10-23T11:11:07.119  Display initialized
+2026-10-23T11:11:07.119  [PWR after display init] VSYS=4.34 V, I=0 mA
+2026-10-23T11:11:07.119  
+2026-10-23T11:11:07.119  === Starting System Initialization ===
+2026-10-23T11:11:07.119  
+2026-10-23T11:11:07.121  [DIAG_NO_WIFI] Skipping WiFi/MQTT init, forcing radio off
+2026-10-23T11:11:07.121  WARNING: Cloud config unavailable, sensors will use defaults
+2026-10-23T11:11:07.121  
+2026-10-23T11:11:07.121  [Config] Detection mode: heuristic (useMLDetection=0)
+2026-10-23T11:11:07.121  Initializing sensors...
+2026-10-23T11:11:07.121  [PWR before sensor init] VSYS=4.34 V, I=0 mA
+2026-10-23T11:11:07.121  Initializing Sensor Manager...
+2026-10-23T11:11:07.121  [   805][W][Wire.cpp:301] begin(): Bus already started in Master Mode.
+2026-10-23T11:11:07.121  I2C: 100 kHz, drive CAP_3, filter(7), pad-filter, internal pulls dis [Phase 24 null + Phase 25 bundle]
+2026-10-23T11:11:07.121  Configuration:
+2026-10-23T11:11:07.121    Sample Rate: 1000 Hz
+2026-10-23T11:11:07.121    LED Current: 200mA
+2026-10-23T11:11:07.122    Integration Time: 1T
+2026-10-23T11:11:07.122    High Resolution: enabled
+2026-10-23T11:11:07.122    Read Ambient: enabled
+2026-10-23T11:11:07.122  TCA9548A initialized
+2026-10-23T11:11:07.122  
+2026-10-23T11:11:07.122  
+2026-10-23T11:11:07.123  ╔══════════════════════════════════════════════════════════════════════════════╗
+2026-10-23T11:11:07.123  ║                        I2C DEBUG SCAN - TROUBLESHOOTING                      ║
+2026-10-23T11:11:07.123  ╠══════════════════════════════════════════════════════════════════════════════╣
+2026-10-23T11:11:07.123  ║ STEP 1: Scanning main I2C bus (no TCA channel selected)                      ║
+2026-10-23T11:11:07.146  ╠══════════════════════════════════════════════════════════════════════════════╣
+2026-10-23T11:11:07.146  ║   Found device at 0x40 - Unknown                            
+2026-10-23T11:11:07.148  ║   Found device at 0x6B - Unknown                            
+2026-10-23T11:11:07.148  ║   Found device at 0x70 - TCA9548A (main mux)                            
+2026-10-23T11:11:07.148  ║   Total: 3 device(s) on main bus                                            
+2026-10-23T11:11:07.148  ╠══════════════════════════════════════════════════════════════════════════════╣
+2026-10-23T11:11:07.149  ║ STEP 2: Scanning each TCA9548A channel for connected devices                 ║
+2026-10-23T11:11:07.184  ╠══════════════════════════════════════════════════════════════════════════════╣
+2026-10-23T11:11:07.184  ║ TCA Channel 0:                                                              
+2026-10-23T11:11:07.184  ║   ✓ Found: 0x40 (Unknown)                                  
+2026-10-23T11:11:07.184  ║   ✓ Found: 0x6B (Unknown)                                  
+2026-10-23T11:11:07.219  ║ TCA Channel 1:                                                              
+2026-10-23T11:11:07.219  ║   ✓ Found: 0x40 (Unknown)                                  
+2026-10-23T11:11:07.219  ║   ✓ Found: 0x6B (Unknown)                                  
+2026-10-23T11:11:07.282  ║ TCA Channel 2:                                                              
+2026-10-23T11:11:07.282  ║   ✓ Found: 0x40 (Unknown)                                  
+2026-10-23T11:11:07.282  ║   ✓ Found: 0x6B (Unknown)                                  
+2026-10-23T11:11:07.282  ║ TCA Channel 3:                                                              
+2026-10-23T11:11:07.322  ║   ✓ Found: 0x40 (Unknown)                                  
+2026-10-23T11:11:07.322  ║   ✓ Found: 0x6B (Unknown)                                  
+2026-10-23T11:11:07.322  ║ TCA Channel 4:                                                              
+2026-10-23T11:11:07.322  ║   ✓ Found: 0x40 (Unknown)                                  
+2026-10-23T11:11:07.357  ║   ✓ Found: 0x6B (Unknown)                                  
+2026-10-23T11:11:07.357  ║ TCA Channel 5:                                                              
+2026-10-23T11:11:07.357  ║   ✓ Found: 0x40 (Unknown)                                  
+2026-10-23T11:11:07.394  ║   ✓ Found: 0x6B (Unknown)                                  
+2026-10-23T11:11:07.394  ║ TCA Channel 6:                                                              
+2026-10-23T11:11:07.394  ║   ✓ Found: 0x40 (Unknown)                                  
+2026-10-23T11:11:07.394  ║   ✓ Found: 0x6B (Unknown)                                  
+2026-10-23T11:11:07.429  ║ TCA Channel 7:                                                              
+2026-10-23T11:11:07.429  ║   ✓ Found: 0x40 (Unknown)                                  
+2026-10-23T11:11:07.429  ║   ✓ Found: 0x6B (Unknown)                                  
+2026-10-23T11:11:07.429  ╠══════════════════════════════════════════════════════════════════════════════╣
+2026-10-23T11:11:07.429  ║ STEP 3: Direct PCA9546A address probe at 0x74 on TCA channel 0               ║
+2026-10-23T11:11:07.430  ╠══════════════════════════════════════════════════════════════════════════════╣
+2026-10-23T11:11:07.579  ║   TCA channel 0 selected successfully                                       ║
+2026-10-23T11:11:07.580  ║   Attempt 1: Address 0x74 -> Error 2 (NACK on address)                    
+2026-10-23T11:11:07.580  ║   Attempt 2: Address 0x74 -> Error 2 (NACK on address)                    
+2026-10-23T11:11:07.630  ║   Attempt 3: Address 0x74 -> Error 2 (NACK on address)                    
+2026-10-23T11:11:07.630  ║   Attempting to read control register from 0x74...                          ║
+2026-10-23T11:11:07.630  [  1314][E][Wire.cpp:499] requestFrom(): i2cWriteReadNonStop returned Error -1
+2026-10-23T11:11:07.630  ║   ⚠️ Write OK but read returned 0 bytes                                    ║
+2026-10-23T11:11:07.631  ╠══════════════════════════════════════════════════════════════════════════════╣
+2026-10-23T11:11:07.631  ║ DEBUG SCAN COMPLETE - Check results above for clues                          ║
+2026-10-23T11:11:07.653  ╚══════════════════════════════════════════════════════════════════════════════╝
+2026-10-23T11:11:07.653  
+2026-10-23T11:11:07.653  Scanning for PCA9546A multiplexers on TCA channels...
+2026-10-23T11:11:07.653    Scanning TCA channel 0
+2026-10-23T11:11:07.653      No PCA found on this channel
+2026-10-23T11:11:07.653    Scanning TCA channel 1
+2026-10-23T11:11:07.666      No PCA found on this channel
+2026-10-23T11:11:07.667    Scanning TCA channel 2
+2026-10-23T11:11:07.667      No PCA found on this channel
+2026-10-23T11:11:07.667  Found 0 sensor board(s)
+2026-10-23T11:11:07.667  ERROR: No PCA9546A multiplexers found!
+2026-10-23T11:11:07.667  ERROR: PCA initialization failed!
+2026-10-23T11:11:07.667  [PWR after sensor init] VSYS=4.31 V, I=59 mA
+2026-10-23T11:11:07.667  ERROR: Sensor initialization failed!
+2026-10-23T11:11:07.667  
+2026-10-23T11:11:07.667  ==============================================================
+2026-10-23T11:11:07.667  I2C BUS DIAGNOSTIC LOOP (continuous — press RESET to stop)
+2026-10-23T11:11:07.667  ==============================================================
+2026-10-23T11:11:07.667  PCA detection summary (from init):
+2026-10-23T11:11:07.667    TCA ch 0: (nothing detected)
+2026-10-23T11:11:07.667    TCA ch 1: (nothing detected)
+2026-10-23T11:11:07.667    TCA ch 2: (nothing detected)
+2026-10-23T11:11:07.667  
+2026-10-23T11:11:07.667  Probing: INA(0x40)  BQ(0x6B)  TCA(0x70)  PCA(0x76)  VCNL(0x60)
+2026-10-23T11:11:07.667  Legend:  '.' = ACK,  'X(n)' = error n
+2026-10-23T11:11:07.667           1=data_too_long 2=NACK_addr 3=NACK_data 4=other 5=timeout/bus_hang
+2026-10-23T11:11:07.668  
+2026-10-23T11:11:07.668  Expected when working correctly:
+2026-10-23T11:11:07.668    BASE           -> INA, BQ, TCA present; PCA, VCNL absent
+2026-10-23T11:11:07.668    TCA{0,1,2}     -> INA, BQ, TCA present; PCA present only on
+2026-10-23T11:11:07.668                      channels that have a rigid; VCNL absent
+2026-10-23T11:11:07.680    TCA+PCA0/1     -> INA, BQ, TCA, PCA, VCNL all present
+2026-10-23T11:11:07.680  
+2026-10-23T11:11:07.680  --- Iteration 1 ---
+2026-10-23T11:11:07.680  t=   1353  BASE        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2) 
+2026-10-23T11:11:07.680  t=   1358  TCA0        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2) 
+2026-10-23T11:11:08.182  t=   1363  TCA1        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2) 
+2026-10-23T11:11:08.183  t=   1368  TCA2        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2) 
+2026-10-23T11:11:08.183  
+2026-10-23T11:11:09.693  --- Iteration 2 ---
+2026-10-23T11:11:09.693  t=   3371  BASE        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2) 
+2026-10-23T11:11:09.693  t=   3376  TCA0        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2) 
+2026-10-23T11:11:10.195  t=   3381  TCA1        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2) 
+2026-10-23T11:11:10.195  t=   3386  TCA2        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2) 
+2026-10-23T11:11:10.195  
+2026-10-23T11:11:11.720  --- Iteration 3 ---
+2026-10-23T11:11:11.721  t=   5389  BASE        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2) 
+2026-10-23T11:11:11.721  t=   5394  TCA0        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2) 
+2026-10-23T11:11:11.721  t=   5399  TCA1        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2) 
+2026-10-23T11:11:12.223  t=   5404  TCA2        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2) 
+2026-10-23T11:11:12.223  
+2026-10-23T11:11:13.730  --- Iteration 4 ---
+2026-10-23T11:11:13.730  t=   7407  BASE        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2) 
+2026-10-23T11:11:13.730  t=   7412  TCA0        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2) 
+2026-10-23T11:11:14.234  t=   7417  TCA1        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2) 
+2026-10-23T11:11:14.234  t=   7422  TCA2        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2) 
+2026-10-23T11:11:14.234  
+2026-10-23T11:11:15.739  --- Iteration 5 ---
+2026-10-23T11:11:15.757  t=   9425  BASE        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2) 
+2026-10-23T11:11:15.757  t=   9430  TCA0        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2) 
+2026-10-23T11:11:15.757  t=   9435  TCA1        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2) 
+2026-10-23T11:11:16.257  t=   9440  TCA2        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2) 
+2026-10-23T11:11:16.257  
+2026-10-23T11:11:17.764  --- Iteration 6 ---
+2026-10-23T11:11:17.765  t=  11443  BASE        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2) 
+2026-10-23T11:11:18.269  t=  11448  TCA0        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2) 
+2026-10-23T11:11:18.269  t=  11453  TCA1        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2) 
+2026-10-23T11:11:18.269  t=  11458  TCA2        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2) 
+2026-10-23T11:11:18.269  
+2026-10-23T11:11:19.792  --- Iteration 7 ---
+2026-10-23T11:11:19.793  t=  13461  BASE        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2) 
+2026-10-23T11:11:19.793  t=  13466  TCA0        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2) 
+2026-10-23T11:11:19.793  t=  13471  TCA1        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2) 
+2026-10-23T11:11:20.297  t=  13476  TCA2        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2) 
+2026-10-23T11:11:20.297  
+2026-10-23T11:11:21.805  --- Iteration 8 ---
+2026-10-23T11:11:21.805  t=  15479  BASE        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2) 
+2026-10-23T11:11:21.805  t=  15484  TCA0        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2) 
+2026-10-23T11:11:22.309  t=  15489  TCA1        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2) 
+2026-10-23T11:11:22.309  t=  15494  TCA2        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2) 
+2026-10-23T11:11:22.309  
+2026-10-23T11:11:23.816  --- Iteration 9 ---
+2026-10-23T11:11:23.816  t=  17497  BASE        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2) 
+2026-10-23T11:11:24.320  t=  17502  TCA0        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2) 
+2026-10-23T11:11:24.320  t=  17507  TCA1        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2) 
+2026-10-23T11:11:24.320  t=  17512  TCA2        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2) 
+2026-10-23T11:11:24.320  
+2026-10-23T11:11:25.830  --- Iteration 10 ---
+2026-10-23T11:11:25.847  t=  19515  BASE        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2) 
+2026-10-23T11:11:25.847  t=  19520  TCA0        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2) 
+2026-10-23T11:11:25.847  t=  19525  TCA1        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2) 
+2026-10-23T11:11:26.350  t=  19530  TCA2        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2) 
+2026-10-23T11:11:26.350  
+2026-10-23T11:11:27.858  --- Iteration 11 ---
+2026-10-23T11:11:27.858  t=  21533  BASE        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2) 
+2026-10-23T11:11:27.858  t=  21538  TCA0        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2) 
+2026-10-23T11:11:28.360  t=  21543  TCA1        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2) 
+2026-10-23T11:11:28.360  t=  21548  TCA2        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2) 
+2026-10-23T11:11:28.360  
+2026-10-23T11:11:29.869  --- Iteration 12 ---
+2026-10-23T11:11:29.870  t=  23551  BASE        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2) 
+2026-10-23T11:11:30.374  t=  23556  TCA0        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2) 
+2026-10-23T11:11:30.374  t=  23561  TCA1        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2) 
+2026-10-23T11:11:30.374  t=  23566  TCA2        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2) 
+2026-10-23T11:11:30.374  
+2026-10-23T11:11:31.900  --- Iteration 13 ---
+2026-10-23T11:11:31.901  t=  25569  BASE        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2) 
+2026-10-23T11:11:31.901  t=  25574  TCA0        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2) 
+2026-10-23T11:11:31.901  t=  25579  TCA1        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2) 
+2026-10-23T11:11:32.405  t=  25584  TCA2        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2) 
+2026-10-23T11:11:32.405  
+2026-10-23T11:11:33.913  --- Iteration 14 ---
+2026-10-23T11:11:33.913  t=  27587  BASE        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2) 
+2026-10-23T11:11:33.913  t=  27592  TCA0        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2) 
+2026-10-23T11:11:34.418  t=  27597  TCA1        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2) 
+2026-10-23T11:11:34.418  t=  27602  TCA2        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2) 
+2026-10-23T11:11:34.418  
+2026-10-23T11:11:35.924  --- Iteration 15 ---
+2026-10-23T11:11:35.924  t=  29605  BASE        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2) 
+2026-10-23T11:11:36.426  t=  29610  TCA0        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2) 
+2026-10-23T11:11:36.426  t=  29615  TCA1        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2) 
+2026-10-23T11:11:36.426  t=  29620  TCA2        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2) 
+2026-10-23T11:11:36.426  
+2026-10-23T11:11:37.955  --- Iteration 16 ---
+2026-10-23T11:11:37.955  t=  31623  BASE        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2) 
+2026-10-23T11:11:37.955  t=  31628  TCA0        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2) 
+2026-10-23T11:11:37.955  t=  31633  TCA1        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2) 
+2026-10-23T11:11:38.459  t=  31638  TCA2        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2) 
+2026-10-23T11:11:38.459  
+2026-10-23T11:11:39.967  --- Iteration 17 ---
+2026-10-23T11:11:39.967  t=  33641  BASE        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2) 
+2026-10-23T11:11:39.967  t=  33646  TCA0        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2) 
+2026-10-23T11:11:40.473  t=  33651  TCA1        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2) 
+2026-10-23T11:11:40.473  t=  33656  TCA2        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2) 
+2026-10-23T11:11:40.473  
+2026-10-23T11:11:41.982  --- Iteration 18 ---
+2026-10-23T11:11:41.982  t=  35659  BASE        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2) 
+2026-10-23T11:11:41.983  t=  35664  TCA0        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2) 
+2026-10-23T11:11:42.483  t=  35669  TCA1        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2) 
+2026-10-23T11:11:42.483  t=  35674  TCA2        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2) 
+2026-10-23T11:11:42.483  
+2026-10-23T11:11:44.009  --- Iteration 19 ---
+2026-10-23T11:11:44.009  t=  37677  BASE        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2) 
+2026-10-23T11:11:44.009  t=  37682  TCA0        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2) 
+2026-10-23T11:11:44.009  t=  37687  TCA1        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2) 
+2026-10-23T11:11:44.513  t=  37692  TCA2        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2) 
+2026-10-23T11:11:44.513  
