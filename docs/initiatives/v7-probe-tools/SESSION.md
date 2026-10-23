@@ -97,3 +97,21 @@ Phase notes: worktree in session scratchpad; build output must show core #2.0.14
 | # | Phase | Result | Escalation evaluated? | Commit | Notes |
 |---|-------|--------|-----------------------|--------|-------|
 | 2 | Phase 2: v6 diag readout | DONE | No — clean completion | handoff on this branch; `v6-diag` → 189cc03 | 6 tasks; branch + tag pushed; worktree removed; `lab/` untouched |
+
+#### Result
+| # | Phase | Result | Escalation evaluated? | Commit | Notes |
+|---|-------|--------|-----------------------|--------|-------|
+| 2 | Phase 2: v6 diag readout | DONE | No — clean completion | 0bb87e9 (v6-diag: 189cc03) | 6 tasks; tag + branch pushed |
+
+#### Verification
+- All tasks in TASKS.md `[x]`; tree clean; scratchpad worktree removed.
+- `v6-diag^{commit}` = 189cc03, parent = `v6-ref` 4da1c67. `git ls-remote origin` shows tag object fa42ba8 and branch `feat/v7-probe-tools-v6diag` at 189cc03.
+- `git diff v6-ref v6-diag`: 4 files, +216/−1. Read main.cpp and platformio.ini hunks in full: all main.cpp changes sit inside `#ifdef DIAG_NO_WIFI` with the original code unchanged in `#else`; the only `-` line is the EOF-newline on platformio.ini; no `Wire.`/`setClock` lines touched.
+- `runBusDiagnosticLoop()` extracted from `v7-clean` and `v6-diag` and diffed: identical.
+- Builds taken on the Worker's word (both envs SUCCESS, core 2.0.14+sha.44da992); not re-run.
+- No `loop()` guard ported: diag path ends in the loop then `while(1)`, so no later `mqttManager`/`dataTransmitter` use is reachable. Accepted.
+- PLAN has no date-stamped headings.
+
+---
+
+**Outcome:** Loop complete — 2 workers dispatched, 1 session, 0 unresolved blockers. `feat/v7-probe-tools` pushed and PR opened by the Orchestrator. Debugger handoff items relayed to the user (no `lab/` edits).
