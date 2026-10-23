@@ -2613,3 +2613,46 @@ Full text is in the file; it is not copied here.
 - Re-checked today: `check_state.py` OK, 0 warnings. MEMORY.md has no v7 lines.
 - Final PR: https://github.com/moclei/motion-play/pull/80, from feat/test-workflow-setup to main. Not merged. The body says to merge with a merge commit, never squash.
 - Open for the Orchestrator and user: merge PR #80 (merge commit), then close the initiative. The user's process feedback in "User answers — W8 part 2" is for a later methodology session, not this initiative.
+
+#### Result
+| # | Phase | Result | Escalation evaluated? | Commit | Notes |
+|---|-------|--------|-----------------------|--------|-------|
+| 21 | Phase 16: acceptance + PR | DONE | No — clean completion | a6edd5f | Both tables ticked with citations; PR #80 open |
+
+#### Verification
+- Commits 325f5ee..a6edd5f, pushed; the local branch equals origin. PR #80 is OPEN against main and not merged. No `[ ]` or `[~]` tasks remain in Phases 1–16. `check_state.py`: OK.
+
+---
+
+**Outcome:** Loop complete — 21 workers dispatched, 8 user bench waits (W2–W8, W8 in two parts), 0 unresolved blockers. Waiting only on the user merging PR #80 (merge commit, never squash).
+
+**Parked for the user to route** (notes addressed beyond this initiative; the user is asked which document tracks cross-initiative work):
+
+*A. Lessons from the first run of the method, for a methodology pass (e.g. a `debug-method-v2` initiative before the first v7 card):*
+1. Jargon reached the user unfiltered: probe points without pictures, and terms like "BQ end arm" and "outer end". The fixes that worked were a glossary per procedure, the A–F picture labels, and naming the screen. User-facing text needs a readability check before it ships.
+2. SESSION.md grew past 2 000 lines. It needs per-phase summaries or an archive rule.
+3. Procedures written before any bench contact got four facts wrong: V5 limit below the instrument floor, RIGHT-button restart, START trigger, 400 kHz. Each cost a bench session plus a replan. A short "bench smoke run" of a new procedure before a card registers on it would catch these sooner.
+4. Process weight: a raw-data commit after every report, even with no data. Fold confirm-only reports into the next data commit (role-draft suggestion).
+5. Instruction blocks posted under results get missed. Send them as a message of their own (now in the template; also a role-draft item).
+6. Bench-state handoff: at session close, read the bench state back to the user for confirmation before the notebook commit, so no separate L0 check is ever needed. (User idea.)
+7. Card ordering should weigh setup-change cost (board swaps, probe moves) and batch cards that share a setup. The current queue (decisioning §2.7) orders cards by information value alone. (User concern.)
+8. The return relays were written as "relay prompts for a fresh session", while an Orchestrator was already running. Debugger returns should say "paste to the running Orchestrator".
+9. The user has their own notes on the method. Input for the same pass.
+
+*B. Start-here for the first debug-track session:*
+- STATE.md is still the skeleton, so the first session transcribes `decisioning.md` §2 into it (one commit, no bench).
+- First cards, all log-only (no probes), per decisioning §2.7:
+  1. fault on `v7-clean`;
+  2. v6 under the minimal repro;
+  3. symptom identity with the SAMD21;
+  4. Nano ESP32 master swap.
+- Card 2 is independent of card 1, and v6 is on the bench now. Consider order by setup cost (A7).
+- Parts in the plan: a spare T-Display-S3 and an ESP32-S3-DevKitC-1 N16R8. The user has not yet confirmed whether these are on hand.
+- `pcb-board-model` is triggered by this initiative closing (decisioning §3.2a). The user chooses when.
+
+*C. Open technical items:*
+- R32.2 (the S2 fallback ground) is not pictured.
+- No v7 S1 fallback is written if C9.1 won't take a tip and a spring.
+- Deferred list in TASKS.md: role install, role-draft suggestions, the ESP32-S3 datasheet in the repo, the capture.py sweep label, the `:TRIGger:SWEep?` bench check.
+
+*D. Temporary files* in the Orchestrator scratchpad are lost when this session ends: `memory-backup/`, the board-render scripts (`annot/`, `boards/`) and the check scripts. Copy anything wanted.
