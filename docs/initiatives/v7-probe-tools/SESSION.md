@@ -74,3 +74,26 @@ The first task is marked `[~]` ...
 You are not the Orchestrator. ...
 ```
 Phase notes: worktree in session scratchpad; build output must show core #2.0.14; push only `feat/v7-probe-tools-v6diag` + tag `v6-diag` (not `feat/v7-probe-tools`); SESSION/TASKS writes go on `feat/v7-probe-tools` in the main checkout.
+
+#### Notes
+
+**Result: DONE.** Tag **`v6-diag`** (annotated, tag object fa42ba8) → commit **189cc03** on branch `feat/v7-probe-tools-v6diag` (parent `v6-ref` 4da1c67). Env **`lilygo-t-display-s3-diag`**. Branch and tag pushed to origin; the worktree was removed. Cite the tag for card 2.
+
+**Build (build-only, 2026-10-23, both SUCCESS, no warnings from `firmware/src`):**
+- Both envs resolved `framework-arduinoespressif32 @ 2.0.14+sha.44da992` (the `#2.0.14` git pin), platform Espressif 32 6.4.0. The 2.0.11 global default that Phase 1 left behind is not used.
+- `lilygo-t-display-s3-diag`: Flash 1,315,357 B (20.1%), RAM 69,452 B (21.2%). `lilygo-t-display-s3`: Flash 1,842,085 B, RAM 70,356 B. The diag image is smaller because the network/cloud path is compiled out.
+- Libraries resolved from today's cache (the same for both envs): TFT_eSPI 2.5.43, Adafruit BusIO 1.17.4, Adafruit VCNL4040 1.2.0, TCA9548 0.3.2, FastLED 3.10.8, PubSubClient 2.8.0, ArduinoJson 6.21.6, Chirale_TensorFLowLite 2.0.0. The `^` ranges are unchanged from `v6-ref`. The `v6-ref` tag build on 2026-10-19 also resolved from the live cache.
+
+**`git diff v6-ref` audit:**
+- 4 files, +216/−1. The single "−" line is `platformio.ini`'s last line (`-DARDUINO_USB_CDC_ON_BOOT=0`). `v6-ref` had no newline at end of file, and appending the env added one. The diff is empty under `--ignore-space-at-eol`, so the base env is unchanged in content.
+- `SensorManager.cpp`: only `runBusDiagnosticLoop()` was added, placed before `dumpSensorConfiguration()` as in v7. It was checked mechanically with awk extraction + diff against `v7-clean`: identical, `BUS_RECOVERY_TEST` blocks included. `SensorManager.h`: the declaration and its comment were copied verbatim. `selectChannelVerify` / `readControlRegister` were not ported, because the loop doesn't use them.
+- `main.cpp`: two `#ifdef DIAG_NO_WIFI … #else … #endif` wraps. (1) The network block: the v7 `#ifdef` header was copied verbatim, and the v6 network code sits untouched in `#else`. (2) The sensor init: the diag branch runs the same `sensorManager.init(&currentConfig)` call, prints `ERROR: Sensor initialization failed!` (and the display error) or `Sensors initialized successfully`, then `[v6-diag] v6-ref 4da1c67 + diag readout; I2C init unchanged`, then the loop, then `while(1)`. The original v6 `if (!init) {halt}` sits byte-identical in `#else`.
+- No added or removed line touches `Wire.begin`, `setClock`, pulls, filters or drive. `TCA9548A` / `PCA9546A` are unchanged between `v6-ref` and `v7-clean` (empty diff on `components/tca9548a`). So the TCA channel cache noted in Phase 1 behaves the same on v6-diag as on v7.
+- No `loop()` guard was ported. The diag path never returns from `runBusDiagnosticLoop()` (plus `while(1)`), so `loop()`, `handleCommand()` and every other `mqttManager` / `dataTransmitter` use is unreachable. No task that touches them is started before that point: the `xTaskCreate` calls in `SensorManager` / `InterruptManager` are only reached from collection commands.
+
+**For the card:** the v6-diag boot prints `[DIAG_NO_WIFI] Skipping WiFi/MQTT init, forcing radio off` and `WARNING: Cloud config unavailable, sensors will use defaults`, then `[Config] Detection mode…`, the sensor init output, the init result, the `[v6-diag]` line, and then the v7 banner/rows. Flashing follows `firmware/CONTEXT.md` "Development Cable Workflow": `pio run -e lilygo-t-display-s3-diag -t upload` from a checkout of `v6-diag`.
+
+#### Result
+| # | Phase | Result | Escalation evaluated? | Commit | Notes |
+|---|-------|--------|-----------------------|--------|-------|
+| 2 | Phase 2: v6 diag readout | DONE | No — clean completion | handoff on this branch; `v6-diag` → 189cc03 | 6 tasks; branch + tag pushed; worktree removed; `lab/` untouched |
