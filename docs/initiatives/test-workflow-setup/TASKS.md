@@ -193,7 +193,7 @@
   - In the V8 capture CHECK of `dho804-setup-validation.md` and the step 8 capture CHECK of `known-good-reference.md`, add one sentence each. After a fired SINGLE the logged sweep can read `NORM` or `AUTO`, and the check is the `STOP` status. An SCPI error recorded `after: connect` was queued by an earlier terminal command: note it in REPORT and go on
   - `lab/templates/instruction.md`: send each instruction block in a message of its own, never under a results table or analysis
 - [x] Tick both acceptance tables in PLAN. Before ticking, the user's two answers must be in SESSION.md "W8 part 2": the L0 session was correct without asking, and the image handoff was workable. If either is missing or negative, stop and report. The Dry run rows cite V7R-002, with V7R-001 noted as the void first attempt. Open the final PR (merge commit)
-- [ ] 🔄 Handoff
+- [x] 🔄 Handoff (Worker #21; PR #80)
 
 ## Deferred
 
