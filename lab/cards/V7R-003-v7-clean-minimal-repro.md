@@ -57,6 +57,12 @@ Counts are over the TCA2-row `BQ:` field in the first 10 complete iterations of 
 
 ## Actual result
 ### Raw observations (operator, verbatim; symptoms not interpretations)
+- S1 (2026-10-23), operator: "1. Pin 1 is black, Pin 2 is red, Pin 3 is blue, Pin 4 is yellow 2. Yes, the red wire, Pin 2 3. The 10kohm resistor is a "through hole" type. It has both legs plugged in to a breadboard -- one leg is in the rail labelled for ground, one leg is in the rail labelled for voltage. I plan to insert pin 1 and pin 3 into the rails so that they are connected through the resistor. 4. [...] on that extra PCB material there is a QR code and the text "0003", indicating this was the 3rd board (of 5) from the order. That is how I can identify it, as #3."
+- Board identity: panel marking "0003" on the breakaway rails (rails still attached). Link between "0003" and legacy "B3": not confirmed.
+- S2, operator: "Black wire and resistor leg are on the same half of the rail. The others are hanging unconnected". Breadboard rail labelled "voltage" = +3.3 V (pin 1, black); rail labelled "ground" = SDA side of the 10 kΩ (blue goes there at B).
+- S3, operator: PWR LED lit "Yes"; other LEDs "No".
+- S3, firmware found on the board before flashing (session log `lab/captures/V7R-003/2026-10-23_V7R-003_serial_00_oldfw.txt`): banner line `I2C: 100 kHz, drive CAP_3, filter(7), pad-filter, internal pulls dis [Phase 24 null + Phase 25 bundle]`, DIAG_NO_WIFI, diag loop running; 15 iterations logged with the pigtail in J6 and no far-end path: TCA2 row `BQ:.` in all 15.
+- S3 flash (session): `pio run -e motion-play-v7-diag -t upload` from worktree at 90053af, SUCCESS, hash verified, 2026-10-23 ~11:12. Log `..._serial_01.txt` from 11:12:32: banner `I2C: 400 kHz, default drive, no filters, default pulls [v7-clean]`, `I2C BUS DIAGNOSTIC LOOP` present, PCA summary ch 0/1/2 "(nothing detected)". Boot lines before `BQ24195 configured` not captured (port opened after them). A1 begins at Iteration 1 (11:12:32.757).
 ### Measured values (from log; cite `lab/evidence/V7R-003/...`)
 ### Interpretation (session; labelled as such)
 
