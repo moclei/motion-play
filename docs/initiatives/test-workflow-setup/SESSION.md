@@ -2578,3 +2578,10 @@ Full text is in the file; it is not copied here.
 #### Verification
 - Commit 25c5f20; the tree is clean. The diff is only the three edits named in the task: the V5a step 3 and sanity-check paragraph, the V8 and KGR step 8 CHECK sentences, and the template line. No limits, bands, cards, logs or tools were touched. `run_tests.py` and `check_state.py` both pass.
 - Next: the acceptance tick plus PR, gated on the user's L0 and image answers.
+
+---
+
+### User answers — W8 part 2 (2026-10-22)
+
+- L0 test: "I don't recall that. Is it important?" It was not run. The user also asked "why would i do that? It feels a bit much.. is there a really good reason for doing it?" The Orchestrator explained the purpose and offered to run it or waive it; the answer is pending.
+- Image handoff: "The picture was great. The very first one we produced was badly cropped, but there were two subsequent ones that were perfect and super helpful". This confirms the image handoff was workable (topic-4 Dry run row).
