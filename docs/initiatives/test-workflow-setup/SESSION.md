@@ -2585,3 +2585,15 @@ Full text is in the file; it is not copied here.
 
 - L0 test: "I don't recall that. Is it important?" It was not run. The user also asked "why would i do that? It feels a bit much.. is there a really good reason for doing it?" The Orchestrator explained the purpose and offered to run it or waive it; the answer is pending.
 - Image handoff: "The picture was great. The very first one we produced was badly cropped, but there were two subsequent ones that were perfect and super helpful". This confirms the image handoff was workable (topic-4 Dry run row).
+- L0 test (run 2026-10-22, the output pasted by the user): it stated the bench state correctly, from the notebook's last entry, and asked nothing first. The bench-time question at the end is the role's step 5. It also flagged that STATE §6 is empty, so the bench state lives only in the notebook until STATE is seeded. Assessed as a PASS for the topic-6 Dry run row. Caveat: it also mentioned SESSION.md (the pending L0 note), which is beyond its default loads. The bench state itself came from default L1.
+- The user's process feedback (for the closeout and a later methodology pass, not for this initiative):
+  - a running bench-state log, confirmed by the user at session end, instead of a separate check;
+  - whether checks like this could run as a sub-agent;
+  - card ordering should account for the cost of swapping boards and moving probes;
+  - the user has their own notes on the methodology, for a separate session.
+
+---
+
+### Worker #21 — Phase 16: acceptance tick + final PR
+
+**Dispatch:** standard template. Additional reading: SESSION "### W8 part 2" Verification and "### User answers — W8 part 2".

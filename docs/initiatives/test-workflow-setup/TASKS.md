@@ -186,13 +186,13 @@
 
 ## Phase 16: v6 re-run S2 and close (bench, then desk)
 
-- [~] **W8, part 2:** the user runs `RELAY-v6-dry-run-2-s2.md` as an ad-hoc debugger session (S2, close card V7R-002), then a second fresh ad-hoc debugger session asked only "what is the bench state?". The user reports whether the answer was correct and whether the image handoff was workable
+- [x] **W8, part 2:** the user runs `RELAY-v6-dry-run-2-s2.md` as an ad-hoc debugger session (S2, close card V7R-002), then a second fresh ad-hoc debugger session asked only "what is the bench state?". The user reports whether the answer was correct and whether the image handoff was workable
 - [x] Verify from git, for V7R-002: the pre-registration commit comes before the raw-data commits; there are per-arm raw commits; the recording commit touches STATE with `as_of` set; the notebook entry exists; the evidence files for both arms are present; the card notes the procedure commits S2 ran on; the card's S1 Measured values cite the S1 log with the tool values beside them (PLAN §6 "The S1 record"); `check_state.py` is clean; `validate_log.py` passes both arm logs (`2026-10-21_s01` and the S2 log). If v6 is out of spec on a validated setup (V1–V8 pass for that arm), stop: the setup gets fixed before close (replan if needed). If V5 fails again, stop and replan; no limit is widened
 - [x] Feedback edits from W8 part 2, per PLAN "After V7R-002 S2" §1, §3 and §4. Keep each one to a sentence or two, and don't explain causes. No limit, band, card or log edits:
   - `lab/procedures/dho804-setup-validation.md` V5a step 3: a tip or spring may go on an alligator clip on the Cal ground terminal. In the "Scope sanity check" paragraph, replace "stop and look at the scope and probes before going on" with this: recapture V5a with the flagged channel on the clip, keep the flagged capture in the record, and stop if the clip control is flagged too
   - In the V8 capture CHECK of `dho804-setup-validation.md` and the step 8 capture CHECK of `known-good-reference.md`, add one sentence each. After a fired SINGLE the logged sweep can read `NORM` or `AUTO`, and the check is the `STOP` status. An SCPI error recorded `after: connect` was queued by an earlier terminal command: note it in REPORT and go on
   - `lab/templates/instruction.md`: send each instruction block in a message of its own, never under a results table or analysis
-- [ ] Tick both acceptance tables in PLAN. Before ticking, the user's two answers must be in SESSION.md "W8 part 2": the L0 session was correct without asking, and the image handoff was workable. If either is missing or negative, stop and report. The Dry run rows cite V7R-002, with V7R-001 noted as the void first attempt. Open the final PR (merge commit)
+- [~] Tick both acceptance tables in PLAN. Before ticking, the user's two answers must be in SESSION.md "W8 part 2": the L0 session was correct without asking, and the image handoff was workable. If either is missing or negative, stop and report. The Dry run rows cite V7R-002, with V7R-001 noted as the void first attempt. Open the final PR (merge commit)
 - [ ] 🔄 Handoff
 
 ## Deferred
