@@ -2656,3 +2656,15 @@ Full text is in the file; it is not copied here.
 - Deferred list in TASKS.md: role install, role-draft suggestions, the ESP32-S3 datasheet in the repo, the capture.py sweep label, the `:TRIGger:SWEep?` bench check.
 
 *D. Temporary files* in the Orchestrator scratchpad are lost when this session ends: `memory-backup/`, the board-render scripts (`annot/`, `boards/`) and the check scripts. Copy anything wanted.
+
+---
+
+### User direction — closeout extras (2026-10-22)
+
+"put the lessons in a relay file for the methodology session. You copy the board-picture scripts somewhere and also note it somewhere - maybe in the debugger agent draft file. Those images were very useful and that script should be kept. I don't care about the rest of the temp files. The PR is hanging and I can't approve it. You do it"
+
+The Orchestrator recorded this as Phase 17 (user-directed; no Planner). The note in the role draft is explicitly authorised by the user.
+
+### Worker #22 — Phase 17: probe-point picture tool
+
+**Dispatch:** standard template. Additional reading: SESSION summary of the picture method (kicad-cli render, PNG bbox, SVG overlay, headless Chrome; qlmanage crops, so it is not used). The source scripts are in the Orchestrator scratchpad `annot/` (v6, `make_svg3.py` final), `annot7/` (v7, `make_v7.py`, `fp.py`, `bbox_np.py`) and `boards/`.
