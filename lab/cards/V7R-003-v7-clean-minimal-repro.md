@@ -9,7 +9,7 @@ baseline:
   firmware_commit: "90053af"
   firmware_env: motion-play-v7-diag
   board_id: v7-B3             # believed B3; user not certain of the B1/B2/B3 identity (2026-10-22). Recorded at S1 as "v7, believed B3"
-  hardware_config: "v7 main board, no battery, nothing on J4/J5; J6: JST-SH 4-pin cable, far end 10 kΩ with one lead on pin 1 (+3.3 V), SDA (pin 3) and SCL (pin 4) wires dangling; USB-C Mac ↔ v7 J7 (data + power). No mods known."
+  hardware_config: "v7 main board, no battery, nothing on J4/J5; J6: JST-SH 4-pin pigtail (loose wires at the far end; wires identified at S1 by continuity of GND to pad C, then position), far end 10 kΩ with one lead on pin 1 (+3.3 V), SDA (pin 3) and SCL (pin 4) wires dangling; USB-C Mac ↔ v7 J7 (data + power). No mods known."
 variable_changed: "far-end DC path SDA → +3.3 V (10 kΩ) connected vs not connected; cable stays in J6"
 structure: A/B/A
 revert_on_null: n/a           # flashing v7-clean is the baseline, not a delta; firmware on the board before S2 is unknown and is recorded from its boot output at S2
@@ -46,7 +46,7 @@ Counts are over the TCA2-row `BQ:` field in the first 10 complete iterations of 
 ## Procedure (physical steps for the operator)
 | Step | Do | Check before continuing | Report back |
 |---|---|---|---|
-| S1 | Unpowered: v6 off the bench (data-only cable out). v7 on the bench, no battery, J4/J5 empty. Cable into J6. At the far end: 10 kΩ, one lead on pin 1 (+3.3 V); SDA and SCL wires dangling, touching nothing | Nothing conductive under the board; the free 10 kΩ lead touches nothing | Board markings; how the 10 kΩ joins pin 1; anything noticed |
+| S1 | Unpowered: v6 off the bench (data-only cable out). v7 on the bench, no battery, J4/J5 empty. Pigtail into J6; find the GND wire by continuity to pad C (C9.1), then pin 1 / pin 3 / pin 4 by position. At the far end: 10 kΩ, one lead on pin 1 (+3.3 V); SDA and SCL wires dangling, touching nothing | Nothing conductive under the board; the free 10 kΩ lead touches nothing | Board markings; how the 10 kΩ joins pin 1; anything noticed |
 | S2 | USB-C Mac ↔ v7 J7. Session logs the old firmware's boot output, then flashes | Session confirms the port, the flash and the diag banner | Anything seen on the board (LEDs) |
 | A1 | Nothing; session logs ≥ 10 iterations | — | — |
 | B  | Connect the free 10 kΩ lead to the SDA wire (cable pin 3); reply "done" at once | SCL wire still dangling | Anything noticed |
