@@ -1,0 +1,27 @@
+# Failing fixture (kind: scope): each line marked FAIL is one expected validator error.
+session_id: 2026-11-04_s09            # FAIL: does not match the file name
+kind: scope
+dut:
+  board_id: v7-B3
+  firmware_commit: "1a2b3c4"
+  firmware_env: motion-play-v7-diag
+  declared_baseline: v7-dirty         # FAIL: not v7-clean | v6-ref | other
+scope:
+  model: Rigol DHO804
+  firmware: 00.01.05
+validation:
+  passed: yes please                  # FAIL: not a bool
+  V2_probe_ratio: {CH1: 10x/fixed}
+  V5_noise_floor_mVpp: 12mV           # FAIL: units belong in the key, value must be a number
+  V6_ground: {method: spring, point: C21.2}   # FAIL: length_mm missing
+  V7_idle_high_V: {CH1: 3.29}
+channels:
+  CH1: {ratio: 10x, signal: SDA, bw_limit: "OFF"}   # FAIL: point missing
+measurements:
+  - test_id: V7R-12                   # FAIL: not V7R-NNN
+    method: guess                     # FAIL: not auto | cursor | both
+    feature: "SDA flat region"
+    values:
+      - {name: VBASe, ch: CH1, value: }   # FAIL: no value_<unit> and not valid: false
+    captures: [sda.png]               # FAIL: not a §4.4 name
+                                      # FAIL: raw_observation missing

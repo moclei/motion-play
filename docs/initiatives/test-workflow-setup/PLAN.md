@@ -6,7 +6,7 @@ One initiative merging topic 4 (`docs/research/v7-retry/test-workflow-audit.md` 
 
 **Track 1: log-only ready (Phases 1–4).** This is everything a log-only debug card needs (`decisioning.md` §3.3): the baselines, the `lab/` containers and templates, the checker and hook that stop a Phase-25-style lost result, and the touch points that let debugger work run from the role draft (`docs/research/v7-retry/debugger-role-draft.md`) as ad-hoc sessions. The role is not installed in this initiative. At the end of Phase 4 the Orchestrator opens a PR and the user merges it to main with a **merge commit**. The debug track can then start as ad-hoc sessions off the draft (first debugger session transcribes `decisioning.md` §2 into STATE.md). The Orchestrator re-cuts `feat/test-workflow-setup` from the new main for Track 2.
 
-**Track 2: scope ready (Phases 5–9).** Verify the instrument facts, choose the capture tool, build the capture and ingest tooling, write the procedures, then run the v6 dry run. These phases touch only `tools/lab/`, `lab/procedures/`, `lab/templates/` and docs. The one exception is the Phase 9 dry-run card, which goes through the normal debugger lifecycle, so there is no conflict with a debug track running on main. Rebase onto main at the start of each Track 2 phase.
+**Track 2: scope ready (Phases 5–16).** Verify the instrument facts, choose the capture tool, build the capture and ingest tooling, write the procedures, then run the v6 dry run. These phases touch only `tools/lab/`, `lab/procedures/`, `lab/templates/` and docs. The one exception is the Phase 9 dry-run card, which goes through the normal debugger lifecycle, so there is no conflict with a debug track running on main. Rebase onto main at the start of each Track 2 phase.
 
 ```
 lab/                               # repo root (context-strategy §6.1)
@@ -15,8 +15,8 @@ lab/                               # repo root (context-strategy §6.1)
 ├── cards/                         # V7R-NNN-<slug>.md ; counter = highest filename + 1
 ├── log/                           # YYYY-MM-DD_sNN.yaml
 ├── evidence/V7R-NNN/              # committed
-├── captures/V7R-NNN/              # gitignored, backed up to Google Drive
-├── inbox/                         # gitignored, backed up to Google Drive
+├── captures/V7R-NNN/              # gitignored, backed up to iCloud Drive
+├── inbox/                         # gitignored, backed up to iCloud Drive
 ├── procedures/                    # Phase 8
 └── templates/                     # card.md, log.yaml, instruction.md
 tools/lab/                         # check_state.py, capture tool, ingest, validator, backup
@@ -33,29 +33,30 @@ tools/lab/                         # check_state.py, capture tool, ingest, valid
 | W4 | 6 | Bench: scope on the LAN, SCPI smoke tests, USB saves for comparison (§4.8 blocks) | All REPORT blocks returned |
 | W5 | 6→7 | **Decision gate:** build our own capture tool or adopt the third-party one, based on the Phase 5 + 6 findings | User decides |
 | W6 | 7 | Bench: one capture-tool acceptance capture vs USB | REPORT returned |
-| W7 | 9 | User runs the dry run as an ad-hoc debugger session off the draft, then a second fresh ad-hoc debugger session for the L0 test | User reports both sessions done |
+| W7 | 9 | User runs the dry run as an ad-hoc debugger session off the draft, then a second fresh ad-hoc debugger session for the L0 test | Done: V7R-001 void at V5 (4736a4a). The L0 test and the image-handoff report moved to W8 |
+| W8 | 12, 16 | User runs the re-run (card V7R-002, V5–V9 at S1 and S2 on v6 with `v6-ref`): S1 from `RELAY-v6-dry-run-2.md` (done, interim return), S2 and the card close from `RELAY-v6-dry-run-2-s2.md` after the Phase 13–15 revision, then the fresh-session L0 test | User reports both sessions done |
 
 Bench instructions for the user always use the `test-workflow-audit.md` §4.8 block: STEP / DO / CHECK / CAPTURE / REPORT / STOP IF, one step at a time. The Orchestrator writes them into SESSION.md and relays them. Workers do not talk to the bench.
 
 ### Acceptance — topic 4 (`test-workflow-audit.md` §6.1)
 
-| Check | Pass |
-|---|---|
-| Baselines | Both `v7-clean` and `v6-ref` build, and each one's I²C init is stated in its commit/tag message. |
-| LAN capture | A screenshot and CSV pulled over LAN match the same capture saved to USB. |
-| Capture tool | One command yields files named per §4.4 and a log entry with every required §4.6 field filled from the scope's own settings. |
-| Templates | A dummy card can be created, pre-registered and committed end to end. |
-| Dry run | v6 on `v6-ref` reads within §4.3 spec (V_OL ≤ 0.4 V, expected ≈ 30–80 mV *once the datasheet check confirms it*; idle high 3.3 V ± 5%; rise time 30→70% ≤ 300 ns at 400 kHz), and the user confirms the image handoff was workable. If v6 fails, the setup is fixed before the initiative closes. |
+| Check | Pass | Met |
+|---|---|---|
+| Baselines | Both `v7-clean` and `v6-ref` build, and each one's I²C init is stated in its commit/tag message. | [x] Tags `v7-clean` → `90053af`, `v6-ref` → `4da1c67`; both tag messages state the I²C init and the envs that built (SESSION "Worker #1", c24f956). |
+| LAN capture | A screenshot and CSV pulled over LAN match the same capture saved to USB. | [x] On memory data: PNG matches, RAW memory over LAN equals the menu memory CSV sample for sample ("Verified instrument facts", LAN-vs-USB comparison, Phase 6). |
+| Capture tool | One command yields files named per §4.4 and a log entry with every required §4.6 field filled from the scope's own settings. | [x] W6 on `V7R-999`: three files named per §4.4, all required scope fields filled; CSV 10 000 / 10 000 vs menu CSV, PNG pixel-equal over the graticule ("Verified instrument facts", capture-tool comparison; SESSION "Worker #10", d192212). |
+| Templates | A dummy card can be created, pre-registered and committed end to end. | [x] `V7R-999-dummy.md` pre-registered in 9bc9d0c, front matter parsed, removed in 91b482f (SESSION "Worker #2"). |
+| Dry run | v6 on `v6-ref` reads within §4.3 spec (V_OL ≤ 0.4 V; the ≈ 35 mV expectation is a labelled estimate, not a pass band (Open Questions, Phase 5); idle high 3.3 V ± 5%; rise time 30→70% ≤ 300 ns, the Fast-mode limit, kept although the reference frame runs at 100 kHz: "After V7R-002 S1" §2), and the user confirms the image handoff was workable. If v6 fails, the setup is fixed before the initiative closes. | [x] Card V7R-002, recorded a2612d9, outcome row 1 at both arms. S1 (log `2026-10-21_s01`): V_OL 72.4 / 70.2 / 75.4 mV, idle high 3.3025 / 3.2929 V, rise ≤ 98.4 ns. S2 (log `2026-10-21_s02`): V_OL 64.1 / 63.2 / 65.9 mV, idle high 3.3020 / 3.2923 V, rise max 98.7 / 91.7 ns; recomputed by the Orchestrator (SESSION "W8 part 2" Verification). Image handoff workable: SESSION "User answers — W8 part 2". V7R-001 (4736a4a) was the void first attempt (V5), not counted. |
 
 ### Acceptance — topic 6 (`context-strategy.md` §10.1)
 
-| Check | Pass |
-|---|---|
-| Hook | Recording a dummy card without a STATE.md edit is rejected. With the edit, it passes. |
-| Checker | On a fixture `lab/`, it reports STALE, open-card mismatch, CHECKPOINT DUE, a cap overrun, a stale hash and a memory hit, once each. |
-| Budget | A fresh ad-hoc debugger session's L0 (the role draft standing in for `debugger.md`) measures < 500 lines and ≤ ~12k tokens (counting the actual files). |
-| Dry run | The v6 dry run runs as an ad-hoc debugger session off the draft: card pre-registered, raw data committed per arm, recorded with STATE updated in the same commit, notebook entry written. A second fresh ad-hoc debugger session then states the bench state correctly from L0 + default L1 alone, without asking the user. |
-| Retirement | No v7 lines in the memory index, except a line the user kept as accepted at W2; banners on the §2.4 items; PROJECT.md pointer present. |
+| Check | Pass | Met |
+|---|---|---|
+| Hook | Recording a dummy card without a STATE.md edit is rejected. With the edit, it passes. | [x] Scratch clone at 4882bd7: rejected (exit 1) without STATE, passed as a38c80d with it (SESSION "Worker #3", Task 5). |
+| Checker | On a fixture `lab/`, it reports STALE, open-card mismatch, CHECKPOINT DUE, a cap overrun, a stale hash and a memory hit, once each. | [x] Fixtures 5ad41a4; the runner asserts each tag exactly once and no other; 14/14 pass (SESSION "Worker #3", Task 3). `run_tests.py` still passes. |
+| Budget | A fresh ad-hoc debugger session's L0 (the role draft standing in for `debugger.md`) measures < 500 lines and ≤ ~12k tokens (counting the actual files). | [x] 304 lines / ~5.3k tokens actual, 402 lines / ~8.4k with STATE at cap (SESSION "Worker #5", budget check). The draft has not been edited since. |
+| Dry run | The v6 dry run runs as an ad-hoc debugger session off the draft: card pre-registered, raw data committed per arm, recorded with STATE updated in the same commit, notebook entry written. A second fresh ad-hoc debugger session then states the bench state correctly from L0 + default L1 alone, without asking the user. | [x] V7R-002: pre-registered e39f953, per-step raw commits at S1 and S2, recorded with STATE front matter in a2612d9, notebook entries s01 and s02 (SESSION "W8 part 2" Verification). L0 test 2026-10-22: correct from the notebook's last entry, asked nothing first (SESSION "User answers — W8 part 2"; caveat there: it also read SESSION.md, but the bench state came from default L1). V7R-001 (4736a4a) was the void first attempt. |
+| Retirement | No v7 lines in the memory index, except a line the user kept as accepted at W2; banners on the §2.4 items; PROJECT.md pointer present. | [x] MEMORY.md has 3 lines, no v7 entries (W2 kept none); banners 07b7d59, scope-guide banner 08fdecc; PROJECT.md pointer 89f2195 (SESSION "Worker #5"). `check_state.py` OK, 0 warnings. |
 
 ## Technical Notes
 
@@ -120,15 +121,27 @@ Bench instructions for the user always use the `test-workflow-audit.md` §4.8 bl
 - Bench items (Phase 6): connect the scope to the LAN (fixed IP or DHCP reservation, recorded); test `*IDN?`; each Phase 5 query live; save PNG + CSV + setup to USB and pull the same capture over the LAN; compare them (pixel diff for PNG, sample-for-sample within quantisation for CSV); smoke-test the third-party tool.
 - No [verify] item feeds a procedure or tool until it is marked verified, with the source, in this file.
 
-**Capture tooling (Phase 7).** `tools/lab/capture.py --test V7R-NNN --arm A1 [--session lab/log/<file>.yaml]` (or a wrapper around the adopted tool):
-- pulls the PNG, CSV and setup file into `lab/captures/<ID>/` named per §4.4;
+**Capture tooling (Phase 7).** `tools/lab/capture.py --test V7R-NNN --arm A1 [--session lab/log/<file>.yaml]`, our own tool, with a vendored and credited copy of the MIT `ScpiClient` from `mattjax16/rigol-dho-mcp` @ `f9ac7191869845ae46ca714de69a877c388b2530` for the socket/TMC layer (W5):
+- pulls the PNG, the RAW memory CSV and the `:SYSTem:SETup?` binary blob (the setup file; `:SAVE:SETup` fails on 00.01.05) into `lab/captures/<ID>/` named per §4.4;
 - queries the channel and trigger settings;
 - appends a measurement entry with every required §4.6 field filled from the scope, leaving operator-only fields (`feature`, `raw_observation`) as explicit `TODO` blanks.
+
+As built (Phase 7):
+- Files are `<stem>.png`, `<stem>.csv` and `<stem>.setup.bin`. The blob is not the `.stp` XML format, so it is not given the `.stp` extension.
+- The CSV is `Time(s),CH1V[,CH2V…]`, one row per RAW memory point. The values are the scope's ASCii text verbatim, so W6 compares them as text against the menu memory CSV. The time is xorg + i × xinc, taken from PREamble. Channels with different time axes are refused.
+- The tool sends `:STOP` first and leaves the scope stopped. It sets the clock and reads it back. It refuses firmware other than 00.01.05 unless `--any-firmware` is passed. It refuses memory deeper than 10 kpts unless `--chunked` is passed (10 kpt windows, marked unverified in the entry). It has a guard that refuses to send `:SAVE:SETup`, `:SAVE:MEMory` or `:SAVE:STATus?`. Nothing is written until every query has succeeded.
+- A connect failure is reported by capture.py itself (address, OS error, `--host`/`$DHO_HOST`, and the macOS Local Network hint); the vendored client's message and its stderr log line are suppressed without editing the vendored file.
+- After each binary block, the tool sends `*IDN?` to resync. The vendored client drops the block's trailing `\n` with a 0.5 s read. If that `\n` arrives late, it would otherwise shift every later reply by one.
+- Measurements default to `VTOP,VBASe,VAMP,VPP` (`--items`) on each displayed channel. ~9.9E37, or no reply, is recorded as `valid: false` with the raw reply, never as a number. Each entry also carries a `scope_settings` block (the S4 queries, raw), the preambles, the clock read-back and any `:SYSTem:ERRor?` entries.
+- A new session log is created with the scope-sourced `scope:` and `channels:` blocks filled. `dut.*`, `validation.*`, `signal`/`point`/`probe` are left as `TODO`.
+- `validate_log.py` reports a `TODO` as pending, not missing (exit 3). The pre-commit hook rejects errors and only warns on TODOs, so per-arm commits made mid-session are not blocked. A PNG with no `ai_read` entry is a warning.
+- `ingest_usb.py` takes `--at` (the Mac time of the save, also used for the date in the name) and optionally `--files` (REPORT field 3, index digit optional). It tries the stick clock offsets 0 and +60 min. When the match is ambiguous it stops and lists the candidates. It never writes to the stick. The inbox copy is kept, and the renamed copies go into `captures/<ID>/` together with an `INGEST.tsv` mapping.
+- Tests: `tools/lab/tests/run_tests.py` runs everything. The capture tests use a local fake SCPI server that replays the Phase 6 bench recordings, which are committed in `tools/lab/tests/scope_fixtures/`.
 
 The rest of Phase 7:
 - `tools/lab/ingest_usb.py` is the fallback: copy a stick into `lab/inbox/`, match by timestamp, rename into `captures/`.
 - `tools/lab/validate_log.py` checks the required §4.6 fields (branching on `kind`). The hook runs it on staged `lab/log/*.yaml`.
-- `tools/lab/backup_captures.sh` rsyncs `lab/captures/` and `lab/inbox/` to a Google Drive for desktop folder (path is one config value, set by the user).
+- `tools/lab/backup_captures.sh` rsyncs `lab/captures/` and `lab/inbox/` to an iCloud Drive folder, `~/Library/Mobile Documents/com~apple~CloudDocs/motion-play-lab/` by default (the path is one config value in the script). As built: `$LAB_BACKUP_DIR` overrides it; `--dry-run` lists what would be sent; additive only (no `--delete`, so files deleted locally stay in the backup); exit 1 with a message if the iCloud Drive root is missing. First real run (Phase 7): 59 files, 6.6 MB (captures 6, inbox 53), identical to the source by `diff -r`; a second run sent 0 files.
 - Card scaffolder (§5 item 3): include it only if Phase 7 has room; otherwise `ls lab/cards | tail -1` is enough.
 
 **Procedures (Phase 8).**
@@ -142,6 +155,281 @@ The rest of Phase 7:
 - The user then opens a second fresh ad-hoc debugger session, opened the same way, and asks for the bench state.
 - The Orchestrator verifies afterwards from git: the card's commits per arm, the recording commit touching STATE, the notebook entry, the evidence files.
 
+### Verified instrument facts
+
+Status values: **desk-verified** means it comes from a vendor document, cited below. **verified** means Phase 6 observed it on our DHO804 (fw 00.01.05). **corrected** means the bench contradicted the desk fact, and the corrected fact is given. **failed** means the command or path does not work on 00.01.05 (each failure is in Open Questions). **not tested** means Phase 6 did not exercise it, so it still rests on the desk evidence only and must not feed a tool or procedure until checked.
+
+Bench evidence is the W4 REPORTs and Orchestrator notes in SESSION.md, cited as "W4 S<n>": S1–S7b on 2026-10-19, S8–S8c on 2026-10-20; the W4b follow-up S10–S10b on 2026-10-20. Raw files: `lab/inbox/phase6/` (gitignored).
+
+**Sources** (downloaded 2026-10-19; local copies were in the Phase 5 scratchpad only, so re-download by URL):
+- **[PG]** Rigol *DHO800/DHO900 Programming Guide*, PGA39106-1110, written for software 00.01.03. `rigol.com/dam/global/downloads/brochures/en/program-guide/oscilloscopes/DHO800900_ProgrammingGuide_EN.pdf`, sha256 `e252bc1c…`. Page numbers are the printed numbers (PDF page = printed + 22).
+- **[UG]** Rigol *DHO800 User Guide*, UGA36105-1110, also for software 00.01.03. `…/en/user-manual/oscillosopes/DHO800_UserGuide_EN.pdf`, sha256 `dc2b1c28…`. Printed pages (PDF page = printed + 14).
+- **[DS]** Rigol *DHO800 Data Sheet* (PDF created 2024-10-16). `…/en/data-sheet/oscilloscopes/DHO800_DataSheet_EN.pdf`, sha256 `e55177dc…`.
+- **Firmware gap:** both [PG] and [UG] cover 00.01.03, but our scope runs 00.01.05 (W4 S1, S2). The "Bench" column below gives the Phase 6 status on 00.01.05. A row or part marked **not tested** still rests on 00.01.03 desk evidence only.
+
+**SCPI, by the needs in PLAN and §5 item 1.** Syntax desk-verified against [PG]; bench status on 00.01.05 in the last column.
+
+| Need | Exact syntax | Returns / notes | [PG] p. | Bench (00.01.05) |
+|---|---|---|---|---|
+| Identity | `*IDN?` | `RIGOL TECHNOLOGIES,<model>,<serial>,<software version>` | 126 | **Verified** (W4 S2, S2b): `RIGOL TECHNOLOGIES,DHO804,DHO8A282M00872,00.01.05` |
+| Screenshot | `:DISPlay:DATA? PNG` (also `BMP`, `JPG`; **default BMP**) | TMC block `#N<len><bytes>` | 112–113 | **Verified** (W4 S5): `#9000093789` + a 1024×600 RGBA PNG + trailing `\n`. Does **not** carry the image header overlay (see next row). BMP/JPG and the default: not tested |
+| Screenshot (alt) | `:SAVE:IMAGe:FORMat PNG` then `:SAVE:IMAGe:DATA?` | Same TMC block. `:SAVE:IMAGe:HEADer ON` adds the model and date to saved images | 235–237 | `:SAVE:IMAGe:FORMat PNG` **verified** (W4 S6). `:SAVE:IMAGe:DATA?`: not tested. `:SAVE:IMAGe:HEADer?` reads `1` (W4 S4); **corrected:** on the saved file the header is the model name "DHO804" drawn top-left; no date was visible (Phase 6 PNG comparison) |
+| Save image to stick | `:SAVE:IMAGe D:/<name>.png` | `C:/` is internal, `D:/` is USB. **Filename ≤ 16 chars.** `:SAVE:OVERlap ON` overwrites | 237–238, 241 | **Verified, corrected** (W4 S6, S7): saves, but the scope **appends an index digit**: `D:/p6img.png` → `p6img0.png`. The 16-char limit and `:SAVE:OVERlap`: not tested |
+| Waveform source/mode | `:WAVeform:SOURce CHANnel<n>`; `:WAVeform:MODE {NORMal\|MAXimum\|RAW}`; `:WAVeform:FORMat {WORD\|BYTE\|ASCii}` | NORMal = screen, 1–1000 points. RAW = memory and needs `:STOP` first | 404–406 | `CHANnel1` / `NORMal` / `ASCii` **verified** (W4 S5, 1000 points). `RAW` / `ASCii` **verified** on a stopped trace (W4b S10, 10 000 points). MAXimum, WORD, BYTE: not tested |
+| Waveform range | `:WAVeform:POINts <n>`, `:WAVeform:STARt <n>`, `:WAVeform:STOP <n>` | RAW: from 1 to the memory depth | 406–407, 411–413 | `:WAVeform:STARt 1` / `:WAVeform:STOP 10000` **verified** (W4b S10): RAW ASCii at 10 kpts reads in one go, no chunking needed. Larger depths and `:WAVeform:POINts`: not tested |
+| Waveform data | `:WAVeform:DATA?` | TMC block (BYTE/WORD), or comma-separated volts (ASCii). Volts = `(raw − YORigin − YREFerence) × YINCrement` | 403, 407–408 | ASCii **verified** (W4 S5): 1000 comma-separated volts, **no TMC header**. RAW ASCii (W4b S10): 10 000 values, 140 000 B, also no TMC header; PREamble `2,2,10000,1,4.000000E-7,-2.000000E-3,0.000000,1.3333E-04,0,32768`. BYTE/WORD and the volts formula: not tested |
+| Waveform scaling | `:WAVeform:PREamble?` (10 fields: format, type, points, count, xinc, xorg, xref, yinc, yorg, yref); also `:WAVeform:XINCrement?` / `XORigin?` / `XREFerence?` / `YINCrement?` / `YORigin?` / `YREFerence?` | | 408–414 | `PREamble?` **verified** (W4 S5): 10 fields, `2,0,1000,1,2.000000E-6,-1.000000E-3,0.000000,1.3333E-04,-22459,32768`. xinc/xorg reproduce the USB CSV time axis exactly (Phase 6 comparison). Single-field queries: not tested |
+| Save waveform to stick | `:SAVE:WAVeform D:/<name>.csv` (screen, `.bin`/`.csv`); `:SAVE:MEMory:WAVeform D:/<name>.csv` (memory, `.bin`/`.csv`/`.wfm`); `:SAVE:STATus?` → 1 when done | **There is no SCPI command that reads a file back.** A LAN CSV has to be built from `:WAVeform:DATA?` + `PREamble?`, unless the SMB share route is used (below) | 239–241 | `:SAVE:WAVeform` **verified, corrected** (W4 S6, S7): writes `p6wav0.csv` (index digit appended), header `Time(s),CH1V`, 1000 rows for the screen. **Corrected:** `:SAVE:STATus?` returns `1` even when nothing was written (W4 S7b), so it is not proof of a save. `:SAVE:MEMory:WAVeform D:/p6mem.csv` **failed** (W4b S10): `:SAVE:STATus?` = 1 and `0,"No error"`, but no `p6mem*` file on the stick, the same silent failure as `:SAVE:SETup`. A memory CSV can only be saved from the menu (scope/probe facts, CSV save path) |
+| Setup save / load (file) | `:SAVE:SETup D:/<name>.stp`; `:LOAD:SETup D:/<name>.stp` | Extension `.stp` | 238–239, 246 | `:SAVE:SETup` **failed** (W4 S7, S7b): twice it returned `:SAVE:STATus?` = 1 and `0,"No error"`, but no file appeared. Unusable on 00.01.05 (Open Questions). `:LOAD:SETup`: not tested |
+| Setup over LAN | `:SYSTem:SETup?` (read); `:SYSTem:SETup <block>` (write) | TMC block whose payload "is expressed in ASCII". Whether it is byte-identical to the `.stp` file **needs bench** | 270–271 | Read **verified, corrected** (W4 S5; decoded in the Phase 6 comparison): a 2 867 B TMC payload that is **binary, not ASCII**. It is a 20 B header, then 29 records, each a short binary header plus a zlib stream (6 745 B decoded): packed little-endian integers and length-prefixed strings, with no field names. It is **not the `.stp` format** (that is XML). 214 of the 215 distinctive integer values in `p6menu0.stp` also occur in it. Write: not tested |
+| Setup registers | `*SAV <0..49>`; `*RCL` | | 129–130 | Not tested |
+| Probe ratio | `:CHANnel<n>:PROBe?` | One of 0.001 … 50000, e.g. `10` | 76–77 | **Verified** (W4 S4: CH1 `10`; S8: CH2 `1`). Setting it (`:CHANnel<n>:PROBe 10`): not tested |
+| BW limit | `:CHANnel<n>:BWLimit?` | `20M` or `OFF`. 20 MHz is the only limit | 71 | **Verified** (W4 S4): `OFF` |
+| V/div | `:CHANnel<n>:SCALe?` | Scientific notation, V/div | 75–76 | **Verified** (W4 S4 `1.000000E+00`; S8c CH2 `5.000000E-02`) |
+| Offset | `:CHANnel<n>:OFFSet?` | Scientific notation, V | 74 | **Verified** (W4 S4): `-2.994604E+00` |
+| Coupling / on / invert / units | `:CHANnel<n>:COUPling?` (AC/DC/GND), `:CHANnel<n>:DISPlay?`, `:CHANnel<n>:INVert?`, `:CHANnel<n>:UNITs?` | Input impedance has no SCPI setting (fixed 1 MΩ) | 72–73, 78 | **Verified** (W4 S4): `DC`, `1`, `0`, `VOLT` |
+| Timebase | `:TIMebase[:MAIN]:SCALe?`; `:TIMebase[:MAIN][:OFFSet]?`; `:TIMebase:MODE?` | s/div; s; `MAIN` or `ROLL` | 291–293 | **Verified** (W4 S4, long forms `:TIMebase:MAIN:SCALe?` / `:TIMebase:MAIN:OFFSet?`): `2.000000E-4`, `0.000000`, `MAIN`. Short forms: not tested. **V7R-002 S1:** `:TIMebase:MAIN:SCALe 2e-5` and `1e-5` set and read back `2.000000E-5` / `1.000000E-5`: **verified**. With 10 kpts the record is −80…+80 µs at 16 ns per sample at 10 µs/div, and −160…+160 µs at 32 ns at 20 µs/div (V7R-002 CSVs) |
+| Acquisition | `:ACQuire:SRATe?`; `:ACQuire:MDEPth?`; `:ACQuire:TYPE?` | | 20–22 | **Verified** (W4 S4): `2.500000E+6`, `1.0000E+04`, `NORM` |
+| Trigger (common) | `:TRIGger:MODE?` (EDGE, IIC, …); `:TRIGger:SWEep?` (AUTO/NORM/SING); `:TRIGger:STATus?` (TD/WAIT/RUN/AUTO/STOP); `:TRIGger:COUPling?` | | 300–302 | MODE/SWEep/STATus **verified** (W4 S4): `EDGE`, `AUTO`, `TD`. COUPling: not tested |
+| Trigger (edge) | `:TRIGger:EDGE:SOURce?`, `:TRIGger:EDGE:SLOPe?`, `:TRIGger:EDGE:LEVel?` | | 305–306 | **Verified** (W4 S4): `CHAN1`, `POS`, `1.617302E0`. S8c set CH2 as the source, but the report does not say whether by menu or SCPI, so the SCPI set is not tested |
+| Trigger (I²C) | `:TRIGger:IIC:SCL?`, `:TRIGger:IIC:SDA?`, `:TRIGger:IIC:CLEVel?`, `:TRIGger:IIC:DLEVel?`, `:TRIGger:IIC:WHEN?` (`STAR`/`REST`/`STOP`/**`NACK`**/`ADDR`/`DATA`/`ADAT`), `:TRIGger:IIC:AWIDth?`, `:TRIGger:IIC:ADDRess?`, `:TRIGger:IIC:DIRection?` | The audit's "MissedAck" is `NACK` in SCPI | 365–370 | WHEN?/CLEVel? **verified** (W4 S4): `STAR`, `1.617302E0`. **V7R-002 S1 (2026-10-21):** `:TRIGger:MODE IIC`, `:TRIGger:IIC:WHEN STAR`, `:TRIGger:SWEep NORM` / `SING` set and read back `IIC`, `STAR`, `NORM` / `SING`. `:TRIGger:IIC:WHEN ADDR`, `:TRIGger:IIC:AWIDth 7`, `:TRIGger:IIC:ADDRess 107`, `:TRIGger:IIC:DIRection WRITe` set and read back `ADDR`, `7`, `107`, `WRIT`, and the SINGLE trigger then caught the 0x6B write frame: **verified** (set, read-back and behaviour). `:TRIGger:IIC:SCL` / `SDA` sets were sent but not read back. `NACK`: not tested |
+| I²C decode | `:BUS<n>:MODE?`, `:BUS<n>:IIC:SCLK:SOURce?`, `:BUS<n>:IIC:SDA:SOURce?`, `:BUS<n>:IIC:ADDRess?` (NORM/RW), `:BUS<n>:THReshold? SDA` / `? SCL` (the decode threshold, ~1.65 V per §4.1) | | 25, 31, 46–48 | `:BUS1:MODE?` **verified** (W4 S4): `PAR`. `:BUS1:THReshold? SDA` answers (`0.000000`, with the bus in PAR mode, so not a decode threshold yet). **V7R-002 S1:** after `:BUS1:MODE IIC` and the two source sets, `:BUS1:MODE?` → `IIC`, `:BUS1:IIC:SCLK:SOURce?` → `CHAN2`, `:BUS1:IIC:SDA:SOURce?` → `CHAN1`: **verified**. `:BUS1:MODE IIC` sets the bus type but **not Bus status**: the Decode menu still showed Bus status Off, and both thresholds read `0.000000` (menu 0.00 V). Set by hand (lower-left function navigation icon → Decode → Decode 1: Bus status On, SCL Thre and SDA Thre 1.65 V, R/W With), after which `:BUS1:THReshold? SDA` / `SCL` read `1.650000E0`: threshold **query verified**. SCPI sets for Bus status, the thresholds and R/W: **not tested**. R/W Without labels the 7-bit address (one frame read "write 74"); R/W With labels the 8-bit byte (`Write:d6`). The decode band shows byte labels only when the frame's START is inside the record |
+| Measurement (one value) | `:MEASure:ITEM? <item>,CHANnel<n>`, with items such as `VBASe`, `VTOP`, `VAMP`, `VPP`, `VMIN`, `RTIMe`, `FTIMe` | Scientific notation. About `9.9e37` means invalid (third-party note, needs bench) | 192, 195–196 | **Verified** (W4 S4: VAMP/VTOP/VBASe on CH1 match the panel; S8c: VAMP/VPP on CH2). `9.9E37` = invalid **verified** (W4 S8b): CH2 returned `9.9000E+37` until CH2 was turned on, made the trigger source and AUTO was pressed (S8c). Which of the three was needed was not isolated. FTIMe/VMIN: not tested. **V7R-002 S1:** VTOP and VBASe return 9.9E37 on a **flat trace** (a parked channel in V3, the idle bus in V7) on a channel that is on, on the panel and running; VPP stays valid on the same traces. `RTIMe` returns a value (CH1 285.71 ns, CH2 114.29 ns, thresholds 70/30, Cnt 1) that disagrees with the CSV 30→70 % rise (≈ 98 / 92 ns): see "After V7R-002 S1" §4 |
+| Measurement statistics | `:MEASure:STATistic:ITEM? {MAXimum\|MINimum\|CURRent\|AVERages\|DEViation\|CNT},<item>[,<src>]` | | 199–201 | Not tested |
+| Measurement thresholds | `:MEASure:SETup:MAX\|MID\|MIN <pct>` with `:MEASure:THReshold:SOURce`, `:MEASure:THReshold:TYPE {PERCent\|ABSolute}` | §4.3's 30 %→70 % rise time needs `MIN 30`, `MAX 70`. The defaults are not stated in [PG] (**needs bench**) | 201–203, 206–207 | Queries **verified** (W4 S4): `PERC`; MAX/MID/MIN = **90/50/10 %** (defaults now known). **V7R-002 S1:** `:MEASure:SETup:MAX 70` / `MIN 30` set and read back `7.000000E+01` / `3.000000E+01`: **verified** |
+| All-measure panel | `:MEASure:AMSource?` | CHAN1–4 or OFF | 197 | **Verified** (W4 S4): `OFF` |
+| **Active measurement list** | **No such query in [PG].** | The capture tool must query a named item list (taken from the card or a default set). Parsing `:SYSTem:SETup?` might recover the panel's items (**needs bench**) | — | Not settled. The `:SYSTem:SETup?` blob has no field names (see above), so recovering the panel's items from it is not practical. The capture tool queries a named item list |
+| LAN | `:LAN:IPADdress?`, `:LAN:DHCP?`, `:LAN:STATus?`, `:LAN:MAC?`, `:LAN:VISA?`; menu `Utility > IO` | Transport is not stated in [PG]. Raw socket port **5555** is from the third-party README (**needs bench**) | 6–7, 139–148 | **Verified** (W4 S1, S2, S2b, S4): menu `Utility > IO`; fixed IP `192.168.50.2/24` on a direct link to the Mac (`en7`, `192.168.50.1`); MAC `00:19:AF:A5:19:A7`. **Raw socket port 5555 answers**; VXI-11 portmapper (111) is open and the web "SCPI Panel Control" works (`TCPIP::192.168.50.2::INSTR`). `:LAN:IPADdress?`/`:LAN:VISA?` answer. **Corrected:** macOS `nc` drops the reply when stdin ends; a client must hold the socket open and read until the reply is complete, not until EOF (W4 S2, S2b). No socket-port setting on the IO page. DHCP?/STATus?/MAC? queries: not tested |
+| LAN file drop (alternative) | `:SAVe:SMB:SERVerpath \\<ip>\<share>`, `:SAVe:SMB:USERname`, `:SAVe:SMB:PASSword`, `:SAVe:SMB:CONNect`, `:SAVe:SMB:CONState?`; the share appears as drive `I:` ([UG] p.212) | The scope can write native PNG/CSV/STP files straight into a Mac SMB share. An option for Phase 7 (**needs bench**) | 242–245 | Not tested. Still an untested alternative for Phase 7 |
+| Scope clock | `:SYSTem:DATE?`, `:SYSTem:TIME?`; set with `:SYSTem:DATE <Y>,<M>,<D>`, `:SYSTem:TIME <H>,<M>,<S>` | Not desk-checked in [PG] (added at the bench) | — | **Verified** (W4 S4, S4b): it read `2013-01-18 09:52:08` (≈ 13.75 years slow); after the sets it read `2026-10-19` / `23:19:26`, matching the Mac. One of the three set commands raised `-109,"Missing parameter"` (likely the dashed date form; not isolated), so use the comma form and read it back. Persistence across a power cycle: not tested. There is no front-panel date/time setting (W4 S1) |
+| Version / error queue | `:SYSTem:VERSion?`, `:SYSTem:ERRor?` | | — | **Verified** (W4 S4): `3.0` (not the firmware version), `0,"No error"` |
+
+**Scope and probe facts**
+
+| Fact | Value | Source | Status |
+|---|---|---|---|
+| DHO804 Cal output | **1 kHz, 3 Vpp square wave**. No amplitude tolerance is given | [DS] p.17 "Probe Compensation Output"; terminal described in [UG] p.23 | Nominal: desk-verified. **Verified** (W4 S3, S4; Rigol stock probe at 10×, ratio 10): Vamp 3.0037 V, Vtop 2.9774 V, Vbase −26.3 mV, so a ≈ 0 → 3 V square wave, and **V4 reads Vamp**. The Vbase panel value alternated between −26.266 mV and 43.333 mV (observed, not interpreted). V4's ±3 % is our own tolerance, not Rigol's |
+| Setup-file extension | **`.stp`**, the only type offered on load | [UG] p.214 (Save Setup), p.219 (Load Setup: "default file type is *.stp, and no other options"), p.244 (defaults); [PG] p.238, 246 | **Verified** (W4 S7b): the menu save wrote `p6menu0.stp` (43 839 B), an **XML** file (`<?xml …?>`, a `<meta>` root with model, firmware `00.01.05.00.01` and serial, then 43 `<ServiceIDnn>` blocks of integer fields). Saving it over SCPI fails (SCPI table). Loading: not tested |
+| CSV save path (menu) | **Storage → Save tab → Choose "Save Wave" → Data Source `Screen` or `Memory` → Format `*.csv`** (Screen offers .bin/.csv; Memory offers .bin/.csv/.wfm) → File Path (`D:` once a stick is detected) → Save. Storage is opened from the lower-left function navigation icon or the toolbar Storage button. The audit's "Waveform/Trace" label does not appear in [UG]: **corrected** | [UG] pp.210–213 (§20.1, §20.2.2) | **Verified** (W4 S6, S7) with Data Source `Screen`: wrote `p6menu0.csv`, byte-identical to the SCPI `p6wav0.csv` of the same frozen trace. The "Choose" control lists "Save wave", "Save image" and "Save setup" (W4 S7). The setup save is **Storage → Save → Choose "Save setup" → File Name → Save** (W4 S7b). Data Source `Memory` **verified** (W4b S10b): **Storage → Save → Choose "Save wave" → DATA SOURCE = MEMORY → FORMAT = \*.csv → File Name → Save** (the menu labels read exactly `DATA SOURCE` and `FORMAT`). It wrote `p6mem0.csv` (160 045 B, 10 001 lines). **The memory CSV has its own layout:** header `CH1V,t0 =-2.000000e-03, tInc = 4.000000e-07,`, then one value per line followed by `,,`, with no time column. The screen CSV is `Time(s),CH1V` |
+| Default save location | "Local Disk" (C:). Switches to `D:` automatically when a USB device is detected, or `I:` when an SMB share is connected | [UG] p.212 | Partly verified (W4 S6, S7): `D:` is the USB stick, for SCPI and menu saves. The automatic switch to `D:` was not separately observed. `I:` (SMB): not tested |
+| Scope-side filename limit | ≤ 16 characters when the name is given over SCPI. §4.4 names (≥ 25 chars) can only be applied at ingest, which matches §4.4 ("renaming happens at ingest") | [PG] pp.238–242 | Desk-verified; the limit itself was not tested. **Corrected** (W4 S6, S7): the scope **appends an index digit to every saved name**, SCPI and menu saves alike (`p6img.png` → `p6img0.png`; a second menu save of `p6menu` → `p6menu1.csv`). Ingest has to expect the digit |
+| Saved-file timestamps | — | Observed in Phase 6 | Observed (Phase 6 comparison, listing `/Volumes/HANTEK`): after the S4b clock set, stick files are dated 2026-10-20 00:27–00:45, while the Mac saved and copied them at about 23:22–23:46 on 2026-10-19. The stick times read **about 1 h ahead of Mac local time** (cause not established). Files from before the set are dated 2013-01-18. **Not reproduced in W6 S5:** the stick times matched the Mac at offset +0 |
+| SQ500 bandwidth | DC to 500 MHz (−3 dB) | Sensepeek *User's Guide SQ200/SQ350/SQ500* Rev 1.1, p.16 (`welectron.com/mediafiles/manuals/sensepeek/Sensepeek_SQ200-SQ350-SQ500_Manual.pdf`, sha256 `d35edf84…`) | Desk-verified. The system bandwidth is set by the DHO804's 70 MHz (§4.1). No bench check possible |
+| SQ500 attenuation | **10:1, fixed** (no 1×/10× switch). Tip resistance 10 MΩ ±2 % at DC; scope input 1 MΩ; has a "scope x10 pin" | same, p.16 | **Verified 10:1** (W4 S8c): with CH2's ratio at 1×, the 3 Vpp Cal signal read VAMP 0.298 V and VPP 0.307 V. **The DHO804 does not detect it** (W4 S8, S8c): CH2 read `1` with the SQ500 attached. Every procedure sets `:CHANnel<n>:PROBe 10` (or the menu ratio to 10×) and reads it back. V2 records "fixed 10:1" |
+| SQ500 tip capacitance | **9 pF**. Compensation range 9–54 pF (the DHO804's 15 pF input is inside it) | same, p.16 | Desk-verified |
+| SQ10 bandwidth | **> 10 MHz** ("not impedance matched … suitable below 10 MHz"); rise time 34 ns (calculated) | Sensepeek *User's Guide SQ10* Rev 1.1, p.8 (`evision-webshop.de/media/43/df/0a/1710364194/UG SQ10 Rev1.1.pdf`, sha256 `3d297273…`) | Desk-verified |
+| SQ10 attenuation | **1:1** (passive; needle resistance < 0.02 Ω) | same, pp.1, 8 | Desk-verified. **Not for edge or V_OL work** (§4.1 rule stands): 1× puts the scope's 15 pF plus the unmatched cable's capacitance on the node, which slows the very edge being measured. Its 34 ns rise time is not the limit |
+| SQ10 tip capacitance | **Not specified** by Sensepeek | same, p.8 (absent) | Not tested in Phase 6: treat as unknown. Expect the scope's 15 pF plus the cable |
+| Ground springs | On hand for the Rigol stock probe and the SQ500 | Bench | **Verified** (W4 S8, S8b): springs are in the stock-probe bags and the user has one that fits each probe type (the SQ500's has the same spring-needle head). The TASKS purchase note is closed. Landing one on a 0603 pad (C21.2): not tested, see PCB probe points |
+
+**LAN-vs-USB comparison (Phase 6; acceptance "LAN capture").** A stdlib scratch script (session scratchpad, not kept) compared the S5 LAN files with the S6/S7 USB files.
+- **Same capture?** Yes, for the PNG and CSV pairs. The scope was STOPPED from the start of S5 until RUN at the start of S7 (W4 S5–S7), and both PNGs show STOP. The two screenshots match pixel for pixel over the whole graticule, trace and Result panel (0 differing pixels in that area). `p6wav0.csv` (SCPI), `p6menu0.csv` and `p6menu1.csv` (menu, about 1–2 min later by the stick times) are byte-identical. The W4 note "may not come from the same acquisition" is therefore resolved: it is one acquisition. The CSV difference comes from the readout path (below), not from a new trigger.
+- **PNG: match.** Both are 1024×600 RGBA PNGs with the same chunk layout. The bytes differ (93 789 B vs 97 347 B), so compare decoded pixels, not files. 1 946 of 614 400 pixels (0.32 %) differ, all outside the waveform area: the "DHO804" header overlay that only the saved file has (`:SAVE:IMAGe:HEADer` = 1), the USB-stick icon (the stick went in after the LAN pull), and 63 pixels of ±2-level colour noise on the STOP badge.
+- **CSV: does not match sample for sample.** The LAN `:WAVeform:DATA?` (NORMal, ASCii) and the USB screen CSV agree on format and scaling: 1 000 points each, the same time axis (PREamble xorg −1 ms, xinc 2 µs reproduce the CSV `Time(s)` column exactly), the same voltage steps, the same 1.5 V crossings at indices 1/251/501/751, and mean high/low levels within 1.4 mV (2.981/−0.022 V vs 2.982/−0.022 V). But only 145 of the 1 000 values are equal. Away from the edges they differ by up to 64 mV, which is about the noise on the flat top (std 18–25 mV). Within ±2 samples of each edge they differ by up to 0.82 V: the LAN set starts each transition one sample earlier. This fits the two paths taking different 1-in-5 samples from the 10 kpt memory (screen point 2 µs, sample 400 ns), but that is a hypothesis, not checked.
+- **Setup:** not comparable byte for byte (binary blob vs XML; see the SCPI table). Where both expose a value it agrees: CH1 scale, CH1 offset, CH1/CH2 probe codes, the CH1 trigger level, the 200 µs timebase and the IP/gateway, plus 214 of 215 distinctive integer fields. The `.stp` was saved in S7b, after RUN, with no settings changed in between by the reports. This is "consistent where comparable", not "identical".
+- **Screen data (S5 vs S6/S7): no sample-for-sample match.** The screenshot half passes. The screen CSV pulled over the LAN does not match the USB screen CSV of the same capture sample for sample (above).
+- **Memory data (W4b S10 vs S10b): match.** One frozen acquisition (S10b `:TRIGger:STATus?` = STOP): the LAN `:WAVeform:MODE RAW` ASCii pull (`lan_raw_ascii.txt`) against the menu memory CSV (`usb/p6mem0.csv`). A stdlib scratch script (session scratchpad, not kept) found:
+  - 10 000 vs 10 000 values; **10 000 / 10 000 equal**, as numbers and as text; max abs difference **0**; alignment offset **0** (every shift of ±1…5 samples matches only 397–645 values).
+  - The memory CSV header's `t0 = -2.000000e-03` and `tInc = 4.000000e-07` equal the RAW preamble's xorg and xinc exactly.
+- **Are the 1 000-point screen sets subsets of the 10 k memory?** Not shown, and not provable: S5–S7 is a different acquisition from S10. Structurally they fit a 1-in-5 decimation of the middle of memory. The screen window (xorg −1 ms, xinc 2 µs) is RAW indices 2 500–7 499 at stride 5. That window has its 1.5 V crossings at screen indices 1/251/501/751, the same as both screen sets. All three sets have the same ≈ 2.53–2.67 mV value steps. But **no** screen value occurs in the RAW value set: the value grids are offset from each other (cause not checked), so even a value-level subset test can't be made across the two acquisitions. Which memory samples each screen path takes is still a hypothesis.
+- **Acceptance "LAN capture": met on memory data.** The PNG matches (S5 vs S6), and the RAW memory pulled over the LAN matches the menu memory CSV of the same capture sample for sample. The screen-data readouts don't match each other, so the capture tool does not use them. The capture tool writes RAW memory data, and W6 compares its CSV against a menu memory CSV (DATA SOURCE = MEMORY) of the same frozen capture.
+
+**Capture-tool comparison (W6, Phase 7; acceptance "Capture tool").** One frozen acquisition: the tool run in W6 S2a sent `:STOP`, and the trace stayed STOPPED through the SCPI PNG save (S3) and the menu memory CSV save (S4). Files are in `lab/captures/V7R-999/` (gitignored, backed up): tool `2026-10-20_V7R-999_A1_01.{png,csv,setup.bin}`, USB `…_A1usb_01.{png,csv}` (from `w6img0.png` and `w6mem0.csv`, ingested in S5). A stdlib + numpy scratch script (session scratchpad, not kept) found:
+- **CSV: match.** The tool CSV (`Time(s),CH1V`) and the menu memory CSV (`CH1V,t0 =…, tInc =…,` then `value,,`) have 10 000 rows each. **10 000 / 10 000 values are equal as text and as numbers**, max abs difference **0**, alignment offset **0** (shifts of ±1…5 samples match only 327–510 values). The memory CSV header's `t0 = -2.000000e-03` and `tInc = 4.000000e-07` equal the entry's PREamble xorg and xinc exactly. The tool's `Time(s)` column equals xorg + i × xinc to within 9e-19 s.
+- **PNG: match over the graticule.** Both are 1024×600 RGBA with the same chunk layout. **0 differing pixels in the graticule and trace area** (x 12–865, y 92–510) and in the bottom bar. 2 217 of 614 400 pixels (0.36 %) differ elsewhere: the "DHO804" header overlay that only the saved file has (1 187 px, by design); the same 63 px of ±2-level noise on the STOP badge as in Phase 6; ±1-level anti-aliasing on the Vamp(C1) and Vbase(C1) values in the Result panel (468 px; the digits read the same); and the Vpp(C2) panel item's focus border (499 px), drawn in the tool's PNG but not in the USB one (a UI focus change between S2a and S3, cause not checked). No USB-icon difference this time: the stick was in from S1.
+- **Validator:** `validate_log.py lab/inbox/w6/2026-10-20_s01.yaml` → `PENDING (TODOs)`, exit 3, **no ERROR lines** (W6 S6, re-run here with the same result). Every TODO is an operator field (`ai_session`, `dut.*`, `validation.*`, `channels.CH1.{probe,signal,point}`, `feature`, `raw_observation`); the one warning is the expected missing `ai_read` for an unreviewed PNG. The scope-sourced fields are filled: scope model/serial/firmware/setup file, CH1 ratio 10x, BW OFF, 0.5 V/div, offset −1.492636 V, DC; trigger EDGE/AUTO/CHAN1/POS/1.492636 V; timebase 200 µs/div; RAW preamble; clock set and read back (Δ 0 s).
+- **Naming:** `2026-10-20_V7R-999_A1_01.{png,csv,setup.bin}` follows §4.4 (`.setup.bin` instead of `.stp`, per "As built").
+- **Acceptance "Capture tool": met.** One command (`capture.py --test V7R-999 --arm A1 --session …`) wrote the three files named per §4.4 and a log entry whose required scope fields are all filled from the scope; its CSV equals the menu memory CSV 10 000 / 10 000 and its PNG equals the USB PNG pixel for pixel over the graticule. The run needed one environment fix first (S2 → S2a: macOS Local Network permission for Cursor), not a tool change.
+- **Observation: VPP CH1 = 9.9E37 (`valid: false`) while VAMP/VTOP/VBASe CH1 were valid.** Clipping is ruled out: all 10 000 samples lie inside the screen window (−0.507 … 3.493 V at 0.5 V/div, offset −1.4926 V, 8 divisions); min −40.9 mV, max 3.034 V (pk-pk 3.075 V); ADC codes 9 766 … 55 890 of 0 … 65 535; the extreme values occur once each. The screenshots show the Result panel holding Vamp, Vtop and Vbase on C1, plus Vamp(C2) and Vpp(C2) left from W4 S8c, but **no Vpp(C1)**. So the three valid items were already on the panel while the scope ran, and VPP CH1 was not, and the tool queries after `:STOP`. Hypothesis (not tested): `:MEASure:ITEM?` for an item/source pair that is not already being measured returns 9.9E37 on a stopped trace, which fits W4 S8b/S8c (CH2 invalid until it was running/AUTO). The tool's invalid-handling is correct and was not changed.
+
+**Inputs for Phase 7 (capture tool), from the bench:**
+- Set the scope clock over SCPI at the start of every session (comma form, then read back with `:SYSTem:DATE?`/`:TIME?`). Persistence across a power cycle is unknown, so don't assume it held. Don't match files on scope timestamps without allowing for the ≈ 1 h offset seen on the stick (row above).
+- Raw socket on port 5555. Read each reply until it is complete (TMC length, or the terminating `\n` for ASCII). Don't rely on the socket reaching EOF.
+- The scope appends an index digit to every saved filename. Ingest matches on the stem plus digit, and renames to §4.4.
+- `:SAVE:SETup` and `:SAVE:MEMory:WAVeform` are unusable on 00.01.05 (both fail silently). `:SAVE:STATus?` = 1 does not prove a file was written. The tool saves the `:SYSTem:SETup?` binary blob over the LAN as the setup file (not human-readable), and the log entry records the readable settings from the S4 queries. There is no per-capture menu save (user, W4b).
+- The waveform the tool writes is RAW memory: `:STOP`, then `:WAVeform:SOURce CHANnel<n>`, `:WAVeform:MODE RAW`, `:WAVeform:FORMat ASCii`, `:WAVeform:STARt 1`, `:WAVeform:STOP <mdepth>`, `:WAVeform:DATA?` and `:WAVeform:PREamble?`. That matches the menu memory CSV sample for sample (LAN-vs-USB comparison, above). The NORMal screen readout is not canonical. A single read is verified only at 10 kpts; deeper memory may need chunking.
+- The SMB drop (`:SAVe:SMB:*`, drive `I:`) is still an untested alternative.
+
+**Inputs for Phase 8 (procedures), from the bench:**
+- The SQ500 is 10:1 and the scope doesn't detect it. Set `:CHANnel<n>:PROBe 10` (or the menu ratio) and read it back before measuring.
+- Turn the channel on and make it the trigger source before `:MEASure:ITEM?`. Otherwise the result can be `9.9E37` (invalid).
+- Measure thresholds default to 90/50/10 %. The 30→70 % rise time needs `:MEASure:SETup:MAX 70` and `:MEASure:SETup:MIN 30`, set and read back.
+- V4 reads Vamp on the Cal output (≈ 0 → 3 V).
+- Ground springs fit both probes.
+- The user needs menu steps spelled out button by button. The S6 wording ("Choose 'Save Setup'") was not followable, and the S3 step only worked as a full walk-through.
+- Terminal commands run in Cursor's integrated terminal (W6).
+- One-time Mac setup: **System Settings → Privacy & Security → Local Network → allow the terminal app** (Cursor). Without it the pyenv Python gets `[Errno 65] No route to host` while `nc` (an exempt Apple binary) still connects, so `nc` working does not prove Python can connect. Confirmed in W6 S2 → S2a (toggling Cursor off and on fixed it). capture.py's connect error now prints this hint.
+- The stick clock matched the Mac at offset +0 in W6 S5 (`w6img0.png` dated exactly the S3 Mac time). Worker #7's "about 1 h ahead" was not reproduced, so procedures should not state an offset. `ingest_usb.py` still tries +0 and +60 min.
+- Before a capture, put every item the card measures on the Result panel while the scope is running, so `:MEASure:ITEM?` after `:STOP` has a value to return (VPP CH1 observation above; a hypothesis, untested).
+
+**ESP32-S3 V_OL (the check behind §2.1's "≈ 30–80 mV").**
+- **Source:** *ESP32-S3 Series Datasheet* v1.7 (Espressif, 2023), Table 4-4 "DC Characteristics (3.3 V, 25 °C)", p.57, and Table 2-1 note 6, p.12. **The datasheet is not in `docs/references/`.** It was read from the user's local copy `~/Downloads/esp32-s3_datasheet_en.pdf` (sha256 `049b83bb…`). See TASKS Deferred.
+- **What the datasheet says:**
+  - V_OL max = 0.1 × VDD = **0.33 V**, measured "using high-impedance load" (note 2). That makes it a no-load figure, not a bound at our ~2 mA sink.
+  - I_OL **typ 28 mA at V_OL = 0.495 V**, with VDD = 3.3 V and **PAD_DRIVER = 3 only**.
+  - Default drive strength is 20 mA (p.12). That is the setting `v6-ref` uses. **No V_OL or I_OL figure is given for it.**
+- **What follows:**
+  - At CAP_3 the typical R_on is ≈ 0.495 V / 28 mA ≈ **18 Ω**, so ≈ **35 mV** at 2 mA. This assumes the low-current linear region and is a typ value at 25 °C, not a guarantee.
+  - The audit's 15–40 Ω range is anchored only at the CAP_3 end. The 40 Ω end (default drive, so the upper ~80 mV) is our own extrapolation.
+- **Verdict: partly supported.** The order of magnitude (tens of mV) follows from a typical datasheet figure. The 30–80 mV band is not a datasheet spec.
+- **What the §4.3 procedure may claim:**
+  - Pass/fail stays **V_OL ≤ 0.4 V** (UM10204, 3 mA).
+  - "Expect tens of mV (≈ 35 mV at CAP_3, from the datasheet's typical I_OL; default drive not specified)" may appear only as a labelled **estimate [own]**. The "> 0.2 V = investigate the setup" line stays as our own heuristic.
+  - The procedure must not present 30–80 mV as a pass band.
+
+**Third-party DHO800 LAN/MCP project (input to W5).** The audit doesn't name the project, so Phase 5 checked the three GitHub candidates (data from `gh api`, 2026-10-19).
+
+| Project | Licence | Activity | Notes |
+|---|---|---|---|
+| **`mattjax16/rigol-dho-mcp`** @ `f9ac719` | MIT | Created 2026-07-09. 26 commits, the last on 2026-07-30 (pushed 2026-10-17). 2 stars, 1 open issue ("MCP v2 migration"). | Best fit. Python ≥ 3.10, `mcp<2.0` pinned. Raw socket on port 5555. Stdlib-only `scpi.py` (~215 lines) plus a FastMCP `server.py` with 14 tools and a `rigol-dho-cli`. No tests. Doesn't say which firmware it was tested on |
+| `csibug/rigol-dho824-mcp` | MIT | 1 commit (2026-03-29), inactive | Bundles Rigol's manuals converted to Markdown |
+| `MasterJubei/pydho800` | BSD-3 | 27 commits, the last on 2024-05-08, stale | Library only, no MCP. Predates firmware 00.01.05 |
+
+`mattjax16` against §5 item 1:
+- **Covered:**
+  - `*IDN?`.
+  - Per-channel probe ratio, BW, scale, offset, coupling (`get_status`).
+  - Timebase, sample rate and memory depth.
+  - Trigger mode/sweep/status, but configuration is edge-only.
+  - A single named measurement (`get_measurement`).
+  - Screen or RAW waveform, chunked.
+  - A PNG screenshot.
+- **Not covered:**
+  - The setup file (`:SYSTem:SETup?` and `:SAVE:SETup` are absent).
+  - I²C trigger and decode settings, which would need the opt-in raw `scpi_command`.
+  - A list of active measurements (no SCPI exists for it).
+  - **Writing files at all.** The screenshot comes back as an MCP image and the waveform as decimated JSON, both into the session context. Only the CLI writes a `capture_NNNNN.png`.
+  - Names per §4.4 and the §4.6 log entry.
+- **Effort:**
+  - Adopting the MCP server as it stands gives interactive control but none of the file/log contract. We would still write the capture tool, and the server needs a Python ≥ 3.10 venv (the repo's default `python3` is 3.7).
+  - Reusing its `scpi.py` (MIT, keep the notice) under our own `tools/lab/capture.py` saves about 100 lines of socket/TMC-block code. Everything else is ours either way: setup, I²C queries, CSV from PREamble, naming, YAML.
+
+**Recommendation (for the user at W5): build our own `capture.py`.** Either vendor `mattjax16`'s `ScpiClient` with its MIT notice, or write the equivalent. Don't adopt the MCP server as the capture path. Use the Phase 6 smoke test (port 5555, `*IDN?`, `:DISPlay:DATA? PNG` via `rigol-dho-cli`) to validate the transport on 00.01.05 whichever way W5 goes. Registering the MCP server for interactive debugger sessions is a separate, later choice, outside this initiative.
+
+**W5 decision (user, 2026-10-20): "build + borrow the socket client".** We build our own `tools/lab/capture.py` and vendor `mattjax16/rigol-dho-mcp`'s MIT `ScpiClient` (`scpi.py`) @ `f9ac7191869845ae46ca714de69a877c388b2530`, keeping its licence notice and crediting it. The S9 smoke test was never run, so the vendored client is first exercised on 00.01.05 in Phase 7.
+
+**PCB probe points (Phase 5 kiutils probe).**
+- **Method:** a read-only scratch script (kiutils 1.4.8 + shapely), run on `hardware/pcb-main/kicad/motion-play-main.kicad_pcb` **@`c2acffc`** (v7; HEAD is identical) and **@`fd632ef`** (v6). Both were extracted with `git show`.
+- **Distances** are copper pad edge to copper pad edge. Pads are modelled as rotated rectangles or circles, and roundrect corners are ignored, so the distances run slightly low.
+- **Vias are excluded:** both boards have `(tenting front back)`, and the nearest GND vias sit under U5's exposed pad.
+
+v7, the closest GND-net pad to U5 (BQ24195) pin 5 (`/I2C_SCL`) and pin 6 (`/I2C_SDA`), front side:
+
+| Pad | Value | Edge-to-edge | Centre-to-centre | Note |
+|---|---|---|---|---|
+| **C21.2** | 4.7 µF (0603-size pads, ~0.95 × 0.9 mm) | **2.64 mm** (to U5.5) | 3.67 mm | **Closest usable GND.** C21.1 next to it is `Protected_VBUS`, so the ground contact must not bridge the two |
+| R32.2 | 330 Ω (BQ_ILIM) | 3.44 mm (to U5.6) | 4.19 mm | |
+| C20.2 | 1 µF | 3.66 mm (to U5.5) | 4.70 mm | Its pad 1 is also `Protected_VBUS` |
+| TP4.1 | PGND test pad | 12.09 mm | 13.26 mm | Today's V6 ground (§4.2) |
+| U5.2 / U5.3 (own pins on the GND net), U5.25 (EP) | — | 1.20 / 0.70 / 0.24 mm | — | Not usable: 0.5 mm-pitch QFN pins beside the signal pins, and the EP is under the package |
+
+**v6 names** (from `fd632ef`):
+- **Master SDA/SCL test points:** **TPIO43** = `/I2C_SDA`, **TPIO44** = `/I2C_SCL`. These are the same names as v7. The master is U2 (T-Display-S3, pins 15/16).
+- **BQ24195:** **U5**, pin 5 = `/I2C_SCL` and pin 6 = `/I2C_SDA`, the same as v7. On v6 the package is rotated, but C21.2 is again 2.64 mm edge-to-edge (R32.2 3.44, C20.2 3.66).
+- **GND pads:** **TP4** (value `PGND`, net GND), 6.85 mm from U5 pins 5/6, and **TP_GND1** (net GND), about 36 mm from U5. Note: TP4 is 6.85 mm from U5 on v6 but 12.09 mm on v7, so "TP4 on both boards" would not be the same ground length. Correction to CL-26's wording: v6 *has* TP4; TP_GND1 was the second GND pad.
+- **Other v6 pads:** TP_3V1 (+3.3V) and TP_5V1 (+5V).
+- **Master-side GND, for the same-ground-length rule:**
+  - v6: the nearest GND to TPIO43/44 is U2.14, a T-Display header pin (through-hole), 8.26 mm away. TP_GND1 is about 38–41 mm centre-to-centre.
+  - v7: U3.40, an ESP32 module pad, is 1.19 mm away (not a practical clip point), and C9.1 (100 nF) is 3.05 mm away.
+- **Implication for §4.3:** C21.2 gives an identical 2.64 mm ground on both boards at the BQ end. That makes it the natural "same ground length" point for the U5 pin 5/6 arms, if the probe ground (spring or ≤ 10 mm wire) can land on a 0603 pad. Whether it can **needs bench** (not tested in Phase 6; the springs fit the probes, W4 S8b).
+
+### After V7R-001: setup-validation and reference changes
+
+Source: card V7R-001 (`lab/cards/V7R-001-v6-setup-validation.md`, recorded at `4736a4a`), its log `lab/log/2026-10-20_s01.yaml`, evidence `lab/evidence/V7R-001/`, and SESSION.md "W7". V1–V4 passed; V5 failed at S1; V6 was recorded; V7–V9 were not run.
+
+**1. V5 measures the noise the board and ground add, not the scope's own floor.**
+- **Finding.** At the reference settings (0.5 V/div, −1.65 V offset, BW OFF, 10 µs/div, 10 kpts, two channels on, so 16 ns per sample), the no-board control (tips and springs on the scope's Cal ground) read panel Vpp 21.9 / 21.9 mV. That is above the old ≤ 20 mV **[own]** limit, so V5 could not tell a good ground from a bad one. CSV sd, CH1 / CH2: control 4.97 / 4.77 mV; S1 board unpowered 4.99 / 4.71 mV; S1 board powered 5.17 / 4.72 mV (planner check of the three `val_V5_0n.csv` files).
+- **Vpp is the wrong statistic.** It is an extreme value, so it is unstable. For the same capture the panel Vpp (25.8 mV) and the CSV max − min (32.7 mV) also differ, cause not checked. V5 uses the sd of the CSV samples instead.
+- **V5's purpose** (`test-workflow-audit.md` §2.2, "Long ground lead"): catch loop pickup from the switching charger, which rides on every level as a noise band. Independent noise sources add in quadrature, so the noise the board and ground path add is **excess = √(max(0, sd_DUT² − sd_ctl²))**, per channel.
+- **New V5, per arm, at the card's channel settings, in the same session:**
+  - **V5a, control:** tips and springs on the scope's Cal ground terminal, off the board. Arm `val_V5ctl`.
+  - **V5b, DUT:** tip and ground on the arm's ground point (as before), board powered and running. Arm `val_V5`.
+  - `tools/lab/noise_floor.py --ctl <csv> --dut <csv>` prints per channel mean, sd, max − min and excess (mV), and a `validation.V5` snippet. It refuses when the sample interval or point count differ, and warns when the smallest level step differs (a sign of a different V/div).
+  - **Pass: excess ≤ 5 mV rms on each channel [own].** Rationale: a sinusoidal pickup of 5 mV rms is 14 mV peak to peak, below the 20 mV V_OL difference that the audit's example predictions resolve (`test-workflow-audit.md` §4.7). The limit comes from that 20 mV, not from the W7 data. For information only, the W7 S1 data give ≈ 1.4 / 0 mV.
+  - **Scope sanity [own]:** at the V7R-001 reference settings, a control sd outside 2.5–10 mV (half to double V7R-001's ≈ 5 mV) means stop and investigate the scope and probes. At other settings the control is recorded only.
+  - **Record:** `validation.V5: {ctl_sd_mV, dut_sd_mV, excess_rms_mV, offset_mV}`, each a per-channel map; optional `vpp_panel_mV`. `offset_mV` is the control mean (V7R-001: −10.4 / −14.1 mV).
+  - **Offset use:** `known-good-reference.md` step 9 (step 7 before Phase 14) records V_OL as measured and cites that channel's V5 offset beside it. It does not subtract it. The 0.4 V pass limit is far away, but the ≈ 35 mV estimate is the same order as the offset, so the record matters.
+- **Unchanged:** BW limit stays OFF in the reference settings; V5 still runs per arm, because the ground point differs between arms.
+- **User confirmation pending** (Open Questions): this changes a pass rule after a failure.
+
+**2. S1 ground on v6: the soldered wire is the v6 reference ground.**
+- Pad C on v6 (U2.14) is a through-hole header hole filled by the T-Display's soldered pin. No probe-mounted ≤ 10 mm wire was practical. The user soldered a ~10 mm solid-core wire (26–28 AWG) to C's top-side solder mound, and the springs touch it ~8–9 mm from C. GND net only, removable.
+- The v6 reference keeps that wire. Cards on v6 state it in `hardware_config` as a board mod. V6 records `{method: wire, point: U2.14, length_mm: <spring-to-pad distance>}`.
+- **What the same-ground rule means for v7 at S1 (pad C = C9.1) is a user decision** (Open Questions). Every option leaves the v6 re-run the same, so only the procedure wording waits on it.
+
+**3. Restart for the reference frame: unplug and replug the main-board USB-C.**
+- On `v6-ref` with no sensor PCB, `setup()` halts at "Sensor init failed!" (`firmware/src/main.cpp` @ `4da1c67`, l.463–464, `while (1)`). The RIGHT button is read only in `loop()` (l.1434–1440), so pressing RIGHT does nothing. `configureBQ24195()` runs earlier in `setup()` (l.123), so every power-up sends the 0x6B frames once. The bus is **not** quiet after them: sensor init still runs at 400 kHz (TCA9548A at 0x70, then a PCA scan of 0x71–0x77) before the halt, and the boot ROM's UART toggles SDA before any of it ("After V7R-002 S1" §1). The SINGLE trigger is made clean by triggering on the 0x6B write address, not by the bus going quiet.
+- The procedure restarts the board by unplugging and replugging the main-board USB-C (power), with the probes left in place. It runs without a sensor PCB, because with one fitted `loop()` runs and the bus carries TCA/VCNL traffic. The T-Display's own reset button is an untested alternative and is not written into the procedure.
+
+**4. v6 power and flash path (as used in W7).**
+- **Power:** a mains USB-C charger into the main-board USB-C. **Flash and serial:** a data-only cable from the Mac to the T-Display USB-C. The user reports it passes no power (W7, step F). The ESP32 port (`/dev/cu.usbmodem…`) enumerated only once the main board was powered.
+- "Unplug the board" in both procedures means: the main-board USB-C out and no battery. The data-only cable may stay in. Whether it is in is recorded in `validation.notes`, because it may still join the Mac's ground to the board (not checked for this cable).
+- Each re-run card re-flashes `v6-ref` at its start. The boot screen ("Sensor init failed") looks the same under any firmware without a sensor PCB, so it can't confirm which build is on the board.
+
+**5. Tool gaps.**
+- **"Not run":** `validate_log.py` accepts `not_run: "<reason>"` as the value of any `validation.V<n>` item, only when `validation.passed` is false. It is then neither a TODO nor an error. With `passed: true` it is an ERROR.
+- **Legacy V5:** a log that has only `V5_noise_floor_mVpp` (V7R-001) gets a WARNING, not an error, so committed logs stay valid unedited.
+- **Channel drift:** `capture.py` compares each capture's channels with the most recent earlier entry that has the same `--arm`, not with the session's first capture. With no earlier entry for that arm, there is no drift check. The validation skeleton writes the new V5 block.
+- **One log per arm:** a card that runs S1 and S2 uses one session log per arm (`_s01` for S1, `_s02` for S2). Each log gets its own `validation` block. V1–V4 are run once at the session start and recorded in the first log. The second log records a fresh V2 read-back and puts "V1, V3, V4: see `<first log>`" in `validation.notes`. The validator needs no change for this (it requires V2, V5, V6, V7 only).
+
+### After V7R-002 S1: trigger, decode, idle-high and rise-time changes
+
+Source: card V7R-002 (`lab/cards/V7R-002-v6-setup-validation-2.md`, open), its S1 log `lab/log/2026-10-21_s01.yaml`, the captures in `lab/captures/V7R-002/`, `RELAY-v6-dry-run-2-return.md` Q1–Q5, and `firmware/src/main.cpp` + `components/mux/MuxController.cpp` @ `4da1c67`. S1 passed V1–V9 with two deviations decided on the card: (a) V7 from the CSV mean, (b) V8/V9 on an address trigger. Nothing below changes a pass limit or a card prediction.
+
+**1. V8 and V9 trigger on the I²C address 0x6B (write), not on START.** (Q1)
+- **Finding.** A SINGLE trigger on START fired at power-up on SDA steps of ≈ 8.68 µs with SCL high (val_V8_01): no I²C frame. 8.68 µs is one bit at 115 200 baud; GPIO43 (SDA on v6 and v7) is the ESP32-S3's UART0 TX, which the boot ROM uses before the firmware re-assigns the pin to I²C. *Interpretation, consistent with the data, not proven.* With `WHEN ADDR`, `AWIDth 7`, `ADDRess 107`, `DIRection WRITe`, SINGLE, the replug caught `D6`+ACK every time (val_V8_02, _03, S1_01).
+- **Decision.** Both procedures use the address trigger, set by SCPI and read back (now verified, Verified instrument facts). START is dropped from V8 and V9. It applies to v7 too, since v7 has the same SDA pin. The trigger fires at the R/W bit, about 80 µs after START at 100 kHz.
+- After the 0x6B frames, the firmware runs sensor init at 400 kHz (`SensorManager::init` → `MuxController::begin`: TCA9548A at 0x70; `scanForPCA` probes 0x71–0x77) before it halts. The "write 74" label seen once with sweep NORM fits the 0x74 probe of that scan. *Interpretation.* Sweep NORM keeps showing the latest frame, so V8 and V9 use SINGLE only.
+
+**2. The reference frame runs at 100 kHz; the rise-time limit stays ≤ 300 ns.** (Q2)
+- **Finding.** SCL period 10.0 µs (S1_01). The code agrees: `configureBQ24195()` calls `Wire.begin(43, 44)` with no clock, so the Arduino default of 100 kHz applies. The 400 kHz in the `v6-ref` tag message is set later, in `SensorManager::init` (`components/sensor/SensorManager.cpp` l.636–637, `Wire.setClock(400000)`), before `mux.begin()` (l.651). The tag message stays as it is (tags are not rewritten); the procedures state the frame's clock.
+- **Limit.** The 30→70 % rise-time pass stays **≤ 300 ns** (UM10204 Fast mode). Rise time is set by the pull-ups and the bus capacitance, not by the clock rate. The bus runs at 400 kHz once the firmware is running, and the v7 comparison is at 400 kHz. So the Fast-mode limit is the one that matters, and it is the stricter one. The ≤ 1000 ns Standard-mode figure stays only for the Arduino secondary reference. V7R-002 keeps its registered ≤ 300 ns for both arms.
+- **Timebase.** V9 stays at **10 µs/div** (16 ns per sample, record −80…+80 µs). The START falls just before the record, but every rising edge, every master-driven 0-bit, the ACK and the idle level after the STOP are inside it. V9's decode is read from the CSV (SDA sampled at each SCL rising edge). The empty decode band at 10 µs/div is expected, not a fail.
+- **V8 runs at 20 µs/div**, so the START is in the record and the scope's decode band shows labels (`Write:d6`, `A:0`; val_V8_03). Then the timebase goes back to 10 µs/div, read back, before V9.
+
+**3. V7 idle high is the CSV mean.** (Q3)
+- VTOP and VBASe return 9.9E37 on a flat trace (Verified instrument facts). V7's metric becomes the **mean of all CSV samples per channel** on a record with no edges, from `tools/lab/i2c_frame.py` (§6). The panel item for V7 is **VPP** (valid on flat traces, a flatness cross-check), not VTOP. The 3.135–3.465 V limit is unchanged.
+
+**4. Rise time: the CSV is the metric; the panel is recorded only.** (Q5)
+- **Metric.** For every SDA and SCL rising edge in the record: the time from the 0.3 × V_DD crossing to the 0.7 × V_DD crossing, with **V_DD = 3.3 V nominal, so 0.99 V → 2.31 V** (UM10204 defines these as fractions of V_DD, not of the scope's Vbase–Vtop span), linear interpolation between samples. Reported per edge and as the maximum per channel. This is how S1 was computed.
+- **Panel RTIMe** (thresholds 70/30) is recorded beside it, with no pass role. At S1 it read 285.71 / 114.29 ns against CSV ≈ 98 / 92 ns, and before the replug it showed round 300.00 / 100.00 ns. *Interpretation, not tested:* the panel measures on screen-resolution data (≈ 100 ns per point at 10 µs/div), which can't resolve a ≈ 95 ns edge. The V3 observation (CH2 panel Vamp/Vtop/Vbase identical to CH1's to every digit, while the CSVs differ) fits coarse panel data too. Neither needs a procedure change: V4's ± 3 % band is far wider than the effect.
+
+**5. Decode setup is a menu step with SCPI read-back.** (Q4)
+- `:BUS1:MODE IIC` does not turn the decode on, and the thresholds came up at 0 V. The setup validation gets a **decode setup** step before V8, run in every scope session: the menu path, field by field (lower-left function navigation icon → Decode → Decode 1: Bus type I2C, Bus status On, Clock CH2, SDA CH1, Format Hex, SCL Thre 1.65 V, SDA Thre 1.65 V, R/W With), then the verified queries as the check (`:BUS1:MODE?`, both sources, both thresholds). No SCPI set for Bus status, thresholds or R/W is written into the procedure until one is verified on the bench.
+
+**6. Tool: `tools/lab/i2c_frame.py`.** Repeatable CSV numbers for V7 and V9, so each arm and each card is computed the same way, not by hand.
+- **Idle mode** (no channel crosses 1.65 V): per channel mean, sd, min, max, and a `validation.V7_idle_high_V` snippet.
+- **Frame mode:** SCL period; SDA at each SCL rising edge → address byte (hex) and the 9th bit (ACK when low); the rise time of §4 for every rising edge per channel; V_OL and idle high with the gates below; a `values` snippet with gates. `--expect D6` checks the byte. It reports the pass-table rows against the limits in `known-good-reference.md`, which stays the source.
+- **V_OL gate (the method).** For each master-driven 0-bit of the address byte (the ACK excluded): the mean of SDA over that bit's SCL-high interval, shrunk by 10 % of its length at each end, with n and sd in the gate. Reasons: SCL high is the I²C data-valid window, where the receiver samples SDA (UM10204: SDA is stable while SCL is high), so it is the low level the receiver sees; the SCL-low part of a bit holds the SDA set-up and hold around the transitions; and the 10 % shrink keeps the SCL edges out. The gate is fixed by the SCL edges, so every arm and card gets the same gate without a hand choice. At V7R-002 S1, SDA read about 20 mV higher in the SCL-low part of bit 5 (87.7 mV, n 113) than in the SCL-high part (64.6 mV). *Interpretation, not tested:* coupling from SCL, or ground movement. The gate leaves that part out by definition; it is not explained, and it does not change a verdict.
+- **Idle-high gate (the method).** The mean of each channel from **5 µs after the last edge** (its 0.5 V_DD crossing, on either channel) to the end of the record, with at least 5 µs of samples left, else not reported. Reasons: idle high is the settled level the pull-ups hold between frames, and the edge itself is covered by the rise-time row; 5 µs is UM10204's bus-free time t_BUF after a STOP in Standard mode (4.7 µs), rounded up, and the frame runs at 100 kHz (§2). At S1, the 4.5 µs after the STOP read 3240.8 mV with sd 73.9 mV on SDA, so it was still settling. Idle mode (V7) has no edges and no margin.
+- **Acceptance** (on `S1_01.csv`; revised after Worker #16):
+  - Byte, ACK, SCL period and every rise time agree with the S1 hand numbers within 3 ns. Met at Worker #16 (exact).
+  - Idle high agrees with the S1 hand numbers within 3 mV. The hand gate (+35…+80 µs) and the method gate (from +35.44 µs) differ by under 0.5 µs, so this is a fair check of the computation.
+  - V_OL is not compared with the hand numbers, because the hand gate (whole bit, SCL-low time included) is not the method. Instead, a one-off check script, not part of the tool, computes the mean over the tool's printed gate, and over the hand gates. The first must match the tool within 0.1 mV, and the second must reproduce 72.4 / 70.2 / 75.4 mV within 0.1 mV. The difference between the tool and the hand values (−6.9…−8.8 mV) is recorded as a gate difference, not a tool error.
+  - If any part is not met, the difference and both gates are reported, and the tool is not tuned to match.
+- **The S1 record.** The S1 log `lab/log/2026-10-21_s01.yaml` keeps its hand numbers. It is committed, and it is not edited. At the card close (Phase 16), the card's Measured values cite the S1 log for S1 as recorded. Beside them, a line gives the `i2c_frame.py` values for S1_01 at the method gates, with the tool commit, labelled "recomputed at the method gates (PLAN §6); differs from the hand values only by gate; verdicts unchanged". S2 cites the tool's values from the S2 log. Any S1-vs-S2 comparison on the card uses the tool's values for both arms, so the two are measured the same way.
+
+**7. Bench-handoff wording.** (return friction notes)
+- **"Screen".** Every instruction names the device: the **scope screen**, the **board display** (T-Display), or the **terminal**. The decode band is "the row labelled B1 / I2C at the left edge of the scope screen; byte labels such as `Write:d6` appear in that row".
+- **CHECK placement.** In a §4.8 block the CHECK is read after all of DO. A check that must happen before a later action (such as "Vtop is on the panel" before the capture) ends the block, and the action starts a new STEP. The procedures are split that way, and `lab/templates/instruction.md` states the rule.
+- **Paths in a relay.** Every file path in a relay's paste text is checked to exist before the relay is committed. W8's dispatch had `v6-oints.png` for `v6-probe-points.png`.
+
+**8. V7R-002 S2 and the procedure version.** S2 runs on the revised procedures. They write deviations (a) and (b) in as the method, so S2 is measured the same way as S1. The card notes the procedure commits S2 ran on. Its predictions, limits and outcome rows stay as registered. S2 is a new scope session, so V1–V4 run again and are recorded in the S2 log.
+
+### After V7R-002 S2: feedback placement
+
+Source: `RELAY-v6-dry-run-2-s2-return.md` (Open questions, Deviations), card V7R-002 S2 notes, SESSION.md "W8 part 2". V7R-002 is recorded and passes at both arms. None of the items below changes a limit, a band or a card, and acceptance does not depend on any of them. Items 1, 3 and 4 are one-sentence edits to files this initiative delivers, so they go in before the PR (Phase 16). Items 2 and 5 go to TASKS Deferred.
+
+1. **V5a control fixture.** An alligator clip on the Cal ground terminal is **allowed**, not required, for any tip or spring. When the control is flagged (sd outside 2.5–10 mV), the next step is to recapture V5a with the flagged channel on the clip. The flagged capture stays in the record. If the clip control is flagged as well, stop. No cause is written into the procedure. (S2: two hand-seated CH1 controls flagged, then the clip control read 5.25 mV against S1's 5.04 mV.)
+2. **Raw-commit weight.** The role draft already says to commit raw data "after every REPORT with data". S2 committed after every report. The fix belongs in the user's draft edit pass: a REPORT that only confirms (done, read-backs as expected) is appended with the next data commit. Deferred, because the draft is not edited in this initiative (BRIEF).
+3. **Instruction delivery.** Each instruction block goes in a message of its own, never under a results table or analysis. This goes into `lab/templates/instruction.md`, which the draft points to. It is also added to the draft-edit suggestions.
+4. **Capture output that looks wrong but isn't.** At the V8 capture CHECK in `dho804-setup-validation.md` and step 8 in `known-good-reference.md`, one sentence each:
+   - After a fired SINGLE, the logged `trigger.sweep` can read `NORM` (S1) or `AUTO` (S2). The check is the `STOP` status.
+   - A `scpi_errors` entry `after: connect` was queued by an earlier terminal command, not by the capture. Note it in REPORT and go on.
+5. **Tool polish (deferred).** `capture.py` could label `after: connect` errors in its NOTE line as "queued before this run". Separately, check what `:TRIGger:SWEep?` returns after SINGLE fires. Neither affects a verdict.
+
+**Acceptance.** Nothing above blocks the tick. Both Dry run rows cite V7R-002, with V7R-001 noted as the void first attempt. Both rows still need two things from the user (the "user fills" lines in the return relay, Phase 16 task 1): the image handoff was workable, and the fresh L0 session stated the bench state correctly without asking.
+
 ## Rejected Approaches
 - A separate context-scaffolding initiative: both topics build `lab/`, and one dry run validates both (decisioning §3.1).
 - A Claude Code hook for the STATE rule: it isn't versioned (`.claude/*` is gitignored) and only fires inside Claude; git `core.hooksPath` only (user, 2026-10-18).
@@ -152,14 +440,35 @@ The rest of Phase 7:
 - A separate counter file for V7R IDs: the `lab/cards/` directory is the counter (context-strategy §6.2).
 - Squash-merging initiative PRs: it would orphan the baseline tags.
 - Installing the debugger role inside this initiative: the draft needs more user review and must not block. Ad-hoc sessions run off the draft instead, and the install is tracked in TASKS.md Deferred (user, W1 outcome).
+- Adopting `mattjax16/rigol-dho-mcp` as the capture tool as-is: untested on 00.01.05 (the S9 smoke test was not run), writes no files, has no setup pull and no I²C configuration; we build `capture.py` and vendor only its MIT `ScpiClient` (user, W5).
+- Raising the V5 Vpp limit until the W7 reading passes: it would still measure the scope, not the ground, and it is a limit fitted to a failed reading (Planner, after V7R-001).
+- Turning the 20 MHz BW limit on for the reference settings to get V5 under 20 mV: the effect is not measured on our scope, and it is not needed once V5 measures the excess over a control (Planner, after V7R-001).
+- A gated mean as the V5 metric: V5 checks pickup on every level, and the V_OL gate already averages broadband noise (Planner, after V7R-001).
+- Pressing RIGHT to restart `v6-ref` for the reference frame: with no sensor PCB, `setup()` halts before `loop()` reads the button (V7R-001).
+- An I²C START trigger for V8/V9: the boot-ROM UART on GPIO43 (SDA) fires it before any I²C frame (V7R-002 S1).
+- Sweep NORM for V8/V9: it keeps showing the latest frame, and later frames (sensor init at 400 kHz) follow the 0x6B frames (V7R-002 S1).
+- Widening the reference rise-time limit to ≤ 1000 ns because the frame runs at 100 kHz: rise time doesn't depend on the clock, and the bus runs at 400 kHz in use (Planner, after V7R-002 S1).
+- V9 at 20 µs/div so the decode band shows labels: it halves the edge resolution (32 ns per sample) against ≈ 95 ns edges; V8 shows the decode on the scope instead (Planner, after V7R-002 S1).
+- Moving the trigger point with `:TIMebase:MAIN:OFFSet` to fit the START into the 10 µs/div record: the set is untested, and V9 doesn't need the START (Planner, after V7R-002 S1).
+- Panel RTIMe as the rise-time metric: it disagrees with the 16 ns memory data by up to ≈ 3× (Planner, after V7R-002 S1).
+- SCPI sets for decode Bus status, thresholds and R/W in the procedure: not verified on 00.01.05; the menu path is written in instead (Planner, after V7R-002 S1).
+- V_OL gated over the whole bit, SCL-low time included (the S1 hand gate): it mixes in the SDA set-up and hold time and a part that read about 20 mV higher at S1; the method is the SCL-high data-valid window (Planner, after Worker #16).
+- Idle high from the first sample past the last edge, with no settle margin: at S1 the 4.5 µs after the STOP was still settling (sd 74 mV); a 5 µs margin (t_BUF) is used (Planner, after Worker #16).
+- Tuning `i2c_frame.py` until it matches the S1 hand numbers: the hand gates were chosen by hand, and the method has to be one fixed rule for every arm (Planner, after Worker #16).
+- Requiring the alligator clip for every V5a control: S1 and V7R-001 passed with direct contact, so the clip is allowed and is the first response to a flagged control (Planner, after V7R-002 S2).
+- A separate desk phase for the W8 part 2 feedback: the in-scope items are one sentence each, so they go in as one Phase 16 task (Planner, after V7R-002 S2).
 
 ## Open Questions
 - ~~Phasing: role and containers before scope tooling?~~ Yes, with a milestone merge after Phase 4 (user, 2026-10-18).
-- ~~Cloud backup service~~ → Google Drive (user, 2026-10-18). Still open: the exact local Drive folder path (asked in Phase 7).
-- ~~Build vs adopt the capture tool~~ → evaluate first. The gate is W5, after Phase 6.
+- ~~Cloud backup service~~ → ~~Google Drive (user, 2026-10-18)~~ → iCloud Drive, folder `~/Library/Mobile Documents/com~apple~CloudDocs/motion-play-lab/` (one config value). Changed at W6 because the user uninstalled Google Drive for desktop (user, 2026-10-20: "A - icloud folder"; SESSION.md, W6 user decisions).
+- ~~Build vs adopt the capture tool~~ → build our own `capture.py`, vendoring the MIT `ScpiClient` from `mattjax16/rigol-dho-mcp` @ `f9ac719` (user, W5, 2026-10-20: "build + borrow the socket client").
 - ~~Old scope guide~~ → banner + pointer.
 - ~~Hook mechanism~~ → git only. ~~Caps~~ → soft except `as_of`. ~~Legacy artefacts~~ → banner in place. ~~Card filename~~ → `V7R-NNN-<slug>.md`.
 - ~~Does the debugger role's checkpoint section carry the `decisioning.md` §4.2 criteria table, or a pointer to it?~~ Moved out of this initiative with the role install (TASKS.md Deferred).
 - ~~Does `4da1c67` still build with today's PlatformIO and library versions?~~ Yes: env `lilygo-t-display-s3` builds clean, no fix needed (Phase 1, 2026-10-19).
-- Is the ESP32-S3 V_OL expectation (≈ 30–80 mV) supported by the datasheet? To be found in Phase 5.
+- ~~Is the ESP32-S3 V_OL expectation (≈ 30–80 mV) supported by the datasheet?~~ Partly. The CAP_3 typical figure gives ≈ 35 mV, and the band is not a spec. The pass limit stays ≤ 0.4 V and the expectation is a labelled estimate (Verified instrument facts; Phase 5, 2026-10-19).
 - ~~`Result commit` self-reference convention~~ → literal `self` for both `prereg_commit` and `Result commit`, resolved from git (Phase 3, 2026-10-19).
+- ~~**`:SAVE:SETup` fails silently on 00.01.05** (W4 S7, S7b): what does the capture tool save as the setup file?~~ → the `:SYSTem:SETup?` binary blob over the LAN, and the log entry records the readable settings from the S4 queries; no per-capture menu save (user, W4b, 2026-10-20: "Let's go with option a").
+- ~~**LAN CSV ≠ USB CSV for the same capture** (Phase 6 comparison; screen data, 145/1 000 equal)~~ → compare memory data instead. The LAN RAW pull matches the menu memory CSV 10 000/10 000 (W4b S10/S10b). The capture tool writes RAW memory data, and W6 compares against a menu memory CSV (Verified instrument facts, LAN-vs-USB comparison). `:SAVE:MEMory:WAVeform` fails silently on 00.01.05 (W4b S10), so the memory CSV for W6 is a menu save; nothing in the tool depends on it.
+- ~~**V5 rule change (user to confirm).** V5 changes from "total noise ≤ 20 mV Vpp" to "the board and ground add ≤ 5 mV rms over a no-board control at the same settings" (Technical Notes, "After V7R-001" §1).~~ → accepted (user, 2026-10-20: "Ok lets go with option a").
+- ~~**S1 ground on v7 (user decision).** (a) solder a wire to C9.1; (b) spring straight on C9.1, recorded as unequal ground and accepted only when V5 passes on both boards; (c) compare at S2 only.~~ → (b) (user, 2026-10-20: "Q2: b").

@@ -1,0 +1,46 @@
+# Failing fixture (kind: scope): not_run with passed: true. Each line marked FAIL is one expected validator error.
+session_id: 2026-11-08_s01
+kind: scope
+operator: user
+ai_session: fixture
+dut:
+  board_id: v6-A1
+  firmware_commit: "4da1c67"
+  firmware_env: lilygo-t-display-s3
+  declared_baseline: v6-ref
+scope:
+  model: Rigol DHO804
+  firmware: 00.01.05
+  setup_file: 2026-11-04_V7R-001_A1_01.setup.bin
+validation:
+  passed: true
+  V2_probe_ratio: {CH1: 10x/fixed, CH2: 10x/fixed}
+  V3_comp_png: 2026-11-04_V7R-001_val_V3_01.png
+  V5:
+    ctl_sd_mV: {CH1: 4.97, CH2: 4.77}
+    dut_sd_mV: {CH1: 5.17, CH2: 4.72}
+    excess_rms_mV: {CH1: 1.44, CH2: 0.0}
+    offset_mV: {CH1: -10.39, CH2: -14.06}
+  V6_ground: {method: spring, point: C21.2, length_mm: 8}
+  V7_idle_high_V: {not_run: "skipped"}   # FAIL: not_run needs passed: false
+  V8_decode_ok: true
+  notes: ""
+channels:
+  CH1: {probe: "SQ-500 #1", ratio: 10x, signal: SDA, point: U5.6, bw_limit: "OFF", v_div_V: 0.2, offset_V: -0.6, coupling: DC}
+  CH2: {probe: "SQ-500 #2", ratio: 10x, signal: SCL, point: U5.5, bw_limit: "OFF", v_div_V: 1.0, offset_V: 0.0, coupling: DC}
+measurements:
+  - test_id: V7R-001
+    arm: A1
+    time: "2026-11-04T10:42:05"
+    method: auto
+    feature: "SDA, master-driven 0-bit, flat region"
+    values:
+      - {name: VBASe, ch: CH1, value_mV: 48.0, raw: "4.8000E-02"}
+      - {name: VAMP, ch: CH2, valid: false, raw: "9.9000E+37"}
+    captures: [2026-11-04_V7R-001_A1_01.png, 2026-11-04_V7R-001_A1_01.csv, 2026-11-04_V7R-001_A1_01.setup.bin]
+    raw_observation: "decode shows D6 N"
+    ai_read:
+      - capture: 2026-11-04_V7R-001_A1_01.png
+        settings_seen: {CH1_v_div: 200mV}
+        values_seen: {CH1_Vbase_mV: 48}
+        mismatch: none

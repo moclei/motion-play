@@ -12,7 +12,7 @@ Make v7 bench work recordable and trustworthy before any new v7 result is taken.
 - DHO804 setup-validation and known-good-reference procedures, proven by an end-to-end dry run on v6 with `v6-ref` firmware, run as a debugger session.
 
 ## Scope
-In: the baselines; the `lab/` containers and templates; the checker and hook; running debugger work from the role draft; protocol, context and memory touch points (with user approval); retirement banners; SCPI verification; evaluating the third-party DHO800 tool vs building our own; the capture tool, USB ingest and log validation; Google Drive backup for gitignored captures; the procedures; finding the closest GND pad to U5; the v6 dry run.
+In: the baselines; the `lab/` containers and templates; the checker and hook; running debugger work from the role draft; protocol, context and memory touch points (with user approval); retirement banners; SCPI verification; evaluating the third-party DHO800 tool vs building our own; the capture tool, USB ingest and log validation; iCloud Drive backup for gitignored captures; the procedures; finding the closest GND pad to U5; the v6 dry run.
 Out: any v7 measurement (R1/R2 included); any hypothesis work on the v7 fault; STATE.md content (the first debugger session transcribes `decisioning.md` §2); probe sketches for specific debug cards; firmware changes beyond defining the two baselines; source-hash retrofits to extractor outputs (board-model initiative); editing the bodies of `docs/debugging/` files; editing the debugger role draft or installing it as `.claude/agents/debugger.md` (tracked in TASKS.md Deferred).
 
 ## Constraints

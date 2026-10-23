@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
-"""Fixture tests for tools/lab/check_state.py.
+"""Tests for tools/lab/: check_state.py fixtures here, then capture.py, validate_log.py
+(+ the pre-commit log rule) and ingest_usb.py via tool_tests.py.
 
 Each fixture under fixtures/<name>/ holds a lab/ tree and a memory/ dir and is
 built to trigger exactly one checker condition. The runner asserts that the
@@ -90,6 +91,9 @@ def main():
         ok = mini == lablib.yaml.safe_load(fm)
         print("%s mini-parser == PyYAML on lab/templates/card.md" % ("PASS" if ok else "FAIL"))
         failures += not ok
+
+    import tool_tests
+    failures += tool_tests.main()
 
     print("\n%s: %d failure(s)" % ("OK" if not failures else "FAILED", failures))
     return 1 if failures else 0

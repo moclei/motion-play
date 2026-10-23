@@ -6,7 +6,9 @@ Reads the staged index (not the working tree) and rejects the commit when:
      lab/STATE.md is not staged with `as_of` = the highest such card ID;
   2. a card staged as `recorded` has an empty (or still `<hash>`) Result commit,
      or no `lab/evidence/<ID>/` reference in its `## Conclusion`;
-  3. a staged card's V7R-NNN number is used by another card file.
+  3. a staged card's V7R-NNN number is used by another card file;
+  4. a staged session log lab/log/*.yaml fails validate_log.py (missing or malformed
+     §4.6 required fields). TODO placeholders left by capture.py only warn.
 
 `Result commit: self` is valid (the recording commit can't hold its own hash;
 see the self-reference note in lab/templates/card.md).
@@ -19,8 +21,10 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import lablib  # noqa: E402
+import validate_log  # noqa: E402
 
 CARD_PATH_RE = re.compile(r"^lab/cards/(V7R-(\d{3,})-.+\.md)$")
+LOG_PATH_RE = re.compile(r"^lab/log/([^/]+)\.yaml$")
 STATE = "lab/STATE.md"
 
 
@@ -84,6 +88,18 @@ def main():
             elif not git("ls-files", "lab/evidence/%s/" % cid)[1].strip():
                 warnings.append("%s: lab/evidence/%s/ has no files in the index" % (path, cid))
 
+    # Rule 4: staged session logs pass validate_log.py (TODOs warn only)
+    for path in staged:
+        m = LOG_PATH_RE.match(path)
+        if not m:
+            continue
+        rep = validate_log.validate_text(blob(":" + path) or "", m.group(1))
+        errors.extend("%s: %s" % (path, e) for e in rep.errors)
+        if rep.todos:
+            warnings.append("%s: %d TODO field(s) still to fill (%s%s)" % (
+                path, len(rep.todos), ", ".join(rep.todos[:4]), ", ..." if len(rep.todos) > 4 else ""))
+        warnings.extend("%s: %s" % (path, w) for w in rep.warnings)
+
     # Rule 1: STATE.md staged with as_of = highest transitioned ID
     if transitions:
         top = max(transitions)
@@ -120,7 +136,8 @@ def main():
         print("lab pre-commit: REJECTED", file=sys.stderr)
         for e in errors:
             print("  - " + e, file=sys.stderr)
-        print("  (rules: docs/research/v7-retry/context-strategy.md §4.2; card template: lab/templates/card.md)",
+        print("  (rules: docs/research/v7-retry/context-strategy.md §4.2; card template: lab/templates/card.md;"
+              " log fields: lab/templates/log.yaml, tools/lab/validate_log.py)",
               file=sys.stderr)
         return 1
     return 0
