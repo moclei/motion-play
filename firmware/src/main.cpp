@@ -372,6 +372,15 @@ void initializeSystem()
     // --- Phase 1: Network (WiFi → MQTT → cloud config) ---
     // Done first so we have the real sensor config before initializing hardware.
 
+#ifdef DIAG_NO_WIFI
+    // Diagnostic build: keep the radio powered down so we can run the I2C
+    // bus diagnostic loop without any RF activity on the ESP32. Skips the
+    // whole network/MQTT/cloud-config block below; sensors init with defaults.
+    Serial.println("[DIAG_NO_WIFI] Skipping WiFi/MQTT init, forcing radio off");
+    WiFi.mode(WIFI_OFF);
+    btStop();
+    bool cloudConfigLoaded = false;
+#else
     Serial.println("Loading WiFi config...");
     if (!networkManager.loadConfig())
     {
@@ -441,6 +450,7 @@ void initializeSystem()
     Serial.println("Fetching sensor config from cloud...");
     display.updateInitStage(INIT_COMPLETE, "Loading config...");
     bool cloudConfigLoaded = fetchConfigFromCloud();
+#endif // DIAG_NO_WIFI
     if (cloudConfigLoaded)
     {
         Serial.println("Cloud config loaded — sensors will init with cloud settings");
@@ -457,6 +467,25 @@ void initializeSystem()
 
     Serial.println("Initializing sensors...");
     display.updateInitStage(INIT_SENSORS, "Initializing sensors...");
+#ifdef DIAG_NO_WIFI
+    // Diagnostic build (v6-diag): same sensorManager.init() call as v6-ref,
+    // then print the result and enter the v7-clean bus diagnostic loop
+    // whether init succeeded or failed. Runs until reset; never returns.
+    bool sensorInitOk = sensorManager.init(&currentConfig);
+    if (!sensorInitOk)
+    {
+        Serial.println("ERROR: Sensor initialization failed!");
+        display.setInitError("Sensor init failed!");
+    }
+    else
+    {
+        Serial.println("Sensors initialized successfully");
+    }
+    Serial.println("[v6-diag] v6-ref 4da1c67 + diag readout; I2C init unchanged");
+    sensorManager.runBusDiagnosticLoop();
+    while (1)
+        delay(1000);
+#else
     if (!sensorManager.init(&currentConfig))
     {
         Serial.println("ERROR: Sensor initialization failed!");
@@ -464,6 +493,7 @@ void initializeSystem()
         while (1)
             delay(1000);
     }
+#endif // DIAG_NO_WIFI
     Serial.println("Sensors initialized successfully");
 
     // CalibrationManager (just GPIO setup, no delay)

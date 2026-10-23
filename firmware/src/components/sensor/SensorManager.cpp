@@ -1253,6 +1253,174 @@ bool SensorManager::reinitialize(SensorConfiguration *config)
     return true;
 }
 
+void SensorManager::runBusDiagnosticLoop()
+{
+    Serial.println();
+    Serial.println("==============================================================");
+    Serial.println("I2C BUS DIAGNOSTIC LOOP (continuous — press RESET to stop)");
+    Serial.println("==============================================================");
+
+    // Note which TCA channels had a PCA detected during init. Channels with
+    // a PCA get an extra TCA+PCA0 / TCA+PCA1 probe round. Channels without
+    // a PCA still get a TCA_only probe so we can compare.
+    Serial.println("PCA detection summary (from init):");
+    for (int ch = 0; ch < 3; ch++)
+    {
+        if (pca_addresses[ch] != 0)
+            Serial.printf("  TCA ch %d: PCA9546A at 0x%02X\n", ch, pca_addresses[ch]);
+        else
+            Serial.printf("  TCA ch %d: (nothing detected)\n", ch);
+    }
+
+    Serial.println();
+    Serial.println("Probing: INA(0x40)  BQ(0x6B)  TCA(0x70)  PCA(0x76)  VCNL(0x60)");
+    Serial.println("Legend:  '.' = ACK,  'X(n)' = error n");
+    Serial.println("         1=data_too_long 2=NACK_addr 3=NACK_data 4=other 5=timeout/bus_hang");
+    Serial.println();
+    Serial.println("Expected when working correctly:");
+    Serial.println("  BASE           -> INA, BQ, TCA present; PCA, VCNL absent");
+    Serial.println("  TCA{0,1,2}     -> INA, BQ, TCA present; PCA present only on");
+    Serial.println("                    channels that have a rigid; VCNL absent");
+    Serial.println("  TCA+PCA0/1     -> INA, BQ, TCA, PCA, VCNL all present");
+#ifdef BUS_RECOVERY_TEST
+    Serial.println();
+    Serial.println("[BUS_RECOVERY_TEST] Active: 3x dummy START+STOP framings issued after each");
+    Serial.println("                    TCA channel-open, before probing. Tests Story A");
+    Serial.println("                    (BQ in stuck state, recoverable in software).");
+#endif
+    Serial.println();
+
+    // Table of addresses we probe in every state. Names match the column
+    // headers in the output.
+    struct Probe
+    {
+        uint8_t addr;
+        const char *name;
+    };
+    static const Probe probes[] = {
+        {0x40, "INA"},
+        {0x6B, "BQ"},
+        {0x70, "TCA"},
+        {0x76, "PCA"},
+        {0x60, "VCNL"},
+    };
+    static const int nProbes = sizeof(probes) / sizeof(probes[0]);
+
+    // Probe all addresses in the current mux state and print one line.
+    // Error codes from Wire.endTransmission(): 0=ACK, 1=data_too_long,
+    // 2=NACK_on_address, 3=NACK_on_data, 4=other, 5=timeout (bus stuck).
+    // 2 vs 5 is the key distinction: 2 = device refused; 5 = SDA/SCL hung.
+    auto probeAndPrint = [&](const char *stateLabel)
+    {
+        Serial.printf("t=%7lu  %-10s  ", millis(), stateLabel);
+        for (int i = 0; i < nProbes; i++)
+        {
+            Wire.beginTransmission(probes[i].addr);
+            uint8_t err = Wire.endTransmission();
+            if (err == 0)
+                Serial.printf("%s:.    ", probes[i].name);
+            else
+                Serial.printf("%s:X(%u) ", probes[i].name, err);
+        }
+        Serial.println();
+    };
+
+    // Force every TCA/PCA back to a fully-closed state. Safe to call at any
+    // point between rounds of probing. Must select each TCA channel before
+    // touching that channel's PCA (if any).
+    auto resetAllMuxes = [&]()
+    {
+        for (int ch = 0; ch < 3; ch++)
+        {
+            if (pca_addresses[ch] != 0)
+            {
+                mux.selectChannel(ch);
+                delay(1);
+                pca_instances[ch].disableAllChannels();
+            }
+        }
+        mux.disableAllChannels();
+        delay(2);
+    };
+
+#ifdef BUS_RECOVERY_TEST
+    // Issue 3x dummy general-call (0x00) transmissions. Each one sends
+    //   START + 0x00 + R/W=0 + NACK (no slave responds at 0x00) + STOP
+    // = 9 SCL clocks plus a clean STOP. Repeating gives any slave that's
+    // in a confused state-machine state (e.g. mid-byte counting from a
+    // phantom-START fired by the channel-open transient) multiple chances
+    // to reset to idle before the next probe series. Tests Story A from
+    // the v7 I2C investigation (see docs/debugging/v7-i2c-investigation.md).
+    auto busRecoverySequence = [&]()
+    {
+        for (int i = 0; i < 3; i++)
+        {
+            Wire.beginTransmission((uint8_t)0x00);
+            Wire.endTransmission();
+        }
+    };
+#endif
+
+    unsigned long iter = 0;
+    while (true)
+    {
+        iter++;
+        Serial.printf("--- Iteration %lu ---\n", iter);
+
+        // State: BASE — everything closed.
+        resetAllMuxes();
+        probeAndPrint("BASE");
+
+        // For each TCA channel (0..2), open just that channel (no PCA) and
+        // probe. Then, if a PCA was detected on this channel, also probe the
+        // two PCA-channel states. This way the test works with or without
+        // rigids connected — an empty TCA channel still exercises the
+        // "TCA channel open" state, just without any downstream load.
+        for (int tca_ch = 0; tca_ch < 3; tca_ch++)
+        {
+            resetAllMuxes();
+
+            // State: TCA{ch} — TCA channel open, PCA channels (if any) closed.
+            mux.selectChannel(tca_ch);
+            delay(2);
+            if (pca_addresses[tca_ch] != 0)
+            {
+                pca_instances[tca_ch].disableAllChannels();
+                delay(2);
+            }
+#ifdef BUS_RECOVERY_TEST
+            busRecoverySequence();
+#endif
+            char label[16];
+            snprintf(label, sizeof(label), "TCA%d", tca_ch);
+            probeAndPrint(label);
+
+            if (pca_addresses[tca_ch] != 0)
+            {
+                // State: TCA{ch}+PCA0
+                pca_instances[tca_ch].selectChannel(0);
+                delay(2);
+                snprintf(label, sizeof(label), "TCA%d+PCA0", tca_ch);
+                probeAndPrint(label);
+
+                // State: TCA{ch}+PCA1
+                pca_instances[tca_ch].disableAllChannels();
+                delay(1);
+                pca_instances[tca_ch].selectChannel(1);
+                delay(2);
+                snprintf(label, sizeof(label), "TCA%d+PCA1", tca_ch);
+                probeAndPrint(label);
+            }
+        }
+
+        Serial.println();
+
+        // ~2 second cadence between iterations. delay() yields on ESP32
+        // so the task watchdog is fed.
+        delay(2000);
+    }
+}
+
 void SensorManager::dumpSensorConfiguration()
 {
     Serial.println("\n");

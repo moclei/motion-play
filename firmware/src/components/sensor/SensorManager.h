@@ -138,6 +138,13 @@ public:
     void dumpSensorConfiguration();                 // Diagnostic: print all sensor configs to serial
     bool calibrateProximityCancellation();          // Calibrate PS_CANC for all sensors (cover offset)
     uint16_t getBaselineValue(uint8_t sensorIndex); // Get stored baseline for a sensor
+
+    // Continuous bus diagnostic: probes a fixed set of I2C addresses in four
+    // different mux states (baseline, TCA-only, TCA+PCA0, TCA+PCA1) every
+    // ~2 seconds and prints one compact line per state. Runs forever — press
+    // reset to stop. Intended for use when init() fails so we can observe
+    // whether bus behavior is consistent or flaky.
+    void runBusDiagnosticLoop();
 };
 
 #endif
