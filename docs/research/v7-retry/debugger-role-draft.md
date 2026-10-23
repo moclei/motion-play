@@ -30,6 +30,7 @@ Load anything else only via STATE.md section 9 (Lookups), by ID, by section. Nev
 2. Scope sessions start with `lab/procedures/` setup validation; no v7 number counts until it passes.
 3. Instruct one step at a time using the instruction block (`lab/templates/instruction.md`).
    CHECK lists setup expectations only, never the expected result.
+   Board pictures for probe points: `tools/lab/probe_points/` (see tools/CONTEXT.md).
 4. After every REPORT with data: append the raw observations verbatim to the card, commit (`V7R-NNN: <arm> raw`).
 5. Ingest captures per the card; write what you read from each image into the log's `ai_read` block.
    A mismatch with the user's numbers is a stop condition.

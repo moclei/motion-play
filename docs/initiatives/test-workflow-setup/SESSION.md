@@ -2656,3 +2656,41 @@ Full text is in the file; it is not copied here.
 - Deferred list in TASKS.md: role install, role-draft suggestions, the ESP32-S3 datasheet in the repo, the capture.py sweep label, the `:TRIGger:SWEep?` bench check.
 
 *D. Temporary files* in the Orchestrator scratchpad are lost when this session ends: `memory-backup/`, the board-render scripts (`annot/`, `boards/`) and the check scripts. Copy anything wanted.
+
+---
+
+### User direction — closeout extras (2026-10-22)
+
+"put the lessons in a relay file for the methodology session. You copy the board-picture scripts somewhere and also note it somewhere - maybe in the debugger agent draft file. Those images were very useful and that script should be kept. I don't care about the rest of the temp files. The PR is hanging and I can't approve it. You do it"
+
+The Orchestrator recorded this as Phase 17 (user-directed; no Planner). The note in the role draft is explicitly authorised by the user.
+
+### Worker #22 — Phase 17: probe-point picture tool
+
+**Dispatch:** standard template. Additional reading: SESSION summary of the picture method (kicad-cli render, PNG bbox, SVG overlay, headless Chrome; qlmanage crops, so it is not used). The source scripts are in the Orchestrator scratchpad `annot/` (v6, `make_svg3.py` final), `annot7/` (v7, `make_v7.py`, `fp.py`, `bbox_np.py`) and `boards/`.
+
+#### Notes
+- **Done.** Commit `8cc2cb8`: `tools/lab/probe_points/` (`probe_points.py`, `README.md`, `v6.json`, `v7.json`), a row in the `tools/CONTEXT.md` Lab Tools table, and one pointer line in the role draft (Test lifecycle, under step 3: the instruction-block step). Nothing else in the draft changed.
+- **Tool.** `render --points <json> --out <png>` with the board from `--board FILE`, or `--ref REF [--path P]` (`git show REF:P` into a work dir; default path `hardware/pcb-main/kicad/motion-play-main.kicad_pcb`), or the points file's `source`. That is how `boards/` was obtained: the scratchpad `v6.kicad_pcb` / `v7.kicad_pcb` are byte-identical (sha) to that path at `fd632ef` / `c2acffc`. Also `pads REF...` and `near X Y` helpers for writing points files. Writes a `<png>.meta.json` provenance sidecar (source, commit, sha256, calibration). `--render-png` reuses a render; `--pngquant` optional. Stdlib only (Python 3.7): numpy replaced by a pure-Python PNG decoder that un-filters only the alpha channel (~10 s on 6384×4792). On the old v7 render it gives the same bbox as the numpy version (867..5491 × 1371..3389).
+- **Points files** name every marker by footprint reference + pad. Every original coordinate is a pad centre exactly: A TPIO43.1, B TPIO44.1, C U2.14 (v6) / C9.1 (v7), D U5.6, E U5.5, F C21.2, X C21.1 and C20.1. Layout values (windows, radii, offsets, captions) are copied from `make_svg3.py` / `make_v7.py`.
+- **Re-generation check** (outputs in the scratchpad `w22/out/`, committed PNGs untouched; neither is byte-identical):
+  - v6: fresh render, 1600×2394 (same size). Red-mask IoU 0.947 at zero shift; marker centroids within 0.7 px. Same markers on the same pads by eye.
+  - v7: 1600×3798 vs 3797 (the new render is 6384×4792, the old 6360×4760; calibration absorbs it, 52.53 vs 52.44 px/mm). Red-mask IoU 0.90 at 1 px shift; zoom-marker centroids within 1 px. Same markers on the same pads by eye.
+  - kicad-cli trims the requested 6400×4800 to 6384×4792, so the size is read from the PNG header.
+- **Not mine:** the untracked `RELAY-debug-track-start.md` and `RELAY-methodology-planner.md` were in the tree before I committed. I left them alone, so the tree is not clean because of them.
+- `tools/lab/tests/run_tests.py`: OK, 0 failures. The new tool has no tests. It needs kicad-cli and Chrome, and a run takes about 3 minutes.
+
+#### Result
+| # | Phase | Result | Escalation evaluated? | Commit | Notes |
+|---|-------|--------|-----------------------|--------|-------|
+| 22 | Phase 17: probe-point picture tool | DONE | No — clean completion | f94f185 | `tools/lab/probe_points/`; v6 and v7 points files; role-draft pointer |
+
+#### Verification
+- Commits 8cc2cb8 and f94f185. The role-draft diff is exactly the one authorised line. Only the four tool files are tracked; no pycache or renders. `run_tests.py`: OK. `--help` runs.
+- Regenerated pictures match the committed ones (red-pixel overlap 0.95 / 0.90, markers within 1 px). The committed PNGs were kept.
+
+### Closeout (2026-10-22)
+- PR #80 was merged by the user as a merge commit (d4acbb0).
+- The Orchestrator wrote `RELAY-methodology-planner.md` (lessons, for a methodology-pass Planner) and `RELAY-debug-track-start.md` (first debug-track session; user request). Phase 17 lands via a follow-up PR.
+
+**Outcome (final):** Loop complete — 22 workers dispatched, 0 unresolved blockers. Initiative closed.

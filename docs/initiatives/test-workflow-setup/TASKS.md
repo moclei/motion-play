@@ -195,6 +195,14 @@
 - [x] Tick both acceptance tables in PLAN. Before ticking, the user's two answers must be in SESSION.md "W8 part 2": the L0 session was correct without asking, and the image handoff was workable. If either is missing or negative, stop and report. The Dry run rows cite V7R-002, with V7R-001 noted as the void first attempt. Open the final PR (merge commit)
 - [x] 🔄 Handoff (Worker #21; PR #80)
 
+## Phase 17: Closeout extras (user-requested, 2026-10-22)
+
+> User direction (2026-10-22): "put the lessons in a relay file for the methodology session. You copy the board-picture scripts somewhere and also note it somewhere - maybe in the debugger agent draft file. Those images were very useful and that script should be kept." The user explicitly authorises this one note in the role draft, which BRIEF otherwise puts out of scope.
+
+- [x] Move the probe-point picture scripts from the Orchestrator scratchpad into the repo as a re-runnable tool: `kicad-cli pcb render`, a board bbox from the PNG pixels, an SVG overlay with #ff1744 markers, headless Chrome to rasterise. Add a usage note to `tools/CONTEXT.md` and a one-line pointer in `docs/research/v7-retry/debugger-role-draft.md`
+- [x] Orchestrator: write `RELAY-methodology-planner.md` (lessons from SESSION Outcome A, for a methodology-pass Planner)
+- [x] Orchestrator: merge PR #80 with a merge commit (merged by the user, d4acbb0, merge commit); Phase 17 lands via a follow-up PR. Also `RELAY-debug-track-start.md` (user request)
+
 ## Deferred
 
 [from: test-workflow-setup] Install the debugger role: after the user's edit pass, copy `docs/research/v7-retry/debugger-role-draft.md` verbatim to `.claude/agents/debugger.md`, check every path it names exists, re-run the L0 budget check against it, and flip the PROTOCOL.md Debugger row from draft to installed.
