@@ -46,7 +46,7 @@ Bench instructions for the user always use the `test-workflow-audit.md` §4.8 bl
 | LAN capture | A screenshot and CSV pulled over LAN match the same capture saved to USB. |
 | Capture tool | One command yields files named per §4.4 and a log entry with every required §4.6 field filled from the scope's own settings. |
 | Templates | A dummy card can be created, pre-registered and committed end to end. |
-| Dry run | v6 on `v6-ref` reads within §4.3 spec (V_OL ≤ 0.4 V, expected ≈ 30–80 mV *once the datasheet check confirms it*; idle high 3.3 V ± 5%; rise time 30→70% ≤ 300 ns, the Fast-mode limit, kept although the reference frame runs at 100 kHz: "After V7R-002 S1" §2), and the user confirms the image handoff was workable. If v6 fails, the setup is fixed before the initiative closes. |
+| Dry run | v6 on `v6-ref` reads within §4.3 spec (V_OL ≤ 0.4 V; the ≈ 35 mV expectation is a labelled estimate, not a pass band (Open Questions, Phase 5); idle high 3.3 V ± 5%; rise time 30→70% ≤ 300 ns, the Fast-mode limit, kept although the reference frame runs at 100 kHz: "After V7R-002 S1" §2), and the user confirms the image handoff was workable. If v6 fails, the setup is fixed before the initiative closes. |
 
 ### Acceptance — topic 6 (`context-strategy.md` §10.1)
 
@@ -416,6 +416,20 @@ Source: card V7R-002 (`lab/cards/V7R-002-v6-setup-validation-2.md`, open), its S
 
 **8. V7R-002 S2 and the procedure version.** S2 runs on the revised procedures. They write deviations (a) and (b) in as the method, so S2 is measured the same way as S1. The card notes the procedure commits S2 ran on. Its predictions, limits and outcome rows stay as registered. S2 is a new scope session, so V1–V4 run again and are recorded in the S2 log.
 
+### After V7R-002 S2: feedback placement
+
+Source: `RELAY-v6-dry-run-2-s2-return.md` (Open questions, Deviations), card V7R-002 S2 notes, SESSION.md "W8 part 2". V7R-002 is recorded and passes at both arms. None of the items below changes a limit, a band or a card, and acceptance does not depend on any of them. Items 1, 3 and 4 are one-sentence edits to files this initiative delivers, so they go in before the PR (Phase 16). Items 2 and 5 go to TASKS Deferred.
+
+1. **V5a control fixture.** An alligator clip on the Cal ground terminal is **allowed**, not required, for any tip or spring. When the control is flagged (sd outside 2.5–10 mV), the next step is to recapture V5a with the flagged channel on the clip. The flagged capture stays in the record. If the clip control is flagged as well, stop. No cause is written into the procedure. (S2: two hand-seated CH1 controls flagged, then the clip control read 5.25 mV against S1's 5.04 mV.)
+2. **Raw-commit weight.** The role draft already says to commit raw data "after every REPORT with data". S2 committed after every report. The fix belongs in the user's draft edit pass: a REPORT that only confirms (done, read-backs as expected) is appended with the next data commit. Deferred, because the draft is not edited in this initiative (BRIEF).
+3. **Instruction delivery.** Each instruction block goes in a message of its own, never under a results table or analysis. This goes into `lab/templates/instruction.md`, which the draft points to. It is also added to the draft-edit suggestions.
+4. **Capture output that looks wrong but isn't.** At the V8 capture CHECK in `dho804-setup-validation.md` and step 8 in `known-good-reference.md`, one sentence each:
+   - After a fired SINGLE, the logged `trigger.sweep` can read `NORM` (S1) or `AUTO` (S2). The check is the `STOP` status.
+   - A `scpi_errors` entry `after: connect` was queued by an earlier terminal command, not by the capture. Note it in REPORT and go on.
+5. **Tool polish (deferred).** `capture.py` could label `after: connect` errors in its NOTE line as "queued before this run". Separately, check what `:TRIGger:SWEep?` returns after SINGLE fires. Neither affects a verdict.
+
+**Acceptance.** Nothing above blocks the tick. Both Dry run rows cite V7R-002, with V7R-001 noted as the void first attempt. Both rows still need two things from the user (the "user fills" lines in the return relay, Phase 16 task 1): the image handoff was workable, and the fresh L0 session stated the bench state correctly without asking.
+
 ## Rejected Approaches
 - A separate context-scaffolding initiative: both topics build `lab/`, and one dry run validates both (decisioning §3.1).
 - A Claude Code hook for the STATE rule: it isn't versioned (`.claude/*` is gitignored) and only fires inside Claude; git `core.hooksPath` only (user, 2026-10-18).
@@ -441,6 +455,8 @@ Source: card V7R-002 (`lab/cards/V7R-002-v6-setup-validation-2.md`, open), its S
 - V_OL gated over the whole bit, SCL-low time included (the S1 hand gate): it mixes in the SDA set-up and hold time and a part that read about 20 mV higher at S1; the method is the SCL-high data-valid window (Planner, after Worker #16).
 - Idle high from the first sample past the last edge, with no settle margin: at S1 the 4.5 µs after the STOP was still settling (sd 74 mV); a 5 µs margin (t_BUF) is used (Planner, after Worker #16).
 - Tuning `i2c_frame.py` until it matches the S1 hand numbers: the hand gates were chosen by hand, and the method has to be one fixed rule for every arm (Planner, after Worker #16).
+- Requiring the alligator clip for every V5a control: S1 and V7R-001 passed with direct contact, so the clip is allowed and is the first response to a flagged control (Planner, after V7R-002 S2).
+- A separate desk phase for the W8 part 2 feedback: the in-scope items are one sentence each, so they go in as one Phase 16 task (Planner, after V7R-002 S2).
 
 ## Open Questions
 - ~~Phasing: role and containers before scope tooling?~~ Yes, with a milestone merge after Phase 4 (user, 2026-10-18).
