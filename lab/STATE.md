@@ -2,7 +2,7 @@
 as_of: V7R-004            # highest card ID with status recorded|abandoned that this file reflects (V7R-000 = sentinel, nothing recorded)
 updated: 2026-10-23       # date of the last edit
 last_checkpoint: V7R-003  # card ID at which the last step-back checkpoint ran (context-strategy §4.3)
-open_cards: []                        # cards with status pre-registered|run; must match lab/cards/ (checked)
+open_cards: [V7R-005]                 # cards with status pre-registered|run; must match lab/cards/ (checked)
 ---
 
 # v7 I²C fault — current state
@@ -131,7 +131,7 @@ Verdict is trustworthy | suspect | unknown | not tested; a row is deleted when a
 
 ## 8. Next                                      (≤ 6 lines)
 Open cards (ID, title, arm reached); proposed next test (which map region it cuts, and why); blocked on (initiatives, parts, decisions).
-- Open cards: none. V7R-004 recorded (row 1: Nano ESP32 at TPIO43/44 ACK 10/10; U3 NACK 10/10 before and after).
+- Open cards: V7R-005 (symptom identity, Nano + rigid), pre-registered. V7R-004 recorded (row 1: Nano ESP32 at TPIO43/44 ACK 10/10; U3 NACK 10/10 before and after).
 - U3 bundle still unseparated: module/path, supply, copper U3→TPIO, pin role, die rev v0.2/v0.1, core 2.0.14/2.0.18, image. Candidates, all log-only: (a) Nano on core 2.0.14 via PlatformIO, same sketch — cuts core; (b) U3 running the probe sketch (devkitc, 2.0.14) on GPIO43/44 — cuts image vs U3 hardware; (c) WROOM-1 devkit as master at TPIO — cuts module vs v7 supply/copper (hardware on hand: unknown).
 - Still queued: card 3 (symptom identity: rigid on J6, external master that gets BQ ACK — does VCNL 0x60 ACK?) outranks the above on what it decides; card 2 (v6 under the L-Ph12 repro). Both unblocked: `v7-probe-tools` (PR #85) delivered `tools/arduino-sketches/v7_pca_master_probe` (SAMD21 + Nano ESP32) and tag `v6-diag` → 189cc03 (env lilygo-t-display-s3-diag). Hardware for (c): YD-ESP32-23 V1.3 devkit on hand (module marking unread).
 - Timebox: 4/15 cards · week 1/8 (from V7R-001, 2026-10-20). Checkpoint: 1 recorded since V7R-003; due at V7R-006.
