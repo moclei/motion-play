@@ -140,6 +140,7 @@ Pass table per `known-good-reference.md` (V_DD = 3.3 V). Evaluated per arm (S1, 
 - S2 V7, session (`i2c_frame.py`, mode idle): CH1 mean 3.3007 V, CH2 mean 3.2893 V; tool verdict "V7 PASS".
 - S2 V8 step 1: read-backs "IIC / ADDR / 7 / 107 / WRIT / 0,\"No error\"". Hand read-back (2), operator typed and read: `:TRIGger:IIC:SCL?` → "CHAN2"; `:TRIGger:IIC:SDA?` → "CHAN1".
 - S2 V8 steps 2–3: read-backs "2.000000E-5, SING"; `:TRIGger:STATus?` → "STOP"; decode band: "Write:D6, A:0"; replugs: "1".
+- S2 V8 capture: wrote `2026-10-22_V7R-002_val_V8_01.{png,csv,setup.bin}`; "NOTE: SCPI errors recorded in the entry: [{'after': 'connect', 'error': '-100,\"Command err\"'}]"; "The scope is left STOPPED." Timebase back: "1.000000E-5". PNG: decode band Write:d6 | A:0.
 
 ### Measured values (from log; cite `lab/evidence/V7R-002/...`)
 ### Interpretation (session; labelled as such)
