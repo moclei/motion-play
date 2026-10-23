@@ -1,7 +1,7 @@
 ---
 as_of: V7R-003            # highest card ID with status recorded|abandoned that this file reflects (V7R-000 = sentinel, nothing recorded)
 updated: 2026-10-23       # date of the last edit
-last_checkpoint: V7R-000  # card ID at which the last step-back checkpoint ran (context-strategy §4.3)
+last_checkpoint: V7R-003  # card ID at which the last step-back checkpoint ran (context-strategy §4.3)
 open_cards: []                    # cards with status pre-registered|run; must match lab/cards/ (checked)
 ---
 
@@ -131,8 +131,9 @@ Verdict is trustworthy | suspect | unknown | not tested; a row is deleted when a
 Open cards (ID, title, arm reached); proposed next test (which map region it cuts, and why); blocked on (initiatives, parts, decisions).
 - Open cards: none. V7R-003 recorded (v7 baseline set: fault reproduces at `v7-clean`).
 - Queue, all log-only: (2) v6 on v6-ref under the L-Ph12 minimal repro, A/B/A — cuts the v6 IS NOT (proven with rigids only); (3) SAMD21 master on v7, rigid on J6: does VCNL 0x60 ACK? — cuts symptom identity; (4) Arduino Nano ESP32 as master on the v7 bus, U3 released — cuts master: module/path, master supply, copper near U3 vs die/core/driver.
-- Card 2 needs a v6 diag readout (v6-ref has no diag loop) → Planner relay before it can run. Cards 3 and 4 share the v7 + external-master setup. Then, depending on 4: WROOM-1 devkit as master or board-model-backed copper cards; first scope card = R1 (instrument validation on v7 + V_OL), then S3-vs-SAMD21 capture at BQ pin 6.
-- Blocked on: none (test-workflow-setup closed, PR #80).
+- Runnable now: card 4 (existing probe sketch, v7 bench as is). Blocked → Planner relay: card 2 (v6-ref has no diag loop), card 3 (probe sketch never opens a PCA channel, so VCNL behind a rigid is unreachable). Card 3 outranks 4 on what it decides. Then, depending on 4: WROOM-1 devkit as master or board-model-backed copper cards; first scope card = R1 (instrument validation on v7 + V_OL), then S3-vs-SAMD21 capture at BQ pin 6.
+- Timebox: 3/15 cards · week 1/8 (from V7R-001, 2026-10-20). Last checkpoint V7R-003 (notebook 2026-10-23).
+- Blocked on: Planner relay for cards 2 and 3 (tools only); nothing blocks card 4.
 
 ## 9. Lookups (L1 routing)                      (≤ 15 rows)
 Where to go for detail that is not L0; load only the named section or query.
