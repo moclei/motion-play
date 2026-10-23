@@ -192,7 +192,7 @@
   - `lab/procedures/dho804-setup-validation.md` V5a step 3: a tip or spring may go on an alligator clip on the Cal ground terminal. In the "Scope sanity check" paragraph, replace "stop and look at the scope and probes before going on" with this: recapture V5a with the flagged channel on the clip, keep the flagged capture in the record, and stop if the clip control is flagged too
   - In the V8 capture CHECK of `dho804-setup-validation.md` and the step 8 capture CHECK of `known-good-reference.md`, add one sentence each. After a fired SINGLE the logged sweep can read `NORM` or `AUTO`, and the check is the `STOP` status. An SCPI error recorded `after: connect` was queued by an earlier terminal command: note it in REPORT and go on
   - `lab/templates/instruction.md`: send each instruction block in a message of its own, never under a results table or analysis
-- [~] Tick both acceptance tables in PLAN. Before ticking, the user's two answers must be in SESSION.md "W8 part 2": the L0 session was correct without asking, and the image handoff was workable. If either is missing or negative, stop and report. The Dry run rows cite V7R-002, with V7R-001 noted as the void first attempt. Open the final PR (merge commit)
+- [x] Tick both acceptance tables in PLAN. Before ticking, the user's two answers must be in SESSION.md "W8 part 2": the L0 session was correct without asking, and the image handoff was workable. If either is missing or negative, stop and report. The Dry run rows cite V7R-002, with V7R-001 noted as the void first attempt. Open the final PR (merge commit)
 - [ ] 🔄 Handoff
 
 ## Deferred

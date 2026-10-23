@@ -40,23 +40,23 @@ Bench instructions for the user always use the `test-workflow-audit.md` §4.8 bl
 
 ### Acceptance — topic 4 (`test-workflow-audit.md` §6.1)
 
-| Check | Pass |
-|---|---|
-| Baselines | Both `v7-clean` and `v6-ref` build, and each one's I²C init is stated in its commit/tag message. |
-| LAN capture | A screenshot and CSV pulled over LAN match the same capture saved to USB. |
-| Capture tool | One command yields files named per §4.4 and a log entry with every required §4.6 field filled from the scope's own settings. |
-| Templates | A dummy card can be created, pre-registered and committed end to end. |
-| Dry run | v6 on `v6-ref` reads within §4.3 spec (V_OL ≤ 0.4 V; the ≈ 35 mV expectation is a labelled estimate, not a pass band (Open Questions, Phase 5); idle high 3.3 V ± 5%; rise time 30→70% ≤ 300 ns, the Fast-mode limit, kept although the reference frame runs at 100 kHz: "After V7R-002 S1" §2), and the user confirms the image handoff was workable. If v6 fails, the setup is fixed before the initiative closes. |
+| Check | Pass | Met |
+|---|---|---|
+| Baselines | Both `v7-clean` and `v6-ref` build, and each one's I²C init is stated in its commit/tag message. | [x] Tags `v7-clean` → `90053af`, `v6-ref` → `4da1c67`; both tag messages state the I²C init and the envs that built (SESSION "Worker #1", c24f956). |
+| LAN capture | A screenshot and CSV pulled over LAN match the same capture saved to USB. | [x] On memory data: PNG matches, RAW memory over LAN equals the menu memory CSV sample for sample ("Verified instrument facts", LAN-vs-USB comparison, Phase 6). |
+| Capture tool | One command yields files named per §4.4 and a log entry with every required §4.6 field filled from the scope's own settings. | [x] W6 on `V7R-999`: three files named per §4.4, all required scope fields filled; CSV 10 000 / 10 000 vs menu CSV, PNG pixel-equal over the graticule ("Verified instrument facts", capture-tool comparison; SESSION "Worker #10", d192212). |
+| Templates | A dummy card can be created, pre-registered and committed end to end. | [x] `V7R-999-dummy.md` pre-registered in 9bc9d0c, front matter parsed, removed in 91b482f (SESSION "Worker #2"). |
+| Dry run | v6 on `v6-ref` reads within §4.3 spec (V_OL ≤ 0.4 V; the ≈ 35 mV expectation is a labelled estimate, not a pass band (Open Questions, Phase 5); idle high 3.3 V ± 5%; rise time 30→70% ≤ 300 ns, the Fast-mode limit, kept although the reference frame runs at 100 kHz: "After V7R-002 S1" §2), and the user confirms the image handoff was workable. If v6 fails, the setup is fixed before the initiative closes. | [x] Card V7R-002, recorded a2612d9, outcome row 1 at both arms. S1 (log `2026-10-21_s01`): V_OL 72.4 / 70.2 / 75.4 mV, idle high 3.3025 / 3.2929 V, rise ≤ 98.4 ns. S2 (log `2026-10-21_s02`): V_OL 64.1 / 63.2 / 65.9 mV, idle high 3.3020 / 3.2923 V, rise max 98.7 / 91.7 ns; recomputed by the Orchestrator (SESSION "W8 part 2" Verification). Image handoff workable: SESSION "User answers — W8 part 2". V7R-001 (4736a4a) was the void first attempt (V5), not counted. |
 
 ### Acceptance — topic 6 (`context-strategy.md` §10.1)
 
-| Check | Pass |
-|---|---|
-| Hook | Recording a dummy card without a STATE.md edit is rejected. With the edit, it passes. |
-| Checker | On a fixture `lab/`, it reports STALE, open-card mismatch, CHECKPOINT DUE, a cap overrun, a stale hash and a memory hit, once each. |
-| Budget | A fresh ad-hoc debugger session's L0 (the role draft standing in for `debugger.md`) measures < 500 lines and ≤ ~12k tokens (counting the actual files). |
-| Dry run | The v6 dry run runs as an ad-hoc debugger session off the draft: card pre-registered, raw data committed per arm, recorded with STATE updated in the same commit, notebook entry written. A second fresh ad-hoc debugger session then states the bench state correctly from L0 + default L1 alone, without asking the user. |
-| Retirement | No v7 lines in the memory index, except a line the user kept as accepted at W2; banners on the §2.4 items; PROJECT.md pointer present. |
+| Check | Pass | Met |
+|---|---|---|
+| Hook | Recording a dummy card without a STATE.md edit is rejected. With the edit, it passes. | [x] Scratch clone at 4882bd7: rejected (exit 1) without STATE, passed as a38c80d with it (SESSION "Worker #3", Task 5). |
+| Checker | On a fixture `lab/`, it reports STALE, open-card mismatch, CHECKPOINT DUE, a cap overrun, a stale hash and a memory hit, once each. | [x] Fixtures 5ad41a4; the runner asserts each tag exactly once and no other; 14/14 pass (SESSION "Worker #3", Task 3). `run_tests.py` still passes. |
+| Budget | A fresh ad-hoc debugger session's L0 (the role draft standing in for `debugger.md`) measures < 500 lines and ≤ ~12k tokens (counting the actual files). | [x] 304 lines / ~5.3k tokens actual, 402 lines / ~8.4k with STATE at cap (SESSION "Worker #5", budget check). The draft has not been edited since. |
+| Dry run | The v6 dry run runs as an ad-hoc debugger session off the draft: card pre-registered, raw data committed per arm, recorded with STATE updated in the same commit, notebook entry written. A second fresh ad-hoc debugger session then states the bench state correctly from L0 + default L1 alone, without asking the user. | [x] V7R-002: pre-registered e39f953, per-step raw commits at S1 and S2, recorded with STATE front matter in a2612d9, notebook entries s01 and s02 (SESSION "W8 part 2" Verification). L0 test 2026-10-22: correct from the notebook's last entry, asked nothing first (SESSION "User answers — W8 part 2"; caveat there: it also read SESSION.md, but the bench state came from default L1). V7R-001 (4736a4a) was the void first attempt. |
+| Retirement | No v7 lines in the memory index, except a line the user kept as accepted at W2; banners on the §2.4 items; PROJECT.md pointer present. | [x] MEMORY.md has 3 lines, no v7 entries (W2 kept none); banners 07b7d59, scope-guide banner 08fdecc; PROJECT.md pointer 89f2195 (SESSION "Worker #5"). `check_state.py` OK, 0 warnings. |
 
 ## Technical Notes
 
