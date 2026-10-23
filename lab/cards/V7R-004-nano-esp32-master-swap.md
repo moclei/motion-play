@@ -67,6 +67,8 @@ Counted field: TCA2-row `BQ:` in 10 complete iterations per arm. A1 and A2: the 
 ### Raw observations (operator, verbatim; symptoms not interpretations)
 - S1 (2026-10-23), operator: "One LED is on I think, it's green-ish (or  maybe yellow)"
 - S1 (session): Nano on `/dev/cu.usbmodem14201`, USB "USB JTAG_serial debug unit" 303A:1001; esptool: ESP32-S3 (revision v0.1), MAC 34:85:18:7b:eb:38. Old firmware printed nothing in 4 s at 115200 (not identified). Blank sketch (hwcdc build) written, all four hashes verified, hard reset; port back, silent.
+- S2 fixture amendment (before any arm), operator: "Option 1, I tinned the ends and use dupont jumpers". Pad wires too short to reach the breadboard from the PCBite; green and yellow ends tinned, each pushed into the female end of a female-to-male Dupont jumper, male end in the Nano column. Extension in place for all arms (A1, B, A2). Jumper length: asked at S3.
+- S2, operator: "1. The green wire is next to A4 on the nano, connected. The yellow wire is next to A5, connected. The pigtail's black wire is in the "V" rail of the breadboard, same side as one leg of the 10kohm resistor, connected. The pigtail's red wire is next to the GND pin of the nano, connected. The pigtail's blue wire is connected to the GND rail of the breadboard, beside the 10kohm resistor's other leg, connected. The pigtail's yellow wire is hanging unconnected 2. I think I listed everything above 3. Yes, it has 2. I connected our pigtail wire next to the GND that is between the nano's pins "D2" and "RST". The other one is between pins "VIN" and "B1""
 ### Measured values (from log; cite `lab/evidence/V7R-004/...`)
 ### Interpretation (session; labelled as such)
 
