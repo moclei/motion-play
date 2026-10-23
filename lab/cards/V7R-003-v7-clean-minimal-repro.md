@@ -1,7 +1,7 @@
 ---
 test_id: V7R-003
 title: "Fault re-established on v7 at `v7-clean`, L-Ph12 minimal repro, A/B/A"
-status: pre-registered
+status: recorded
 created: 2026-10-22
 prereg_commit: self
 baseline:
@@ -70,12 +70,25 @@ Counts are over the TCA2-row `BQ:` field in the first 10 complete iterations of 
 - A2, operator: "done". Session received the reply at ~11:36:47 (shell clock 11:36:47).
 - A2 (session log): TCA2 `BQ:.` from it 713 (11:36:29) on, every iteration through 733. Counted window (report time, in-progress iteration 722 dropped): iterations 723–732, TCA2 `BQ:.` 10/10. Controls 713–733: BASE `BQ:.`, TCA0/1 `BQ:.`, TCA2 `INA:.` `TCA:.`. No code other than 2 in the whole log (it 1–733).
 
+- S6, operator: "Ok v7 is unplugged, PWR LED is off". Logger stopped 11:40:13 (port lost on unplug).
 ### Measured values (from log; cite `lab/evidence/V7R-003/...`)
+Source: `lab/evidence/V7R-003/2026-10-23_V7R-003_serial_01.txt` (v7-clean, iterations 1–733+).
+
+| Arm | Counted iterations | TCA2 `BQ:X(2)` | TCA2 `BQ:.` | Controls (BASE BQ, TCA2 INA/TCA) | Other codes |
+|---|---|---|---|---|---|
+| A1 | 1–10 | 0/10 | 10/10 | pass | none |
+| B  | 254–263 | 10/10 | 0/10 | pass | none |
+| A2 | 723–732 | 0/10 | 10/10 | pass | none |
+
+Uncounted, full log: A1 it 1–236 `BQ:.` 236/236; B it 237–712 `X(2)` 475/476 (it 238 `.`); A2 it 713–733+ `.`.
+Pre-flash firmware (`lab/evidence/V7R-003/2026-10-23_V7R-003_serial_00_oldfw.txt`): Phase 24/25 stacked init, stub only, TCA2 `BQ:.` 15/15.
 ### Interpretation (session; labelled as such)
+Interpretation: the L-Ph12 trigger reproduces at `v7-clean` (400 kHz, default drive, no filters, default pulls) on v7 #0003, live in both directions. The five reverted I²C-init changes are not needed for the fault. The single `.` at it 238 sits between the first X(2) (it 237) and the steady X(2) run, inside the ~30 s before the operator's report; it is consistent with contact made and broken while pushing the wire in, which was not observed.
 
 ## Conclusion
-- Outcome row matched: ...
-- Hypotheses excluded: ...
-- **Strength:** measured-refuted | measured-supported | argued | not tested
-- Revert-on-null done: n/a
+- Outcome row matched: row 1 — A1 0/10, B 10/10 `BQ:X(2)`, A2 0/10; controls pass in every arm; no code other than 2 (`lab/evidence/V7R-003/2026-10-23_V7R-003_serial_01.txt`).
+- Hypotheses excluded: H1 (the fault needs the five stacked I²C-init changes) — measured-refuted. H2 measured-supported on v7 #0003. M not supported (controls pass; J6 → TCA2 row confirmed by the B/A2 switching).
+- **Strength:** measured-refuted (H1, one board, A/B/A, 10/10 per arm); measured-supported (H2); `lab/evidence/V7R-003/`
+- Deviations: B report came ~30 s after the action (boundary rule applied at report time). Board identity: "0003" panel marking; link to legacy B3 not confirmed. Boot lines before `BQ24195 configured` not captured on the v7-clean log.
+- Revert-on-null done: n/a (v7-clean stays flashed as the v7 baseline)
 - Result commit: self

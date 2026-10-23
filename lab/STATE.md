@@ -1,8 +1,8 @@
 ---
-as_of: V7R-002            # highest card ID with status recorded|abandoned that this file reflects (V7R-000 = sentinel, nothing recorded)
-updated: 2026-10-22       # date of the last edit
+as_of: V7R-003            # highest card ID with status recorded|abandoned that this file reflects (V7R-000 = sentinel, nothing recorded)
+updated: 2026-10-23       # date of the last edit
 last_checkpoint: V7R-000  # card ID at which the last step-back checkpoint ran (context-strategy §4.3)
-open_cards: [V7R-003]                    # cards with status pre-registered|run; must match lab/cards/ (checked)
+open_cards: []                    # cards with status pre-registered|run; must match lab/cards/ (checked)
 ---
 
 # v7 I²C fault — current state
@@ -30,8 +30,8 @@ Every candidate cause in section 3 must explain both columns; Distinction is wha
 | Where: line | far-end DC path on SDA | far-end DC path on SCL only | SDA is bidirectional (slave drives ACK); GPIO43 = U0TXD, GPIO44 = U0RXD; SDA neighbours (CHRG_INT) | L-Ph12, CL-02, T3 |
 | Condition: polarity | far-end path to +3.3 V (main rail or clean bench PSU) | far-end path to GND; VCC–GND resistor only | ~70 µA sourced into SDA at the far end while low; downstream node held at 3.3 V | L-Ph11, L-Ph13, L-Ph14 |
 | Condition: load | any R from 4.7 k to 47 k, or a rigid | cable with no far-end path (stub only) | DC path present, not R value or C | L-Ph5, L-Ph6d |
-| When | every probe while channel open and path present; steady state | after channel close or path removal (next probe); never cleared by 3× START/STOP | live, not latched | L-Ph12, L-Ph14, L-Ph15 |
-| Firmware knobs | 400 kHz default init (pre-debug), 100 k, 50 k, CAP_3, deglitch 7 | none found that clears it | none found | L-Ph1–4, L-Ph22, L-Ph23, L-Ph24b |
+| When | every probe while channel open and path present; steady state | after channel close or path removal (next probe); never cleared by 3× START/STOP | live, not latched | L-Ph12, L-Ph14, L-Ph15, V7R-003 |
+| Firmware knobs | 400 kHz default init (pre-debug; `v7-clean`), 100 k, 50 k, CAP_3, deglitch 7 | none found that clears it | none found | L-Ph1–4, L-Ph22, L-Ph23, L-Ph24b, V7R-003 |
 | Regime | VBUS present; battery pads only; WiFi on and off | none found | none found | L-Ph6b, L-Ph18 |
 | Extent | 100% deterministic on 2 healthy-assembly v7 boards | intermittent; board-specific | design-level | L-Ph4, L-Ph9 |
 
@@ -54,7 +54,7 @@ Status (untested | tested) says whether a test has touched the region; Strength 
 | symptom identity: causal | BQ's NACK state or input disturbs the bus for downstream devices (BQ causal), vs common cause | untested | not tested | L-Ph8 (B2: BQ I²C open) | — |
 | cable / far end | no live hypothesis; trigger characterised (SDA, +3.3 V, DC path, R-independent) | tested | measured (as trigger) | L-Ph5, L-Ph6d, L-Ph11–15 | L-Ph15 |
 | cable mating | 4-pin socket vs 4-in-5 (CL-16) | untested | argued-refuted (SAMD21 ACKs through the same mating) | CL-16, L-Ph24a | — |
-| firmware: drift | Debug-stack drift since `4da1c67` causes it | tested (indirectly) | argued-refuted (fault present with v6-era init, L-Ph1–4) | CL-25, F-6 | L-Ph4 |
+| firmware: drift | Debug-stack drift since `4da1c67` causes it | tested (partly) | measured-refuted for the five stacked I²C-init changes; argued-refuted for the rest (diag code, F-6) | V7R-003, CL-25, F-6 | V7R-003 |
 | firmware: env | v7 env/variant change (devkitc variant, no display init, STARTUP_I2C_SCAN, boot order) | untested | not tested | CL-24 | — |
 | firmware: core | arduino-esp32 2.0.14 / legacy IDF I²C driver behaviour (#8543 class) | untested | not tested; fails v6 IS NOT on its own (same core on v6) | F-10, CL-24 | — |
 | power regime | no live hypothesis; control variable (VBUS / battery / WiFi state) | tested | measured-refuted as cause | L-Ph6b, L-Ph18 | L-Ph18 |
@@ -101,15 +101,17 @@ Only facts load-bearing for section 3; inferences are labelled "argued" and neve
 - Story G-revised: V_IL violation via V_OL rise — refuted by L-Ph23 — measured-refuted, pending R1 — legacy Ph21–23
 - Story H: BQ input fault regardless of master — refuted by L-Ph24a — measured-refuted (strong for "master-dependent") — legacy Ph24a
 - I²C-controller deglitcher (Exp 1) — refuted by L-Ph24b — measured-refuted (moderate; stacked on 100 kHz + CAP_3) — legacy Ph24b
+- Five stacked I²C-init debug changes (Ph22–25) as the cause — refuted by V7R-003 — measured-refuted (one board, A/B/A, 10/10 per arm) — notebook 2026-10-23
 - Not tombstoned: L-Ph25 (pad filter + internal pulls) not tested, stays under master: peripheral config; L-Ph7 bodge (1.1 kΩ upstream) no data (B1 destroyed).
 
 ## 6. Baselines and bench state                 (≤ 15 lines)
 Baselines (tag → commit, I²C init in one line); boards (ID | condition | mods | role); flashed now (board → commit + env, with the card ID that set it); cables and fixtures in the failing config.
 - Baselines: `v7-clean` → 90053af (Wire.begin(43, 44), 400 kHz, CAP_2, no filters, default pulls; STARTUP_I2C_SCAN true; envs motion-play-v7, -diag, -busrec, -relbus). `v6-ref` → 4da1c67 (same init; STARTUP_I2C_SCAN false; env lilygo-t-display-s3).
 - Boards: v6 | healthy | ~10 mm wire on pad C (U2.14, GND), V7R-001 | known-good reference, on the bench.
-- Boards: v7 B1 | bodge-damaged (L-Ph7) | rework | none. v7 B2 | BQ I²C open (L-Ph8), never reflowed? | none known | symptom identity: causal, if it still exists. v7 B3 | healthy | none known | only good unit (no irreversible actions).
-- Flashed now: v6 → v6-ref 4da1c67, lilygo-t-display-s3 (V7R-002 S2 step F). v7 B3 → unknown (last legacy HEAD = stacked Ph23–25 changes); v7-clean not yet flashed.
-- Bench at last stop (notebook 2026-10-21 s02): v6 unpowered, data-only cable Mac ↔ T-Display in, both SQ500 on scope Cal ground.
+- Boards: v7 #0003 (panel marking; believed B3, not confirmed) | healthy | none known | the v7 on the bench (V7R-003); treated as the only good unit.
+- Legacy: v7 B1 | bodge-damaged (L-Ph7) | rework | none. v7 B2 | BQ I²C open (L-Ph8), never reflowed? | none known | symptom identity: causal, if it still exists. v7 B3 | healthy | none known | only good unit (no irreversible actions); likely #0003.
+- Flashed now: v6 → v6-ref 4da1c67, lilygo-t-display-s3 (V7R-002 S2 step F). v7 #0003 → v7-clean 90053af, motion-play-v7-diag (V7R-003 S3).
+- Bench at last stop (notebook 2026-10-23 s01): v7 #0003 unpowered, pigtail in J6 (black = pin 1 +3.3 V, red = pin 2 GND, blue = pin 3 SDA, yellow = pin 4 SCL), black in breadboard with the 10 kΩ, blue out; v6 off the bench; probes on scope Cal ground.
 - Failing config fixtures: cable in J6 with 10 kΩ SDA→+3.3 V at the far end, SCL wire dangling (L-Ph12); sensor rigid on J4/J5/J6.
 
 ## 7. Measurement trust                         (≤ 10 rows; rows leave when re-measured)
@@ -124,13 +126,12 @@ Verdict is trustworthy | suspect | unknown | not tested; a row is deleted when a
 | L-Ph23 SCL V_OL ~300 mV | suspect (inconsistent with SDA, same driver) | nothing | R1 channel swap |
 | L-Ph25 | not tested | nothing | re-run individually only if the map needs it |
 | L-Ph24a | log-based; trustworthy as a binary result; multi-variable | master: identity; F-5 | a same-family swap (§2.7) narrows it |
-| Firmware baseline | HEAD = stacked Ph23–25 changes | every future card | `v7-clean` / `v6-ref` (test-workflow-setup) |
 
 ## 8. Next                                      (≤ 6 lines)
 Open cards (ID, title, arm reached); proposed next test (which map region it cuts, and why); blocked on (initiatives, parts, decisions).
-- Open cards: V7R-003 (fault re-established on v7-clean, minimal repro, A/B/A), pre-registered.
-- Proposed first cards, all log-only: (1) fault re-established on v7-clean, L-Ph12 minimal repro, A/B/A — cuts firmware: drift/env, sets the v7 baseline; (2) v6 on v6-ref under the L-Ph12 minimal repro, A/B/A — cuts the v6 IS NOT (proven with rigids only); (3) SAMD21 master on v7, rigid on J6: does VCNL 0x60 ACK? — cuts symptom identity; (4) Arduino Nano ESP32 as master on the v7 bus, U3 released — cuts master: module/path, master supply, copper near U3 vs die/core/driver.
-- Then, depending on 4: WROOM-1 devkit as master or board-model-backed copper cards; first scope card = R1 (instrument validation on v7 + V_OL), then S3-vs-SAMD21 capture at BQ pin 6.
+- Open cards: none. V7R-003 recorded (v7 baseline set: fault reproduces at `v7-clean`).
+- Queue, all log-only: (2) v6 on v6-ref under the L-Ph12 minimal repro, A/B/A — cuts the v6 IS NOT (proven with rigids only); (3) SAMD21 master on v7, rigid on J6: does VCNL 0x60 ACK? — cuts symptom identity; (4) Arduino Nano ESP32 as master on the v7 bus, U3 released — cuts master: module/path, master supply, copper near U3 vs die/core/driver.
+- Card 2 needs a v6 diag readout (v6-ref has no diag loop) → Planner relay before it can run. Cards 3 and 4 share the v7 + external-master setup. Then, depending on 4: WROOM-1 devkit as master or board-model-backed copper cards; first scope card = R1 (instrument validation on v7 + V_OL), then S3-vs-SAMD21 capture at BQ pin 6.
 - Blocked on: none (test-workflow-setup closed, PR #80).
 
 ## 9. Lookups (L1 routing)                      (≤ 15 rows)
