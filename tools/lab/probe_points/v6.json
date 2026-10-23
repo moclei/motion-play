@@ -1,0 +1,40 @@
+{
+  "description": "v6 main PCB probe points for the I2C arms S1 (master end) and S2 (BQ end). Approved picture: lab/procedures/img/v6-probe-points.png.",
+  "source": {"ref": "fd632ef", "path": "hardware/pcb-main/kicad/motion-play-main.kicad_pcb"},
+  "render": {"side": "top", "quality": "high", "width": 6400, "height": 4800},
+  "width": 1600,
+  "bottom": 85,
+  "blocks": [
+    {"type": "text", "space": 45, "size": 32, "bold": true,
+     "text": "v6 main board, top side. Hold it with the USB-C socket at the top left."},
+    {"type": "panel", "id": "overview", "space": 25, "window_mm": [74, 99, 166, 143], "x": 20, "width": 1560,
+     "boxes": [{"panel": "zoom", "label": "S2 (zoom below)"}],
+     "markers": [
+       {"label": "A", "ref": "TPIO43", "pad": "1", "r": 17, "stroke": 4, "halo": 7, "font": 30, "dx": 20, "dy": -14,
+        "legend": "S1: SDA probe (CH1) on the round pad marked \"SD\""},
+       {"label": "B", "ref": "TPIO44", "pad": "1", "r": 17, "stroke": 4, "halo": 7, "font": 30, "dx": 20, "dy": -14,
+        "legend": "S1: SCL probe (CH2) on the round pad marked \"SC\""},
+       {"label": "C", "ref": "U2", "pad": "14", "r": 17, "stroke": 4, "halo": 7, "font": 30, "dx": 20, "dy": -14,
+        "legend": "S1: ground, 2nd hole from the left in the lower header row (GND); short wire"}
+     ],
+     "legend": true, "legend_space": 40},
+    {"type": "text", "space": 53, "size": 30, "bold": true,
+     "text": "S2, zoomed in: the charger chip (U5) and capacitor C21"},
+    {"type": "panel", "id": "zoom", "space": 25, "window_mm": [88.8, 117.8, 98.6, 125.2], "x": 100, "width": 1400,
+     "markers": [
+       {"label": "D", "ref": "U5", "pad": "6", "r": 26, "stroke": 5, "halo": 9, "font": 40, "dy": 10,
+        "legend": "S2: SDA probe (CH1) on U5 pin 6, the BOTTOM pin of U5's left side"},
+       {"label": "E", "ref": "U5", "pad": "5", "r": 26, "stroke": 5, "halo": 9, "font": 40, "dy": 10,
+        "legend": "S2: SCL probe (CH2) on U5 pin 5, the pin just above D"},
+       {"label": "F", "ref": "C21", "pad": "2", "r": 40, "stroke": 5, "halo": 9, "font": 40, "dy": 10,
+        "legend": "S2: ground spring on THIS end of C21 (the end farther from U5)"},
+       {"label": "X", "ref": "C21", "pad": "1", "r": 40, "stroke": 5, "halo": 9, "font": 40, "dy": 10,
+        "legend": "USB power: the other end of C21. Never touch, never bridge to F"},
+       {"label": "X", "ref": "C20", "pad": "1", "r": 40, "stroke": 5, "halo": 9, "font": 40, "dy": 10,
+        "legend": "USB power: one end of C20. Also keep clear"}
+     ],
+     "legend": true, "legend_space": 45},
+    {"type": "text", "space": 56, "size": 22, "fill": "#555",
+     "text": "Rendered from the v6 KiCad layout (commit {commit}). Pin positions are from the layout file, so check under the microscope before probing."}
+  ]
+}
