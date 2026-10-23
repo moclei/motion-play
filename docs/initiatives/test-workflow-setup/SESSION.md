@@ -2600,7 +2600,7 @@ Full text is in the file; it is not copied here.
 
 #### Notes
 - No rebase was needed: origin/main is still at b412284 (PR #79), which is an ancestor of the branch.
-- Gate check: both user answers are in SESSION "User answers — W8 part 2" and both are positive. Image handoff: workable. L0 test (2026-10-22): correct, asked nothing first. The caveat is recorded in the Retirement row's neighbour, the topic-6 Dry run row: the session also read SESSION.md, but the bench state came from default L1.
+- Gate check: both user answers are in SESSION "User answers — W8 part 2" and both are positive. Image handoff: workable. L0 test (2026-10-22): correct, asked nothing first. The caveat is carried in the topic-6 Dry run row: the session also read SESSION.md, but the bench state came from default L1.
 - Ticked both PLAN acceptance tables (325f5ee). Each table has a new "Met" column citing a commit, a SESSION section or a card. Every row was shown as met, so none was left unticked:
   - Baselines: the tag messages, Worker #1.
   - LAN capture and Capture tool: "Verified instrument facts", Worker #10.
