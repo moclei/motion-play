@@ -2,7 +2,7 @@
 as_of: V7R-008            # highest card ID with status recorded|abandoned that this file reflects (V7R-000 = sentinel, nothing recorded)
 updated: 2026-10-24       # date of the last edit
 last_checkpoint: V7R-008  # card ID at which the last step-back checkpoint ran (context-strategy §4.3)
-open_cards: []                              # cards with status pre-registered|run; must match lab/cards/ (checked)
+open_cards: [V7R-009]                       # cards with status pre-registered|run; must match lab/cards/ (checked)
 ---
 
 # v7 I²C fault — current state
@@ -134,7 +134,7 @@ Verdict is trustworthy | suspect | unknown | not tested; a row is deleted when a
 ## 8. Next                                      (≤ 6 lines)
 Open cards (ID, title, arm reached); proposed next test (which map region it cuts, and why); blocked on (initiatives, parts, decisions).
 - U3 bundle unseparated: module/path, die rev v0.2/v0.1, master supply, copper U3→TPIO, pin role (V7R-008 void), board variant/flags. Candidates: (c) YD-ESP32-23 devkit as master at TPIO — module vs v7 supply/copper; v7 scope session (setup validation first) — master: timing, mux, measurement, and the V7R-008 B-redo bus state; pin role again only with a Nano power-order step in the procedure. Card 2 (v6-diag) runnable.
-- Open cards: none. Timebox: 8/15 cards · week 1/8 (from V7R-001, 2026-10-20). Master bundle region: 4 cards (V7R-004, -006, -007, -008), reviewed at checkpoint V7R-008; a 5th needs the user's go-ahead. Checkpoint: done at V7R-008; next due at V7R-011.
+- Open cards: V7R-009 (scope at the BQ end, U3 vs Nano; pre-registered). Timebox: 8/15 cards · week 1/8 (from V7R-001, 2026-10-20). Master bundle region: 4 cards (V7R-004, -006, -007, -008), reviewed at checkpoint V7R-008; a 5th needs the user's go-ahead. Checkpoint: done at V7R-008; next due at V7R-011.
 
 ## 9. Lookups (L1 routing)                      (≤ 15 rows)
 Where to go for detail that is not L0; load only the named section or query.
