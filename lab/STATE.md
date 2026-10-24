@@ -111,13 +111,12 @@ Only facts load-bearing for section 3; inferences are labelled "argued" and neve
 
 ## 6. Baselines and bench state                 (≤ 15 lines)
 Baselines (tag → commit, I²C init in one line); boards (ID | condition | mods | role); flashed now (board → commit + env, with the card ID that set it); cables and fixtures in the failing config.
-- Baselines: `v7-clean` → 90053af (Wire.begin(43, 44), 400 kHz, CAP_2, no filters, default pulls; STARTUP_I2C_SCAN true; envs motion-play-v7, -diag, -busrec, -relbus). `v6-ref` → 4da1c67 (same init; STARTUP_I2C_SCAN false; env lilygo-t-display-s3).
+- Failing config fixtures: cable in J6 with 10 kΩ SDA→+3.3 V at the far end, SCL wire dangling (L-Ph12); sensor rigid on J4/J5/J6. Baselines: `v7-clean` → 90053af (Wire.begin(43, 44), 400 kHz, CAP_2, no filters, default pulls; STARTUP_I2C_SCAN true; envs motion-play-v7, -diag, -busrec, -relbus). `v6-ref` → 4da1c67 (same init; STARTUP_I2C_SCAN false; env lilygo-t-display-s3).
 - Boards: v6 | healthy | ~10 mm wire on pad C (U2.14, GND), V7R-001 | known-good reference, on the bench.
 - Boards: v7 #0003 (panel marking; believed B3, not confirmed; U3 die rev v0.2) | healthy | ~68 mm 26 AWG wires soldered on TPIO43 (green) and TPIO44 (yellow), fitted before V7R-004 | the v7 on the bench; treated as the only good unit. Arduino Nano ESP32 (S3 rev v0.1) | healthy | none | external S3 master (V7R-004).
 - Legacy: v7 B1 | bodge-damaged (L-Ph7) | rework | none. v7 B2 | BQ I²C open (L-Ph8), never reflowed? | none known | symptom identity: causal, if it still exists. v7 B3 | healthy | none known | only good unit (no irreversible actions); likely #0003.
 - Flashed now: v6 → v6-ref 4da1c67, lilygo-t-display-s3 (V7R-002 S2 step F). v7 #0003 → v7-clean 90053af, motion-play-v7-diag (V7R-007 revert). Nano ESP32 → blank sketch, 2.0.18 hwcdc build (V7R-007 revert).
 - Bench at last stop (notebook 2026-10-23 s03 cont., V7R-007; unchanged since V7R-005): v7 #0003 and Nano unpowered (USB-C cables in, Mac ends unplugged). J6: rigid #1 (marker; SW1 ON = PCA 0x76; flex + 2 VCNL) via ~400 mm double-ended cable. J5: pigtail, black in 'V' rail with the 10 kΩ, blue + yellow dangling, red in Nano GND column. Pad wires green/yellow → ~175 mm Dupont → Nano A4/A5. J4 empty. v6 off bench. Probes on Cal ground.
-- Failing config fixtures: cable in J6 with 10 kΩ SDA→+3.3 V at the far end, SCL wire dangling (L-Ph12); sensor rigid on J4/J5/J6.
 
 ## 7. Measurement trust                         (≤ 10 rows; rows leave when re-measured)
 Verdict is trustworthy | suspect | unknown | not tested; a row is deleted when a V7R card re-measures it.
