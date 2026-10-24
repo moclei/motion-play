@@ -1,7 +1,7 @@
 ---
 test_id: V7R-007
 title: "Core swap on the Nano ESP32 master: v7_pca_master_probe on arduino-esp32 2.0.18-arduino.5 vs 2.0.14, U3 released, rigid on J6, A/B/A"
-status: pre-registered
+status: run
 created: 2026-10-23
 prereg_commit: self
 baseline:
@@ -64,6 +64,10 @@ Controls in every counted iteration: Nano banner `sketch=v7_pca_master_probe ver
 
 ## Actual result
 ### Raw observations (operator, verbatim; symptoms not interpretations)
+- S1 (operator): "both on" (Nano first, then v7).
+- S1 (session): ports by USB serial (`ioreg`, no port opened): Nano 34:85:18:7B:EB:38 → `/dev/cu.usbmodem14201`; v7 44:1B:F6:C5:58:C4 → `/dev/cu.usbmodem14401`. Nano logger started 23:40:15 (blank sketch: no output).
+- U3 (session): `motion-play-v7-relbus` uploaded from worktree at 90053af, 23:40:15–23:40:45: `Chip is ESP32-S3 (revision v0.2)`, `MAC: 44:1b:f6:c5:58:c4`, 4× `Hash of data verified.`, hard reset, SUCCESS. v7 log from 23:40:45.335: relbus burst (100 kHz, uncounted) TCA2 `INA:. BQ:X(2) TCA:.` 5/5; `BUS RELEASED` 23:40:52.848; heartbeat `[heartbeat] t=… ms — ESP32 alive, bus released` every 5 s thereafter.
+- A1 (session): Nano logger stopped; probe built with 2.0.18-arduino.5 (`nano_nora:USBMode=hwcdc`) written with esptool v4.5.1 23:41:07–23:41:11: `Chip is ESP32-S3 (revision v0.1)`, `MAC: 34:85:18:7b:eb:38`, 4× `Hash of data verified.`, hard reset. Nano log (`=== A1` marker): `[probe] sketch=v7_pca_master_probe version=1.0 board=NANO_ESP32 i2c_clock=400000 Hz`; `TCA9548A initialized`; PCA scan ch 0/1 nothing, ch 2 `PCA9546A found at 0x76`; summary `TCA ch 2: PCA9546A at 0x76`. Iterations 1–10 (t = 1516 … 19816 ms; host 23:41:12.653 … 23:41:30.967), every iteration identical: BASE, TCA0, TCA1 `INA:. BQ:. TCA:. PCA:X(2) VCNL:X(2)`; TCA2 `INA:. BQ:. TCA:. PCA:. VCNL:X(2)`; TCA2+PCA0 and TCA2+PCA1 `INA:. BQ:. TCA:. PCA:. VCNL:.`. Counted: VCNL '.' 20/20; TCA2 BQ '.' 10/10. Controls pass. v7 heartbeat continued (last seen 23:41:37.801, t=53599 ms), one `BUS RELEASED`, no reboot.
 ### Measured values (from log; cite `lab/evidence/V7R-007/...`)
 ### Interpretation (session; labelled as such)
 
