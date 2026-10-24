@@ -1,0 +1,102 @@
+---
+test_id: V7R-004
+title: "Same-family master swap: Arduino Nano ESP32 as master on the v7 bus (U3 released), L-Ph12 minimal repro, A/B/A"
+status: recorded
+created: 2026-10-23
+prereg_commit: self
+baseline:
+  name: v7-clean
+  firmware_commit: "90053af"
+  firmware_env: motion-play-v7-relbus   # same commit as V7R-003; env differs (bus-release build, -DDIAG_RELEASE_I2C on motion-play-v7). Declared delta, user-approved 2026-10-23
+  board_id: v7-B3             # v7 #0003 (panel marking); link to legacy B3 not confirmed (V7R-003)
+  hardware_config: "v7 #0003, no battery, nothing on J4/J5. J6: pigtail (black = pin 1 +3.3 V, red = pin 2 GND, blue = pin 3 SDA, yellow = pin 4 SCL); breadboard: 10 kΩ between the rail labelled 'voltage' (black) and the rail labelled 'ground' (blue goes there; that rail is the SDA side of the 10 kΩ, not GND); pigtail yellow dangling. Wires soldered to v7 pads (fitted before this card): green ~68 mm 26 AWG on TPIO43 (pad A, SDA), yellow ~68 mm on TPIO44 (pad B, SCL). Arduino Nano ESP32 in the breadboard (headers push-fit): green → Nano A4 column, yellow → Nano A5 column, pigtail red → Nano GND column. USB-C Mac ↔ v7 J7; USB-C Mac ↔ Nano. Scope probes on Cal ground."
+variable_changed: "I²C master: U3 (ESP32-S3-WROOM-1 on v7, relbus burst) vs Arduino Nano ESP32 (probe sketch) at TPIO43/44, U3 released"
+structure: A/B/A
+revert_on_null: yes           # end of card: v7 re-flashed to v7-clean motion-play-v7-diag (the V7R-003 bench state); Nano left on the blank sketch
+---
+
+# V7R-004 — Same-family master swap: Nano ESP32 as master on the v7 bus
+
+Map region cut: **master: module/path** and **master supply** (U3's WROOM module, its pad path and the shared +3.3 V rail at the master) against **master: identity → die / Arduino-core driver class**, and against the bus side (**bus copper**, **mux**) with an S3 master. Decisioning §2.7 card 4.
+
+## Hypotheses in play
+| ID | Hypothesis | Source |
+|---|---|---|
+| H1 | The NACK needs U3's context on v7 (WROOM-1 module, its pad path, its supply from the board's +3.3 V, or its firmware env/core 2.0.14); an ESP32-S3 master with its own module and supply, driving TPIO43/44, gets BQ ACK in the failing config | map: master: module/path, master supply; F-5 (SAMD21 ACK) |
+| H2 | Any ESP32-S3 master on arduino-esp32 2.0.x (die, legacy I²C driver class), or the bus side of v7 with an S3 master, gives the NACK; the Nano ESP32 at TPIO43/44 also gets BQ X(2) | map: master: identity, bus copper, mux; F-1 (v6 passes with an S3) |
+| M  | Readout or setup artefact: wrong board or port; U3 not released (contention); Nano wired to the wrong pad or column, or poor contact; J6 not on TCA2; 10 kΩ not on SDA | always listed |
+
+## Confounds (declared; not separated by this card)
+- Nano core is arduino:esp32 **2.0.18-arduino.5** (IDF 4.4.x); U3 runs arduino-esp32 **2.0.14**. Different module (Nano ESP32 = u-blox NORA-W106, ESP32-S3), its own 3.3 V regulator from its USB.
+- Sketch: `tools/arduino-sketches/v7_bq_master_probe/v7_bq_master_probe.ino` @ 6400df9, unchanged, built for `arduino:esp32:nano_nora`. Each Nano row also probes 0x60 (VCNL, absent: expected NACK, not counted) before BQ; the U3 relbus burst probes INA, BQ, TCA only. Delays the same (1 ms close, 2 ms open).
+- Both at 100 kHz: neither sets a clock before the probes; both cores default to 100 kHz (`esp32-hal-i2c.c:71`). Both drivers enable internal pull-ups on their pins.
+- Die revision *(amended at S3, before A1 counted; found by esptool)*: U3 ESP32-S3 rev v0.2; Nano ESP32-S3 rev v0.1 (esptool, S1/S3).
+- Injection point: TPIO43/44 (5.9 mm from U3) via ~68 mm wire + breadboard; U3's pads stay on the net as inputs (`pinMode(INPUT)`) during B. During A arms the Nano's A4/A5 are on the net, running an empty sketch (pins at reset default).
+
+## Predictions and exclusions (written before the run)
+Counted field: TCA2-row `BQ:` in 10 complete iterations per arm. A1 and A2: the 5-iteration relbus burst from each of two consecutive v7 boots (2 × 5). B: Nano iterations 1–10 after the probe sketch starts. Controls in every counted iteration: BASE row `BQ:.` `INA:.` `TCA:.`; TCA0/TCA1 rows `BQ:.`; TCA2 row `INA:.` `TCA:.`; no `WARN: TCA select` line (B); during B, the v7 log shows `[heartbeat]` lines and no reboot.
+
+| Outcome (numeric) | Excludes | Supports (weakly) |
+|---|---|---|
+| A1 and A2: `BQ:X(2)` in ≥ 9/10 each; B: `BQ:.` in ≥ 9/10; controls pass | H2 (measured-refuted: an S3 master on core 2.0.x on this bus does not by itself give the NACK) | H1 |
+| A1 and A2: `BQ:X(2)` ≥ 9/10 each; B: `BQ:X(2)` ≥ 9/10; controls pass | H1 (measured-refuted: U3's module/supply context is not needed) | H2 |
+| A1 and A2: ≥ 9/10 X(2); B: non-'.' in 2–8/10 | — (intermittent under the Nano) | — ; extend B to 30 iterations, decide with the user |
+| A1 or A2: `BQ:X(2)` < 9/10; or A2 differs from A1 by > 1/10; or any control fails; or a counted code other than 2; or no heartbeat / a v7 reboot during B | — (result void) | M; stop and investigate |
+| No `BUS RELEASED` banner on v7, or no Nano output after flashing | — (setup void; no arm counts) | M |
+
+## Setup
+- Readout: two serial ports at 115200, logged by the session with host time on each line (scratch pyserial logger, reconnects on re-enumeration): v7 → `lab/captures/V7R-004/2026-10-23_V7R-004_v7_01.txt`, Nano → `lab/captures/V7R-004/2026-10-23_V7R-004_nano_01.txt`.
+- v7 flash: `pio run -e motion-play-v7-relbus -t upload` from a detached worktree at `v7-clean` (90053af), by the session. v7 resets between bursts by the session (esptool hard reset over USB); no physical step.
+- Nano flashes by the session. *Amended at S1, before any arm:* the Nano enumerates as Espressif USB-JTAG/serial (303A:1001), not Arduino DFU, so both sketches are built with `arduino:esp32:nano_nora:USBMode=hwcdc` (Hardware CDC, as v7's `ARDUINO_USB_MODE=1`) and written with esptool v4.5.1 (bootloader 0x0, partitions 0x8000, boot_app0 0xe000, app 0x10000). Sketches: blank sketch (`void setup(){}` / `loop(){delay(1000);}`, scratch, built with the same core) for A arms; probe sketch for B.
+- Arms run with no operator action; the 10 kΩ SDA → +3.3 V path stays connected throughout.
+- No scope.
+
+## Procedure (physical steps for the operator)
+| Step | Do | Check before continuing | Report back |
+|---|---|---|---|
+| S1 | Both boards unpowered. Nano USB-C into the Mac; nothing else to the Nano. Session flashes the blank sketch, then asks for the Nano Mac end to be unplugged | Session confirms port + flash | Nano LEDs |
+| S2 | Both unpowered. Green (pad A) → Nano A4 column; yellow (pad B) → Nano A5 column; pigtail red → Nano GND column; pigtail blue → the 'ground'-labelled rail (10 kΩ SDA side) | No Nano pin in a rail; pigtail yellow touches nothing | Which holes, what is next to what |
+| S3 | Plug the Nano Mac end; plug the v7 Mac end. Session flashes relbus to v7 | Session confirms both ports, flash, `BUS RELEASED` | v7 LEDs |
+| A1 | Nothing; session resets v7 once more (2 bursts logged) | — | — |
+| B  | Nothing; session flashes the probe sketch to the Nano, logs ≥ 10 iterations | — | — |
+| A2 | Nothing; session flashes the blank sketch to the Nano, resets v7 twice | — | — |
+| S4 | Session re-flashes v7-clean motion-play-v7-diag to v7 (revert). Unplug both Mac ends | — | Bench state read-back |
+
+--- RUN ---
+
+## Actual result
+### Raw observations (operator, verbatim; symptoms not interpretations)
+- S1 (2026-10-23), operator: "One LED is on I think, it's green-ish (or  maybe yellow)"
+- S1 (session): Nano on `/dev/cu.usbmodem14201`, USB "USB JTAG_serial debug unit" 303A:1001; esptool: ESP32-S3 (revision v0.1), MAC 34:85:18:7b:eb:38. Old firmware printed nothing in 4 s at 115200 (not identified). Blank sketch (hwcdc build) written, all four hashes verified, hard reset; port back, silent.
+- S2 fixture amendment (before any arm), operator: "Option 1, I tinned the ends and use dupont jumpers". Pad wires too short to reach the breadboard from the PCBite; green and yellow ends tinned, each pushed into the female end of a female-to-male Dupont jumper, male end in the Nano column. Extension in place for all arms (A1, B, A2). Jumper length: asked at S3.
+- S2, operator: "1. The green wire is next to A4 on the nano, connected. The yellow wire is next to A5, connected. The pigtail's black wire is in the "V" rail of the breadboard, same side as one leg of the 10kohm resistor, connected. The pigtail's red wire is next to the GND pin of the nano, connected. The pigtail's blue wire is connected to the GND rail of the breadboard, beside the 10kohm resistor's other leg, connected. The pigtail's yellow wire is hanging unconnected 2. I think I listed everything above 3. Yes, it has 2. I connected our pigtail wire next to the GND that is between the nano's pins "D2" and "RST". The other one is between pins "VIN" and "B1""
+- S3, operator: "1. One, yellowy-green. Seems to just indicate that power is on. 2. The power led, green I think 3. Same length,  approx. 175mm". Fixture: two female-to-male Dupont jumpers, ~175 mm each (SDA and SCL), in series with the ~68 mm pad wires.
+- S3 (session): ports — Nano `/dev/cu.usbmodem14201` (MAC 34:85:18:7b:eb:38), v7 `/dev/cu.usbmodem14401` (MAC 44:1b:f6:c5:58:c4). Flash `pio run -e motion-play-v7-relbus -t upload` from worktree at 90053af: SUCCESS, 4 hashes verified, 15:31:01. esptool: v7 U3 = ESP32-S3 **revision v0.2**; Nano = **revision v0.1** (die revision differs: added to confounds). Loggers on both ports from 15:30:21.
+- A1 (session log `..._v7_01.txt`): boot 1 (after flash, 15:31:01) burst iterations 1–5; boot 2 (esptool hard reset 15:31:21) burst iterations 1–5. TCA2 `BQ:X(2)` 10/10. BASE `INA:. BQ:. TCA:.` 10/10; TCA0/TCA1 `BQ:.` 10/10 each (all rows present for both boots; correction 2026-10-23 review: an earlier draft said boot 1 rows were partial); TCA2 `INA:. TCA:.` 10/10. `BUS RELEASED` + heartbeat after each burst. Codes seen: X(2) only. Nano log silent (blank sketch).
+- B (session): probe sketch (hwcdc build) written to the Nano 15:31:54–15:31:58, 4 hashes verified, hard reset; v7 untouched (still in `BUS RELEASED`, heartbeat). Nano log `..._nano_01.txt` from 15:32:00: banner `I2C clock: 100000 Hz`; iteration 1 at 15:32:00.454.
+- B (session log), iterations 1–10 (15:32:00 → 15:32:14): TCA2 row `INA:. VCNL:X(2) BQ :. TCA:.` in all 10 → TCA2 `BQ:.` 10/10. BASE, TCA0, TCA1 rows: `INA:. VCNL:X(2) BQ :. TCA:.` 10/10 each. No `WARN: TCA select` line. Codes seen: X(2) in the VCNL column only (no device at 0x60; not counted). Iterations 11–22 the same (correction 2026-10-23 review: the log holds 22 iterations). v7 log during B: heartbeat every 5 s (t=33420 → 58420 ms), no reboot, no `DIAG_RELEASE_I2C` banner after 15:31:22.
+- B limitation (session): the sketch does not read back the TCA control register, so "channel 2 open under the Nano" rests on the TCA select write returning 0 (address and data byte ACKed), not on a read-back.
+- A2 (session): blank sketch written to the Nano 15:32:41–15:32:45, 4 hashes verified; Nano log silent after. v7 esptool hard resets at 15:32:52 (boot 1) and 15:33:03 (boot 2), each followed by the 5-iteration burst and `BUS RELEASED`.
+- A2 (session log `..._v7_01.txt`): TCA2 `BQ:X(2)` 10/10 (boot 1 it 1–5, boot 2 it 1–5). BASE `INA:. BQ:. TCA:.` 10/10; TCA0/TCA1 `BQ:.` 10/10 each; TCA2 `INA:. TCA:.` 10/10. Codes seen: X(2) only.
+- S4 revert (session): `pio run -e motion-play-v7-diag -t upload` from worktree at 90053af, SUCCESS, 4 hashes verified, 15:36:30; v7 log: `I2C: 400 kHz, default drive, no filters, default pulls [v7-clean]`, `I2C BUS DIAGNOSTIC LOOP` at 15:36:31 (uncounted rows: TCA2 `BQ:X(2)`, U3 master, Nano blank). Loggers stopped after unplug.
+- S4, operator: "1. all off 2. Left as-is"
+### Measured values (from log; cite `lab/evidence/V7R-004/...`)
+Sources: `lab/evidence/V7R-004/2026-10-23_V7R-004_v7_01.txt` (U3 relbus bursts, heartbeat), `lab/evidence/V7R-004/2026-10-23_V7R-004_nano_01.txt` (Nano probe sketch).
+
+| Arm | Master | Counted iterations | TCA2 `BQ:X(2)` | TCA2 `BQ:.` | Controls (BASE INA/BQ/TCA; TCA0/1 BQ; TCA2 INA/TCA) | Other codes |
+|---|---|---|---|---|---|---|
+| A1 | U3 (rev v0.2, core 2.0.14) | boot 1 it 1–5, boot 2 it 1–5 | 10/10 | 0/10 | pass | none |
+| B  | Nano ESP32 (rev v0.1, core 2.0.18-arduino.5) | it 1–10 | 0/10 | 10/10 | pass; no WARN; v7 heartbeat, no reboot | none (VCNL column X(2), not counted) |
+| A2 | U3 | boot 1 it 1–5, boot 2 it 1–5 | 10/10 | 0/10 | pass | none |
+
+Uncounted: B iterations 11–22 TCA2 `BQ:.` 12/12.
+### Interpretation (session; labelled as such)
+Interpretation: on v7 #0003, with the same far-end SDA path, same TCA2 state, same 100 kHz and the same physical bus from TPIO43/44 to BQ, an ESP32-S3 master on its own module and supply gets BQ ACK and U3 gets NACK, live in both directions. "An S3 master as such" (die family, arduino-esp32 2.0.x legacy driver class, generic S3 controller) is not sufficient for the NACK. What stays bundled in the U3 side: WROOM-1 module and its pad path, U3's supply from the board's +3.3 V, the 5.9 mm of copper U3 → TPIO43/44, GPIO43/44 pin role (Nano drives from GPIO11/12), die revision v0.2 vs v0.1, core 2.0.14 vs 2.0.18, and the firmware image. This card does not separate them. The ~243 mm of pad wire + jumper was on the bus in all arms.
+
+## Conclusion
+- Outcome row matched: row 1 — A1 `BQ:X(2)` 10/10, B `BQ:.` 10/10, A2 `BQ:X(2)` 10/10; controls pass in every arm; no code other than 2 (`lab/evidence/V7R-004/2026-10-23_V7R-004_v7_01.txt`, `lab/evidence/V7R-004/2026-10-23_V7R-004_nano_01.txt`).
+- Hypotheses excluded: H2 (an S3 master on core 2.0.x, or the bus side with an S3 master, gives the NACK) — measured-refuted. H1 measured-supported as a bundle (module/path, supply, U3-side copper, pin role, die revision, core, image not separated). M not supported (controls pass; the A arms reproduce and switch with the master; v7 heartbeat through B).
+- **Strength:** measured-refuted (H2; one board, A/B/A, 10/10 per arm; confounds listed); measured-supported (H1, bundle); `lab/evidence/V7R-004/`
+- Deviations: Nano flash method amended at S1 (hwcdc build, esptool) before any arm. Fixture extended at S2 (tinned pad wires + ~175 mm Dupont jumpers) before any arm. TCA channel-open under the Nano not read back (write ACK only). Die revisions differ (v0.2 vs v0.1), found at S3.
+- Revert-on-null done: yes — v7 back on v7-clean motion-play-v7-diag (S4, 15:36:30, session flash log); Nano left on the blank sketch
+- Result commit: self
