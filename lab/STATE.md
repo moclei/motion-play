@@ -1,8 +1,8 @@
 ---
-as_of: V7R-007            # highest card ID with status recorded|abandoned that this file reflects (V7R-000 = sentinel, nothing recorded)
+as_of: V7R-008            # highest card ID with status recorded|abandoned that this file reflects (V7R-000 = sentinel, nothing recorded)
 updated: 2026-10-24       # date of the last edit
 last_checkpoint: V7R-006  # card ID at which the last step-back checkpoint ran (context-strategy §4.3)
-open_cards: [V7R-008]                      # cards with status pre-registered|run; must match lab/cards/ (checked)
+open_cards: []                              # cards with status pre-registered|run; must match lab/cards/ (checked)
 ---
 
 # v7 I²C fault — current state
@@ -41,7 +41,7 @@ Status (untested | tested) says whether a test has touched the region; Strength 
 |---|---|---|---|---|---|
 | master: identity | Something about U3's context on v7 (not BQ alone, not an S3 master as such, not the v7 image, not core 2.0.14) causes the NACK; which property is unknown | tested | measured-supported (two non-U3 masters ACK, the Nano on both cores; U3 NACKs on two images; property not isolated) | L-Ph24a, V7R-004, V7R-006, V7R-007 | V7R-007 |
 | master: module/path | WROOM-1 module, its pad path, die rev (v0.2 vs Nano v0.1) or copper U3→TPIO is the distinguishing factor | tested (bundle) | measured-supported (bundle with supply, pin role, board variant; image removed by V7R-006, core by V7R-007; not separated) | CL-01, CL-02, V7R-004, V7R-006, V7R-007 | V7R-007 |
-| master: pin role | GPIO43's UART0-TX role (ROM boot output, IO_MUX/matrix state, any Serial0 use) leaves the SDA pad unlike SCL's | tested (bundle) | measured-supported (bundle; Nano drives from GPIO11/12; U3 NACKs with v7 image and probe sketch alike) | CL-02, CL-24, V7R-004, V7R-006 | V7R-006 |
+| master: pin role | GPIO43's UART0-TX role (ROM boot output, IO_MUX/matrix state, any Serial0 use) leaves the SDA pad unlike SCL's | tested (bundle) | measured-supported (bundle; U3 NACKs with v7 image and probe sketch alike); V7R-008 void: Nano on GPIO43/44 lost every device after iteration 1, not separated | CL-02, CL-24, V7R-004, V7R-006, V7R-008 | V7R-008 |
 | master: peripheral config | A controller or pad setting (clock, drive, deglitch, pad filter, internal pulls) gates it | tested (partly) | measured-refuted for clock, CAP_3, deglitch (stacked); not tested for pad filter and pulls | L-Ph22, L-Ph23, L-Ph24b, L-Ph25 | L-Ph24b |
 | master: timing | S3 SDA hold/setup relative to SCL, as shaped by the far-end path, falls outside BQ's (and VCNL's) tolerance but inside INA/TCA's | untested | argued (V7R-004: a generic S3 at TPIO got ACK; timing itself never measured) | F-3, F-9, V7R-004 | V7R-004 |
 | master supply | Shared +3.3 V rail (MCU I/O = pull-up rail; AMS1117 + as-built caps) changes how the master's pad relates to the bus | tested (bundle) | measured-supported (bundle with module/path; not separated) | CL-03, CL-08, CL-14, V7R-004, V7R-006 | V7R-006 |
@@ -115,8 +115,8 @@ Baselines (tag → commit, I²C init in one line); boards (ID | condition | mods
 - Boards: v6 | healthy | ~10 mm wire on pad C (U2.14, GND), V7R-001 | known-good reference, on the bench.
 - Boards: v7 #0003 (panel marking; believed B3, not confirmed; U3 die rev v0.2) | healthy | ~68 mm 26 AWG wires soldered on TPIO43 (green) and TPIO44 (yellow), fitted before V7R-004 | the v7 on the bench; treated as the only good unit. Arduino Nano ESP32 (S3 rev v0.1) | healthy | none | external S3 master (V7R-004).
 - Legacy: v7 B1 | bodge-damaged (L-Ph7) | rework | none. v7 B2 | BQ I²C open (L-Ph8), never reflowed? | none known | symptom identity: causal, if it still exists. v7 B3 | healthy | none known | only good unit (no irreversible actions); likely #0003.
-- Flashed now: v6 → v6-ref 4da1c67, lilygo-t-display-s3 (V7R-002 S2 step F). v7 #0003 → v7-clean 90053af, motion-play-v7-diag (V7R-007 revert). Nano ESP32 → blank sketch, 2.0.18 hwcdc build (V7R-007 revert).
-- Bench at last stop (notebook 2026-10-23 s03 cont., V7R-007; unchanged since V7R-005): v7 #0003 and Nano unpowered (USB-C cables in, Mac ends unplugged). J6: rigid #1 (marker; SW1 ON = PCA 0x76; flex + 2 VCNL) via ~400 mm double-ended cable. J5: pigtail, black in 'V' rail with the 10 kΩ, blue + yellow dangling, red in Nano GND column. Pad wires green/yellow → ~175 mm Dupont → Nano A4/A5. J4 empty. v6 off bench. Probes on Cal ground.
+- Flashed now: v6 → v6-ref 4da1c67, lilygo-t-display-s3 (V7R-002 S2 step F). v7 #0003 → v7-clean 90053af, motion-play-v7-diag (V7R-008 revert). Nano ESP32 → blank sketch, 2.0.18 hwcdc build (V7R-008 revert).
+- Bench at last stop (notebook 2026-10-24 s04, V7R-008; unchanged since V7R-005): v7 #0003 and Nano unpowered (USB-C cables in, Mac ends unplugged). J6: rigid #1 (marker; SW1 ON = PCA 0x76; flex + 2 VCNL) via ~400 mm double-ended cable. J5: pigtail, black in 'V' rail with the 10 kΩ, blue + yellow dangling, red in Nano GND column. Pad wires green/yellow → ~175 mm Dupont → Nano A4/A5. J4 empty. v6 off bench. Probes on Cal ground.
 
 ## 7. Measurement trust                         (≤ 10 rows; rows leave when re-measured)
 Verdict is trustworthy | suspect | unknown | not tested; a row is deleted when a V7R card re-measures it.
@@ -133,8 +133,8 @@ Verdict is trustworthy | suspect | unknown | not tested; a row is deleted when a
 
 ## 8. Next                                      (≤ 6 lines)
 Open cards (ID, title, arm reached); proposed next test (which map region it cuts, and why); blocked on (initiatives, parts, decisions).
-- U3 bundle unseparated: module/path (WROOM-1 vs NORA-W106), die rev v0.2/v0.1, master supply, copper U3→TPIO, pin role (U3 GPIO43/44 = UART0 vs Nano GPIO11/12), board variant/flags (image removed V7R-006, core V7R-007). Log-only candidates: (d) Nano drives I²C from its D1/D0 = GPIO43/44 (variant pins_arduino.h) — cuts pin role, rewire two jumpers; (c) YD-ESP32-23 V1.3 devkit as master at TPIO (on hand; can marking unread) — module vs v7 supply/copper. Not log-only: v7 scope session (setup validation first) — touches master: timing, mux, measurement. Card 2 (v6-diag, tag → 189cc03) runnable.
-- Open cards: V7R-008 (Nano on GPIO43/44, option (d); A1 run). Timebox: 7/15 cards · week 1/8 (from V7R-001, 2026-10-20). Master bundle region: 3 cards (V7R-004, -006, -007); the 4th triggers its region review. Checkpoint: done at V7R-006; next due at V7R-009.
+- U3 bundle unseparated: module/path, die rev v0.2/v0.1, master supply, copper U3→TPIO, pin role (V7R-008 void), board variant/flags. Candidates: (c) YD-ESP32-23 devkit as master at TPIO — module vs v7 supply/copper; v7 scope session (setup validation first) — master: timing, mux, measurement, and the V7R-008 B-redo bus state; pin role again only with a Nano power-order step in the procedure. Card 2 (v6-diag) runnable.
+- Open cards: none. Timebox: 8/15 cards · week 1/8 (from V7R-001, 2026-10-20). Master bundle region: 4 cards (V7R-004, -006, -007, -008): region review due before the next card. Checkpoint: last at V7R-006; due at V7R-009.
 
 ## 9. Lookups (L1 routing)                      (≤ 15 rows)
 Where to go for detail that is not L0; load only the named section or query.

@@ -1,0 +1,178 @@
+2026-10-24T00:26:43.154 [PowerMonitor] INA219 configured: 10mR shunt, 1mA/LSB, 8A max
+2026-10-24T00:26:43.154 [PWR after BQ config] VSYS=4.33 V, I=0 mA
+2026-10-24T00:26:43.155 Display initialized
+2026-10-24T00:26:43.155 [PWR after display init] VSYS=4.33 V, I=0 mA
+2026-10-24T00:26:43.155 
+2026-10-24T00:26:43.155 ==============================================================
+2026-10-24T00:26:43.155 [DIAG_RELEASE_I2C] Bus-release diagnostic mode
+2026-10-24T00:26:43.155 ==============================================================
+2026-10-24T00:26:43.155 Skipping WiFi/MQTT/sensor init.
+2026-10-24T00:26:43.155 Running 5-iteration diagnostic burst to prove BQ NACK reproduces
+2026-10-24T00:26:43.155 on the ESP32 side, then releasing the I2C bus to an external master.
+2026-10-24T00:26:43.155 
+2026-10-24T00:26:43.155 Probing: INA(0x40)  BQ(0x6B)  TCA(0x70)
+2026-10-24T00:26:43.155 Legend:  '.' = ACK,  'X(n)' = error n
+2026-10-24T00:26:43.155          (with failing-config cable in J6, expect BQ:X(2) on TCA2 row)
+2026-10-24T00:26:43.155 
+2026-10-24T00:26:43.155 --- Iteration 1 ---
+2026-10-24T00:26:43.155 t=    940  BASE        INA:.    BQ:.    TCA:.
+2026-10-24T00:26:43.155 t=    944  TCA0        INA:.    BQ:.    TCA:.
+2026-10-24T00:26:43.155 t=    948  TCA1        INA:.    BQ:.    TCA:.
+2026-10-24T00:26:43.155 t=    952  TCA2        INA:.    BQ:X(2) TCA:.
+2026-10-24T00:26:43.155 
+2026-10-24T00:26:44.584 --- Iteration 2 ---
+2026-10-24T00:26:44.584 t=   2455  BASE        INA:.    BQ:.    TCA:.
+2026-10-24T00:26:44.584 t=   2459  TCA0        INA:.    BQ:.    TCA:.
+2026-10-24T00:26:44.584 t=   2463  TCA1        INA:.    BQ:.    TCA:.
+2026-10-24T00:26:44.584 t=   2467  TCA2        INA:.    BQ:X(2) TCA:.
+2026-10-24T00:26:44.584 
+2026-10-24T00:26:46.006 --- Iteration 3 ---
+2026-10-24T00:26:46.006 t=   3970  BASE        INA:.    BQ:.    TCA:.
+2026-10-24T00:26:46.006 t=   3974  TCA0        INA:.    BQ:.    TCA:.
+2026-10-24T00:26:46.006 t=   3978  TCA1        INA:.    BQ:.    TCA:.
+2026-10-24T00:26:46.006 t=   3982  TCA2        INA:.    BQ:X(2) TCA:.
+2026-10-24T00:26:46.006 
+2026-10-24T00:26:47.632 --- Iteration 4 ---
+2026-10-24T00:26:47.632 t=   5485  BASE        INA:.    BQ:.    TCA:.
+2026-10-24T00:26:47.632 t=   5489  TCA0        INA:.    BQ:.    TCA:.
+2026-10-24T00:26:47.632 t=   5493  TCA1        INA:.    BQ:.    TCA:.
+2026-10-24T00:26:47.632 t=   5497  TCA2        INA:.    BQ:X(2) TCA:.
+2026-10-24T00:26:47.632 
+[evidence trim: 3991 lines omitted; full capture lab/captures/V7R-008/ (gitignored)]
+2026-10-24T14:14:55.739 [heartbeat] t=49693574 ms — ESP32 alive, bus released
+2026-10-24T14:15:00.844 [heartbeat] t=49698574 ms — ESP32 alive, bus released
+2026-10-24T14:15:03.925 [logger] read failed: [Errno 6] Device not configured
+=== A2-redo 14:15:53 (both unplugged; loggers armed; Nano first then v7; relbus boot expected)
+2026-10-24T14:22:32.289 
+2026-10-24T14:22:32.291 
+2026-10-24T14:22:32.291 =================================
+2026-10-24T14:22:32.291 Motion Play Device - BOOT
+2026-10-24T14:22:32.291 =================================
+2026-10-24T14:22:32.291 =================================
+2026-10-24T14:22:32.291 
+2026-10-24T14:22:32.291 === Configuring BQ24195 (input current limit) ===
+2026-10-24T14:22:32.291 [   760][I][esp32-hal-i2c.c:75] i2cInit(): Initialising I2C Master: sda=43 scl=44 freq=100000
+2026-10-24T14:22:32.291 [I2C SCAN] Scanning 0x03..0x77...
+2026-10-24T14:22:33.516 [I2C SCAN]   Found device at 0x17
+2026-10-24T14:22:34.531 [I2C SCAN]   Found device at 0x28
+2026-10-24T14:22:35.554 [I2C SCAN]   Found device at 0x40
+2026-10-24T14:22:35.554 [I2C SCAN]   Found device at 0x70
+2026-10-24T14:22:35.554 [I2C SCAN]   Found device at 0x76
+2026-10-24T14:22:35.554 [I2C SCAN] Done. 5 device(s) responded.
+2026-10-24T14:22:35.554 BQ24195 not found at 0x6B - skipping (bare T-Display?)
+2026-10-24T14:22:35.554 [PowerMonitor] INA219 configured: 10mR shunt, 1mA/LSB, 8A max
+2026-10-24T14:22:35.554 [PWR after BQ config] VSYS=4.32 V, I=0 mA
+2026-10-24T14:22:35.554 Display initialized
+2026-10-24T14:22:35.554 [PWR after display init] VSYS=4.32 V, I=0 mA
+2026-10-24T14:22:35.554 
+2026-10-24T14:22:35.554 ==============================================================
+2026-10-24T14:22:35.554 [DIAG_RELEASE_I2C] Bus-release diagnostic mode
+2026-10-24T14:22:35.555 ==============================================================
+2026-10-24T14:22:35.555 Skipping WiFi/MQTT/sensor init.
+2026-10-24T14:22:35.555 Running 5-iteration diagnostic burst to prove BQ NACK reproduces
+2026-10-24T14:22:35.555 on the ESP32 side, then releasing the I2C bus to an external master.
+2026-10-24T14:22:35.555 
+2026-10-24T14:22:35.555 Probing: INA(0x40)  BQ(0x6B)  TCA(0x70)
+2026-10-24T14:22:35.555 Legend:  '.' = ACK,  'X(n)' = error n
+2026-10-24T14:22:35.555          (with failing-config cable in J6, expect BQ:X(2) on TCA2 row)
+2026-10-24T14:22:35.555 
+2026-10-24T14:22:35.555 --- Iteration 1 ---
+2026-10-24T14:22:35.555 t=   4012  BASE        INA:.    BQ:X(2) TCA:.
+2026-10-24T14:22:35.555 t=   4016  TCA0        INA:.    BQ:X(2) TCA:.
+2026-10-24T14:22:35.555 t=   4020  TCA1        INA:.    BQ:X(2) TCA:.
+2026-10-24T14:22:35.555 t=   4024  TCA2        INA:.    BQ:X(2) TCA:.
+2026-10-24T14:22:35.555 
+2026-10-24T14:22:36.976 --- Iteration 2 ---
+[evidence trim: 138 lines omitted; full capture lab/captures/V7R-008/ (gitignored)]
+2026-10-24T14:29:58.153 [heartbeat] t=446646 ms — ESP32 alive, bus released
+2026-10-24T14:30:03.033 [heartbeat] t=451646 ms — ESP32 alive, bus released
+2026-10-24T14:30:03.784 [logger] read failed: [Errno 6] Device not configured
+=== Bredo 14:31:18 (both unplugged; loggers armed; Nano first then v7)
+2026-10-24T14:33:02.116 
+2026-10-24T14:33:02.117 
+2026-10-24T14:33:02.117 =================================
+2026-10-24T14:33:02.117 Motion Play Device - BOOT
+2026-10-24T14:33:02.117 =================================
+2026-10-24T14:33:02.117 =================================
+2026-10-24T14:33:02.117 
+2026-10-24T14:33:02.117 === Configuring BQ24195 (input current limit) ===
+2026-10-24T14:33:02.117 [   760][I][esp32-hal-i2c.c:75] i2cInit(): Initialising I2C Master: sda=43 scl=44 freq=100000
+2026-10-24T14:33:02.117 [I2C SCAN] Scanning 0x03..0x77...
+2026-10-24T14:33:02.322 [I2C SCAN]   Found device at 0x03
+2026-10-24T14:33:03.343 [I2C SCAN]   Found device at 0x40
+2026-10-24T14:33:03.343 [I2C SCAN]   Found device at 0x70
+2026-10-24T14:33:03.343 [I2C SCAN] Done. 3 device(s) responded.
+2026-10-24T14:33:03.343 BQ24195 not found at 0x6B - skipping (bare T-Display?)
+2026-10-24T14:33:03.343 [PowerMonitor] INA219 configured: 10mR shunt, 1mA/LSB, 8A max
+2026-10-24T14:33:03.343 [PWR after BQ config] VSYS=4.30 V, I=65 mA
+2026-10-24T14:33:03.343 Display initialized
+2026-10-24T14:33:03.343 [PWR after display init] VSYS=4.30 V, I=65 mA
+2026-10-24T14:33:03.343 
+2026-10-24T14:33:03.343 ==============================================================
+2026-10-24T14:33:03.343 [DIAG_RELEASE_I2C] Bus-release diagnostic mode
+2026-10-24T14:33:03.343 ==============================================================
+2026-10-24T14:33:03.343 Skipping WiFi/MQTT/sensor init.
+2026-10-24T14:33:03.343 Running 5-iteration diagnostic burst to prove BQ NACK reproduces
+2026-10-24T14:33:03.343 on the ESP32 side, then releasing the I2C bus to an external master.
+2026-10-24T14:33:03.343 
+2026-10-24T14:33:03.343 Probing: INA(0x40)  BQ(0x6B)  TCA(0x70)
+2026-10-24T14:33:03.343 Legend:  '.' = ACK,  'X(n)' = error n
+2026-10-24T14:33:03.343          (with failing-config cable in J6, expect BQ:X(2) on TCA2 row)
+2026-10-24T14:33:03.343 
+2026-10-24T14:33:03.343 --- Iteration 1 ---
+2026-10-24T14:33:03.343 t=   2033  BASE        INA:.    BQ:X(2) TCA:.
+2026-10-24T14:33:03.343 t=   2037  TCA0        INA:.    BQ:X(2) TCA:.
+2026-10-24T14:33:03.343 t=   2041  TCA1        INA:.    BQ:X(2) TCA:.
+2026-10-24T14:33:03.343 t=   2045  TCA2        INA:.    BQ:X(2) TCA:.
+2026-10-24T14:33:03.343 
+2026-10-24T14:33:04.770 --- Iteration 2 ---
+2026-10-24T14:33:04.771 t=   3548  BASE        INA:.    BQ:X(2) TCA:.
+2026-10-24T14:33:04.771 t=   3552  TCA0        INA:.    BQ:X(2) TCA:.
+[evidence trim: 179 lines omitted; full capture lab/captures/V7R-008/ (gitignored)]
+2026-10-24T14:44:00.885 [heartbeat] t=659667 ms — ESP32 alive, bus released
+2026-10-24T14:44:05.970 [heartbeat] t=664667 ms — ESP32 alive, bus released
+2026-10-24T14:44:07.237 [logger] read failed: [Errno 6] Device not configured
+=== A3 14:44:56 (both unplugged; loggers armed; Nano first then v7)
+2026-10-24T14:46:29.429 
+2026-10-24T14:46:29.430 
+2026-10-24T14:46:29.430 =================================
+2026-10-24T14:46:29.430 Motion Play Device - BOOT
+2026-10-24T14:46:29.430 =================================
+2026-10-24T14:46:29.430 =================================
+2026-10-24T14:46:29.430 
+2026-10-24T14:46:29.430 === Configuring BQ24195 (input current limit) ===
+2026-10-24T14:46:29.430 [   760][I][esp32-hal-i2c.c:75] i2cInit(): Initialising I2C Master: sda=43 scl=44 freq=100000
+2026-10-24T14:46:29.430 [I2C SCAN] Scanning 0x03..0x77...
+2026-10-24T14:46:29.631 [I2C SCAN]   Found device at 0x40
+2026-10-24T14:46:29.631 [I2C SCAN]   Found device at 0x70
+2026-10-24T14:46:29.631 [I2C SCAN] Done. 2 device(s) responded.
+2026-10-24T14:46:29.631 BQ24195 not found at 0x6B - skipping (bare T-Display?)
+2026-10-24T14:46:29.631 [PowerMonitor] INA219 configured: 10mR shunt, 1mA/LSB, 8A max
+2026-10-24T14:46:29.631 [PWR after BQ config] VSYS=4.29 V, I=0 mA
+2026-10-24T14:46:29.631 Display initialized
+2026-10-24T14:46:29.631 [PWR after display init] VSYS=4.29 V, I=0 mA
+2026-10-24T14:46:29.632 
+2026-10-24T14:46:29.632 ==============================================================
+2026-10-24T14:46:29.632 [DIAG_RELEASE_I2C] Bus-release diagnostic mode
+2026-10-24T14:46:29.632 ==============================================================
+2026-10-24T14:46:29.632 Skipping WiFi/MQTT/sensor init.
+2026-10-24T14:46:29.632 Running 5-iteration diagnostic burst to prove BQ NACK reproduces
+2026-10-24T14:46:29.632 on the ESP32 side, then releasing the I2C bus to an external master.
+2026-10-24T14:46:29.632 
+2026-10-24T14:46:29.632 Probing: INA(0x40)  BQ(0x6B)  TCA(0x70)
+2026-10-24T14:46:29.632 Legend:  '.' = ACK,  'X(n)' = error n
+2026-10-24T14:46:29.632          (with failing-config cable in J6, expect BQ:X(2) on TCA2 row)
+2026-10-24T14:46:29.632 
+2026-10-24T14:46:29.632 --- Iteration 1 ---
+2026-10-24T14:46:29.632 t=   1035  BASE        INA:.    BQ:X(2) TCA:.
+2026-10-24T14:46:29.632 t=   1039  TCA0        INA:.    BQ:X(2) TCA:.
+2026-10-24T14:46:29.632 t=   1043  TCA1        INA:.    BQ:X(2) TCA:.
+2026-10-24T14:46:29.632 t=   1047  TCA2        INA:.    BQ:X(2) TCA:.
+2026-10-24T14:46:29.632 
+2026-10-24T14:46:31.050 --- Iteration 2 ---
+2026-10-24T14:46:31.255 t=   2550  BASE        INA:.    BQ:X(2) TCA:.
+2026-10-24T14:46:31.255 t=   2554  TCA0        INA:.    BQ:X(2) TCA:.
+2026-10-24T14:46:31.255 t=   2558  TCA1        INA:.    BQ:X(2) TCA:.
+[evidence trim: 54 lines omitted; full capture lab/captures/V7R-008/ (gitignored)]
+2026-10-24T14:47:08.335 [heartbeat] t=39669 ms — ESP32 alive, bus released
+2026-10-24T14:47:13.223 [heartbeat] t=44669 ms — ESP32 alive, bus released

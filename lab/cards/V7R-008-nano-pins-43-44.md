@@ -1,7 +1,7 @@
 ---
 test_id: V7R-008
 title: "Pin role on the Nano ESP32 master: I²C on GPIO11/12 (A4/A5) vs GPIO43/44 (D1/D0, UART0 pins), U3 released, rigid on J6, A/B/A"
-status: run
+status: recorded
 created: 2026-10-24
 prereg_commit: self
 baseline:
@@ -102,11 +102,28 @@ Controls in every counted arm: banner `sketch=v7_pca_master_probe version=1.0 �
 - B counted (`=== Bredo-reset`): banner; `[pins]` as before (GPIO43 → I2C0 SDA out 90, GPIO44 → SCL out 89, MCU_SEL 1); `[pins-in] sda_in_cfg=0xab scl_in_cfg=0xac … ie=1/1 wpu=1/1 od=1/1 lvl43=1 lvl44=` (cut); `TCA9548A initialized`; `TCA ch 2: PCA9546A at 0x76`. Iteration 1 (t = 1517 ms): BASE, TCA0, TCA1 `INA:. BQ:X(2) TCA:. PCA:X(2) VCNL:X(2)`; TCA2 `INA:X(2) BQ:X(2) TCA:. PCA:. VCNL:X(2)`; TCA2+PCA0, TCA2+PCA1 all X(2). Iterations 2–10 (t = 3547 … 19789 ms): every row all X(2). Counted: VCNL X(2) 20/20; TCA2 BQ X(2) 10/10; controls fail (INA/TCA NACK from iteration 1 TCA2+PCA0 on) → void row. U3 heartbeat 14:33:40.980.
 - User chose to close the card: "ok, let's go with (a)". Closing sequence: A image flashed (wires on TX1/RX0, all powered, uncounted); both unplugged; wires to A4/A5; Nano first, then v7; after `BUS RELEASED`, session resets the Nano and counts A3; then revert (Nano blank, U3 diag) and S4.
 ### Measured values (from log; cite `lab/evidence/V7R-008/...`)
+Sources: `lab/evidence/V7R-008/2026-10-24_V7R-008_nano_01.txt` (all Nano runs; arm markers `=== …`; sections trimmed after ~140 lines, full captures in `lab/captures/V7R-008/`, gitignored), `lab/evidence/V7R-008/2026-10-24_V7R-008_v7_01.txt` (U3 relbus boots, `BUS RELEASED`, heartbeats; trimmed likewise).
+
+| Run (marker) | Nano image · pins | Power order / boot | Counted | VCNL '.' | VCNL X(2) | TCA2 BQ '.' | TCA2 BQ X(2) | Controls |
+|---|---|---|---|---|---|---|---|---|
+| A1 (`=== A1`) | A · A4/A5 | Nano then v7 (S1); boot after flash | it 1–10 | 20/20 | 0/20 | 10/10 | 0/10 | pass (no pin line) |
+| B (`=== B 11:20`) | B · TX1/RX0 | Nano replugged, v7 live | it 1–10 | 0/20 (no PCA rows) | — | 0/10 | 10/10 | fail: all X(2), no TCA/PCA |
+| B retry (`=== diag-all-three`) | B · TX1/RX0 | Nano replugged, v7 live | it 1–10 | — | — | 0/10 | 10/10 | fail: all X(2) |
+| B′ (`=== Bprime-replug`) | B′ · TX1/RX0 | Nano replugged, v7 live | it 1–10 | — | — | 0/10 | 10/10 | fail: all X(2); pins GPIO43/44 out |
+| B″ (`=== Bdprime`) | B″ · TX1/RX0 | Nano replugged, v7 live | it 1–10 | — | — | 0/10 | 10/10 | fail: all X(2); pins in/out GPIO43/44 |
+| A2 (`=== A2`, `=== A2-retry`) | A · A4/A5 | Nano replugged, v7 live | it 1–4 only | — | — | 0/4 | 4/4 | fail: all X(2) |
+| A2 redo (`=== A2-redo-reset`) | A · A4/A5 | Nano then v7, Nano reset after `BUS RELEASED` | it 1–10 | 20/20 | 0/20 | 10/10 | 0/10 | pass |
+| B redo (`=== Bredo-reset`) | B″ · TX1/RX0 | Nano then v7, Nano reset after `BUS RELEASED` | it 1–10 | 0/20 | 20/20 | 0/10 | 10/10 | fail: INA/TCA ACK at BASE/TCA0/TCA1 in it 1 only, all X(2) from it 1 TCA2+PCA0 on |
+| A3 (`=== A3-reset`) | A · A4/A5 | Nano then v7, Nano reset after `BUS RELEASED` | it 1–10 | 20/20 | 0/20 | 10/10 | 0/10 | pass |
+
+U3 (`motion-play-v7-relbus`): every boot printed the burst TCA2 `INA:. BQ:X(2) TCA:.` 5/5 and one `BUS RELEASED`; heartbeat present through every run; no reboot other than the operator's power cycles. Relbus boots after the full power cycles (14:22, 14:33, 14:46) printed `BQ24195 not found at 0x6B - skipping (bare T-Display?)`.
 ### Interpretation (session; labelled as such)
+Interpretation: the pre-registered B arm never produced a countable result. With the Nano replugged while the v7 was powered, every run (A image on A4/A5 included) got no ACK from any device, and the operator found the Nano's LED off whenever the v7 SDA/SCL wires were attached; that fits the Nano being fed through its I/O pins from the v7's pull-ups (back-powering) while unpowered, which the card did not anticipate. With the S1 power order and a session reset of the Nano, A2 and A3 match A1; under that order the Nano on GPIO43/44 (pins confirmed by register readback, in and out) got ACK from INA/TCA at first and then no ACK from anything for the rest of the run, which A never showed. The card's question (does pin role move the BQ/VCNL NACK) is not answered: the controls failed in B, so H1 and H2 both stand. What the run adds is an unexplained observation: an S3 master on GPIO43/44 of a NORA-W106 on this bus loses every device within the first iteration.
 
 ## Conclusion
-- Outcome row matched: ...
-- Hypotheses excluded: ...
-- **Strength:** ...
-- Revert-on-null done: ...
+- Outcome row matched: void row (B: controls fail in every attempt — INA/TCA/PCA X(2); A1, A2 redo and A3 pass: VCNL '.' 20/20, BQ '.' 10/10 each) (`lab/evidence/V7R-008/2026-10-24_V7R-008_nano_01.txt`, `lab/evidence/V7R-008/2026-10-24_V7R-008_v7_01.txt`).
+- Hypotheses excluded: none. H1 and H2 not tested (B void). M supported for the replug runs (Nano power-up with the v7 live and the bus wires attached); not separated for the B redo (pins and wiring checked; bus state not observed).
+- **Strength:** not tested (H1, H2); observation only for the B-redo pattern (one run, one board, one Nano); `lab/evidence/V7R-008/`
+- Deviations: (1) build.code_debug=3 had no effect; the i2cInit pin line was missing (user: "carry on"); replaced in later B runs by user-approved readback images B′ and B″ (readback prints only). (2) The Nano logger stopped at the S2 unplug and was not restarted; B re-captured on a second replug (user agreed). (3) Unplanned operator actions: Nano reseated in the breadboard; wire-by-wire USB diagnostic; meter continuity checks; 13:58 placement/LED test (operator: disregard). (4) A2 and B redone with a different procedure: both boards off, Nano powered first, then v7, then a session esptool reset of the Nano (`chip_id`, no flash) after `BUS RELEASED` (user approved each). (5) An extra A3 arm after the B redo. (6) Operator "LED on" reports from S2 on unreliable (LED faces the breadboard).
+- Revert-on-null done: yes — Nano on the blank sketch (14:47:24), U3 on v7-clean motion-play-v7-diag (14:47:24–14:48:01, SUCCESS); jumpers on A4/A5; S4 operator: "both off"
 - Result commit: self
