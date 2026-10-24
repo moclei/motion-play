@@ -43,7 +43,7 @@ Status (untested | tested) says whether a test has touched the region; Strength 
 | master: module/path | WROOM-1 module, its pad path, die rev (v0.2 vs Nano v0.1) or copper U3→TPIO is the distinguishing factor | tested (bundle) | measured-supported (bundle with supply, pin role, core, image; not separated) | CL-01, CL-02, V7R-004 | V7R-004 |
 | master: pin role | GPIO43's UART0-TX role (ROM boot output, IO_MUX/matrix state, any Serial0 use) leaves the SDA pad unlike SCL's | tested (bundle) | measured-supported (bundle; Nano drives from GPIO11/12) | CL-02, CL-24, V7R-004 | V7R-004 |
 | master: peripheral config | A controller or pad setting (clock, drive, deglitch, pad filter, internal pulls) gates it | tested (partly) | measured-refuted for clock, CAP_3, deglitch (stacked); not tested for pad filter and pulls | L-Ph22, L-Ph23, L-Ph24b, L-Ph25 | L-Ph24b |
-| master: timing | S3 SDA hold/setup relative to SCL, as shaped by the far-end path, falls outside BQ's (and VCNL's) tolerance but inside INA/TCA's | tested (partly) | measured-refuted for a generic S3 at 100 kHz (Nano, V7R-004); U3-specific timing not tested | F-3, F-9, V7R-004 | V7R-004 |
+| master: timing | S3 SDA hold/setup relative to SCL, as shaped by the far-end path, falls outside BQ's (and VCNL's) tolerance but inside INA/TCA's | untested | argued (V7R-004: a generic S3 at TPIO got ACK; timing itself never measured) | F-3, F-9, V7R-004 | V7R-004 |
 | master supply | Shared +3.3 V rail (MCU I/O = pull-up rail; AMS1117 + as-built caps) changes how the master's pad relates to the bus | tested (bundle) | measured-supported (bundle with module/path; not separated) | CL-03, CL-08, CL-14, V7R-004 | V7R-004 |
 | bus copper | v7 SDA route (B.Cu under BT1, ~6.8 mm with no In2 under it, In2 +3.3 V reference) degrades S3-driven SDA edges but not SAMD21's | tested (partly) | measured-refuted for TPIO→BQ with an S3 master at TPIO (V7R-004); U3→TPIO 5.9 mm in master: module/path | F-8, CL-19–21, T3, V7R-004 | V7R-004 |
 | bus copper: neighbours | SCL (0.20 mm gap) or CHRG_INT (<0.5 mm) couples into SDA | untested | not tested | F-8, T3 | — |
@@ -76,7 +76,7 @@ Only facts load-bearing for section 3; inferences are labelled "argued" and neve
 | F-9 BQ is the farthest SDA load from U3 (47.7 mm; INA 31.7 mm, TCA 19.4 mm) | measured | T3 §3 |
 | F-10 espressif/esp-idf #8543: ESP32-S3 master clocked SCL after STOP on IDF release/v4.4, fixed 2022; original ESP32 unaffected. Relevance: **unassessed** (whether core 2.0.14's IDF includes the fix is unchecked) | reference | T5-ref |
 | F-11 Sensor module (rigid + flex + VCNL) works with an Arduino Nano ESP32 master on J1 | measured (strong) | L-Ph3 |
-| F-12 Nano ESP32 (S3 rev v0.1, core 2.0.18-arduino.5, own supply) at TPIO43/44, U3 released, 100 kHz, failing config: BQ ACK 10/10; U3 (rev v0.2) NACK 10/10 before and after; ~243 mm wire on the bus in all arms | measured-supported (one board, A/B/A; bundle) | V7R-004 |
+| F-12 Nano ESP32 (S3 rev v0.1, core 2.0.18-arduino.5, own supply) at TPIO43/44, U3 released, failing config: BQ ACKs; U3 (rev v0.2) NACKs before and after; ~243 mm wire on the bus in all arms | measured-supported (one board, A/B/A; bundle) | V7R-004 |
 | A-1 TCA9548A pass gate: with no downstream pull-up, the downstream side idles below VCC (pass-gate limited), so "stub only" and "stub + far-end pull-up" also differ in downstream idle level | argued (datasheet behaviour; not verified this session; not measured on v7) | TI TCA9548A datasheet [verify] |
 | A-2 "BQ is first to fail because it's farthest, and VCNL fails from the same bus margin" | argued for "farthest / bus margin" (not tested); "same fault" part measured-supported (V7R-005) | L-Ph4, V7R-005 |
 
@@ -132,7 +132,7 @@ Verdict is trustworthy | suspect | unknown | not tested; a row is deleted when a
 
 ## 8. Next                                      (≤ 6 lines)
 Open cards (ID, title, arm reached); proposed next test (which map region it cuts, and why); blocked on (initiatives, parts, decisions).
-- Open cards: none. V7R-005 recorded (row 1: with a rigid on J6, VCNL and BQ both ACK under the Nano, both NACK under U3).
+- Open cards: none. V7R-005 recorded (row 1).
 - U3 bundle unseparated: module/path, supply, copper U3→TPIO, pin role, die rev v0.2/v0.1, core 2.0.14/2.0.18, image. Log-only candidates: (b) U3 runs `v7_pca_master_probe` with `Wire.begin(43, 44)` (one-line card delta; user approval pending) — splits image/core vs U3 hardware; (a) Nano on core 2.0.14 — cuts core; (c) YD-ESP32-23 V1.3 devkit as master at TPIO (on hand; can marking unread) — module vs v7 supply/copper. Card 2 (v6-diag, tag → 189cc03) runnable.
 - Timebox: 5/15 cards · week 1/8 (from V7R-001, 2026-10-20). Checkpoint: 2 recorded since V7R-003; due at V7R-006 (no new card after it until done).
 

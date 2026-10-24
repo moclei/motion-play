@@ -26,11 +26,11 @@ Working rules for me at the bench: the same as before (notebook 2026-10-23 s01 a
 
 ## 3. What should happen, in order
 
-1. **Start-up check and a five-line orientation.** No open cards. Then the branch.
+1. **Start-up check and a five-line orientation.** Then the branch.
 2. **Card (b) pre-registered and committed** before any bench step, with the delta stated: which file, which line, built on which core, reverted at the end.
 3. **Bench steps one at a time.** Raw data is committed as it comes in.
 4. **Recording:** the card, STATE and the notebook entry in one commit.
-5. **Checkpoint entry** (now due) before anything else is pre-registered.
+5. **Checkpoint entry** (due once that card is recorded) before anything else is pre-registered.
 
 ## 4. Stop at once
 

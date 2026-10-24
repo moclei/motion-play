@@ -107,3 +107,12 @@ The "belief changes" line replaces overwriting a "current working theory": STATE
 - observations not in a card: v7 HW-CDC output is held until the host opens the port (boot 1's text arrived ~150 s after power-on, in one burst). esptool `chip_id` reset can fail with "Unable to verify flash chip connection" and leave the S3 in download mode; `--no-stub read_mac` resets cleanly. Every diag-image boot with the rigid prints `requestFrom(): i2cWriteReadNonStop returned Error -1` at the STEP 3 0x74 read (TCA ch 0, empty); boot 2 stopped printing there. YD-ESP32-23 (2022 V1.3) devkit found spare, headers fitted; can marking not read yet. Rigid #1: operator marked "#1"; SW1 ON, SW2 OFF; ~400 mm double-ended cable; green LED on the rigid when powered.
 - bench state at end: v7 #0003 and Nano unpowered, both USB-C cables in, Mac ends unplugged; v7 on v7-clean 90053af motion-play-v7-diag (session flash 21:51:57), Nano on the blank sketch (session flash 21:51:23). J6: rigid #1 via ~400 mm cable. J5: pigtail (black in 'V' rail with the 10 kΩ, blue + yellow dangling, red in Nano GND column). Pad wires green/yellow → Dupont → Nano A4/A5. J4 empty. v6 off bench. Probes on scope Cal ground.
 - next: no open card. Candidates in STATE §8: (b) U3 running the PCA probe (one-line pin delta), (a) Nano on core 2.0.14, (c) YD devkit, card 2. Checkpoint due at V7R-006.
+
+## 2026-10-23 · s02 (review corrections) · PR #86 review: two record fixes
+- session: debugger (direct) · operator: user · boards: none (no bench step)
+- cards: V7R-004 and V7R-005 corrected after recording (marked in place): count/wording fixes; V7R-005 delta-approval deviation recorded.
+- map: master: timing: the s02 entry's "measured-refuted for a generic S3 at 100 kHz" was overstated — now untested, argued (V7R-004 never measured timing). No other map change.
+- decisions: user asked for a PR, an independent review, and a merge unless a blocking objection couldn't be fixed. Both blocking findings were record fixes, made here.
+- observations not in a card: V7R-005's firmware deltas were run without a card-specific approval (the role requires one); disclosed on the card and to the user.
+- bench state at end: unchanged from 2026-10-23 · s02 (cont.).
+- next: no open card; checkpoint due at V7R-006.
