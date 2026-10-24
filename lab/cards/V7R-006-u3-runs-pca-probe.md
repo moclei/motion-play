@@ -1,7 +1,7 @@
 ---
 test_id: V7R-006
 title: "Image swap on U3: v7-clean diag loop vs v7_pca_master_probe (+ Wire.begin(43, 44)), same core, rigid on J6, A/B/A"
-status: run
+status: recorded
 created: 2026-10-23
 prereg_commit: self
 baseline:
@@ -71,11 +71,23 @@ Controls in every counted iteration: PCA detection summary shows `TCA ch 2: PCA9
 - B (session): probe image (scratch `[env:u3-probe]`) uploaded over `/dev/cu.usbmodem14401` 23:15:44–23:15:50: `Chip is ESP32-S3 (revision v0.2)`, `MAC: 44:1b:f6:c5:58:c4`, 4× `Hash of data verified.`, `Hard resetting via RTS pin...`, SUCCESS. No power cycle. Logger restarted 23:15:50 (same file). First line `[   897][I][esp32-hal-i2c.c:75] i2cInit(): Initialising I2C Master: sda=43 scl=44 freq=100000` (Wire.begin default before setClock), then `[probe] sketch=v7_pca_master_probe version=1.0 board=Espressif ESP32-S3-DevKitC-1-N8 (8 MB QD, No PSRAM) i2c_clock=400000 Hz` (board string is the PlatformIO board's ARDUINO_BOARD name; i2c_clock is the requested value, not a readback). `TCA9548A initialized`; PCA scan ch 0/1 nothing, ch 2 `PCA9546A found at 0x76`; summary `TCA ch 2: PCA9546A at 0x76`. Iterations 1–10 (t = 934 … 19231 ms; host 23:15:50.765 … 23:16:09.080): every iteration identical — BASE `INA:. BQ:. TCA:. PCA:X(2) VCNL:X(2)`; TCA0 and TCA1 `INA:. BQ:. TCA:. PCA:X(2) VCNL:X(2)`; TCA2 `INA:. BQ:X(2) TCA:. PCA:. VCNL:X(2)`; TCA2+PCA0 and TCA2+PCA1 `INA:. BQ:X(2) TCA:. PCA:. VCNL:X(2)`. Counted: VCNL X(2) 20/20; TCA2 BQ X(2) 10/10. Controls pass. Iteration 11 same.
 - A2 (session): logger stopped after B iteration ~23 (23:16:37). `motion-play-v7-diag` uploaded from a detached worktree at 90053af, 23:16:37–23:17:11: `Chip is ESP32-S3 (revision v0.2)`, `MAC: 44:1b:f6:c5:58:c4`, 4× `Hash of data verified.`, `Hard resetting via RTS pin...`, SUCCESS. No power cycle. Logger restarted 23:17:11 (same file). Boot output starts `BQ24195 not found at 0x6B - skipping (bare T-Display?)` (A1 boot had `BQ24195 configured: IINLIM=2A, watchdog disabled`), then `[PowerMonitor] INA219 configured…`, `[PWR after BQ config] VSYS=4.31 V, I=0 mA`. STEP 3: `[  1473][E][Wire.cpp:499] requestFrom(): i2cWriteReadNonStop returned Error -1`; boot continued. PCA scan `PCA9546A found at 0x76`; summary `TCA ch 2: PCA9546A at 0x76`. Iterations 1–10 (t = 1603 … 19905 ms; host 23:17:11.785 … 23:17:30.131): every iteration identical to A1 and B — BASE `INA:. BQ:. TCA:. PCA:X(2) VCNL:X(2)`; TCA0/TCA1 `INA:. BQ:. TCA:. PCA:X(2) VCNL:X(2)`; TCA2, TCA2+PCA0, TCA2+PCA1 `INA:. BQ:X(2) TCA:. PCA:. VCNL:X(2)`. Counted: VCNL X(2) 20/20; TCA2 BQ X(2) 10/10. Controls pass.
 ### Measured values (from log; cite `lab/evidence/V7R-006/...`)
+Source: `lab/evidence/V7R-006/2026-10-23_V7R-006_v7_01.txt` (U3: A1 boot 1, B probe image, A2 boot; one file, logger restarted at each upload).
+
+| Arm | Image on U3 | Counted | VCNL X(2) (TCA2+PCA0/1) | VCNL '.' | TCA2 BQ X(2) | TCA2 BQ '.' | Controls | Other codes |
+|---|---|---|---|---|---|---|---|---|
+| A1 | v7-clean diag loop, 400 kHz | boot 1 it 1–10 | 20/20 | 0/20 | 10/10 | 0/10 | pass | none |
+| B  | v7_pca_master_probe 1.0 + Wire.begin(43, 44), 400 kHz requested | it 1–10 | 20/20 | 0/20 | 10/10 | 0/10 | pass; banner version/clock as required | none |
+| A2 | v7-clean diag loop, 400 kHz | it 1–10 | 20/20 | 0/20 | 10/10 | 0/10 | pass | none |
+
+Uncounted: A1 it 11–25 and B it 11–~23 same per-row results.
+Boot-time observation (not an arm): the A2 boot (U3 reset by the upload, no power cycle, after B) printed `BQ24195 not found at 0x6B - skipping`; the A1 boot (from power-on) printed `BQ24195 configured`. Both A boots printed the STEP 3 `requestFrom()` error and continued.
 ### Interpretation (session; labelled as such)
+Interpretation: on v7 #0003 with rigid #1 on J6, U3 gets VCNL and BQ NACK whether it runs the v7-clean image or the raw-`Wire` probe sketch that gave ACK on the Nano ESP32 (V7R-005). The v7 image (boot sequence, BQ/INA/GPIO init, diag-loop code) is not necessary for the NACK. What remains on the U3 side, unseparated: module/path, master supply, U3→TPIO copper, pin role, die rev v0.2, core 2.0.14 (held in all arms here; the Nano ran 2.0.18), and the devkitc board variant (held). The A2 boot's `BQ24195 not found` is consistent with the TCA keeping channel 2 open across a U3 reset (the TCA is not reset by U3's reset) — argued, not checked.
 
 ## Conclusion
-- Outcome row matched: ...
-- Hypotheses excluded: ...
-- **Strength:** ...
-- Revert-on-null done: ...
+- Outcome row matched: row 2 — A1 VCNL X(2) 20/20 / BQ X(2) 10/10; B VCNL X(2) 20/20 / BQ X(2) 10/10; A2 VCNL X(2) 20/20 / BQ X(2) 10/10; controls pass in every arm; no counted code other than 2 (`lab/evidence/V7R-006/2026-10-23_V7R-006_v7_01.txt`).
+- Hypotheses excluded: H1 (the v7-clean image is necessary for the NACK on U3) — measured-refuted. H2 measured-supported as a bundle (U3 module/path, supply, copper, pin role, die rev, core 2.0.14, board variant; not separated). M not supported (banner, PCA detection and controls pass in every arm; port identified by MAC).
+- **Strength:** measured-refuted (H1; one board, one rigid, A/B/A, 20/20 and 10/10 per arm; core 2.0.14 and devkitc variant held; probe emulation of the diag loop not scope-verified); measured-supported (H2, bundle); `lab/evidence/V7R-006/`
+- Deviations: before A1 the session ran an esptool `read_mac` loop over both ports that was not in the procedure and not asked for (the user's rule: no session-side action outside the procedure without asking); it failed at import before opening any port, so no reset reached either board. Disclosed to the user. B entered without a power cycle as declared; the A2 boot did not configure the BQ (`BQ24195 not found`), so A2's BQ register state is whatever A1 set — not read back.
+- Revert-on-null done: yes — A2 leaves U3 on v7-clean motion-play-v7-diag (90053af, upload 23:16:37–23:17:11); Nano on the blank sketch throughout
 - Result commit: self

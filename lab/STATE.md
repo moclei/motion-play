@@ -1,8 +1,8 @@
 ---
-as_of: V7R-005            # highest card ID with status recorded|abandoned that this file reflects (V7R-000 = sentinel, nothing recorded)
+as_of: V7R-006            # highest card ID with status recorded|abandoned that this file reflects (V7R-000 = sentinel, nothing recorded)
 updated: 2026-10-23       # date of the last edit
 last_checkpoint: V7R-003  # card ID at which the last step-back checkpoint ran (context-strategy §4.3)
-open_cards: [V7R-006]                      # cards with status pre-registered|run; must match lab/cards/ (checked)
+open_cards: []                             # cards with status pre-registered|run; must match lab/cards/ (checked)
 ---
 
 # v7 I²C fault — current state
@@ -31,7 +31,7 @@ Every candidate cause in section 3 must explain both columns; Distinction is wha
 | Condition: polarity | far-end path to +3.3 V (main rail or clean bench PSU) | far-end path to GND; VCC–GND resistor only | ~70 µA sourced into SDA at the far end while low; downstream node held at 3.3 V | L-Ph11, L-Ph13, L-Ph14 |
 | Condition: load | any R from 4.7 k to 47 k, or a rigid | cable with no far-end path (stub only) | DC path present, not R value or C | L-Ph5, L-Ph6d |
 | When | every probe while channel open and path present; steady state | after channel close or path removal (next probe); never cleared by 3× START/STOP | live, not latched | L-Ph12, L-Ph14, L-Ph15, V7R-003 |
-| Firmware knobs | 400 kHz default init (pre-debug; `v7-clean`), 100 k, 50 k, CAP_3, deglitch 7 | none found that clears it | none found | L-Ph1–4, L-Ph22, L-Ph23, L-Ph24b, V7R-003 |
+| Firmware knobs | 400 kHz default init (pre-debug; `v7-clean`), 100 k, 50 k, CAP_3, deglitch 7; U3 running the raw-`Wire` probe sketch (no v7 init) | none found that clears it on U3 | none found | L-Ph1–4, L-Ph22, L-Ph23, L-Ph24b, V7R-003, V7R-006 |
 | Regime | VBUS present; battery pads only; WiFi on and off | none found | none found | L-Ph6b, L-Ph18 |
 | Extent | 100% deterministic on 2 healthy-assembly v7 boards | intermittent; board-specific | design-level | L-Ph4, L-Ph9 |
 
@@ -39,12 +39,12 @@ Every candidate cause in section 3 must explain both columns; Distinction is wha
 Status (untested | tested) says whether a test has touched the region; Strength (argued | measured-supported | measured-refuted | not tested) says what the evidence is worth. A region with no rows is listed as "no hypothesis yet".
 | Region | Hypothesis (one line) | Status | Strength | Evidence | Last touched |
 |---|---|---|---|---|---|
-| master: identity | Something about U3's context on v7 (not BQ alone, not an S3 master as such) causes the NACK; which property is unknown | tested | measured-supported (two non-U3 masters ACK; property not isolated) | L-Ph24a, V7R-004 | V7R-004 |
-| master: module/path | WROOM-1 module, its pad path, die rev (v0.2 vs Nano v0.1) or copper U3→TPIO is the distinguishing factor | tested (bundle) | measured-supported (bundle with supply, pin role, core, image; not separated) | CL-01, CL-02, V7R-004 | V7R-004 |
-| master: pin role | GPIO43's UART0-TX role (ROM boot output, IO_MUX/matrix state, any Serial0 use) leaves the SDA pad unlike SCL's | tested (bundle) | measured-supported (bundle; Nano drives from GPIO11/12) | CL-02, CL-24, V7R-004 | V7R-004 |
+| master: identity | Something about U3's context on v7 (not BQ alone, not an S3 master as such, not the v7 image) causes the NACK; which property is unknown | tested | measured-supported (two non-U3 masters ACK; U3 NACKs on two images; property not isolated) | L-Ph24a, V7R-004, V7R-006 | V7R-006 |
+| master: module/path | WROOM-1 module, its pad path, die rev (v0.2 vs Nano v0.1) or copper U3→TPIO is the distinguishing factor | tested (bundle) | measured-supported (bundle with supply, pin role, core 2.0.14; image removed by V7R-006; not separated) | CL-01, CL-02, V7R-004, V7R-006 | V7R-006 |
+| master: pin role | GPIO43's UART0-TX role (ROM boot output, IO_MUX/matrix state, any Serial0 use) leaves the SDA pad unlike SCL's | tested (bundle) | measured-supported (bundle; Nano drives from GPIO11/12; U3 NACKs with v7 image and probe sketch alike) | CL-02, CL-24, V7R-004, V7R-006 | V7R-006 |
 | master: peripheral config | A controller or pad setting (clock, drive, deglitch, pad filter, internal pulls) gates it | tested (partly) | measured-refuted for clock, CAP_3, deglitch (stacked); not tested for pad filter and pulls | L-Ph22, L-Ph23, L-Ph24b, L-Ph25 | L-Ph24b |
 | master: timing | S3 SDA hold/setup relative to SCL, as shaped by the far-end path, falls outside BQ's (and VCNL's) tolerance but inside INA/TCA's | untested | argued (V7R-004: a generic S3 at TPIO got ACK; timing itself never measured) | F-3, F-9, V7R-004 | V7R-004 |
-| master supply | Shared +3.3 V rail (MCU I/O = pull-up rail; AMS1117 + as-built caps) changes how the master's pad relates to the bus | tested (bundle) | measured-supported (bundle with module/path; not separated) | CL-03, CL-08, CL-14, V7R-004 | V7R-004 |
+| master supply | Shared +3.3 V rail (MCU I/O = pull-up rail; AMS1117 + as-built caps) changes how the master's pad relates to the bus | tested (bundle) | measured-supported (bundle with module/path; not separated) | CL-03, CL-08, CL-14, V7R-004, V7R-006 | V7R-006 |
 | bus copper | v7 SDA route (B.Cu under BT1, ~6.8 mm with no In2 under it, In2 +3.3 V reference) degrades S3-driven SDA edges but not SAMD21's | tested (partly) | measured-refuted for TPIO→BQ with an S3 master at TPIO (V7R-004); U3→TPIO 5.9 mm in master: module/path | F-8, CL-19–21, T3, V7R-004 | V7R-004 |
 | bus copper: neighbours | SCL (0.20 mm gap) or CHRG_INT (<0.5 mm) couples into SDA | untested | not tested | F-8, T3 | — |
 | mux | TCA channel-open with a far-end pull-up changes the upstream SDA node (pass-gate state, idle level) in a way only U3's context reacts to | untested | argued (V7R-004: an S3 at TPIO doesn't react; U3 does) | A-1, L-Ph5, L-Ph6d, L-Ph13, V7R-004 | V7R-004 |
@@ -54,9 +54,9 @@ Status (untested | tested) says whether a test has touched the region; Strength 
 | symptom identity: causal | BQ's NACK state or input disturbs the bus for downstream devices (BQ causal), vs common cause | untested | not tested | L-Ph8 (B2: BQ I²C open) | — |
 | cable / far end | no live hypothesis; trigger characterised (SDA, +3.3 V, DC path, R-independent) | tested | measured (as trigger) | L-Ph5, L-Ph6d, L-Ph11–15 | L-Ph15 |
 | cable mating | 4-pin socket vs 4-in-5 (CL-16) | untested | argued-refuted (SAMD21 ACKs through the same mating) | CL-16, L-Ph24a | — |
-| firmware: drift | Debug-stack drift since `4da1c67` causes it | tested (partly) | measured-refuted for the five stacked I²C-init changes; argued-refuted for the rest (diag code, F-6) | V7R-003, CL-25, F-6 | V7R-003 |
-| firmware: env | v7 env/variant change (devkitc variant, no display init, STARTUP_I2C_SCAN, boot order) | untested | not tested | CL-24 | — |
-| firmware: core | arduino-esp32 2.0.14 / legacy IDF I²C driver behaviour (#8543 class) | untested | not tested; fails v6 IS NOT on its own (same core on v6); driver class 2.0.x measured-refuted as sufficient (V7R-004, 2.0.18) | F-10, CL-24, V7R-004 | V7R-004 |
+| firmware: drift | Debug-stack drift since `4da1c67` causes it | tested | measured-refuted for the five stacked I²C-init changes (V7R-003) and for the v7 image as a whole incl. diag code (V7R-006) | V7R-003, V7R-006, CL-25, F-6 | V7R-006 |
+| firmware: env | v7 env/variant change (devkitc variant, no display init, STARTUP_I2C_SCAN, boot order) | tested (partly) | measured-refuted for the image (boot order, STARTUP_I2C_SCAN, BQ/INA/GPIO init); devkitc variant and build flags held, not tested | CL-24, V7R-006 | V7R-006 |
+| firmware: core | arduino-esp32 2.0.14 / legacy IDF I²C driver behaviour (#8543 class) | untested | not tested; fails v6 IS NOT on its own (same core on v6); driver class 2.0.x measured-refuted as sufficient (V7R-004, 2.0.18); 2.0.14 held on U3 in V7R-006, still in the U3 bundle | F-10, CL-24, V7R-004, V7R-006 | V7R-006 |
 | power regime | no live hypothesis; control variable (VBUS / battery / WiFi state) | tested | measured-refuted as cause | L-Ph6b, L-Ph18 | L-Ph18 |
 | measurement | Any v7 scope number is an artefact until §4.2 setup validation passes on that session | untested | not tested | T4 §2.6 | T4 |
 | power: other | no hypothesis yet (BQ charger switching, boost, LDO noise beyond L-Ph14's far-end test) | untested | not tested | — | — |
@@ -105,6 +105,7 @@ Only facts load-bearing for section 3; inferences are labelled "argued" and neve
 - Five stacked I²C-init debug changes (Ph22–25) as the cause — refuted by V7R-003 — measured-refuted (one board, A/B/A, 10/10 per arm) — notebook 2026-10-23
 - An S3 master as such (die family, arduino-esp32 2.0.x driver class) or the TPIO→BQ bus with an S3 master gives the NACK — refuted by V7R-004 — measured-refuted (one board, A/B/A, 10/10 per arm; die rev and core differ) — notebook 2026-10-23
 - VCNL NACK and BQ marker as separate faults — refuted by V7R-005 — measured-refuted (one board, one rigid, A/B/A, VCNL 20/20, BQ 10/10 per arm) — notebook 2026-10-23
+- The v7-clean image (boot order, startup scan, BQ/INA/GPIO init, diag-loop code) as necessary for the NACK on U3 — refuted by V7R-006 — measured-refuted (one board, one rigid, A/B/A, VCNL 20/20, BQ 10/10 per arm; core 2.0.14 and devkitc variant held) — notebook 2026-10-23
 - Not tombstoned: L-Ph25 (pad filter + internal pulls) not tested, stays under master: peripheral config; L-Ph7 bodge (1.1 kΩ upstream) no data (B1 destroyed).
 
 ## 6. Baselines and bench state                 (≤ 15 lines)
@@ -113,8 +114,8 @@ Baselines (tag → commit, I²C init in one line); boards (ID | condition | mods
 - Boards: v6 | healthy | ~10 mm wire on pad C (U2.14, GND), V7R-001 | known-good reference, on the bench.
 - Boards: v7 #0003 (panel marking; believed B3, not confirmed; U3 die rev v0.2) | healthy | ~68 mm 26 AWG wires soldered on TPIO43 (green) and TPIO44 (yellow), fitted before V7R-004 | the v7 on the bench; treated as the only good unit. Arduino Nano ESP32 (S3 rev v0.1) | healthy | none | external S3 master (V7R-004).
 - Legacy: v7 B1 | bodge-damaged (L-Ph7) | rework | none. v7 B2 | BQ I²C open (L-Ph8), never reflowed? | none known | symptom identity: causal, if it still exists. v7 B3 | healthy | none known | only good unit (no irreversible actions); likely #0003.
-- Flashed now: v6 → v6-ref 4da1c67, lilygo-t-display-s3 (V7R-002 S2 step F). v7 #0003 → v7-clean 90053af, motion-play-v7-diag (V7R-005 A2). Nano ESP32 → blank sketch, hwcdc build (V7R-005 A2).
-- Bench at last stop (notebook 2026-10-23 s02, V7R-005): v7 #0003 and Nano unpowered (USB-C cables in, Mac ends unplugged). J6: rigid #1 (marker; SW1 ON = PCA 0x76; flex + 2 VCNL) via ~400 mm double-ended cable. J5: pigtail, black in 'V' rail with the 10 kΩ, blue + yellow dangling, red in Nano GND column. Pad wires green/yellow → ~175 mm Dupont → Nano A4/A5. J4 empty. v6 off bench. Probes on Cal ground.
+- Flashed now: v6 → v6-ref 4da1c67, lilygo-t-display-s3 (V7R-002 S2 step F). v7 #0003 → v7-clean 90053af, motion-play-v7-diag (V7R-006 A2). Nano ESP32 → blank sketch, hwcdc build (V7R-005 A2; unchanged in V7R-006).
+- Bench at last stop (notebook 2026-10-23 s03, V7R-006; unchanged since V7R-005): v7 #0003 and Nano unpowered (USB-C cables in, Mac ends unplugged). J6: rigid #1 (marker; SW1 ON = PCA 0x76; flex + 2 VCNL) via ~400 mm double-ended cable. J5: pigtail, black in 'V' rail with the 10 kΩ, blue + yellow dangling, red in Nano GND column. Pad wires green/yellow → ~175 mm Dupont → Nano A4/A5. J4 empty. v6 off bench. Probes on Cal ground.
 - Failing config fixtures: cable in J6 with 10 kΩ SDA→+3.3 V at the far end, SCL wire dangling (L-Ph12); sensor rigid on J4/J5/J6.
 
 ## 7. Measurement trust                         (≤ 10 rows; rows leave when re-measured)
@@ -132,9 +133,8 @@ Verdict is trustworthy | suspect | unknown | not tested; a row is deleted when a
 
 ## 8. Next                                      (≤ 6 lines)
 Open cards (ID, title, arm reached); proposed next test (which map region it cuts, and why); blocked on (initiatives, parts, decisions).
-- Open cards: V7R-006 (U3 runs the PCA probe image, option (b); A1, B, A2 run). V7R-005 recorded (row 1).
-- U3 bundle unseparated: module/path, supply, copper U3→TPIO, pin role, die rev v0.2/v0.1, core 2.0.14/2.0.18, image. Log-only candidates: (b) U3 runs `v7_pca_master_probe` with `Wire.begin(43, 44)` (one-line card delta; approved 2026-10-23, now V7R-006) — splits image/core vs U3 hardware; (a) Nano on core 2.0.14 — cuts core; (c) YD-ESP32-23 V1.3 devkit as master at TPIO (on hand; can marking unread) — module vs v7 supply/copper. Card 2 (v6-diag, tag → 189cc03) runnable.
-- Timebox: 5/15 cards · week 1/8 (from V7R-001, 2026-10-20). Checkpoint: 2 recorded since V7R-003; due at V7R-006 (no new card after it until done).
+- U3 bundle unseparated: module/path, supply, copper U3→TPIO, pin role, die rev v0.2/v0.1, core 2.0.14/2.0.18, devkitc variant/build flags (image removed, V7R-006). Log-only candidates: (a) Nano on core 2.0.14 — cuts core; (c) YD-ESP32-23 V1.3 devkit as master at TPIO (on hand; can marking unread) — module vs v7 supply/copper. Card 2 (v6-diag, tag → 189cc03) runnable.
+- Open cards: none (V7R-006 recorded, row 2). Timebox: 6/15 cards · week 1/8 (from V7R-001, 2026-10-20). Checkpoint: DUE (3 recorded since V7R-003); no new card until done.
 
 ## 9. Lookups (L1 routing)                      (≤ 15 rows)
 Where to go for detail that is not L0; load only the named section or query.
