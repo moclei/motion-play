@@ -1,7 +1,7 @@
 ---
 test_id: V7R-005
 title: "Symptom identity: sensor rigid on J6, Nano ESP32 vs U3 as master — does VCNL 0x60 ACK? A/B/A"
-status: pre-registered
+status: recorded
 created: 2026-10-23
 prereg_commit: self
 baseline:
@@ -74,12 +74,25 @@ Controls in every counted iteration: PCA detection summary shows `TCA ch 2: PCA9
 - B (session log `..._nano_01.txt`), iterations 1–10: TCA2+PCA0 `VCNL:.` 10/10, TCA2+PCA1 `VCNL:.` 10/10 → 20/20; TCA2 `BQ:.` 10/10. Controls 10/10 each: BASE INA/BQ/TCA '.', TCA2 INA/TCA/PCA '.', TCA2+PCA0/1 PCA '.', TCA0 BQ '.'. No WARN line. X(2) only in uncounted columns (PCA/VCNL on BASE/TCA0/TCA1, VCNL on TCA2). Iteration 1 verbatim: `TCA2        INA:.    BQ:.    TCA:.    PCA:.    VCNL:X(2)` / `TCA2+PCA0   INA:.    BQ:.    TCA:.    PCA:.    VCNL:.` / `TCA2+PCA1   INA:.    BQ:.    TCA:.    PCA:.    VCNL:.`. v7 during B: 7 heartbeat lines, no reboot or new banner.
 - A2 (session): blank sketch written to the Nano 21:51:19–23, 4 hashes verified (Nano log silent after). `motion-play-v7-diag` flashed to v7 from worktree at 90053af, SUCCESS, 4 hashes verified, 21:51:57. Boot: banner `[v7-clean]`; STEP 3 `requestFrom()` error line then `⚠️ Write OK but read returned 0 bytes` (continued); `Initialized 0 / 6 sensors`; diag banner; `TCA ch 2: PCA9546A at 0x76`.
 - A2 (session log `..._v7_01.txt`), iterations 1–10: TCA2+PCA0 `VCNL:X(2)` 10/10, TCA2+PCA1 `VCNL:X(2)` 10/10 → 20/20; TCA2 `BQ:X(2)` 10/10. Controls 10/10 each (as A1). Codes: '.' and X(2) only.
+- S3, operator: "1. all off 2. left as-is". Loggers stopped (port lost on unplug, 22:06:37).
 ### Measured values (from log; cite `lab/evidence/V7R-005/...`)
+Sources: `lab/evidence/V7R-005/2026-10-23_V7R-005_v7_01.txt` (U3: boots 1–3, relbus, A2 boot), `lab/evidence/V7R-005/2026-10-23_V7R-005_nano_01.txt` (Nano probe).
+
+| Arm | Master | Counted | VCNL X(2) (TCA2+PCA0/1) | VCNL '.' | TCA2 BQ X(2) | TCA2 BQ '.' | Controls | Other codes |
+|---|---|---|---|---|---|---|---|---|
+| A1 | U3, diag loop, 400 kHz | boot 3 it 1–10 | 20/20 | 0/20 | 10/10 | 0/10 | pass | none |
+| B  | Nano ESP32, probe 1.0, 400 kHz | it 1–10 | 0/20 | 20/20 | 0/10 | 10/10 | pass; heartbeat, no reboot | none |
+| A2 | U3, diag loop, 400 kHz | it 1–10 | 20/20 | 0/20 | 10/10 | 0/10 | pass | none |
+
+Uncounted: boot 1 it 1–5 (U3) VCNL X(2) 10/10, BQ X(2) 5/5; relbus burst before B (U3, 100 kHz) BQ X(2) 5/5.
+Boot-time observation (not an arm): 4 U3 boots in the diag image; all printed the STEP 3 `requestFrom()` error; boot 2 stopped printing right after it (no recovery in ~15 min until download-mode entry), boots 1, 3 and the A2 boot continued.
 ### Interpretation (session; labelled as such)
+Interpretation: on v7 #0003 with rigid #1 on J6 as the trigger, the product failure (VCNL 0x60 NACK behind the PCA) and the diag marker (BQ 0x6B NACK) move together with the master: both NACK under U3, both ACK under the Nano ESP32 at 400 kHz, live in both directions. The PCA at 0x76 ACKs under both masters. This supports treating the BQ marker as a stand-in for the product failure on this board, for master-swap cards. It does not say whether BQ's state disturbs the VCNL transaction (symptom identity: causal) or both share a cause. The Nano's BQ ACK now holds at 400 kHz as well as 100 kHz (V7R-004). The boot-2 stall is unexplained (USB output or bus); one in four boots.
 
 ## Conclusion
-- Outcome row matched: ...
-- Hypotheses excluded: ...
-- **Strength:** ...
-- Revert-on-null done: ...
+- Outcome row matched: row 1 — A1 VCNL X(2) 20/20 / BQ X(2) 10/10; B VCNL '.' 20/20 / BQ '.' 10/10; A2 VCNL X(2) 20/20 / BQ X(2) 10/10; controls pass in every arm; no counted code other than 2 (`lab/evidence/V7R-005/2026-10-23_V7R-005_v7_01.txt`, `lab/evidence/V7R-005/2026-10-23_V7R-005_nano_01.txt`).
+- Hypotheses excluded: H2 (symptoms separate under a master that clears the BQ marker) — measured-refuted. H1 measured-supported (one board, one rigid). M not supported (PCA detected at 0x76 under both masters; controls pass; switching follows the master).
+- **Strength:** measured-refuted (H2; one board, one rigid, A/B/A, 20/20 and 10/10 per arm; Nano vs U3 confounds as V7R-004); measured-supported (H1); `lab/evidence/V7R-005/`
+- Deviations: A1 counted on boot 3, not boot 1: an unneeded session reset at 21:39:31 led to boot 2 stalling after the STEP 3 `requestFrom()` error; the first recovery reset failed in esptool (left the chip in download mode), the second (`--no-stub read_mac`) worked; operator approved the reset. Boot 1 (uncounted) gave the same per-row results as boot 3.
+- Revert-on-null done: yes — A2 leaves v7 on v7-clean motion-play-v7-diag (21:51:57 session flash); Nano on the blank sketch (21:51:23)
 - Result commit: self
