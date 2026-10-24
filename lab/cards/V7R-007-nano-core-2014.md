@@ -1,7 +1,7 @@
 ---
 test_id: V7R-007
 title: "Core swap on the Nano ESP32 master: v7_pca_master_probe on arduino-esp32 2.0.18-arduino.5 vs 2.0.14, U3 released, rigid on J6, A/B/A"
-status: run
+status: recorded
 created: 2026-10-23
 prereg_commit: self
 baseline:
@@ -72,12 +72,24 @@ Controls in every counted iteration: Nano banner `sketch=v7_pca_master_probe ver
 - B (session): retry 23:42:45–23:42:55, esptool v4.5.1: `Chip is ESP32-S3 (revision v0.1)`, `MAC: 34:85:18:7b:eb:38`, 4× `Hash of data verified.`, hard reset, SUCCESS. Nano log (`=== B 23:42:55` marker): `[probe] sketch=v7_pca_master_probe version=1.0 board=Arduino Nano ESP32 i2c_clock=400000 Hz` (board string differs from A1's `NANO_ESP32`); `TCA9548A initialized`; PCA scan ch 0/1 nothing, ch 2 `PCA9546A found at 0x76`; summary `TCA ch 2: PCA9546A at 0x76`. Iterations 1–10 (t = 1517 … 19816 ms; host 23:42:57.240 … 23:43:15.570), every iteration identical: BASE, TCA0, TCA1 `INA:. BQ:. TCA:. PCA:X(2) VCNL:X(2)`; TCA2 `INA:. BQ:. TCA:. PCA:. VCNL:X(2)`; TCA2+PCA0 and TCA2+PCA1 `INA:. BQ:. TCA:. PCA:. VCNL:.`. Counted: VCNL '.' 20/20; TCA2 BQ '.' 10/10. Controls pass. v7 heartbeat continued (23:43:02.915, t=138599 ms), no reboot.
 - A2 (session): 2.0.18 probe image (same files as A1) written with esptool 23:43:40–23:43:43: `Chip is ESP32-S3 (revision v0.1)`, `MAC: 34:85:18:7b:eb:38`, 4× `Hash of data verified.`, hard reset. Nano log (`=== A2 23:43:43` marker): `[probe] sketch=v7_pca_master_probe version=1.0 board=NANO_ESP32 i2c_clock=400000 Hz`; summary `TCA ch 2: PCA9546A at 0x76`. Iterations 1–10 (t = 1516 … 19815 ms; host 23:43:45.169 … 23:44:03.475), every iteration identical to A1 and B: BASE, TCA0, TCA1 `INA:. BQ:. TCA:. PCA:X(2) VCNL:X(2)`; TCA2 `INA:. BQ:. TCA:. PCA:. VCNL:X(2)`; TCA2+PCA0/1 `INA:. BQ:. TCA:. PCA:. VCNL:.`. Counted: VCNL '.' 20/20; TCA2 BQ '.' 10/10. Controls pass. v7 heartbeat continued (23:44:02.968, t=198599 ms), one `BUS RELEASED` in the v7 log, no reboot.
 - Revert (session): loggers stopped. Nano blank sketch (2.0.18 hwcdc) written 23:44:14–23:44:17, 4 hashes verified, hard reset. U3 `motion-play-v7-diag` from worktree at 90053af (rebuilt: worktree recreated) uploaded 23:44:17–23:46:55, `Chip is ESP32-S3 (revision v0.2)`, `MAC: 44:1b:f6:c5:58:c4`, 4 hashes verified, hard reset, SUCCESS. Not logged after the revert.
+- S2 (operator): "both off".
 ### Measured values (from log; cite `lab/evidence/V7R-007/...`)
+Sources: `lab/evidence/V7R-007/2026-10-23_V7R-007_nano_01.txt` (Nano: A1, failed B upload note, B, A2; arm markers `=== …`), `lab/evidence/V7R-007/2026-10-23_V7R-007_v7_01.txt` (U3 relbus: burst, `BUS RELEASED`, heartbeat through all arms).
+
+| Arm | Nano probe image (core) | Counted | VCNL '.' (TCA2+PCA0/1) | VCNL X(2) | TCA2 BQ '.' | TCA2 BQ X(2) | Controls | Other codes |
+|---|---|---|---|---|---|---|---|---|
+| A1 | 2.0.18-arduino.5, nano_nora hwcdc | it 1–10 | 20/20 | 0/20 | 10/10 | 0/10 | pass; U3 heartbeat | none |
+| B  | espressif 2.0.14, arduino_nano_nora hwcdc | it 1–10 | 20/20 | 0/20 | 10/10 | 0/10 | pass; U3 heartbeat | none |
+| A2 | 2.0.18-arduino.5, nano_nora hwcdc | it 1–10 | 20/20 | 0/20 | 10/10 | 0/10 | pass; U3 heartbeat | none |
+
+Uncounted: U3 relbus burst before A1 (100 kHz) TCA2 BQ X(2) 5/5; A1 iterations 11–27 same per-row results.
 ### Interpretation (session; labelled as such)
+Interpretation: with the Nano ESP32 as master on this bus (U3 released, rigid #1 on J6), the probe sketch gets VCNL and BQ ACK whether built on Arduino's 2.0.18-arduino.5 or on espressif's 2.0.14, the core U3 runs. Core 2.0.14 is not sufficient for the NACK with an S3 master here, so it drops out of the U3 bundle left by V7R-006. Left in the bundle, unseparated: U3's module/path (WROOM-1 vs NORA-W106), die rev (v0.2 vs v0.1), master supply (v7 +3.3 V rail vs the Nano's own), U3→TPIO copper, pin role (U3 drives from GPIO43/44, the UART0 pins; the Nano from GPIO11/12), and the board variant/flags (devkitc build on U3 vs Nano variant).
 
 ## Conclusion
-- Outcome row matched: ...
-- Hypotheses excluded: ...
-- **Strength:** ...
-- Revert-on-null done: ...
+- Outcome row matched: row 1 — A1 VCNL '.' 20/20 / BQ '.' 10/10; B VCNL '.' 20/20 / BQ '.' 10/10; A2 VCNL '.' 20/20 / BQ '.' 10/10; controls pass in every arm; no counted code other than 2 (`lab/evidence/V7R-007/2026-10-23_V7R-007_nano_01.txt`, `lab/evidence/V7R-007/2026-10-23_V7R-007_v7_01.txt`).
+- Hypotheses excluded: H1 (core 2.0.14 necessary for the NACK given an S3 master on this bus) — measured-refuted. H2 measured-supported (core is not the distinguishing factor; remaining U3 bundle listed above). M not supported (banners per arm differ as the builds should; PCA detected; controls pass; U3 released throughout).
+- **Strength:** measured-refuted (H1; one board, one rigid, one Nano, A/B/A, 20/20 and 10/10 per arm; fork vs version not separated, but neither moves the symptom); measured-supported (H2); `lab/evidence/V7R-007/`
+- Deviations: first B upload used PlatformIO's default `dfu` protocol and failed (Error 74) before touching the Nano; retried with `upload_protocol = esptool`, the method the card declared. No other deviation; no session resets beyond uploads.
+- Revert-on-null done: yes — Nano on the blank sketch (23:44:14–23:44:17), U3 on v7-clean motion-play-v7-diag (23:44:17–23:46:55)
 - Result commit: self
