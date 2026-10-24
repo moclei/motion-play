@@ -1,7 +1,7 @@
 ---
 test_id: V7R-006
 title: "Image swap on U3: v7-clean diag loop vs v7_pca_master_probe (+ Wire.begin(43, 44)), same core, rigid on J6, A/B/A"
-status: pre-registered
+status: run
 created: 2026-10-23
 prereg_commit: self
 baseline:
@@ -63,6 +63,10 @@ Controls in every counted iteration: PCA detection summary shows `TCA ch 2: PCA9
 
 ## Actual result
 ### Raw observations (operator, verbatim; symptoms not interpretations)
+- S1 (operator): bench matches hardware_config — "1. yes".
+- S2 (operator): "I plugged them both in and they are powered on properly" (Nano first, then v7, per S2).
+- S2 (session): ports by USB serial (ioreg, no port opened): Nano 34:85:18:7B:EB:38 → `/dev/cu.usbmodem14201`; v7 44:1B:F6:C5:58:C4 → `/dev/cu.usbmodem14401`. Before that, the session ran an esptool `read_mac` loop over both ports that was not in the procedure; it failed at import (`No module named 'esptool'` in system python), so no port was opened and no reset was sent. First logger start also failed at import (pyserial); restarted with PlatformIO's python at ~23:14:50. Neither port had been opened before that.
+- A1 (session): log `..._v7_01.txt` from 23:14:53.291 (boot 1 after power-on, no session reset; HW-CDC burst delivered on port open). Boot output starts at `BQ24195 configured: IINLIM=2A, watchdog disabled`. STEP 3 0x74 probe: Error 2 ×3, then `[ 54958][E][Wire.cpp:499] requestFrom(): i2cWriteReadNonStop returned Error -1`; boot continued. PCA scan: `PCA9546A found at 0x76`; summary `TCA ch 2: PCA9546A at 0x76`. Iterations 1–10 (t = 55088 … 73391 ms; 1 at host 23:14:53.697, then ~2.03 s apart): every iteration identical — BASE `INA:. BQ:. TCA:. PCA:X(2) VCNL:X(2)`; TCA0 and TCA1 `INA:. BQ:. TCA:. PCA:X(2) VCNL:X(2)`; TCA2 `INA:. BQ:X(2) TCA:. PCA:. VCNL:X(2)`; TCA2+PCA0 and TCA2+PCA1 `INA:. BQ:X(2) TCA:. PCA:. VCNL:X(2)`. Counted: VCNL X(2) 20/20; TCA2 BQ X(2) 10/10. Controls pass.
 ### Measured values (from log; cite `lab/evidence/V7R-006/...`)
 ### Interpretation (session; labelled as such)
 
