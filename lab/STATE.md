@@ -134,7 +134,7 @@ Verdict is trustworthy | suspect | unknown | not tested; a row is deleted when a
 ## 8. Next                                      (≤ 6 lines)
 Open cards (ID, title, arm reached); proposed next test (which map region it cuts, and why); blocked on (initiatives, parts, decisions).
 - U3 bundle unseparated: module/path (WROOM-1 vs NORA-W106), die rev v0.2/v0.1, master supply, copper U3→TPIO, pin role (U3 GPIO43/44 = UART0 vs Nano GPIO11/12), board variant/flags (image removed V7R-006, core V7R-007). Log-only candidates: (d) Nano drives I²C from its D1/D0 = GPIO43/44 (variant pins_arduino.h) — cuts pin role, rewire two jumpers; (c) YD-ESP32-23 V1.3 devkit as master at TPIO (on hand; can marking unread) — module vs v7 supply/copper. Not log-only: v7 scope session (setup validation first) — touches master: timing, mux, measurement. Card 2 (v6-diag, tag → 189cc03) runnable.
-- Open cards: V7R-008 (Nano on GPIO43/44, option (d); pre-registered). Timebox: 7/15 cards · week 1/8 (from V7R-001, 2026-10-20). Master bundle region: 3 cards (V7R-004, -006, -007); the 4th triggers its region review. Checkpoint: done at V7R-006; next due at V7R-009.
+- Open cards: V7R-008 (Nano on GPIO43/44, option (d); A1 run). Timebox: 7/15 cards · week 1/8 (from V7R-001, 2026-10-20). Master bundle region: 3 cards (V7R-004, -006, -007); the 4th triggers its region review. Checkpoint: done at V7R-006; next due at V7R-009.
 
 ## 9. Lookups (L1 routing)                      (≤ 15 rows)
 Where to go for detail that is not L0; load only the named section or query.

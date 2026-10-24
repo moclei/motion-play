@@ -1,7 +1,7 @@
 ---
 test_id: V7R-008
 title: "Pin role on the Nano ESP32 master: I²C on GPIO11/12 (A4/A5) vs GPIO43/44 (D1/D0, UART0 pins), U3 released, rigid on J6, A/B/A"
-status: pre-registered
+status: run
 created: 2026-10-24
 prereg_commit: self
 baseline:
@@ -67,6 +67,10 @@ Controls in every counted arm: banner `sketch=v7_pca_master_probe version=1.0 �
 
 ## Actual result
 ### Raw observations (operator, verbatim; symptoms not interpretations)
+- S1 (operator): "both on" (Nano first, then v7). Ports by USB serial (`ioreg`): Nano → `/dev/cu.usbmodem14201`, v7 → `/dev/cu.usbmodem14401`.
+- U3 (session): `motion-play-v7-relbus` uploaded 00:26:12–00:26:42 (`Chip is ESP32-S3 (revision v0.2)`, `MAC: 44:1b:f6:c5:58:c4`, 4 hashes verified, SUCCESS). Relbus burst (uncounted) TCA2 `INA:. BQ:X(2) TCA:.` 5/5; `BUS RELEASED` 00:26:50.675.
+- A1 (session): Nano A image written 00:26:52–00:26:55 (`Chip is ESP32-S3 (revision v0.1)`, `MAC: 34:85:18:7b:eb:38`, 4 hashes verified, hard reset). Log (`=== A1 00:26:55`): `[probe] sketch=v7_pca_master_probe version=1.0 board=NANO_ESP32 i2c_clock=400000 Hz`; `TCA9548A initialized`; summary `TCA ch 2: PCA9546A at 0x76`. **No `i2cInit()` line**: the string `Initialising I2C Master` is absent from the A image ELF — `--build-property build.code_debug=3` did not take effect (same for the B image, same flags). Iterations 1–10 (t = 1517 … 19816 ms; host 00:26:57.077 … 00:27:15.418), every iteration identical: BASE, TCA0, TCA1 `INA:. BQ:. TCA:. PCA:X(2) VCNL:X(2)`; TCA2 `INA:. BQ:. TCA:. PCA:. VCNL:X(2)`; TCA2+PCA0/1 `INA:. BQ:. TCA:. PCA:. VCNL:.`. Counted: VCNL '.' 20/20; TCA2 BQ '.' 10/10. Controls pass except the i2cInit pin readback (absent). U3 heartbeat 00:27:15.690 (t=33574 ms).
+- Stop and decision (session → user): pin-readback control unavailable in both images. User: "carry on" — continue without it; the INA/TCA/PCA ACK controls stand in (a Nano on unconnected pins gets no ACK from any device). Recorded as a deviation.
 ### Measured values (from log; cite `lab/evidence/V7R-008/...`)
 ### Interpretation (session; labelled as such)
 
