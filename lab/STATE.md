@@ -2,7 +2,7 @@
 as_of: V7R-005            # highest card ID with status recorded|abandoned that this file reflects (V7R-000 = sentinel, nothing recorded)
 updated: 2026-10-23       # date of the last edit
 last_checkpoint: V7R-003  # card ID at which the last step-back checkpoint ran (context-strategy §4.3)
-open_cards: []                        # cards with status pre-registered|run; must match lab/cards/ (checked)
+open_cards: [V7R-006]                      # cards with status pre-registered|run; must match lab/cards/ (checked)
 ---
 
 # v7 I²C fault — current state
@@ -132,8 +132,8 @@ Verdict is trustworthy | suspect | unknown | not tested; a row is deleted when a
 
 ## 8. Next                                      (≤ 6 lines)
 Open cards (ID, title, arm reached); proposed next test (which map region it cuts, and why); blocked on (initiatives, parts, decisions).
-- Open cards: none. V7R-005 recorded (row 1).
-- U3 bundle unseparated: module/path, supply, copper U3→TPIO, pin role, die rev v0.2/v0.1, core 2.0.14/2.0.18, image. Log-only candidates: (b) U3 runs `v7_pca_master_probe` with `Wire.begin(43, 44)` (one-line card delta; user approval pending) — splits image/core vs U3 hardware; (a) Nano on core 2.0.14 — cuts core; (c) YD-ESP32-23 V1.3 devkit as master at TPIO (on hand; can marking unread) — module vs v7 supply/copper. Card 2 (v6-diag, tag → 189cc03) runnable.
+- Open cards: V7R-006 (U3 runs the PCA probe image, option (b); pre-registered). V7R-005 recorded (row 1).
+- U3 bundle unseparated: module/path, supply, copper U3→TPIO, pin role, die rev v0.2/v0.1, core 2.0.14/2.0.18, image. Log-only candidates: (b) U3 runs `v7_pca_master_probe` with `Wire.begin(43, 44)` (one-line card delta; approved 2026-10-23, now V7R-006) — splits image/core vs U3 hardware; (a) Nano on core 2.0.14 — cuts core; (c) YD-ESP32-23 V1.3 devkit as master at TPIO (on hand; can marking unread) — module vs v7 supply/copper. Card 2 (v6-diag, tag → 189cc03) runnable.
 - Timebox: 5/15 cards · week 1/8 (from V7R-001, 2026-10-20). Checkpoint: 2 recorded since V7R-003; due at V7R-006 (no new card after it until done).
 
 ## 9. Lookups (L1 routing)                      (≤ 15 rows)
