@@ -81,6 +81,12 @@ The session runs every SCPI command, flash and capture; one instruction block pe
 | S2 V8, A2 | Nothing (session: scope build, V8, 3 captures) | band shows `Write:d6` | what the band shows |
 | End | Session reverts U3 to diag; then unplug the v7, lift the probes off the board, unplug the Nano | no LEDs; probes clear | bench state |
 
+### Amendment 2026-10-25 (after the S0 arm, before any anchor data; user-approved "a")
+- **Change:** the anchor arm A2 is taken at **A (TPIO43), S1 placement**, not at D (S2). After S0, only the CH1 tip moves from K back to A; springs stay on C and CH2 stays on B. Steps "S2 V7" and "S2 V8, A2" are replaced by: V7 at A (`val_V7_A2`), then V8 (`val_V8_A2`) and 3 counted captures `A2`, all in `lab/log/2026-10-24_s03.yaml`, same image sequence (relbus for V7, scope build for V8 and A2).
+- **Reason:** probe moves are a risk to the board (shorts, pad scraping, repeated seating); a return to S2 is a full move (springs + both tips) at the most cramped position. The design did not weigh this. The change was made for the physical reason only; no anchor data existed when it was made.
+- **Anchor rule, amended:** anchor fails if |V_OL(S1) − V_OL(A2)| > 20 mV, or S1 or A2 ≤ 0.4 V. V_OL(A) = mean of S1 and A2. V_OL(D) = A1 alone (no second D reading). Outcome rows otherwise unchanged.
+- **Cost:** drift at D itself is not checked; the D value rests on one arm.
+
 --- RUN ---
 
 ## Actual result
