@@ -2,24 +2,25 @@
 session_id: "2026-10-24_s02"
 kind: "scope"
 operator: "user"
-ai_session: "TODO"
-dut: {board_id: "TODO", firmware_commit: "TODO", firmware_env: "TODO", declared_baseline: "TODO"}
+ai_session: "debugger (V7R-010, debug/v7-track-3)"
+dut: {board_id: "v7-B3", firmware_commit: "90053af", firmware_env: "motion-play-v7-relbus (validation); V7R-009 scope build u3-scope, firmware.bin 84c930db (V8, A1)", declared_baseline: "v7-clean"}
 scope: {model: "Rigol DHO804", serial: "DHO8A282M00872", firmware: "00.01.05", setup_file: "2026-10-24_V7R-010_val_V3_01.setup.bin"}
 validation:
-  passed: "TODO"
-  V2_probe_ratio: {CH1: "10x/TODO"}
-  V3_comp_png: "TODO"
+  passed: true
+  V2_probe_ratio: {CH1: "10x/fixed 10:1 (SQ500 #1)", CH2: "10x/fixed 10:1 (SQ500 #2)"}
+  V3_comp_png: "2026-10-24_V7R-010_val_V3_01.png (CH1), 2026-10-24_V7R-010_val_V3_03.png (CH2); operator: flat top, square corners, both. val_V3_02 not used (wrong scale/offset)"
   V5:
-    ctl_sd_mV: {CH1: "TODO"}
-    dut_sd_mV: {CH1: "TODO"}
-    excess_rms_mV: {CH1: "TODO"}
-    offset_mV: {CH1: "TODO"}
-  V6_ground: {method: "TODO", point: "TODO", length_mm: "TODO"}
-  V7_idle_high_V: {CH1: "TODO"}
-  V8_decode_ok: "TODO"
-  notes: ""
+    ctl_sd_mV: {CH1: 4.95, CH2: 4.0}
+    dut_sd_mV: {CH1: 5.06, CH2: 4.8}
+    excess_rms_mV: {CH1: 1.04, CH2: 2.66}
+    offset_mV: {CH1: -6.73, CH2: 2983.93}   # CH2 control (val_V5ctl_01) was on the Cal signal, not ground: CH2 V5 not valid; deviation, user choice "b" (CH2 = SCL, no counted number)
+  V6_ground: {method: "ground springs (both probes)", point: "pad F (C21.2), side away from X", length_mm: 0}
+  V7_idle_high_V: {CH1: 3.274, CH2: 3.261}   # 2026-10-24_V7R-010_val_V7_01 (i2c_frame.py, bus idle), first seat
+  V8_decode_ok: true   # decode band Write:80, Write:d6 (NACK mark), Write:e0; 2026-10-24_V7R-010_val_V8_01.png
+  notes: "Probe ratio read-back via direct socket (10/10) after the one-shot query tool returned blanks and -110 errors; error queue drained. AUTO pressed twice by the operator before V3 (V3 sets every setting explicitly afterwards). val_V3_02 captured at 0.5 V/div, 0 V offset (set commands had not taken); recaptured as _03. V5a control CH2 on the Cal signal (2.971-2.998 V flat): CH2 V5 invalid, accepted as a deviation (user 'b'). V5b springs on F, tips on G (C20.2), as V7R-009. Decode menu checked, no field differed. Timebase delay 0.00 s after AUTO (1.20 us in V7R-009). V8 at 20 us/div SINGLE, trigger IIC ADDR 107 WRITE, armed before flashing the scope build. V9 not due (V7R-002)."
 channels:
-  CH1: {probe: "TODO", ratio: "10x", signal: "TODO", point: "TODO", bw_limit: "OFF", v_div_V: 1.0, offset_V: -3.3, coupling: "DC"}
+  CH1: {probe: "SQ500 #1", ratio: "10x", signal: "SDA", point: "D (U5.6)", bw_limit: "OFF", v_div_V: 0.5, offset_V: -1.65, coupling: "DC"}   # val_V3 at 1 V/div, -3.3 V
+  CH2: {probe: "SQ500 #2", ratio: "10x", signal: "SCL", point: "E (U5.5)", bw_limit: "OFF", v_div_V: 0.5, offset_V: -1.65, coupling: "DC"}
 measurements:
   - test_id: "V7R-010"
     arm: "val_V3"
@@ -27,13 +28,13 @@ measurements:
     trigger: {type: "EDGE", sweep: "AUTO", source: "CHAN1", slope: "POS", level_V: 1.5}
     timebase_s_div: 0.0002
     method: "auto"
-    feature: "TODO"
+    feature: "Cal square wave, compensation look (CH1)"
     values:
       - {name: "VAMP", ch: "CH1", value_mV: 3020.8, raw: "3.0208E+00"}
       - {name: "VTOP", ch: "CH1", value_mV: 2975.7, raw: "2.9757E+00"}
       - {name: "VBASe", ch: "CH1", value_mV: -45.067, raw: "-4.5067E-02"}
     captures: ["2026-10-24_V7R-010_val_V3_01.png", "2026-10-24_V7R-010_val_V3_01.csv", "2026-10-24_V7R-010_val_V3_01.setup.bin"]
-    raw_observation: "TODO"
+    raw_observation: "operator: CH1 flat top, square corners: \"yes\"; operator: \"I accidentally pressed auto a second time after placing probe 1\""
     source: "tools/lab/capture.py"
     scope_settings:
       channels:
@@ -58,7 +59,7 @@ measurements:
     trigger: {type: "EDGE", sweep: "AUTO", source: "CHAN2", slope: "POS", level_V: 1.5}
     timebase_s_div: 0.0002
     method: "auto"
-    feature: "TODO"
+    feature: "Cal square wave (CH2) - NOT USED: captured at 0.5 V/div, 0 V offset (the set commands had not taken)"
     values:
       - {name: "VAMP", ch: "CH1", valid: false, raw: "9.9000E+37"}
       - {name: "VTOP", ch: "CH1", valid: false, raw: "9.9000E+37"}
@@ -67,7 +68,7 @@ measurements:
       - {name: "VTOP", ch: "CH2", valid: false, raw: "9.9000E+37"}
       - {name: "VBASe", ch: "CH2", value_mV: -17.067, raw: "-1.7067E-02"}
     captures: ["2026-10-24_V7R-010_val_V3_02.png", "2026-10-24_V7R-010_val_V3_02.csv", "2026-10-24_V7R-010_val_V3_02.setup.bin"]
-    raw_observation: "TODO"
+    raw_observation: "session: scale/offset read back wrong; re-set, read back, recaptured as val_V3_03"
     source: "tools/lab/capture.py"
     scope_settings:
       channels:
@@ -94,7 +95,7 @@ measurements:
     trigger: {type: "EDGE", sweep: "AUTO", source: "CHAN2", slope: "POS", level_V: 1.5}
     timebase_s_div: 0.0002
     method: "auto"
-    feature: "TODO"
+    feature: "Cal square wave, compensation look (CH2)"
     values:
       - {name: "VAMP", ch: "CH1", valid: false, raw: "9.9000E+37"}
       - {name: "VTOP", ch: "CH1", valid: false, raw: "9.9000E+37"}
@@ -103,7 +104,7 @@ measurements:
       - {name: "VTOP", ch: "CH2", value_mV: 2975.7, raw: "2.9757E+00"}
       - {name: "VBASe", ch: "CH2", value_mV: -45.067, raw: "-4.5067E-02"}
     captures: ["2026-10-24_V7R-010_val_V3_03.png", "2026-10-24_V7R-010_val_V3_03.csv", "2026-10-24_V7R-010_val_V3_03.setup.bin"]
-    raw_observation: "TODO"
+    raw_observation: "operator: CH2 flat top, square corners: \"yes\""
     source: "tools/lab/capture.py"
     scope_settings:
       channels:
@@ -130,12 +131,12 @@ measurements:
     trigger: {type: "EDGE", sweep: "AUTO", source: "CHAN1", slope: "POS", level_V: 1.5}
     timebase_s_div: 1.0e-05
     method: "auto"
-    feature: "TODO"
+    feature: "V5a: tips + springs on Cal ground, no board contact"
     values:
       - {name: "VPP", ch: "CH1", value_mV: 22.533, raw: "2.2533E-02"}
       - {name: "VPP", ch: "CH2", value_mV: 23.533, raw: "2.3533E-02"}
     captures: ["2026-10-24_V7R-010_val_V5ctl_01.png", "2026-10-24_V7R-010_val_V5ctl_01.csv", "2026-10-24_V7R-010_val_V5ctl_01.setup.bin"]
-    raw_observation: "TODO"
+    raw_observation: "operator: both tips and springs on Cal ground: \"done\"; CSV CH2 flat at 2.971-2.998 V (the Cal high level): CH2 tip on the Cal signal, not ground (deviation, user choice \"b\")"
     source: "tools/lab/capture.py"
     scope_settings:
       channels:
@@ -161,12 +162,12 @@ measurements:
     trigger: {type: "EDGE", sweep: "AUTO", source: "CHAN1", slope: "POS", level_V: 1.5}
     timebase_s_div: 1.0e-05
     method: "auto"
-    feature: "TODO"
+    feature: "V5b (S2): springs on F (C21.2), tips on G (C20.2), v7 powered (relbus, bus idle)"
     values:
       - {name: "VPP", ch: "CH1", value_mV: 23.933, raw: "2.3933E-02"}
       - {name: "VPP", ch: "CH2", value_mV: 24.8, raw: "2.4800E-02"}
     captures: ["2026-10-24_V7R-010_val_V5_01.png", "2026-10-24_V7R-010_val_V5_01.csv", "2026-10-24_V7R-010_val_V5_01.setup.bin"]
-    raw_observation: "TODO"
+    raw_observation: "operator: springs on F / tips on G, nothing on an X pad: \"confirmed\"; PWR LED \"yes\""
     source: "tools/lab/capture.py"
     scope_settings:
       channels:
@@ -192,7 +193,7 @@ measurements:
     trigger: {type: "EDGE", sweep: "AUTO", source: "CHAN1", slope: "POS", level_V: 1.5}
     timebase_s_div: 1.0e-05
     method: "auto"
-    feature: "TODO"
+    feature: "V7 (S2): tips on D (U5.6 SDA) and E (U5.5 SCL), springs on F, bus idle after BUS RELEASED"
     values:
       - {name: "VTOP", ch: "CH1", valid: false, raw: "9.9000E+37"}
       - {name: "VBASe", ch: "CH1", valid: false, raw: "9.9000E+37"}
@@ -203,7 +204,7 @@ measurements:
       - {name: "VAMP", ch: "CH2", valid: false, raw: "9.9000E+37"}
       - {name: "VPP", ch: "CH2", value_mV: 85.2, raw: "8.5200E-02"}
     captures: ["2026-10-24_V7R-010_val_V7_01.png", "2026-10-24_V7R-010_val_V7_01.csv", "2026-10-24_V7R-010_val_V7_01.setup.bin"]
-    raw_observation: "TODO"
+    raw_observation: "operator: \"confirmed\", PWR LED \"yes\"; i2c_frame CH1 3.2738 V, CH2 3.2614 V (PASS)"
     source: "tools/lab/capture.py"
     scope_settings:
       channels:
@@ -229,7 +230,7 @@ measurements:
     trigger: {type: "IIC", sweep: "AUTO", when: "ADDR", scl: "CHAN2", sda: "CHAN1", address: "107", direction: "WRIT", awidth: "7", clevel_V: 1.5, dlevel_V: 1.5}
     timebase_s_div: 2.0e-05
     method: "auto"
-    feature: "TODO"
+    feature: "V8 (S2): 0x6B write address frame, U3 scope build, 20 us/div SINGLE"
     values:
       - {name: "VTOP", ch: "CH1", value_mV: 3271.3, raw: "3.2713E+00"}
       - {name: "VBASe", ch: "CH1", value_mV: 856.4, raw: "8.5640E-01"}
@@ -240,7 +241,12 @@ measurements:
       - {name: "VAMP", ch: "CH2", value_mV: 3165.9, raw: "3.1659E+00"}
       - {name: "VPP", ch: "CH2", value_mV: 3261.7, raw: "3.2617E+00"}
     captures: ["2026-10-24_V7R-010_val_V8_01.png", "2026-10-24_V7R-010_val_V8_01.csv", "2026-10-24_V7R-010_val_V8_01.setup.bin"]
-    raw_observation: "TODO"
+    raw_observation: "scope screen (PNG): decode band Write:80, Write:d6 (red NACK mark), Write:e0; operator: decode fields differed: \"none\"; decode band on screen: \"yes\""
+    ai_read:
+      - capture: 2026-10-24_V7R-010_val_V8_01.png
+        settings_seen: {CH1_v_div: 500mV, CH2_v_div: 500mV, CH1_offset: -1.65V, CH2_offset: -1.65V, timebase: 20.00us/div, srate_mdepth: "31.25MSa/s 10.00kpts", trigger: "I2C, 1.50 V, A"}
+        values_seen: {decode: "Write:80, Write:d6 + red NACK mark, Write:e0, D..", Vpp_C1_V: 3.3941, Vpp_C2_V: 3.2616, Vtop_C2_V: 3.2628, Vbase_C2_mV: 96.933, RiseTime_C1_ns: 342.85, RiseTime_C2_ns: 142.85, SDA_lows: "U3-driven lows about 0.9 V on screen; ACK-slot lows near 0.1-0.15 V"}
+        mismatch: none
     source: "tools/lab/capture.py"
     scope_settings:
       channels:
@@ -266,7 +272,7 @@ measurements:
     trigger: {type: "IIC", sweep: "AUTO", when: "ADDR", scl: "CHAN2", sda: "CHAN1", address: "107", direction: "WRIT", awidth: "7", clevel_V: 1.5, dlevel_V: 1.5}
     timebase_s_div: 1.0e-05
     method: "auto"
-    feature: "TODO"
+    feature: "0x6B write address frame at D/E (U5.6/U5.5), U3 master (scope build), Nano blank"
     values:
       - {name: "VTOP", ch: "CH1", value_mV: 3271.3, raw: "3.2713E+00"}
       - {name: "VBASe", ch: "CH1", value_mV: 890.53, raw: "8.9053E-01"}
@@ -277,7 +283,7 @@ measurements:
       - {name: "VAMP", ch: "CH2", value_mV: 3165.9, raw: "3.1659E+00"}
       - {name: "VPP", ch: "CH2", value_mV: 3325.4, raw: "3.3254E+00"}
     captures: ["2026-10-24_V7R-010_A1_01.png", "2026-10-24_V7R-010_A1_01.csv", "2026-10-24_V7R-010_A1_01.setup.bin"]
-    raw_observation: "TODO"
+    raw_observation: "session-run; v7 log [scope] lines spanning the captures: tca=ina=n, bq=0, bq_codes=2222222222; no reboot"
     source: "tools/lab/capture.py"
     scope_settings:
       channels:
@@ -303,7 +309,7 @@ measurements:
     trigger: {type: "IIC", sweep: "AUTO", when: "ADDR", scl: "CHAN2", sda: "CHAN1", address: "107", direction: "WRIT", awidth: "7", clevel_V: 1.5, dlevel_V: 1.5}
     timebase_s_div: 1.0e-05
     method: "auto"
-    feature: "TODO"
+    feature: "0x6B write address frame at D/E (U5.6/U5.5), U3 master (scope build), Nano blank"
     values:
       - {name: "VTOP", ch: "CH1", value_mV: 3271.3, raw: "3.2713E+00"}
       - {name: "VBASe", ch: "CH1", value_mV: 899.07, raw: "8.9907E-01"}
@@ -314,7 +320,7 @@ measurements:
       - {name: "VAMP", ch: "CH2", value_mV: 3165.9, raw: "3.1659E+00"}
       - {name: "VPP", ch: "CH2", value_mV: 3326.5, raw: "3.3265E+00"}
     captures: ["2026-10-24_V7R-010_A1_02.png", "2026-10-24_V7R-010_A1_02.csv", "2026-10-24_V7R-010_A1_02.setup.bin"]
-    raw_observation: "TODO"
+    raw_observation: "session-run; v7 log [scope] lines spanning the captures: tca=ina=n, bq=0, bq_codes=2222222222; no reboot"
     source: "tools/lab/capture.py"
     scope_settings:
       channels:
@@ -340,7 +346,7 @@ measurements:
     trigger: {type: "IIC", sweep: "AUTO", when: "ADDR", scl: "CHAN2", sda: "CHAN1", address: "107", direction: "WRIT", awidth: "7", clevel_V: 1.5, dlevel_V: 1.5}
     timebase_s_div: 1.0e-05
     method: "auto"
-    feature: "TODO"
+    feature: "0x6B write address frame at D/E (U5.6/U5.5), U3 master (scope build), Nano blank"
     values:
       - {name: "VTOP", ch: "CH1", value_mV: 3271.3, raw: "3.2713E+00"}
       - {name: "VBASe", ch: "CH1", value_mV: 899.07, raw: "8.9907E-01"}
@@ -351,7 +357,7 @@ measurements:
       - {name: "VAMP", ch: "CH2", value_mV: 3165.9, raw: "3.1659E+00"}
       - {name: "VPP", ch: "CH2", value_mV: 3281.1, raw: "3.2811E+00"}
     captures: ["2026-10-24_V7R-010_A1_03.png", "2026-10-24_V7R-010_A1_03.csv", "2026-10-24_V7R-010_A1_03.setup.bin"]
-    raw_observation: "TODO"
+    raw_observation: "session-run; v7 log [scope] lines spanning the captures: tca=ina=n, bq=0, bq_codes=2222222222; no reboot"
     source: "tools/lab/capture.py"
     scope_settings:
       channels:

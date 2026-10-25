@@ -1,0 +1,1622 @@
+=== start 21:42:07 (P0, U3 diag)
+2026-10-24T21:43:52.062 =================================
+2026-10-24T21:43:52.062 Motion Play Device - BOOT
+2026-10-24T21:43:52.062 =================================
+2026-10-24T21:43:52.062 =================================
+2026-10-24T21:43:52.062 === Configuring BQ24195 (input current limit) ===
+2026-10-24T21:43:52.062 [   822][I][esp32-hal-i2c.c:75] i2cInit(): Initialising I2C Master: sda=43 scl=44 freq=100000
+2026-10-24T21:43:52.062 [I2C SCAN] Scanning 0x03..0x77...
+2026-10-24T21:43:52.062 [I2C SCAN]   Found device at 0x40
+2026-10-24T21:43:52.062 [I2C SCAN]   Found device at 0x6B
+2026-10-24T21:43:52.062 [I2C SCAN]   Found device at 0x70
+2026-10-24T21:43:52.062 [I2C SCAN] Done. 3 device(s) responded.
+2026-10-24T21:43:52.062 BQ24195 configured: IINLIM=2A, watchdog disabled
+2026-10-24T21:43:52.062 [PowerMonitor] INA219 configured: 10mR shunt, 1mA/LSB, 8A max
+2026-10-24T21:43:52.062 [PWR after BQ config] VSYS=4.21 V, I=64 mA
+2026-10-24T21:43:52.062 Display initialized
+2026-10-24T21:43:52.062 [PWR after display init] VSYS=4.21 V, I=64 mA
+2026-10-24T21:43:52.062 === Starting System Initialization ===
+2026-10-24T21:43:52.062 [DIAG_NO_WIFI] Skipping WiFi/MQTT init, forcing radio off
+2026-10-24T21:43:52.062 WARNING: Cloud config unavailable, sensors will use defaults
+2026-10-24T21:43:52.062 [Config] Detection mode: heuristic (useMLDetection=0)
+2026-10-24T21:43:52.062 Initializing sensors...
+2026-10-24T21:43:52.062 [PWR before sensor init] VSYS=4.21 V, I=64 mA
+2026-10-24T21:43:52.062 Initializing Sensor Manager...
+2026-10-24T21:43:52.062 [   848][W][Wire.cpp:301] begin(): Bus already started in Master Mode.
+2026-10-24T21:43:52.063 I2C: 400 kHz, default drive, no filters, default pulls [v7-clean]
+2026-10-24T21:43:52.063 Configuration:
+2026-10-24T21:43:52.063   Sample Rate: 1000 Hz
+2026-10-24T21:43:52.063   LED Current: 200mA
+2026-10-24T21:43:52.063   Integration Time: 1T
+2026-10-24T21:43:52.063   High Resolution: enabled
+2026-10-24T21:43:52.063   Read Ambient: enabled
+2026-10-24T21:43:52.063 TCA9548A initialized
+2026-10-24T21:43:52.063 ╔══════════════════════════════════════════════════════════════════════════════╗
+2026-10-24T21:43:52.063 ║                        I2C DEBUG SCAN - TROUBLESHOOTING                      ║
+2026-10-24T21:43:52.063 ╠══════════════════════════════════════════════════════════════════════════════╣
+2026-10-24T21:43:52.063 ║ STEP 1: Scanning main I2C bus (no TCA channel selected)                      ║
+2026-10-24T21:43:52.063 ╠══════════════════════════════════════════════════════════════════════════════╣
+2026-10-24T21:43:52.063 ║   Found device at 0x40 - Unknown
+2026-10-24T21:43:52.063 ║   Found device at 0x6B - Unknown
+2026-10-24T21:43:52.063 ║   Found device at 0x70 - TCA9548A (main mux)
+2026-10-24T21:43:52.063 ║   Total: 3 device(s) on main bus
+2026-10-24T21:43:52.063 ╠══════════════════════════════════════════════════════════════════════════════╣
+2026-10-24T21:43:52.063 ║ STEP 2: Scanning each TCA9548A channel for connected devices                 ║
+2026-10-24T21:43:52.063 ╠══════════════════════════════════════════════════════════════════════════════╣
+2026-10-24T21:43:52.063 ║ TCA Channel 0:
+2026-10-24T21:43:52.063 ║   ✓ Found: 0x40 (Unknown)
+2026-10-24T21:43:52.063 ║   ✓ Found: 0x6B (Unknown)
+2026-10-24T21:43:52.063 ║ TCA Channel 1:
+2026-10-24T21:43:52.063 ║   ✓ Found: 0x40 (Unknown)
+2026-10-24T21:43:52.063 ║   ✓ Found: 0x6B (Unknown)
+2026-10-24T21:43:52.063 ║ TCA Channel 2:
+2026-10-24T21:43:52.264 ║   ✓ Found: 0x40 (Unknown)
+2026-10-24T21:43:52.264 ║   ✓ Found: 0x76 (PCA9546A?)
+2026-10-24T21:43:52.264 ║ TCA Channel 3:
+2026-10-24T21:43:52.265 ║   ✓ Found: 0x40 (Unknown)
+2026-10-24T21:43:52.265 ║   ✓ Found: 0x6B (Unknown)
+2026-10-24T21:43:52.265 ║ TCA Channel 4:
+2026-10-24T21:43:52.265 ║   ✓ Found: 0x40 (Unknown)
+2026-10-24T21:43:52.265 ║   ✓ Found: 0x6B (Unknown)
+2026-10-24T21:43:52.265 ║ TCA Channel 5:
+2026-10-24T21:43:52.265 ║   ✓ Found: 0x40 (Unknown)
+2026-10-24T21:43:52.265 ║   ✓ Found: 0x6B (Unknown)
+2026-10-24T21:43:52.265 ║ TCA Channel 6:
+2026-10-24T21:43:52.265 ║   ✓ Found: 0x40 (Unknown)
+2026-10-24T21:43:52.265 ║   ✓ Found: 0x6B (Unknown)
+2026-10-24T21:43:52.265 ║ TCA Channel 7:
+2026-10-24T21:43:52.265 ║   ✓ Found: 0x40 (Unknown)
+2026-10-24T21:43:52.265 ║   ✓ Found: 0x6B (Unknown)
+2026-10-24T21:43:52.265 ╠══════════════════════════════════════════════════════════════════════════════╣
+2026-10-24T21:43:52.265 ║ STEP 3: Direct PCA9546A address probe at 0x74 on TCA channel 0               ║
+2026-10-24T21:43:52.265 ╠══════════════════════════════════════════════════════════════════════════════╣
+2026-10-24T21:43:52.265 ║   TCA channel 0 selected successfully                                       ║
+2026-10-24T21:43:52.265 ║   Attempt 1: Address 0x74 -> Error 2 (NACK on address)
+2026-10-24T21:43:52.466 ║   Attempt 2: Address 0x74 -> Error 2 (NACK on address)
+2026-10-24T21:43:52.466 ║   Attempt 3: Address 0x74 -> Error 2 (NACK on address)
+2026-10-24T21:43:52.466 ║   Attempting to read control register from 0x74...                          ║
+2026-10-24T21:43:52.466 [  1284][E][Wire.cpp:499] requestFrom(): i2cWriteReadNonStop returned Error -1
+2026-10-24T21:43:52.466 ║   ⚠️ Write OK but read returned 0 bytes                                    ║
+2026-10-24T21:43:52.466 ╠══════════════════════════════════════════════════════════════════════════════╣
+2026-10-24T21:43:52.466 ║ DEBUG SCAN COMPLETE - Check results above for clues                          ║
+2026-10-24T21:43:52.466 ╚══════════════════════════════════════════════════════════════════════════════╝
+2026-10-24T21:43:52.466 Scanning for PCA9546A multiplexers on TCA channels...
+2026-10-24T21:43:52.466   Scanning TCA channel 0
+2026-10-24T21:43:52.466     No PCA found on this channel
+2026-10-24T21:43:52.466   Scanning TCA channel 1
+2026-10-24T21:43:52.466     No PCA found on this channel
+2026-10-24T21:43:52.466   Scanning TCA channel 2
+2026-10-24T21:43:52.466     PCA9546A found at 0x76
+2026-10-24T21:43:52.466 Found 1 sensor board(s)
+2026-10-24T21:43:52.669 Initializing sensor 0 (P1S1)...
+2026-10-24T21:43:52.669   No sensor board on this channel
+2026-10-24T21:43:52.669 Initializing sensor 1 (P1S2)...
+2026-10-24T21:43:52.669   No sensor board on this channel
+2026-10-24T21:43:52.669 Initializing sensor 2 (P2S1)...
+2026-10-24T21:43:52.669   No sensor board on this channel
+2026-10-24T21:43:52.669 Initializing sensor 3 (P2S2)...
+2026-10-24T21:43:52.669   No sensor board on this channel
+2026-10-24T21:43:52.670 Initializing sensor 4 (P3S1)...
+2026-10-24T21:43:52.670   PCA ch 0 selected (ctrl reg = 0x01)
+2026-10-24T21:43:52.670   ERROR: No VCNL4040 at 0x60 (I2C error: 2)
+2026-10-24T21:43:52.670   Scanning this PCA channel for any I2C device...
+2026-10-24T21:43:52.670     Found device at 0x40
+2026-10-24T21:43:52.670     Found device at 0x70
+2026-10-24T21:43:52.670     Found device at 0x76
+2026-10-24T21:43:52.670 Initializing sensor 5 (P3S2)...
+2026-10-24T21:43:52.670   PCA ch 1 selected (ctrl reg = 0x02)
+2026-10-24T21:43:52.670   ERROR: No VCNL4040 at 0x60 (I2C error: 2)
+2026-10-24T21:43:52.670   Scanning this PCA channel for any I2C device...
+2026-10-24T21:43:52.670     Found device at 0x40
+2026-10-24T21:43:52.670     Found device at 0x70
+2026-10-24T21:43:52.670     Found device at 0x76
+2026-10-24T21:43:52.670 Initialized 0 / 6 sensors
+2026-10-24T21:43:52.670 ERROR: No sensors initialized!
+2026-10-24T21:43:52.670 [PWR after sensor init] VSYS=4.22 V, I=83 mA
+2026-10-24T21:43:52.670 ERROR: Sensor initialization failed!
+2026-10-24T21:43:52.670 ==============================================================
+2026-10-24T21:43:52.670 I2C BUS DIAGNOSTIC LOOP (continuous — press RESET to stop)
+2026-10-24T21:43:52.670 ==============================================================
+2026-10-24T21:43:52.670 PCA detection summary (from init):
+2026-10-24T21:43:52.670   TCA ch 0: (nothing detected)
+2026-10-24T21:43:52.670   TCA ch 1: (nothing detected)
+2026-10-24T21:43:52.670   TCA ch 2: PCA9546A at 0x76
+2026-10-24T21:43:52.670 Probing: INA(0x40)  BQ(0x6B)  TCA(0x70)  PCA(0x76)  VCNL(0x60)
+2026-10-24T21:43:52.670 Legend:  '.' = ACK,  'X(n)' = error n
+2026-10-24T21:43:52.670          1=data_too_long 2=NACK_addr 3=NACK_data 4=other 5=timeout/bus_hang
+2026-10-24T21:43:52.670 Expected when working correctly:
+2026-10-24T21:43:52.670   BASE           -> INA, BQ, TCA present; PCA, VCNL absent
+2026-10-24T21:43:52.670   TCA{0,1,2}     -> INA, BQ, TCA present; PCA present only on
+2026-10-24T21:43:52.670                     channels that have a rigid; VCNL absent
+2026-10-24T21:43:52.670   TCA+PCA0/1     -> INA, BQ, TCA, PCA, VCNL all present
+2026-10-24T21:43:52.671 --- Iteration 1 ---
+2026-10-24T21:43:52.671 t=   1414  BASE        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-24T21:43:52.671 t=   1420  TCA0        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-24T21:43:52.671 t=   1426  TCA1        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-24T21:43:52.671 t=   1434  TCA2        INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-24T21:43:52.671 t=   1437  TCA2+PCA0   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-24T21:43:52.671 t=   1441  TCA2+PCA1   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-24T21:43:54.704 --- Iteration 2 ---
+2026-10-24T21:43:54.704 t=   3444  BASE        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-24T21:43:54.704 t=   3450  TCA0        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-24T21:43:54.704 t=   3456  TCA1        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-24T21:43:54.704 t=   3464  TCA2        INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-24T21:43:54.704 t=   3467  TCA2+PCA0   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-24T21:43:54.704 t=   3471  TCA2+PCA1   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-24T21:43:56.741 --- Iteration 3 ---
+2026-10-24T21:43:56.742 t=   5475  BASE        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-24T21:43:56.742 t=   5481  TCA0        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-24T21:43:56.742 t=   5487  TCA1        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-24T21:43:56.742 t=   5495  TCA2        INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-24T21:43:56.742 t=   5498  TCA2+PCA0   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-24T21:43:56.742 t=   5502  TCA2+PCA1   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-24T21:43:58.781 --- Iteration 4 ---
+2026-10-24T21:43:58.781 t=   7506  BASE        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-24T21:43:58.781 t=   7512  TCA0        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-24T21:43:58.781 t=   7518  TCA1        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-24T21:43:58.781 t=   7526  TCA2        INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-24T21:43:58.781 t=   7529  TCA2+PCA0   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-24T21:43:58.781 t=   7533  TCA2+PCA1   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-24T21:44:00.849 --- Iteration 5 ---
+2026-10-24T21:44:00.849 t=   9536  BASE        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-24T21:44:00.849 t=   9542  TCA0        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-24T21:44:00.849 t=   9548  TCA1        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-24T21:44:00.849 t=   9556  TCA2        INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-24T21:44:00.849 t=   9559  TCA2+PCA0   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-24T21:44:00.849 t=   9563  TCA2+PCA1   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-24T21:44:02.883 --- Iteration 6 ---
+2026-10-24T21:44:02.883 t=  11566  BASE        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-24T21:44:02.883 t=  11572  TCA0        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-24T21:44:02.883 t=  11578  TCA1        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-24T21:44:02.883 t=  11586  TCA2        INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-24T21:44:02.883 t=  11589  TCA2+PCA0   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-24T21:44:02.883 t=  11593  TCA2+PCA1   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-24T21:44:04.915 --- Iteration 7 ---
+2026-10-24T21:44:04.915 t=  13596  BASE        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-24T21:44:04.915 t=  13602  TCA0        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-24T21:44:04.915 t=  13608  TCA1        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-24T21:44:04.915 t=  13616  TCA2        INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-24T21:44:04.915 t=  13619  TCA2+PCA0   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-24T21:44:04.915 t=  13623  TCA2+PCA1   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-24T21:44:06.945 --- Iteration 8 ---
+2026-10-24T21:44:06.946 t=  15627  BASE        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-24T21:44:06.946 t=  15633  TCA0        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-24T21:44:06.946 t=  15639  TCA1        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-24T21:44:06.946 t=  15647  TCA2        INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-24T21:44:06.946 t=  15650  TCA2+PCA0   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-24T21:44:06.946 t=  15654  TCA2+PCA1   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-24T21:44:08.781 --- Iteration 9 ---
+2026-10-24T21:44:08.985 t=  17658  BASE        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-24T21:44:08.985 t=  17664  TCA0        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-24T21:44:08.985 t=  17670  TCA1        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-24T21:44:08.985 t=  17678  TCA2        INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-24T21:44:08.985 t=  17681  TCA2+PCA0   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-24T21:44:08.985 t=  17685  TCA2+PCA1   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-24T21:44:10.815 --- Iteration 10 ---
+2026-10-24T21:44:10.815 t=  19688  BASE        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-24T21:44:11.019 t=  19694  TCA0        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-24T21:44:11.019 t=  19700  TCA1        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-24T21:44:11.019 t=  19708  TCA2        INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-24T21:44:11.019 t=  19711  TCA2+PCA0   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-24T21:44:11.019 t=  19715  TCA2+PCA1   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-24T21:44:12.853 --- Iteration 11 ---
+2026-10-24T21:44:12.853 t=  21719  BASE        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-24T21:44:12.853 t=  21725  TCA0        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-24T21:44:13.057 t=  21731  TCA1        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-24T21:44:13.057 t=  21739  TCA2        INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-24T21:44:13.057 t=  21742  TCA2+PCA0   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-24T21:44:13.057 t=  21746  TCA2+PCA1   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-24T21:44:14.887 --- Iteration 12 ---
+2026-10-24T21:44:14.887 t=  23750  BASE        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-24T21:44:14.887 t=  23756  TCA0        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-24T21:44:15.089 t=  23762  TCA1        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-24T21:44:15.089 t=  23770  TCA2        INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-24T21:44:15.089 t=  23773  TCA2+PCA0   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-24T21:44:15.089 t=  23777  TCA2+PCA1   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-24T21:44:16.915 --- Iteration 13 ---
+2026-10-24T21:44:16.915 t=  25781  BASE        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-24T21:44:16.915 t=  25787  TCA0        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-24T21:44:17.119 t=  25793  TCA1        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-24T21:44:17.119 t=  25801  TCA2        INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-24T21:44:17.119 t=  25804  TCA2+PCA0   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-24T21:44:17.119 t=  25808  TCA2+PCA1   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+=== start 21:44:23 (val, U3 relbus upload)
+2026-10-24T21:45:02.000 BQ24195 not found at 0x6B - skipping (bare T-Display?)
+2026-10-24T21:45:02.000 [PowerMonitor] INA219 configured: 10mR shunt, 1mA/LSB, 8A max
+2026-10-24T21:45:02.000 [PWR after BQ config] VSYS=4.21 V, I=0 mA
+2026-10-24T21:45:02.000 Display initialized
+2026-10-24T21:45:02.000 [PWR after display init] VSYS=4.21 V, I=0 mA
+2026-10-24T21:45:02.000 ==============================================================
+2026-10-24T21:45:02.000 [DIAG_RELEASE_I2C] Bus-release diagnostic mode
+2026-10-24T21:45:02.000 ==============================================================
+2026-10-24T21:45:02.000 Skipping WiFi/MQTT/sensor init.
+2026-10-24T21:45:02.000 Running 5-iteration diagnostic burst to prove BQ NACK reproduces
+2026-10-24T21:45:02.000 on the ESP32 side, then releasing the I2C bus to an external master.
+2026-10-24T21:45:02.000 Probing: INA(0x40)  BQ(0x6B)  TCA(0x70)
+2026-10-24T21:45:02.000 Legend:  '.' = ACK,  'X(n)' = error n
+2026-10-24T21:45:02.000          (with failing-config cable in J6, expect BQ:X(2) on TCA2 row)
+2026-10-24T21:45:02.000 --- Iteration 1 ---
+2026-10-24T21:45:02.000 t=   8355  BASE        INA:.    BQ:.    TCA:.
+2026-10-24T21:45:02.000 t=   8359  TCA0        INA:.    BQ:.    TCA:.
+2026-10-24T21:45:02.000 t=   8363  TCA1        INA:.    BQ:.    TCA:.
+2026-10-24T21:45:02.000 t=   8367  TCA2        INA:.    BQ:X(2) TCA:.
+2026-10-24T21:45:03.425 --- Iteration 2 ---
+2026-10-24T21:45:03.425 t=   9870  BASE        INA:.    BQ:.    TCA:.
+2026-10-24T21:45:03.425 t=   9874  TCA0        INA:.    BQ:.    TCA:.
+2026-10-24T21:45:03.425 t=   9878  TCA1        INA:.    BQ:.    TCA:.
+2026-10-24T21:45:03.425 t=   9882  TCA2        INA:.    BQ:X(2) TCA:.
+2026-10-24T21:45:04.847 --- Iteration 3 ---
+2026-10-24T21:45:04.847 t=  11385  BASE        INA:.    BQ:.    TCA:.
+2026-10-24T21:45:04.847 t=  11389  TCA0        INA:.    BQ:.    TCA:.
+2026-10-24T21:45:04.847 t=  11393  TCA1        INA:.    BQ:.    TCA:.
+2026-10-24T21:45:05.049 t=  11397  TCA2        INA:.    BQ:X(2) TCA:.
+2026-10-24T21:45:06.466 --- Iteration 4 ---
+2026-10-24T21:45:06.466 t=  12900  BASE        INA:.    BQ:.    TCA:.
+2026-10-24T21:45:06.466 t=  12904  TCA0        INA:.    BQ:.    TCA:.
+2026-10-24T21:45:06.466 t=  12908  TCA1        INA:.    BQ:.    TCA:.
+2026-10-24T21:45:06.466 t=  12912  TCA2        INA:.    BQ:X(2) TCA:.
+2026-10-24T21:45:07.891 --- Iteration 5 ---
+2026-10-24T21:45:07.891 t=  14415  BASE        INA:.    BQ:.    TCA:.
+2026-10-24T21:45:07.891 t=  14419  TCA0        INA:.    BQ:.    TCA:.
+2026-10-24T21:45:07.891 t=  14423  TCA1        INA:.    BQ:.    TCA:.
+2026-10-24T21:45:07.891 t=  14427  TCA2        INA:.    BQ:X(2) TCA:.
+2026-10-24T21:45:09.510 Burst complete. Closing all TCA channels for clean baseline...
+2026-10-24T21:45:09.510 Releasing I2C bus...
+2026-10-24T21:45:09.510 ==============================================================
+2026-10-24T21:45:09.510 BUS RELEASED
+2026-10-24T21:45:09.510 ==============================================================
+2026-10-24T21:45:09.510 ESP32 is no longer driving SDA/SCL. All TCA channels are closed
+2026-10-24T21:45:09.511 [heartbeat] t=15989 ms — ESP32 alive, bus released
+2026-10-24T21:45:14.582 [heartbeat] t=20989 ms — ESP32 alive, bus released
+2026-10-24T21:45:19.461 [heartbeat] t=25989 ms — ESP32 alive, bus released
+2026-10-24T21:45:24.537 [heartbeat] t=30989 ms — ESP32 alive, bus released
+2026-10-24T21:45:29.630 [heartbeat] t=35989 ms — ESP32 alive, bus released
+2026-10-24T21:45:34.515 [heartbeat] t=40989 ms — ESP32 alive, bus released
+2026-10-24T21:45:39.599 [heartbeat] t=45989 ms — ESP32 alive, bus released
+2026-10-24T21:45:44.480 [heartbeat] t=50989 ms — ESP32 alive, bus released
+2026-10-24T21:45:49.571 [heartbeat] t=55989 ms — ESP32 alive, bus released
+2026-10-24T21:45:54.455 [heartbeat] t=60989 ms — ESP32 alive, bus released
+2026-10-24T21:45:59.556 [heartbeat] t=65989 ms — ESP32 alive, bus released
+2026-10-24T21:46:04.631 [heartbeat] t=70989 ms — ESP32 alive, bus released
+2026-10-24T21:46:09.510 [heartbeat] t=75989 ms — ESP32 alive, bus released
+2026-10-24T21:46:14.589 [heartbeat] t=80989 ms — ESP32 alive, bus released
+2026-10-24T21:46:19.460 [heartbeat] t=85989 ms — ESP32 alive, bus released
+2026-10-24T21:46:24.526 [heartbeat] t=90989 ms — ESP32 alive, bus released
+2026-10-24T21:46:29.597 [heartbeat] t=95989 ms — ESP32 alive, bus released
+2026-10-24T21:46:34.473 [heartbeat] t=100989 ms — ESP32 alive, bus released
+2026-10-24T21:46:39.540 [heartbeat] t=105989 ms — ESP32 alive, bus released
+2026-10-24T21:46:44.632 [heartbeat] t=110989 ms — ESP32 alive, bus released
+2026-10-24T21:46:49.513 [heartbeat] t=115989 ms — ESP32 alive, bus released
+2026-10-24T21:46:54.593 [heartbeat] t=120989 ms — ESP32 alive, bus released
+2026-10-24T21:46:59.468 [heartbeat] t=125989 ms — ESP32 alive, bus released
+2026-10-24T21:47:04.559 [heartbeat] t=130989 ms — ESP32 alive, bus released
+2026-10-24T21:47:09.443 [heartbeat] t=135989 ms — ESP32 alive, bus released
+2026-10-24T21:47:14.525 [heartbeat] t=140989 ms — ESP32 alive, bus released
+2026-10-24T21:47:19.607 [heartbeat] t=145989 ms — ESP32 alive, bus released
+2026-10-24T21:47:24.476 [heartbeat] t=150989 ms — ESP32 alive, bus released
+2026-10-24T21:47:29.558 [heartbeat] t=155989 ms — ESP32 alive, bus released
+2026-10-24T21:47:34.443 [heartbeat] t=160989 ms — ESP32 alive, bus released
+2026-10-24T21:47:39.512 [heartbeat] t=165989 ms — ESP32 alive, bus released
+2026-10-24T21:47:44.594 [heartbeat] t=170989 ms — ESP32 alive, bus released
+2026-10-24T21:47:49.480 [heartbeat] t=175989 ms — ESP32 alive, bus released
+2026-10-24T21:47:54.557 [heartbeat] t=180989 ms — ESP32 alive, bus released
+2026-10-24T21:47:59.444 [heartbeat] t=185989 ms — ESP32 alive, bus released
+2026-10-24T21:48:04.529 [heartbeat] t=190989 ms — ESP32 alive, bus released
+2026-10-24T21:48:09.622 [heartbeat] t=195989 ms — ESP32 alive, bus released
+2026-10-24T21:48:14.510 [heartbeat] t=200989 ms — ESP32 alive, bus released
+2026-10-24T21:48:19.584 [heartbeat] t=205989 ms — ESP32 alive, bus released
+2026-10-24T21:48:24.466 [heartbeat] t=210989 ms — ESP32 alive, bus released
+2026-10-24T21:48:29.559 [heartbeat] t=215989 ms — ESP32 alive, bus released
+2026-10-24T21:48:34.444 [heartbeat] t=220989 ms — ESP32 alive, bus released
+2026-10-24T21:48:39.538 [heartbeat] t=225989 ms — ESP32 alive, bus released
+2026-10-24T21:48:44.629 [heartbeat] t=230989 ms — ESP32 alive, bus released
+2026-10-24T21:48:49.519 [heartbeat] t=235989 ms — ESP32 alive, bus released
+2026-10-24T21:48:54.613 [heartbeat] t=240989 ms — ESP32 alive, bus released
+2026-10-24T21:48:59.491 [heartbeat] t=245989 ms — ESP32 alive, bus released
+2026-10-24T21:49:04.577 [heartbeat] t=250989 ms — ESP32 alive, bus released
+2026-10-24T21:49:09.445 [heartbeat] t=255989 ms — ESP32 alive, bus released
+2026-10-24T21:49:14.615 [heartbeat] t=260989 ms — ESP32 alive, bus released
+2026-10-24T21:49:19.591 [heartbeat] t=265989 ms — ESP32 alive, bus released
+2026-10-24T21:49:24.552 [heartbeat] t=270989 ms — ESP32 alive, bus released
+2026-10-24T21:49:29.510 [heartbeat] t=275989 ms — ESP32 alive, bus released
+2026-10-24T21:49:34.450 [heartbeat] t=280989 ms — ESP32 alive, bus released
+2026-10-24T21:49:39.636 [heartbeat] t=285989 ms — ESP32 alive, bus released
+2026-10-24T21:49:44.598 [heartbeat] t=290989 ms — ESP32 alive, bus released
+2026-10-24T21:49:49.562 [heartbeat] t=295989 ms — ESP32 alive, bus released
+2026-10-24T21:49:54.515 [heartbeat] t=300989 ms — ESP32 alive, bus released
+2026-10-24T21:49:59.488 [heartbeat] t=305989 ms — ESP32 alive, bus released
+2026-10-24T21:50:04.468 [heartbeat] t=310989 ms — ESP32 alive, bus released
+2026-10-24T21:50:09.631 [heartbeat] t=315989 ms — ESP32 alive, bus released
+2026-10-24T21:50:14.601 [heartbeat] t=320989 ms — ESP32 alive, bus released
+2026-10-24T21:50:19.564 [heartbeat] t=325989 ms — ESP32 alive, bus released
+2026-10-24T21:50:24.528 [heartbeat] t=330989 ms — ESP32 alive, bus released
+2026-10-24T21:50:29.519 [heartbeat] t=335989 ms — ESP32 alive, bus released
+2026-10-24T21:50:34.486 [heartbeat] t=340989 ms — ESP32 alive, bus released
+2026-10-24T21:50:39.463 [heartbeat] t=345989 ms — ESP32 alive, bus released
+2026-10-24T21:50:44.649 [heartbeat] t=350989 ms — ESP32 alive, bus released
+2026-10-24T21:50:49.610 [heartbeat] t=355989 ms — ESP32 alive, bus released
+2026-10-24T21:50:54.595 [heartbeat] t=360989 ms — ESP32 alive, bus released
+2026-10-24T21:50:59.571 [heartbeat] t=365989 ms — ESP32 alive, bus released
+2026-10-24T21:51:04.532 [heartbeat] t=370989 ms — ESP32 alive, bus released
+2026-10-24T21:51:09.505 [heartbeat] t=375989 ms — ESP32 alive, bus released
+2026-10-24T21:51:14.446 [heartbeat] t=380989 ms — ESP32 alive, bus released
+2026-10-24T21:51:19.623 [heartbeat] t=385989 ms — ESP32 alive, bus released
+2026-10-24T21:51:24.580 [heartbeat] t=390989 ms — ESP32 alive, bus released
+2026-10-24T21:51:29.522 [heartbeat] t=395989 ms — ESP32 alive, bus released
+2026-10-24T21:51:34.480 [heartbeat] t=400989 ms — ESP32 alive, bus released
+2026-10-24T21:51:39.459 [heartbeat] t=405989 ms — ESP32 alive, bus released
+2026-10-24T21:51:44.633 [heartbeat] t=410989 ms — ESP32 alive, bus released
+2026-10-24T21:51:49.591 [heartbeat] t=415989 ms — ESP32 alive, bus released
+2026-10-24T21:51:54.526 [heartbeat] t=420989 ms — ESP32 alive, bus released
+2026-10-24T21:51:59.521 [heartbeat] t=425989 ms — ESP32 alive, bus released
+2026-10-24T21:52:04.485 [heartbeat] t=430989 ms — ESP32 alive, bus released
+2026-10-24T21:52:09.639 [heartbeat] t=435989 ms — ESP32 alive, bus released
+2026-10-24T21:52:14.590 [heartbeat] t=440989 ms — ESP32 alive, bus released
+2026-10-24T21:52:19.570 [heartbeat] t=445989 ms — ESP32 alive, bus released
+2026-10-24T21:52:24.534 [heartbeat] t=450989 ms — ESP32 alive, bus released
+2026-10-24T21:52:29.503 [heartbeat] t=455989 ms — ESP32 alive, bus released
+2026-10-24T21:52:34.496 [heartbeat] t=460989 ms — ESP32 alive, bus released
+2026-10-24T21:52:39.449 [heartbeat] t=465989 ms — ESP32 alive, bus released
+2026-10-24T21:52:44.610 [heartbeat] t=470989 ms — ESP32 alive, bus released
+2026-10-24T21:52:49.575 [heartbeat] t=475989 ms — ESP32 alive, bus released
+2026-10-24T21:52:54.554 [heartbeat] t=480989 ms — ESP32 alive, bus released
+2026-10-24T21:52:59.526 [heartbeat] t=485989 ms — ESP32 alive, bus released
+2026-10-24T21:53:04.483 [heartbeat] t=490989 ms — ESP32 alive, bus released
+2026-10-24T21:53:09.638 [heartbeat] t=495989 ms — ESP32 alive, bus released
+2026-10-24T21:53:14.609 [heartbeat] t=500989 ms — ESP32 alive, bus released
+2026-10-24T21:53:19.586 [heartbeat] t=505989 ms — ESP32 alive, bus released
+2026-10-24T21:53:24.549 [heartbeat] t=510989 ms — ESP32 alive, bus released
+2026-10-24T21:53:29.512 [heartbeat] t=515989 ms — ESP32 alive, bus released
+2026-10-24T21:53:34.450 [heartbeat] t=520989 ms — ESP32 alive, bus released
+2026-10-24T21:53:39.605 [heartbeat] t=525989 ms — ESP32 alive, bus released
+2026-10-24T21:53:44.580 [heartbeat] t=530989 ms — ESP32 alive, bus released
+2026-10-24T21:53:49.561 [heartbeat] t=535989 ms — ESP32 alive, bus released
+2026-10-24T21:53:54.521 [heartbeat] t=540989 ms — ESP32 alive, bus released
+2026-10-24T21:53:59.481 [heartbeat] t=545989 ms — ESP32 alive, bus released
+2026-10-24T21:54:04.448 [heartbeat] t=550989 ms — ESP32 alive, bus released
+2026-10-24T21:54:09.634 [heartbeat] t=555989 ms — ESP32 alive, bus released
+2026-10-24T21:54:14.613 [heartbeat] t=560989 ms — ESP32 alive, bus released
+2026-10-24T21:54:19.591 [heartbeat] t=565989 ms — ESP32 alive, bus released
+2026-10-24T21:54:24.569 [heartbeat] t=570989 ms — ESP32 alive, bus released
+2026-10-24T21:54:29.531 [heartbeat] t=575989 ms — ESP32 alive, bus released
+2026-10-24T21:54:34.520 [heartbeat] t=580989 ms — ESP32 alive, bus released
+2026-10-24T21:54:39.500 [heartbeat] t=585989 ms — ESP32 alive, bus released
+2026-10-24T21:54:44.461 [heartbeat] t=590989 ms — ESP32 alive, bus released
+2026-10-24T21:54:49.634 [heartbeat] t=595989 ms — ESP32 alive, bus released
+2026-10-24T21:54:54.609 [heartbeat] t=600989 ms — ESP32 alive, bus released
+2026-10-24T21:54:59.578 [heartbeat] t=605989 ms — ESP32 alive, bus released
+2026-10-24T21:55:04.539 [heartbeat] t=610989 ms — ESP32 alive, bus released
+2026-10-24T21:55:09.497 [heartbeat] t=615989 ms — ESP32 alive, bus released
+2026-10-24T21:55:14.654 [heartbeat] t=620989 ms — ESP32 alive, bus released
+2026-10-24T21:55:19.635 [heartbeat] t=625989 ms — ESP32 alive, bus released
+2026-10-24T21:55:24.598 [heartbeat] t=630989 ms — ESP32 alive, bus released
+2026-10-24T21:55:29.579 [heartbeat] t=635989 ms — ESP32 alive, bus released
+2026-10-24T21:55:34.561 [heartbeat] t=640989 ms — ESP32 alive, bus released
+2026-10-24T21:55:39.511 [heartbeat] t=645989 ms — ESP32 alive, bus released
+2026-10-24T21:55:44.495 [heartbeat] t=650989 ms — ESP32 alive, bus released
+2026-10-24T21:55:49.488 [heartbeat] t=655989 ms — ESP32 alive, bus released
+2026-10-24T21:55:54.463 [heartbeat] t=660989 ms — ESP32 alive, bus released
+2026-10-24T21:55:59.635 [heartbeat] t=665989 ms — ESP32 alive, bus released
+2026-10-24T21:56:04.576 [heartbeat] t=670989 ms — ESP32 alive, bus released
+2026-10-24T21:56:09.532 [heartbeat] t=675989 ms — ESP32 alive, bus released
+2026-10-24T21:56:14.483 [heartbeat] t=680989 ms — ESP32 alive, bus released
+2026-10-24T21:56:19.453 [heartbeat] t=685989 ms — ESP32 alive, bus released
+2026-10-24T21:56:24.620 [heartbeat] t=690989 ms — ESP32 alive, bus released
+2026-10-24T21:56:29.582 [heartbeat] t=695989 ms — ESP32 alive, bus released
+2026-10-24T21:56:34.550 [heartbeat] t=700989 ms — ESP32 alive, bus released
+2026-10-24T21:56:39.529 [heartbeat] t=705989 ms — ESP32 alive, bus released
+2026-10-24T21:56:44.502 [heartbeat] t=710989 ms — ESP32 alive, bus released
+2026-10-24T21:56:49.472 [heartbeat] t=715989 ms — ESP32 alive, bus released
+2026-10-24T21:56:54.648 [heartbeat] t=720989 ms — ESP32 alive, bus released
+2026-10-24T21:56:59.602 [heartbeat] t=725989 ms — ESP32 alive, bus released
+2026-10-24T21:57:04.576 [heartbeat] t=730989 ms — ESP32 alive, bus released
+2026-10-24T21:57:09.552 [heartbeat] t=735989 ms — ESP32 alive, bus released
+2026-10-24T21:57:14.508 [heartbeat] t=740989 ms — ESP32 alive, bus released
+2026-10-24T21:57:19.473 [heartbeat] t=745989 ms — ESP32 alive, bus released
+2026-10-24T21:57:24.642 [heartbeat] t=750989 ms — ESP32 alive, bus released
+2026-10-24T21:57:29.606 [heartbeat] t=755989 ms — ESP32 alive, bus released
+2026-10-24T21:57:34.578 [heartbeat] t=760989 ms — ESP32 alive, bus released
+2026-10-24T21:57:39.531 [heartbeat] t=765989 ms — ESP32 alive, bus released
+2026-10-24T21:57:44.503 [heartbeat] t=770989 ms — ESP32 alive, bus released
+2026-10-24T21:57:49.466 [heartbeat] t=775989 ms — ESP32 alive, bus released
+2026-10-24T21:57:54.655 [heartbeat] t=780989 ms — ESP32 alive, bus released
+2026-10-24T21:57:59.621 [heartbeat] t=785989 ms — ESP32 alive, bus released
+2026-10-24T21:58:04.576 [heartbeat] t=790989 ms — ESP32 alive, bus released
+2026-10-24T21:58:09.648 [heartbeat] t=795989 ms — ESP32 alive, bus released
+2026-10-24T21:58:14.524 [heartbeat] t=800989 ms — ESP32 alive, bus released
+2026-10-24T21:58:19.605 [heartbeat] t=805989 ms — ESP32 alive, bus released
+2026-10-24T21:58:24.476 [heartbeat] t=810989 ms — ESP32 alive, bus released
+2026-10-24T21:58:29.574 [heartbeat] t=815989 ms — ESP32 alive, bus released
+2026-10-24T21:58:34.451 [heartbeat] t=820989 ms — ESP32 alive, bus released
+2026-10-24T21:58:39.547 [heartbeat] t=825989 ms — ESP32 alive, bus released
+2026-10-24T21:58:44.629 [heartbeat] t=830989 ms — ESP32 alive, bus released
+2026-10-24T21:58:49.499 [heartbeat] t=835989 ms — ESP32 alive, bus released
+2026-10-24T21:58:54.571 [heartbeat] t=840989 ms — ESP32 alive, bus released
+2026-10-24T21:58:59.455 [heartbeat] t=845989 ms — ESP32 alive, bus released
+2026-10-24T21:59:04.535 [heartbeat] t=850989 ms — ESP32 alive, bus released
+2026-10-24T21:59:09.618 [heartbeat] t=855989 ms — ESP32 alive, bus released
+2026-10-24T21:59:14.487 [heartbeat] t=860989 ms — ESP32 alive, bus released
+2026-10-24T21:59:19.577 [heartbeat] t=865989 ms — ESP32 alive, bus released
+2026-10-24T21:59:24.654 [heartbeat] t=870989 ms — ESP32 alive, bus released
+2026-10-24T21:59:29.543 [heartbeat] t=875989 ms — ESP32 alive, bus released
+2026-10-24T21:59:34.625 [heartbeat] t=880989 ms — ESP32 alive, bus released
+2026-10-24T21:59:39.498 [heartbeat] t=885989 ms — ESP32 alive, bus released
+2026-10-24T21:59:44.576 [heartbeat] t=890989 ms — ESP32 alive, bus released
+2026-10-24T21:59:49.655 [heartbeat] t=895989 ms — ESP32 alive, bus released
+2026-10-24T21:59:54.535 [heartbeat] t=900989 ms — ESP32 alive, bus released
+2026-10-24T21:59:59.611 [heartbeat] t=905989 ms — ESP32 alive, bus released
+2026-10-24T22:00:04.497 [heartbeat] t=910989 ms — ESP32 alive, bus released
+2026-10-24T22:00:09.584 [heartbeat] t=915989 ms — ESP32 alive, bus released
+2026-10-24T22:00:14.489 [heartbeat] t=920989 ms — ESP32 alive, bus released
+2026-10-24T22:00:19.574 [heartbeat] t=925989 ms — ESP32 alive, bus released
+2026-10-24T22:00:24.657 [heartbeat] t=930989 ms — ESP32 alive, bus released
+2026-10-24T22:00:29.537 [heartbeat] t=935989 ms — ESP32 alive, bus released
+2026-10-24T22:00:34.619 [heartbeat] t=940989 ms — ESP32 alive, bus released
+2026-10-24T22:00:39.500 [heartbeat] t=945989 ms — ESP32 alive, bus released
+2026-10-24T22:00:44.584 [heartbeat] t=950989 ms — ESP32 alive, bus released
+2026-10-24T22:00:49.468 [heartbeat] t=955989 ms — ESP32 alive, bus released
+2026-10-24T22:00:54.545 [heartbeat] t=960989 ms — ESP32 alive, bus released
+2026-10-24T22:00:59.640 [heartbeat] t=965989 ms — ESP32 alive, bus released
+2026-10-24T22:01:04.516 [heartbeat] t=970989 ms — ESP32 alive, bus released
+2026-10-24T22:01:09.605 [heartbeat] t=975989 ms — ESP32 alive, bus released
+2026-10-24T22:01:14.488 [heartbeat] t=980989 ms — ESP32 alive, bus released
+2026-10-24T22:01:19.585 [heartbeat] t=985989 ms — ESP32 alive, bus released
+2026-10-24T22:01:24.467 [heartbeat] t=990989 ms — ESP32 alive, bus released
+2026-10-24T22:01:29.546 [heartbeat] t=995989 ms — ESP32 alive, bus released
+2026-10-24T22:01:34.633 [heartbeat] t=1000989 ms — ESP32 alive, bus released
+2026-10-24T22:01:39.515 [heartbeat] t=1005989 ms — ESP32 alive, bus released
+2026-10-24T22:01:44.602 [heartbeat] t=1010989 ms — ESP32 alive, bus released
+2026-10-24T22:01:49.486 [heartbeat] t=1015989 ms — ESP32 alive, bus released
+2026-10-24T22:01:54.558 [heartbeat] t=1020989 ms — ESP32 alive, bus released
+2026-10-24T22:01:59.630 [heartbeat] t=1025989 ms — ESP32 alive, bus released
+2026-10-24T22:02:04.501 [heartbeat] t=1030989 ms — ESP32 alive, bus released
+2026-10-24T22:02:09.580 [heartbeat] t=1035989 ms — ESP32 alive, bus released
+2026-10-24T22:02:14.647 [heartbeat] t=1040989 ms — ESP32 alive, bus released
+2026-10-24T22:02:19.524 [heartbeat] t=1045989 ms — ESP32 alive, bus released
+2026-10-24T22:02:24.611 [heartbeat] t=1050989 ms — ESP32 alive, bus released
+2026-10-24T22:02:29.496 [heartbeat] t=1055989 ms — ESP32 alive, bus released
+2026-10-24T22:02:34.562 [heartbeat] t=1060989 ms — ESP32 alive, bus released
+2026-10-24T22:02:39.636 [heartbeat] t=1065989 ms — ESP32 alive, bus released
+2026-10-24T22:02:44.515 [heartbeat] t=1070989 ms — ESP32 alive, bus released
+2026-10-24T22:02:49.584 [heartbeat] t=1075989 ms — ESP32 alive, bus released
+2026-10-24T22:02:54.471 [heartbeat] t=1080989 ms — ESP32 alive, bus released
+2026-10-24T22:02:59.546 [heartbeat] t=1085989 ms — ESP32 alive, bus released
+2026-10-24T22:03:04.625 [heartbeat] t=1090989 ms — ESP32 alive, bus released
+2026-10-24T22:03:09.493 [heartbeat] t=1095989 ms — ESP32 alive, bus released
+2026-10-24T22:03:14.569 [heartbeat] t=1100989 ms — ESP32 alive, bus released
+2026-10-24T22:03:19.648 [heartbeat] t=1105989 ms — ESP32 alive, bus released
+2026-10-24T22:03:24.509 [heartbeat] t=1110989 ms — ESP32 alive, bus released
+2026-10-24T22:03:29.594 [heartbeat] t=1115989 ms — ESP32 alive, bus released
+2026-10-24T22:03:34.463 [heartbeat] t=1120989 ms — ESP32 alive, bus released
+2026-10-24T22:03:39.545 [heartbeat] t=1125989 ms — ESP32 alive, bus released
+2026-10-24T22:03:44.639 [heartbeat] t=1130989 ms — ESP32 alive, bus released
+2026-10-24T22:03:49.511 [heartbeat] t=1135989 ms — ESP32 alive, bus released
+2026-10-24T22:03:54.522 [heartbeat] t=1140989 ms — ESP32 alive, bus released
+2026-10-24T22:03:59.405 [heartbeat] t=1145989 ms — ESP32 alive, bus released
+2026-10-24T22:04:04.495 [heartbeat] t=1150989 ms — ESP32 alive, bus released
+2026-10-24T22:04:09.579 [heartbeat] t=1155989 ms — ESP32 alive, bus released
+2026-10-24T22:04:14.439 [heartbeat] t=1160989 ms — ESP32 alive, bus released
+2026-10-24T22:04:19.528 [heartbeat] t=1165989 ms — ESP32 alive, bus released
+2026-10-24T22:04:24.413 [heartbeat] t=1170989 ms — ESP32 alive, bus released
+2026-10-24T22:04:29.498 [heartbeat] t=1175989 ms — ESP32 alive, bus released
+2026-10-24T22:04:34.582 [heartbeat] t=1180989 ms — ESP32 alive, bus released
+2026-10-24T22:04:39.462 [heartbeat] t=1185989 ms — ESP32 alive, bus released
+2026-10-24T22:04:44.542 [heartbeat] t=1190989 ms — ESP32 alive, bus released
+2026-10-24T22:04:49.410 [heartbeat] t=1195989 ms — ESP32 alive, bus released
+2026-10-24T22:04:54.501 [heartbeat] t=1200989 ms — ESP32 alive, bus released
+2026-10-24T22:04:59.580 [heartbeat] t=1205989 ms — ESP32 alive, bus released
+2026-10-24T22:05:04.461 [heartbeat] t=1210989 ms — ESP32 alive, bus released
+2026-10-24T22:05:09.547 [heartbeat] t=1215989 ms — ESP32 alive, bus released
+2026-10-24T22:05:14.422 [heartbeat] t=1220989 ms — ESP32 alive, bus released
+2026-10-24T22:05:19.504 [heartbeat] t=1225989 ms — ESP32 alive, bus released
+2026-10-24T22:05:24.570 [heartbeat] t=1230989 ms — ESP32 alive, bus released
+2026-10-24T22:05:29.448 [heartbeat] t=1235989 ms — ESP32 alive, bus released
+2026-10-24T22:05:34.529 [heartbeat] t=1240989 ms — ESP32 alive, bus released
+2026-10-24T22:05:39.413 [heartbeat] t=1245989 ms — ESP32 alive, bus released
+2026-10-24T22:05:44.496 [heartbeat] t=1250989 ms — ESP32 alive, bus released
+2026-10-24T22:05:49.381 [heartbeat] t=1255989 ms — ESP32 alive, bus released
+=== attach 22:05:55
+2026-10-24T22:05:59.425 [heartbeat] t=1265989 ms — ESP32 alive, bus released
+2026-10-24T22:06:04.502 [heartbeat] t=1270989 ms — ESP32 alive, bus released
+2026-10-24T22:06:09.575 [heartbeat] t=1275989 ms — ESP32 alive, bus released
+2026-10-24T22:06:14.448 [heartbeat] t=1280989 ms — ESP32 alive, bus released
+2026-10-24T22:06:19.533 [heartbeat] t=1285989 ms — ESP32 alive, bus released
+2026-10-24T22:06:24.418 [heartbeat] t=1290989 ms — ESP32 alive, bus released
+2026-10-24T22:06:29.497 [heartbeat] t=1295989 ms — ESP32 alive, bus released
+2026-10-24T22:06:34.574 [heartbeat] t=1300989 ms — ESP32 alive, bus released
+2026-10-24T22:06:39.460 [heartbeat] t=1305989 ms — ESP32 alive, bus released
+2026-10-24T22:06:44.544 [heartbeat] t=1310989 ms — ESP32 alive, bus released
+2026-10-24T22:06:49.430 [heartbeat] t=1315989 ms — ESP32 alive, bus released
+2026-10-24T22:06:49.542 [logger] read failed: [Errno 6] Device not configured
+=== attach 22:18:18
+2026-10-24T22:18:18.675 =================================
+2026-10-24T22:18:18.675 Motion Play Device - BOOT
+2026-10-24T22:18:18.675 =================================
+2026-10-24T22:18:18.675 =================================
+2026-10-24T22:18:18.675 === Configuring BQ24195 (input current limit) ===
+2026-10-24T22:18:18.675 [   760][I][esp32-hal-i2c.c:75] i2cInit(): Initialising I2C Master: sda=43 scl=44 freq=100000
+2026-10-24T22:18:18.675 [I2C SCAN] Scanning 0x03..0x77...
+2026-10-24T22:18:18.675 [I2C SCAN]   Found device at 0x40
+2026-10-24T22:18:18.675 [I2C SCAN]   Found device at 0x6B
+2026-10-24T22:18:18.675 [I2C SCAN]   Found device at 0x70
+2026-10-24T22:18:18.675 [I2C SCAN] Done. 3 device(s) responded.
+2026-10-24T22:18:18.675 BQ24195 configured: IINLIM=2A, watchdog disabled
+2026-10-24T22:18:18.675 [PowerMonitor] INA219 configured: 10mR shunt, 1mA/LSB, 8A max
+2026-10-24T22:18:18.675 [PWR after BQ config] VSYS=4.21 V, I=72 mA
+2026-10-24T22:18:18.675 Display initialized
+2026-10-24T22:18:18.675 [PWR after display init] VSYS=4.21 V, I=72 mA
+2026-10-24T22:18:18.675 ==============================================================
+2026-10-24T22:18:18.676 [DIAG_RELEASE_I2C] Bus-release diagnostic mode
+2026-10-24T22:18:18.676 ==============================================================
+2026-10-24T22:18:18.676 Skipping WiFi/MQTT/sensor init.
+2026-10-24T22:18:18.676 Running 5-iteration diagnostic burst to prove BQ NACK reproduces
+2026-10-24T22:18:18.676 on the ESP32 side, then releasing the I2C bus to an external master.
+2026-10-24T22:18:18.676 Probing: INA(0x40)  BQ(0x6B)  TCA(0x70)
+2026-10-24T22:18:18.676 Legend:  '.' = ACK,  'X(n)' = error n
+2026-10-24T22:18:18.676          (with failing-config cable in J6, expect BQ:X(2) on TCA2 row)
+2026-10-24T22:18:18.676 --- Iteration 1 ---
+2026-10-24T22:18:18.676 t=    786  BASE        INA:.    BQ:.    TCA:.
+2026-10-24T22:18:18.676 t=    790  TCA0        INA:.    BQ:.    TCA:.
+2026-10-24T22:18:18.676 t=    794  TCA1        INA:.    BQ:.    TCA:.
+2026-10-24T22:18:18.676 t=    798  TCA2        INA:.    BQ:X(2) TCA:.
+2026-10-24T22:18:20.110 --- Iteration 2 ---
+2026-10-24T22:18:20.110 t=   2301  BASE        INA:.    BQ:.    TCA:.
+2026-10-24T22:18:20.110 t=   2305  TCA0        INA:.    BQ:.    TCA:.
+2026-10-24T22:18:20.110 t=   2309  TCA1        INA:.    BQ:.    TCA:.
+2026-10-24T22:18:20.110 t=   2313  TCA2        INA:.    BQ:X(2) TCA:.
+2026-10-24T22:18:21.735 --- Iteration 3 ---
+2026-10-24T22:18:21.735 t=   3816  BASE        INA:.    BQ:.    TCA:.
+2026-10-24T22:18:21.735 t=   3820  TCA0        INA:.    BQ:.    TCA:.
+2026-10-24T22:18:21.735 t=   3824  TCA1        INA:.    BQ:.    TCA:.
+2026-10-24T22:18:21.735 t=   3828  TCA2        INA:.    BQ:X(2) TCA:.
+2026-10-24T22:18:23.160 --- Iteration 4 ---
+2026-10-24T22:18:23.160 t=   5331  BASE        INA:.    BQ:.    TCA:.
+2026-10-24T22:18:23.160 t=   5335  TCA0        INA:.    BQ:.    TCA:.
+2026-10-24T22:18:23.160 t=   5339  TCA1        INA:.    BQ:.    TCA:.
+2026-10-24T22:18:23.160 t=   5343  TCA2        INA:.    BQ:X(2) TCA:.
+2026-10-24T22:18:24.585 --- Iteration 5 ---
+2026-10-24T22:18:24.585 t=   6846  BASE        INA:.    BQ:.    TCA:.
+2026-10-24T22:18:24.585 t=   6850  TCA0        INA:.    BQ:.    TCA:.
+2026-10-24T22:18:24.585 t=   6854  TCA1        INA:.    BQ:.    TCA:.
+2026-10-24T22:18:24.791 t=   6858  TCA2        INA:.    BQ:X(2) TCA:.
+2026-10-24T22:18:26.215 Burst complete. Closing all TCA channels for clean baseline...
+2026-10-24T22:18:26.215 Releasing I2C bus...
+2026-10-24T22:18:26.215 ==============================================================
+2026-10-24T22:18:26.215 BUS RELEASED
+2026-10-24T22:18:26.215 ==============================================================
+2026-10-24T22:18:26.215 ESP32 is no longer driving SDA/SCL. All TCA channels are closed
+2026-10-24T22:18:26.216 [heartbeat] t=8420 ms — ESP32 alive, bus released
+2026-10-24T22:18:31.310 [heartbeat] t=13420 ms — ESP32 alive, bus released
+2026-10-24T22:18:36.190 [heartbeat] t=18420 ms — ESP32 alive, bus released
+2026-10-24T22:18:41.266 [heartbeat] t=23420 ms — ESP32 alive, bus released
+2026-10-24T22:18:46.347 [heartbeat] t=28420 ms — ESP32 alive, bus released
+2026-10-24T22:18:51.228 [heartbeat] t=33420 ms — ESP32 alive, bus released
+2026-10-24T22:18:56.312 [heartbeat] t=38420 ms — ESP32 alive, bus released
+2026-10-24T22:19:01.192 [heartbeat] t=43420 ms — ESP32 alive, bus released
+2026-10-24T22:19:06.260 [heartbeat] t=48420 ms — ESP32 alive, bus released
+2026-10-24T22:19:11.338 [heartbeat] t=53420 ms — ESP32 alive, bus released
+2026-10-24T22:19:16.217 [heartbeat] t=58420 ms — ESP32 alive, bus released
+2026-10-24T22:19:21.303 [heartbeat] t=63420 ms — ESP32 alive, bus released
+2026-10-24T22:19:26.181 [heartbeat] t=68420 ms — ESP32 alive, bus released
+2026-10-24T22:19:31.271 [heartbeat] t=73420 ms — ESP32 alive, bus released
+2026-10-24T22:19:36.353 [heartbeat] t=78420 ms — ESP32 alive, bus released
+2026-10-24T22:19:41.235 [heartbeat] t=83420 ms — ESP32 alive, bus released
+2026-10-24T22:19:46.310 [heartbeat] t=88420 ms — ESP32 alive, bus released
+2026-10-24T22:19:51.198 [heartbeat] t=93420 ms — ESP32 alive, bus released
+2026-10-24T22:19:56.263 [heartbeat] t=98420 ms — ESP32 alive, bus released
+2026-10-24T22:20:01.150 [heartbeat] t=103420 ms — ESP32 alive, bus released
+2026-10-24T22:20:06.227 [heartbeat] t=108420 ms — ESP32 alive, bus released
+2026-10-24T22:20:11.311 [heartbeat] t=113420 ms — ESP32 alive, bus released
+2026-10-24T22:20:16.186 [heartbeat] t=118420 ms — ESP32 alive, bus released
+2026-10-24T22:20:21.241 [heartbeat] t=123420 ms — ESP32 alive, bus released
+2026-10-24T22:20:26.331 [heartbeat] t=128420 ms — ESP32 alive, bus released
+2026-10-24T22:20:31.211 [heartbeat] t=133420 ms — ESP32 alive, bus released
+2026-10-24T22:20:36.289 [heartbeat] t=138420 ms — ESP32 alive, bus released
+2026-10-24T22:20:41.169 [heartbeat] t=143420 ms — ESP32 alive, bus released
+2026-10-24T22:20:46.257 [heartbeat] t=148420 ms — ESP32 alive, bus released
+2026-10-24T22:20:51.349 [heartbeat] t=153420 ms — ESP32 alive, bus released
+2026-10-24T22:20:56.237 [heartbeat] t=158420 ms — ESP32 alive, bus released
+2026-10-24T22:21:01.308 [heartbeat] t=163420 ms — ESP32 alive, bus released
+2026-10-24T22:21:06.179 [heartbeat] t=168420 ms — ESP32 alive, bus released
+2026-10-24T22:21:11.265 [heartbeat] t=173420 ms — ESP32 alive, bus released
+2026-10-24T22:21:16.351 [heartbeat] t=178420 ms — ESP32 alive, bus released
+2026-10-24T22:21:21.231 [heartbeat] t=183420 ms — ESP32 alive, bus released
+2026-10-24T22:21:26.305 [heartbeat] t=188420 ms — ESP32 alive, bus released
+2026-10-24T22:21:31.175 [heartbeat] t=193420 ms — ESP32 alive, bus released
+2026-10-24T22:21:36.241 [heartbeat] t=198420 ms — ESP32 alive, bus released
+2026-10-24T22:21:41.319 [heartbeat] t=203420 ms — ESP32 alive, bus released
+2026-10-24T22:21:46.189 [heartbeat] t=208420 ms — ESP32 alive, bus released
+2026-10-24T22:21:51.264 [heartbeat] t=213420 ms — ESP32 alive, bus released
+2026-10-24T22:21:56.153 [heartbeat] t=218420 ms — ESP32 alive, bus released
+2026-10-24T22:22:01.228 [heartbeat] t=223420 ms — ESP32 alive, bus released
+2026-10-24T22:22:06.305 [heartbeat] t=228420 ms — ESP32 alive, bus released
+2026-10-24T22:22:11.188 [heartbeat] t=233420 ms — ESP32 alive, bus released
+2026-10-24T22:22:16.275 [heartbeat] t=238420 ms — ESP32 alive, bus released
+2026-10-24T22:22:21.155 [heartbeat] t=243420 ms — ESP32 alive, bus released
+2026-10-24T22:22:26.239 [heartbeat] t=248420 ms — ESP32 alive, bus released
+2026-10-24T22:22:31.316 [heartbeat] t=253420 ms — ESP32 alive, bus released
+2026-10-24T22:22:36.200 [heartbeat] t=258420 ms — ESP32 alive, bus released
+2026-10-24T22:22:41.287 [heartbeat] t=263420 ms — ESP32 alive, bus released
+2026-10-24T22:22:46.161 [heartbeat] t=268420 ms — ESP32 alive, bus released
+2026-10-24T22:22:51.237 [heartbeat] t=273420 ms — ESP32 alive, bus released
+2026-10-24T22:22:52.374 [logger] read failed: [Errno 6] Device not configured
+=== attach 22:31:23
+2026-10-24T22:31:24.215 =================================
+2026-10-24T22:31:24.215 Motion Play Device - BOOT
+2026-10-24T22:31:24.215 =================================
+2026-10-24T22:31:24.215 =================================
+2026-10-24T22:31:24.215 === Configuring BQ24195 (input current limit) ===
+2026-10-24T22:31:24.215 [   760][I][esp32-hal-i2c.c:75] i2cInit(): Initialising I2C Master: sda=43 scl=44 freq=100000
+2026-10-24T22:31:24.215 [I2C SCAN] Scanning 0x03..0x77...
+2026-10-24T22:31:24.215 [I2C SCAN]   Found device at 0x40
+2026-10-24T22:31:24.215 [I2C SCAN]   Found device at 0x6B
+2026-10-24T22:31:24.215 [I2C SCAN]   Found device at 0x70
+2026-10-24T22:31:24.215 [I2C SCAN] Done. 3 device(s) responded.
+2026-10-24T22:31:24.215 BQ24195 configured: IINLIM=2A, watchdog disabled
+2026-10-24T22:31:24.215 [PowerMonitor] INA219 configured: 10mR shunt, 1mA/LSB, 8A max
+2026-10-24T22:31:24.215 [PWR after BQ config] VSYS=4.21 V, I=63 mA
+2026-10-24T22:31:24.216 Display initialized
+2026-10-24T22:31:24.216 [PWR after display init] VSYS=4.21 V, I=63 mA
+2026-10-24T22:31:24.216 ==============================================================
+2026-10-24T22:31:24.216 [DIAG_RELEASE_I2C] Bus-release diagnostic mode
+2026-10-24T22:31:24.216 ==============================================================
+2026-10-24T22:31:24.216 Skipping WiFi/MQTT/sensor init.
+2026-10-24T22:31:24.216 Running 5-iteration diagnostic burst to prove BQ NACK reproduces
+2026-10-24T22:31:24.216 on the ESP32 side, then releasing the I2C bus to an external master.
+2026-10-24T22:31:24.216 Probing: INA(0x40)  BQ(0x6B)  TCA(0x70)
+2026-10-24T22:31:24.216 Legend:  '.' = ACK,  'X(n)' = error n
+2026-10-24T22:31:24.216          (with failing-config cable in J6, expect BQ:X(2) on TCA2 row)
+2026-10-24T22:31:24.216 --- Iteration 1 ---
+2026-10-24T22:31:24.216 t=    786  BASE        INA:.    BQ:.    TCA:.
+2026-10-24T22:31:24.216 t=    790  TCA0        INA:.    BQ:.    TCA:.
+2026-10-24T22:31:24.216 t=    794  TCA1        INA:.    BQ:.    TCA:.
+2026-10-24T22:31:24.216 t=    798  TCA2        INA:.    BQ:X(2) TCA:.
+2026-10-24T22:31:25.641 --- Iteration 2 ---
+2026-10-24T22:31:25.641 t=   2301  BASE        INA:.    BQ:.    TCA:.
+2026-10-24T22:31:25.641 t=   2305  TCA0        INA:.    BQ:.    TCA:.
+2026-10-24T22:31:25.641 t=   2309  TCA1        INA:.    BQ:.    TCA:.
+2026-10-24T22:31:25.641 t=   2313  TCA2        INA:.    BQ:X(2) TCA:.
+2026-10-24T22:31:27.263 --- Iteration 3 ---
+2026-10-24T22:31:27.263 t=   3816  BASE        INA:.    BQ:.    TCA:.
+2026-10-24T22:31:27.263 t=   3820  TCA0        INA:.    BQ:.    TCA:.
+2026-10-24T22:31:27.263 t=   3824  TCA1        INA:.    BQ:.    TCA:.
+2026-10-24T22:31:27.263 t=   3828  TCA2        INA:.    BQ:X(2) TCA:.
+2026-10-24T22:31:28.684 --- Iteration 4 ---
+2026-10-24T22:31:28.684 t=   5331  BASE        INA:.    BQ:.    TCA:.
+2026-10-24T22:31:28.684 t=   5335  TCA0        INA:.    BQ:.    TCA:.
+2026-10-24T22:31:28.684 t=   5339  TCA1        INA:.    BQ:.    TCA:.
+2026-10-24T22:31:28.684 t=   5343  TCA2        INA:.    BQ:X(2) TCA:.
+2026-10-24T22:31:30.312 --- Iteration 5 ---
+2026-10-24T22:31:30.312 t=   6846  BASE        INA:.    BQ:.    TCA:.
+2026-10-24T22:31:30.312 t=   6850  TCA0        INA:.    BQ:.    TCA:.
+2026-10-24T22:31:30.312 t=   6854  TCA1        INA:.    BQ:.    TCA:.
+2026-10-24T22:31:30.312 t=   6858  TCA2        INA:.    BQ:X(2) TCA:.
+2026-10-24T22:31:31.739 Burst complete. Closing all TCA channels for clean baseline...
+2026-10-24T22:31:31.739 Releasing I2C bus...
+2026-10-24T22:31:31.739 ==============================================================
+2026-10-24T22:31:31.739 BUS RELEASED
+2026-10-24T22:31:31.739 ==============================================================
+2026-10-24T22:31:31.739 ESP32 is no longer driving SDA/SCL. All TCA channels are closed
+2026-10-24T22:31:31.739 [heartbeat] t=8420 ms — ESP32 alive, bus released
+2026-10-24T22:31:36.837 [heartbeat] t=13420 ms — ESP32 alive, bus released
+2026-10-24T22:31:41.716 [heartbeat] t=18420 ms — ESP32 alive, bus released
+2026-10-24T22:31:46.805 [heartbeat] t=23420 ms — ESP32 alive, bus released
+2026-10-24T22:31:51.888 [heartbeat] t=28420 ms — ESP32 alive, bus released
+2026-10-24T22:31:56.765 [heartbeat] t=33420 ms — ESP32 alive, bus released
+2026-10-24T22:32:01.837 [heartbeat] t=38420 ms — ESP32 alive, bus released
+2026-10-24T22:32:06.780 [heartbeat] t=43420 ms — ESP32 alive, bus released
+2026-10-24T22:32:11.863 [heartbeat] t=48420 ms — ESP32 alive, bus released
+2026-10-24T22:32:16.739 [heartbeat] t=53420 ms — ESP32 alive, bus released
+2026-10-24T22:32:21.817 [heartbeat] t=58420 ms — ESP32 alive, bus released
+2026-10-24T22:32:26.899 [heartbeat] t=63420 ms — ESP32 alive, bus released
+2026-10-24T22:32:31.789 [heartbeat] t=68420 ms — ESP32 alive, bus released
+2026-10-24T22:32:36.872 [heartbeat] t=73420 ms — ESP32 alive, bus released
+2026-10-24T22:32:41.752 [heartbeat] t=78420 ms — ESP32 alive, bus released
+2026-10-24T22:32:46.831 [heartbeat] t=83420 ms — ESP32 alive, bus released
+2026-10-24T22:32:51.734 [heartbeat] t=88420 ms — ESP32 alive, bus released
+2026-10-24T22:32:56.815 [heartbeat] t=93420 ms — ESP32 alive, bus released
+2026-10-24T22:33:01.899 [heartbeat] t=98420 ms — ESP32 alive, bus released
+2026-10-24T22:33:06.781 [heartbeat] t=103420 ms — ESP32 alive, bus released
+2026-10-24T22:33:11.868 [heartbeat] t=108420 ms — ESP32 alive, bus released
+2026-10-24T22:33:16.745 [heartbeat] t=113420 ms — ESP32 alive, bus released
+2026-10-24T22:33:21.823 [heartbeat] t=118420 ms — ESP32 alive, bus released
+=== start 22:33:26 (S2 V8+A1, U3 scope build upload)
+=== attach 22:33:43
+2026-10-24T22:33:43.898 [scope] t=13507 n=120 tca=120 ina=120 bq=0 bq_codes=2222222222
+2026-10-24T22:33:44.907 [scope] t=14507 n=130 tca=130 ina=130 bq=0 bq_codes=2222222222
+2026-10-24T22:33:45.924 [scope] t=15507 n=140 tca=140 ina=140 bq=0 bq_codes=2222222222
+2026-10-24T22:33:46.936 [scope] t=16507 n=150 tca=150 ina=150 bq=0 bq_codes=2222222222
+2026-10-24T22:33:47.951 [scope] t=17507 n=160 tca=160 ina=160 bq=0 bq_codes=2222222222
+2026-10-24T22:33:48.961 [scope] t=18507 n=170 tca=170 ina=170 bq=0 bq_codes=2222222222
+2026-10-24T22:33:49.976 [scope] t=19507 n=180 tca=180 ina=180 bq=0 bq_codes=2222222222
+2026-10-24T22:33:50.992 [scope] t=20507 n=190 tca=190 ina=190 bq=0 bq_codes=2222222222
+2026-10-24T22:33:52.003 [scope] t=21507 n=200 tca=200 ina=200 bq=0 bq_codes=2222222222
+2026-10-24T22:33:53.017 [scope] t=22507 n=210 tca=210 ina=210 bq=0 bq_codes=2222222222
+2026-10-24T22:33:54.030 [scope] t=23507 n=220 tca=220 ina=220 bq=0 bq_codes=2222222222
+2026-10-24T22:33:55.050 [scope] t=24507 n=230 tca=230 ina=230 bq=0 bq_codes=2222222222
+2026-10-24T22:33:56.066 [scope] t=25507 n=240 tca=240 ina=240 bq=0 bq_codes=2222222222
+2026-10-24T22:33:57.080 [scope] t=26507 n=250 tca=250 ina=250 bq=0 bq_codes=2222222222
+2026-10-24T22:33:58.095 [scope] t=27507 n=260 tca=260 ina=260 bq=0 bq_codes=2222222222
+2026-10-24T22:33:58.903 [scope] t=28507 n=270 tca=270 ina=270 bq=0 bq_codes=2222222222
+2026-10-24T22:33:59.919 [scope] t=29507 n=280 tca=280 ina=280 bq=0 bq_codes=2222222222
+2026-10-24T22:34:00.937 [scope] t=30507 n=290 tca=290 ina=290 bq=0 bq_codes=2222222222
+2026-10-24T22:34:01.953 [scope] t=31507 n=300 tca=300 ina=300 bq=0 bq_codes=2222222222
+2026-10-24T22:34:02.977 [scope] t=32507 n=310 tca=310 ina=310 bq=0 bq_codes=2222222222
+2026-10-24T22:34:03.994 [scope] t=33507 n=320 tca=320 ina=320 bq=0 bq_codes=2222222222
+2026-10-24T22:34:05.010 [scope] t=34507 n=330 tca=330 ina=330 bq=0 bq_codes=2222222222
+2026-10-24T22:34:06.029 [scope] t=35507 n=340 tca=340 ina=340 bq=0 bq_codes=2222222222
+2026-10-24T22:34:07.047 [scope] t=36507 n=350 tca=350 ina=350 bq=0 bq_codes=2222222222
+2026-10-24T22:34:08.054 [scope] t=37507 n=360 tca=360 ina=360 bq=0 bq_codes=2222222222
+2026-10-24T22:34:09.074 [scope] t=38507 n=370 tca=370 ina=370 bq=0 bq_codes=2222222222
+2026-10-24T22:34:10.087 [scope] t=39507 n=380 tca=380 ina=380 bq=0 bq_codes=2222222222
+2026-10-24T22:34:10.899 [scope] t=40507 n=390 tca=390 ina=390 bq=0 bq_codes=2222222222
+2026-10-24T22:34:11.916 [scope] t=41507 n=400 tca=400 ina=400 bq=0 bq_codes=2222222222
+2026-10-24T22:34:12.934 [scope] t=42507 n=410 tca=410 ina=410 bq=0 bq_codes=2222222222
+2026-10-24T22:34:13.947 [scope] t=43507 n=420 tca=420 ina=420 bq=0 bq_codes=2222222222
+2026-10-24T22:34:14.963 [scope] t=44507 n=430 tca=430 ina=430 bq=0 bq_codes=2222222222
+2026-10-24T22:34:15.983 [scope] t=45507 n=440 tca=440 ina=440 bq=0 bq_codes=2222222222
+2026-10-24T22:34:17.000 [scope] t=46507 n=450 tca=450 ina=450 bq=0 bq_codes=2222222222
+2026-10-24T22:34:18.013 [scope] t=47507 n=460 tca=460 ina=460 bq=0 bq_codes=2222222222
+2026-10-24T22:34:19.037 [scope] t=48507 n=470 tca=470 ina=470 bq=0 bq_codes=2222222222
+2026-10-24T22:34:20.054 [scope] t=49507 n=480 tca=480 ina=480 bq=0 bq_codes=2222222222
+2026-10-24T22:34:21.071 [scope] t=50507 n=490 tca=490 ina=490 bq=0 bq_codes=2222222222
+=== start 22:34:21 (S1 val, U3 relbus upload)
+=== attach 22:35:00
+2026-10-24T22:35:01.223 BQ24195 configured: IINLIM=2A, watchdog disabled
+2026-10-24T22:35:01.223 [PowerMonitor] INA219 configured: 10mR shunt, 1mA/LSB, 8A max
+2026-10-24T22:35:01.223 [PWR after BQ config] VSYS=4.29 V, I=0 mA
+2026-10-24T22:35:01.223 Display initialized
+2026-10-24T22:35:01.223 [PWR after display init] VSYS=4.29 V, I=0 mA
+2026-10-24T22:35:01.223 ==============================================================
+2026-10-24T22:35:01.223 [DIAG_RELEASE_I2C] Bus-release diagnostic mode
+2026-10-24T22:35:01.223 ==============================================================
+2026-10-24T22:35:01.223 Skipping WiFi/MQTT/sensor init.
+2026-10-24T22:35:01.223 Running 5-iteration diagnostic burst to prove BQ NACK reproduces
+2026-10-24T22:35:01.223 on the ESP32 side, then releasing the I2C bus to an external master.
+2026-10-24T22:35:01.223 Probing: INA(0x40)  BQ(0x6B)  TCA(0x70)
+2026-10-24T22:35:01.223 Legend:  '.' = ACK,  'X(n)' = error n
+2026-10-24T22:35:01.223          (with failing-config cable in J6, expect BQ:X(2) on TCA2 row)
+2026-10-24T22:35:01.223 --- Iteration 1 ---
+2026-10-24T22:35:01.223 t=   8535  BASE        INA:.    BQ:.    TCA:.
+2026-10-24T22:35:01.223 t=   8539  TCA0        INA:.    BQ:.    TCA:.
+2026-10-24T22:35:01.223 t=   8543  TCA1        INA:.    BQ:.    TCA:.
+2026-10-24T22:35:01.223 t=   8547  TCA2        INA:.    BQ:X(2) TCA:.
+2026-10-24T22:35:02.651 --- Iteration 2 ---
+2026-10-24T22:35:02.651 t=  10050  BASE        INA:.    BQ:.    TCA:.
+2026-10-24T22:35:02.651 t=  10054  TCA0        INA:.    BQ:.    TCA:.
+2026-10-24T22:35:02.651 t=  10058  TCA1        INA:.    BQ:.    TCA:.
+2026-10-24T22:35:02.651 t=  10062  TCA2        INA:.    BQ:X(2) TCA:.
+2026-10-24T22:35:04.073 --- Iteration 3 ---
+2026-10-24T22:35:04.073 t=  11565  BASE        INA:.    BQ:.    TCA:.
+2026-10-24T22:35:04.073 t=  11569  TCA0        INA:.    BQ:.    TCA:.
+2026-10-24T22:35:04.073 t=  11573  TCA1        INA:.    BQ:.    TCA:.
+2026-10-24T22:35:04.277 t=  11577  TCA2        INA:.    BQ:X(2) TCA:.
+2026-10-24T22:35:05.698 --- Iteration 4 ---
+2026-10-24T22:35:05.698 t=  13080  BASE        INA:.    BQ:.    TCA:.
+2026-10-24T22:35:05.698 t=  13084  TCA0        INA:.    BQ:.    TCA:.
+2026-10-24T22:35:05.698 t=  13088  TCA1        INA:.    BQ:.    TCA:.
+2026-10-24T22:35:05.698 t=  13092  TCA2        INA:.    BQ:X(2) TCA:.
+2026-10-24T22:35:07.122 --- Iteration 5 ---
+2026-10-24T22:35:07.122 t=  14595  BASE        INA:.    BQ:.    TCA:.
+2026-10-24T22:35:07.122 t=  14599  TCA0        INA:.    BQ:.    TCA:.
+2026-10-24T22:35:07.122 t=  14603  TCA1        INA:.    BQ:.    TCA:.
+2026-10-24T22:35:07.122 t=  14607  TCA2        INA:.    BQ:X(2) TCA:.
+2026-10-24T22:35:08.754 Burst complete. Closing all TCA channels for clean baseline...
+2026-10-24T22:35:08.754 Releasing I2C bus...
+2026-10-24T22:35:08.754 ==============================================================
+2026-10-24T22:35:08.754 BUS RELEASED
+2026-10-24T22:35:08.754 ==============================================================
+2026-10-24T22:35:08.754 ESP32 is no longer driving SDA/SCL. All TCA channels are closed
+2026-10-24T22:35:08.755 [heartbeat] t=16169 ms — ESP32 alive, bus released
+2026-10-24T22:35:13.820 [heartbeat] t=21170 ms — ESP32 alive, bus released
+2026-10-24T22:35:18.703 [heartbeat] t=26170 ms — ESP32 alive, bus released
+2026-10-24T22:35:23.778 [heartbeat] t=31170 ms — ESP32 alive, bus released
+2026-10-24T22:35:28.857 [heartbeat] t=36170 ms — ESP32 alive, bus released
+2026-10-24T22:35:33.732 [heartbeat] t=41170 ms — ESP32 alive, bus released
+2026-10-24T22:35:38.820 [heartbeat] t=46170 ms — ESP32 alive, bus released
+2026-10-24T22:35:43.699 [heartbeat] t=51170 ms — ESP32 alive, bus released
+2026-10-24T22:35:48.792 [heartbeat] t=56170 ms — ESP32 alive, bus released
+2026-10-24T22:35:53.677 [heartbeat] t=61170 ms — ESP32 alive, bus released
+2026-10-24T22:35:58.768 [heartbeat] t=66170 ms — ESP32 alive, bus released
+2026-10-24T22:36:03.850 [heartbeat] t=71170 ms — ESP32 alive, bus released
+2026-10-24T22:36:08.723 [heartbeat] t=76170 ms — ESP32 alive, bus released
+2026-10-24T22:36:13.808 [heartbeat] t=81170 ms — ESP32 alive, bus released
+2026-10-24T22:36:18.676 [heartbeat] t=86170 ms — ESP32 alive, bus released
+2026-10-24T22:36:23.751 [heartbeat] t=91170 ms — ESP32 alive, bus released
+2026-10-24T22:36:28.841 [heartbeat] t=96170 ms — ESP32 alive, bus released
+2026-10-24T22:36:33.727 [heartbeat] t=101170 ms — ESP32 alive, bus released
+2026-10-24T22:36:38.795 [heartbeat] t=106170 ms — ESP32 alive, bus released
+2026-10-24T22:36:40.397 [logger] read failed: [Errno 6] Device not configured
+=== attach 22:55:48
+2026-10-24T22:55:49.469 =================================
+2026-10-24T22:55:49.469 Motion Play Device - BOOT
+2026-10-24T22:55:49.469 =================================
+2026-10-24T22:55:49.469 =================================
+2026-10-24T22:55:49.469 === Configuring BQ24195 (input current limit) ===
+2026-10-24T22:55:49.469 [   760][I][esp32-hal-i2c.c:75] i2cInit(): Initialising I2C Master: sda=43 scl=44 freq=100000
+2026-10-24T22:55:49.469 [I2C SCAN] Scanning 0x03..0x77...
+2026-10-24T22:55:49.469 [I2C SCAN]   Found device at 0x40
+2026-10-24T22:55:49.469 [I2C SCAN]   Found device at 0x6B
+2026-10-24T22:55:49.469 [I2C SCAN]   Found device at 0x70
+2026-10-24T22:55:49.469 [I2C SCAN] Done. 3 device(s) responded.
+2026-10-24T22:55:49.469 BQ24195 configured: IINLIM=2A, watchdog disabled
+2026-10-24T22:55:49.469 [PowerMonitor] INA219 configured: 10mR shunt, 1mA/LSB, 8A max
+2026-10-24T22:55:49.469 [PWR after BQ config] VSYS=4.21 V, I=65 mA
+2026-10-24T22:55:49.469 Display initialized
+2026-10-24T22:55:49.469 [PWR after display init] VSYS=4.21 V, I=65 mA
+2026-10-24T22:55:49.469 ==============================================================
+2026-10-24T22:55:49.469 [DIAG_RELEASE_I2C] Bus-release diagnostic mode
+2026-10-24T22:55:49.469 ==============================================================
+2026-10-24T22:55:49.469 Skipping WiFi/MQTT/sensor init.
+2026-10-24T22:55:49.469 Running 5-iteration diagnostic burst to prove BQ NACK reproduces
+2026-10-24T22:55:49.469 on the ESP32 side, then releasing the I2C bus to an external master.
+2026-10-24T22:55:49.469 Probing: INA(0x40)  BQ(0x6B)  TCA(0x70)
+2026-10-24T22:55:49.469 Legend:  '.' = ACK,  'X(n)' = error n
+2026-10-24T22:55:49.469          (with failing-config cable in J6, expect BQ:X(2) on TCA2 row)
+2026-10-24T22:55:49.469 --- Iteration 1 ---
+2026-10-24T22:55:49.469 t=    786  BASE        INA:.    BQ:.    TCA:.
+2026-10-24T22:55:49.469 t=    790  TCA0        INA:.    BQ:.    TCA:.
+2026-10-24T22:55:49.469 t=    794  TCA1        INA:.    BQ:.    TCA:.
+2026-10-24T22:55:49.469 t=    798  TCA2        INA:.    BQ:X(2) TCA:.
+2026-10-24T22:55:50.889 --- Iteration 2 ---
+2026-10-24T22:55:50.889 t=   2301  BASE        INA:.    BQ:.    TCA:.
+2026-10-24T22:55:50.889 t=   2305  TCA0        INA:.    BQ:.    TCA:.
+2026-10-24T22:55:50.889 t=   2309  TCA1        INA:.    BQ:.    TCA:.
+2026-10-24T22:55:50.889 t=   2313  TCA2        INA:.    BQ:X(2) TCA:.
+2026-10-24T22:55:52.513 --- Iteration 3 ---
+2026-10-24T22:55:52.513 t=   3816  BASE        INA:.    BQ:.    TCA:.
+2026-10-24T22:55:52.513 t=   3820  TCA0        INA:.    BQ:.    TCA:.
+2026-10-24T22:55:52.513 t=   3824  TCA1        INA:.    BQ:.    TCA:.
+2026-10-24T22:55:52.513 t=   3828  TCA2        INA:.    BQ:X(2) TCA:.
+2026-10-24T22:55:53.935 --- Iteration 4 ---
+2026-10-24T22:55:53.935 t=   5331  BASE        INA:.    BQ:.    TCA:.
+2026-10-24T22:55:53.935 t=   5335  TCA0        INA:.    BQ:.    TCA:.
+2026-10-24T22:55:53.935 t=   5339  TCA1        INA:.    BQ:.    TCA:.
+2026-10-24T22:55:53.935 t=   5343  TCA2        INA:.    BQ:X(2) TCA:.
+2026-10-24T22:55:55.562 --- Iteration 5 ---
+2026-10-24T22:55:55.562 t=   6846  BASE        INA:.    BQ:.    TCA:.
+2026-10-24T22:55:55.562 t=   6850  TCA0        INA:.    BQ:.    TCA:.
+2026-10-24T22:55:55.562 t=   6854  TCA1        INA:.    BQ:.    TCA:.
+2026-10-24T22:55:55.562 t=   6858  TCA2        INA:.    BQ:X(2) TCA:.
+2026-10-24T22:55:56.986 Burst complete. Closing all TCA channels for clean baseline...
+2026-10-24T22:55:56.999 Releasing I2C bus...
+2026-10-24T22:55:56.999 ==============================================================
+2026-10-24T22:55:56.999 BUS RELEASED
+2026-10-24T22:55:57.000 ==============================================================
+2026-10-24T22:55:57.000 ESP32 is no longer driving SDA/SCL. All TCA channels are closed
+2026-10-24T22:55:57.219 [heartbeat] t=8420 ms — ESP32 alive, bus released
+2026-10-24T22:56:02.098 [heartbeat] t=13420 ms — ESP32 alive, bus released
+2026-10-24T22:56:07.182 [heartbeat] t=18420 ms — ESP32 alive, bus released
+2026-10-24T22:56:12.051 [heartbeat] t=23420 ms — ESP32 alive, bus released
+2026-10-24T22:56:17.129 [heartbeat] t=28420 ms — ESP32 alive, bus released
+2026-10-24T22:56:21.990 [heartbeat] t=33420 ms — ESP32 alive, bus released
+2026-10-24T22:56:27.086 [heartbeat] t=38420 ms — ESP32 alive, bus released
+2026-10-24T22:56:32.176 [heartbeat] t=43420 ms — ESP32 alive, bus released
+2026-10-24T22:56:37.055 [heartbeat] t=48420 ms — ESP32 alive, bus released
+2026-10-24T22:56:42.144 [heartbeat] t=53420 ms — ESP32 alive, bus released
+2026-10-24T22:56:47.020 [heartbeat] t=58420 ms — ESP32 alive, bus released
+2026-10-24T22:56:52.092 [heartbeat] t=63420 ms — ESP32 alive, bus released
+2026-10-24T22:56:57.168 [heartbeat] t=68420 ms — ESP32 alive, bus released
+2026-10-24T22:57:02.038 [heartbeat] t=73420 ms — ESP32 alive, bus released
+2026-10-24T22:57:07.128 [heartbeat] t=78420 ms — ESP32 alive, bus released
+2026-10-24T22:57:12.007 [heartbeat] t=83420 ms — ESP32 alive, bus released
+2026-10-24T22:57:17.097 [heartbeat] t=88420 ms — ESP32 alive, bus released
+2026-10-24T22:57:22.176 [heartbeat] t=93420 ms — ESP32 alive, bus released
+2026-10-24T22:57:27.055 [heartbeat] t=98420 ms — ESP32 alive, bus released
+2026-10-24T22:57:32.141 [heartbeat] t=103420 ms — ESP32 alive, bus released
+2026-10-24T22:57:37.011 [heartbeat] t=108420 ms — ESP32 alive, bus released
+2026-10-24T22:57:42.091 [heartbeat] t=113420 ms — ESP32 alive, bus released
+2026-10-24T22:57:47.183 [heartbeat] t=118420 ms — ESP32 alive, bus released
+2026-10-24T22:57:52.069 [heartbeat] t=123420 ms — ESP32 alive, bus released
+2026-10-24T22:57:57.151 [heartbeat] t=128420 ms — ESP32 alive, bus released
+2026-10-24T22:58:02.021 [heartbeat] t=133420 ms — ESP32 alive, bus released
+2026-10-24T22:58:07.101 [heartbeat] t=138420 ms — ESP32 alive, bus released
+2026-10-24T22:58:12.186 [heartbeat] t=143420 ms — ESP32 alive, bus released
+2026-10-24T22:58:17.050 [heartbeat] t=148420 ms — ESP32 alive, bus released
+2026-10-24T22:58:22.130 [heartbeat] t=153420 ms — ESP32 alive, bus released
+2026-10-24T22:58:27.017 [heartbeat] t=158420 ms — ESP32 alive, bus released
+2026-10-24T22:58:32.103 [heartbeat] t=163420 ms — ESP32 alive, bus released
+2026-10-24T22:58:37.180 [heartbeat] t=168420 ms — ESP32 alive, bus released
+2026-10-24T22:58:42.050 [heartbeat] t=173420 ms — ESP32 alive, bus released
+2026-10-24T22:58:47.136 [heartbeat] t=178420 ms — ESP32 alive, bus released
+2026-10-24T22:58:52.021 [heartbeat] t=183420 ms — ESP32 alive, bus released
+2026-10-24T22:58:57.097 [heartbeat] t=188420 ms — ESP32 alive, bus released
+2026-10-24T22:59:02.173 [heartbeat] t=193420 ms — ESP32 alive, bus released
+2026-10-24T22:59:07.041 [heartbeat] t=198420 ms — ESP32 alive, bus released
+2026-10-24T22:59:12.120 [heartbeat] t=203420 ms — ESP32 alive, bus released
+2026-10-24T22:59:17.184 [heartbeat] t=208420 ms — ESP32 alive, bus released
+2026-10-24T22:59:22.052 [heartbeat] t=213420 ms — ESP32 alive, bus released
+2026-10-24T22:59:27.134 [heartbeat] t=218420 ms — ESP32 alive, bus released
+2026-10-24T22:59:32.031 [heartbeat] t=223420 ms — ESP32 alive, bus released
+2026-10-24T22:59:37.098 [heartbeat] t=228420 ms — ESP32 alive, bus released
+2026-10-24T22:59:42.180 [heartbeat] t=233420 ms — ESP32 alive, bus released
+2026-10-24T22:59:47.050 [heartbeat] t=238420 ms — ESP32 alive, bus released
+2026-10-24T22:59:48.830 [logger] read failed: [Errno 6] Device not configured
+=== attach 23:05:14
+2026-10-24T23:05:14.944 =================================
+2026-10-24T23:05:14.944 Motion Play Device - BOOT
+2026-10-24T23:05:14.944 =================================
+2026-10-24T23:05:14.944 =================================
+2026-10-24T23:05:14.944 === Configuring BQ24195 (input current limit) ===
+2026-10-24T23:05:14.944 [   760][I][esp32-hal-i2c.c:75] i2cInit(): Initialising I2C Master: sda=43 scl=44 freq=100000
+2026-10-24T23:05:14.944 [I2C SCAN] Scanning 0x03..0x77...
+2026-10-24T23:05:14.944 [I2C SCAN]   Found device at 0x40
+2026-10-24T23:05:14.944 [I2C SCAN]   Found device at 0x6B
+2026-10-24T23:05:14.944 [I2C SCAN]   Found device at 0x70
+2026-10-24T23:05:14.945 [I2C SCAN] Done. 3 device(s) responded.
+2026-10-24T23:05:14.945 BQ24195 configured: IINLIM=2A, watchdog disabled
+2026-10-24T23:05:14.945 [PowerMonitor] INA219 configured: 10mR shunt, 1mA/LSB, 8A max
+2026-10-24T23:05:14.945 [PWR after BQ config] VSYS=4.21 V, I=68 mA
+2026-10-24T23:05:14.945 Display initialized
+2026-10-24T23:05:14.945 [PWR after display init] VSYS=4.21 V, I=68 mA
+2026-10-24T23:05:14.945 ==============================================================
+2026-10-24T23:05:14.945 [DIAG_RELEASE_I2C] Bus-release diagnostic mode
+2026-10-24T23:05:14.945 ==============================================================
+2026-10-24T23:05:14.945 Skipping WiFi/MQTT/sensor init.
+2026-10-24T23:05:14.945 Running 5-iteration diagnostic burst to prove BQ NACK reproduces
+2026-10-24T23:05:14.945 on the ESP32 side, then releasing the I2C bus to an external master.
+2026-10-24T23:05:14.945 Probing: INA(0x40)  BQ(0x6B)  TCA(0x70)
+2026-10-24T23:05:14.945 Legend:  '.' = ACK,  'X(n)' = error n
+2026-10-24T23:05:14.945          (with failing-config cable in J6, expect BQ:X(2) on TCA2 row)
+2026-10-24T23:05:14.945 --- Iteration 1 ---
+2026-10-24T23:05:14.945 t=    786  BASE        INA:.    BQ:.    TCA:.
+2026-10-24T23:05:14.945 t=    790  TCA0        INA:.    BQ:.    TCA:.
+2026-10-24T23:05:14.945 t=    794  TCA1        INA:.    BQ:.    TCA:.
+2026-10-24T23:05:14.945 t=    798  TCA2        INA:.    BQ:X(2) TCA:.
+2026-10-24T23:05:16.576 --- Iteration 2 ---
+2026-10-24T23:05:16.576 t=   2301  BASE        INA:.    BQ:.    TCA:.
+2026-10-24T23:05:16.576 t=   2305  TCA0        INA:.    BQ:.    TCA:.
+2026-10-24T23:05:16.576 t=   2309  TCA1        INA:.    BQ:.    TCA:.
+2026-10-24T23:05:16.576 t=   2313  TCA2        INA:.    BQ:X(2) TCA:.
+2026-10-24T23:05:17.999 --- Iteration 3 ---
+2026-10-24T23:05:17.999 t=   3816  BASE        INA:.    BQ:.    TCA:.
+2026-10-24T23:05:17.999 t=   3820  TCA0        INA:.    BQ:.    TCA:.
+2026-10-24T23:05:17.999 t=   3824  TCA1        INA:.    BQ:.    TCA:.
+2026-10-24T23:05:17.999 t=   3828  TCA2        INA:.    BQ:X(2) TCA:.
+2026-10-24T23:05:19.416 --- Iteration 4 ---
+2026-10-24T23:05:19.416 t=   5331  BASE        INA:.    BQ:.    TCA:.
+2026-10-24T23:05:19.416 t=   5335  TCA0        INA:.    BQ:.    TCA:.
+2026-10-24T23:05:19.620 t=   5339  TCA1        INA:.    BQ:.    TCA:.
+2026-10-24T23:05:19.620 t=   5343  TCA2        INA:.    BQ:X(2) TCA:.
+2026-10-24T23:05:21.037 --- Iteration 5 ---
+2026-10-24T23:05:21.037 t=   6846  BASE        INA:.    BQ:.    TCA:.
+2026-10-24T23:05:21.037 t=   6850  TCA0        INA:.    BQ:.    TCA:.
+2026-10-24T23:05:21.037 t=   6854  TCA1        INA:.    BQ:.    TCA:.
+2026-10-24T23:05:21.037 t=   6858  TCA2        INA:.    BQ:X(2) TCA:.
+2026-10-24T23:05:22.457 Burst complete. Closing all TCA channels for clean baseline...
+2026-10-24T23:05:22.457 Releasing I2C bus...
+2026-10-24T23:05:22.658 ==============================================================
+2026-10-24T23:05:22.658 BUS RELEASED
+2026-10-24T23:05:22.658 ==============================================================
+2026-10-24T23:05:22.658 ESP32 is no longer driving SDA/SCL. All TCA channels are closed
+2026-10-24T23:05:22.659 [heartbeat] t=8420 ms — ESP32 alive, bus released
+2026-10-24T23:05:27.525 [heartbeat] t=13420 ms — ESP32 alive, bus released
+2026-10-24T23:05:32.605 [heartbeat] t=18420 ms — ESP32 alive, bus released
+2026-10-24T23:05:37.668 [heartbeat] t=23420 ms — ESP32 alive, bus released
+2026-10-24T23:05:42.555 [heartbeat] t=28420 ms — ESP32 alive, bus released
+2026-10-24T23:05:47.633 [heartbeat] t=33420 ms — ESP32 alive, bus released
+2026-10-24T23:05:52.505 [heartbeat] t=38420 ms — ESP32 alive, bus released
+2026-10-24T23:05:57.575 [heartbeat] t=43420 ms — ESP32 alive, bus released
+2026-10-24T23:06:02.661 [heartbeat] t=48420 ms — ESP32 alive, bus released
+2026-10-24T23:06:07.533 [heartbeat] t=53420 ms — ESP32 alive, bus released
+2026-10-24T23:06:12.615 [heartbeat] t=58420 ms — ESP32 alive, bus released
+2026-10-24T23:06:17.686 [heartbeat] t=63420 ms — ESP32 alive, bus released
+2026-10-24T23:06:22.558 [heartbeat] t=68420 ms — ESP32 alive, bus released
+2026-10-24T23:06:27.643 [heartbeat] t=73420 ms — ESP32 alive, bus released
+2026-10-24T23:06:32.523 [heartbeat] t=78420 ms — ESP32 alive, bus released
+2026-10-24T23:06:37.600 [heartbeat] t=83420 ms — ESP32 alive, bus released
+2026-10-24T23:06:42.668 [heartbeat] t=88420 ms — ESP32 alive, bus released
+2026-10-24T23:06:47.553 [heartbeat] t=93420 ms — ESP32 alive, bus released
+2026-10-24T23:06:52.700 [heartbeat] t=98420 ms — ESP32 alive, bus released
+2026-10-24T23:06:57.585 [heartbeat] t=103420 ms — ESP32 alive, bus released
+2026-10-24T23:07:02.669 [heartbeat] t=108420 ms — ESP32 alive, bus released
+2026-10-24T23:07:07.752 [heartbeat] t=113420 ms — ESP32 alive, bus released
+2026-10-24T23:07:12.633 [heartbeat] t=118420 ms — ESP32 alive, bus released
+2026-10-24T23:07:17.716 [heartbeat] t=123420 ms — ESP32 alive, bus released
+2026-10-24T23:07:22.608 [heartbeat] t=128420 ms — ESP32 alive, bus released
+2026-10-24T23:07:27.701 [heartbeat] t=133420 ms — ESP32 alive, bus released
+2026-10-24T23:07:32.572 [heartbeat] t=138420 ms — ESP32 alive, bus released
+2026-10-24T23:07:37.658 [heartbeat] t=143420 ms — ESP32 alive, bus released
+2026-10-24T23:07:42.733 [heartbeat] t=148420 ms — ESP32 alive, bus released
+2026-10-24T23:07:47.610 [heartbeat] t=153420 ms — ESP32 alive, bus released
+2026-10-24T23:07:52.699 [heartbeat] t=158420 ms — ESP32 alive, bus released
+2026-10-24T23:07:57.583 [heartbeat] t=163420 ms — ESP32 alive, bus released
+2026-10-24T23:08:02.659 [heartbeat] t=168420 ms — ESP32 alive, bus released
+2026-10-24T23:08:07.750 [heartbeat] t=173420 ms — ESP32 alive, bus released
+2026-10-24T23:08:12.624 [heartbeat] t=178420 ms — ESP32 alive, bus released
+2026-10-24T23:08:17.710 [heartbeat] t=183420 ms — ESP32 alive, bus released
+2026-10-24T23:08:22.575 [heartbeat] t=188420 ms — ESP32 alive, bus released
+2026-10-24T23:08:27.697 [heartbeat] t=193420 ms — ESP32 alive, bus released
+2026-10-24T23:08:32.772 [heartbeat] t=198420 ms — ESP32 alive, bus released
+2026-10-24T23:08:37.643 [heartbeat] t=203420 ms — ESP32 alive, bus released
+2026-10-24T23:08:42.733 [heartbeat] t=208420 ms — ESP32 alive, bus released
+2026-10-24T23:08:47.614 [heartbeat] t=213420 ms — ESP32 alive, bus released
+2026-10-24T23:08:52.695 [heartbeat] t=218420 ms — ESP32 alive, bus released
+2026-10-24T23:08:57.577 [heartbeat] t=223420 ms — ESP32 alive, bus released
+2026-10-24T23:09:02.641 [heartbeat] t=228420 ms — ESP32 alive, bus released
+2026-10-24T23:09:07.729 [heartbeat] t=233420 ms — ESP32 alive, bus released
+2026-10-24T23:09:12.609 [heartbeat] t=238420 ms — ESP32 alive, bus released
+2026-10-24T23:09:17.681 [heartbeat] t=243420 ms — ESP32 alive, bus released
+2026-10-24T23:09:22.756 [heartbeat] t=248420 ms — ESP32 alive, bus released
+2026-10-24T23:09:27.620 [heartbeat] t=253420 ms — ESP32 alive, bus released
+2026-10-24T23:09:32.705 [heartbeat] t=258420 ms — ESP32 alive, bus released
+2026-10-24T23:09:37.777 [heartbeat] t=263420 ms — ESP32 alive, bus released
+2026-10-24T23:09:42.655 [heartbeat] t=268420 ms — ESP32 alive, bus released
+2026-10-24T23:09:47.732 [heartbeat] t=273420 ms — ESP32 alive, bus released
+2026-10-24T23:09:52.599 [heartbeat] t=278420 ms — ESP32 alive, bus released
+2026-10-24T23:09:57.674 [heartbeat] t=283420 ms — ESP32 alive, bus released
+2026-10-24T23:10:02.742 [heartbeat] t=288420 ms — ESP32 alive, bus released
+2026-10-24T23:10:07.630 [heartbeat] t=293420 ms — ESP32 alive, bus released
+2026-10-24T23:10:12.708 [heartbeat] t=298420 ms — ESP32 alive, bus released
+2026-10-24T23:10:17.575 [heartbeat] t=303420 ms — ESP32 alive, bus released
+2026-10-24T23:10:22.672 [heartbeat] t=308420 ms — ESP32 alive, bus released
+2026-10-24T23:10:27.758 [heartbeat] t=313420 ms — ESP32 alive, bus released
+2026-10-24T23:10:32.641 [heartbeat] t=318420 ms — ESP32 alive, bus released
+2026-10-24T23:10:37.722 [heartbeat] t=323420 ms — ESP32 alive, bus released
+2026-10-24T23:10:42.598 [heartbeat] t=328420 ms — ESP32 alive, bus released
+2026-10-24T23:10:47.677 [heartbeat] t=333420 ms — ESP32 alive, bus released
+2026-10-24T23:10:52.761 [heartbeat] t=338420 ms — ESP32 alive, bus released
+2026-10-24T23:10:57.641 [heartbeat] t=343420 ms — ESP32 alive, bus released
+2026-10-24T23:11:02.728 [heartbeat] t=348420 ms — ESP32 alive, bus released
+2026-10-24T23:11:07.607 [heartbeat] t=353420 ms — ESP32 alive, bus released
+2026-10-24T23:11:12.689 [heartbeat] t=358420 ms — ESP32 alive, bus released
+2026-10-24T23:11:17.758 [heartbeat] t=363420 ms — ESP32 alive, bus released
+2026-10-24T23:11:22.633 [heartbeat] t=368420 ms — ESP32 alive, bus released
+2026-10-24T23:11:27.713 [heartbeat] t=373420 ms — ESP32 alive, bus released
+2026-10-24T23:11:32.582 [heartbeat] t=378420 ms — ESP32 alive, bus released
+2026-10-24T23:11:37.649 [heartbeat] t=383420 ms — ESP32 alive, bus released
+2026-10-24T23:11:42.736 [heartbeat] t=388420 ms — ESP32 alive, bus released
+2026-10-24T23:11:47.619 [heartbeat] t=393420 ms — ESP32 alive, bus released
+2026-10-24T23:11:52.697 [heartbeat] t=398420 ms — ESP32 alive, bus released
+2026-10-24T23:11:57.768 [heartbeat] t=403420 ms — ESP32 alive, bus released
+2026-10-24T23:12:02.641 [heartbeat] t=408420 ms — ESP32 alive, bus released
+2026-10-24T23:12:07.720 [heartbeat] t=413420 ms — ESP32 alive, bus released
+2026-10-24T23:12:12.592 [heartbeat] t=418420 ms — ESP32 alive, bus released
+2026-10-24T23:12:17.680 [heartbeat] t=423420 ms — ESP32 alive, bus released
+2026-10-24T23:12:22.766 [heartbeat] t=428420 ms — ESP32 alive, bus released
+=== start 23:12:35 (S1 V8+S1, U3 scope build upload)
+=== attach 23:12:50
+2026-10-24T23:12:51.301 [scope] t=12407 n=110 tca=110 ina=110 bq=0 bq_codes=2222222222
+2026-10-24T23:12:52.315 [scope] t=13407 n=120 tca=120 ina=120 bq=0 bq_codes=2222222222
+2026-10-24T23:12:53.335 [scope] t=14407 n=130 tca=130 ina=130 bq=0 bq_codes=2222222222
+2026-10-24T23:12:54.347 [scope] t=15407 n=140 tca=140 ina=140 bq=0 bq_codes=2222222222
+2026-10-24T23:12:55.362 [scope] t=16407 n=150 tca=150 ina=150 bq=0 bq_codes=2222222222
+2026-10-24T23:12:56.375 [scope] t=17407 n=160 tca=160 ina=160 bq=0 bq_codes=2222222222
+2026-10-24T23:12:57.185 [scope] t=18407 n=170 tca=170 ina=170 bq=0 bq_codes=2222222222
+2026-10-24T23:12:58.207 [scope] t=19407 n=180 tca=180 ina=180 bq=0 bq_codes=2222222222
+2026-10-24T23:12:59.226 [scope] t=20407 n=190 tca=190 ina=190 bq=0 bq_codes=2222222222
+2026-10-24T23:13:00.244 [scope] t=21407 n=200 tca=200 ina=200 bq=0 bq_codes=2222222222
+2026-10-24T23:13:01.265 [scope] t=22407 n=210 tca=210 ina=210 bq=0 bq_codes=2222222222
+2026-10-24T23:13:02.282 [scope] t=23407 n=220 tca=220 ina=220 bq=0 bq_codes=2222222222
+2026-10-24T23:13:03.296 [scope] t=24407 n=230 tca=230 ina=230 bq=0 bq_codes=2222222222
+2026-10-24T23:13:04.307 [scope] t=25407 n=240 tca=240 ina=240 bq=0 bq_codes=2222222222
+2026-10-24T23:13:05.319 [scope] t=26407 n=250 tca=250 ina=250 bq=0 bq_codes=2222222222
+2026-10-24T23:13:06.334 [scope] t=27407 n=260 tca=260 ina=260 bq=0 bq_codes=2222222222
+2026-10-24T23:13:07.351 [scope] t=28407 n=270 tca=270 ina=270 bq=0 bq_codes=2222222222
+2026-10-24T23:13:08.368 [scope] t=29407 n=280 tca=280 ina=280 bq=0 bq_codes=2222222222
+2026-10-24T23:13:09.180 [scope] t=30407 n=290 tca=290 ina=290 bq=0 bq_codes=2222222222
+2026-10-24T23:13:10.206 [scope] t=31407 n=300 tca=300 ina=300 bq=0 bq_codes=2222222222
+2026-10-24T23:13:11.223 [scope] t=32407 n=310 tca=310 ina=310 bq=0 bq_codes=2222222222
+2026-10-24T23:13:12.242 [scope] t=33407 n=320 tca=320 ina=320 bq=0 bq_codes=2222222222
+2026-10-24T23:13:13.258 [scope] t=34407 n=330 tca=330 ina=330 bq=0 bq_codes=2222222222
+2026-10-24T23:13:14.276 [scope] t=35407 n=340 tca=340 ina=340 bq=0 bq_codes=2222222222
+2026-10-24T23:13:15.296 [scope] t=36407 n=350 tca=350 ina=350 bq=0 bq_codes=2222222222
+2026-10-24T23:13:16.316 [scope] t=37407 n=360 tca=360 ina=360 bq=0 bq_codes=2222222222
+2026-10-24T23:13:17.338 [scope] t=38407 n=370 tca=370 ina=370 bq=0 bq_codes=2222222222
+2026-10-24T23:13:18.354 [scope] t=39407 n=380 tca=380 ina=380 bq=0 bq_codes=2222222222
+2026-10-24T23:13:19.371 [scope] t=40407 n=390 tca=390 ina=390 bq=0 bq_codes=2222222222
+2026-10-24T23:13:20.183 [scope] t=41407 n=400 tca=400 ina=400 bq=0 bq_codes=2222222222
+2026-10-24T23:13:21.193 [scope] t=42407 n=410 tca=410 ina=410 bq=0 bq_codes=2222222222
+2026-10-24T23:13:22.215 [scope] t=43407 n=420 tca=420 ina=420 bq=0 bq_codes=2222222222
+2026-10-24T23:13:23.233 [scope] t=44407 n=430 tca=430 ina=430 bq=0 bq_codes=2222222222
+2026-10-24T23:13:24.242 [scope] t=45407 n=440 tca=440 ina=440 bq=0 bq_codes=2222222222
+2026-10-24T23:13:25.257 [scope] t=46407 n=450 tca=450 ina=450 bq=0 bq_codes=2222222222
+2026-10-24T23:13:26.274 [scope] t=47407 n=460 tca=460 ina=460 bq=0 bq_codes=2222222222
+=== start 23:13:27 (S0 val, U3 relbus upload)
+=== attach 23:14:07
+2026-10-24T23:14:07.836 BQ24195 configured: IINLIM=2A, watchdog disabled
+2026-10-24T23:14:07.836 [PowerMonitor] INA219 configured: 10mR shunt, 1mA/LSB, 8A max
+2026-10-24T23:14:07.836 [PWR after BQ config] VSYS=4.21 V, I=0 mA
+2026-10-24T23:14:07.836 Display initialized
+2026-10-24T23:14:07.836 [PWR after display init] VSYS=4.21 V, I=0 mA
+2026-10-24T23:14:07.836 ==============================================================
+2026-10-24T23:14:07.836 [DIAG_RELEASE_I2C] Bus-release diagnostic mode
+2026-10-24T23:14:07.837 ==============================================================
+2026-10-24T23:14:07.837 Skipping WiFi/MQTT/sensor init.
+2026-10-24T23:14:07.837 Running 5-iteration diagnostic burst to prove BQ NACK reproduces
+2026-10-24T23:14:07.837 on the ESP32 side, then releasing the I2C bus to an external master.
+2026-10-24T23:14:07.837 Probing: INA(0x40)  BQ(0x6B)  TCA(0x70)
+2026-10-24T23:14:07.837 Legend:  '.' = ACK,  'X(n)' = error n
+2026-10-24T23:14:07.837          (with failing-config cable in J6, expect BQ:X(2) on TCA2 row)
+2026-10-24T23:14:07.837 --- Iteration 1 ---
+2026-10-24T23:14:07.837 t=  10170  BASE        INA:.    BQ:.    TCA:.
+2026-10-24T23:14:07.837 t=  10174  TCA0        INA:.    BQ:.    TCA:.
+2026-10-24T23:14:07.837 t=  10178  TCA1        INA:.    BQ:.    TCA:.
+2026-10-24T23:14:07.837 t=  10182  TCA2        INA:.    BQ:X(2) TCA:.
+2026-10-24T23:14:09.263 --- Iteration 2 ---
+2026-10-24T23:14:09.263 t=  11685  BASE        INA:.    BQ:.    TCA:.
+2026-10-24T23:14:09.263 t=  11689  TCA0        INA:.    BQ:.    TCA:.
+2026-10-24T23:14:09.263 t=  11693  TCA1        INA:.    BQ:.    TCA:.
+2026-10-24T23:14:09.263 t=  11697  TCA2        INA:.    BQ:X(2) TCA:.
+2026-10-24T23:14:10.690 --- Iteration 3 ---
+2026-10-24T23:14:10.690 t=  13200  BASE        INA:.    BQ:.    TCA:.
+2026-10-24T23:14:10.690 t=  13204  TCA0        INA:.    BQ:.    TCA:.
+2026-10-24T23:14:10.690 t=  13208  TCA1        INA:.    BQ:.    TCA:.
+2026-10-24T23:14:10.690 t=  13212  TCA2        INA:.    BQ:X(2) TCA:.
+2026-10-24T23:14:12.321 --- Iteration 4 ---
+2026-10-24T23:14:12.321 t=  14715  BASE        INA:.    BQ:.    TCA:.
+2026-10-24T23:14:12.321 t=  14719  TCA0        INA:.    BQ:.    TCA:.
+2026-10-24T23:14:12.321 t=  14723  TCA1        INA:.    BQ:.    TCA:.
+2026-10-24T23:14:12.321 t=  14727  TCA2        INA:.    BQ:X(2) TCA:.
+2026-10-24T23:14:13.745 --- Iteration 5 ---
+2026-10-24T23:14:13.746 t=  16230  BASE        INA:.    BQ:.    TCA:.
+2026-10-24T23:14:13.746 t=  16234  TCA0        INA:.    BQ:.    TCA:.
+2026-10-24T23:14:13.746 t=  16238  TCA1        INA:.    BQ:.    TCA:.
+2026-10-24T23:14:13.746 t=  16242  TCA2        INA:.    BQ:X(2) TCA:.
+2026-10-24T23:14:15.373 Burst complete. Closing all TCA channels for clean baseline...
+2026-10-24T23:14:15.373 Releasing I2C bus...
+2026-10-24T23:14:15.373 ==============================================================
+2026-10-24T23:14:15.373 BUS RELEASED
+2026-10-24T23:14:15.373 ==============================================================
+2026-10-24T23:14:15.373 ESP32 is no longer driving SDA/SCL. All TCA channels are closed
+2026-10-24T23:14:15.374 [heartbeat] t=17804 ms — ESP32 alive, bus released
+2026-10-24T23:14:20.447 [heartbeat] t=22804 ms — ESP32 alive, bus released
+2026-10-24T23:14:25.342 [heartbeat] t=27804 ms — ESP32 alive, bus released
+2026-10-24T23:14:30.443 [heartbeat] t=32804 ms — ESP32 alive, bus released
+2026-10-24T23:14:35.306 [heartbeat] t=37804 ms — ESP32 alive, bus released
+2026-10-24T23:14:36.861 [logger] read failed: [Errno 6] Device not configured
+=== attach 23:22:45
+2026-10-24T23:22:46.143 =================================
+2026-10-24T23:22:46.143 Motion Play Device - BOOT
+2026-10-24T23:22:46.143 =================================
+2026-10-24T23:22:46.143 =================================
+2026-10-24T23:22:46.144 === Configuring BQ24195 (input current limit) ===
+2026-10-24T23:22:46.144 [   760][I][esp32-hal-i2c.c:75] i2cInit(): Initialising I2C Master: sda=43 scl=44 freq=100000
+2026-10-24T23:22:46.144 [I2C SCAN] Scanning 0x03..0x77...
+2026-10-24T23:22:46.144 [I2C SCAN]   Found device at 0x40
+2026-10-24T23:22:46.144 [I2C SCAN]   Found device at 0x6B
+2026-10-24T23:22:46.144 [I2C SCAN]   Found device at 0x70
+2026-10-24T23:22:46.144 [I2C SCAN] Done. 3 device(s) responded.
+2026-10-24T23:22:46.144 BQ24195 configured: IINLIM=2A, watchdog disabled
+2026-10-24T23:22:46.144 [PowerMonitor] INA219 configured: 10mR shunt, 1mA/LSB, 8A max
+2026-10-24T23:22:46.144 [PWR after BQ config] VSYS=4.21 V, I=67 mA
+2026-10-24T23:22:46.144 Display initialized
+2026-10-24T23:22:46.144 [PWR after display init] VSYS=4.21 V, I=67 mA
+2026-10-24T23:22:46.144 ==============================================================
+2026-10-24T23:22:46.144 [DIAG_RELEASE_I2C] Bus-release diagnostic mode
+2026-10-24T23:22:46.144 ==============================================================
+2026-10-24T23:22:46.144 Skipping WiFi/MQTT/sensor init.
+2026-10-24T23:22:46.144 Running 5-iteration diagnostic burst to prove BQ NACK reproduces
+2026-10-24T23:22:46.144 on the ESP32 side, then releasing the I2C bus to an external master.
+2026-10-24T23:22:46.144 Probing: INA(0x40)  BQ(0x6B)  TCA(0x70)
+2026-10-24T23:22:46.144 Legend:  '.' = ACK,  'X(n)' = error n
+2026-10-24T23:22:46.144          (with failing-config cable in J6, expect BQ:X(2) on TCA2 row)
+2026-10-24T23:22:46.144 --- Iteration 1 ---
+2026-10-24T23:22:46.144 t=    786  BASE        INA:.    BQ:.    TCA:.
+2026-10-24T23:22:46.144 t=    790  TCA0        INA:.    BQ:.    TCA:.
+2026-10-24T23:22:46.144 t=    794  TCA1        INA:.    BQ:.    TCA:.
+2026-10-24T23:22:46.144 t=    798  TCA2        INA:.    BQ:X(2) TCA:.
+2026-10-24T23:22:47.774 --- Iteration 2 ---
+2026-10-24T23:22:47.774 t=   2301  BASE        INA:.    BQ:.    TCA:.
+2026-10-24T23:22:47.774 t=   2305  TCA0        INA:.    BQ:.    TCA:.
+2026-10-24T23:22:47.774 t=   2309  TCA1        INA:.    BQ:.    TCA:.
+2026-10-24T23:22:47.774 t=   2313  TCA2        INA:.    BQ:X(2) TCA:.
+2026-10-24T23:22:49.199 --- Iteration 3 ---
+2026-10-24T23:22:49.199 t=   3816  BASE        INA:.    BQ:.    TCA:.
+2026-10-24T23:22:49.200 t=   3820  TCA0        INA:.    BQ:.    TCA:.
+2026-10-24T23:22:49.200 t=   3824  TCA1        INA:.    BQ:.    TCA:.
+2026-10-24T23:22:49.200 t=   3828  TCA2        INA:.    BQ:X(2) TCA:.
+2026-10-24T23:22:50.622 --- Iteration 4 ---
+2026-10-24T23:22:50.622 t=   5331  BASE        INA:.    BQ:.    TCA:.
+2026-10-24T23:22:50.622 t=   5335  TCA0        INA:.    BQ:.    TCA:.
+2026-10-24T23:22:50.622 t=   5339  TCA1        INA:.    BQ:.    TCA:.
+2026-10-24T23:22:50.826 t=   5343  TCA2        INA:.    BQ:X(2) TCA:.
+2026-10-24T23:22:52.250 --- Iteration 5 ---
+2026-10-24T23:22:52.250 t=   6846  BASE        INA:.    BQ:.    TCA:.
+2026-10-24T23:22:52.250 t=   6850  TCA0        INA:.    BQ:.    TCA:.
+2026-10-24T23:22:52.250 t=   6854  TCA1        INA:.    BQ:.    TCA:.
+2026-10-24T23:22:52.250 t=   6858  TCA2        INA:.    BQ:X(2) TCA:.
+2026-10-24T23:22:53.674 Burst complete. Closing all TCA channels for clean baseline...
+2026-10-24T23:22:53.675 Releasing I2C bus...
+2026-10-24T23:22:53.880 ==============================================================
+2026-10-24T23:22:53.880 BUS RELEASED
+2026-10-24T23:22:53.880 ==============================================================
+2026-10-24T23:22:53.880 ESP32 is no longer driving SDA/SCL. All TCA channels are closed
+2026-10-24T23:22:53.880 [heartbeat] t=8420 ms — ESP32 alive, bus released
+2026-10-24T23:22:58.776 [heartbeat] t=13420 ms — ESP32 alive, bus released
+2026-10-24T23:23:03.878 [heartbeat] t=18420 ms — ESP32 alive, bus released
+2026-10-24T23:23:08.763 [heartbeat] t=23420 ms — ESP32 alive, bus released
+2026-10-24T23:23:13.840 [heartbeat] t=28420 ms — ESP32 alive, bus released
+2026-10-24T23:23:18.726 [heartbeat] t=33420 ms — ESP32 alive, bus released
+2026-10-24T23:23:23.804 [heartbeat] t=38420 ms — ESP32 alive, bus released
+2026-10-24T23:23:28.889 [heartbeat] t=43420 ms — ESP32 alive, bus released
+2026-10-24T23:23:33.767 [heartbeat] t=48420 ms — ESP32 alive, bus released
+2026-10-24T23:23:38.854 [heartbeat] t=53420 ms — ESP32 alive, bus released
+2026-10-24T23:23:43.737 [heartbeat] t=58420 ms — ESP32 alive, bus released
+2026-10-24T23:23:48.813 [heartbeat] t=63420 ms — ESP32 alive, bus released
+2026-10-24T23:23:53.901 [heartbeat] t=68420 ms — ESP32 alive, bus released
+2026-10-24T23:23:58.783 [heartbeat] t=73420 ms — ESP32 alive, bus released
+2026-10-24T23:24:03.853 [heartbeat] t=78420 ms — ESP32 alive, bus released
+2026-10-24T23:24:08.731 [heartbeat] t=83420 ms — ESP32 alive, bus released
+2026-10-24T23:24:13.810 [heartbeat] t=88420 ms — ESP32 alive, bus released
+2026-10-24T23:24:18.883 [heartbeat] t=93420 ms — ESP32 alive, bus released
+2026-10-24T23:24:23.758 [heartbeat] t=98420 ms — ESP32 alive, bus released
+2026-10-24T23:24:28.835 [heartbeat] t=103420 ms — ESP32 alive, bus released
+2026-10-24T23:24:33.904 [heartbeat] t=108420 ms — ESP32 alive, bus released
+2026-10-24T23:24:38.784 [heartbeat] t=113420 ms — ESP32 alive, bus released
+2026-10-24T23:24:43.873 [heartbeat] t=118420 ms — ESP32 alive, bus released
+2026-10-24T23:24:48.755 [heartbeat] t=123420 ms — ESP32 alive, bus released
+2026-10-24T23:24:53.840 [heartbeat] t=128420 ms — ESP32 alive, bus released
+2026-10-24T23:24:58.719 [heartbeat] t=133420 ms — ESP32 alive, bus released
+2026-10-24T23:25:03.790 [heartbeat] t=138420 ms — ESP32 alive, bus released
+2026-10-24T23:25:08.870 [heartbeat] t=143420 ms — ESP32 alive, bus released
+2026-10-24T23:25:10.918 [logger] read failed: [Errno 6] Device not configured
+=== attach 23:26:20
+2026-10-24T23:26:20.472 =================================
+2026-10-24T23:26:20.472 Motion Play Device - BOOT
+2026-10-24T23:26:20.472 =================================
+2026-10-24T23:26:20.472 =================================
+2026-10-24T23:26:20.472 === Configuring BQ24195 (input current limit) ===
+2026-10-24T23:26:20.472 [   760][I][esp32-hal-i2c.c:75] i2cInit(): Initialising I2C Master: sda=43 scl=44 freq=100000
+2026-10-24T23:26:20.473 [I2C SCAN] Scanning 0x03..0x77...
+2026-10-24T23:26:20.473 [I2C SCAN]   Found device at 0x40
+2026-10-24T23:26:20.473 [I2C SCAN]   Found device at 0x6B
+2026-10-24T23:26:20.473 [I2C SCAN]   Found device at 0x70
+2026-10-24T23:26:20.473 [I2C SCAN] Done. 3 device(s) responded.
+2026-10-24T23:26:20.473 BQ24195 configured: IINLIM=2A, watchdog disabled
+2026-10-24T23:26:20.473 [PowerMonitor] INA219 configured: 10mR shunt, 1mA/LSB, 8A max
+2026-10-24T23:26:20.473 [PWR after BQ config] VSYS=4.21 V, I=0 mA
+2026-10-24T23:26:20.473 Display initialized
+2026-10-24T23:26:20.473 [PWR after display init] VSYS=4.21 V, I=0 mA
+2026-10-24T23:26:20.473 ==============================================================
+2026-10-24T23:26:20.473 [DIAG_RELEASE_I2C] Bus-release diagnostic mode
+2026-10-24T23:26:20.473 ==============================================================
+2026-10-24T23:26:20.473 Skipping WiFi/MQTT/sensor init.
+2026-10-24T23:26:20.473 Running 5-iteration diagnostic burst to prove BQ NACK reproduces
+2026-10-24T23:26:20.473 on the ESP32 side, then releasing the I2C bus to an external master.
+2026-10-24T23:26:20.473 Probing: INA(0x40)  BQ(0x6B)  TCA(0x70)
+2026-10-24T23:26:20.473 Legend:  '.' = ACK,  'X(n)' = error n
+2026-10-24T23:26:20.473          (with failing-config cable in J6, expect BQ:X(2) on TCA2 row)
+2026-10-24T23:26:20.473 --- Iteration 1 ---
+2026-10-24T23:26:20.473 t=    786  BASE        INA:.    BQ:.    TCA:.
+2026-10-24T23:26:20.473 t=    790  TCA0        INA:.    BQ:.    TCA:.
+2026-10-24T23:26:20.473 t=    794  TCA1        INA:.    BQ:.    TCA:.
+2026-10-24T23:26:20.473 t=    798  TCA2        INA:.    BQ:X(2) TCA:.
+2026-10-24T23:26:21.892 --- Iteration 2 ---
+2026-10-24T23:26:21.892 t=   2301  BASE        INA:.    BQ:.    TCA:.
+2026-10-24T23:26:21.892 t=   2305  TCA0        INA:.    BQ:.    TCA:.
+2026-10-24T23:26:21.892 t=   2309  TCA1        INA:.    BQ:.    TCA:.
+2026-10-24T23:26:21.892 t=   2313  TCA2        INA:.    BQ:X(2) TCA:.
+2026-10-24T23:26:23.527 --- Iteration 3 ---
+2026-10-24T23:26:23.527 t=   3816  BASE        INA:.    BQ:.    TCA:.
+2026-10-24T23:26:23.527 t=   3820  TCA0        INA:.    BQ:.    TCA:.
+2026-10-24T23:26:23.527 t=   3824  TCA1        INA:.    BQ:.    TCA:.
+2026-10-24T23:26:23.527 t=   3828  TCA2        INA:.    BQ:X(2) TCA:.
+2026-10-24T23:26:24.951 --- Iteration 4 ---
+2026-10-24T23:26:24.951 t=   5331  BASE        INA:.    BQ:.    TCA:.
+2026-10-24T23:26:24.951 t=   5335  TCA0        INA:.    BQ:.    TCA:.
+2026-10-24T23:26:24.951 t=   5339  TCA1        INA:.    BQ:.    TCA:.
+2026-10-24T23:26:24.951 t=   5343  TCA2        INA:.    BQ:X(2) TCA:.
+2026-10-24T23:26:26.583 --- Iteration 5 ---
+2026-10-24T23:26:26.583 t=   6846  BASE        INA:.    BQ:.    TCA:.
+2026-10-24T23:26:26.583 t=   6850  TCA0        INA:.    BQ:.    TCA:.
+2026-10-24T23:26:26.583 t=   6854  TCA1        INA:.    BQ:.    TCA:.
+2026-10-24T23:26:26.583 t=   6858  TCA2        INA:.    BQ:X(2) TCA:.
+2026-10-24T23:26:28.010 Burst complete. Closing all TCA channels for clean baseline...
+2026-10-24T23:26:28.010 Releasing I2C bus...
+2026-10-24T23:26:28.010 ==============================================================
+2026-10-24T23:26:28.010 BUS RELEASED
+2026-10-24T23:26:28.010 ==============================================================
+2026-10-24T23:26:28.010 ESP32 is no longer driving SDA/SCL. All TCA channels are closed
+2026-10-24T23:26:28.011 [heartbeat] t=8420 ms — ESP32 alive, bus released
+2026-10-24T23:26:33.087 [heartbeat] t=13420 ms — ESP32 alive, bus released
+2026-10-24T23:26:38.170 [heartbeat] t=18420 ms — ESP32 alive, bus released
+2026-10-24T23:26:43.063 [heartbeat] t=23420 ms — ESP32 alive, bus released
+2026-10-24T23:26:48.155 [heartbeat] t=28420 ms — ESP32 alive, bus released
+2026-10-24T23:26:53.036 [heartbeat] t=33420 ms — ESP32 alive, bus released
+2026-10-24T23:26:58.124 [heartbeat] t=38420 ms — ESP32 alive, bus released
+2026-10-24T23:27:03.014 [heartbeat] t=43420 ms — ESP32 alive, bus released
+2026-10-24T23:27:08.089 [heartbeat] t=48420 ms — ESP32 alive, bus released
+2026-10-24T23:27:13.182 [heartbeat] t=53420 ms — ESP32 alive, bus released
+2026-10-24T23:27:18.064 [heartbeat] t=58420 ms — ESP32 alive, bus released
+2026-10-24T23:27:23.153 [heartbeat] t=63420 ms — ESP32 alive, bus released
+2026-10-24T23:27:28.033 [heartbeat] t=68420 ms — ESP32 alive, bus released
+2026-10-24T23:27:33.132 [heartbeat] t=73420 ms — ESP32 alive, bus released
+2026-10-24T23:27:38.017 [heartbeat] t=78420 ms — ESP32 alive, bus released
+2026-10-24T23:27:43.102 [heartbeat] t=83420 ms — ESP32 alive, bus released
+2026-10-24T23:27:48.183 [heartbeat] t=88420 ms — ESP32 alive, bus released
+2026-10-24T23:27:53.063 [heartbeat] t=93420 ms — ESP32 alive, bus released
+2026-10-24T23:27:58.151 [heartbeat] t=98420 ms — ESP32 alive, bus released
+2026-10-24T23:28:03.021 [heartbeat] t=103420 ms — ESP32 alive, bus released
+2026-10-24T23:28:08.102 [heartbeat] t=108420 ms — ESP32 alive, bus released
+2026-10-24T23:28:13.192 [heartbeat] t=113420 ms — ESP32 alive, bus released
+2026-10-24T23:28:18.073 [heartbeat] t=118420 ms — ESP32 alive, bus released
+2026-10-24T23:28:23.151 [heartbeat] t=123420 ms — ESP32 alive, bus released
+2026-10-24T23:28:28.034 [heartbeat] t=128420 ms — ESP32 alive, bus released
+2026-10-24T23:28:33.118 [heartbeat] t=133420 ms — ESP32 alive, bus released
+2026-10-24T23:28:37.996 [heartbeat] t=138420 ms — ESP32 alive, bus released
+2026-10-24T23:28:43.064 [heartbeat] t=143420 ms — ESP32 alive, bus released
+2026-10-24T23:28:48.142 [heartbeat] t=148420 ms — ESP32 alive, bus released
+2026-10-24T23:28:53.039 [heartbeat] t=153420 ms — ESP32 alive, bus released
+2026-10-24T23:28:58.110 [heartbeat] t=158420 ms — ESP32 alive, bus released
+2026-10-24T23:29:03.181 [heartbeat] t=163420 ms — ESP32 alive, bus released
+2026-10-24T23:29:08.053 [heartbeat] t=168420 ms — ESP32 alive, bus released
+2026-10-24T23:29:13.136 [heartbeat] t=173420 ms — ESP32 alive, bus released
+2026-10-24T23:29:18.045 [logger] read failed: [Errno 6] Device not configured
+=== attach 09:35:40
+2026-10-25T09:35:40.529 =================================
+2026-10-25T09:35:40.529 Motion Play Device - BOOT
+2026-10-25T09:35:40.529 =================================
+2026-10-25T09:35:40.529 =================================
+2026-10-25T09:35:40.529 === Configuring BQ24195 (input current limit) ===
+2026-10-25T09:35:40.529 [   760][I][esp32-hal-i2c.c:75] i2cInit(): Initialising I2C Master: sda=43 scl=44 freq=100000
+2026-10-25T09:35:40.529 [I2C SCAN] Scanning 0x03..0x77...
+2026-10-25T09:35:40.529 [I2C SCAN]   Found device at 0x40
+2026-10-25T09:35:40.529 [I2C SCAN]   Found device at 0x6B
+2026-10-25T09:35:40.529 [I2C SCAN]   Found device at 0x70
+2026-10-25T09:35:40.529 [I2C SCAN] Done. 3 device(s) responded.
+2026-10-25T09:35:40.529 BQ24195 configured: IINLIM=2A, watchdog disabled
+2026-10-25T09:35:40.529 [PowerMonitor] INA219 configured: 10mR shunt, 1mA/LSB, 8A max
+2026-10-25T09:35:40.529 [PWR after BQ config] VSYS=4.21 V, I=64 mA
+2026-10-25T09:35:40.529 Display initialized
+2026-10-25T09:35:40.530 [PWR after display init] VSYS=4.21 V, I=64 mA
+2026-10-25T09:35:40.530 ==============================================================
+2026-10-25T09:35:40.530 [DIAG_RELEASE_I2C] Bus-release diagnostic mode
+2026-10-25T09:35:40.530 ==============================================================
+2026-10-25T09:35:40.530 Skipping WiFi/MQTT/sensor init.
+2026-10-25T09:35:40.530 Running 5-iteration diagnostic burst to prove BQ NACK reproduces
+2026-10-25T09:35:40.530 on the ESP32 side, then releasing the I2C bus to an external master.
+2026-10-25T09:35:40.530 Probing: INA(0x40)  BQ(0x6B)  TCA(0x70)
+2026-10-25T09:35:40.530 Legend:  '.' = ACK,  'X(n)' = error n
+2026-10-25T09:35:40.530          (with failing-config cable in J6, expect BQ:X(2) on TCA2 row)
+2026-10-25T09:35:40.530 --- Iteration 1 ---
+2026-10-25T09:35:40.530 t=    786  BASE        INA:.    BQ:.    TCA:.
+2026-10-25T09:35:40.530 t=    790  TCA0        INA:.    BQ:.    TCA:.
+2026-10-25T09:35:40.530 t=    794  TCA1        INA:.    BQ:.    TCA:.
+2026-10-25T09:35:40.530 t=    798  TCA2        INA:.    BQ:X(2) TCA:.
+2026-10-25T09:35:41.971 --- Iteration 2 ---
+2026-10-25T09:35:41.971 t=   2301  BASE        INA:.    BQ:.    TCA:.
+2026-10-25T09:35:41.971 t=   2305  TCA0        INA:.    BQ:.    TCA:.
+2026-10-25T09:35:41.971 t=   2309  TCA1        INA:.    BQ:.    TCA:.
+2026-10-25T09:35:41.971 t=   2313  TCA2        INA:.    BQ:X(2) TCA:.
+2026-10-25T09:35:43.604 --- Iteration 3 ---
+2026-10-25T09:35:43.604 t=   3816  BASE        INA:.    BQ:.    TCA:.
+2026-10-25T09:35:43.604 t=   3820  TCA0        INA:.    BQ:.    TCA:.
+2026-10-25T09:35:43.604 t=   3824  TCA1        INA:.    BQ:.    TCA:.
+2026-10-25T09:35:43.604 t=   3828  TCA2        INA:.    BQ:X(2) TCA:.
+2026-10-25T09:35:45.028 --- Iteration 4 ---
+2026-10-25T09:35:45.028 t=   5331  BASE        INA:.    BQ:.    TCA:.
+2026-10-25T09:35:45.028 t=   5335  TCA0        INA:.    BQ:.    TCA:.
+2026-10-25T09:35:45.028 t=   5339  TCA1        INA:.    BQ:.    TCA:.
+2026-10-25T09:35:45.028 t=   5343  TCA2        INA:.    BQ:X(2) TCA:.
+2026-10-25T09:35:46.653 --- Iteration 5 ---
+2026-10-25T09:35:46.654 t=   6846  BASE        INA:.    BQ:.    TCA:.
+2026-10-25T09:35:46.654 t=   6850  TCA0        INA:.    BQ:.    TCA:.
+2026-10-25T09:35:46.654 t=   6854  TCA1        INA:.    BQ:.    TCA:.
+2026-10-25T09:35:46.654 t=   6858  TCA2        INA:.    BQ:X(2) TCA:.
+2026-10-25T09:35:48.069 Burst complete. Closing all TCA channels for clean baseline...
+2026-10-25T09:35:48.070 Releasing I2C bus...
+2026-10-25T09:35:48.070 ==============================================================
+2026-10-25T09:35:48.070 BUS RELEASED
+2026-10-25T09:35:48.071 ==============================================================
+2026-10-25T09:35:48.071 ESP32 is no longer driving SDA/SCL. All TCA channels are closed
+2026-10-25T09:35:48.089 [heartbeat] t=8420 ms — ESP32 alive, bus released
+2026-10-25T09:35:53.181 [heartbeat] t=13420 ms — ESP32 alive, bus released
+2026-10-25T09:35:58.062 [heartbeat] t=18420 ms — ESP32 alive, bus released
+2026-10-25T09:36:03.132 [heartbeat] t=23420 ms — ESP32 alive, bus released
+2026-10-25T09:36:08.187 [heartbeat] t=28420 ms — ESP32 alive, bus released
+2026-10-25T09:36:13.065 [heartbeat] t=33420 ms — ESP32 alive, bus released
+2026-10-25T09:36:18.136 [heartbeat] t=38420 ms — ESP32 alive, bus released
+2026-10-25T09:36:23.233 [heartbeat] t=43420 ms — ESP32 alive, bus released
+=== start 09:36:39 (S0 V8+S0, U3 scope build upload)
+=== attach 09:36:51
+2026-10-25T09:36:51.529 [scope] t=8007 n=70 tca=70 ina=70 bq=0 bq_codes=2222222222
+2026-10-25T09:36:52.550 [scope] t=9007 n=80 tca=80 ina=80 bq=0 bq_codes=2222222222
+2026-10-25T09:36:53.567 [scope] t=10007 n=90 tca=90 ina=90 bq=0 bq_codes=2222222222
+2026-10-25T09:36:54.577 [scope] t=11007 n=100 tca=100 ina=100 bq=0 bq_codes=2222222222
+2026-10-25T09:36:55.593 [scope] t=12007 n=110 tca=110 ina=110 bq=0 bq_codes=2222222222
+2026-10-25T09:36:56.403 [scope] t=13007 n=120 tca=120 ina=120 bq=0 bq_codes=2222222222
+2026-10-25T09:36:57.419 [scope] t=14007 n=130 tca=130 ina=130 bq=0 bq_codes=2222222222
+2026-10-25T09:36:58.432 [scope] t=15007 n=140 tca=140 ina=140 bq=0 bq_codes=2222222222
+2026-10-25T09:36:59.450 [scope] t=16007 n=150 tca=150 ina=150 bq=0 bq_codes=2222222222
+2026-10-25T09:37:00.460 [scope] t=17007 n=160 tca=160 ina=160 bq=0 bq_codes=2222222222
+2026-10-25T09:37:01.473 [scope] t=18007 n=170 tca=170 ina=170 bq=0 bq_codes=2222222222
+2026-10-25T09:37:02.486 [scope] t=19007 n=180 tca=180 ina=180 bq=0 bq_codes=2222222222
+2026-10-25T09:37:03.502 [scope] t=20007 n=190 tca=190 ina=190 bq=0 bq_codes=2222222222
+2026-10-25T09:37:04.523 [scope] t=21007 n=200 tca=200 ina=200 bq=0 bq_codes=2222222222
+2026-10-25T09:37:05.542 [scope] t=22007 n=210 tca=210 ina=210 bq=0 bq_codes=2222222222
+2026-10-25T09:37:06.554 [scope] t=23007 n=220 tca=220 ina=220 bq=0 bq_codes=2222222222
+2026-10-25T09:37:07.572 [scope] t=24007 n=230 tca=230 ina=230 bq=0 bq_codes=2222222222
+2026-10-25T09:37:08.588 [scope] t=25007 n=240 tca=240 ina=240 bq=0 bq_codes=2222222222
+2026-10-25T09:37:09.605 [scope] t=26007 n=250 tca=250 ina=250 bq=0 bq_codes=2222222222
+2026-10-25T09:37:10.413 [scope] t=27007 n=260 tca=260 ina=260 bq=0 bq_codes=2222222222
+2026-10-25T09:37:11.429 [scope] t=28007 n=270 tca=270 ina=270 bq=0 bq_codes=2222222222
+2026-10-25T09:37:12.442 [scope] t=29007 n=280 tca=280 ina=280 bq=0 bq_codes=2222222222
+2026-10-25T09:37:13.460 [scope] t=30007 n=290 tca=290 ina=290 bq=0 bq_codes=2222222222
+2026-10-25T09:37:14.478 [scope] t=31007 n=300 tca=300 ina=300 bq=0 bq_codes=2222222222
+2026-10-25T09:37:15.499 [scope] t=32007 n=310 tca=310 ina=310 bq=0 bq_codes=2222222222
+2026-10-25T09:37:16.510 [scope] t=33007 n=320 tca=320 ina=320 bq=0 bq_codes=2222222222
+2026-10-25T09:37:17.526 [scope] t=34007 n=330 tca=330 ina=330 bq=0 bq_codes=2222222222
+2026-10-25T09:37:18.545 [scope] t=35007 n=340 tca=340 ina=340 bq=0 bq_codes=2222222222
+2026-10-25T09:37:19.564 [scope] t=36007 n=350 tca=350 ina=350 bq=0 bq_codes=2222222222
+2026-10-25T09:37:20.577 [scope] t=37007 n=360 tca=360 ina=360 bq=0 bq_codes=2222222222
+2026-10-25T09:37:21.600 [scope] t=38007 n=370 tca=370 ina=370 bq=0 bq_codes=2222222222
+2026-10-25T09:37:22.406 [scope] t=39007 n=380 tca=380 ina=380 bq=0 bq_codes=2222222222
+2026-10-25T09:37:23.417 [scope] t=40007 n=390 tca=390 ina=390 bq=0 bq_codes=2222222222
+2026-10-25T09:37:24.431 [scope] t=41007 n=400 tca=400 ina=400 bq=0 bq_codes=2222222222
+2026-10-25T09:37:25.458 [scope] t=42007 n=410 tca=410 ina=410 bq=0 bq_codes=2222222222
+2026-10-25T09:37:26.471 [scope] t=43007 n=420 tca=420 ina=420 bq=0 bq_codes=2222222222
+2026-10-25T09:37:27.490 [scope] t=44007 n=430 tca=430 ina=430 bq=0 bq_codes=2222222222
+2026-10-25T09:37:28.505 [scope] t=45007 n=440 tca=440 ina=440 bq=0 bq_codes=2222222222
+2026-10-25T09:37:29.522 [scope] t=46007 n=450 tca=450 ina=450 bq=0 bq_codes=2222222222
+2026-10-25T09:37:30.540 [scope] t=47007 n=460 tca=460 ina=460 bq=0 bq_codes=2222222222
+2026-10-25T09:37:31.557 [scope] t=48007 n=470 tca=470 ina=470 bq=0 bq_codes=2222222222
+2026-10-25T09:37:32.581 [scope] t=49007 n=480 tca=480 ina=480 bq=0 bq_codes=2222222222
+2026-10-25T09:37:33.591 [scope] t=50007 n=490 tca=490 ina=490 bq=0 bq_codes=2222222222
+2026-10-25T09:37:34.403 [scope] t=51007 n=500 tca=500 ina=500 bq=0 bq_codes=2222222222
+=== start 09:37:40 (relbus upload before S2 return)
+=== attach 09:38:20
+2026-10-25T09:38:20.823 BQ24195 configured: IINLIM=2A, watchdog disabled
+2026-10-25T09:38:20.824 [PowerMonitor] INA219 configured: 10mR shunt, 1mA/LSB, 8A max
+2026-10-25T09:38:20.824 [PWR after BQ config] VSYS=4.28 V, I=0 mA
+2026-10-25T09:38:20.824 Display initialized
+2026-10-25T09:38:20.824 [PWR after display init] VSYS=4.28 V, I=0 mA
+2026-10-25T09:38:20.824 ==============================================================
+2026-10-25T09:38:20.824 [DIAG_RELEASE_I2C] Bus-release diagnostic mode
+2026-10-25T09:38:20.824 ==============================================================
+2026-10-25T09:38:20.824 Skipping WiFi/MQTT/sensor init.
+2026-10-25T09:38:20.824 Running 5-iteration diagnostic burst to prove BQ NACK reproduces
+2026-10-25T09:38:20.824 on the ESP32 side, then releasing the I2C bus to an external master.
+2026-10-25T09:38:20.824 Probing: INA(0x40)  BQ(0x6B)  TCA(0x70)
+2026-10-25T09:38:20.824 Legend:  '.' = ACK,  'X(n)' = error n
+2026-10-25T09:38:20.824          (with failing-config cable in J6, expect BQ:X(2) on TCA2 row)
+2026-10-25T09:38:20.824 --- Iteration 1 ---
+2026-10-25T09:38:20.824 t=  10455  BASE        INA:.    BQ:.    TCA:.
+2026-10-25T09:38:20.824 t=  10459  TCA0        INA:.    BQ:.    TCA:.
+2026-10-25T09:38:20.825 t=  10463  TCA1        INA:.    BQ:.    TCA:.
+2026-10-25T09:38:20.825 t=  10467  TCA2        INA:.    BQ:X(2) TCA:.
+2026-10-25T09:38:22.238 --- Iteration 2 ---
+2026-10-25T09:38:22.239 t=  11970  BASE        INA:.    BQ:.    TCA:.
+2026-10-25T09:38:22.239 t=  11974  TCA0        INA:.    BQ:.    TCA:.
+2026-10-25T09:38:22.239 t=  11978  TCA1        INA:.    BQ:.    TCA:.
+2026-10-25T09:38:22.239 t=  11982  TCA2        INA:.    BQ:X(2) TCA:.
+2026-10-25T09:38:23.655 --- Iteration 3 ---
+2026-10-25T09:38:23.860 t=  13485  BASE        INA:.    BQ:.    TCA:.
+2026-10-25T09:38:23.860 t=  13489  TCA0        INA:.    BQ:.    TCA:.
+2026-10-25T09:38:23.860 t=  13493  TCA1        INA:.    BQ:.    TCA:.
+2026-10-25T09:38:23.860 t=  13497  TCA2        INA:.    BQ:X(2) TCA:.
+2026-10-25T09:38:25.283 --- Iteration 4 ---
+2026-10-25T09:38:25.283 t=  15000  BASE        INA:.    BQ:.    TCA:.
+2026-10-25T09:38:25.284 t=  15004  TCA0        INA:.    BQ:.    TCA:.
+2026-10-25T09:38:25.284 t=  15008  TCA1        INA:.    BQ:.    TCA:.
+2026-10-25T09:38:25.284 t=  15012  TCA2        INA:.    BQ:X(2) TCA:.
+2026-10-25T09:38:26.705 --- Iteration 5 ---
+2026-10-25T09:38:26.705 t=  16515  BASE        INA:.    BQ:.    TCA:.
+2026-10-25T09:38:26.705 t=  16519  TCA0        INA:.    BQ:.    TCA:.
+2026-10-25T09:38:26.705 t=  16523  TCA1        INA:.    BQ:.    TCA:.
+2026-10-25T09:38:26.705 t=  16527  TCA2        INA:.    BQ:X(2) TCA:.
+2026-10-25T09:38:28.330 Burst complete. Closing all TCA channels for clean baseline...
+2026-10-25T09:38:28.330 Releasing I2C bus...
+2026-10-25T09:38:28.330 ==============================================================
+2026-10-25T09:38:28.330 BUS RELEASED
+2026-10-25T09:38:28.330 ==============================================================
+2026-10-25T09:38:28.330 ESP32 is no longer driving SDA/SCL. All TCA channels are closed
+2026-10-25T09:38:28.331 [heartbeat] t=18089 ms — ESP32 alive, bus released
+2026-10-25T09:38:33.402 [heartbeat] t=23089 ms — ESP32 alive, bus released
+2026-10-25T09:38:38.267 [heartbeat] t=28089 ms — ESP32 alive, bus released
+2026-10-25T09:38:43.337 [heartbeat] t=33089 ms — ESP32 alive, bus released
+2026-10-25T09:38:48.413 [heartbeat] t=38089 ms — ESP32 alive, bus released
+2026-10-25T09:38:53.301 [heartbeat] t=43089 ms — ESP32 alive, bus released
+2026-10-25T09:38:58.392 [heartbeat] t=48089 ms — ESP32 alive, bus released
+2026-10-25T09:39:03.261 [heartbeat] t=53089 ms — ESP32 alive, bus released
+2026-10-25T09:39:08.343 [heartbeat] t=58089 ms — ESP32 alive, bus released
+2026-10-25T09:39:13.432 [heartbeat] t=63089 ms — ESP32 alive, bus released
+2026-10-25T09:39:18.310 [heartbeat] t=68089 ms — ESP32 alive, bus released
+2026-10-25T09:39:23.403 [heartbeat] t=73089 ms — ESP32 alive, bus released
+2026-10-25T09:39:28.094 [logger] read failed: [Errno 6] Device not configured
+=== attach 09:46:03
+2026-10-25T09:46:04.275 =================================
+2026-10-25T09:46:04.275 Motion Play Device - BOOT
+2026-10-25T09:46:04.275 =================================
+2026-10-25T09:46:04.275 =================================
+2026-10-25T09:46:04.275 === Configuring BQ24195 (input current limit) ===
+2026-10-25T09:46:04.275 [   760][I][esp32-hal-i2c.c:75] i2cInit(): Initialising I2C Master: sda=43 scl=44 freq=100000
+2026-10-25T09:46:04.275 [I2C SCAN] Scanning 0x03..0x77...
+2026-10-25T09:46:04.275 [I2C SCAN]   Found device at 0x40
+2026-10-25T09:46:04.275 [I2C SCAN]   Found device at 0x6B
+2026-10-25T09:46:04.275 [I2C SCAN]   Found device at 0x70
+2026-10-25T09:46:04.275 [I2C SCAN] Done. 3 device(s) responded.
+2026-10-25T09:46:04.275 BQ24195 configured: IINLIM=2A, watchdog disabled
+2026-10-25T09:46:04.275 [PowerMonitor] INA219 configured: 10mR shunt, 1mA/LSB, 8A max
+2026-10-25T09:46:04.275 [PWR after BQ config] VSYS=4.21 V, I=64 mA
+2026-10-25T09:46:04.275 Display initialized
+2026-10-25T09:46:04.275 [PWR after display init] VSYS=4.21 V, I=64 mA
+2026-10-25T09:46:04.275 ==============================================================
+2026-10-25T09:46:04.275 [DIAG_RELEASE_I2C] Bus-release diagnostic mode
+2026-10-25T09:46:04.275 ==============================================================
+2026-10-25T09:46:04.275 Skipping WiFi/MQTT/sensor init.
+2026-10-25T09:46:04.275 Running 5-iteration diagnostic burst to prove BQ NACK reproduces
+2026-10-25T09:46:04.276 on the ESP32 side, then releasing the I2C bus to an external master.
+2026-10-25T09:46:04.276 Probing: INA(0x40)  BQ(0x6B)  TCA(0x70)
+2026-10-25T09:46:04.276 Legend:  '.' = ACK,  'X(n)' = error n
+2026-10-25T09:46:04.276          (with failing-config cable in J6, expect BQ:X(2) on TCA2 row)
+2026-10-25T09:46:04.276 --- Iteration 1 ---
+2026-10-25T09:46:04.276 t=    786  BASE        INA:.    BQ:.    TCA:.
+2026-10-25T09:46:04.276 t=    790  TCA0        INA:.    BQ:.    TCA:.
+2026-10-25T09:46:04.276 t=    794  TCA1        INA:.    BQ:.    TCA:.
+2026-10-25T09:46:04.276 t=    798  TCA2        INA:.    BQ:X(2) TCA:.
+2026-10-25T09:46:05.695 --- Iteration 2 ---
+2026-10-25T09:46:05.696 t=   2301  BASE        INA:.    BQ:.    TCA:.
+2026-10-25T09:46:05.696 t=   2305  TCA0        INA:.    BQ:.    TCA:.
+2026-10-25T09:46:05.696 t=   2309  TCA1        INA:.    BQ:.    TCA:.
+2026-10-25T09:46:05.696 t=   2313  TCA2        INA:.    BQ:X(2) TCA:.
+2026-10-25T09:46:07.321 --- Iteration 3 ---
+2026-10-25T09:46:07.321 t=   3816  BASE        INA:.    BQ:.    TCA:.
+2026-10-25T09:46:07.321 t=   3820  TCA0        INA:.    BQ:.    TCA:.
+2026-10-25T09:46:07.321 t=   3824  TCA1        INA:.    BQ:.    TCA:.
+2026-10-25T09:46:07.321 t=   3828  TCA2        INA:.    BQ:X(2) TCA:.
+2026-10-25T09:46:08.750 --- Iteration 4 ---
+2026-10-25T09:46:08.750 t=   5331  BASE        INA:.    BQ:.    TCA:.
+2026-10-25T09:46:08.750 t=   5335  TCA0        INA:.    BQ:.    TCA:.
+2026-10-25T09:46:08.751 t=   5339  TCA1        INA:.    BQ:.    TCA:.
+2026-10-25T09:46:08.751 t=   5343  TCA2        INA:.    BQ:X(2) TCA:.
+2026-10-25T09:46:10.374 --- Iteration 5 ---
+2026-10-25T09:46:10.375 t=   6846  BASE        INA:.    BQ:.    TCA:.
+2026-10-25T09:46:10.375 t=   6850  TCA0        INA:.    BQ:.    TCA:.
+2026-10-25T09:46:10.375 t=   6854  TCA1        INA:.    BQ:.    TCA:.
+2026-10-25T09:46:10.375 t=   6858  TCA2        INA:.    BQ:X(2) TCA:.
+2026-10-25T09:46:11.795 Burst complete. Closing all TCA channels for clean baseline...
+2026-10-25T09:46:11.795 Releasing I2C bus...
+2026-10-25T09:46:11.795 ==============================================================
+2026-10-25T09:46:11.795 BUS RELEASED
+2026-10-25T09:46:11.795 ==============================================================
+2026-10-25T09:46:11.795 ESP32 is no longer driving SDA/SCL. All TCA channels are closed
+2026-10-25T09:46:11.795 [heartbeat] t=8420 ms — ESP32 alive, bus released
+2026-10-25T09:46:16.886 [heartbeat] t=13420 ms — ESP32 alive, bus released
+2026-10-25T09:46:21.966 [heartbeat] t=18420 ms — ESP32 alive, bus released
+2026-10-25T09:46:26.844 [heartbeat] t=23420 ms — ESP32 alive, bus released
+2026-10-25T09:46:31.931 [heartbeat] t=28420 ms — ESP32 alive, bus released
+=== start 09:46:50 (A2 at A: V8+A2, U3 scope build upload)
+=== attach 09:46:56
+2026-10-25T09:46:57.394 [scope] t=3607 n=30 tca=30 ina=30 bq=0 bq_codes=2222222222
+2026-10-25T09:46:58.411 [scope] t=4607 n=40 tca=40 ina=40 bq=0 bq_codes=2222222222
+2026-10-25T09:46:59.426 [scope] t=5607 n=50 tca=50 ina=50 bq=0 bq_codes=2222222222
+2026-10-25T09:47:00.444 [scope] t=6607 n=60 tca=60 ina=60 bq=0 bq_codes=2222222222
+2026-10-25T09:47:01.459 [scope] t=7607 n=70 tca=70 ina=70 bq=0 bq_codes=2222222222
+2026-10-25T09:47:02.477 [scope] t=8607 n=80 tca=80 ina=80 bq=0 bq_codes=2222222222
+2026-10-25T09:47:03.518 [scope] t=9607 n=90 tca=90 ina=90 bq=0 bq_codes=2222222222
+2026-10-25T09:47:04.356 [scope] t=10607 n=100 tca=100 ina=100 bq=0 bq_codes=2222222222
+2026-10-25T09:47:05.372 [scope] t=11607 n=110 tca=110 ina=110 bq=0 bq_codes=2222222222
+2026-10-25T09:47:06.391 [scope] t=12607 n=120 tca=120 ina=120 bq=0 bq_codes=2222222222
+2026-10-25T09:47:07.409 [scope] t=13607 n=130 tca=130 ina=130 bq=0 bq_codes=2222222222
+2026-10-25T09:47:08.426 [scope] t=14607 n=140 tca=140 ina=140 bq=0 bq_codes=2222222222
+2026-10-25T09:47:09.440 [scope] t=15607 n=150 tca=150 ina=150 bq=0 bq_codes=2222222222
+2026-10-25T09:47:10.455 [scope] t=16607 n=160 tca=160 ina=160 bq=0 bq_codes=2222222222
+2026-10-25T09:47:11.477 [scope] t=17607 n=170 tca=170 ina=170 bq=0 bq_codes=2222222222
+2026-10-25T09:47:12.522 [scope] t=18607 n=180 tca=180 ina=180 bq=0 bq_codes=2222222222
+2026-10-25T09:47:13.336 [scope] t=19607 n=190 tca=190 ina=190 bq=0 bq_codes=2222222222
+2026-10-25T09:47:14.355 [scope] t=20607 n=200 tca=200 ina=200 bq=0 bq_codes=2222222222
+2026-10-25T09:47:15.369 [scope] t=21607 n=210 tca=210 ina=210 bq=0 bq_codes=2222222222
+2026-10-25T09:47:16.388 [scope] t=22607 n=220 tca=220 ina=220 bq=0 bq_codes=2222222222
+2026-10-25T09:47:17.405 [scope] t=23607 n=230 tca=230 ina=230 bq=0 bq_codes=2222222222
+2026-10-25T09:47:18.423 [scope] t=24607 n=240 tca=240 ina=240 bq=0 bq_codes=2222222222
+2026-10-25T09:47:19.439 [scope] t=25607 n=250 tca=250 ina=250 bq=0 bq_codes=2222222222
+2026-10-25T09:47:20.458 [scope] t=26607 n=260 tca=260 ina=260 bq=0 bq_codes=2222222222
+2026-10-25T09:47:21.475 [scope] t=27607 n=270 tca=270 ina=270 bq=0 bq_codes=2222222222
+2026-10-25T09:47:22.489 [scope] t=28607 n=280 tca=280 ina=280 bq=0 bq_codes=2222222222
+2026-10-25T09:47:23.503 [scope] t=29607 n=290 tca=290 ina=290 bq=0 bq_codes=2222222222
+2026-10-25T09:47:24.520 [scope] t=30607 n=300 tca=300 ina=300 bq=0 bq_codes=2222222222
+2026-10-25T09:47:25.332 [scope] t=31607 n=310 tca=310 ina=310 bq=0 bq_codes=2222222222
+2026-10-25T09:47:26.349 [scope] t=32607 n=320 tca=320 ina=320 bq=0 bq_codes=2222222222
+2026-10-25T09:47:27.364 [scope] t=33607 n=330 tca=330 ina=330 bq=0 bq_codes=2222222222
+2026-10-25T09:47:28.381 [scope] t=34607 n=340 tca=340 ina=340 bq=0 bq_codes=2222222222
+2026-10-25T09:47:29.390 [scope] t=35607 n=350 tca=350 ina=350 bq=0 bq_codes=2222222222
+2026-10-25T09:47:30.411 [scope] t=36607 n=360 tca=360 ina=360 bq=0 bq_codes=2222222222
+2026-10-25T09:47:31.424 [scope] t=37607 n=370 tca=370 ina=370 bq=0 bq_codes=2222222222
+2026-10-25T09:47:32.439 [scope] t=38607 n=380 tca=380 ina=380 bq=0 bq_codes=2222222222
+2026-10-25T09:47:33.460 [scope] t=39607 n=390 tca=390 ina=390 bq=0 bq_codes=2222222222
+2026-10-25T09:47:34.483 [scope] t=40607 n=400 tca=400 ina=400 bq=0 bq_codes=2222222222
+2026-10-25T09:47:35.495 [scope] t=41607 n=410 tca=410 ina=410 bq=0 bq_codes=2222222222
+2026-10-25T09:47:36.515 [scope] t=42607 n=420 tca=420 ina=420 bq=0 bq_codes=2222222222
+2026-10-25T09:47:37.324 [scope] t=43607 n=430 tca=430 ina=430 bq=0 bq_codes=2222222222
+=== start 09:47:43 (End: revert U3 to diag)

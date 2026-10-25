@@ -1,7 +1,7 @@
 ---
 test_id: V7R-010
 title: "SDA low along U3's path: U3 pin (K) vs test pad (A) vs BQ pin (D), U3 master, failing state"
-status: pre-registered
+status: recorded
 created: 2026-10-24
 prereg_commit: self
 baseline:
@@ -91,12 +91,41 @@ The session runs every SCPI command, flash and capture; one instruction block pe
 
 ## Actual result
 ### Raw observations (operator, verbatim; symptoms not interpretations)
+- P0 (operator): "1. yes 2. yes". Nano plugged in first, then the v7. Session: U3 on relbus, `BUS RELEASED` 21:45:09; V2 probe ratio read back 10 / 10 by direct socket after the one-shot query returned blanks and `-110` errors (error queue drained).
+- V1–V4 (operator): "1. done 2. I accidentally pressed auto a second time after placing probe 1 in it's position"; CH1 flat top, square corners "yes"; CH2 "yes". Vamp 3020.8 mV per channel (`val_V3_01`, `val_V3_03`). Session: `val_V3_02` (CH2) captured at 0.5 V/div, 0 V offset (set commands had not taken); re-set, read back, recaptured as `_03`.
+- V5a (operator): both tips and springs on Cal ground "done". Session: `val_V5ctl_01` CH2 flat at 2.971–2.998 V (the Cal high level), CH1 mean −6.7 mV.
+- S2 V5b (operator): springs on F, tips on G, "1. confirmed 2. yes". S2 V7: "1. confirmed 2. yes"; `val_V7_01` passes first seat. Decode menu: "1. none 2. confirmed 3. yes".
+- S2 V8, A1 (session): U3 scope build (firmware.bin 84c930db, hash verified); V8 decode band `Write:80`, `Write:d6` (red NACK mark), `Write:e0`. A1 captures 22:33:50 / :55 / 22:34:01; v7 log `[scope]` 22:33:43 → 22:34:21, n 120 → 490, `tca` = `ina` = n, `bq=0 bq_codes=2222222222`, no reboot.
+- S1 V5b (operator): "1. confirmed. Small space so hard to be 100% about it, but I'm ok enough to try turning on the power, which i just did 2. yes". S1 V7: "1. confirmed 2. yes"; `val_V7_02` CH2 −0.0157 V; operator: "ok checked and fixed (I think). plugged in power on". The session's command checker then gave no verdict on several calls; the operator ran `capture.py` for `val_V7_03` in another terminal and pasted the output; `val_V7_03` passes, CH2 sd 29.56 mV with spikes 2.79–3.64 V.
+- S1 V8, S1 (session): V8 decode band `Write:d6` with NACK mark; panel Vpp(C2) and Vbase(C2) `*****`. Captures 23:12:56 / 23:13:02 / :08; log 23:12:51 → 23:13:26, n 110 → 460, `tca` = `ina` = n, `bq=0`, no reboot.
+- S0 V7 (operator): CH1 on K only "1. confirmed 2. yes"; `val_V7_S0_01` CH1 −0.0127 V. Operator: "The ESP32-s3 pins/pads seem to have some kind of substance in them, semi-transparent, which scrapes away a bit when touched by the probe needles. I reseated CH1"; `val_V7_S0_02` CH1 −0.0118 V. Operator (third seat): "I think everything is in place now"; `2026-10-25_…_val_V7_S0_01` passes, 2 s after `BUS RELEASED` 09:35:48.
+- S0 V8, S0 (session): V8 `Write:d6` with NACK mark. Captures 09:37:02 / :08 / :14; log 09:36:51 → 09:37:34, n 70 → 500, `tca` = `ina` = n, `bq=0`, no reboot.
+- Anchor (operator, after the amendment 598369c): "a — move CH1 tip from K back to A"; "1. confirmed 2. plugged in, PWR LED on". `val_V7_A2_01` passes, 2 s after `BUS RELEASED` 09:46:11. V8 `Write:d6` with NACK mark. A2 captures 09:47:08 / :14 / :20; log 09:46:57 → 09:47:37, n 30 → 430, `tca` = `ina` = n, `bq=0`, no reboot.
+- Revert (session): U3 `motion-play-v7-diag` from the worktree at 90053af, SUCCESS. Nano not reflashed (blank throughout).
+- End (operator): "v7 off, probes clear, nano off, pads look fine".
+- Observed, not asked for: every relbus boot scan this session found 0x6B; captures after midnight carry the date 2026-10-25.
+
 ### Measured values (from log; cite `lab/evidence/V7R-010/...`)
+Sources: `lab/log/2026-10-24_s02.yaml` (S2), `lab/log/2026-10-24_s03.yaml` (S1, S0, A2); `lab/evidence/V7R-010/i2c_frame/*.i2c_frame.txt` (i2c_frame.py `--expect D6` on CSVs cropped to −30…+40 µs by `lab/evidence/V7R-010/i2c_frame/crop.py`, identical to V7R-009's; originals in `lab/captures/V7R-010/`, iCloud backup); `lab/evidence/V7R-010/png/`; v7 log `lab/evidence/V7R-010/2026-10-24_V7R-010_v7_01.txt` (trimmed: blank lines and the relbus help text removed).
+
+Validation (both logs `passed: true`): V5 excess S2 1.04 / 2.66 mV rms, master end 2.29 / 3.11 mV rms (limit 5), CH1 control sd 4.95 mV, offset −6.73 mV; CH2 control invalid (see Deviations). V6 springs on F (S2) / C (master end), 0 mm. V7 idle high 3.261–3.274 V at every placement used (D/E, A/B, K/B, A/B). V8 `Write:d6` + NACK at S2, S1, S0, A2.
+
+| Arm | Point (CH1) | Captures: byte, 9th bit | SDA V_OL, 9 bit-means (mV) | Arm V_OL mean (mV) | Rise max CH1 / CH2 (ns) | SCL period (µs) | Log `bq` ACK | Controls |
+|---|---|---|---|---|---|---|---|---|
+| A1 | D (U5.6) | D6 NACK ×3 | 893.9–903.1 | 898.50 | 133.0 / 128.0 | 2.500 | 0 % (0/490) | pass |
+| S1 | A (TPIO43) | D6 NACK ×3 | 894.2–903.2 | 898.61 | 134.6 / 130.3 | 2.500–2.501 | 0 % (0/460) | pass |
+| S0 | K (U3 pad 37) | D6 NACK ×3 | 895.9–905.6 | 900.48 | 133.3 / 127.2 | 2.500 | 0 % (0/500) | pass |
+| A2 | A (TPIO43) | D6 NACK ×3 | 895.3–904.6 | 899.94 | 133.8 / 127.7 | 2.500 | 0 % (0/430) | pass |
+
+Card quantities: V_OL(K) = 900.48 mV; V_OL(A) = mean(S1, A2) = 899.28 mV; V_OL(D) = A1 = 898.50 mV. |V_OL(K) − V_OL(D)| = 1.98 mV; |V_OL(A) − V_OL(D)| = 0.78 mV; V_OL(K) − V_OL(A) = 1.20 mV. Anchor (amended): |S1 − A2| = 1.33 mV (limit 20), both > 0.4 V. Zero offset beside V_OL (not subtracted): CH1 −6.73 mV (Cal ground); on-board CH1 means at ground (V5b) −12.1 mV (C/N), and the failed K seats read −11.8 / −12.7 mV. Timing (t_SU;DAT, t_HD;DAT): captured in the CSVs, not evaluated.
+
 ### Interpretation (session; labelled as such)
+Interpretation: U3's ~0.90 V SDA low is already there at U3's own edge pad (K) and is the same, within 2 mV, at TPIO43 and at the BQ's pin. Nothing along the copper adds to it; the low comes from U3 or from what loads its pad, not from the path after it. The test had limited power against H2/H3 as stated: at a few mA, board copper drops microvolts, so only a break or a series fault (e.g. a cracked joint) could have produced a step; none is seen. The same wire is pulled to ~0.1 V by the INA/TCA ACKs (V8 screens, V7R-009), so the bus can be pulled low; the weak low is specific to U3 driving SDA, while U3's SCL lows sit near 0.1 V. Exploratory, argued only: GPIO43 is U0TXD; if the UART0 TX output (idle high) were still routed to that pad while the I²C controller pulls it low, the two drivers would fight and settle at an intermediate level. SCL's pad (GPIO44 = U0RXD, an input) would not fight. This is not measured; it sits under master: pin role. The semi-transparent coating on U3's pads is unidentified [verify]; it delayed contact at K but V7 there passed once contact was made.
 
 ## Conclusion
-- Outcome row matched: ...
-- Hypotheses excluded: ...
-- **Strength:** ...
-- Revert-on-null done: ...
+- Outcome row matched: row 1 — V_OL(K) = 900.48 mV > 0.4 V, |V_OL(K) − V_OL(D)| = 1.98 mV < 100 mV, |V_OL(A) − V_OL(D)| = 0.78 mV < 100 mV; anchor (amended, at A) 1.33 mV ≤ 20 mV; all controls pass in all four arms.
+- Hypotheses excluded: H2 (low lost along U3 → TPIO43 copper) and H3 (lost along TPIO43 → U5.6) — measured-refuted. H1 weakly supported (the elevated low is present at U3's pin). M not supported: four placements, two grounds, each validated; every capture's NACK agrees with its log; values agree across points to 2 mV.
+- **Strength:** measured-refuted (H2, H3; one board, one rigid, A/B/C/A with the anchor amended to A, 3 captures per arm); H1 measured-supported only in the weak sense of the row (location, not mechanism); `lab/evidence/V7R-010/`
+- Deviations: (1) Anchor amended before any anchor data (598369c, user "a"): A2 at A by a single-tip move instead of a full move back to S2, to limit probe moves; V_OL(D) rests on A1 alone and drift at D is not checked. (2) V5a control CH2 on the Cal signal, not ground: CH2 V5 invalid at both grounds; accepted (user "b"; CH2 = SCL carries no counted number). (3) `val_V3_02` captured at the wrong scale/offset; recaptured as `_03`. (4) AUTO pressed twice before V3 (V3 then sets every setting). (5) Re-seats: S1 CH2 off pad B once (`val_V7_02`); K needed three seats (coating on U3's pads, operator report). (6) `val_V7_03` captured by the operator in another terminal while the session's command checker gave no verdict; output pasted. (7) Analysis on cropped CSVs (user choice a, as V7R-009; Planner relay open). (8) Banner control not observed; SCL period 2.500 µs in all 12 captures stands in. (9) CH2 at B showed spike bursts at `val_V7_03` (sd 29.56 mV); not at later V7 captures at B (sd 4.7–5.1 mV).
+- Revert-on-null done: yes (not a null; revert per card) — U3 on v7-clean motion-play-v7-diag (90053af), Nano on the blank sketch, probes off the board, both boards unplugged
 - Result commit: self
