@@ -1,0 +1,635 @@
+=== val-relbus 15:15:08 (U3 relbus upload for validation; Nano blank)
+2026-10-24T15:15:46.995 BQ24195 configured: IINLIM=2A, watchdog disabled
+2026-10-24T15:15:46.996 [PowerMonitor] INA219 configured: 10mR shunt, 1mA/LSB, 8A max
+2026-10-24T15:15:46.996 [PWR after BQ config] VSYS=4.33 V, I=0 mA
+2026-10-24T15:15:46.996 Display initialized
+2026-10-24T15:15:46.996 [PWR after display init] VSYS=4.33 V, I=0 mA
+2026-10-24T15:15:46.996 
+2026-10-24T15:15:46.996 ==============================================================
+2026-10-24T15:15:46.996 [DIAG_RELEASE_I2C] Bus-release diagnostic mode
+2026-10-24T15:15:46.996 ==============================================================
+2026-10-24T15:15:46.996 Skipping WiFi/MQTT/sensor init.
+2026-10-24T15:15:46.996 Running 5-iteration diagnostic burst to prove BQ NACK reproduces
+2026-10-24T15:15:46.996 on the ESP32 side, then releasing the I2C bus to an external master.
+2026-10-24T15:15:46.996 
+2026-10-24T15:15:46.996 Probing: INA(0x40)  BQ(0x6B)  TCA(0x70)
+2026-10-24T15:15:46.996 Legend:  '.' = ACK,  'X(n)' = error n
+2026-10-24T15:15:46.997          (with failing-config cable in J6, expect BQ:X(2) on TCA2 row)
+2026-10-24T15:15:46.997 
+2026-10-24T15:15:46.997 --- Iteration 1 ---
+2026-10-24T15:15:46.997 t=   9085  BASE        INA:.    BQ:.    TCA:.
+2026-10-24T15:15:46.997 t=   9089  TCA0        INA:.    BQ:.    TCA:.
+2026-10-24T15:15:46.997 t=   9093  TCA1        INA:.    BQ:.    TCA:.
+2026-10-24T15:15:46.997 t=   9097  TCA2        INA:.    BQ:X(2) TCA:.
+2026-10-24T15:15:46.997 
+2026-10-24T15:15:48.427 --- Iteration 2 ---
+2026-10-24T15:15:48.427 t=  10600  BASE        INA:.    BQ:.    TCA:.
+2026-10-24T15:15:48.427 t=  10604  TCA0        INA:.    BQ:.    TCA:.
+2026-10-24T15:15:48.427 t=  10608  TCA1        INA:.    BQ:.    TCA:.
+2026-10-24T15:15:48.427 t=  10612  TCA2        INA:.    BQ:X(2) TCA:.
+2026-10-24T15:15:48.427 
+2026-10-24T15:15:49.853 --- Iteration 3 ---
+2026-10-24T15:15:49.853 t=  12115  BASE        INA:.    BQ:.    TCA:.
+2026-10-24T15:15:49.854 t=  12119  TCA0        INA:.    BQ:.    TCA:.
+2026-10-24T15:15:49.854 t=  12123  TCA1        INA:.    BQ:.    TCA:.
+2026-10-24T15:15:49.854 t=  12127  TCA2        INA:.    BQ:X(2) TCA:.
+2026-10-24T15:15:49.854 
+2026-10-24T15:15:51.484 --- Iteration 4 ---
+2026-10-24T15:15:51.484 t=  13630  BASE        INA:.    BQ:.    TCA:.
+2026-10-24T15:15:51.484 t=  13634  TCA0        INA:.    BQ:.    TCA:.
+2026-10-24T15:15:51.484 t=  13638  TCA1        INA:.    BQ:.    TCA:.
+2026-10-24T15:15:51.484 t=  13642  TCA2        INA:.    BQ:X(2) TCA:.
+2026-10-24T15:15:51.484 
+2026-10-24T15:15:52.911 --- Iteration 5 ---
+2026-10-24T15:15:52.911 t=  15145  BASE        INA:.    BQ:.    TCA:.
+2026-10-24T15:15:52.911 t=  15149  TCA0        INA:.    BQ:.    TCA:.
+2026-10-24T15:15:52.911 t=  15153  TCA1        INA:.    BQ:.    TCA:.
+2026-10-24T15:15:52.911 t=  15157  TCA2        INA:.    BQ:X(2) TCA:.
+2026-10-24T15:15:52.911 
+2026-10-24T15:15:54.539 Burst complete. Closing all TCA channels for clean baseline...
+2026-10-24T15:15:54.539 Releasing I2C bus...
+2026-10-24T15:15:54.539 
+2026-10-24T15:15:54.539 ==============================================================
+2026-10-24T15:15:54.539 BUS RELEASED
+2026-10-24T15:15:54.539 ==============================================================
+2026-10-24T15:15:54.539 ESP32 is no longer driving SDA/SCL. All TCA channels are closed
+2026-10-24T15:15:54.539 (clean baseline). BQ24195 is configured (IINLIM=2A, watchdog
+2026-10-24T15:15:54.539 disabled) and will retain that state indefinitely.
+2026-10-24T15:15:54.539 
+2026-10-24T15:15:54.539 Connect an Arduino Nano ESP32 (or any 3.3V Arduino) to:
+2026-10-24T15:15:54.539   Arduino SDA   <-> main PCB TPIO43 (SDA)
+2026-10-24T15:15:54.539   Arduino SCL   <-> main PCB TPIO44 (SCL)
+2026-10-24T15:15:54.540   Arduino GND   <-> main PCB GND test pad (shared ground required)
+2026-10-24T15:15:54.540 
+2026-10-24T15:15:54.540 Then flash and run:
+2026-10-24T15:15:54.540   tools/arduino-sketches/v7_bq_master_probe/v7_bq_master_probe.ino
+2026-10-24T15:15:54.540 
+2026-10-24T15:15:54.540 The Arduino sketch probes BQ on the closed-bus baseline, then opens
+2026-10-24T15:15:54.540 TCA channel 2 from its own master, and reports whether BQ ACKs in
+2026-10-24T15:15:54.540 each state. Expected outcomes:
+2026-10-24T15:15:54.540   - BQ NACKs Arduino on TCA2 -> Story D-revised confirmed
+[trimmed by session: 164 lines omitted; full log in lab/captures/V7R-009/ (iCloud backup)]
+2026-10-24T15:29:04.633 [heartbeat] t=806719 ms — ESP32 alive, bus released
+2026-10-24T15:29:09.509 [heartbeat] t=811719 ms — ESP32 alive, bus released
+2026-10-24T15:29:14.589 [heartbeat] t=816719 ms — ESP32 alive, bus released
+2026-10-24T15:29:19.468 [heartbeat] t=821719 ms — ESP32 alive, bus released
+2026-10-24T15:29:21.363 [logger] read failed: [Errno 6] Device not configured
+=== start 20:18:12 (V5b, v7 relbus)
+2026-10-24T20:18:44.481 
+2026-10-24T20:18:44.481 
+2026-10-24T20:18:44.482 =================================
+2026-10-24T20:18:44.482 Motion Play Device - BOOT
+2026-10-24T20:18:44.482 =================================
+2026-10-24T20:18:44.482 =================================
+2026-10-24T20:18:44.482 
+2026-10-24T20:18:44.482 === Configuring BQ24195 (input current limit) ===
+2026-10-24T20:18:44.482 [   760][I][esp32-hal-i2c.c:75] i2cInit(): Initialising I2C Master: sda=43 scl=44 freq=100000
+2026-10-24T20:18:44.482 [I2C SCAN] Scanning 0x03..0x77...
+2026-10-24T20:18:44.482 [I2C SCAN]   Found device at 0x40
+2026-10-24T20:18:44.482 [I2C SCAN]   Found device at 0x6B
+2026-10-24T20:18:44.482 [I2C SCAN]   Found device at 0x70
+2026-10-24T20:18:44.482 [I2C SCAN] Done. 3 device(s) responded.
+2026-10-24T20:18:44.482 BQ24195 configured: IINLIM=2A, watchdog disabled
+2026-10-24T20:18:44.482 [PowerMonitor] INA219 configured: 10mR shunt, 1mA/LSB, 8A max
+2026-10-24T20:18:44.482 [PWR after BQ config] VSYS=4.21 V, I=66 mA
+2026-10-24T20:18:44.482 Display initialized
+2026-10-24T20:18:44.482 [PWR after display init] VSYS=4.21 V, I=66 mA
+2026-10-24T20:18:44.482 
+2026-10-24T20:18:44.482 ==============================================================
+2026-10-24T20:18:44.482 [DIAG_RELEASE_I2C] Bus-release diagnostic mode
+2026-10-24T20:18:44.482 ==============================================================
+2026-10-24T20:18:44.482 Skipping WiFi/MQTT/sensor init.
+2026-10-24T20:18:44.482 Running 5-iteration diagnostic burst to prove BQ NACK reproduces
+2026-10-24T20:18:44.482 on the ESP32 side, then releasing the I2C bus to an external master.
+2026-10-24T20:18:44.482 
+2026-10-24T20:18:44.483 Probing: INA(0x40)  BQ(0x6B)  TCA(0x70)
+2026-10-24T20:18:44.483 Legend:  '.' = ACK,  'X(n)' = error n
+2026-10-24T20:18:44.483          (with failing-config cable in J6, expect BQ:X(2) on TCA2 row)
+2026-10-24T20:18:44.483 
+2026-10-24T20:18:44.483 --- Iteration 1 ---
+2026-10-24T20:18:44.483 t=    786  BASE        INA:.    BQ:.    TCA:.
+2026-10-24T20:18:44.483 t=    790  TCA0        INA:.    BQ:.    TCA:.
+2026-10-24T20:18:44.483 t=    794  TCA1        INA:.    BQ:.    TCA:.
+2026-10-24T20:18:44.483 t=    798  TCA2        INA:.    BQ:X(2) TCA:.
+2026-10-24T20:18:44.483 
+2026-10-24T20:18:45.903 --- Iteration 2 ---
+2026-10-24T20:18:45.903 t=   2301  BASE        INA:.    BQ:.    TCA:.
+2026-10-24T20:18:45.903 t=   2305  TCA0        INA:.    BQ:.    TCA:.
+2026-10-24T20:18:45.903 t=   2309  TCA1        INA:.    BQ:.    TCA:.
+2026-10-24T20:18:46.104 t=   2313  TCA2        INA:.    BQ:X(2) TCA:.
+2026-10-24T20:18:46.105 
+2026-10-24T20:18:47.524 --- Iteration 3 ---
+2026-10-24T20:18:47.524 t=   3816  BASE        INA:.    BQ:.    TCA:.
+2026-10-24T20:18:47.524 t=   3820  TCA0        INA:.    BQ:.    TCA:.
+2026-10-24T20:18:47.524 t=   3824  TCA1        INA:.    BQ:.    TCA:.
+2026-10-24T20:18:47.524 t=   3828  TCA2        INA:.    BQ:X(2) TCA:.
+2026-10-24T20:18:47.524 
+2026-10-24T20:18:48.950 --- Iteration 4 ---
+2026-10-24T20:18:48.950 t=   5331  BASE        INA:.    BQ:.    TCA:.
+2026-10-24T20:18:48.950 t=   5335  TCA0        INA:.    BQ:.    TCA:.
+2026-10-24T20:18:48.950 t=   5339  TCA1        INA:.    BQ:.    TCA:.
+2026-10-24T20:18:48.950 t=   5343  TCA2        INA:.    BQ:X(2) TCA:.
+2026-10-24T20:18:48.950 
+2026-10-24T20:18:50.580 --- Iteration 5 ---
+2026-10-24T20:18:50.580 t=   6846  BASE        INA:.    BQ:.    TCA:.
+2026-10-24T20:18:50.580 t=   6850  TCA0        INA:.    BQ:.    TCA:.
+2026-10-24T20:18:50.580 t=   6854  TCA1        INA:.    BQ:.    TCA:.
+2026-10-24T20:18:50.580 t=   6858  TCA2        INA:.    BQ:X(2) TCA:.
+2026-10-24T20:18:50.580 
+2026-10-24T20:18:52.004 Burst complete. Closing all TCA channels for clean baseline...
+2026-10-24T20:18:52.004 Releasing I2C bus...
+2026-10-24T20:18:52.209 
+2026-10-24T20:18:52.209 ==============================================================
+2026-10-24T20:18:52.209 BUS RELEASED
+2026-10-24T20:18:52.209 ==============================================================
+2026-10-24T20:18:52.209 ESP32 is no longer driving SDA/SCL. All TCA channels are closed
+2026-10-24T20:18:52.209 (clean baseline). BQ24195 is configured (IINLIM=2A, watchdog
+[trimmed by session: 109 lines omitted; full log in lab/captures/V7R-009/ (iCloud backup)]
+2026-10-24T20:26:17.130 [heartbeat] t=453420 ms — ESP32 alive, bus released
+2026-10-24T20:26:22.206 [heartbeat] t=458420 ms — ESP32 alive, bus released
+2026-10-24T20:26:27.068 [heartbeat] t=463420 ms — ESP32 alive, bus released
+2026-10-24T20:26:32.145 [heartbeat] t=468420 ms — ESP32 alive, bus released
+2026-10-24T20:26:32.343 [logger] read failed: [Errno 6] Device not configured
+=== start 20:26:39 (V7, v7 relbus)
+2026-10-24T20:35:08.507 
+2026-10-24T20:35:08.507 
+2026-10-24T20:35:08.507 =================================
+2026-10-24T20:35:08.507 Motion Play Device - BOOT
+2026-10-24T20:35:08.507 =================================
+2026-10-24T20:35:08.507 =================================
+2026-10-24T20:35:08.507 
+2026-10-24T20:35:08.507 === Configuring BQ24195 (input current limit) ===
+2026-10-24T20:35:08.508 [   760][I][esp32-hal-i2c.c:75] i2cInit(): Initialising I2C Master: sda=43 scl=44 freq=100000
+2026-10-24T20:35:08.508 [I2C SCAN] Scanning 0x03..0x77...
+2026-10-24T20:35:08.508 [I2C SCAN]   Found device at 0x40
+2026-10-24T20:35:08.508 [I2C SCAN]   Found device at 0x6B
+2026-10-24T20:35:08.508 [I2C SCAN]   Found device at 0x70
+2026-10-24T20:35:08.508 [I2C SCAN] Done. 3 device(s) responded.
+2026-10-24T20:35:08.508 BQ24195 configured: IINLIM=2A, watchdog disabled
+2026-10-24T20:35:08.508 [PowerMonitor] INA219 configured: 10mR shunt, 1mA/LSB, 8A max
+2026-10-24T20:35:08.508 [PWR after BQ config] VSYS=4.21 V, I=65 mA
+2026-10-24T20:35:08.508 Display initialized
+2026-10-24T20:35:08.508 [PWR after display init] VSYS=4.21 V, I=65 mA
+2026-10-24T20:35:08.508 
+2026-10-24T20:35:08.508 ==============================================================
+2026-10-24T20:35:08.508 [DIAG_RELEASE_I2C] Bus-release diagnostic mode
+2026-10-24T20:35:08.508 ==============================================================
+2026-10-24T20:35:08.508 Skipping WiFi/MQTT/sensor init.
+2026-10-24T20:35:08.508 Running 5-iteration diagnostic burst to prove BQ NACK reproduces
+2026-10-24T20:35:08.508 on the ESP32 side, then releasing the I2C bus to an external master.
+2026-10-24T20:35:08.508 
+2026-10-24T20:35:08.508 Probing: INA(0x40)  BQ(0x6B)  TCA(0x70)
+2026-10-24T20:35:08.508 Legend:  '.' = ACK,  'X(n)' = error n
+2026-10-24T20:35:08.508          (with failing-config cable in J6, expect BQ:X(2) on TCA2 row)
+2026-10-24T20:35:08.508 
+2026-10-24T20:35:08.508 --- Iteration 1 ---
+2026-10-24T20:35:08.508 t=    786  BASE        INA:.    BQ:.    TCA:.
+2026-10-24T20:35:08.508 t=    790  TCA0        INA:.    BQ:.    TCA:.
+2026-10-24T20:35:08.508 t=    794  TCA1        INA:.    BQ:.    TCA:.
+2026-10-24T20:35:08.509 t=    798  TCA2        INA:.    BQ:X(2) TCA:.
+2026-10-24T20:35:08.509 
+2026-10-24T20:35:09.930 --- Iteration 2 ---
+2026-10-24T20:35:09.931 t=   2301  BASE        INA:.    BQ:.    TCA:.
+2026-10-24T20:35:09.931 t=   2305  TCA0        INA:.    BQ:.    TCA:.
+2026-10-24T20:35:09.931 t=   2309  TCA1        INA:.    BQ:.    TCA:.
+2026-10-24T20:35:09.931 t=   2313  TCA2        INA:.    BQ:X(2) TCA:.
+2026-10-24T20:35:09.931 
+2026-10-24T20:35:11.559 --- Iteration 3 ---
+2026-10-24T20:35:11.559 t=   3816  BASE        INA:.    BQ:.    TCA:.
+2026-10-24T20:35:11.559 t=   3820  TCA0        INA:.    BQ:.    TCA:.
+2026-10-24T20:35:11.559 t=   3824  TCA1        INA:.    BQ:.    TCA:.
+2026-10-24T20:35:11.559 t=   3828  TCA2        INA:.    BQ:X(2) TCA:.
+2026-10-24T20:35:11.559 
+2026-10-24T20:35:12.970 --- Iteration 4 ---
+2026-10-24T20:35:12.970 t=   5331  BASE        INA:.    BQ:.    TCA:.
+2026-10-24T20:35:12.970 t=   5335  TCA0        INA:.    BQ:.    TCA:.
+2026-10-24T20:35:12.970 t=   5339  TCA1        INA:.    BQ:.    TCA:.
+2026-10-24T20:35:12.970 t=   5343  TCA2        INA:.    BQ:X(2) TCA:.
+2026-10-24T20:35:12.970 
+2026-10-24T20:35:14.597 --- Iteration 5 ---
+2026-10-24T20:35:14.597 t=   6846  BASE        INA:.    BQ:.    TCA:.
+2026-10-24T20:35:14.597 t=   6850  TCA0        INA:.    BQ:.    TCA:.
+2026-10-24T20:35:14.597 t=   6854  TCA1        INA:.    BQ:.    TCA:.
+2026-10-24T20:35:14.597 t=   6858  TCA2        INA:.    BQ:X(2) TCA:.
+2026-10-24T20:35:14.597 
+2026-10-24T20:35:16.026 Burst complete. Closing all TCA channels for clean baseline...
+2026-10-24T20:35:16.026 Releasing I2C bus...
+2026-10-24T20:35:16.026 
+2026-10-24T20:35:16.027 ==============================================================
+2026-10-24T20:35:16.027 BUS RELEASED
+2026-10-24T20:35:16.027 ==============================================================
+2026-10-24T20:35:16.027 ESP32 is no longer driving SDA/SCL. All TCA channels are closed
+2026-10-24T20:35:16.027 (clean baseline). BQ24195 is configured (IINLIM=2A, watchdog
+[trimmed by session: 50 lines omitted; full log in lab/captures/V7R-009/ (iCloud backup)]
+2026-10-24T20:37:46.167 [heartbeat] t=158420 ms — ESP32 alive, bus released
+2026-10-24T20:37:51.040 [heartbeat] t=163420 ms — ESP32 alive, bus released
+2026-10-24T20:37:56.121 [heartbeat] t=168420 ms — ESP32 alive, bus released
+2026-10-24T20:38:01.191 [heartbeat] t=173420 ms — ESP32 alive, bus released
+2026-10-24T20:38:05.461 [logger] read failed: [Errno 6] Device not configured
+=== start 20:38:12 (V7 re-seat, v7 relbus)
+2026-10-24T20:44:58.532 
+2026-10-24T20:44:58.533 
+2026-10-24T20:44:58.533 =================================
+2026-10-24T20:44:58.533 Motion Play Device - BOOT
+2026-10-24T20:44:58.533 =================================
+2026-10-24T20:44:58.533 =================================
+2026-10-24T20:44:58.533 
+2026-10-24T20:44:58.533 === Configuring BQ24195 (input current limit) ===
+2026-10-24T20:44:58.533 [   760][I][esp32-hal-i2c.c:75] i2cInit(): Initialising I2C Master: sda=43 scl=44 freq=100000
+2026-10-24T20:44:58.533 [I2C SCAN] Scanning 0x03..0x77...
+2026-10-24T20:44:58.533 [I2C SCAN]   Found device at 0x40
+2026-10-24T20:44:58.533 [I2C SCAN]   Found device at 0x6B
+2026-10-24T20:44:58.533 [I2C SCAN]   Found device at 0x70
+2026-10-24T20:44:58.533 [I2C SCAN] Done. 3 device(s) responded.
+2026-10-24T20:44:58.533 BQ24195 configured: IINLIM=2A, watchdog disabled
+2026-10-24T20:44:58.533 [PowerMonitor] INA219 configured: 10mR shunt, 1mA/LSB, 8A max
+2026-10-24T20:44:58.533 [PWR after BQ config] VSYS=4.21 V, I=65 mA
+2026-10-24T20:44:58.533 Display initialized
+2026-10-24T20:44:58.533 [PWR after display init] VSYS=4.21 V, I=65 mA
+2026-10-24T20:44:58.533 
+2026-10-24T20:44:58.533 ==============================================================
+2026-10-24T20:44:58.533 [DIAG_RELEASE_I2C] Bus-release diagnostic mode
+2026-10-24T20:44:58.533 ==============================================================
+2026-10-24T20:44:58.533 Skipping WiFi/MQTT/sensor init.
+2026-10-24T20:44:58.533 Running 5-iteration diagnostic burst to prove BQ NACK reproduces
+2026-10-24T20:44:58.533 on the ESP32 side, then releasing the I2C bus to an external master.
+2026-10-24T20:44:58.533 
+2026-10-24T20:44:58.533 Probing: INA(0x40)  BQ(0x6B)  TCA(0x70)
+2026-10-24T20:44:58.533 Legend:  '.' = ACK,  'X(n)' = error n
+2026-10-24T20:44:58.533          (with failing-config cable in J6, expect BQ:X(2) on TCA2 row)
+2026-10-24T20:44:58.533 
+2026-10-24T20:44:58.533 --- Iteration 1 ---
+2026-10-24T20:44:58.533 t=    786  BASE        INA:.    BQ:.    TCA:.
+2026-10-24T20:44:58.533 t=    790  TCA0        INA:.    BQ:.    TCA:.
+2026-10-24T20:44:58.534 t=    794  TCA1        INA:.    BQ:.    TCA:.
+2026-10-24T20:44:58.534 t=    798  TCA2        INA:.    BQ:X(2) TCA:.
+2026-10-24T20:44:58.534 
+2026-10-24T20:45:00.157 --- Iteration 2 ---
+2026-10-24T20:45:00.157 t=   2301  BASE        INA:.    BQ:.    TCA:.
+2026-10-24T20:45:00.157 t=   2305  TCA0        INA:.    BQ:.    TCA:.
+2026-10-24T20:45:00.157 t=   2309  TCA1        INA:.    BQ:.    TCA:.
+2026-10-24T20:45:00.157 t=   2313  TCA2        INA:.    BQ:X(2) TCA:.
+2026-10-24T20:45:00.157 
+2026-10-24T20:45:01.575 --- Iteration 3 ---
+2026-10-24T20:45:01.575 t=   3816  BASE        INA:.    BQ:.    TCA:.
+2026-10-24T20:45:01.575 t=   3820  TCA0        INA:.    BQ:.    TCA:.
+2026-10-24T20:45:01.575 t=   3824  TCA1        INA:.    BQ:.    TCA:.
+2026-10-24T20:45:01.575 t=   3828  TCA2        INA:.    BQ:X(2) TCA:.
+2026-10-24T20:45:01.575 
+2026-10-24T20:45:02.999 --- Iteration 4 ---
+2026-10-24T20:45:03.202 t=   5331  BASE        INA:.    BQ:.    TCA:.
+2026-10-24T20:45:03.202 t=   5335  TCA0        INA:.    BQ:.    TCA:.
+2026-10-24T20:45:03.202 t=   5339  TCA1        INA:.    BQ:.    TCA:.
+2026-10-24T20:45:03.202 t=   5343  TCA2        INA:.    BQ:X(2) TCA:.
+2026-10-24T20:45:03.202 
+2026-10-24T20:45:04.624 --- Iteration 5 ---
+2026-10-24T20:45:04.624 t=   6846  BASE        INA:.    BQ:.    TCA:.
+2026-10-24T20:45:04.624 t=   6850  TCA0        INA:.    BQ:.    TCA:.
+2026-10-24T20:45:04.624 t=   6854  TCA1        INA:.    BQ:.    TCA:.
+2026-10-24T20:45:04.624 t=   6858  TCA2        INA:.    BQ:X(2) TCA:.
+2026-10-24T20:45:04.624 
+2026-10-24T20:45:06.044 Burst complete. Closing all TCA channels for clean baseline...
+2026-10-24T20:45:06.044 Releasing I2C bus...
+2026-10-24T20:45:06.249 
+2026-10-24T20:45:06.249 ==============================================================
+2026-10-24T20:45:06.249 BUS RELEASED
+2026-10-24T20:45:06.249 ==============================================================
+2026-10-24T20:45:06.249 ESP32 is no longer driving SDA/SCL. All TCA channels are closed
+2026-10-24T20:45:06.249 (clean baseline). BQ24195 is configured (IINLIM=2A, watchdog
+[trimmed by session: 41 lines omitted; full log in lab/captures/V7R-009/ (iCloud backup)]
+2026-10-24T20:46:51.153 [heartbeat] t=113420 ms — ESP32 alive, bus released
+2026-10-24T20:46:56.244 [heartbeat] t=118420 ms — ESP32 alive, bus released
+2026-10-24T20:47:01.106 [heartbeat] t=123420 ms — ESP32 alive, bus released
+2026-10-24T20:47:06.178 [heartbeat] t=128420 ms — ESP32 alive, bus released
+2026-10-24T20:47:08.793 [logger] read failed: [Errno 6] Device not configured
+=== start 20:47:18 (after V7_02, v7 relbus)
+2026-10-24T20:58:30.075 
+2026-10-24T20:58:30.076 
+2026-10-24T20:58:30.076 =================================
+2026-10-24T20:58:30.076 Motion Play Device - BOOT
+2026-10-24T20:58:30.076 =================================
+2026-10-24T20:58:30.076 =================================
+2026-10-24T20:58:30.076 
+2026-10-24T20:58:30.076 === Configuring BQ24195 (input current limit) ===
+2026-10-24T20:58:30.076 [   760][I][esp32-hal-i2c.c:75] i2cInit(): Initialising I2C Master: sda=43 scl=44 freq=100000
+2026-10-24T20:58:30.076 [I2C SCAN] Scanning 0x03..0x77...
+2026-10-24T20:58:30.076 [I2C SCAN]   Found device at 0x40
+2026-10-24T20:58:30.076 [I2C SCAN]   Found device at 0x6B
+2026-10-24T20:58:30.076 [I2C SCAN]   Found device at 0x70
+2026-10-24T20:58:30.076 [I2C SCAN] Done. 3 device(s) responded.
+2026-10-24T20:58:30.076 BQ24195 configured: IINLIM=2A, watchdog disabled
+2026-10-24T20:58:30.076 [PowerMonitor] INA219 configured: 10mR shunt, 1mA/LSB, 8A max
+2026-10-24T20:58:30.076 [PWR after BQ config] VSYS=4.21 V, I=67 mA
+2026-10-24T20:58:30.076 Display initialized
+2026-10-24T20:58:30.076 [PWR after display init] VSYS=4.21 V, I=67 mA
+2026-10-24T20:58:30.076 
+2026-10-24T20:58:30.076 ==============================================================
+2026-10-24T20:58:30.076 [DIAG_RELEASE_I2C] Bus-release diagnostic mode
+2026-10-24T20:58:30.076 ==============================================================
+2026-10-24T20:58:30.076 Skipping WiFi/MQTT/sensor init.
+2026-10-24T20:58:30.076 Running 5-iteration diagnostic burst to prove BQ NACK reproduces
+2026-10-24T20:58:30.076 on the ESP32 side, then releasing the I2C bus to an external master.
+2026-10-24T20:58:30.076 
+2026-10-24T20:58:30.076 Probing: INA(0x40)  BQ(0x6B)  TCA(0x70)
+2026-10-24T20:58:30.076 Legend:  '.' = ACK,  'X(n)' = error n
+2026-10-24T20:58:30.076          (with failing-config cable in J6, expect BQ:X(2) on TCA2 row)
+2026-10-24T20:58:30.076 
+2026-10-24T20:58:30.076 --- Iteration 1 ---
+2026-10-24T20:58:30.076 t=    786  BASE        INA:.    BQ:.    TCA:.
+2026-10-24T20:58:30.076 t=    790  TCA0        INA:.    BQ:.    TCA:.
+2026-10-24T20:58:30.077 t=    794  TCA1        INA:.    BQ:.    TCA:.
+2026-10-24T20:58:30.077 t=    798  TCA2        INA:.    BQ:X(2) TCA:.
+2026-10-24T20:58:30.077 
+2026-10-24T20:58:31.496 --- Iteration 2 ---
+2026-10-24T20:58:31.496 t=   2301  BASE        INA:.    BQ:.    TCA:.
+2026-10-24T20:58:31.496 t=   2305  TCA0        INA:.    BQ:.    TCA:.
+2026-10-24T20:58:31.496 t=   2309  TCA1        INA:.    BQ:.    TCA:.
+2026-10-24T20:58:31.496 t=   2313  TCA2        INA:.    BQ:X(2) TCA:.
+2026-10-24T20:58:31.496 
+2026-10-24T20:58:33.129 --- Iteration 3 ---
+2026-10-24T20:58:33.129 t=   3816  BASE        INA:.    BQ:.    TCA:.
+2026-10-24T20:58:33.129 t=   3820  TCA0        INA:.    BQ:.    TCA:.
+2026-10-24T20:58:33.129 t=   3824  TCA1        INA:.    BQ:.    TCA:.
+2026-10-24T20:58:33.129 t=   3828  TCA2        INA:.    BQ:X(2) TCA:.
+2026-10-24T20:58:33.129 
+2026-10-24T20:58:34.558 --- Iteration 4 ---
+2026-10-24T20:58:34.558 t=   5331  BASE        INA:.    BQ:.    TCA:.
+2026-10-24T20:58:34.558 t=   5335  TCA0        INA:.    BQ:.    TCA:.
+2026-10-24T20:58:34.558 t=   5339  TCA1        INA:.    BQ:.    TCA:.
+2026-10-24T20:58:34.558 t=   5343  TCA2        INA:.    BQ:X(2) TCA:.
+2026-10-24T20:58:34.558 
+2026-10-24T20:58:35.974 --- Iteration 5 ---
+2026-10-24T20:58:35.974 t=   6846  BASE        INA:.    BQ:.    TCA:.
+2026-10-24T20:58:35.974 t=   6850  TCA0        INA:.    BQ:.    TCA:.
+2026-10-24T20:58:36.179 t=   6854  TCA1        INA:.    BQ:.    TCA:.
+2026-10-24T20:58:36.180 t=   6858  TCA2        INA:.    BQ:X(2) TCA:.
+2026-10-24T20:58:36.180 
+2026-10-24T20:58:37.601 Burst complete. Closing all TCA channels for clean baseline...
+2026-10-24T20:58:37.601 Releasing I2C bus...
+2026-10-24T20:58:37.601 
+2026-10-24T20:58:37.601 ==============================================================
+2026-10-24T20:58:37.601 BUS RELEASED
+2026-10-24T20:58:37.601 ==============================================================
+2026-10-24T20:58:37.602 ESP32 is no longer driving SDA/SCL. All TCA channels are closed
+2026-10-24T20:58:37.602 (clean baseline). BQ24195 is configured (IINLIM=2A, watchdog
+[trimmed by session: 67 lines omitted; full log in lab/captures/V7R-009/ (iCloud backup)]
+2026-10-24T21:02:32.596 [heartbeat] t=243420 ms — ESP32 alive, bus released
+2026-10-24T21:02:37.688 [heartbeat] t=248420 ms — ESP32 alive, bus released
+2026-10-24T21:02:42.563 [heartbeat] t=253420 ms — ESP32 alive, bus released
+2026-10-24T21:02:47.635 [heartbeat] t=258420 ms — ESP32 alive, bus released
+2026-10-24T21:02:52.712 [heartbeat] t=263420 ms — ESP32 alive, bus released
+=== start 21:03:30 (V8, U3 scope build)
+2026-10-24T21:03:40.389 [scope] t=21148 n=190 tca=190 ina=190 bq=0 bq_codes=2222222222
+2026-10-24T21:03:41.401 [scope] t=22148 n=200 tca=200 ina=200 bq=0 bq_codes=2222222222
+2026-10-24T21:03:42.421 [scope] t=23148 n=210 tca=210 ina=210 bq=0 bq_codes=2222222222
+2026-10-24T21:03:43.438 [scope] t=24148 n=220 tca=220 ina=220 bq=0 bq_codes=2222222222
+2026-10-24T21:03:44.454 [scope] t=25148 n=230 tca=230 ina=230 bq=0 bq_codes=2222222222
+2026-10-24T21:03:45.473 [scope] t=26148 n=240 tca=240 ina=240 bq=0 bq_codes=2222222222
+2026-10-24T21:03:46.492 [scope] t=27148 n=250 tca=250 ina=250 bq=0 bq_codes=2222222222
+2026-10-24T21:03:47.509 [scope] t=28148 n=260 tca=260 ina=260 bq=0 bq_codes=2222222222
+2026-10-24T21:03:48.523 [scope] t=29148 n=270 tca=270 ina=270 bq=0 bq_codes=2222222222
+2026-10-24T21:03:49.542 [scope] t=30148 n=280 tca=280 ina=280 bq=0 bq_codes=2222222222
+2026-10-24T21:03:50.352 [scope] t=31148 n=290 tca=290 ina=290 bq=0 bq_codes=2222222222
+2026-10-24T21:03:51.369 [scope] t=32148 n=300 tca=300 ina=300 bq=0 bq_codes=2222222222
+2026-10-24T21:03:52.384 [scope] t=33148 n=310 tca=310 ina=310 bq=0 bq_codes=2222222222
+2026-10-24T21:03:53.396 [scope] t=34148 n=320 tca=320 ina=320 bq=0 bq_codes=2222222222
+2026-10-24T21:03:54.410 [scope] t=35148 n=330 tca=330 ina=330 bq=0 bq_codes=2222222222
+2026-10-24T21:03:55.430 [scope] t=36148 n=340 tca=340 ina=340 bq=0 bq_codes=2222222222
+2026-10-24T21:03:56.448 [scope] t=37148 n=350 tca=350 ina=350 bq=0 bq_codes=2222222222
+2026-10-24T21:03:57.489 [scope] t=38148 n=360 tca=360 ina=360 bq=0 bq_codes=2222222222
+2026-10-24T21:03:58.505 [scope] t=39148 n=370 tca=370 ina=370 bq=0 bq_codes=2222222222
+2026-10-24T21:03:59.514 [scope] t=40148 n=380 tca=380 ina=380 bq=0 bq_codes=2222222222
+2026-10-24T21:04:00.528 [scope] t=41148 n=390 tca=390 ina=390 bq=0 bq_codes=2222222222
+2026-10-24T21:04:01.547 [scope] t=42148 n=400 tca=400 ina=400 bq=0 bq_codes=2222222222
+2026-10-24T21:04:02.358 [scope] t=43148 n=410 tca=410 ina=410 bq=0 bq_codes=2222222222
+2026-10-24T21:04:03.371 [scope] t=44148 n=420 tca=420 ina=420 bq=0 bq_codes=2222222222
+2026-10-24T21:04:04.385 [scope] t=45148 n=430 tca=430 ina=430 bq=0 bq_codes=2222222222
+2026-10-24T21:04:05.393 [scope] t=46148 n=440 tca=440 ina=440 bq=0 bq_codes=2222222222
+2026-10-24T21:04:06.406 [scope] t=47148 n=450 tca=450 ina=450 bq=0 bq_codes=2222222222
+2026-10-24T21:04:07.422 [scope] t=48148 n=460 tca=460 ina=460 bq=0 bq_codes=2222222222
+2026-10-24T21:04:08.435 [scope] t=49148 n=470 tca=470 ina=470 bq=0 bq_codes=2222222222
+2026-10-24T21:04:09.447 [scope] t=50148 n=480 tca=480 ina=480 bq=0 bq_codes=2222222222
+2026-10-24T21:04:10.461 [scope] t=51148 n=490 tca=490 ina=490 bq=0 bq_codes=2222222222
+2026-10-24T21:04:11.473 [scope] t=52148 n=500 tca=500 ina=500 bq=0 bq_codes=2222222222
+2026-10-24T21:04:12.490 [scope] t=53148 n=510 tca=510 ina=510 bq=0 bq_codes=2222222222
+2026-10-24T21:04:13.507 [scope] t=54148 n=520 tca=520 ina=520 bq=0 bq_codes=2222222222
+2026-10-24T21:04:14.527 [scope] t=55148 n=530 tca=530 ina=530 bq=0 bq_codes=2222222222
+2026-10-24T21:04:15.548 [scope] t=56148 n=540 tca=540 ina=540 bq=0 bq_codes=2222222222
+2026-10-24T21:04:16.363 [scope] t=57148 n=550 tca=550 ina=550 bq=0 bq_codes=2222222222
+2026-10-24T21:04:17.380 [scope] t=58148 n=560 tca=560 ina=560 bq=0 bq_codes=2222222222
+2026-10-24T21:04:18.398 [scope] t=59148 n=570 tca=570 ina=570 bq=0 bq_codes=2222222222
+2026-10-24T21:04:19.416 [scope] t=60148 n=580 tca=580 ina=580 bq=0 bq_codes=2222222222
+2026-10-24T21:04:20.432 [scope] t=61148 n=590 tca=590 ina=590 bq=0 bq_codes=2222222222
+2026-10-24T21:04:21.443 [scope] t=62148 n=600 tca=600 ina=600 bq=0 bq_codes=2222222222
+2026-10-24T21:04:22.459 [scope] t=63148 n=610 tca=610 ina=610 bq=0 bq_codes=2222222222
+2026-10-24T21:04:23.476 [scope] t=64148 n=620 tca=620 ina=620 bq=0 bq_codes=2222222222
+2026-10-24T21:04:24.490 [scope] t=65148 n=630 tca=630 ina=630 bq=0 bq_codes=2222222222
+2026-10-24T21:04:25.506 [scope] t=66148 n=640 tca=640 ina=640 bq=0 bq_codes=2222222222
+2026-10-24T21:04:26.522 [scope] t=67148 n=650 tca=650 ina=650 bq=0 bq_codes=2222222222
+2026-10-24T21:04:27.535 [scope] t=68148 n=660 tca=660 ina=660 bq=0 bq_codes=2222222222
+2026-10-24T21:04:28.546 [scope] t=69148 n=670 tca=670 ina=670 bq=0 bq_codes=2222222222
+2026-10-24T21:04:29.355 [scope] t=70148 n=680 tca=680 ina=680 bq=0 bq_codes=2222222222
+2026-10-24T21:04:30.367 [scope] t=71148 n=690 tca=690 ina=690 bq=0 bq_codes=2222222222
+2026-10-24T21:04:31.386 [scope] t=72148 n=700 tca=700 ina=700 bq=0 bq_codes=2222222222
+2026-10-24T21:04:32.394 [scope] t=73148 n=710 tca=710 ina=710 bq=0 bq_codes=2222222222
+2026-10-24T21:04:33.408 [scope] t=74148 n=720 tca=720 ina=720 bq=0 bq_codes=2222222222
+2026-10-24T21:04:34.426 [scope] t=75148 n=730 tca=730 ina=730 bq=0 bq_codes=2222222222
+2026-10-24T21:04:35.443 [scope] t=76148 n=740 tca=740 ina=740 bq=0 bq_codes=2222222222
+2026-10-24T21:04:36.456 [scope] t=77148 n=750 tca=750 ina=750 bq=0 bq_codes=2222222222
+2026-10-24T21:04:37.472 [scope] t=78148 n=760 tca=760 ina=760 bq=0 bq_codes=2222222222
+2026-10-24T21:04:38.490 [scope] t=79148 n=770 tca=770 ina=770 bq=0 bq_codes=2222222222
+2026-10-24T21:04:39.498 [scope] t=80148 n=780 tca=780 ina=780 bq=0 bq_codes=2222222222
+2026-10-24T21:04:40.512 [scope] t=81148 n=790 tca=790 ina=790 bq=0 bq_codes=2222222222
+2026-10-24T21:04:41.526 [scope] t=82148 n=800 tca=800 ina=800 bq=0 bq_codes=2222222222
+2026-10-24T21:04:42.541 [scope] t=83148 n=810 tca=810 ina=810 bq=0 bq_codes=2222222222
+2026-10-24T21:04:43.353 [scope] t=84148 n=820 tca=820 ina=820 bq=0 bq_codes=2222222222
+2026-10-24T21:04:44.366 [scope] t=85148 n=830 tca=830 ina=830 bq=0 bq_codes=2222222222
+2026-10-24T21:04:45.386 [scope] t=86148 n=840 tca=840 ina=840 bq=0 bq_codes=2222222222
+2026-10-24T21:04:46.399 [scope] t=87148 n=850 tca=850 ina=850 bq=0 bq_codes=2222222222
+2026-10-24T21:04:47.418 [scope] t=88148 n=860 tca=860 ina=860 bq=0 bq_codes=2222222222
+2026-10-24T21:04:48.430 [scope] t=89148 n=870 tca=870 ina=870 bq=0 bq_codes=2222222222
+[trimmed by session: 195 lines omitted; full log in lab/captures/V7R-009/ (iCloud backup)]
+2026-10-24T21:08:04.351 [scope] t=285148 n=2830 tca=2830 ina=2830 bq=0 bq_codes=2222222222
+2026-10-24T21:08:05.368 [scope] t=286148 n=2840 tca=2840 ina=2840 bq=0 bq_codes=2222222222
+2026-10-24T21:08:06.385 [scope] t=287148 n=2850 tca=2850 ina=2850 bq=0 bq_codes=2222222222
+2026-10-24T21:08:07.404 [scope] t=288148 n=2860 tca=2860 ina=2860 bq=0 bq_codes=2222222222
+2026-10-24T21:08:08.432 [scope] t=289148 n=2870 tca=2870 ina=2870 bq=0 bq_codes=2222222222
+=== start 21:08:49 (B, U3 relbus)
+2026-10-24T21:08:49.889 BQ24195 configured: IINLIM=2A, watchdog disabled
+2026-10-24T21:08:49.890 [PowerMonitor] INA219 configured: 10mR shunt, 1mA/LSB, 8A max
+2026-10-24T21:08:49.890 [PWR after BQ config] VSYS=4.30 V, I=0 mA
+2026-10-24T21:08:49.890 Display initialized
+2026-10-24T21:08:49.890 [PWR after display init] VSYS=4.30 V, I=0 mA
+2026-10-24T21:08:49.890 
+2026-10-24T21:08:49.890 ==============================================================
+2026-10-24T21:08:49.890 [DIAG_RELEASE_I2C] Bus-release diagnostic mode
+2026-10-24T21:08:49.890 ==============================================================
+2026-10-24T21:08:49.890 Skipping WiFi/MQTT/sensor init.
+2026-10-24T21:08:49.890 Running 5-iteration diagnostic burst to prove BQ NACK reproduces
+2026-10-24T21:08:49.890 on the ESP32 side, then releasing the I2C bus to an external master.
+2026-10-24T21:08:49.890 
+2026-10-24T21:08:49.890 Probing: INA(0x40)  BQ(0x6B)  TCA(0x70)
+2026-10-24T21:08:49.890 Legend:  '.' = ACK,  'X(n)' = error n
+2026-10-24T21:08:49.890          (with failing-config cable in J6, expect BQ:X(2) on TCA2 row)
+2026-10-24T21:08:49.890 
+2026-10-24T21:08:49.890 --- Iteration 1 ---
+2026-10-24T21:08:49.890 t=   7390  BASE        INA:.    BQ:.    TCA:.
+2026-10-24T21:08:49.890 t=   7394  TCA0        INA:.    BQ:.    TCA:.
+2026-10-24T21:08:49.890 t=   7398  TCA1        INA:.    BQ:.    TCA:.
+2026-10-24T21:08:49.890 t=   7402  TCA2        INA:.    BQ:X(2) TCA:.
+2026-10-24T21:08:49.890 
+2026-10-24T21:08:51.308 --- Iteration 2 ---
+2026-10-24T21:08:51.308 t=   8905  BASE        INA:.    BQ:.    TCA:.
+2026-10-24T21:08:51.308 t=   8909  TCA0        INA:.    BQ:.    TCA:.
+2026-10-24T21:08:51.308 t=   8913  TCA1        INA:.    BQ:.    TCA:.
+2026-10-24T21:08:51.308 t=   8917  TCA2        INA:.    BQ:X(2) TCA:.
+2026-10-24T21:08:51.308 
+2026-10-24T21:08:52.734 --- Iteration 3 ---
+2026-10-24T21:08:52.734 t=  10420  BASE        INA:.    BQ:.    TCA:.
+2026-10-24T21:08:52.734 t=  10424  TCA0        INA:.    BQ:.    TCA:.
+2026-10-24T21:08:52.935 t=  10428  TCA1        INA:.    BQ:.    TCA:.
+2026-10-24T21:08:52.935 t=  10432  TCA2        INA:.    BQ:X(2) TCA:.
+2026-10-24T21:08:52.935 
+2026-10-24T21:08:54.356 --- Iteration 4 ---
+2026-10-24T21:08:54.356 t=  11935  BASE        INA:.    BQ:.    TCA:.
+2026-10-24T21:08:54.356 t=  11939  TCA0        INA:.    BQ:.    TCA:.
+2026-10-24T21:08:54.356 t=  11943  TCA1        INA:.    BQ:.    TCA:.
+2026-10-24T21:08:54.356 t=  11947  TCA2        INA:.    BQ:X(2) TCA:.
+2026-10-24T21:08:54.356 
+2026-10-24T21:08:55.778 --- Iteration 5 ---
+2026-10-24T21:08:55.778 t=  13450  BASE        INA:.    BQ:.    TCA:.
+2026-10-24T21:08:55.778 t=  13454  TCA0        INA:.    BQ:.    TCA:.
+2026-10-24T21:08:55.778 t=  13458  TCA1        INA:.    BQ:.    TCA:.
+2026-10-24T21:08:55.778 t=  13462  TCA2        INA:.    BQ:X(2) TCA:.
+2026-10-24T21:08:55.778 
+2026-10-24T21:08:57.407 Burst complete. Closing all TCA channels for clean baseline...
+2026-10-24T21:08:57.408 Releasing I2C bus...
+2026-10-24T21:08:57.408 
+2026-10-24T21:08:57.408 ==============================================================
+2026-10-24T21:08:57.408 BUS RELEASED
+2026-10-24T21:08:57.408 ==============================================================
+2026-10-24T21:08:57.408 ESP32 is no longer driving SDA/SCL. All TCA channels are closed
+2026-10-24T21:08:57.408 (clean baseline). BQ24195 is configured (IINLIM=2A, watchdog
+2026-10-24T21:08:57.408 disabled) and will retain that state indefinitely.
+2026-10-24T21:08:57.408 
+2026-10-24T21:08:57.408 Connect an Arduino Nano ESP32 (or any 3.3V Arduino) to:
+2026-10-24T21:08:57.408   Arduino SDA   <-> main PCB TPIO43 (SDA)
+2026-10-24T21:08:57.408   Arduino SCL   <-> main PCB TPIO44 (SCL)
+2026-10-24T21:08:57.408   Arduino GND   <-> main PCB GND test pad (shared ground required)
+2026-10-24T21:08:57.408 
+2026-10-24T21:08:57.408 Then flash and run:
+2026-10-24T21:08:57.408   tools/arduino-sketches/v7_bq_master_probe/v7_bq_master_probe.ino
+2026-10-24T21:08:57.408 
+2026-10-24T21:08:57.408 The Arduino sketch probes BQ on the closed-bus baseline, then opens
+2026-10-24T21:08:57.408 TCA channel 2 from its own master, and reports whether BQ ACKs in
+2026-10-24T21:08:57.408 each state. Expected outcomes:
+2026-10-24T21:08:57.408   - BQ NACKs Arduino on TCA2 -> Story D-revised confirmed
+[trimmed by session: 20 lines omitted; full log in lab/captures/V7R-009/ (iCloud backup)]
+2026-10-24T21:10:07.370 [heartbeat] t=85024 ms — ESP32 alive, bus released
+2026-10-24T21:10:12.457 [heartbeat] t=90024 ms — ESP32 alive, bus released
+2026-10-24T21:10:17.530 [heartbeat] t=95024 ms — ESP32 alive, bus released
+2026-10-24T21:10:22.406 [heartbeat] t=100024 ms — ESP32 alive, bus released
+2026-10-24T21:10:27.481 [heartbeat] t=105024 ms — ESP32 alive, bus released
+=== start 21:10:30 (A2, U3 scope build)
+2026-10-24T21:10:45.597 [scope] t=11307 n=100 tca=100 ina=100 bq=0 bq_codes=2222222222
+2026-10-24T21:10:46.617 [scope] t=12307 n=110 tca=110 ina=110 bq=0 bq_codes=2222222222
+2026-10-24T21:10:47.636 [scope] t=13307 n=120 tca=120 ina=120 bq=0 bq_codes=2222222222
+2026-10-24T21:10:48.651 [scope] t=14307 n=130 tca=130 ina=130 bq=0 bq_codes=2222222222
+2026-10-24T21:10:49.667 [scope] t=15307 n=140 tca=140 ina=140 bq=0 bq_codes=2222222222
+2026-10-24T21:10:50.678 [scope] t=16307 n=150 tca=150 ina=150 bq=0 bq_codes=2222222222
+2026-10-24T21:10:51.692 [scope] t=17307 n=160 tca=160 ina=160 bq=0 bq_codes=2222222222
+2026-10-24T21:10:52.709 [scope] t=18307 n=170 tca=170 ina=170 bq=0 bq_codes=2222222222
+2026-10-24T21:10:53.725 [scope] t=19307 n=180 tca=180 ina=180 bq=0 bq_codes=2222222222
+2026-10-24T21:10:54.735 [scope] t=20307 n=190 tca=190 ina=190 bq=0 bq_codes=2222222222
+2026-10-24T21:10:55.753 [scope] t=21307 n=200 tca=200 ina=200 bq=0 bq_codes=2222222222
+2026-10-24T21:10:56.565 [scope] t=22307 n=210 tca=210 ina=210 bq=0 bq_codes=2222222222
+2026-10-24T21:10:57.582 [scope] t=23307 n=220 tca=220 ina=220 bq=0 bq_codes=2222222222
+2026-10-24T21:10:58.599 [scope] t=24307 n=230 tca=230 ina=230 bq=0 bq_codes=2222222222
+2026-10-24T21:10:59.620 [scope] t=25307 n=240 tca=240 ina=240 bq=0 bq_codes=2222222222
+2026-10-24T21:11:00.641 [scope] t=26307 n=250 tca=250 ina=250 bq=0 bq_codes=2222222222
+2026-10-24T21:11:01.660 [scope] t=27307 n=260 tca=260 ina=260 bq=0 bq_codes=2222222222
+2026-10-24T21:11:02.682 [scope] t=28307 n=270 tca=270 ina=270 bq=0 bq_codes=2222222222
+2026-10-24T21:11:03.698 [scope] t=29307 n=280 tca=280 ina=280 bq=0 bq_codes=2222222222
+2026-10-24T21:11:04.716 [scope] t=30307 n=290 tca=290 ina=290 bq=0 bq_codes=2222222222
+2026-10-24T21:11:05.729 [scope] t=31307 n=300 tca=300 ina=300 bq=0 bq_codes=2222222222
+2026-10-24T21:11:06.745 [scope] t=32307 n=310 tca=310 ina=310 bq=0 bq_codes=2222222222
+2026-10-24T21:11:07.559 [scope] t=33307 n=320 tca=320 ina=320 bq=0 bq_codes=2222222222
+2026-10-24T21:11:08.572 [scope] t=34307 n=330 tca=330 ina=330 bq=0 bq_codes=2222222222
+2026-10-24T21:11:09.588 [scope] t=35307 n=340 tca=340 ina=340 bq=0 bq_codes=2222222222
+2026-10-24T21:11:10.608 [scope] t=36307 n=350 tca=350 ina=350 bq=0 bq_codes=2222222222
+2026-10-24T21:11:11.634 [scope] t=37307 n=360 tca=360 ina=360 bq=0 bq_codes=2222222222
+=== start 21:11:12 (End, U3 diag)
+2026-10-24T21:11:53.619 BQ24195 configured: IINLIM=2A, watchdog disabled
+2026-10-24T21:11:53.620 [PowerMonitor] INA219 configured: 10mR shunt, 1mA/LSB, 8A max
+2026-10-24T21:11:53.620 [PWR after BQ config] VSYS=4.30 V, I=0 mA
+2026-10-24T21:11:53.620 Display initialized
+2026-10-24T21:11:53.620 [PWR after display init] VSYS=4.30 V, I=0 mA
+2026-10-24T21:11:53.620 
+2026-10-24T21:11:53.620 === Starting System Initialization ===
+2026-10-24T21:11:53.621 
+2026-10-24T21:11:53.621 [DIAG_NO_WIFI] Skipping WiFi/MQTT init, forcing radio off
+2026-10-24T21:11:53.621 WARNING: Cloud config unavailable, sensors will use defaults
+2026-10-24T21:11:53.621 
+2026-10-24T21:11:53.621 [Config] Detection mode: heuristic (useMLDetection=0)
+2026-10-24T21:11:53.621 Initializing sensors...
+2026-10-24T21:11:53.621 [PWR before sensor init] VSYS=4.30 V, I=0 mA
+2026-10-24T21:11:53.621 Initializing Sensor Manager...
+2026-10-24T21:11:53.621 [  7092][W][Wire.cpp:301] begin(): Bus already started in Master Mode.
+2026-10-24T21:11:53.621 I2C: 400 kHz, default drive, no filters, default pulls [v7-clean]
+2026-10-24T21:11:53.621 Configuration:
+2026-10-24T21:11:53.621   Sample Rate: 1000 Hz
+2026-10-24T21:11:53.621   LED Current: 200mA
+2026-10-24T21:11:53.621   Integration Time: 1T
+2026-10-24T21:11:53.621   High Resolution: enabled
+2026-10-24T21:11:53.621   Read Ambient: enabled
+2026-10-24T21:11:53.621 TCA9548A initialized
+2026-10-24T21:11:53.621 
+2026-10-24T21:11:53.621 
+2026-10-24T21:11:53.621 ╔══════════════════════════════════════════════════════════════════════════════╗
+2026-10-24T21:11:53.621 ║                        I2C DEBUG SCAN - TROUBLESHOOTING                      ║
+2026-10-24T21:11:53.621 ╠══════════════════════════════════════════════════════════════════════════════╣
+2026-10-24T21:11:53.621 ║ STEP 1: Scanning main I2C bus (no TCA channel selected)                      ║
+2026-10-24T21:11:53.621 ╠══════════════════════════════════════════════════════════════════════════════╣
+2026-10-24T21:11:53.621 ║   Found device at 0x40 - Unknown
+2026-10-24T21:11:53.621 ║   Found device at 0x6B - Unknown
+2026-10-24T21:11:53.621 ║   Found device at 0x70 - TCA9548A (main mux)
+2026-10-24T21:11:53.622 ║   Total: 3 device(s) on main bus
+2026-10-24T21:11:53.622 ╠══════════════════════════════════════════════════════════════════════════════╣
+2026-10-24T21:11:53.622 ║ STEP 2: Scanning each TCA9548A channel for connected devices                 ║
+2026-10-24T21:11:53.622 ╠══════════════════════════════════════════════════════════════════════════════╣
+2026-10-24T21:11:53.622 ║ TCA Channel 0:
+2026-10-24T21:11:53.622 ║   ✓ Found: 0x40 (Unknown)
+2026-10-24T21:11:53.622 ║   ✓ Found: 0x6B (Unknown)
+2026-10-24T21:11:53.622 ║ TCA Channel 1:
+2026-10-24T21:11:53.622 ║   ✓ Found: 0x40 (Unknown)
+2026-10-24T21:11:53.622 ║   ✓ Found: 0x6B (Unknown)
+2026-10-24T21:11:53.622 ║ TCA Channel 2:
+2026-10-24T21:11:53.622 ║   ✓ Found: 0x40 (Unknown)
+2026-10-24T21:11:53.622 ║   ✓ Found: 0x76 (PCA9546A?)
+2026-10-24T21:11:53.622 ║ TCA Channel 3:
+2026-10-24T21:11:53.622 ║   ✓ Found: 0x40 (Unknown)
+2026-10-24T21:11:53.622 ║   ✓ Found: 0x6B (Unknown)
+2026-10-24T21:11:53.622 ║ TCA Channel 4:
+2026-10-24T21:11:53.622 ║   ✓ Found: 0x40 (Unknown)
+2026-10-24T21:11:53.622 ║   ✓ Found: 0x6B (Unknown)
+2026-10-24T21:11:53.622 ║ TCA Channel 5:
+2026-10-24T21:11:53.622 ║   ✓ Found: 0x40 (Unknown)
+2026-10-24T21:11:53.622 ║   ✓ Found: 0x6B (Unknown)
+2026-10-24T21:11:53.622 ║ TCA Channel 6:
+2026-10-24T21:11:53.824 ║   ✓ Found: 0x40 (Unknown)
+2026-10-24T21:11:53.824 ║   ✓ Found: 0x6B (Unknown)
+2026-10-24T21:11:53.824 ║ TCA Channel 7:
+2026-10-24T21:11:53.824 ║   ✓ Found: 0x40 (Unknown)
+2026-10-24T21:11:53.825 ║   ✓ Found: 0x6B (Unknown)
+2026-10-24T21:11:53.825 ╠══════════════════════════════════════════════════════════════════════════════╣
+2026-10-24T21:11:53.825 ║ STEP 3: Direct PCA9546A address probe at 0x74 on TCA channel 0               ║
+2026-10-24T21:11:53.825 ╠══════════════════════════════════════════════════════════════════════════════╣
+2026-10-24T21:11:53.825 ║   TCA channel 0 selected successfully                                       ║
+2026-10-24T21:11:53.825 ║   Attempt 1: Address 0x74 -> Error 2 (NACK on address)
+2026-10-24T21:11:53.825 ║   Attempt 2: Address 0x74 -> Error 2 (NACK on address)
+2026-10-24T21:11:53.825 ║   Attempt 3: Address 0x74 -> Error 2 (NACK on address)
+[trimmed by session: 3609 lines omitted; full log in lab/captures/V7R-009/ (iCloud backup)]
+2026-10-24T21:26:53.530 t= 907168  TCA2+PCA0   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-24T21:26:53.530 t= 907172  TCA2+PCA1   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-24T21:26:53.530 
+2026-10-24T21:26:54.970 [logger] read failed: [Errno 6] Device not configured

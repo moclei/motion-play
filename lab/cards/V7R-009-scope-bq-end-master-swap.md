@@ -1,7 +1,7 @@
 ---
 test_id: V7R-009
 title: "Scope at the BQ end (U5.6/U5.5): 0x6B address frame in the failing state, U3 vs Nano ESP32 as master, A/B/A"
-status: pre-registered
+status: recorded
 created: 2026-10-24
 prereg_commit: self
 baseline:
@@ -84,12 +84,40 @@ Validation steps follow `lab/procedures/dho804-setup-validation.md` V1–V8 and 
 
 ## Actual result
 ### Raw observations (operator, verbatim; symptoms not interpretations)
+- P0 (operator): "done, network status CONNECTED"; "done. Probe 1 is ch1 and probe 2 is ch2". Nano plugged in first, then the v7 (V7R-008 power order).
+- V1–V4: V3 per channel "flat top, square corners" (CH1 and CH2), result panel items present; Vamp 3020.8 mV on each channel (log `val_V3`). V5a: tips + springs on Cal ground, captured `val_V5ctl_01`.
+- V5b (operator): spring and tip could not both sit on pad F ("the spring and the tip on both probes are a few mm apart, but the pad is smaller than that"). Session: both springs on F, both tips on pad G (C20.2, ground), see Deviations. Operator: "1. confirmed 2. confirmed … I'm only 95% sure that everything is in the right place, but nothing is in the wrong place"; "plugged in, PWR LED on".
+- V7 (operator): tips on D/E, springs on F, "95% sure"; "plugged in, PWR LED on". `val_V7_01` CH2 −0.016 V. Operator: "Ch2's tip had just slightly moved off the pad. I reseated it"; `val_V7_02` CH2 −0.0145 V. Operator re-seated again: "I'm a little more confident that CH2 is correctly touching"; "1. Yes, all good 2. power on"; `val_V7_03` passes.
+- Decode setup (operator): fields differing before: "none"; all set as listed: "confirmed"; "yes, decode band is on screen".
+- V8 (session): trigger read-backs `IIC CHAN2 CHAN1 ADDR 7 107 WRIT 0,"No error"`; 20 µs/div, SINGLE armed (WAIT), U3 scope build uploaded from `u3-scope` with `-t nobuild` (firmware.bin 84c930db, hash verified, hard reset); trigger `STOP`. Screen (PNG): decode band `Write:80`, `Write:d6` with a red mark on the 9th bit, `Write:e0`, `Da…`.
+- A1 (session, no reflash after V8): 10 µs/div; 3 SINGLE captures 21:07:22 / :28 / :34, each `STOP` before capture. v7 log `[scope]` every 10 cycles, 21:03:40 → 21:08:08: `tca` = `ina` = n, `bq=0 bq_codes=2222222222`, n 190 → 2870, no reboot.
+- B (session): U3 `motion-play-v7-relbus` from the worktree at 90053af (4 hashes verified); v7 log: relbus burst 5 iterations BASE/TCA0/TCA1 `INA:. BQ:. TCA:.`, TCA2 `INA:. BQ:X(2) TCA:.`; `BUS RELEASED` 21:08:57.408; heartbeats to 21:10:27. SINGLE armed (WAIT); Nano scope build written with esptool (bin 881bc806, 4 hashes verified, hard reset; a first call of the flash script failed with `permission denied` before esptool ran, so the Nano was written once). Trigger `STOP`; captures 21:09:40 / :46 / :52. Nano log 21:09:41 → 21:10:12: `tca` = `ina` = `bq` = n, `bq_codes=0000000000`, n 150 → 460.
+- A2 (session): Nano blank written (4 hashes verified, hard reset), Nano log ends `bq=460` then the blank marker. SINGLE armed (WAIT); U3 scope build uploaded (84c930db, hash verified). Captures 21:10:45 / :51 / :56. v7 log 21:10:45 → 21:11:11: `tca` = `ina` = n, `bq=0 bq_codes=2222222222`, n 100 → 360, no reboot.
+- Banner control: neither log holds the `[scope] sketch=… i2c_clock=400000 Hz` line (printed at setup, before the logger re-attached after each upload). See Deviations.
+- Revert (session): Nano blank (A2); U3 `motion-play-v7-diag` from the worktree at 90053af, SUCCESS; v7 log from 21:11:53 shows the diag boot (`BQ24195 configured`, `[DIAG_NO_WIFI]`). Scope left running (AUTO).
+- End (operator): "v7 off, probes clear, nano off".
+- Observed, not asked for: the v7 relbus boots at 20:44:58 and 20:58:30 logged a first diagnostic row `BASE INA:. BQ:. TCA:.`; earlier boots this session logged `TCA2 … BQ:X(2)` first. The relbus boot scan found 0x6B after every power-up this session (V7R-008 noted `BQ24195 not found` after a power cycle).
+
 ### Measured values (from log; cite `lab/evidence/V7R-009/...`)
+Sources: `lab/log/2026-10-24_s01.yaml`; `lab/evidence/V7R-009/i2c_frame/*.i2c_frame.txt` (i2c_frame.py on CSVs cropped to −30…+40 µs by `lab/evidence/V7R-009/i2c_frame/crop.py`; originals in `lab/captures/V7R-009/`, iCloud backup); `lab/evidence/V7R-009/png/`; serial logs `lab/evidence/V7R-009/2026-10-24_V7R-009_{v7,nano}_01.txt`.
+
+Validation (log `validation`, `passed: true`): V5 excess 0.00 / 1.44 mV rms (limit 5), control sd 5.30 / 4.97 mV, offset −11.95 / −14.91 mV; V6 springs on F, 0 mm; V7 idle high 3.273 / 3.261 V (`val_V7_03`); V8 `Write:d6` decoded.
+
+| Arm | Master | Captures: byte, 9th bit | SDA V_OL, 9 bit-means (mV) | Arm V_OL mean (mV) | Rise max CH1 / CH2 (ns) | SCL period (µs) | Log `bq` ACK | Controls |
+|---|---|---|---|---|---|---|---|---|
+| A1 | U3 (scope build) | D6 NACK ×3 | 895.1–903.7 | 899.2 | 134.7 / 127.1 | 2.500–2.501 | 0 % (0/2870) | pass (banner: see Deviations) |
+| B  | Nano (scope build), U3 relbus | D6 ACK ×3 | 103.4–114.9 | 108.5 | 136.3 / 127.4 | 2.500–2.501 | 100 % (460/460) | pass; U3 heartbeat |
+| A2 | U3 (scope build) | D6 NACK ×3 | 890.9–902.9 | 897.7 | 134.4 / 126.8 | 2.500 | 0 % (0/360) | pass |
+
+Differences: |V_OL(B) − V_OL(A1)| = 790.7 mV, |V_OL(B) − V_OL(A2)| = 789.2 mV, both A higher. A1 vs A2: 1.5 mV, rise 0.3 / 0.3 ns. |rise(B) − rise(A)| ≤ 1.9 ns per channel. Pass table: V_OL > 0.4 V on all 18 A-arm bit-means, none in B; rise ≤ 300 ns everywhere; idle high where reported 3.261–3.275 V. Zero offsets beside V_OL (not subtracted): CH1 −11.95 mV. Scope panel (PNG, not counted): Vbase(C2) 96.933 mV in A1_01, B_01, A2_01; SCL lows near 0.1 V on screen in every arm. Timing (t_SU;DAT, t_HD;DAT): captured in the CSVs, not evaluated (no validated tool).
+
 ### Interpretation (session; labelled as such)
+Interpretation: at the BQ's pins, with the trigger cable in place, the address byte is the same under both masters (D6, same SCL period, same rise times), but SDA's low level is not: about 0.90 V when U3 drives it, about 0.11 V when the Nano drives the same bus from TPIO43/44. SCL's low under U3 sits near 0.1 V, so the elevated low is on SDA only. 0.90 V is above the I²C 0.4 V V_OL limit. That INA and TCA ACK at that level while BQ (and VCNL) NACK would fit inputs with different low thresholds; the parts' V_IL values have not been checked against their datasheets [verify]. The legacy readings (L-Ph21 V_OL ~650/750 mV; L-Ph23 SDA ~50 mV) are replaced by this validated measurement at S2. Where along U3's path the low is lost (U3's pad, the U3→TPIO copper, or something on SDA sourcing current while U3 pulls low), and whether it depends on the far-end trigger path, is not measured here. Exploratory: SDA at ~0.9 V against a pull-up network of roughly 1.5–2 kΩ (legacy, unmeasured on this config) would mean several hundred ohms in U3's pull-down path; argued only.
 
 ## Conclusion
-- Outcome row matched: ...
-- Hypotheses excluded: ...
-- **Strength:** ...
-- Revert-on-null done: ...
+- Outcome row matched: row 2 — all 9 captures decode `D6`; A1 vs A2 within 10 mV (1.5 mV) and 15 ns (0.3 ns); |V_OL(B) − V_OL(A)| ≥ 20 mV for both A1 (790.7 mV) and A2 (789.2 mV), both A higher; controls pass. With it, the pass-table row: V_OL > 0.4 V in A only (supports H1). Rise differences < 30 ns (rise is not the quantity that differs).
+- Hypotheses excluded: H2 (the frames match in level/edge/byte at U5's pins) — measured-refuted. H1 measured-supported for SDA V_OL; measured-refuted for rise time and decoded byte. M not supported: the same probes, ground and placement served all arms; the level follows the master A/B/A; validation passed; each capture's 9th bit agrees with its arm's log.
+- **Strength:** measured-supported (H1, SDA V_OL at U5.6; one board, one rigid, one Nano, A/B/A, 3 captures per arm, one probe placement); measured-refuted (H2); `lab/evidence/V7R-009/`
+- Deviations: (1) V5b tips on pad G (C20.2, ground) with springs on F, because spring and tip would not both fit on F (user-agreed). (2) `val_V5` capture run with `--items` in a wrong format: the panel Vpp values were not read (SCPI timeouts recorded); the CSV and noise_floor result are unaffected. (3) V7 needed three seats (CH2 off pad E twice). (4) Analysis: every counted CSV cropped to −30…+40 µs around the trigger before `i2c_frame.py` (user choice a), because at 400 kHz the record starts inside the preceding INA frame and the tool reports `NO FRAME`; originals kept; Planner relay `lab/relays/2026-10-24_RELAY-planner-i2c_frame-window.md`. (5) Banner control (`[scope] … i2c_clock=400000 Hz`) not observed in the logs; the measured SCL period of 2.500 µs in all 9 captures stands in for it. (6) A first call of the Nano flash script failed (`permission denied`, not executable) before esptool ran; the retry via `zsh` wrote the Nano once.
+- Revert-on-null done: yes (not a null; revert per card) — U3 on v7-clean motion-play-v7-diag (90053af), Nano on the blank sketch, probes off the board, both boards unplugged
 - Result commit: self
