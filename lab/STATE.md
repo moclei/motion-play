@@ -2,7 +2,7 @@
 as_of: V7R-010            # highest card ID with status recorded|abandoned that this file reflects (V7R-000 = sentinel, nothing recorded)
 updated: 2026-10-25       # date of the last edit
 last_checkpoint: V7R-008  # card ID at which the last step-back checkpoint ran (context-strategy §4.3)
-open_cards: []                              # cards with status pre-registered|run; must match lab/cards/ (checked)
+open_cards: [V7R-011]                       # cards with status pre-registered|run; must match lab/cards/ (checked)
 ---
 
 # v7 I²C fault — current state
@@ -135,7 +135,7 @@ Verdict is trustworthy | suspect | unknown | not tested; a row is deleted when a
 ## 8. Next                                      (≤ 6 lines)
 Open cards (ID, title, arm reached); proposed next test (which map region it cuts, and why); blocked on (initiatives, parts, decisions).
 - V7R-010 recorded: U3's ~0.90 V SDA low is the same at U3's pad, TPIO43 and U5.6 (F-13); copper ruled out. Candidates (user's choice): (a) S2 or K under U3 with the far-end trigger path in vs out (A/B/A) — does the 0.90 V low need F-2's trigger? (b) master: pin role — read GPIO43's IO_MUX / GPIO-matrix routing on U3 at the failing point (firmware read-back, no bench move), testing the U0TXD-fight idea; (c) desk: BQ24195 / INA219 / TCA9548A / VCNL4040 V_IL from datasheets (slave: BQ × master). Planner relay 2026-10-24 open (i2c_frame window, setup/hold).
-- Open cards: none. Timebox: 10/15 cards · week 1/8 (from V7R-001, 2026-10-20). Master bundle region: 6 cards (V7R-004, -006, -007, -008, -009, -010; the 6th approved: "let's go with (a)"). Checkpoint: done at V7R-008; next due at V7R-011. Plan probe positions to minimise moves (user, 2026-10-25).
+- Open cards: V7R-011 (U3 GPIO43 vs GPIO44 pad config read-back; pre-registered; user chose (b), delta "1. approved."). Timebox: 10/15 cards · week 1/8 (from V7R-001, 2026-10-20). Master bundle region: 6 cards (V7R-004, -006, -007, -008, -009, -010; the 6th approved: "let's go with (a)"). Checkpoint: done at V7R-008; next due at V7R-011. Plan probe positions to minimise moves (user, 2026-10-25).
 
 ## 9. Lookups (L1 routing)                      (≤ 15 rows)
 Where to go for detail that is not L0; load only the named section or query.
