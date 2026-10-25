@@ -1,0 +1,2 @@
+=== start 14:31:21 (P0, Nano blank)
+2026-10-25T14:40:24.867 [logger] read failed: [Errno 6] Device not configured

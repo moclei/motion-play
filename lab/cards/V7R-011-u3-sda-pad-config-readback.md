@@ -1,7 +1,7 @@
 ---
 test_id: V7R-011
 title: "U3 pad configuration read-back: GPIO43 (SDA) vs GPIO44 (SCL) in the failing state"
-status: pre-registered
+status: recorded
 created: 2026-10-25
 prereg_commit: self
 baseline:
@@ -62,12 +62,36 @@ The session runs every flash and log; one instruction block per step.
 
 ## Actual result
 ### Raw observations (operator, verbatim; symptoms not interpretations)
+- P0 (operator): "1. yes, 2. yes" (Nano plugged in first, then the v7; PWR LED on). Session: both ports enumerated; v7 diag boot 14:32:15, scan found 0x6B, diag rows `TCA2+PCA0/1 INA:. BQ:X(2) TCA:. PCA:. VCNL:X(2)`.
+- R1 (session): `u3-regs` uploaded with `-t nobuild` (firmware.bin 5f0d9f39, hash verified) at 14:32:45; banner `[scope] sketch=v7_scope_bq_probe version=1.0 … i2c_clock=400000 Hz` at 14:32:49 (the build keeps the V7R-009 banner text). Logged to the power cycle (~14:35:05).
+- R2 (operator): "1. power cycled, 2. PWR LED on". Session: re-attach 14:35:15, banner 14:35:15; logged to 14:36:13.
+- End (session): U3 `motion-play-v7-diag` from the worktree at 90053af, SUCCESS; diag boot 14:36:54 (`[DIAG_NO_WIFI]`). Operator: "v7 off, nano off, no LEDs". Nano: blank throughout, log empty apart from the unplug.
+
 ### Measured values (from log; cite `lab/evidence/V7R-011/...`)
+Source: `lab/evidence/V7R-011/2026-10-25_V7R-011_v7_01.txt` (blank lines removed); build source `lab/evidence/V7R-011/src/u3/`.
+
+| Field | GPIO43 (SDA) | GPIO44 (SCL) | Same? |
+|---|---|---|---|
+| IO_MUX raw | 0x00001b00 | 0x00001b00 | yes |
+| mcu_sel (1 = GPIO matrix) | 1 | 1 | yes |
+| fun_drv | 2 | 2 | yes |
+| wpu / wpd | 1 / 0 | 1 / 0 | yes |
+| ie / filt | 1 / 0 | 1 / 0 | yes |
+| GPIO_PIN raw, od | 0x00000004, 1 | 0x00000004, 1 | yes |
+| OUT_SEL raw, out_sig | 0x0000005a, 90 (I2CEXT0_SDA_OUT) | 0x00000059, 89 (I2CEXT0_SCL_OUT) | signal index only |
+| out_inv / oen_sel / oen_inv | 0 / 0 / 0 | 0 / 0 / 0 | yes |
+| oe / out / in at dump time (not judged) | 1 / 1 / 1 | 1 / 1 / 1 | — |
+
+Input selects (every dump): I2CEXT0 SDA ← GPIO43 via matrix (`sda=43 sda_mx=1`), SCL ← GPIO44 (`scl=44 scl_mx=1`); U0RXD select 60 with `u0rxd_mx=0` (not routed from 43/44).
+Dumps: R1 29 per line type, R2 13; every dump identical to every other, within and across runs. Controls: (c1) GPIO44 `mcu_sel=1`, `out_sig=89`, `scl=44` — pass; (c2) `[scope]` R1 14:32:50 → 14:35:05, n 10 → 1360, 136 lines; R2 14:35:16 → 14:36:13, n 10 → 580, 58 lines; every line `tca` = `ina` = n, `bq=0`, `bq_codes=2222222222` — pass; (c3) no reboot within a run — pass; (c4) ≥ 5 dumps per run — pass.
+
 ### Interpretation (session; labelled as such)
+Interpretation: as far as firmware can read them, U3's SDA and SCL pads are set up identically: same IO_MUX function (GPIO matrix), open-drain, drive 2, pull-up on, filter off, no inversion, each driven by its own I²C controller signal and read back by the controller from its own pad. Nothing in this configuration explains why SDA's low sits at ~0.90 V while SCL's reaches ~0.1 V. The difference lies outside these registers: the GPIO43 pad or its path inside the WROOM module, its supply, or something on the SDA net sinking or sourcing current that firmware cannot see. A UART0 routing onto GPIO43 is not present at run time (mcu_sel 1, out_sig 90); what the ROM does before `Wire.begin()` is not covered by this read.
 
 ## Conclusion
-- Outcome row matched: ...
-- Hypotheses excluded: ...
-- **Strength:** ...
-- Revert-on-null done: ...
+- Outcome row matched: row 1 — in all 42 dumps (R1 29, R2 13) every judged field of GPIO43 equals GPIO44's except `out_sig` 90 vs 89; input selects `sda=43`, `scl=44`; controls c1–c4 pass.
+- Hypotheses excluded: H1 (routing differs) and H2 (pad electrical setting differs) — measured-refuted for the firmware-readable pad configuration at run time. H3 weakly supported. M not supported: the macros come from the core's own headers, the GPIO44 control reads as expected, and the dumps are constant.
+- **Strength:** measured-refuted (H1, H2; one board, one image family, two boots, 42 dumps); scope limited to registers firmware can read at run time; `lab/evidence/V7R-011/`
+- Deviations: (1) the build prints the V7R-009 banner text (`sketch=v7_scope_bq_probe`); the build is identified by its `[regs]` lines and firmware.bin 5f0d9f39. (2) R1 ran ~135 s, not ~60 s (the session counted 13 dumps at 55 s and the run continued until the operator's power cycle); more dumps, no change in method.
+- Revert-on-null done: yes (not a null; revert per card) — U3 on v7-clean motion-play-v7-diag (90053af), Nano on the blank sketch, both boards unplugged
 - Result commit: self
