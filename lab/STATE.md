@@ -1,7 +1,7 @@
 ---
 as_of: V7R-011            # highest card ID with status recorded|abandoned that this file reflects (V7R-000 = sentinel, nothing recorded)
 updated: 2026-10-25       # date of the last edit
-last_checkpoint: V7R-008  # card ID at which the last step-back checkpoint ran (context-strategy §4.3)
+last_checkpoint: V7R-011  # card ID at which the last step-back checkpoint ran (context-strategy §4.3)
 open_cards: []                              # cards with status pre-registered|run; must match lab/cards/ (checked)
 ---
 
@@ -48,7 +48,7 @@ Status (untested | tested) says whether a test has touched the region; Strength 
 | bus copper | v7 SDA route (B.Cu under BT1, ~6.8 mm with no In2 under it, In2 +3.3 V reference) degrades S3-driven SDA edges but not SAMD21's | tested (partly) | measured-refuted for TPIO→BQ with an S3 master at TPIO (V7R-004); measured-refuted as where U3's SDA low is lost, U3 pad → TPIO43 → U5.6 (V7R-010) | F-8, CL-19–21, T3, V7R-004, V7R-010 | V7R-010 |
 | bus copper: neighbours | SCL (0.20 mm gap) or CHRG_INT (<0.5 mm) couples into SDA | untested | not tested | F-8, T3 | — |
 | mux | TCA channel-open with a far-end pull-up changes the upstream SDA node (pass-gate state, idle level) in a way only U3's context reacts to | untested | argued (V7R-004: an S3 at TPIO doesn't react; U3 does) | A-1, L-Ph5, L-Ph6d, L-Ph13, V7R-004 | V7R-004 |
-| slave: BQ × master | BQ's input requirement is stricter than INA/TCA's (e.g. V_IL), met by the Nano, missed by U3's ~0.90 V SDA low | untested | argued (V7R-009 measured the level, not the thresholds; datasheet V_IL values unchecked) | F-9, F-13, L-Ph24a, V7R-009 | V7R-009 |
+| slave: BQ × master | BQ's input requirement is stricter than INA/TCA's (e.g. V_IL), met by the Nano, missed by U3's ~0.90 V SDA low | untested | argued: repo datasheet text gives VCNL4040 V_IL 0.4 V (NACKs) and PCA9546A V_IL 0.3×VCC ≈ 0.99 V (ACKs), which fits a 0.90 V low; BQ/INA/TCA values unchecked. Contradicted by legacy L-Ph23 (NACK at ~50 mV, CAP_3) and L-Ph21 (ACK at ~650 mV, no cable), both unvalidated (§7) | F-9, F-13, L-Ph21, L-Ph23, L-Ph24a, V7R-009, docs/references/{vcnl4040,pca9546a} | checkpoint V7R-011 |
 | slave: INA, TCA, PCA | no hypothesis yet (they ACK; used as controls) | untested | not tested | L-Ph4 | — |
 | symptom identity | VCNL NACK (product failure) is the same fault as BQ NACK (diag marker) | tested | measured-supported (both follow the master, A/B/A; one board, one rigid; rigid as trigger) | A-2, L-Ph4, V7R-005 | V7R-005 |
 | symptom identity: causal | BQ's NACK state or input disturbs the bus for downstream devices (BQ causal), vs common cause | untested | not tested | L-Ph8 (B2: BQ I²C open) | — |
@@ -129,14 +129,16 @@ Verdict is trustworthy | suspect | unknown | not tested; a row is deleted when a
 | L-Ph20 SDA high ≥ 3.01 V vs V_IH 1.3 V | trustworthy (by margin) | D-revised tombstone; F-7 | none |
 | L-Ph20 visual "ACK/NACK identical, no kink" | unknown | nothing | R2 only if needed |
 | L-Ph22 scope remark | unknown | nothing (null result is log-based) | none |
+| L-Ph23 SDA V_OL ~50 mV at U5.6 under U3 with CAP_3, BQ NACK | unknown (cursor reading, unvalidated setup; a 15× drop for a 2× drive change) | G-revised tombstone; challenges slave: BQ × master | validated V_OL at CAP_3 vs CAP_2 under U3 |
+| L-Ph21 SDA V_OL ~650 mV at U5.6 under U3, no cable, BQ ACK | unknown (unvalidated setup) | challenges slave: BQ × master | validated V_OL with the trigger path out |
 | L-Ph23 SCL V_OL ~300 mV | suspect (inconsistent with SDA, same driver) | nothing | R1 channel swap |
 | L-Ph25 | not tested | nothing | re-run individually only if the map needs it |
 | L-Ph24a | log-based; trustworthy as a binary result; multi-variable | master: identity; F-5 | none (V7R-004 replicates master-dependence with an S3) |
 
 ## 8. Next                                      (≤ 6 lines)
 Open cards (ID, title, arm reached); proposed next test (which map region it cuts, and why); blocked on (initiatives, parts, decisions).
-- **Checkpoint due before the next card** (3 cards recorded since V7R-008: V7R-009, -010, -011). V7R-011 recorded: U3's SDA and SCL pads read back identically at run time; the ~0.90 V SDA low (F-13) is not explained by firmware-readable pad configuration. Remaining candidates from V7R-010: (a) far-end trigger path in vs out under U3 (does the 0.90 V low need F-2's trigger?); (c) desk V_IL check. Planner relay 2026-10-24 open.
-- Open cards: none. Timebox: 11/15 cards · week 1/8 (from V7R-001, 2026-10-20). Master bundle region: 7 cards (V7R-004, -006 … -011; the 7th approved: "let's go with (b)"). Checkpoint: done at V7R-008; due now. Plan probe positions to minimise moves (user, 2026-10-25).
+- Checkpoint at V7R-011 done (notebook 2026-10-25). Questions it left: does U3's 0.90 V SDA low follow the drive setting and the trigger path, and does the NACK follow the low? Candidates (user's choice), all at the S1 probe position (A/B, ground C), so they can share one placement: (d) CAP_2/CAP_3/CAP_2 on GPIO43 under U3, validated V_OL + log BQ ACK — re-measures L-Ph23; (a) trigger path in/out/in under U3 — re-measures L-Ph21, ties the level to F-2; (e) static low-drive test, GPIO43 vs GPIO44 driven low as plain open-drain GPIO, I²C off — U3's pad sink vs the I²C controller's output. Desk: (c) BQ24195 / INA219 / TCA9548A V_IL from datasheets.
+- Open cards: none. Timebox: 11/15 cards · week 1/8 (from V7R-001, 2026-10-20). Master bundle region: 7 cards; continuing needs the user's go-ahead per card. Checkpoint: done at V7R-011; next due at V7R-014. Plan probe positions to minimise moves (user, 2026-10-25).
 
 ## 9. Lookups (L1 routing)                      (≤ 15 rows)
 Where to go for detail that is not L0; load only the named section or query.
