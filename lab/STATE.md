@@ -138,7 +138,7 @@ Verdict is trustworthy | suspect | unknown | not tested; a row is deleted when a
 ## 8. Next                                      (≤ 6 lines)
 Open cards (ID, title, arm reached); proposed next test (which map region it cuts, and why); blocked on (initiatives, parts, decisions).
 - Checkpoint at V7R-011 done (notebook 2026-10-25). Questions it left: does U3's 0.90 V SDA low follow the drive setting and the trigger path, and does the NACK follow the low? Candidates (user's choice), all at the S1 probe position (A/B, ground C), so they can share one placement: (d) CAP_2/CAP_3/CAP_2 on GPIO43 under U3, validated V_OL + log BQ ACK — re-measures L-Ph23; (a) trigger path in/out/in under U3 — re-measures L-Ph21, ties the level to F-2; (e) static low-drive test, GPIO43 vs GPIO44 driven low as plain open-drain GPIO, I²C off — U3's pad sink vs the I²C controller's output. Desk: (c) BQ24195 / INA219 / TCA9548A V_IL from datasheets.
-- Open cards: none. Timebox: 11/15 cards · week 1/8 (from V7R-001, 2026-10-20). Master bundle region: 7 cards; continuing needs the user's go-ahead per card. Checkpoint: done at V7R-011; next due at V7R-014. Plan probe positions to minimise moves (user, 2026-10-25).
+- Open cards: none. Timebox: 11/15 cards · week 1/8 (from V7R-001, 2026-10-20). Master bundle region: 7 cards; continuing needs the user's go-ahead per card. Checkpoint: done at V7R-011; next due at V7R-014.
 
 ## 9. Lookups (L1 routing)                      (≤ 15 rows)
 Where to go for detail that is not L0; load only the named section or query.
