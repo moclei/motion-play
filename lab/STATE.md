@@ -2,7 +2,7 @@
 as_of: V7R-009            # highest card ID with status recorded|abandoned that this file reflects (V7R-000 = sentinel, nothing recorded)
 updated: 2026-10-24       # date of the last edit
 last_checkpoint: V7R-008  # card ID at which the last step-back checkpoint ran (context-strategy §4.3)
-open_cards: []                              # cards with status pre-registered|run; must match lab/cards/ (checked)
+open_cards: [V7R-010]                       # cards with status pre-registered|run; must match lab/cards/ (checked)
 ---
 
 # v7 I²C fault — current state
@@ -134,7 +134,7 @@ Verdict is trustworthy | suspect | unknown | not tested; a row is deleted when a
 ## 8. Next                                      (≤ 6 lines)
 Open cards (ID, title, arm reached); proposed next test (which map region it cuts, and why); blocked on (initiatives, parts, decisions).
 - V7R-009 recorded: SDA low at U5.6 ~0.90 V under U3 vs ~0.11 V under the Nano (F-13). Candidates (user's choice): (a) same validated scope, U3 master, S1 (TPIO43) vs S2 — locates the lost low (U3 pad vs U3→TPIO copper vs bus); (b) S2 under U3 with the far-end trigger path in vs out (A/B/A) — ties the level to F-2's trigger; (c) desk: BQ24195 / INA219 / TCA9548A / VCNL4040 V_IL from datasheets (slave: BQ × master). Planner relay 2026-10-24: i2c_frame window + setup/hold timing.
-- Open cards: none. Timebox: 9/15 cards · week 1/8 (from V7R-001, 2026-10-20). Master bundle region: 5 cards (V7R-004, -006, -007, -008, -009; the 5th approved: "yes, go with the scope session"). Checkpoint: done at V7R-008; next due at V7R-011.
+- Open cards: V7R-010 (SDA low along U3's path K/A/D; pre-registered; user chose (a) "with K"). Timebox: 9/15 cards · week 1/8 (from V7R-001, 2026-10-20). Master bundle region: 5 cards (V7R-004, -006, -007, -008, -009; the 5th approved: "yes, go with the scope session"). Checkpoint: done at V7R-008; next due at V7R-011.
 
 ## 9. Lookups (L1 routing)                      (≤ 15 rows)
 Where to go for detail that is not L0; load only the named section or query.

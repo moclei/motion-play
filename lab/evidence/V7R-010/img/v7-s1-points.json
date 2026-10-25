@@ -1,0 +1,133 @@
+{
+ "description": "V7R-010: v7 master end. U3 own SDA pin (K), test pads A/B, grounds C (C9.1) and N (C10.1), +3.3 V pads X.",
+ "source": {
+  "ref": "c2acffc",
+  "path": "hardware/pcb-main/kicad/motion-play-main.kicad_pcb"
+ },
+ "render": {
+  "side": "top",
+  "quality": "high",
+  "width": 6400,
+  "height": 4800
+ },
+ "width": 1600,
+ "bottom": 40,
+ "blocks": [
+  {
+   "type": "text",
+   "space": 45,
+   "size": 32,
+   "bold": true,
+   "text": "v7 main board, top side, master end: ESP32 module U3 and the SDA/SCL test pads."
+  },
+  {
+   "type": "panel",
+   "id": "overview",
+   "space": 25,
+   "window_mm": [
+    73.7,
+    99,
+    165.9,
+    141.5
+   ],
+   "x": 20,
+   "width": 1560,
+   "boxes": [
+    {
+     "panel": "zoom1",
+     "label": "zoom"
+    }
+   ]
+  },
+  {
+   "type": "text",
+   "space": 45,
+   "size": 30,
+   "bold": true,
+   "text": "Zoom: K = U3's own SDA pin. A/B = test pads. C, N = ground. X = +3.3 V."
+  },
+  {
+   "type": "panel",
+   "id": "zoom1",
+   "space": 25,
+   "window_mm": [
+    136.0,
+    102.0,
+    150.0,
+    118.5
+   ],
+   "x": 200,
+   "width": 1200,
+   "markers": [
+    {
+     "label": "K",
+     "ref": "U3",
+     "pad": "37",
+     "r": 22,
+     "font": 34,
+     "dx": -60,
+     "legend": "SDA at U3's own pin: U3 pad 37 (module edge pad)"
+    },
+    {
+     "label": "A",
+     "ref": "TPIO43",
+     "pad": "1",
+     "r": 34,
+     "font": 36,
+     "legend": "SDA test pad (TPIO43, green wire soldered)"
+    },
+    {
+     "label": "B",
+     "ref": "TPIO44",
+     "pad": "1",
+     "r": 34,
+     "font": 36,
+     "legend": "SCL test pad (TPIO44, yellow wire soldered)"
+    },
+    {
+     "label": "C",
+     "ref": "C9",
+     "pad": "1",
+     "r": 28,
+     "font": 36,
+     "legend": "Ground: C9.1, the upper end of capacitor C9"
+    },
+    {
+     "label": "X",
+     "ref": "C9",
+     "pad": "2",
+     "r": 28,
+     "font": 36,
+     "dx": 50,
+     "legend": "+3.3 V: the other end of C9. Never bridge to C"
+    },
+    {
+     "label": "N",
+     "ref": "C10",
+     "pad": "1",
+     "r": 28,
+     "font": 36,
+     "legend": "Ground: C10.1, the upper end of capacitor C10 (V5 tips only)"
+    },
+    {
+     "label": "X",
+     "ref": "C10",
+     "pad": "2",
+     "r": 28,
+     "font": 36,
+     "dx": 50,
+     "legend": "+3.3 V: the lower end of C10, between N and X/C. Never touch"
+    }
+   ],
+   "legend": true,
+   "legend_space": 45
+  },
+  {
+   "type": "text",
+   "space": 56,
+   "size": 22,
+   "fill": "#555",
+   "text": "Rendered from the v7 KiCad layout (commit {commit}). Pad positions are from the layout file, so check under the microscope before probing."
+  }
+ ]
+}
