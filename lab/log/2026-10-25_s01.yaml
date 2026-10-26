@@ -2,8 +2,8 @@
 session_id: "2026-10-25_s01"
 kind: "scope"
 operator: "user"
-ai_session: "debugger (V7R-012, debug/v7-track-3)"
-dut: {board_id: "v7-B3", firmware_commit: "90053af", firmware_env: "motion-play-v7-relbus (V5b, V7); V7R-012 drive builds u3-drv2 f8ebf3fc (V8_A1, A1, V8_A2, A2) and u3-drv3 0a41f744 (V8_B, B)", declared_baseline: "v7-clean"}
+ai_session: "debugger (V7R-012, V7R-013; debug/v7-track-3)"
+dut: {board_id: "v7-B3", firmware_commit: "90053af", firmware_env: "motion-play-v7-relbus (V5b, V7); V7R-012 drive builds u3-drv2 f8ebf3fc (V7R-012 A1, A2; all V7R-013 arms) and u3-drv3 0a41f744 (V7R-012 B)", declared_baseline: "v7-clean"}
 scope: {model: "Rigol DHO804", serial: "DHO8A282M00872", firmware: "00.01.05", setup_file: "2026-10-25_V7R-012_val_V3_01.setup.bin"}
 validation:
   passed: true
@@ -17,7 +17,7 @@ validation:
   V6_ground: {method: "ground springs (both probes)", point: "pad C (C9.1), side away from C9's +3.3 V end", length_mm: 0}
   V7_idle_high_V: {CH1: 3.272, CH2: 3.262}   # val_V7_02 (after CH1 re-seat; _01 CH1 -0.015 V, no contact). Re-check after CH2 re-seat: val_V7_03 3.273/3.262
   V8_decode_ok: true   # Write:d6 + red NACK mark: val_V8_A1_01, val_V8_B_01, val_V8_A2_01 (20 us/div, address trigger 0x6B write); 9th bit recorded, not judged (V8 adaptation)
-  notes: "V1 clock ok (delta 0 s); no setup loaded; AUTO pressed at V1. V4 Vamp CH1 = 3.0037 V (panel); CH2 panel showed the same digits (V4 note 4), CSV amplitude 3.006 V. V5 control valid on both channels (both on Cal ground). V5b first capture failed on CH2 (spike bursts ~every 26 us, up to +/-0.5 V); CH2 re-seated on C/N, recapture passed. V7 first capture CH1 at ground level (tip not on A); CH1 re-seated, pass. CH2 came loose from B after A1_03 (operator); re-seated, V7 re-checked on relbus (val_V7_03), then B. CH2 at B shows spike bursts at idle (sd ~28.5 mV), as V7R-010. Decode setup by menu: Bus status On, SCL/SDA Thre 1.65 V, R/W With; no field differed. ~4 h gap (17:36-21:22) between the CH2 re-seat and V7_03, board unplugged, probes seated. V9 not due."
+  notes: "V1 clock ok (delta 0 s); no setup loaded; AUTO pressed at V1. V4 Vamp CH1 = 3.0037 V (panel); CH2 panel showed the same digits (V4 note 4), CSV amplitude 3.006 V. V5 control valid on both channels (both on Cal ground). V5b first capture failed on CH2 (spike bursts ~every 26 us, up to +/-0.5 V); CH2 re-seated on C/N, recapture passed. V7 first capture CH1 at ground level (tip not on A); CH1 re-seated, pass. CH2 came loose from B after A1_03 (operator); re-seated, V7 re-checked on relbus (val_V7_03), then B. CH2 at B shows spike bursts at idle (sd ~28.5 mV), as V7R-010. Decode setup by menu: Bus status On, SCL/SDA Thre 1.65 V, R/W With; no field differed. ~4 h gap (17:36-21:22) between the CH2 re-seat and V7_03, board unplugged, probes seated. V7R-013 (same placement, no probe move): V8 before each arm; CH1 idle-high between frames checked in every counted CSV. V9 not due."
 channels:
   CH1: {probe: "SQ500 #1", ratio: "10x", signal: "SDA", point: "A (TPIO43)", bw_limit: "OFF", v_div_V: 0.5, offset_V: -1.65, coupling: "DC"}   # 1 V/div, -1.5 V for V3 only
   CH2: {probe: "SQ500 #2", ratio: "10x", signal: "SCL", point: "B (TPIO44)", bw_limit: "OFF", v_div_V: 0.5, offset_V: -1.65, coupling: "DC"}
@@ -756,12 +756,17 @@ measurements:
     trigger: {type: "IIC", sweep: "AUTO", when: "ADDR", scl: "CHAN2", sda: "CHAN1", address: "107", direction: "WRIT", awidth: "7", clevel_V: 1.5, dlevel_V: 1.5}
     timebase_s_div: 2.0e-05
     method: "auto"
-    feature: "TODO"
+    feature: "V7R-013 A1 V8 (contact, decode) at S1, u3-drv2, 20 us/div; rigid #1 on the J6 cable (in)"
     values:
       - {name: "VPP", ch: "CH1", value_mV: 3348.3, raw: "3.3483E+00"}
       - {name: "VPP", ch: "CH2", value_mV: 3935.4, raw: "3.9354E+00"}
     captures: ["2026-10-25_V7R-013_val_V8_A1_01.png", "2026-10-25_V7R-013_val_V8_A1_01.csv", "2026-10-25_V7R-013_val_V8_A1_01.setup.bin"]
-    raw_observation: "TODO"
+    raw_observation: "operator: 1. yes 2. nothing (v7 plugged in)"
+    ai_read:
+      - capture: 2026-10-25_V7R-013_val_V8_A1_01.png
+        settings_seen: {CH1_v_div: 500mV, CH2_v_div: 500mV, CH1_offset: -1.65V, CH2_offset: -1.65V, timebase: 20.00us/div, srate_mdepth: "31.25MSa/s 10.00kpts", trigger: "I2C, 1.50 V, A"}
+        values_seen: {decode: "Write:80, Write:d6 + red NACK mark, Write:e0, D..", Vpp_C1_V: 3.3482, Vpp_C2_V: 3.9354, Vtop_C2_V: 3.2628, Vbase_C2_mV: 96.933, RiseTime_C1_ns: 371.42, RiseTime_C2_ns: 142.85}
+        mismatch: none
     source: "tools/lab/capture.py"
     scope_settings:
       channels:
@@ -787,12 +792,18 @@ measurements:
     trigger: {type: "IIC", sweep: "AUTO", when: "ADDR", scl: "CHAN2", sda: "CHAN1", address: "107", direction: "WRIT", awidth: "7", clevel_V: 1.5, dlevel_V: 1.5}
     timebase_s_div: 1.0e-05
     method: "auto"
-    feature: "TODO"
+    feature: "V7R-013 A1 counted capture, u3-drv2, 10 us/div, SINGLE on 0x6B write; rigid #1 on the J6 cable (in)"
     values:
       - {name: "VPP", ch: "CH1", value_mV: 2853.6, raw: "2.8536E+00"}
       - {name: "VPP", ch: "CH2", value_mV: 3975.2, raw: "3.9752E+00"}
     captures: ["2026-10-25_V7R-013_A1_01.png", "2026-10-25_V7R-013_A1_01.csv", "2026-10-25_V7R-013_A1_01.setup.bin"]
-    raw_observation: "TODO"
+    raw_observation: "operator: 1. yes 2. nothing (v7 plugged in)"
+    values_csv:   # i2c_frame.py --expect D6 on the cropped CSV, lab/evidence/V7R-013/i2c_frame/A1_01_frame.txt
+      - {name: V_OL, ch: CH1, value_mV: 903.1, gate: "address bit 5", offset_mV: -10.13}
+      - {name: V_OL, ch: CH1, value_mV: 893.7, gate: "address bit 3", offset_mV: -10.13}
+      - {name: V_OL, ch: CH1, value_mV: 897.6, gate: "R/W bit 0", offset_mV: -10.13}
+      - {name: decode_bits, ch: CH1, value: "D6, 9th clock high = NACK"}
+      - {name: SCL_period, ch: CH2, value_us: 2.500}
     source: "tools/lab/capture.py"
     scope_settings:
       channels:
@@ -818,12 +829,18 @@ measurements:
     trigger: {type: "IIC", sweep: "AUTO", when: "ADDR", scl: "CHAN2", sda: "CHAN1", address: "107", direction: "WRIT", awidth: "7", clevel_V: 1.5, dlevel_V: 1.5}
     timebase_s_div: 1.0e-05
     method: "auto"
-    feature: "TODO"
+    feature: "V7R-013 A1 counted capture, u3-drv2, 10 us/div, SINGLE on 0x6B write; rigid #1 on the J6 cable (in)"
     values:
       - {name: "VPP", ch: "CH1", value_mV: 2828.4, raw: "2.8284E+00"}
       - {name: "VPP", ch: "CH2", value_mV: 3992.9, raw: "3.9929E+00"}
     captures: ["2026-10-25_V7R-013_A1_02.png", "2026-10-25_V7R-013_A1_02.csv", "2026-10-25_V7R-013_A1_02.setup.bin"]
-    raw_observation: "TODO"
+    raw_observation: "operator: 1. yes 2. nothing (v7 plugged in)"
+    values_csv:   # i2c_frame.py --expect D6 on the cropped CSV, lab/evidence/V7R-013/i2c_frame/A1_02_frame.txt
+      - {name: V_OL, ch: CH1, value_mV: 902.5, gate: "address bit 5", offset_mV: -10.13}
+      - {name: V_OL, ch: CH1, value_mV: 894.6, gate: "address bit 3", offset_mV: -10.13}
+      - {name: V_OL, ch: CH1, value_mV: 897.8, gate: "R/W bit 0", offset_mV: -10.13}
+      - {name: decode_bits, ch: CH1, value: "D6, 9th clock high = NACK"}
+      - {name: SCL_period, ch: CH2, value_us: 2.500}
     source: "tools/lab/capture.py"
     scope_settings:
       channels:
@@ -849,12 +866,18 @@ measurements:
     trigger: {type: "IIC", sweep: "AUTO", when: "ADDR", scl: "CHAN2", sda: "CHAN1", address: "107", direction: "WRIT", awidth: "7", clevel_V: 1.5, dlevel_V: 1.5}
     timebase_s_div: 1.0e-05
     method: "auto"
-    feature: "TODO"
+    feature: "V7R-013 A1 counted capture, u3-drv2, 10 us/div, SINGLE on 0x6B write; rigid #1 on the J6 cable (in)"
     values:
       - {name: "VPP", ch: "CH1", value_mV: 2876.7, raw: "2.8767E+00"}
       - {name: "VPP", ch: "CH2", value_mV: 4019.1, raw: "4.0191E+00"}
     captures: ["2026-10-25_V7R-013_A1_03.png", "2026-10-25_V7R-013_A1_03.csv", "2026-10-25_V7R-013_A1_03.setup.bin"]
-    raw_observation: "TODO"
+    raw_observation: "operator: 1. yes 2. nothing (v7 plugged in)"
+    values_csv:   # i2c_frame.py --expect D6 on the cropped CSV, lab/evidence/V7R-013/i2c_frame/A1_03_frame.txt
+      - {name: V_OL, ch: CH1, value_mV: 902.0, gate: "address bit 5", offset_mV: -10.13}
+      - {name: V_OL, ch: CH1, value_mV: 894.4, gate: "address bit 3", offset_mV: -10.13}
+      - {name: V_OL, ch: CH1, value_mV: 897.7, gate: "R/W bit 0", offset_mV: -10.13}
+      - {name: decode_bits, ch: CH1, value: "D6, 9th clock high = NACK"}
+      - {name: SCL_period, ch: CH2, value_us: 2.500}
     source: "tools/lab/capture.py"
     scope_settings:
       channels:
@@ -880,12 +903,17 @@ measurements:
     trigger: {type: "IIC", sweep: "AUTO", when: "ADDR", scl: "CHAN2", sda: "CHAN1", address: "107", direction: "WRIT", awidth: "7", clevel_V: 1.5, dlevel_V: 1.5}
     timebase_s_div: 2.0e-05
     method: "auto"
-    feature: "TODO"
+    feature: "V7R-013 B V8 (contact, decode) at S1, u3-drv2, 20 us/div; rigid #1 unplugged at its end, cable stub in J6 (out)"
     values:
       - {name: "VPP", ch: "CH1", value_mV: 3354.8, raw: "3.3548E+00"}
       - {name: "VPP", ch: "CH2", valid: false, raw: "9.9000E+37"}
     captures: ["2026-10-25_V7R-013_val_V8_B_01.png", "2026-10-25_V7R-013_val_V8_B_01.csv", "2026-10-25_V7R-013_val_V8_B_01.setup.bin"]
-    raw_observation: "TODO"
+    raw_observation: "operator: B-1: 1. yes 2. yes 3. yes 4. nothing; B-2: 1. yes 2. nothing"
+    ai_read:
+      - capture: 2026-10-25_V7R-013_val_V8_B_01.png
+        settings_seen: {CH1_v_div: 500mV, CH2_v_div: 500mV, CH1_offset: -1.65V, CH2_offset: -1.65V, timebase: 20.00us/div, srate_mdepth: "31.25MSa/s 10.00kpts", trigger: "I2C, 1.50 V, A"}
+        values_seen: {decode: "Write:80, Write:d6 (no red mark), Write:e0, D..", Vpp_C1_V: 3.3548, Vpp_C2: "*****", Vtop_C2_V: 3.2628, Vbase_C2: "*****", RiseTime_C1_ns: 400.00, RiseTime_C2_ns: 171.42, traces: "SDA lows visibly lower than in the A arms, near the 650 mV gridline"}
+        mismatch: none
     source: "tools/lab/capture.py"
     scope_settings:
       channels:
@@ -911,12 +939,18 @@ measurements:
     trigger: {type: "IIC", sweep: "AUTO", when: "ADDR", scl: "CHAN2", sda: "CHAN1", address: "107", direction: "WRIT", awidth: "7", clevel_V: 1.5, dlevel_V: 1.5}
     timebase_s_div: 1.0e-05
     method: "auto"
-    feature: "TODO"
+    feature: "V7R-013 B counted capture, u3-drv2, 10 us/div, SINGLE on 0x6B write; rigid #1 unplugged at its end, cable stub in J6 (out)"
     values:
       - {name: "VPP", ch: "CH1", value_mV: 3298.0, raw: "3.2980E+00"}
       - {name: "VPP", ch: "CH2", valid: false, raw: "9.9000E+37"}
     captures: ["2026-10-25_V7R-013_B_01.png", "2026-10-25_V7R-013_B_01.csv", "2026-10-25_V7R-013_B_01.setup.bin"]
-    raw_observation: "TODO"
+    raw_observation: "operator: B-1: 1. yes 2. yes 3. yes 4. nothing; B-2: 1. yes 2. nothing"
+    values_csv:   # i2c_frame.py --expect D6 on the cropped CSV, lab/evidence/V7R-013/i2c_frame/B_01_frame.txt
+      - {name: V_OL, ch: CH1, value_mV: 683.8, gate: "address bit 5", offset_mV: -10.13}
+      - {name: V_OL, ch: CH1, value_mV: 674.3, gate: "address bit 3", offset_mV: -10.13}
+      - {name: V_OL, ch: CH1, value_mV: 677.3, gate: "R/W bit 0", offset_mV: -10.13}
+      - {name: decode_bits, ch: CH1, value: "D6, 9th clock low = ACK"}
+      - {name: SCL_period, ch: CH2, value_us: 2.501}
     source: "tools/lab/capture.py"
     scope_settings:
       channels:
@@ -942,12 +976,18 @@ measurements:
     trigger: {type: "IIC", sweep: "AUTO", when: "ADDR", scl: "CHAN2", sda: "CHAN1", address: "107", direction: "WRIT", awidth: "7", clevel_V: 1.5, dlevel_V: 1.5}
     timebase_s_div: 1.0e-05
     method: "auto"
-    feature: "TODO"
+    feature: "V7R-013 B counted capture, u3-drv2, 10 us/div, SINGLE on 0x6B write; rigid #1 unplugged at its end, cable stub in J6 (out)"
     values:
       - {name: "VPP", ch: "CH1", value_mV: 3402.3, raw: "3.4023E+00"}
       - {name: "VPP", ch: "CH2", valid: false, raw: "9.9000E+37"}
     captures: ["2026-10-25_V7R-013_B_02.png", "2026-10-25_V7R-013_B_02.csv", "2026-10-25_V7R-013_B_02.setup.bin"]
-    raw_observation: "TODO"
+    raw_observation: "operator: B-1: 1. yes 2. yes 3. yes 4. nothing; B-2: 1. yes 2. nothing"
+    values_csv:   # i2c_frame.py --expect D6 on the cropped CSV, lab/evidence/V7R-013/i2c_frame/B_02_frame.txt
+      - {name: V_OL, ch: CH1, value_mV: 683.3, gate: "address bit 5", offset_mV: -10.13}
+      - {name: V_OL, ch: CH1, value_mV: 674.5, gate: "address bit 3", offset_mV: -10.13}
+      - {name: V_OL, ch: CH1, value_mV: 677.8, gate: "R/W bit 0", offset_mV: -10.13}
+      - {name: decode_bits, ch: CH1, value: "D6, 9th clock low = ACK"}
+      - {name: SCL_period, ch: CH2, value_us: 2.501}
     source: "tools/lab/capture.py"
     scope_settings:
       channels:
@@ -973,12 +1013,18 @@ measurements:
     trigger: {type: "IIC", sweep: "AUTO", when: "ADDR", scl: "CHAN2", sda: "CHAN1", address: "107", direction: "WRIT", awidth: "7", clevel_V: 1.5, dlevel_V: 1.5}
     timebase_s_div: 1.0e-05
     method: "auto"
-    feature: "TODO"
+    feature: "V7R-013 B counted capture, u3-drv2, 10 us/div, SINGLE on 0x6B write; rigid #1 unplugged at its end, cable stub in J6 (out)"
     values:
       - {name: "VPP", ch: "CH1", value_mV: 3391.3, raw: "3.3913E+00"}
       - {name: "VPP", ch: "CH2", value_mV: 3893.5, raw: "3.8935E+00"}
     captures: ["2026-10-25_V7R-013_B_03.png", "2026-10-25_V7R-013_B_03.csv", "2026-10-25_V7R-013_B_03.setup.bin"]
-    raw_observation: "TODO"
+    raw_observation: "operator: B-1: 1. yes 2. yes 3. yes 4. nothing; B-2: 1. yes 2. nothing"
+    values_csv:   # i2c_frame.py --expect D6 on the cropped CSV, lab/evidence/V7R-013/i2c_frame/B_03_frame.txt
+      - {name: V_OL, ch: CH1, value_mV: 683.2, gate: "address bit 5", offset_mV: -10.13}
+      - {name: V_OL, ch: CH1, value_mV: 674.3, gate: "address bit 3", offset_mV: -10.13}
+      - {name: V_OL, ch: CH1, value_mV: 677.7, gate: "R/W bit 0", offset_mV: -10.13}
+      - {name: decode_bits, ch: CH1, value: "D6, 9th clock low = ACK"}
+      - {name: SCL_period, ch: CH2, value_us: 2.501}
     source: "tools/lab/capture.py"
     scope_settings:
       channels:
@@ -997,4 +1043,151 @@ measurements:
       read: "single"
       preamble: {CH1: "2,2,10000,1,1.600000E-8,-8.000000E-5,0.000000,6.6667E-05,-24750,32768", CH2: "2,2,10000,1,1.600000E-8,-8.000000E-5,0.000000,6.6667E-05,-24750,32768"}
     scope_clock: {set_to: "2026-10-25T22:01:35", read_back: "2026-10-25 22:01:35", ok: true, delta_s: 0.0}
+    scpi_errors: []
+  - test_id: "V7R-013"
+    arm: "val_V8_A2"
+    time: "2026-10-25T22:17:05"
+    trigger: {type: "IIC", sweep: "AUTO", when: "ADDR", scl: "CHAN2", sda: "CHAN1", address: "107", direction: "WRIT", awidth: "7", clevel_V: 1.5, dlevel_V: 1.5}
+    timebase_s_div: 2.0e-05
+    method: "auto"
+    feature: "V7R-013 A2 V8 (contact, decode) at S1, u3-drv2, 20 us/div; rigid #1 back on the cable (in)"
+    values:
+      - {name: "VPP", ch: "CH1", value_mV: 3348.4, raw: "3.3484E+00"}
+      - {name: "VPP", ch: "CH2", value_mV: 3968.1, raw: "3.9681E+00"}
+    captures: ["2026-10-25_V7R-013_val_V8_A2_01.png", "2026-10-25_V7R-013_val_V8_A2_01.csv", "2026-10-25_V7R-013_val_V8_A2_01.setup.bin"]
+    raw_observation: "operator: A2-1: 1. yes 2. yes 3. nothing; A2-2: 1. yes 2. nothing"
+    ai_read:
+      - capture: 2026-10-25_V7R-013_val_V8_A2_01.png
+        settings_seen: {CH1_v_div: 500mV, CH2_v_div: 500mV, CH1_offset: -1.65V, CH2_offset: -1.65V, timebase: 20.00us/div, srate_mdepth: "31.25MSa/s 10.00kpts", trigger: "I2C, 1.50 V, A"}
+        values_seen: {decode: "Write:80, Write:d6 + red NACK mark, Write:e0, D..", Vpp_C1_V: 3.3484, Vpp_C2_V: 3.9680, Vtop_C2_V: 3.2628, Vbase_C2_mV: 96.933, RiseTime_C1_ns: 371.42, RiseTime_C2_ns: 142.85}
+        mismatch: none
+    source: "tools/lab/capture.py"
+    scope_settings:
+      channels:
+        CH1: {probe: "10", bw_limit: "OFF", scale: "5.000000E-01", offset: "-1.650000E+00", coupling: "DC", invert: "0", units: "VOLT"}
+        CH2: {probe: "10", bw_limit: "OFF", scale: "5.000000E-01", offset: "-1.650000E+00", coupling: "DC", invert: "0", units: "VOLT"}
+      timebase: {scale: "2.000000E-5", offset: "0.000000", mode: "MAIN"}
+      acquire: {srate: "3.125000E+7", mdepth: "1.0000E+04", type: "NORM"}
+      trigger: {mode: "IIC", sweep: "AUTO", when: "ADDR", clevel: "1.500000E0", scl: "CHAN2", sda: "CHAN1", dlevel: "1.500000E0", awidth: "7", address: "107", direction: "WRIT"}
+      bus1: {mode: "IIC", scl_source: "CHAN2", sda_source: "CHAN1", address: "RW", threshold_sda: "1.650000E0", threshold_scl: "1.650000E0"}
+      measure: {threshold_type: "PERC", max_pct: "7.000000E+01", mid_pct: "5.000000E+01", min_pct: "3.000000E+01", amsource: "OFF"}
+      trigger_status: {before: "STOP", after_stop: "STOP"}
+    waveform:
+      mode: "RAW"
+      format: "ASCii"
+      points: 10000
+      read: "single"
+      preamble: {CH1: "2,2,10000,1,3.200000E-8,-1.600000E-4,0.000000,6.6667E-05,-24750,32768", CH2: "2,2,10000,1,3.200000E-8,-1.600000E-4,0.000000,6.6667E-05,-24750,32768"}
+    scope_clock: {set_to: "2026-10-25T22:17:05", read_back: "2026-10-25 22:17:05", ok: true, delta_s: 0.0}
+    scpi_errors: []
+  - test_id: "V7R-013"
+    arm: "A2"
+    time: "2026-10-25T22:17:16"
+    trigger: {type: "IIC", sweep: "AUTO", when: "ADDR", scl: "CHAN2", sda: "CHAN1", address: "107", direction: "WRIT", awidth: "7", clevel_V: 1.5, dlevel_V: 1.5}
+    timebase_s_div: 1.0e-05
+    method: "auto"
+    feature: "V7R-013 A2 counted capture, u3-drv2, 10 us/div, SINGLE on 0x6B write; rigid #1 back on the cable (in)"
+    values:
+      - {name: "VPP", ch: "CH1", value_mV: 2796.4, raw: "2.7964E+00"}
+      - {name: "VPP", ch: "CH2", value_mV: 3795.0, raw: "3.7950E+00"}
+    captures: ["2026-10-25_V7R-013_A2_01.png", "2026-10-25_V7R-013_A2_01.csv", "2026-10-25_V7R-013_A2_01.setup.bin"]
+    raw_observation: "operator: A2-1: 1. yes 2. yes 3. nothing; A2-2: 1. yes 2. nothing"
+    values_csv:   # i2c_frame.py --expect D6 on the cropped CSV, lab/evidence/V7R-013/i2c_frame/A2_01_frame.txt
+      - {name: V_OL, ch: CH1, value_mV: 900.6, gate: "address bit 5", offset_mV: -10.13}
+      - {name: V_OL, ch: CH1, value_mV: 892.7, gate: "address bit 3", offset_mV: -10.13}
+      - {name: V_OL, ch: CH1, value_mV: 895.8, gate: "R/W bit 0", offset_mV: -10.13}
+      - {name: decode_bits, ch: CH1, value: "D6, 9th clock high = NACK"}
+      - {name: SCL_period, ch: CH2, value_us: 2.500}
+    source: "tools/lab/capture.py"
+    scope_settings:
+      channels:
+        CH1: {probe: "10", bw_limit: "OFF", scale: "5.000000E-01", offset: "-1.650000E+00", coupling: "DC", invert: "0", units: "VOLT"}
+        CH2: {probe: "10", bw_limit: "OFF", scale: "5.000000E-01", offset: "-1.650000E+00", coupling: "DC", invert: "0", units: "VOLT"}
+      timebase: {scale: "1.000000E-5", offset: "0.000000", mode: "MAIN"}
+      acquire: {srate: "6.250000E+7", mdepth: "1.0000E+04", type: "NORM"}
+      trigger: {mode: "IIC", sweep: "AUTO", when: "ADDR", clevel: "1.500000E0", scl: "CHAN2", sda: "CHAN1", dlevel: "1.500000E0", awidth: "7", address: "107", direction: "WRIT"}
+      bus1: {mode: "IIC", scl_source: "CHAN2", sda_source: "CHAN1", address: "RW", threshold_sda: "1.650000E0", threshold_scl: "1.650000E0"}
+      measure: {threshold_type: "PERC", max_pct: "7.000000E+01", mid_pct: "5.000000E+01", min_pct: "3.000000E+01", amsource: "OFF"}
+      trigger_status: {before: "STOP", after_stop: "STOP"}
+    waveform:
+      mode: "RAW"
+      format: "ASCii"
+      points: 10000
+      read: "single"
+      preamble: {CH1: "2,2,10000,1,1.600000E-8,-8.000000E-5,0.000000,6.6667E-05,-24750,32768", CH2: "2,2,10000,1,1.600000E-8,-8.000000E-5,0.000000,6.6667E-05,-24750,32768"}
+    scope_clock: {set_to: "2026-10-25T22:17:16", read_back: "2026-10-25 22:17:16", ok: true, delta_s: 0.0}
+    scpi_errors: []
+  - test_id: "V7R-013"
+    arm: "A2"
+    time: "2026-10-25T22:17:24"
+    trigger: {type: "IIC", sweep: "AUTO", when: "ADDR", scl: "CHAN2", sda: "CHAN1", address: "107", direction: "WRIT", awidth: "7", clevel_V: 1.5, dlevel_V: 1.5}
+    timebase_s_div: 1.0e-05
+    method: "auto"
+    feature: "V7R-013 A2 counted capture, u3-drv2, 10 us/div, SINGLE on 0x6B write; rigid #1 back on the cable (in)"
+    values:
+      - {name: "VPP", ch: "CH1", value_mV: 2863.2, raw: "2.8632E+00"}
+      - {name: "VPP", ch: "CH2", valid: false, raw: "9.9000E+37"}
+    captures: ["2026-10-25_V7R-013_A2_02.png", "2026-10-25_V7R-013_A2_02.csv", "2026-10-25_V7R-013_A2_02.setup.bin"]
+    raw_observation: "operator: A2-1: 1. yes 2. yes 3. nothing; A2-2: 1. yes 2. nothing"
+    values_csv:   # i2c_frame.py --expect D6 on the cropped CSV, lab/evidence/V7R-013/i2c_frame/A2_02_frame.txt
+      - {name: V_OL, ch: CH1, value_mV: 902.2, gate: "address bit 5", offset_mV: -10.13}
+      - {name: V_OL, ch: CH1, value_mV: 894.0, gate: "address bit 3", offset_mV: -10.13}
+      - {name: V_OL, ch: CH1, value_mV: 897.2, gate: "R/W bit 0", offset_mV: -10.13}
+      - {name: decode_bits, ch: CH1, value: "D6, 9th clock high = NACK"}
+      - {name: SCL_period, ch: CH2, value_us: 2.500}
+    source: "tools/lab/capture.py"
+    scope_settings:
+      channels:
+        CH1: {probe: "10", bw_limit: "OFF", scale: "5.000000E-01", offset: "-1.650000E+00", coupling: "DC", invert: "0", units: "VOLT"}
+        CH2: {probe: "10", bw_limit: "OFF", scale: "5.000000E-01", offset: "-1.650000E+00", coupling: "DC", invert: "0", units: "VOLT"}
+      timebase: {scale: "1.000000E-5", offset: "0.000000", mode: "MAIN"}
+      acquire: {srate: "6.250000E+7", mdepth: "1.0000E+04", type: "NORM"}
+      trigger: {mode: "IIC", sweep: "AUTO", when: "ADDR", clevel: "1.500000E0", scl: "CHAN2", sda: "CHAN1", dlevel: "1.500000E0", awidth: "7", address: "107", direction: "WRIT"}
+      bus1: {mode: "IIC", scl_source: "CHAN2", sda_source: "CHAN1", address: "RW", threshold_sda: "1.650000E0", threshold_scl: "1.650000E0"}
+      measure: {threshold_type: "PERC", max_pct: "7.000000E+01", mid_pct: "5.000000E+01", min_pct: "3.000000E+01", amsource: "OFF"}
+      trigger_status: {before: "STOP", after_stop: "STOP"}
+    waveform:
+      mode: "RAW"
+      format: "ASCii"
+      points: 10000
+      read: "single"
+      preamble: {CH1: "2,2,10000,1,1.600000E-8,-8.000000E-5,0.000000,6.6667E-05,-24750,32768", CH2: "2,2,10000,1,1.600000E-8,-8.000000E-5,0.000000,6.6667E-05,-24750,32768"}
+    scope_clock: {set_to: "2026-10-25T22:17:24", read_back: "2026-10-25 22:17:24", ok: true, delta_s: 0.0}
+    scpi_errors: []
+  - test_id: "V7R-013"
+    arm: "A2"
+    time: "2026-10-25T22:17:33"
+    trigger: {type: "IIC", sweep: "AUTO", when: "ADDR", scl: "CHAN2", sda: "CHAN1", address: "107", direction: "WRIT", awidth: "7", clevel_V: 1.5, dlevel_V: 1.5}
+    timebase_s_div: 1.0e-05
+    method: "auto"
+    feature: "V7R-013 A2 counted capture, u3-drv2, 10 us/div, SINGLE on 0x6B write; rigid #1 back on the cable (in)"
+    values:
+      - {name: "VPP", ch: "CH1", value_mV: 2752.4, raw: "2.7524E+00"}
+      - {name: "VPP", ch: "CH2", value_mV: 3838.3, raw: "3.8383E+00"}
+    captures: ["2026-10-25_V7R-013_A2_03.png", "2026-10-25_V7R-013_A2_03.csv", "2026-10-25_V7R-013_A2_03.setup.bin"]
+    raw_observation: "operator: A2-1: 1. yes 2. yes 3. nothing; A2-2: 1. yes 2. nothing"
+    values_csv:   # i2c_frame.py --expect D6 on the cropped CSV, lab/evidence/V7R-013/i2c_frame/A2_03_frame.txt
+      - {name: V_OL, ch: CH1, value_mV: 901.8, gate: "address bit 5", offset_mV: -10.13}
+      - {name: V_OL, ch: CH1, value_mV: 893.5, gate: "address bit 3", offset_mV: -10.13}
+      - {name: V_OL, ch: CH1, value_mV: 897.4, gate: "R/W bit 0", offset_mV: -10.13}
+      - {name: decode_bits, ch: CH1, value: "D6, 9th clock high = NACK"}
+      - {name: SCL_period, ch: CH2, value_us: 2.500}
+    source: "tools/lab/capture.py"
+    scope_settings:
+      channels:
+        CH1: {probe: "10", bw_limit: "OFF", scale: "5.000000E-01", offset: "-1.650000E+00", coupling: "DC", invert: "0", units: "VOLT"}
+        CH2: {probe: "10", bw_limit: "OFF", scale: "5.000000E-01", offset: "-1.650000E+00", coupling: "DC", invert: "0", units: "VOLT"}
+      timebase: {scale: "1.000000E-5", offset: "0.000000", mode: "MAIN"}
+      acquire: {srate: "6.250000E+7", mdepth: "1.0000E+04", type: "NORM"}
+      trigger: {mode: "IIC", sweep: "AUTO", when: "ADDR", clevel: "1.500000E0", scl: "CHAN2", sda: "CHAN1", dlevel: "1.500000E0", awidth: "7", address: "107", direction: "WRIT"}
+      bus1: {mode: "IIC", scl_source: "CHAN2", sda_source: "CHAN1", address: "RW", threshold_sda: "1.650000E0", threshold_scl: "1.650000E0"}
+      measure: {threshold_type: "PERC", max_pct: "7.000000E+01", mid_pct: "5.000000E+01", min_pct: "3.000000E+01", amsource: "OFF"}
+      trigger_status: {before: "STOP", after_stop: "STOP"}
+    waveform:
+      mode: "RAW"
+      format: "ASCii"
+      points: 10000
+      read: "single"
+      preamble: {CH1: "2,2,10000,1,1.600000E-8,-8.000000E-5,0.000000,6.6667E-05,-24750,32768", CH2: "2,2,10000,1,1.600000E-8,-8.000000E-5,0.000000,6.6667E-05,-24750,32768"}
+    scope_clock: {set_to: "2026-10-25T22:17:33", read_back: "2026-10-25 22:17:33", ok: true, delta_s: 0.0}
     scpi_errors: []

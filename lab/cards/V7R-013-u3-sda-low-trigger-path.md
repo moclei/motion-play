@@ -1,7 +1,7 @@
 ---
 test_id: V7R-013
 title: "U3 SDA low with the far-end path in / out / in (rigid #1 on the J6 cable vs cable stub only), at TPIO43"
-status: pre-registered
+status: recorded
 created: 2026-10-25
 prereg_commit: self
 baseline:
@@ -85,13 +85,31 @@ The session runs every SCPI command and capture; one instruction block per step.
 - A1 (v7 plugged in, rigid in): "1. yes 2. nothing"
 - B-1 (v7 unplugged; cable unplugged at rigid #1, still in J6): "1. yes 2. yes 3. yes 4. nothing"
 - B-2 (v7 plugged in): "1. yes 2. nothing"
+- A2-1 (v7 unplugged; cable back on rigid #1): "1. yes 2. yes 3. nothing"
+- A2-2 (v7 plugged in): "1. yes 2. nothing"
+- End (after revert to diag): "1. yes 2. yes 3. pads look fine 4. nothing"
 - Session note: the idle-high contact control is read over −45…−25 µs of each counted CSV (the gap between the INA frame, ending ~−52 µs, and the D6 START at ~−20 µs); a first pass over −60…−25 µs overlapped the INA frame's tail and was discarded before any B data.
 ### Measured values (from log; cite `lab/evidence/V7R-013/...`)
+Log `lab/log/2026-10-25_s01.yaml` (shared with V7R-012; validation `passed: true` for this placement). Frames `lab/evidence/V7R-013/i2c_frame/<arm>_<nn>_frame.txt`; PNGs `lab/evidence/V7R-013/png/`; serial `lab/evidence/V7R-013/2026-10-25_V7R-013_{v7,nano}_01.txt`.
+
+| Arm | Far end | V_OL bit 5 / bit 3 / R/W per capture (mV) | Arm V_OL (mean of 9) | Decode, 9th bit | SCL period (µs) | BQ ACK capture window / whole arm | CH1 idle −45…−25 µs (V) |
+|---|---|---|---|---|---|---|---|
+| A1 | rigid in | 903.1/893.7/897.6 · 902.5/894.6/897.8 · 902.0/894.4/897.7 | **898.16** | D6, high ×3 | 2.500 ×3 | 0/740 · 0/3530 | 3.272, 3.272, 3.273 |
+| B | rigid out (stub) | 683.8/674.3/677.3 · 683.3/674.5/677.8 · 683.2/674.3/677.7 | **678.47** | D6, low ×3 | 2.501 ×3 | 1270/1270 · 6180/6180 | 3.272, 3.272, 3.272 |
+| A2 | rigid in | 900.6/892.7/895.8 · 902.2/894.0/897.2 · 901.8/893.5/897.4 | **897.24** | D6, high ×3 | 2.500 ×3 | 0/650 · 0/800 | 3.272, 3.274, 3.274 |
+
+- Anchor: |A1 − A2| = 0.92 mV; A = 897.70 mV. Δ = V_OL(B) − A = **−219.23 mV**.
+- Controls: V8 `Write:d6` before every arm (NACK mark in A1/A2, none in B); `sda_drv=2 scl_drv=2` on every `[scope]` line; `tca` = `ina` = n throughout; `t` continuous within each arm; 9th bit agrees with the log in all 9 captures. V_OL carries the CH1 offset −10.13 mV uncorrected.
+- Panel Vpp CH2 invalid on `val_V8_B_01`, `B_01`, `B_02`, `A2_02` (9.9E37); CSVs unaffected.
+
 ### Interpretation (session; labelled as such)
+Interpretation: taking the far-end path off lowers U3's SDA low by ~220 mV (to ~0.68 V) and BQ starts ACKing; putting it back restores ~0.90 V and the NACK, to within 1 mV. So about a quarter of the elevated low depends on the far-end path, and the rest (~0.68 V, still far above the Nano's ~0.11 V) is there without it. With V7R-012 (drive setting moves the low by −18 mV), the low behaves like a load-dependent drop that the pad's drive setting does not change, e.g. a resistance or offset in series with U3's pull-down. BQ ACKs a ~0.68 V low and NACKs a ~0.90 V low here, consistent with a BQ input threshold between the two [verify: BQ24195 V_IL, desk card (c)], but this card does not separate level from the other things the rigid takes with it (bundle in Confounds). L-Ph21's ~650 mV (no cable, BQ ACK) is reproduced in direction and roughly in size (678 mV, cable stub, BQ ACK).
 
 ## Conclusion
-- Outcome row matched: ...
-- Hypotheses excluded: ...
-- **Strength:** measured-refuted | measured-supported | argued | not tested
-- Revert-on-null done: yes/no (commit)
+- Outcome row matched: row 3 — Δ = −219.23 mV ≤ −100 mV, V_OL(B) = 678.47 mV > 0.4 V, BQ ACK 100 % in B (1270/1270); anchor |A1 − A2| = 0.92 mV with A1, A2 > 0.4 V and BQ ACK 0 %; all controls pass in all three arms.
+- Hypotheses excluded: H2 as the whole of the low (the low depends on the far-end path) — measured-refuted. H1 supported for part of the low (~220 mV of ~0.90 V). H3 not decided (fits if BQ's V_IL lies between 0.68 and 0.90 V; not shown). H4 not excluded. M not supported: no probe move, contact checked by CH1 idle-high in every capture, A1 and A2 agree to 1 mV.
+- **Strength:** measured-refuted (H2 as whole; one board, one rigid, A/B/A, 3 captures per arm, 400 kHz, cable stub left in J6); `lab/evidence/V7R-013/`
+- §7 L-Ph21 SDA V_OL with the path out: re-measured at TPIO43 (678 mV, BQ ACK), with the stub left in J6, not at U5.6 and not at 100 kHz.
+- Deviations: (1) the contact control's window was set to −45…−25 µs after a first pass over −60…−25 µs overlapped the INA frame's tail (before any B data; raw note). (2) Panel Vpp CH2 invalid on four captures; not used.
+- Revert-on-null done: yes (not a null; revert per card, and V7R-012's) — U3 on v7-clean motion-play-v7-diag (90053af, upload 22:18), Nano blank, probes off the board, both boards unplugged
 - Result commit: self
