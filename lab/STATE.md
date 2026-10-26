@@ -2,7 +2,7 @@
 as_of: V7R-013            # highest card ID with status recorded|abandoned that this file reflects (V7R-000 = sentinel, nothing recorded)
 updated: 2026-10-25       # date of the last edit
 last_checkpoint: V7R-011  # card ID at which the last step-back checkpoint ran (context-strategy §4.3)
-open_cards: []                              # cards with status pre-registered|run; must match lab/cards/ (checked)
+open_cards: [V7R-014]                       # cards with status pre-registered|run; must match lab/cards/ (checked)
 ---
 
 # v7 I²C fault — current state
@@ -134,7 +134,7 @@ Verdict is trustworthy | suspect | unknown | not tested; a row is deleted when a
 
 ## 8. Next                                      (≤ 6 lines)
 - V7R-012 (row 1: GPIO43 drive not a lever on the low) and V7R-013 (row 3: far-end path out → low −219 mV to ~0.68 V, BQ ACKs) recorded. Open question: what holds U3's SDA low at ~0.68 V with no far-end path while the Nano reaches ~0.11 V, and does the low track sink current. Candidates (user's choice; all at S1): (e) static low-drive GPIO43 vs GPIO44 as plain open-drain GPIO, I²C off (needs a build); SDA low vs added sink current at TPIO43 (e.g. a known resistor to +3.3 V, design TBD). Desk (c) done 2026-10-25 (F-14).
-- Open cards: none. Timebox: 13/15 cards · week 1/8. Master bundle region: 9 cards; per-card go-ahead. Checkpoint due at V7R-014 (next record).
+- Open cards: V7R-014 (static low GPIO43 vs GPIO44, I²C detached; pre-registered, not run; firmware delta u3-static approved). Timebox: 14/15 cards · week 1/8. Master bundle region: 9 cards; per-card go-ahead. Checkpoint due at V7R-014 (next record).
 
 ## 9. Lookups (L1 routing)                      (≤ 15 rows)
 Where to go for detail that is not L0; load only the named section or query.

@@ -221,3 +221,12 @@ The "belief changes" line replaces overwriting a "current working theory": STATE
 - decisions: user: "do the desk card (c) now".
 - bench state at end: unchanged from s08 (both boards unpowered, probes off, v7 on diag 90053af, Nano blank).
 - next: checkpoint due at V7R-014. Candidates: (e) static low-drive GPIO43 vs GPIO44; SDA low vs added sink current at TPIO43.
+
+## 2026-10-25 · s08 (cont.) · V7R-014 pre-registered (static low, GPIO43 vs GPIO44); session closed for a fresh one
+- session: debugger (same conversation as s08) · operator: user (no bench) · boards: none
+- cards: V7R-014 pre-registered (this commit), not run. Build `u3-static` (firmware.bin 493a0235) sources and session helpers (`serlog.py` with a command file, `runarm_frames.sh`, `arm_frames_V7R-013.py`) in `lab/evidence/V7R-014/src/`.
+- decisions: user: "ok, draft V7R-014 for (e)"; "approve the firmware changes"; "commit everything and I'll run it fresh" (taken as the go-ahead to pre-register; the user may amend the card before the run, which then needs an amendment commit before any bench step).
+- user question answered in chat (not a result): a synthesis of V7R-009…013 and desk (c) was given on request, labelled as interpretation; it is not recorded as a belief change beyond s08's.
+- relay: `lab/relays/2026-10-25_RELAY-debug-next.md` (pointers only).
+- bench state at end: unchanged from s08.
+- next: V7R-014 run (full validation at S1 first); the step-back checkpoint is due once V7R-014 is recorded, before any further card.
