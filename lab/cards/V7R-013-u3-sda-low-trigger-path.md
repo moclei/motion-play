@@ -81,6 +81,9 @@ The session runs every SCPI command and capture; one instruction block per step.
 
 ## Actual result
 ### Raw observations (operator, verbatim; symptoms not interpretations)
+- Pause (end of V7R-012, v7 unplugged): "1. yes 2. nothing"
+- A1 (v7 plugged in, rigid in): "1. yes 2. nothing"
+- Session note: the idle-high contact control is read over −45…−25 µs of each counted CSV (the gap between the INA frame, ending ~−52 µs, and the D6 START at ~−20 µs); a first pass over −60…−25 µs overlapped the INA frame's tail and was discarded before any B data.
 ### Measured values (from log; cite `lab/evidence/V7R-013/...`)
 ### Interpretation (session; labelled as such)
 
