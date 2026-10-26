@@ -25,7 +25,6 @@ This is a new scope session: full validation V1–V8 at S1 before arm F, per the
 The step-back checkpoint is due once V7R-014 is recorded: do it before pre-registering any further card.
 Working rules for me at the bench: as in the notebook "decisions" lines of 2026-10-25 s06–s08. Also:
 - Don't run a session-side action that isn't in the card's procedure (an extra reset, an extra flash) without asking me first.
-- Tell me when context reaches ~50%.
 ```
 
 ## 3. What should happen, in order
