@@ -91,6 +91,16 @@ The session runs every SCPI command, flash and capture; one instruction block pe
 
 ## Actual result
 ### Raw observations (operator, verbatim; symptoms not interpretations)
+- P0: "1. yes 2. yes, Nano green LED 3. yes 4. nothing"
+- V1/V3a (after AUTO): "Ch1 on the scope shows a square wave visible, but just the rising corner of one wave of it, and it seems kind of rounded on the corner"
+- V5a: "1. Yes, I think I got them all directly on 2. Both are like, ranging from 22 - 27mV"
+- V5b-1 (springs on C, tips on N): "1 yes, I'm 98% sure 2. Nothing on x for sure"
+- V5b-2: "1. yes 2. vpp(c1) is like 22-27mV, vpp(c2) is more widely ranging, kind of hard to say" (V5 FAIL on CH2, `val_V5_01`)
+- V5b-3/-4 (CH2 re-seated on C/N): "1. yes 2. nothing on X"; "1. yes, 2. both between 23mV and 28mV" (`val_V5_02`)
+- V7-1/-2 (tips to A/B): "1. yes 2. yes, nothing on X"; "1. yes 2. blue above 3.15V, yellow below 150mV" (`val_V7_01`, CH1 at ground level)
+- V7-3/-4 (CH1 re-seated on A): "1. yes 2. yes, nothing on X"; "1. yes 2. blue above 3.15V, yellow above 3.15V" (`val_V7_02`)
+- Decode: "1. yes 2. none differed"
+- A1 (after A1_03): "It shows \"write D:6\" then a red \"diamond\" that seems to be an empty label. The SCL probe came loose from B, sometime after the capture I think"
 ### Measured values (from log; cite `lab/evidence/V7R-012/...`)
 ### Interpretation (session; labelled as such)
 
