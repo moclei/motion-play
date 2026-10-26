@@ -18,13 +18,8 @@ Run plain `claude`, then paste this as your first message:
 
 ```
 Read `docs/research/v7-retry/debugger-role-draft.md` and act as that role for this session, on branch debug/v7-track-3.
-Start with the role's start-of-session steps. The open card is V7R-014 (pre-registered, not run): lab/cards/V7R-014-u3-static-low-43-vs-44.md. Last notebook entry: 2026-10-25 · s08 (cont.).
-The firmware delta (u3-static, sources and hash in lab/evidence/V7R-014/src/u3/) is approved. Rebuild it from those sources in your scratchpad and check the firmware.bin hash matches firmware.sha256 before flashing; if it differs, stop and tell me.
-Session helpers from the last session are in lab/evidence/V7R-014/src/session/ (serial logger with a command file for the f/r/3/4 mode commands; the frames capture script; the frame analysis script). Copy them to your scratchpad; don't edit them in place.
-This is a new scope session: full validation V1–V8 at S1 before arm F, per the card (V7 in mode r, V8 in mode f). Plan probe moves per lab/templates/card.md and flag any extra move to me before making it.
-The step-back checkpoint is due once V7R-014 is recorded: do it before pre-registering any further card.
-Working rules for me at the bench: as in the notebook "decisions" lines of 2026-10-25 s06–s08. Also:
-- Don't run a session-side action that isn't in the card's procedure (an extra reset, an extra flash) without asking me first.
+Before flashing u3-static, rebuild it from lab/evidence/V7R-014/src/u3/ and check that firmware.bin matches firmware.sha256; if it differs, stop and tell me.
+At the bench, ask me before any session-side action that isn't in the card's procedure (an extra reset, flash or capture).
 ```
 
 ## 3. What should happen, in order
