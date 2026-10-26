@@ -1,7 +1,7 @@
 ---
 test_id: V7R-012
 title: "U3 SDA drive strength CAP_2 / CAP_3 / CAP_2: SDA low at TPIO43 and BQ ACK, failing state"
-status: pre-registered
+status: recorded
 created: 2026-10-25
 prereg_commit: self
 baseline:
@@ -104,11 +104,26 @@ The session runs every SCPI command, flash and capture; one instruction block pe
 - V7-5 (CH2 re-seated on B): "1. yes 2. yes Ch1 still on A, springs on C"; V7-5b: "nothing on x"; V7-6: "1. yes" (`val_V7_03`)
 - B and A2: no operator action (session: u3-drv3 then u3-drv2, V8 and 3 captures each, 21:22–21:25)
 ### Measured values (from log; cite `lab/evidence/V7R-012/...`)
+Log `lab/log/2026-10-25_s01.yaml` (validation `passed: true`). Frames: `lab/evidence/V7R-012/i2c_frame/<arm>_<nn>_frame.txt` (cropped CSV −30…+40 µs, `i2c_frame.py --expect D6`); PNGs `lab/evidence/V7R-012/png/`; serial `lab/evidence/V7R-012/2026-10-25_V7R-012_{v7,nano}_01.txt`.
+
+| Arm | Image (read-back) | V_OL bit 5 / bit 3 / R/W per capture (mV) | Arm V_OL (mean of 9) | Decode, 9th bit | SCL period (µs) | BQ ACK in capture window / whole arm |
+|---|---|---|---|---|---|---|
+| A1 | u3-drv2 (`sda_drv=2 scl_drv=2`) | 902.3/893.9/898.1 · 902.2/894.2/898.2 · 903.0/894.9/899.0 | **898.42** | D6, high ×3 | 2.500 ×3 | 0/620 · 0/20050 |
+| B | u3-drv3 (`sda_drv=3 scl_drv=2`) | 883.9/876.9/879.7 · 885.0/876.1/880.5 · 883.7/875.6/879.9 | **880.14** | D6, high ×3 | 2.500, 2.501, 2.500 | 0/610 · 0/790 |
+| A2 | u3-drv2 (`sda_drv=2 scl_drv=2`) | 903.8/894.8/898.9 · 903.3/895.6/897.6 · 902.1/894.5/898.7 | **898.81** | D6, high ×3 | 2.500 ×3 | 0/440 · 0/7290 |
+
+- Anchor: |A1 − A2| = 0.39 mV; A = 898.62 mV. Δ = V_OL(B) − A = **−18.48 mV**.
+- Controls: S1 validation passed (V5 excess 1.73 / 1.00 mV rms; V7 3.272 / 3.262 V, re-checked 3.273 / 3.262 V after the CH2 re-seat; V8 `Write:d6` before each arm). Every `[scope]` line in each arm carries that arm's `sda_drv` and `scl_drv=2`; `tca` = `ina` = n throughout; `t` continuous within each arm (no reboot). Rise 30→70 % CH1 ~130 ns, CH2 ~125 ns (recorded).
+- V_OL values carry the CH1 offset −10.13 mV (V5a) uncorrected, as in V7R-010.
+
 ### Interpretation (session; labelled as such)
+Interpretation: doubling the GPIO43 pad's nominal drive moved U3's SDA low by ~2 %, against the ~40 % drop a drive-limited low would give (card magnitude estimate). Whatever sets the ~0.90 V low is not the pad's output drive setting. BQ NACKed at both settings, so this card says nothing about BQ's threshold (the low never fell). Legacy L-Ph23's ~50 mV at CAP_3 is not reproduced at TPIO43 under these conditions (400 kHz, CAP_3 on GPIO43 only); its conditions differed (100 kHz, both pins, U5.6, cursor reading).
 
 ## Conclusion
-- Outcome row matched: ...
-- Hypotheses excluded: ...
-- **Strength:** measured-refuted | measured-supported | argued | not tested
-- Revert-on-null done: yes/no (commit)
+- Outcome row matched: row 1 — |Δ| = 18.48 mV < 50 mV; BQ ACK 0 % in B (0/610); anchor |A1 − A2| = 0.39 mV ≤ 20 mV with A1, A2 > 0.4 V and BQ ACK 0 %; all controls pass in all three arms.
+- Hypotheses excluded: H1 (the SDA low is set by the GPIO43 drive setting) — measured-refuted. H2 weakly supported. H3 and H4 not separated (the low did not fall below 0.4 V). M not supported: three arms at one placement with no probe move between them, drive read back on every log line, captures agree with the logs, A1 and A2 agree to 0.4 mV.
+- **Strength:** measured-refuted (H1; one board, one rigid, A/B/A, 3 captures per arm, 400 kHz, CAP_3 on GPIO43 only); `lab/evidence/V7R-012/`
+- §7 L-Ph23 SDA V_OL: re-measured at TPIO43 under U3 with CAP_3 (880 mV, BQ NACK), not at U5.6 and not at 100 kHz or with SCL at CAP_3.
+- Deviations: (1) First V5b failed on CH2 (excess 33.87 mV rms, spike bursts); CH2 re-seated on C/N, `val_V5_02` passed — one extra single-probe move. (2) First V7: CH1 at ground level (tip not on A); CH1 re-seated — one extra single-tip move. (3) CH2 came loose from B after A1_03 (operator); A1 frames decode with a normal SCL record, so A1 stands. CH2 re-seated, V7 re-checked on relbus (`val_V7_03`) before B — one extra single-tip move and one extra relbus flash. (4) ~4 h gap between the CH2 re-seat (17:36) and V7_03 (21:22), board unplugged, probes seated. (5) `A2_02`: panel Vpp CH2 invalid (9.9E37); CSV unaffected. (6) CH2 at B shows spike bursts at idle (sd ~28.5 mV), as in V7R-010; CH2 is not counted. (7) Banner text kept `sketch=v7_scope_bq_probe`; the build is identified by `version=1.0-drv` and its `drive:` line.
+- Revert-on-null done: not yet — U3 left on u3-drv2 (the V7R-013 run image, probes still at S1, user choice "1"); the revert to diag is due at the end of the session.
 - Result commit: self
