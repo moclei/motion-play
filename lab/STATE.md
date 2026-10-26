@@ -2,7 +2,7 @@
 as_of: V7R-012            # highest card ID with status recorded|abandoned that this file reflects (V7R-000 = sentinel, nothing recorded)
 updated: 2026-10-25       # date of the last edit
 last_checkpoint: V7R-011  # card ID at which the last step-back checkpoint ran (context-strategy §4.3)
-open_cards: []                              # cards with status pre-registered|run; must match lab/cards/ (checked)
+open_cards: [V7R-013]                       # cards with status pre-registered|run; must match lab/cards/ (checked)
 ---
 
 # v7 I²C fault — current state
