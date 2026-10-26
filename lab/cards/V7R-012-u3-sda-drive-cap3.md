@@ -101,6 +101,8 @@ The session runs every SCPI command, flash and capture; one instruction block pe
 - V7-3/-4 (CH1 re-seated on A): "1. yes 2. yes, nothing on X"; "1. yes 2. blue above 3.15V, yellow above 3.15V" (`val_V7_02`)
 - Decode: "1. yes 2. none differed"
 - A1 (after A1_03): "It shows \"write D:6\" then a red \"diamond\" that seems to be an empty label. The SCL probe came loose from B, sometime after the capture I think"
+- V7-5 (CH2 re-seated on B): "1. yes 2. yes Ch1 still on A, springs on C"; V7-5b: "nothing on x"; V7-6: "1. yes" (`val_V7_03`)
+- B and A2: no operator action (session: u3-drv3 then u3-drv2, V8 and 3 captures each, 21:22–21:25)
 ### Measured values (from log; cite `lab/evidence/V7R-012/...`)
 ### Interpretation (session; labelled as such)
 
