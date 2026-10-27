@@ -10,8 +10,8 @@ baseline:
   firmware_env: "u3-drv2"     # V7R-012 drive build, original binary f8ebf3fc (lab/evidence/V7R-015/u3-drv2-f8ebf3fc.bin; GPIO43 CAP_2 = default drive, read back), flashed 2026-10-26 23:42 for V7R-015 and still on U3. Not reflashed for this card. End: revert to motion-play-v7-diag (also closes V7R-015's deferred revert). User-approved for this card ("1. approved"); RTS arms "2. ok"; 2 captures per arm "3. ok"; photos + DMM digits "4. yes"
   board_id: v7-B3             # v7 #0003; U3 die rev v0.2. Nano ESP32 powered on the blank sketch throughout (power order, V7R-008)
   hardware_config: "As V7R-015 end (notebook 2026-10-27 s02): J6 JST-SH pigtail (black = pin 1 +3.3 V in the breadboard 'V' rail; red = pin 2 GND → Nano GND column; blue = pin 3 SDA alone in the 'G'-labelled rail; yellow = pin 4 SCL dangling). J4, J5 empty. Rigid #1 off the bench. No battery. TPIO43 green / TPIO44 yellow pad wires → ~175 mm Dupont → Nano A4 / A5. USB-C Mac ↔ v7 J7; USB-C Mac ↔ Nano. Two SQ500 in PCBite arms seated at S1 (CH1 tip A, CH2 tip B, springs C), validated in log 2026-10-26_s02, not moved since V7. v7 powered since the V7R-015 S0b power-up (~00:25)."
-variable_changed: "Far-end pull-up on SDA at the J6 pigtail's far end (resistor between the 'V' rail and blue's rail): none (stub) / 47 kΩ / 10 kΩ / 4.7 kΩ, each set up three times in mixed order, one power-up per set-up. Stub power-up repeats with nothing touched (USB replug, RTS reset) are replicates of the stub level, not a second variable: they separate the boot from the breadboard touch (declared, M-boot / M-touch / M-rts)."
-structure: "Replicated blocks: pre-block stub repeats C0 (no power change) / U1 (USB replug) / T1 (RTS reset); three blocks, each holding every level once in a different order; post-block T2 (RTS reset). 16 arms, at S1 with no probe move. Not A/B/A: replication across set-ups replaces the bracketing anchor (V7R-015's anchor failed at the set-up level)"
+variable_changed: "Far-end pull-up on SDA at the J6 pigtail's far end, selected by which breadboard row blue's Dupont pin is in (each resistor fixed between the 'V' rail and its own row; one empty row): none (stub) / 47 kΩ / 10 kΩ / 4.7 kΩ, each set up three times in mixed order, one power-up per set-up. Stub power-up repeats with nothing touched (USB replug, RTS reset) are replicates of the stub level, not a second variable: they separate the boot from the breadboard touch (declared, M-boot / M-touch / M-rts)."
+structure: "Replicated blocks: C0 (V7R-015 S0b boot read before anything is touched); step R (resistor placement); pre-block stub arms S-0 (after placement) / U1 (USB replug) / T1 (RTS reset); three blocks, each holding every level once in a different order; post-block T2 (RTS reset). 17 arms, at S1 with no probe move. Not A/B/A: replication across set-ups replaces the bracketing anchor (V7R-015's anchor failed at the set-up level)"
 revert_on_null: yes           # end: U3 on v7-clean motion-play-v7-diag; Nano blank (unchanged); probes per the user's call at the end (recorded in the notebook)
 ---
 
@@ -33,10 +33,10 @@ revert_on_null: yes           # end: U3 on v7-clean motion-play-v7-diag; Nano bl
 
 ## Confounds (declared; not separated by this card)
 - **Pigtail, no rigid**, as V7R-015: BQ is the only marker.
-- **I_far computed, not measured:** I_far = (V_rail − V_OL)/R_meas. V_rail by DMM once ('V' rail to Nano GND column, powered, at C0). R_meas by DMM, digits reported, before the first insertion.
-- **Power-up at every set-up** (unplug the v7 at the Mac end, change, plug in), as V7R-013/-015. A set-up therefore changes both the breadboard and the boot; the no-touch stub arms (U1, T1, T2, and C0) give the boot alone.
+- **I_far computed, not measured:** I_far = (V_rail − V_OL)/R_meas. V_rail by DMM once ('V' rail to Nano GND column, powered, at S-0). R_meas by DMM, digits reported, before the first insertion.
+- **Power-up at every set-up** (unplug the v7 at the Mac end, change, plug in), as V7R-013/-015. A set-up therefore changes both the breadboard and the boot; the no-touch stub arms (U1, T1, T2) give the boot alone; C0 is no power-up at all.
 - **RTS reset:** the session runs `esptool.py --port <v7> read_mac` (default reset into the ROM loader, then hard reset via RTS), the same sequence that ended the V7R-015 flash before S0a, without a write. The serial logger is stopped for it and restarted.
-- **Same holes:** every resistor goes in the same two holes as in V7R-015 (V rail and blue's rail); the operator photographs the breadboard after each change.
+- **Move-blue layout (amendment 2026-10-27, before any counted arm; user: "yes, amend it for the move-blue layout"):** the three resistors are placed once at step R and not touched again: one leg each in the 'V' rail (with black), the other leg in its own 5-hole terminal row, three rows that connect to nothing else; one further empty row is the stub row. Each set-up moves only blue's Dupont pin into the arm's row. Differences from V7R-015: the stub node is a 5-hole row, not the 'G' rail (a few pF; stub capacitance tombstoned, L-Ph5/6d); idle resistors hang from the 'V' rail with open far ends (no current). M-touch now means blue's pin contact, the same action for every level. The operator photographs the breadboard after each change.
 - **C0 is not a new power-up:** it is the V7R-015 S0b boot (~00:25), read hours later; compared with S0b (676.72 mV) for within-boot drift.
 - **Timing:** captured in the CSVs, not evaluated (Planner relay 2026-10-24).
 
@@ -72,14 +72,17 @@ Definitions: R_boot = max − min of V over the no-touch stub arms U1, T1, T2 (p
 - Scope: as V7R-015 (DHO804 at 192.168.50.2; CH1 1 V/div −3.3 V, CH2 0.5 V/div −1.65 V, BW OFF, DC; V8 at 20 µs/div, counted at 10 µs/div, 10 kpts; trigger I²C ADDR 107 WRITE, SINGLE; decode set). Session helper: V7R-015 `runarm_frames.sh` with 2 counted captures.
 - Position **S1**. **Probe moves: none.** If a probe moves or is bumped: stop; V7 + V8 again before the next counted arm (procedure).
 - Readout: v7 serial logged by the session (`lab/captures/V7R-016/2026-10-27_V7R-016_v7_01.txt`, `=== <arm>` markers).
-- Resistors: the 47 kΩ, 10 kΩ and 4.7 kΩ from V7R-015, DMM digits reported out of circuit.
+- Resistors: the 47 kΩ, 10 kΩ and 4.7 kΩ from V7R-015, DMM digits (or "within 1 % of nominal") reported out of circuit; legs trimmed to ~8–10 mm and placed once at step R (move-blue layout). A 1 % R error moves I_far by ≤ 1 % (≤ ~3 mV under H1), below every threshold.
 - Photos: one phone photo of the breadboard after each change (`<arm>.jpg`), handed over at the end into `lab/captures/V7R-016/photos/`; the session writes what it reads from each into the log.
 - Time: ~2 h bench. If 105 min have passed, finish the current block and go to End (T2 dropped first).
 
 ## Arm order (fixed before the run)
+Note (amendment): C0 is read before step R, with nothing touched, so it stays the V7R-015 S0b boot. Step R (resistor placement, blue from the 'G' rail into the stub row) is done with the v7 unplugged; S-0 is the stub after it (a touch stub, outside R_boot and the blocks; recorded).
 | # | Arm | Bench action before it | Power |
 |---|---|---|---|
 | 1 | C0 | none | none (V7R-015 S0b boot) |
+| — | step R | resistor placement; blue to the stub row | v7 unplugged, plugged in at the end of R |
+| 1b | S-0 | none after R | (the R power-up) |
 | 2 | U1 | none | USB replug |
 | 3 | T1 | none | RTS reset (session) |
 | 4–7 | Block 1: R10-1, S-1, R4.7-1, R47-1 | change to the arm's level | USB replug each |
@@ -91,11 +94,12 @@ Definitions: R_boot = max − min of V over the no-touch stub arms U1, T1, T2 (p
 The session runs every SCPI command, esptool call, marker and capture; one instruction block per step.
 | Step | Do | Check before continuing | Report back |
 |---|---|---|---|
-| R | DMM the 47 kΩ, 10 kΩ and 4.7 kΩ (out of circuit) | leads on the resistor only | three readings, digits |
-| C0 | DMM 'V' rail to Nano GND column; then nothing (session: V8, 2 captures) | PWR LED on; probes untouched | V_rail digits; what the decode band shows |
+| C0 | Nothing (session: V8, 2 captures), before step R | probes untouched | what the decode band shows |
+| R | DMM the 47 kΩ, 10 kΩ and 4.7 kΩ (out of circuit); v7 unplugged at the Mac end; trim legs, place each between the 'V' rail and its own row; move blue from the 'G' rail into an empty row (the stub row); photo; plug the v7 back in | each resistor's far leg alone in its row; blue alone in the stub row | three readings; which row is which; photo name |
+| S-0 | DMM 'V' rail to Nano GND column; then nothing (session: V8, 2 captures) | PWR LED on; probes untouched | V_rail digits; decode band |
 | U1 | Unplug the v7 at the Mac end; plug it back in; nothing else touched | PWR LED; probes untouched | LED; decode band |
 | T1 | Nothing (session resets U3 by RTS) | PWR LED | decode band |
-| set-up (arms 4–15) | Unplug the v7 at the Mac end; set the breadboard to the arm's level (take out what's there, put in the arm's resistor in the same holes, or leave blue alone for S); photo; plug in | resistor legs in those two rails only; blue alone for S; probes untouched | holes used; photo name; LED; decode band |
+| set-up (arms 4–15) | Unplug the v7 at the Mac end; move blue's pin to the arm's row (resistor row, or the empty row for S); photo; plug in | blue alone in the arm's row; resistors untouched; probes untouched | row used; photo name; LED; decode band |
 | T2 | Nothing (session resets U3 by RTS) | PWR LED | decode band |
 | End | Session reverts U3 to diag; then per the user's call on the probes; unplug the v7 at the Mac end, unplug the Nano | as stated | bench state; photos handed over |
 
