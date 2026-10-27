@@ -84,7 +84,19 @@ The session runs every SCPI command, flash, serial command and capture; one inst
 
 ## Actual result
 ### Raw observations (operator, verbatim; symptoms not interpretations)
+Session 2026-10-26 s01 (log `lab/log/2026-10-26_s01.yaml`).
+- Image check (session, before P0): rebuild of `src/u3/` gave `b3205a0b…` ≠ `493a0235…`; a second rebuild in the original layout (`u3static/src/main.ino`) gave `0a31c4a6…`. Diff vs the original 493a0235 binary: all loadable segments identical; image differs only at 0xb0–0xcf (embedded ELF SHA256) and the last 33 bytes (checksum + appended SHA256); ELF differs only in `.debug_line`/`.debug_str` (absolute build folder, sketch file name). User: "I wouldn't rebuild". Flashed the original 493a0235 binary (`shasum -c` OK) at 0x10000 with esptool `--flash_mode keep`, 13:35. Planner relay `lab/relays/2026-10-26_RELAY-planner-card-build-reproducibility.md`.
+- P0: "1. yes 2. on 3. no 4. nothing". Logger started after the flash: the first boot banner is not in the v7 log.
+- V1/V3 CH1: "Kind of, but it's too 'zoomed in' and the scope is 'running'" (after AUTO, before V3 settings). V3 CH1: "Square wave, top flat, square corners -- yes"; panel "Vamp: 3.0037V, Vtop: 2.9677V, -36mV". V3 CH2: "yes"; panel "vamp(c2): approx 3.003V, vtop(c2): 2.9677V, vbase(c2): -36mV" (capture: 3.0208 V).
+- First V2 batch: one `-110,"Command header err"` queued; source not identified; every read-back correct, queue clear after.
+- V5a: "Both are showing between 21 and 26 mV". V5b: "both around 22-26mV".
+- V7 first capture (`val_V7_01`): CH1 at ~0.85 V with short returns to ~3.29 V every ~8.5 µs; CH2 flat ~3.26 V; U3 `[regs]` GPIO43/44 `out=1 in=1`. Operator Vpp: "both are moving around so I couldn't say". Then operator, before the redo step: "I unplugged the v7 usb from the mac and reseated both probes (tips and ground springs)" — **one extra full placement**. Operator pressed AUTO; session re-set and read back every V5/V7 setting.
+- V7 second capture (`val_V7_02`): CH1 mean −11.3 mV, sd 5.37 mV (ground level); CH2 3.261 V; U3 GPIO43 `in=1`. Board unplugged, CH1 tip re-seated on A — **one extra single-tip move**; where the tip was before: "didn't see".
+- U3 resets in the v7 log (uptime back to a few ms) at ~15:12:50, 16:52:33, 16:54:47, 16:55:54, 16:57:30, 17:05:19, 17:06:07, 17:07:00, 17:07:46; the card's steps account for two plug-ins (V5b, V7). Not explained; none from F onward to be checked (c4).
+- Decode setup: "1. no 2. yes" (no field differed; band present).
 ### Measured values (from log; cite `lab/evidence/V7R-014/...`)
+- Validation: V3/V4 Vamp CH1 3.0037 V, CH2 3.0208 V. V5 (`val_V5ctl_01` / `val_V5_01`): excess CH1 0.00, CH2 1.72 mV rms, PASS (springs' first seat). V5 on the re-seated springs, `noise_floor.py` with `val_V7_03` as DUT: excess CH1 4.33, CH2 2.21 mV rms (≤ 5; idle-high pad, not a ground point). V7 (`val_V7_03`): CH1 3.273 V, CH2 3.262 V, idle, PASS. V8 (`val_V8_01`, 20 µs/div, 0x6B write trigger): band `Write:80`, `Write:d6` (red mark), `Write:e0`.
+- F (U3 mode f, 400 kHz; `i2c_frame/F_0n_frame.txt`): F_01 D6, 9th high, 2.500 µs, V_OL 901.1/892.2/896.6 mV; F_02 D6, high, 2.500, 900.7/891.7/896.4; F_03 D6, high, 2.500, 900.7/892.2/896.0. **Vref = 896.40 mV** (n = 9). `[scope]` at 17:33:09: n=930 tca=930 ina=930 bq=0. CH1 idle −45…−25 µs: 3.2752 / 3.2748 / 3.2750 V. c6 pass.
 ### Interpretation (session; labelled as such)
 
 ## Conclusion
