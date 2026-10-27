@@ -124,6 +124,8 @@ The session runs every SCPI command, esptool call, marker and capture; one instr
 
 - T1 (RTS reset by the session, nothing touched; operator clear since U1): esptool v4 `--chip esp32s3 read_mac` 14:17 (MAC 44:1b:f6:c5:58:c4; stub ran; "Hard resetting via RTS pin..."); logger stopped for it and restarted; `[scope]` t restarted (8978 at 14:17:33). V8 `val_V8_T1_01.png`: `Write:80`, `Write:d6` (no red mark), `Write:e0` (session read). Captures T1_01..02 (14:17–14:18); BQ 610/610 (n 160→770), codes 0000000000, drv 2/2, tca=ina=n, t monotonic, no other lines. Frame tool: D6, 9th low, period 2.500 µs ×2, bit V_OL [683.1 673.8 677.3] [682.5 674.0 676.8] mV → 677.92 mV; idle CH1 3.2732/3.2727 V, CH2 3.2610/3.2607 V; CH2 min 0.029/0.026 V.
 
+- R10-1 (file label `R10_1`; block 1; blue row 25 → row 15, USB replug): operator: "1. Blue is in the 10k resistor row 2. Power is on 3. go". V8 `val_V8_R10_1_01.png`: `Write:80`, `Write:d6` (red mark after), `Write:e0` (session read). Captures R10_1_01..02 (14:37–14:38); `[scope]` BQ 0/620 (n 70→690), codes 2222222222, drv 2/2, tca=ina=n, t monotonic, no other lines. Frame tool: D6, 9th high, period 2.500 µs ×2, bit V_OL [787.7 780.4 782.9] [789.8 781.3 784.7] mV → 784.47 mV; idle CH1 3.2736/3.2741 V, CH2 3.2617/3.2607 V; CH2 min 0.024/0.022 V.
+
 ### Measured values (from log; cite `lab/evidence/V7R-016/...`)
 ### Interpretation (session; labelled as such)
 
