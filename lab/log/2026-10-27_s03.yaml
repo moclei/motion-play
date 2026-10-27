@@ -757,3 +757,108 @@ measurements:
       preamble: {CH1: "2,2,10000,1,1.600000E-8,-8.000000E-5,0.000000,6.6667E-05,-24750,32768", CH2: "2,2,10000,1,1.600000E-8,-8.000000E-5,0.000000,6.6667E-05,-24750,32768"}
     scope_clock: {set_to: "2026-10-27T14:41:06", read_back: "2026-10-27 14:41:06", ok: true, delta_s: 0.0}
     scpi_errors: []
+  - test_id: "V7R-016"
+    arm: "val_V8_R4p7_1"
+    time: "2026-10-27T15:01:00"
+    trigger: {type: "IIC", sweep: "AUTO", when: "ADDR", scl: "CHAN2", sda: "CHAN1", address: "107", direction: "WRIT", awidth: "7", clevel_V: 1.5, dlevel_V: 1.5}
+    timebase_s_div: 2.0e-05
+    method: "auto"
+    feature: "V8 contact check: I2C decode, address trigger 0x6B write, 20 us/div"
+    values:
+      - {name: "VPP", ch: "CH1", value_mV: 3312.5, raw: "3.3125E+00"}
+      - {name: "VPP", ch: "CH2", value_mV: 3279.6, raw: "3.2796E+00"}
+    captures: ["2026-10-27_V7R-016_val_V8_R4p7_1_01.png", "2026-10-27_V7R-016_val_V8_R4p7_1_01.csv", "2026-10-27_V7R-016_val_V8_R4p7_1_01.setup.bin"]
+    raw_observation: "R4.7-1 retry: '1. on, D5 off 2. go'; USB replug in the new Mac port (14301), blue in row 20 since the first attempt"
+    ai_read:
+      - capture: 2026-10-27_V7R-016_val_V8_R4p7_1_01.png
+        values_seen: {summary: "band: Write:80, Write:d6 (red mark after), Write:e0; panel Vbase C1 856.40 mV, Vpp C1 3.3124 V, Vbase C2 79.866 mV; CH2 clean"}
+        mismatch: none
+    source: "tools/lab/capture.py"
+    scope_settings:
+      channels:
+        CH1: {probe: "10", bw_limit: "OFF", scale: "5.000000E-01", offset: "-1.650000E+00", coupling: "DC", invert: "0", units: "VOLT"}
+        CH2: {probe: "10", bw_limit: "OFF", scale: "5.000000E-01", offset: "-1.650000E+00", coupling: "DC", invert: "0", units: "VOLT"}
+      timebase: {scale: "2.000000E-5", offset: "0.000000", mode: "MAIN"}
+      acquire: {srate: "3.125000E+7", mdepth: "1.0000E+04", type: "NORM"}
+      trigger: {mode: "IIC", sweep: "AUTO", when: "ADDR", clevel: "1.500000E0", scl: "CHAN2", sda: "CHAN1", dlevel: "1.500000E0", awidth: "7", address: "107", direction: "WRIT"}
+      bus1: {mode: "IIC", scl_source: "CHAN2", sda_source: "CHAN1", address: "RW", threshold_sda: "1.650000E0", threshold_scl: "1.650000E0"}
+      measure: {threshold_type: "PERC", max_pct: "7.000000E+01", mid_pct: "5.000000E+01", min_pct: "3.000000E+01", amsource: "OFF"}
+      trigger_status: {before: "STOP", after_stop: "STOP"}
+    waveform:
+      mode: "RAW"
+      format: "ASCii"
+      points: 10000
+      read: "single"
+      preamble: {CH1: "2,2,10000,1,3.200000E-8,-1.600000E-4,0.000000,6.6667E-05,-24750,32768", CH2: "2,2,10000,1,3.200000E-8,-1.600000E-4,0.000000,6.6667E-05,-24750,32768"}
+    scope_clock: {set_to: "2026-10-27T15:01:00", read_back: "2026-10-27 15:01:00", ok: true, delta_s: 0.0}
+    scpi_errors: []
+  - test_id: "V7R-016"
+    arm: "R4p7_1"
+    time: "2026-10-27T15:01:15"
+    trigger: {type: "IIC", sweep: "AUTO", when: "ADDR", scl: "CHAN2", sda: "CHAN1", address: "107", direction: "WRIT", awidth: "7", clevel_V: 1.5, dlevel_V: 1.5}
+    timebase_s_div: 1.0e-05
+    method: "auto"
+    feature: "D6 frame, SDA V_OL bits 5/3/R-W (i2c_frame.py), 10 us/div"
+    values:
+      - {name: "VPP", ch: "CH1", value_mV: 2649.9, raw: "2.6499E+00"}
+      - {name: "VPP", ch: "CH2", value_mV: 3282.2, raw: "3.2822E+00"}
+    captures: ["2026-10-27_V7R-016_R4p7_1_01.png", "2026-10-27_V7R-016_R4p7_1_01.csv", "2026-10-27_V7R-016_R4p7_1_01.setup.bin"]
+    raw_observation: "R4.7-1 retry: '1. on, D5 off 2. go'; USB replug in the new Mac port (14301), blue in row 20 since the first attempt"
+    ai_read:
+      - capture: 2026-10-27_V7R-016_R4p7_1_01.png
+        values_seen: {summary: "R4p7_1_01 byte=D6 9th=high period=2.500 us V_OL=[897.0, 889.7, 893.5] mV\nR4p7_1_02 byte=D6 9th=high period=2.500 us V_OL=[897.8, 889.2, 892.3] mV\nR4p7_1: 2 captures, V_OL arm mean = 893.25 mV (n=6 bit-means)\n2026-10-27_V7R-016_R4p7_1_01.csv idle CH1 -45..-25 us: mean 3.2732 V, min 3.1507 V (n=1250)\n2026-10-27_V7R-016_R4p7_1_02.csv idle CH1 -45..-25 us: mean 3.2729 V, min 3.1705 V (n=1250)"}
+        mismatch: none
+    source: "tools/lab/capture.py"
+    scope_settings:
+      channels:
+        CH1: {probe: "10", bw_limit: "OFF", scale: "5.000000E-01", offset: "-1.650000E+00", coupling: "DC", invert: "0", units: "VOLT"}
+        CH2: {probe: "10", bw_limit: "OFF", scale: "5.000000E-01", offset: "-1.650000E+00", coupling: "DC", invert: "0", units: "VOLT"}
+      timebase: {scale: "1.000000E-5", offset: "0.000000", mode: "MAIN"}
+      acquire: {srate: "6.250000E+7", mdepth: "1.0000E+04", type: "NORM"}
+      trigger: {mode: "IIC", sweep: "AUTO", when: "ADDR", clevel: "1.500000E0", scl: "CHAN2", sda: "CHAN1", dlevel: "1.500000E0", awidth: "7", address: "107", direction: "WRIT"}
+      bus1: {mode: "IIC", scl_source: "CHAN2", sda_source: "CHAN1", address: "RW", threshold_sda: "1.650000E0", threshold_scl: "1.650000E0"}
+      measure: {threshold_type: "PERC", max_pct: "7.000000E+01", mid_pct: "5.000000E+01", min_pct: "3.000000E+01", amsource: "OFF"}
+      trigger_status: {before: "STOP", after_stop: "STOP"}
+    waveform:
+      mode: "RAW"
+      format: "ASCii"
+      points: 10000
+      read: "single"
+      preamble: {CH1: "2,2,10000,1,1.600000E-8,-8.000000E-5,0.000000,6.6667E-05,-24750,32768", CH2: "2,2,10000,1,1.600000E-8,-8.000000E-5,0.000000,6.6667E-05,-24750,32768"}
+    scope_clock: {set_to: "2026-10-27T15:01:15", read_back: "2026-10-27 15:01:15", ok: true, delta_s: 0.0}
+    scpi_errors: []
+  - test_id: "V7R-016"
+    arm: "R4p7_1"
+    time: "2026-10-27T15:01:25"
+    trigger: {type: "IIC", sweep: "AUTO", when: "ADDR", scl: "CHAN2", sda: "CHAN1", address: "107", direction: "WRIT", awidth: "7", clevel_V: 1.5, dlevel_V: 1.5}
+    timebase_s_div: 1.0e-05
+    method: "auto"
+    feature: "D6 frame, SDA V_OL bits 5/3/R-W (i2c_frame.py), 10 us/div"
+    values:
+      - {name: "VPP", ch: "CH1", value_mV: 2834.2, raw: "2.8342E+00"}
+      - {name: "VPP", ch: "CH2", value_mV: 3269.1, raw: "3.2691E+00"}
+    captures: ["2026-10-27_V7R-016_R4p7_1_02.png", "2026-10-27_V7R-016_R4p7_1_02.csv", "2026-10-27_V7R-016_R4p7_1_02.setup.bin"]
+    raw_observation: "R4.7-1 retry: '1. on, D5 off 2. go'; USB replug in the new Mac port (14301), blue in row 20 since the first attempt"
+    ai_read:
+      - capture: 2026-10-27_V7R-016_R4p7_1_02.png
+        values_seen: {summary: "R4p7_1_01 byte=D6 9th=high period=2.500 us V_OL=[897.0, 889.7, 893.5] mV\nR4p7_1_02 byte=D6 9th=high period=2.500 us V_OL=[897.8, 889.2, 892.3] mV\nR4p7_1: 2 captures, V_OL arm mean = 893.25 mV (n=6 bit-means)\n2026-10-27_V7R-016_R4p7_1_01.csv idle CH1 -45..-25 us: mean 3.2732 V, min 3.1507 V (n=1250)\n2026-10-27_V7R-016_R4p7_1_02.csv idle CH1 -45..-25 us: mean 3.2729 V, min 3.1705 V (n=1250)"}
+        mismatch: none
+    source: "tools/lab/capture.py"
+    scope_settings:
+      channels:
+        CH1: {probe: "10", bw_limit: "OFF", scale: "5.000000E-01", offset: "-1.650000E+00", coupling: "DC", invert: "0", units: "VOLT"}
+        CH2: {probe: "10", bw_limit: "OFF", scale: "5.000000E-01", offset: "-1.650000E+00", coupling: "DC", invert: "0", units: "VOLT"}
+      timebase: {scale: "1.000000E-5", offset: "0.000000", mode: "MAIN"}
+      acquire: {srate: "6.250000E+7", mdepth: "1.0000E+04", type: "NORM"}
+      trigger: {mode: "IIC", sweep: "AUTO", when: "ADDR", clevel: "1.500000E0", scl: "CHAN2", sda: "CHAN1", dlevel: "1.500000E0", awidth: "7", address: "107", direction: "WRIT"}
+      bus1: {mode: "IIC", scl_source: "CHAN2", sda_source: "CHAN1", address: "RW", threshold_sda: "1.650000E0", threshold_scl: "1.650000E0"}
+      measure: {threshold_type: "PERC", max_pct: "7.000000E+01", mid_pct: "5.000000E+01", min_pct: "3.000000E+01", amsource: "OFF"}
+      trigger_status: {before: "STOP", after_stop: "STOP"}
+    waveform:
+      mode: "RAW"
+      format: "ASCii"
+      points: 10000
+      read: "single"
+      preamble: {CH1: "2,2,10000,1,1.600000E-8,-8.000000E-5,0.000000,6.6667E-05,-24750,32768", CH2: "2,2,10000,1,1.600000E-8,-8.000000E-5,0.000000,6.6667E-05,-24750,32768"}
+    scope_clock: {set_to: "2026-10-27T15:01:25", read_back: "2026-10-27 15:01:25", ok: true, delta_s: 0.0}
+    scpi_errors: []

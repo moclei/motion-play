@@ -133,6 +133,8 @@ The session runs every SCPI command, esptool call, marker and capture; one instr
 - X1a (link check): operator: "1. It looks seated.Nothing seems different than usual except oddly a different LED is turned on, in addition to the power one which is on and green when the power is on -- now the RGB one "D5" is fully lit. That one isn't usually turned on. 2. Looks seated, just the D5 LED is the only difference I see 3. I unplugged the usb-c then plugged it back in and that D5 LED came on again". Still not enumerated after that replug.
 - X1 (v7 unplugged; scope's Ethernet adapter moved into the v7's Mac port; v7 into the adapter's port; breadboard, board, probes untouched): operator: "1. both off" (PWR and D5 off while unplugged) "2. PWR LED on, D5 off". v7 enumerates as `/dev/cu.usbmodem14301` (ioreg 14300000); adapter AX88179B at 00200000; scope answers `*IDN?`. Logger moved to 14301 at 14:58; v7 running u3-drv2 (`[scope]` t=68615 at 14:58:04, n=620), bq=0, codes 2222222222, drv 2/2. No boot banner (board booted ~14:56:56, before the logger opened the port).
 
+- R4.7-1 (file label `R4p7_1`; retry: USB replug in the new Mac port, blue in row 20 since the first attempt): operator: "1. on, D5 off 2. go". Boot check 15:00:28 (t=13560, n=130). V8 `val_V8_R4p7_1_01.png`: `Write:80`, `Write:d6` (red mark after), `Write:e0` (session read). Captures R4p7_1_01..02 (15:00–15:01); BQ 0/620 (n 130→750), codes 2222222222, drv 2/2, tca=ina=n, t monotonic, no other lines. Frame tool: D6, 9th high, period 2.500 µs ×2, bit V_OL [897.0 889.7 893.5] [897.8 889.2 892.3] mV → 893.25 mV; idle CH1 3.2732/3.2729 V, CH2 3.2616/3.2619 V; CH2 min 0.015/0.033 V.
+
 ### Measured values (from log; cite `lab/evidence/V7R-016/...`)
 ### Interpretation (session; labelled as such)
 
