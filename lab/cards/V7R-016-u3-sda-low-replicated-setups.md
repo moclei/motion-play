@@ -1,7 +1,7 @@
 ---
 test_id: V7R-016
 title: "U3 SDA low and BQ ACK vs far-end pull-up on the J6 pigtail, each level set up three times in mixed order, with stub power-up repeats (USB replug, RTS reset), at TPIO43"
-status: pre-registered
+status: run
 created: 2026-10-27
 prereg_commit: self
 baseline:

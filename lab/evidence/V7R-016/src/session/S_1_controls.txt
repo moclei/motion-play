@@ -1,0 +1,6 @@
+2026-10-27_V7R-016_S_1_01.csv CH1 min -0.097 max 3.377 | CH2 min 0.018 max 3.344, idle CH2 -45..-25 us mean 3.2607 V
+2026-10-27_V7R-016_S_1_02.csv CH1 min -0.068 max 3.377 | CH2 min 0.025 max 3.341, idle CH2 -45..-25 us mean 3.2617 V
+malformed [scope] lines: 3 ['14:40:36.981 [scope] sketch=v7_scope_bq_probe version=1.0-drv board=Espressif ESP32-S3-DevKitC-1-N8 (8 MB QD, No PSRAM) i2c_clock=400000 Hz', '14:40:36.981 [scope] cycle: TCA<-0x04, INA 0x40, BQ 0x6B, TCA<-0x00; every 100 ms']
+[scope] lines 74: first 14:40:37.796  n=10 bq=10 | last 14:41:50.808  n=740 bq=740
+BQ ACK 730 / 730 cycles (100.0 %); t monotonic: True; codes seen: ['0000000000']; drv: ['2/2']; tca/ina==n all: True
+non-scope lines in arm: 2 ['14:40:36.981 [   720][I][esp32-hal-i2c.c:75] i2cInit(): Initialising I2C Master: sda=43 scl=44 freq=100000', '14:40:36.981 ']

@@ -1,0 +1,5 @@
+R10_1_01 byte=D6 9th=high period=2.500 us V_OL=[787.7, 780.4, 782.9] mV
+R10_1_02 byte=D6 9th=high period=2.500 us V_OL=[789.8, 781.3, 784.7] mV
+R10_1: 2 captures, V_OL arm mean = 784.47 mV (n=6 bit-means)
+2026-10-27_V7R-016_R10_1_01.csv idle CH1 -45..-25 us: mean 3.2736 V, min 3.2509 V (n=1250)
+2026-10-27_V7R-016_R10_1_02.csv idle CH1 -45..-25 us: mean 3.2741 V, min 3.1215 V (n=1250)

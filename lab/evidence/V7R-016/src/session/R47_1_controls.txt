@@ -1,0 +1,6 @@
+2026-10-27_V7R-016_R47_1_01.csv CH1 min 0.015 max 3.359 | CH2 min 0.027 max 3.339, idle CH2 -45..-25 us mean 3.2604 V
+2026-10-27_V7R-016_R47_1_02.csv CH1 min -0.072 max 3.393 | CH2 min 0.024 max 3.355, idle CH2 -45..-25 us mean 3.2614 V
+malformed [scope] lines: 0 []
+[scope] lines 63: first 15:03:40.227  n=70 bq=0 | last 15:04:44.079  n=690 bq=0
+BQ ACK 0 / 620 cycles (0.0 %); t monotonic: True; codes seen: ['2222222222', '2222552222']; drv: ['2/2']; tca/ina==n all: True
+non-scope lines in arm: 0 []
