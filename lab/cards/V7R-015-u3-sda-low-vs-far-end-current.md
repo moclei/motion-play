@@ -100,6 +100,8 @@ The session runs every SCPI command, flash and capture; one instruction block pe
 - R47: boot banner 00:05:06 (u3-drv2, `version=1.0-drv`). V8 `val_V8_R47_01.png`: band `Write:80`, `Write:d6` (red mark after), `Write:e0` (session read). Captures R47_01..03 (00:05–00:06); `[scope]` n=240→910, bq=0, bq_codes=2222222222, sda_drv=2 scl_drv=2, tca=ina=n; no reset line in the arm. Frame tool: D6, 9th high, period 2.500 µs ×3, bit V_OL [706.0 695.4 699.3] [704.8 694.9 699.2] [704.6 696.2 699.1] mV; idle CH1 3.2742/3.2734/3.2732 V.
 - R10-1: operator: "1. 10k in the same holes as the 47k". R10-2: "1. on".
 - R10: no boot banner in the v7 log for this power-up (last banner 00:05:06); `[scope]` t restarted (t=17561 at 00:12:25). V8 `val_V8_R10_01.png`: band `Write:80`, `Write:d6` (red mark after), `Write:e0` (session read). Captures R10_01..03 (00:12–00:13); `[scope]` n=180→860, bq=0, bq_codes=2222222222, sda_drv=2 scl_drv=2, tca=ina=n; no reset line in the arm. Frame tool: D6, 9th high, period 2.500 µs ×3, bit V_OL [785.7 777.7 782.0] [786.2 777.1 781.2] [787.9 780.6 782.7] mV; idle CH1 3.2726/3.2727/3.2733 V.
+- R4.7-1: operator: "1. 4.7k in the same holes as the 10k". R4.7-2: "1. on". Arm label in file names: `R4p7`.
+- R4.7: V8 `val_V8_R4p7_01.png`: band `Write:80`, `Write:d6` (red mark after), `Write:e0` (session read). Captures R4p7_01..03 (00:19–00:20); `[scope]` n=230→910, bq=0, bq_codes=2222222222, sda_drv=2 scl_drv=2, tca=ina=n; no reset line in the arm. Frame tool: D6, 9th high, period 2.500 µs ×3, bit V_OL [897.0 889.8 893.7] [898.6 890.8 893.7] [898.4 891.0 894.0] mV; idle CH1 3.2729/3.2746/3.2746 V.
 
 ### Measured values (from log; cite `lab/evidence/V7R-015/...`)
 ### Interpretation (session; labelled as such)
