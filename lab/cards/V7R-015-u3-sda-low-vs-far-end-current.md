@@ -102,6 +102,9 @@ The session runs every SCPI command, flash and capture; one instruction block pe
 - R10: no boot banner in the v7 log for this power-up (last banner 00:05:06); `[scope]` t restarted (t=17561 at 00:12:25). V8 `val_V8_R10_01.png`: band `Write:80`, `Write:d6` (red mark after), `Write:e0` (session read). Captures R10_01..03 (00:12–00:13); `[scope]` n=180→860, bq=0, bq_codes=2222222222, sda_drv=2 scl_drv=2, tca=ina=n; no reset line in the arm. Frame tool: D6, 9th high, period 2.500 µs ×3, bit V_OL [785.7 777.7 782.0] [786.2 777.1 781.2] [787.9 780.6 782.7] mV; idle CH1 3.2726/3.2727/3.2733 V.
 - R4.7-1: operator: "1. 4.7k in the same holes as the 10k". R4.7-2: "1. on". Arm label in file names: `R4p7`.
 - R4.7: V8 `val_V8_R4p7_01.png`: band `Write:80`, `Write:d6` (red mark after), `Write:e0` (session read). Captures R4p7_01..03 (00:19–00:20); `[scope]` n=230→910, bq=0, bq_codes=2222222222, sda_drv=2 scl_drv=2, tca=ina=n; no reset line in the arm. Frame tool: D6, 9th high, period 2.500 µs ×3, bit V_OL [897.0 889.8 893.7] [898.6 890.8 893.7] [898.4 891.0 894.0] mV; idle CH1 3.2729/3.2746/3.2746 V.
+- S0b-1: operator: "1. yes" (blue alone). S0b-2: "1. on".
+- S0b: V8 `val_V8_S0b_01.png`: band `Write:80`, `Write:d6` (no red mark after), `Write:e0` (session read). Captures S0b_01..03 (00:26–00:27); `[scope]` n=260→940, bq=n, bq_codes=0000000000, sda_drv=2 scl_drv=2, tca=ina=n; no reset line in the arm. Frame tool: D6, 9th low, period 2.500 µs ×3, bit V_OL [680.6 673.1 676.4] [681.3 673.2 676.9] [679.9 673.3 675.8] mV; idle CH1 3.2738/3.2745/3.2730 V.
+- Anchor (session, card rule): S0a 783.39 mV BQ 0 % vs S0b 676.72 mV BQ 100 %: |Δ| = 106.67 mV > 20 mV and different BQ classes → anchor fails; stop and investigate (card). Bench left as at S0b (v7 powered on u3-drv2, probes at S1) pending the user's call.
 
 ### Measured values (from log; cite `lab/evidence/V7R-015/...`)
 ### Interpretation (session; labelled as such)
