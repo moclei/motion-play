@@ -122,6 +122,8 @@ The session runs every SCPI command, esptool call, marker and capture; one instr
 
 - U1 (USB replug, nothing touched): operator: "1. yes 2. go". V8 `val_V8_U1_01.png`: `Write:80`, `Write:d6` (no red mark), `Write:e0` (session read). Captures U1_01..02 (14:16–14:17); `[scope]` BQ 610/610 (n 80→690), codes 0000000000, drv 2/2, tca=ina=n, t monotonic, no other lines. Frame tool: D6, 9th low, period 2.500/2.501 µs, bit V_OL [682.7 672.9 677.6] [682.1 673.9 677.0] mV → 677.70 mV; idle CH1 3.2729/3.2729 V, CH2 3.2612/3.2609 V; CH2 min 0.017/0.034 V.
 
+- T1 (RTS reset by the session, nothing touched; operator clear since U1): esptool v4 `--chip esp32s3 read_mac` 14:17 (MAC 44:1b:f6:c5:58:c4; stub ran; "Hard resetting via RTS pin..."); logger stopped for it and restarted; `[scope]` t restarted (8978 at 14:17:33). V8 `val_V8_T1_01.png`: `Write:80`, `Write:d6` (no red mark), `Write:e0` (session read). Captures T1_01..02 (14:17–14:18); BQ 610/610 (n 160→770), codes 0000000000, drv 2/2, tca=ina=n, t monotonic, no other lines. Frame tool: D6, 9th low, period 2.500 µs ×2, bit V_OL [683.1 673.8 677.3] [682.5 674.0 676.8] mV → 677.92 mV; idle CH1 3.2732/3.2727 V, CH2 3.2610/3.2607 V; CH2 min 0.029/0.026 V.
+
 ### Measured values (from log; cite `lab/evidence/V7R-016/...`)
 ### Interpretation (session; labelled as such)
 
