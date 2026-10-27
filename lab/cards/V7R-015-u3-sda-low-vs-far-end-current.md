@@ -1,7 +1,7 @@
 ---
 test_id: V7R-015
 title: "U3 SDA low and BQ ACK vs added far-end pull-up current on the J6 pigtail (stub / 47 kΩ / 10 kΩ / 4.7 kΩ / stub), at TPIO43"
-status: pre-registered
+status: recorded
 created: 2026-10-26
 prereg_commit: self
 baseline:
@@ -107,11 +107,24 @@ The session runs every SCPI command, flash and capture; one instruction block pe
 - Anchor (session, card rule): S0a 783.39 mV BQ 0 % vs S0b 676.72 mV BQ 100 %: |Δ| = 106.67 mV > 20 mV and different BQ classes → anchor fails; stop and investigate (card). Bench left as at S0b (v7 powered on u3-drv2, probes at S1) pending the user's call.
 
 ### Measured values (from log; cite `lab/evidence/V7R-015/...`)
+| Arm | R (nominal) | V_OL arm mean (9 bit-means) | per-capture spread | BQ ACK (`[scope]` cycles) | 9th bit (scope) |
+|---|---|---|---|---|---|
+| S0a | stub | 783.39 mV | ≤ 1.6 mV | 0 / 670 (n 3730→4400) | high ×3 |
+| R47 | 47 kΩ | 699.94 mV | ≤ 1.2 mV | 0 / 670 (n 240→910) | high ×3 |
+| R10 | 10 kΩ | 782.34 mV | ≤ 2.2 mV | 0 / 680 (n 180→860) | high ×3 |
+| R4.7 | 4.7 kΩ | 894.11 mV | ≤ 1.6 mV | 0 / 680 (n 230→910) | high ×3 |
+| S0b | stub | 676.72 mV | ≤ 1.4 mV | 940 / 940 (n 0→940) | low ×3 |
+Sources: `lab/evidence/V7R-015/*_{S0a,R47,R10,R4p7,S0b}_0[1-3].{csv,png}`, `*_val_V8_*_01.png`, `src/session/*_frame.txt`, `2026-10-26_V7R-015_v7_01.txt`. V_rail 3.276 V (DMM, S0a). Controls c1–c7 pass in every arm. Fit and I_far not computed: the anchor fails, so the result is void (card) and no fit row is evaluated.
+
 ### Interpretation (session; labelled as such)
+Interpretation (V7R-015): the arm values do not order with the resistor (47 k lowest, 4.7 k highest, stubs at both ends of the range), and the two stub arms, with nothing inserted, differ by 107 mV and in BQ class. The variation is between power-ups/insertions, not within an arm (≤ 2.2 mV). Not separated: boot type (S0a followed an esptool RTS reset after flashing; R47…S0b followed USB unplug/replug), breadboard contact of the pigtail leads, resistor insertion (no in-circuit check or photo; digits not reported), and a board state that changes between boots. Every arm with V_OL ≥ 699.94 mV NACKed and the one arm at 676.72 mV ACKed (one ACK arm; not a threshold measurement). S0b (677 mV, ACK) matches V7R-013's stub arm (678 mV, ACK, 400 mm cable).
+Design gap (user, after the run): each level was set up once; the three captures per arm measure capture repeatability, not insertion or boot repeatability. Replication at the setup level is needed before a dose series can be read.
+
 
 ## Conclusion
-- Outcome row matched: ...
-- Hypotheses excluded: ...
-- **Strength:** measured-refuted | measured-supported | argued | not tested
-- Revert-on-null done: yes/no (commit)
+- Outcome row matched: **Anchor fails** — |S0a − S0b| = 106.67 mV > 20 mV and S0a (0 %) / S0b (100 %) in different BQ classes. Result void; no fit row evaluated. All per-arm controls passed.
+- Hypotheses excluded: none. H1–H4 not decided. M (incl. "a changed board state") is the open explanation for the anchor failure and is not separated (see Interpretation).
+- **Strength:** not tested (void); raw per-arm values recorded as measured, one board, one insertion per level, 3 captures per arm; `lab/evidence/V7R-015/`
+- Deviations: (1) R_meas digits not reported ("All read their proper values" / "they're good"); nominal values. (2) u3-drv2 rebuild ≠ f8ebf3fc (debug-path bytes only, segment compare); the original f8ebf3fc binary was flashed. (3) First flash attempt did not run (esptool import); marker voided in the v7 log. (4) S0a boot followed an RTS reset after flashing, not a USB replug as in the other four arms. (5) Date rolled to 2026-10-27 during R47 (file names). (6) No boot banner logged for the R10/R4.7/S0b power-ups (logger reconnect); `[scope]` t restarted each time.
+- Revert-on-null done: **no, deferred at the user's request** — U3 left on u3-drv2 (f8ebf3fc) with the probes seated at S1 (validated in log 2026-10-26_s02, not moved) so the next card can run on the same seat; revert to motion-play-v7-diag at that card's end.
 - Result commit: self

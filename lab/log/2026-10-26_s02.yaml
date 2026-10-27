@@ -2,25 +2,25 @@
 session_id: "2026-10-26_s02"
 kind: "scope"
 operator: "user"
-ai_session: "TODO"
-dut: {board_id: "TODO", firmware_commit: "TODO", firmware_env: "TODO", declared_baseline: "TODO"}
+ai_session: "debugger (V7R-015; debug/v7-track-3)"
+dut: {board_id: "v7-B3", firmware_commit: "90053af", firmware_env: "motion-play-v7-relbus 2a77cdd9 (V5b, V7); V7R-012 drive build u3-drv2 f8ebf3fc (V8 and all counted arms)", declared_baseline: "v7-clean"}
 scope: {model: "Rigol DHO804", serial: "DHO8A282M00872", firmware: "00.01.05", setup_file: "2026-10-26_V7R-015_val_V3_01.setup.bin"}
 validation:
-  passed: "TODO"
-  V2_probe_ratio: {CH1: "10x/TODO", CH2: "10x/TODO"}
-  V3_comp_png: "TODO"
+  passed: true
+  V2_probe_ratio: {CH1: "10x/fixed 10:1 (SQ500 #1)", CH2: "10x/fixed 10:1 (SQ500 #2)"}
+  V3_comp_png: "2026-10-26_V7R-015_val_V3_01.png (CH1), 2026-10-26_V7R-015_val_V3_02.png (CH2)"
   V5:
-    ctl_sd_mV: {CH1: "TODO", CH2: "TODO"}
-    dut_sd_mV: {CH1: "TODO", CH2: "TODO"}
-    excess_rms_mV: {CH1: "TODO", CH2: "TODO"}
-    offset_mV: {CH1: "TODO", CH2: "TODO"}
-  V6_ground: {method: "TODO", point: "TODO", length_mm: "TODO"}
-  V7_idle_high_V: {CH1: "TODO", CH2: "TODO"}
-  V8_decode_ok: "TODO"
-  notes: ""
+    ctl_sd_mV: {CH1: 5.28, CH2: 5.05}
+    dut_sd_mV: {CH1: 5.45, CH2: 4.91}
+    excess_rms_mV: {CH1: 1.33, CH2: 0.0}
+    offset_mV: {CH1: -12.61, CH2: -15.43}
+  V6_ground: {method: "ground springs (both probes)", point: "pad C (C9.1), side away from C9's +3.3 V end", length_mm: 0}
+  V7_idle_high_V: {CH1: 3.272, CH2: 3.260}   # val_V7_01 (relbus, bus released); CH2 sd 32.5 mV, 2.78-3.61 V
+  V8_decode_ok: true   # val_V8_<arm>_01 per arm: Write:80, Write:d6, Write:e0 (20 us/div, address trigger 0x6B write, u3-drv2); 9th bit recorded, not judged
+  notes: "V1 AUTO pressed, no setup loaded; status read STOP after AUTO, session sent :RUN. Clock ok (delta 0 s). V2: -110 Command header err with 1 s SCPI waits; clean with 2-3 s waits, read-backs 10/10. V4 Vamp CH1 3.0208 V, CH2 3.0208 V (identical to every digit, as V7R-002). V5a/V5b panel Vpp 21-26 mV (operator). Decode setup by menu: Bus status On, SCL/SDA Thre 1.65 V, R/W With; no field differed. Probes seated once (S1-V5 then tips to A/B), not moved after V7. V9 not due."
 channels:
-  CH1: {probe: "TODO", ratio: "10x", signal: "TODO", point: "TODO", bw_limit: "OFF", v_div_V: 1.0, offset_V: -3.3, coupling: "DC"}
-  CH2: {probe: "TODO", ratio: "10x", signal: "TODO", point: "TODO", bw_limit: "OFF", v_div_V: 0.5, offset_V: -1.65, coupling: "DC"}
+  CH1: {probe: "SQ500 #1", ratio: "10x", signal: "SDA", point: "TPIO43 (pad A)", bw_limit: "OFF", v_div_V: 1.0, offset_V: -3.3, coupling: "DC"}
+  CH2: {probe: "SQ500 #2", ratio: "10x", signal: "SCL", point: "TPIO44 (pad B)", bw_limit: "OFF", v_div_V: 0.5, offset_V: -1.65, coupling: "DC"}
 measurements:
   - test_id: "V7R-015"
     arm: "val_V3"
@@ -28,7 +28,7 @@ measurements:
     trigger: {type: "EDGE", sweep: "AUTO", source: "CHAN1", slope: "POS", level_V: 1.5}
     timebase_s_div: 0.0002
     method: "auto"
-    feature: "TODO"
+    feature: "Cal square wave, compensation and Vamp"
     values:
       - {name: "VAMP", ch: "CH1", value_mV: 3020.8, raw: "3.0208E+00"}
       - {name: "VTOP", ch: "CH1", value_mV: 2975.7, raw: "2.9757E+00"}
@@ -37,7 +37,11 @@ measurements:
       - {name: "VTOP", ch: "CH2", valid: false, raw: "9.9000E+37"}
       - {name: "VBASe", ch: "CH2", valid: false, raw: "9.9000E+37"}
     captures: ["2026-10-26_V7R-015_val_V3_01.png", "2026-10-26_V7R-015_val_V3_01.csv", "2026-10-26_V7R-015_val_V3_01.setup.bin"]
-    raw_observation: "TODO"
+    raw_observation: "'yes, looks good' / 'yes'; panel items present"
+    ai_read:
+      - capture: 2026-10-26_V7R-015_val_V3_01.png
+        values_seen: {summary: "as described in card raw notes; PNG agrees with log"}
+        mismatch: none
     source: "tools/lab/capture.py"
     scope_settings:
       channels:
@@ -63,7 +67,7 @@ measurements:
     trigger: {type: "EDGE", sweep: "AUTO", source: "CHAN2", slope: "POS", level_V: 1.5}
     timebase_s_div: 0.0002
     method: "auto"
-    feature: "TODO"
+    feature: "Cal square wave, compensation and Vamp"
     values:
       - {name: "VAMP", ch: "CH1", valid: false, raw: "9.9000E+37"}
       - {name: "VTOP", ch: "CH1", valid: false, raw: "9.9000E+37"}
@@ -72,7 +76,11 @@ measurements:
       - {name: "VTOP", ch: "CH2", value_mV: 2975.7, raw: "2.9757E+00"}
       - {name: "VBASe", ch: "CH2", value_mV: -45.067, raw: "-4.5067E-02"}
     captures: ["2026-10-26_V7R-015_val_V3_02.png", "2026-10-26_V7R-015_val_V3_02.csv", "2026-10-26_V7R-015_val_V3_02.setup.bin"]
-    raw_observation: "TODO"
+    raw_observation: "'yes, looks good' / 'yes'; panel items present"
+    ai_read:
+      - capture: 2026-10-26_V7R-015_val_V3_02.png
+        values_seen: {summary: "as described in card raw notes; PNG agrees with log"}
+        mismatch: none
     source: "tools/lab/capture.py"
     scope_settings:
       channels:
@@ -99,12 +107,16 @@ measurements:
     trigger: {type: "EDGE", sweep: "AUTO", source: "CHAN1", slope: "POS", level_V: 1.5}
     timebase_s_div: 1.0e-05
     method: "auto"
-    feature: "TODO"
+    feature: "noise control, tips on Cal ground"
     values:
       - {name: "VPP", ch: "CH1", value_mV: 22.333, raw: "2.2333E-02"}
       - {name: "VPP", ch: "CH2", value_mV: 24.0, raw: "2.4000E-02"}
     captures: ["2026-10-26_V7R-015_val_V5ctl_01.png", "2026-10-26_V7R-015_val_V5ctl_01.csv", "2026-10-26_V7R-015_val_V5ctl_01.setup.bin"]
-    raw_observation: "TODO"
+    raw_observation: "'Both 21 to 26 mV'"
+    ai_read:
+      - capture: 2026-10-26_V7R-015_val_V5ctl_01.png
+        values_seen: {summary: "as described in card raw notes; PNG agrees with log"}
+        mismatch: none
     source: "tools/lab/capture.py"
     scope_settings:
       channels:
@@ -130,12 +142,16 @@ measurements:
     trigger: {type: "EDGE", sweep: "AUTO", source: "CHAN1", slope: "POS", level_V: 1.5}
     timebase_s_div: 1.0e-05
     method: "auto"
-    feature: "TODO"
+    feature: "noise at pad C/N, board powered"
     values:
       - {name: "VPP", ch: "CH1", value_mV: 26.8, raw: "2.6800E-02"}
       - {name: "VPP", ch: "CH2", value_mV: 24.733, raw: "2.4733E-02"}
     captures: ["2026-10-26_V7R-015_val_V5_01.png", "2026-10-26_V7R-015_val_V5_01.csv", "2026-10-26_V7R-015_val_V5_01.setup.bin"]
-    raw_observation: "TODO"
+    raw_observation: "(no operator report; session capture after power-up)"
+    ai_read:
+      - capture: 2026-10-26_V7R-015_val_V5_01.png
+        values_seen: {summary: "as described in card raw notes; PNG agrees with log"}
+        mismatch: none
     source: "tools/lab/capture.py"
     scope_settings:
       channels:
@@ -161,12 +177,16 @@ measurements:
     trigger: {type: "EDGE", sweep: "AUTO", source: "CHAN1", slope: "POS", level_V: 1.5}
     timebase_s_div: 1.0e-05
     method: "auto"
-    feature: "TODO"
+    feature: "idle-high level at A/B, bus released"
     values:
       - {name: "VPP", ch: "CH1", value_mV: 85.2, raw: "8.5200E-02"}
       - {name: "VPP", ch: "CH2", value_mV: 709.6, raw: "7.0960E-01"}
     captures: ["2026-10-26_V7R-015_val_V7_01.png", "2026-10-26_V7R-015_val_V7_01.csv", "2026-10-26_V7R-015_val_V7_01.setup.bin"]
-    raw_observation: "TODO"
+    raw_observation: "v7 PWR LED 'on'"
+    ai_read:
+      - capture: 2026-10-26_V7R-015_val_V7_01.png
+        values_seen: {summary: "as described in card raw notes; PNG agrees with log"}
+        mismatch: none
     source: "tools/lab/capture.py"
     scope_settings:
       channels:
@@ -192,12 +212,16 @@ measurements:
     trigger: {type: "IIC", sweep: "AUTO", when: "ADDR", scl: "CHAN2", sda: "CHAN1", address: "107", direction: "WRIT", awidth: "7", clevel_V: 1.5, dlevel_V: 1.5}
     timebase_s_div: 2.0e-05
     method: "auto"
-    feature: "TODO"
+    feature: "V8 contact check: decode band, 0x6B write frame (20 us/div)"
     values:
       - {name: "VPP", ch: "CH1", value_mV: 3331.8, raw: "3.3318E+00"}
       - {name: "VPP", ch: "CH2", valid: false, raw: "9.9000E+37"}
     captures: ["2026-10-26_V7R-015_val_V8_S0a_01.png", "2026-10-26_V7R-015_val_V8_S0a_01.csv", "2026-10-26_V7R-015_val_V8_S0a_01.setup.bin"]
-    raw_observation: "TODO"
+    raw_observation: "session read of PNG (operator not asked separately; R47-1 operator: 'Write:d6' and a red empty diamond)"
+    ai_read:
+      - capture: 2026-10-26_V7R-015_val_V8_S0a_01.png
+        values_seen: {summary: "band Write:80, Write:d6 (red mark after d6), Write:e0"}
+        mismatch: none
     source: "tools/lab/capture.py"
     scope_settings:
       channels:
@@ -223,12 +247,16 @@ measurements:
     trigger: {type: "IIC", sweep: "AUTO", when: "ADDR", scl: "CHAN2", sda: "CHAN1", address: "107", direction: "WRIT", awidth: "7", clevel_V: 1.5, dlevel_V: 1.5}
     timebase_s_div: 1.0e-05
     method: "auto"
-    feature: "TODO"
+    feature: "SDA V_OL on address bits 5, 3 and R/W of D6; 9th bit (frame tool on CSV)"
     values:
       - {name: "VPP", ch: "CH1", value_mV: 2985.2, raw: "2.9852E+00"}
       - {name: "VPP", ch: "CH2", valid: false, raw: "9.9000E+37"}
     captures: ["2026-10-26_V7R-015_S0a_01.png", "2026-10-26_V7R-015_S0a_01.csv", "2026-10-26_V7R-015_S0a_01.setup.bin"]
-    raw_observation: "TODO"
+    raw_observation: "none (no bench action during capture)"
+    ai_read:
+      - capture: 2026-10-26_V7R-015_S0a_01.png
+        values_seen: {summary: "band Write:d6 (red NACK mark after d6); panel Vbase(C1) 779.60 mV (captures 01/02/03); CH1 idle high before frame"}
+        mismatch: none
     source: "tools/lab/capture.py"
     scope_settings:
       channels:
@@ -254,12 +282,16 @@ measurements:
     trigger: {type: "IIC", sweep: "AUTO", when: "ADDR", scl: "CHAN2", sda: "CHAN1", address: "107", direction: "WRIT", awidth: "7", clevel_V: 1.5, dlevel_V: 1.5}
     timebase_s_div: 1.0e-05
     method: "auto"
-    feature: "TODO"
+    feature: "SDA V_OL on address bits 5, 3 and R/W of D6; 9th bit (frame tool on CSV)"
     values:
       - {name: "VPP", ch: "CH1", value_mV: 2833.0, raw: "2.8330E+00"}
       - {name: "VPP", ch: "CH2", value_mV: 4062.5, raw: "4.0625E+00"}
     captures: ["2026-10-26_V7R-015_S0a_02.png", "2026-10-26_V7R-015_S0a_02.csv", "2026-10-26_V7R-015_S0a_02.setup.bin"]
-    raw_observation: "TODO"
+    raw_observation: "none (no bench action during capture)"
+    ai_read:
+      - capture: 2026-10-26_V7R-015_S0a_02.png
+        values_seen: {summary: "band Write:d6 (red NACK mark after d6); panel Vbase(C1) 779.60 mV (captures 01/02/03); CH1 idle high before frame"}
+        mismatch: none
     source: "tools/lab/capture.py"
     scope_settings:
       channels:
@@ -285,12 +317,16 @@ measurements:
     trigger: {type: "IIC", sweep: "AUTO", when: "ADDR", scl: "CHAN2", sda: "CHAN1", address: "107", direction: "WRIT", awidth: "7", clevel_V: 1.5, dlevel_V: 1.5}
     timebase_s_div: 1.0e-05
     method: "auto"
-    feature: "TODO"
+    feature: "SDA V_OL on address bits 5, 3 and R/W of D6; 9th bit (frame tool on CSV)"
     values:
       - {name: "VPP", ch: "CH1", value_mV: 2850.9, raw: "2.8509E+00"}
       - {name: "VPP", ch: "CH2", valid: false, raw: "9.9000E+37"}
     captures: ["2026-10-26_V7R-015_S0a_03.png", "2026-10-26_V7R-015_S0a_03.csv", "2026-10-26_V7R-015_S0a_03.setup.bin"]
-    raw_observation: "TODO"
+    raw_observation: "none (no bench action during capture)"
+    ai_read:
+      - capture: 2026-10-26_V7R-015_S0a_03.png
+        values_seen: {summary: "band Write:d6 (red NACK mark after d6); panel Vbase(C1) 779.60 mV (captures 01/02/03); CH1 idle high before frame"}
+        mismatch: none
     source: "tools/lab/capture.py"
     scope_settings:
       channels:
@@ -316,12 +352,16 @@ measurements:
     trigger: {type: "IIC", sweep: "AUTO", when: "ADDR", scl: "CHAN2", sda: "CHAN1", address: "107", direction: "WRIT", awidth: "7", clevel_V: 1.5, dlevel_V: 1.5}
     timebase_s_div: 2.0e-05
     method: "auto"
-    feature: "TODO"
+    feature: "V8 contact check: decode band, 0x6B write frame (20 us/div)"
     values:
       - {name: "VPP", ch: "CH1", value_mV: 3370.0, raw: "3.3700E+00"}
       - {name: "VPP", ch: "CH2", value_mV: 3301.1, raw: "3.3011E+00"}
     captures: ["2026-10-27_V7R-015_val_V8_R47_01.png", "2026-10-27_V7R-015_val_V8_R47_01.csv", "2026-10-27_V7R-015_val_V8_R47_01.setup.bin"]
-    raw_observation: "TODO"
+    raw_observation: "session read of PNG (operator not asked separately; R47-1 operator: 'Write:d6' and a red empty diamond)"
+    ai_read:
+      - capture: 2026-10-27_V7R-015_val_V8_R47_01.png
+        values_seen: {summary: "band Write:80, Write:d6 (red mark after d6), Write:e0"}
+        mismatch: none
     source: "tools/lab/capture.py"
     scope_settings:
       channels:
@@ -347,12 +387,16 @@ measurements:
     trigger: {type: "IIC", sweep: "AUTO", when: "ADDR", scl: "CHAN2", sda: "CHAN1", address: "107", direction: "WRIT", awidth: "7", clevel_V: 1.5, dlevel_V: 1.5}
     timebase_s_div: 1.0e-05
     method: "auto"
-    feature: "TODO"
+    feature: "SDA V_OL on address bits 5, 3 and R/W of D6; 9th bit (frame tool on CSV)"
     values:
       - {name: "VPP", ch: "CH1", value_mV: 2939.2, raw: "2.9392E+00"}
       - {name: "VPP", ch: "CH2", value_mV: 3302.9, raw: "3.3029E+00"}
     captures: ["2026-10-27_V7R-015_R47_01.png", "2026-10-27_V7R-015_R47_01.csv", "2026-10-27_V7R-015_R47_01.setup.bin"]
-    raw_observation: "TODO"
+    raw_observation: "none (no bench action during capture)"
+    ai_read:
+      - capture: 2026-10-27_V7R-015_R47_01.png
+        values_seen: {summary: "band Write:d6 (red NACK mark after d6); panel Vbase(C1) 702.80/702.80/694.26 mV (captures 01/02/03); CH1 idle high before frame"}
+        mismatch: none
     source: "tools/lab/capture.py"
     scope_settings:
       channels:
@@ -378,12 +422,16 @@ measurements:
     trigger: {type: "IIC", sweep: "AUTO", when: "ADDR", scl: "CHAN2", sda: "CHAN1", address: "107", direction: "WRIT", awidth: "7", clevel_V: 1.5, dlevel_V: 1.5}
     timebase_s_div: 1.0e-05
     method: "auto"
-    feature: "TODO"
+    feature: "SDA V_OL on address bits 5, 3 and R/W of D6; 9th bit (frame tool on CSV)"
     values:
       - {name: "VPP", ch: "CH1", value_mV: 2953.5, raw: "2.9535E+00"}
       - {name: "VPP", ch: "CH2", value_mV: 3265.4, raw: "3.2654E+00"}
     captures: ["2026-10-27_V7R-015_R47_02.png", "2026-10-27_V7R-015_R47_02.csv", "2026-10-27_V7R-015_R47_02.setup.bin"]
-    raw_observation: "TODO"
+    raw_observation: "none (no bench action during capture)"
+    ai_read:
+      - capture: 2026-10-27_V7R-015_R47_02.png
+        values_seen: {summary: "band Write:d6 (red NACK mark after d6); panel Vbase(C1) 702.80/702.80/694.26 mV (captures 01/02/03); CH1 idle high before frame"}
+        mismatch: none
     source: "tools/lab/capture.py"
     scope_settings:
       channels:
@@ -409,12 +457,16 @@ measurements:
     trigger: {type: "IIC", sweep: "AUTO", when: "ADDR", scl: "CHAN2", sda: "CHAN1", address: "107", direction: "WRIT", awidth: "7", clevel_V: 1.5, dlevel_V: 1.5}
     timebase_s_div: 1.0e-05
     method: "auto"
-    feature: "TODO"
+    feature: "SDA V_OL on address bits 5, 3 and R/W of D6; 9th bit (frame tool on CSV)"
     values:
       - {name: "VPP", ch: "CH1", value_mV: 3043.5, raw: "3.0435E+00"}
       - {name: "VPP", ch: "CH2", value_mV: 3286.9, raw: "3.2869E+00"}
     captures: ["2026-10-27_V7R-015_R47_03.png", "2026-10-27_V7R-015_R47_03.csv", "2026-10-27_V7R-015_R47_03.setup.bin"]
-    raw_observation: "TODO"
+    raw_observation: "none (no bench action during capture)"
+    ai_read:
+      - capture: 2026-10-27_V7R-015_R47_03.png
+        values_seen: {summary: "band Write:d6 (red NACK mark after d6); panel Vbase(C1) 702.80/702.80/694.26 mV (captures 01/02/03); CH1 idle high before frame"}
+        mismatch: none
     source: "tools/lab/capture.py"
     scope_settings:
       channels:
@@ -440,12 +492,16 @@ measurements:
     trigger: {type: "IIC", sweep: "AUTO", when: "ADDR", scl: "CHAN2", sda: "CHAN1", address: "107", direction: "WRIT", awidth: "7", clevel_V: 1.5, dlevel_V: 1.5}
     timebase_s_div: 2.0e-05
     method: "auto"
-    feature: "TODO"
+    feature: "V8 contact check: decode band, 0x6B write frame (20 us/div)"
     values:
       - {name: "VPP", ch: "CH1", value_mV: 3347.8, raw: "3.3478E+00"}
       - {name: "VPP", ch: "CH2", value_mV: 3305.2, raw: "3.3052E+00"}
     captures: ["2026-10-27_V7R-015_val_V8_R10_01.png", "2026-10-27_V7R-015_val_V8_R10_01.csv", "2026-10-27_V7R-015_val_V8_R10_01.setup.bin"]
-    raw_observation: "TODO"
+    raw_observation: "session read of PNG (operator not asked separately; R47-1 operator: 'Write:d6' and a red empty diamond)"
+    ai_read:
+      - capture: 2026-10-27_V7R-015_val_V8_R10_01.png
+        values_seen: {summary: "band Write:80, Write:d6 (red mark after d6), Write:e0"}
+        mismatch: none
     source: "tools/lab/capture.py"
     scope_settings:
       channels:
@@ -471,12 +527,16 @@ measurements:
     trigger: {type: "IIC", sweep: "AUTO", when: "ADDR", scl: "CHAN2", sda: "CHAN1", address: "107", direction: "WRIT", awidth: "7", clevel_V: 1.5, dlevel_V: 1.5}
     timebase_s_div: 1.0e-05
     method: "auto"
-    feature: "TODO"
+    feature: "SDA V_OL on address bits 5, 3 and R/W of D6; 9th bit (frame tool on CSV)"
     values:
       - {name: "VPP", ch: "CH1", value_mV: 2837.9, raw: "2.8379E+00"}
       - {name: "VPP", ch: "CH2", value_mV: 3312.5, raw: "3.3125E+00"}
     captures: ["2026-10-27_V7R-015_R10_01.png", "2026-10-27_V7R-015_R10_01.csv", "2026-10-27_V7R-015_R10_01.setup.bin"]
-    raw_observation: "TODO"
+    raw_observation: "none (no bench action during capture)"
+    ai_read:
+      - capture: 2026-10-27_V7R-015_R10_01.png
+        values_seen: {summary: "band Write:d6 (red NACK mark after d6); panel Vbase(C1) 779.60 mV (captures 01/02/03); CH1 idle high before frame"}
+        mismatch: none
     source: "tools/lab/capture.py"
     scope_settings:
       channels:
@@ -502,12 +562,16 @@ measurements:
     trigger: {type: "IIC", sweep: "AUTO", when: "ADDR", scl: "CHAN2", sda: "CHAN1", address: "107", direction: "WRIT", awidth: "7", clevel_V: 1.5, dlevel_V: 1.5}
     timebase_s_div: 1.0e-05
     method: "auto"
-    feature: "TODO"
+    feature: "SDA V_OL on address bits 5, 3 and R/W of D6; 9th bit (frame tool on CSV)"
     values:
       - {name: "VPP", ch: "CH1", value_mV: 2741.5, raw: "2.7415E+00"}
       - {name: "VPP", ch: "CH2", value_mV: 3276.7, raw: "3.2767E+00"}
     captures: ["2026-10-27_V7R-015_R10_02.png", "2026-10-27_V7R-015_R10_02.csv", "2026-10-27_V7R-015_R10_02.setup.bin"]
-    raw_observation: "TODO"
+    raw_observation: "none (no bench action during capture)"
+    ai_read:
+      - capture: 2026-10-27_V7R-015_R10_02.png
+        values_seen: {summary: "band Write:d6 (red NACK mark after d6); panel Vbase(C1) 779.60 mV (captures 01/02/03); CH1 idle high before frame"}
+        mismatch: none
     source: "tools/lab/capture.py"
     scope_settings:
       channels:
@@ -533,12 +597,16 @@ measurements:
     trigger: {type: "IIC", sweep: "AUTO", when: "ADDR", scl: "CHAN2", sda: "CHAN1", address: "107", direction: "WRIT", awidth: "7", clevel_V: 1.5, dlevel_V: 1.5}
     timebase_s_div: 1.0e-05
     method: "auto"
-    feature: "TODO"
+    feature: "SDA V_OL on address bits 5, 3 and R/W of D6; 9th bit (frame tool on CSV)"
     values:
       - {name: "VPP", ch: "CH1", value_mV: 2818.3, raw: "2.8183E+00"}
       - {name: "VPP", ch: "CH2", value_mV: 3284.5, raw: "3.2845E+00"}
     captures: ["2026-10-27_V7R-015_R10_03.png", "2026-10-27_V7R-015_R10_03.csv", "2026-10-27_V7R-015_R10_03.setup.bin"]
-    raw_observation: "TODO"
+    raw_observation: "none (no bench action during capture)"
+    ai_read:
+      - capture: 2026-10-27_V7R-015_R10_03.png
+        values_seen: {summary: "band Write:d6 (red NACK mark after d6); panel Vbase(C1) 779.60 mV (captures 01/02/03); CH1 idle high before frame"}
+        mismatch: none
     source: "tools/lab/capture.py"
     scope_settings:
       channels:
@@ -564,12 +632,16 @@ measurements:
     trigger: {type: "IIC", sweep: "AUTO", when: "ADDR", scl: "CHAN2", sda: "CHAN1", address: "107", direction: "WRIT", awidth: "7", clevel_V: 1.5, dlevel_V: 1.5}
     timebase_s_div: 2.0e-05
     method: "auto"
-    feature: "TODO"
+    feature: "V8 contact check: decode band, 0x6B write frame (20 us/div)"
     values:
       - {name: "VPP", ch: "CH1", value_mV: 3322.6, raw: "3.3226E+00"}
       - {name: "VPP", ch: "CH2", value_mV: 3280.8, raw: "3.2808E+00"}
     captures: ["2026-10-27_V7R-015_val_V8_R4p7_01.png", "2026-10-27_V7R-015_val_V8_R4p7_01.csv", "2026-10-27_V7R-015_val_V8_R4p7_01.setup.bin"]
-    raw_observation: "TODO"
+    raw_observation: "session read of PNG (operator not asked separately; R47-1 operator: 'Write:d6' and a red empty diamond)"
+    ai_read:
+      - capture: 2026-10-27_V7R-015_val_V8_R4p7_01.png
+        values_seen: {summary: "band Write:80, Write:d6 (red mark after d6), Write:e0"}
+        mismatch: none
     source: "tools/lab/capture.py"
     scope_settings:
       channels:
@@ -595,12 +667,16 @@ measurements:
     trigger: {type: "IIC", sweep: "AUTO", when: "ADDR", scl: "CHAN2", sda: "CHAN1", address: "107", direction: "WRIT", awidth: "7", clevel_V: 1.5, dlevel_V: 1.5}
     timebase_s_div: 1.0e-05
     method: "auto"
-    feature: "TODO"
+    feature: "SDA V_OL on address bits 5, 3 and R/W of D6; 9th bit (frame tool on CSV)"
     values:
       - {name: "VPP", ch: "CH1", value_mV: 2718.0, raw: "2.7180E+00"}
       - {name: "VPP", ch: "CH2", value_mV: 3265.1, raw: "3.2651E+00"}
     captures: ["2026-10-27_V7R-015_R4p7_01.png", "2026-10-27_V7R-015_R4p7_01.csv", "2026-10-27_V7R-015_R4p7_01.setup.bin"]
-    raw_observation: "TODO"
+    raw_observation: "none (no bench action during capture)"
+    ai_read:
+      - capture: 2026-10-27_V7R-015_R4p7_01.png
+        values_seen: {summary: "band Write:d6 (red NACK mark after d6); panel Vbase(C1) 890.53 mV (captures 01/02/03); CH1 idle high before frame"}
+        mismatch: none
     source: "tools/lab/capture.py"
     scope_settings:
       channels:
@@ -626,12 +702,16 @@ measurements:
     trigger: {type: "IIC", sweep: "AUTO", when: "ADDR", scl: "CHAN2", sda: "CHAN1", address: "107", direction: "WRIT", awidth: "7", clevel_V: 1.5, dlevel_V: 1.5}
     timebase_s_div: 1.0e-05
     method: "auto"
-    feature: "TODO"
+    feature: "SDA V_OL on address bits 5, 3 and R/W of D6; 9th bit (frame tool on CSV)"
     values:
       - {name: "VPP", ch: "CH1", value_mV: 2746.9, raw: "2.7469E+00"}
       - {name: "VPP", ch: "CH2", value_mV: 3301.8, raw: "3.3018E+00"}
     captures: ["2026-10-27_V7R-015_R4p7_02.png", "2026-10-27_V7R-015_R4p7_02.csv", "2026-10-27_V7R-015_R4p7_02.setup.bin"]
-    raw_observation: "TODO"
+    raw_observation: "none (no bench action during capture)"
+    ai_read:
+      - capture: 2026-10-27_V7R-015_R4p7_02.png
+        values_seen: {summary: "band Write:d6 (red NACK mark after d6); panel Vbase(C1) 890.53 mV (captures 01/02/03); CH1 idle high before frame"}
+        mismatch: none
     source: "tools/lab/capture.py"
     scope_settings:
       channels:
@@ -657,12 +737,16 @@ measurements:
     trigger: {type: "IIC", sweep: "AUTO", when: "ADDR", scl: "CHAN2", sda: "CHAN1", address: "107", direction: "WRIT", awidth: "7", clevel_V: 1.5, dlevel_V: 1.5}
     timebase_s_div: 1.0e-05
     method: "auto"
-    feature: "TODO"
+    feature: "SDA V_OL on address bits 5, 3 and R/W of D6; 9th bit (frame tool on CSV)"
     values:
       - {name: "VPP", ch: "CH1", value_mV: 2633.7, raw: "2.6337E+00"}
       - {name: "VPP", ch: "CH2", value_mV: 3278.7, raw: "3.2787E+00"}
     captures: ["2026-10-27_V7R-015_R4p7_03.png", "2026-10-27_V7R-015_R4p7_03.csv", "2026-10-27_V7R-015_R4p7_03.setup.bin"]
-    raw_observation: "TODO"
+    raw_observation: "none (no bench action during capture)"
+    ai_read:
+      - capture: 2026-10-27_V7R-015_R4p7_03.png
+        values_seen: {summary: "band Write:d6 (red NACK mark after d6); panel Vbase(C1) 890.53 mV (captures 01/02/03); CH1 idle high before frame"}
+        mismatch: none
     source: "tools/lab/capture.py"
     scope_settings:
       channels:
@@ -688,12 +772,16 @@ measurements:
     trigger: {type: "IIC", sweep: "AUTO", when: "ADDR", scl: "CHAN2", sda: "CHAN1", address: "107", direction: "WRIT", awidth: "7", clevel_V: 1.5, dlevel_V: 1.5}
     timebase_s_div: 2.0e-05
     method: "auto"
-    feature: "TODO"
+    feature: "V8 contact check: decode band, 0x6B write frame (20 us/div)"
     values:
       - {name: "VPP", ch: "CH1", value_mV: 3403.5, raw: "3.4035E+00"}
       - {name: "VPP", ch: "CH2", value_mV: 3295.8, raw: "3.2958E+00"}
     captures: ["2026-10-27_V7R-015_val_V8_S0b_01.png", "2026-10-27_V7R-015_val_V8_S0b_01.csv", "2026-10-27_V7R-015_val_V8_S0b_01.setup.bin"]
-    raw_observation: "TODO"
+    raw_observation: "session read of PNG (operator not asked separately; R47-1 operator: 'Write:d6' and a red empty diamond)"
+    ai_read:
+      - capture: 2026-10-27_V7R-015_val_V8_S0b_01.png
+        values_seen: {summary: "band Write:80, Write:d6 (no red mark after d6), Write:e0"}
+        mismatch: none
     source: "tools/lab/capture.py"
     scope_settings:
       channels:
@@ -719,12 +807,16 @@ measurements:
     trigger: {type: "IIC", sweep: "AUTO", when: "ADDR", scl: "CHAN2", sda: "CHAN1", address: "107", direction: "WRIT", awidth: "7", clevel_V: 1.5, dlevel_V: 1.5}
     timebase_s_div: 1.0e-05
     method: "auto"
-    feature: "TODO"
+    feature: "SDA V_OL on address bits 5, 3 and R/W of D6; 9th bit (frame tool on CSV)"
     values:
       - {name: "VPP", ch: "CH1", value_mV: 3345.8, raw: "3.3458E+00"}
       - {name: "VPP", ch: "CH2", value_mV: 3276.3, raw: "3.2763E+00"}
     captures: ["2026-10-27_V7R-015_S0b_01.png", "2026-10-27_V7R-015_S0b_01.csv", "2026-10-27_V7R-015_S0b_01.setup.bin"]
-    raw_observation: "TODO"
+    raw_observation: "none (no bench action during capture)"
+    ai_read:
+      - capture: 2026-10-27_V7R-015_S0b_01.png
+        values_seen: {summary: "band Write:d6 (9th bit low, no red mark); panel Vbase(C1) 668.66/685.73/668.66 mV (captures 01/02/03); CH1 idle high before frame"}
+        mismatch: none
     source: "tools/lab/capture.py"
     scope_settings:
       channels:
@@ -750,12 +842,16 @@ measurements:
     trigger: {type: "IIC", sweep: "AUTO", when: "ADDR", scl: "CHAN2", sda: "CHAN1", address: "107", direction: "WRIT", awidth: "7", clevel_V: 1.5, dlevel_V: 1.5}
     timebase_s_div: 1.0e-05
     method: "auto"
-    feature: "TODO"
+    feature: "SDA V_OL on address bits 5, 3 and R/W of D6; 9th bit (frame tool on CSV)"
     values:
       - {name: "VPP", ch: "CH1", value_mV: 3409.6, raw: "3.4096E+00"}
       - {name: "VPP", ch: "CH2", value_mV: 3318.7, raw: "3.3187E+00"}
     captures: ["2026-10-27_V7R-015_S0b_02.png", "2026-10-27_V7R-015_S0b_02.csv", "2026-10-27_V7R-015_S0b_02.setup.bin"]
-    raw_observation: "TODO"
+    raw_observation: "none (no bench action during capture)"
+    ai_read:
+      - capture: 2026-10-27_V7R-015_S0b_02.png
+        values_seen: {summary: "band Write:d6 (9th bit low, no red mark); panel Vbase(C1) 668.66/685.73/668.66 mV (captures 01/02/03); CH1 idle high before frame"}
+        mismatch: none
     source: "tools/lab/capture.py"
     scope_settings:
       channels:
@@ -781,12 +877,16 @@ measurements:
     trigger: {type: "IIC", sweep: "AUTO", when: "ADDR", scl: "CHAN2", sda: "CHAN1", address: "107", direction: "WRIT", awidth: "7", clevel_V: 1.5, dlevel_V: 1.5}
     timebase_s_div: 1.0e-05
     method: "auto"
-    feature: "TODO"
+    feature: "SDA V_OL on address bits 5, 3 and R/W of D6; 9th bit (frame tool on CSV)"
     values:
       - {name: "VPP", ch: "CH1", value_mV: 3314.5, raw: "3.3145E+00"}
       - {name: "VPP", ch: "CH2", value_mV: 3296.6, raw: "3.2966E+00"}
     captures: ["2026-10-27_V7R-015_S0b_03.png", "2026-10-27_V7R-015_S0b_03.csv", "2026-10-27_V7R-015_S0b_03.setup.bin"]
-    raw_observation: "TODO"
+    raw_observation: "none (no bench action during capture)"
+    ai_read:
+      - capture: 2026-10-27_V7R-015_S0b_03.png
+        values_seen: {summary: "band Write:d6 (9th bit low, no red mark); panel Vbase(C1) 668.66/685.73/668.66 mV (captures 01/02/03); CH1 idle high before frame"}
+        mismatch: none
     source: "tools/lab/capture.py"
     scope_settings:
       channels:

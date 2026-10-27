@@ -1,8 +1,8 @@
 ---
-as_of: V7R-014            # highest card ID with status recorded|abandoned that this file reflects (V7R-000 = sentinel, nothing recorded)
-updated: 2026-10-26       # date of the last edit
+as_of: V7R-015            # highest card ID with status recorded|abandoned that this file reflects (V7R-000 = sentinel, nothing recorded)
+updated: 2026-10-27       # date of the last edit
 last_checkpoint: V7R-014  # card ID at which the last step-back checkpoint ran (context-strategy §4.3)
-open_cards: [V7R-015]                            # cards with status pre-registered|run; must match lab/cards/ (checked)
+open_cards: []                            # cards with status pre-registered|run; must match lab/cards/ (checked)
 ---
 
 # v7 I²C fault — current state
@@ -56,7 +56,7 @@ Status (untested | tested) says whether a test has touched the region; Strength 
 | firmware: env | v7 env/variant change (devkitc variant, no display init, STARTUP_I2C_SCAN, boot order) | tested (partly) | measured-refuted for the image (boot order, STARTUP_I2C_SCAN, BQ/INA/GPIO init); devkitc variant and build flags held, not tested | CL-24, V7R-006 | V7R-006 |
 | firmware: core | arduino-esp32 2.0.14 / legacy IDF I²C driver behaviour (#8543 class) | tested | measured-refuted as sufficient with an S3 master on this bus: Nano on 2.0.14 ACKs (V7R-007); also fails v6 IS NOT (same core on v6) | F-10, CL-24, V7R-004, V7R-007 | V7R-007 |
 | power regime | no live hypothesis; control variable (VBUS / battery / WiFi state) | tested | measured-refuted as cause | L-Ph6b, L-Ph18 | L-Ph18 |
-| measurement | Any v7 scope number is an artefact until §4.2 setup validation passes on that session | tested | validated at S2 (V7R-009, V7R-010) and at the master end, ground C9.1: TPIO43/44 and U3 pad 37 (V7R-010) | T4 §2.6, V7R-009, V7R-010 | V7R-010 |
+| measurement | Any v7 scope number is an artefact until §4.2 setup validation passes on that session; V7R-015: U3's SDA low with the J6 pigtail stub differs between power-ups (783 mV NACK vs 677 mV ACK, nothing inserted), within-arm spread ≤ 2 mV | tested | validated at S2 (V7R-009, V7R-010) and at the master end, ground C9.1 (V7R-010); setup/boot-level repeatability not tested: V7R-015 void (anchor fail; boot type, contact, insertion, board state not separated) | T4 §2.6, V7R-009, V7R-010, V7R-015 | V7R-015 |
 | power: other | no hypothesis yet (BQ charger switching, boost, LDO noise beyond L-Ph14's far-end test) | untested | not tested | — | — |
 
 ## 4. Facts in use                              (≤ 15 rows)
@@ -118,8 +118,8 @@ Only facts load-bearing for section 3; inferences are labelled "argued" and neve
 Baselines (tag → commit, I²C init in one line); boards (ID | condition | mods | role); flashed now (board → commit + env, with the card ID that set it); cables and fixtures in the failing config.
 - Failing config fixtures: cable in J6 with 10 kΩ SDA→+3.3 V at the far end, SCL wire dangling (L-Ph12); sensor rigid on J4/J5/J6. Baselines: `v7-clean` → 90053af (Wire.begin(43, 44), 400 kHz, CAP_2, no filters, default pulls; STARTUP_I2C_SCAN true; envs motion-play-v7, -diag, -busrec, -relbus). `v6-ref` → 4da1c67 (same init; STARTUP_I2C_SCAN false; env lilygo-t-display-s3).
 - Boards: v6 | healthy | ~10 mm wire on pad C (U2.14, GND), V7R-001 | known-good reference, on the bench. v7 #0003 (panel marking; believed B3, not confirmed; U3 die rev v0.2) | healthy | ~68 mm 26 AWG wires soldered on TPIO43 (green) and TPIO44 (yellow), fitted before V7R-004 | the v7 on the bench; treated as the only good unit. Arduino Nano ESP32 (S3 rev v0.1) | healthy | none | external S3 master (V7R-004). Legacy: v7 B1 | bodge-damaged (L-Ph7) | rework | none. v7 B2 | BQ I²C open (L-Ph8), never reflowed? | none known | symptom identity: causal, if it still exists. v7 B3 | healthy | none known | only good unit (no irreversible actions); likely #0003.
-- Flashed now: v6 → v6-ref 4da1c67, lilygo-t-display-s3 (V7R-002 S2 step F). v7 #0003 → v7-clean 90053af, motion-play-v7-diag (V7R-014 end revert, 2026-10-26 17:36). Nano ESP32 → blank sketch, 2.0.18 hwcdc build (V7R-009 revert; not reflashed since).
-- Bench at last stop (notebook 2026-10-26 s01, V7R-014): v7 #0003 and Nano unpowered (USB-C cables in, Mac ends unplugged). J6: rigid #1 (SW1 ON = PCA 0x76; flex + 2 VCNL) via ~400 mm cable. J5: pigtail, black in 'V' rail with the 10 kΩ, blue + yellow dangling, red in Nano GND column. Pad wires green/yellow → ~175 mm Dupont → Nano A4/A5. J4 empty. v6 off bench. Probes lifted off the board; operator: "pads look fine". Scope on, decode set.
+- Flashed now: v6 → v6-ref 4da1c67, lilygo-t-display-s3 (V7R-002 S2 step F). v7 #0003 → u3-drv2 f8ebf3fc (V7R-015, flashed 2026-10-26 23:42; revert deferred to the next card's end). Nano ESP32 → blank sketch, 2.0.18 hwcdc build (V7R-009 revert; not reflashed since).
+- Bench at last stop (notebook 2026-10-27 s02, V7R-015): probes **seated at S1** (CH1 tip A, CH2 tip B, springs C), validated in log `2026-10-26_s02`, not moved since V7; next card may run on this seat without re-validation (V8 per arm). Scope on, decode set, address trigger 0x6B write. J6: JST-SH pigtail (black 'V' rail, red Nano GND, blue alone in the SDA rail, yellow dangling); J4, J5 empty; rigid #1 off the bench; 47 k / 10 k / 4.7 kΩ to hand. Nano powered, blank. v7 powered on u3-drv2 at session end unless the operator unplugged it at the Mac end.
 
 ## 7. Measurement trust                         (≤ 10 rows; rows leave when re-measured)
 Verdict is trustworthy | suspect | unknown | not tested; a row is deleted when a V7R card re-measures it.
@@ -130,12 +130,12 @@ Verdict is trustworthy | suspect | unknown | not tested; a row is deleted when a
 | L-Ph22 scope remark | unknown | nothing (null result is log-based) | none |
 | L-Ph23 SCL V_OL ~300 mV | suspect (inconsistent with SDA, same driver) | nothing | R1 channel swap |
 | L-Ph25 | not tested | nothing | re-run individually only if the map needs it |
+| V7R-013 stub 678 mV / BQ ACK and all single-boot V_OL values (V7R-009…015) | suspect at the setup/boot level (V7R-015: stub 783 vs 677 mV across power-ups) | slave: BQ × master; mux; F-13 | stub repeats across power-ups (next card) |
 | L-Ph24a | log-based; trustworthy as a binary result; multi-variable | master: identity; F-5 | none (V7R-004 replicates master-dependence with an S3) |
 
 ## 8. Next                                      (≤ 6 lines)
-- Checkpoint @ V7R-014 (notebook 2026-10-26): continue (user). Candidate lead "U3's GPIO43 sink path is resistive (~0.5–0.7 kΩ), so its low sits above BQ/VCNL V_IL" — argued, not promoted; open challenge: a 47 kΩ far end also triggers (L-Ph5) but adds only ~+33 mV at that resistance.
-- Next: V7R-015 far-end pull-up current stub/47k/10k/4.7k/stub (slope, BQ threshold, 47 kΩ challenge); then (g) static GPIO43 low on a second v7 board; desk: timing from V7R-009 CSVs. Timebox: 14/20 cards · week 1/8 (raised from 15 and miscount 15→14 corrected at this checkpoint). Master bundle region: 10 cards. Planner relays open: 2026-10-24, 2026-10-26.
-
+- Next: V7R-016 on the seated probes — stub repeats across independent power-ups (incl. one RTS-reset boot as S0a), then the dose levels each set up 2–3 times in mixed order with a breadboard photo per insertion (user: replicate at the setup level). Then (g) static GPIO43 on a second v7; desk: timing from V7R-009 CSVs.
+- Checkpoint @ V7R-014: continue; lead "U3's GPIO43 sink path is resistive" argued, not promoted (V7R-015 void, untested). Timebox 15/20 · week 1/8; master bundle 11 cards; relays open 2026-10-24, 2026-10-26; checkpoint due at V7R-017.
 ## 9. Lookups (L1 routing)                      (≤ 15 rows)
 Where to go for detail that is not L0; load only the named section or query.
 | When you need… | Load | Section/query |
