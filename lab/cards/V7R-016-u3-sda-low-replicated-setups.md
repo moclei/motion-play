@@ -126,6 +126,8 @@ The session runs every SCPI command, esptool call, marker and capture; one instr
 
 - R10-1 (file label `R10_1`; block 1; blue row 25 → row 15, USB replug): operator: "1. Blue is in the 10k resistor row 2. Power is on 3. go". V8 `val_V8_R10_1_01.png`: `Write:80`, `Write:d6` (red mark after), `Write:e0` (session read). Captures R10_1_01..02 (14:37–14:38); `[scope]` BQ 0/620 (n 70→690), codes 2222222222, drv 2/2, tca=ina=n, t monotonic, no other lines. Frame tool: D6, 9th high, period 2.500 µs ×2, bit V_OL [787.7 780.4 782.9] [789.8 781.3 784.7] mV → 784.47 mV; idle CH1 3.2736/3.2741 V, CH2 3.2617/3.2607 V; CH2 min 0.024/0.022 V.
 
+- S-1 (file label `S_1`; block 1; blue row 15 → row 25, USB replug): operator: "1. Blue in row 25 2. yes 3. go". v7 log: last R10-1 line 14:39:25; marker 14:40:08; no lines until a boot banner at 14:40:36.981 (`[   720][I][esp32-hal-i2c.c:75] i2cInit(): ... freq=100000`, `[scope] sketch=v7_scope_bq_probe version=1.0-drv ... i2c_clock=400000 Hz`), first `[scope]` t-line 14:40:37 (n=10) — the boot is ~28 s after the marker and after the operator's "yes" (PWR on) and "go" (not separated: a second reset at logger reconnect vs a late plug-in). V8 `val_V8_S_1_01.png`: `Write:80`, `Write:d6` (no red mark), `Write:e0` (session read). Captures S_1_01..02 (14:40:55, 14:41:06, after that boot); BQ 410/410 (n 10→420), codes 0000000000, drv 2/2, tca=ina=n, t monotonic. Frame tool: D6, 9th low, period 2.500 µs ×2, bit V_OL [681.7 673.2 677.0] [682.4 672.9 677.2] mV → 677.40 mV; idle CH1 3.2731/3.2730 V, CH2 3.2607/3.2617 V; CH2 min 0.018/0.025 V.
+
 ### Measured values (from log; cite `lab/evidence/V7R-016/...`)
 ### Interpretation (session; labelled as such)
 
