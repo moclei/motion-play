@@ -1,7 +1,7 @@
 ---
 test_id: V7R-016
 title: "U3 SDA low and BQ ACK vs far-end pull-up on the J6 pigtail, each level set up three times in mixed order, with stub power-up repeats (USB replug, RTS reset), at TPIO43"
-status: run
+status: recorded
 created: 2026-10-27
 prereg_commit: self
 baseline:
@@ -146,12 +146,41 @@ The session runs every SCPI command, esptool call, marker and capture; one instr
 
 - R10-2 (file label `R10_2`; block 2; blue row 25 → row 15, USB replug): operator: "1. 15 2. PWR ON, D5 off 3. go". Boot check 15:24:44 (t=21556, n=210). V8 `val_V8_R10_2_01.png`: `Write:80`, `Write:d6` (red mark after), `Write:e0` (session read). Captures R10_2_01..02 (15:24–15:25); BQ 0/650 (n 210→860), codes 2222222222 only, drv 2/2, tca=ina=n, t monotonic, no other lines. Frame tool: D6, 9th high, period 2.500 µs ×2, bit V_OL [788.1 780.2 783.4] [788.7 780.1 783.4] mV → 783.98 mV; idle CH1 3.2740/3.2725 V, CH2 3.2619/3.2609 V; CH2 min 0.027/0.019 V.
 
+- Block 3 and T2: not run (user decision after block 2, notebook 2026-10-27 s03 cont.; decided after seeing the block 1–2 values).
+- End (session 2026-10-27 s04): esptool `read_mac` on `/dev/cu.usbmodem14301` → 44:1b:f6:c5:58:c4 (the v7, as T1). Upload `motion-play-v7-diag` from a v7-clean worktree at 90053af, 15:39:13–15:39:47, SUCCESS, "Hash of data verified" (build firmware.bin sha1 166f5f40). Diag loop after the reset (blue in row 15, 10 kΩ): `TCA2 INA:. BQ:X(2) TCA:. PCA:X(2) VCNL:X(2)` on iterations 1–4; BASE, TCA0, TCA1 `BQ:.`.
+- End bench step (E1): operator: "1. I left them on 2. LEDs off 3. blue is in row 25, the resistors are in rows 10/15/20 where they were before 4. none"; on the session's query (handoff note had row 15): "Oh sorry, blue is still in row 15 yes, I was mistaken". No photos handed over (none in `lab/captures/V7R-016/photos/`).
+
 ### Measured values (from log; cite `lab/evidence/V7R-016/...`)
+V_rail 3.276 V (DMM, S-0). R_meas 47.15 / 9.999 / 4.695 kΩ (DMM, out of circuit). I_far = (V_rail − V)/R_meas per arm. V = mean of 6 bit-means (2 captures × bits 5, 3, R/W of D6).
+| Arm | Kind | Level | V (mV) | I_far (µA) | BQ ACK (`[scope]` cycles) | 9th bit (scope) |
+|---|---|---|---|---|---|---|
+| C0 | V7R-015 S0b boot, no touch | stub | 677.80 | 0 | 100 % (bq=n) | low ×2 |
+| St0 | after R/R2 (touch) | stub | 677.73 | 0 | 100 % (bq=n) | low ×2 — **void (CH2 spring off C)** |
+| S-0r | power-up after P1 re-seat, breadboard untouched | stub | 677.42 | 0 | 610 / 610 | low ×2 |
+| U1 | USB replug, no touch | stub | 677.70 | 0 | 610 / 610 | low ×2 |
+| T1 | RTS reset, no touch | stub | 677.92 | 0 | 610 / 610 | low ×2 |
+| R10-1 | block 1 | 10 kΩ | 784.47 | 249.2 | 0 / 620 | high ×2 |
+| S-1 | block 1 | stub | 677.40 | 0 | 410 / 410 (730/730 to arm end) | low ×2 |
+| R4.7-1 | block 1 | 4.7 kΩ | 893.25 | 507.5 | 0 / 620 | high ×2 |
+| R47-1 | block 1 | 47 kΩ | 699.97 | 54.6 | 0 / 620 (one line codes 2222552222) | high ×2 |
+| R4.7-2 | block 2 | 4.7 kΩ | 894.20 | 507.3 | 0 / 640 | high ×2 |
+| R47-2 | block 2 | 47 kΩ | 700.78 | 54.6 | 0 / 630 | high ×2 |
+| S-2 | block 2 | stub | 676.75 | 0 | 650 / 650 | low ×2 |
+| R10-2 | block 2 | 10 kΩ | 783.98 | 249.2 | 0 / 650 | high ×2 |
+
+Derived (card definitions): R_boot (U1, T1; T2 not run) = 0.22 mV. R_set: stub 0.65, 47 k 0.81, 10 k 0.49, 4.7 k 0.95 mV (2 arms each). m(L): stub 677.08, 47 k 700.38, 10 k 784.23, 4.7 k 893.73 mV. Fit m = 677.21 mV + 0.4272 kΩ × I_far; residuals −0.13 / −0.17 / +0.55 / −0.25 mV. |C0 − 676.72| = 1.08 mV. All stub power-ups (C0, S-0r, U1, T1, S-1, S-2): 676.75–677.92 mV (range 1.17 mV). Same bit across the two captures of an arm ≤ 2.1 mV apart.
+Controls: every counted arm passes c1–c7 as listed (V8 `Write:d6`; drv 2/2; tca = ina = n; t monotonic; capture byte D6 and 9th bit agree with the log class; period 2.500–2.501 µs; CH1 idle 3.2723–3.2746 V). After P1 the re-seat checks (CH2 idle 3.2603–3.2620 V, CH2 min ≥ 0.015 V) pass in every arm. S-1: one boot 28 s after the marker, before V8 and both captures; none after V8.
+Sources: `lab/evidence/V7R-016/2026-10-27_V7R-016_<arm>_0[12].{csv,png}`, `*_val_V8_<arm>_01.png`, `src/session/<arm>_{summary,controls}.txt`, `2026-10-27_V7R-016_v7_01.txt`; log `lab/log/2026-10-27_s03.yaml`.
+
 ### Interpretation (session; labelled as such)
+Interpretation (V7R-016): in this session U3's SDA low at TPIO43 repeats to ≤ 1.2 mV across six stub boots (USB replug, RTS reset, Dupont moves, a probe re-seat and hours of run time), and rises linearly with the far-end current at ~0.43 kΩ over 0–0.51 mA from a ~677 mV intercept. The intercept is the ~0.68 V that V7R-013 saw with the path out; the dose adds to it, so a 0.43 kΩ-like term and the zero-current offset are both in U3's low. Where they sit (pad, driver, module, SDA-net load) is not separated by this card.
+Interpretation (V7R-016 vs V7R-015): V7R-015's resistor arms (699.94 / 782.34 / 894.11 mV) are within 2 mV of this card's level means; its S0a stub (783.39 mV) is not reproduced by any stub arm here and lies within 1 mV of the 10 kΩ level. Whether a far-end path was present at S0a is not known (no photo, no in-circuit check); not separated.
+Interpretation (BQ): every ACK arm ≤ 677.92 mV, every NACK arm ≥ 699.97 mV. Under U3, BQ's switching level is between these, if the level is what sets it; level and path presence move together in every arm here (B3).
 
 ## Conclusion
-- Outcome row matched: ...
-- Hypotheses excluded: ...
-- **Strength:** measured-refuted | measured-supported | argued | not tested
-- Revert-on-null done: yes/no (commit)
+- Outcome row matched: **Part 1 P1** — R_boot 0.22 mV (U1, T1; T2 not run) and every R_set ≤ 0.95 mV (2 set-ups per level); sub-result |C0 − S0b| = 1.08 mV (within-boot stable over ~11.7 h). **Part 2 D1** — level ranges do not overlap, order stub < 47 k < 10 k < 4.7 k, R_fit 0.427 kΩ (in 0.3–1.5), residual 0.55 mV. **B3** — every stub arm ACK, every resistor arm NACK (B1 ordering holds; level and path presence not separated). 47 kΩ sub-result: NACK ×2 (two set-ups, not three).
+- Hypotheses excluded: H2 (low independent of the far-end current); M-boot, M-touch, M-rts at 20 mV for this session (one board, one seat). H1 supported (weakly, per the card). H3/H4 not separated. M: St0 void (CH2 ground spring); the rest of the controls pass.
+- **Strength:** measured-refuted for H2 and for M-boot/M-touch/M-rts at 20 mV; measured-supported (weak) for H1 — one board, one seat, two set-ups per level, 2 captures per arm; `lab/evidence/V7R-016/`
+- Deviations: (1) Block 3 and T2 not run (user decision after seeing blocks 1–2; card minimum of 2 blocks met; R_boot over 2 arms, R_set over 2). (2) Scope Setup line CH1 "1 V/div −3.3 V" wrong; counted arms at 0.5 V/div −1.65 V (text only). (3) Step R2 added (black into the 'V' rail before S-0). (4) St0 void (CH2 spring slid off C); CH2 re-seated with the v7 unplugged (P1); re-validation after it was V8 + idle-high pass band + CH2 min, not a full V7 (needs an idle-bus image). (5) 105-min stop rule waived (user). (6) First R4.7-1 plug-in: v7 did not enumerate, D5 lit; recovered on another Mac port (X1); the scope's Ethernet adapter moved to the old port. (7) S-1 boot 28 s after its marker (logger reconnect vs late plug-in, not separated); all S-1 captures after it. (8) R47-1: one `[scope]` line with codes 2222552222 and a 3000 ms t step (15:04:10), outside both captures; BQ class unaffected. (9) Arm file labels St0 / St0r / R4p7_N / R47_N / R10_N / S_N (capture.py rejects '-').
+- Revert-on-null done: **yes** (not a null; revert per card, and V7R-015's deferred one) — U3 on v7-clean motion-play-v7-diag (90053af, upload 15:39:47 2026-10-27); Nano blank (unchanged); probes left seated at S1 (user's call); both boards unplugged at the Mac end
 - Result commit: self
