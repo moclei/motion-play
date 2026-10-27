@@ -1,7 +1,7 @@
 ---
 test_id: V7R-014
 title: "U3 static low as plain GPIO, I²C controller detached: GPIO43 (SDA) vs GPIO44 (SCL) held low, TCA channel 2 open"
-status: pre-registered
+status: recorded
 created: 2026-10-25
 prereg_commit: self
 baseline:
@@ -106,10 +106,12 @@ Session 2026-10-26 s01 (log `lab/log/2026-10-26_s01.yaml`).
 - V43(A1) = 845.77, V43(A2) = 845.66, anchor |A1 − A2| = 0.10 mV; **V43 = 845.71 mV**; **V44 = 48.77 mV**; V43 − Vref = −50.69 mV.
 - Controls: c1 released pad 3.260 V (A1, A2 CH2), 3.273 V (B CH1). c2 `[regs]` at each mode change: both pads `mcu_sel=1 out_sig=256 od=1 oe=1`; driven pad `out=0 in=0`, other `out=1 in=1` (A1 17:34:11, B 17:34:37, A2 17:35:02). c3 `tca_write_err=0 tca_reg=0x04` at each. c4 no banner and uptime monotonic from `>>> f` (17:31:36) to the end of A2. c5 driven-channel sd 7.88–8.23 (A), 5.78–6.09 mV (B). Operator: no bench action during A1–A2.
 ### Interpretation (session; labelled as such)
+Interpretation: with the I²C controller detached and GPIO43 a plain open-drain GPIO output, U3 holds TPIO43 at 845.71 mV at this load, 50.69 mV below the frame low under the controller (Vref 896.40 mV); GPIO44 on the same chip, same way, reaches 48.77 mV. So the elevated SDA low is present without the I²C controller and is specific to the GPIO43 side. This card does not separate U3's GPIO43 pad/driver and module path from a difference in the load on the SDA net versus the SCL net (declared: loads similar, not matched; SDA alone carries a slave able to drive it). The ~51 mV between static and frame lows is not explained here.
 
 ## Conclusion
-- Outcome row matched: ...
-- Hypotheses excluded: ...
-- **Strength:** measured-refuted | measured-supported | argued | not tested
-- Revert-on-null done: yes/no (commit)
+- Outcome row matched: **row 1** — V43 = 845.71 mV ≥ 0.6 V and |V43 − Vref| = 50.69 mV < 100 mV; V44 = 48.77 mV ≤ 0.2 V; anchor |A1 − A2| = 0.10 mV ≤ 20 mV; controls c1–c6 pass in every arm.
+- Hypotheses excluded: H2 (the elevated low appears only when the I²C controller drives the pad) — measured-refuted. H3 (neither U3 pad sinks well statically; U3-wide supply/ground cause) — measured-refuted. H1 weakly supported (pad/path not separated from the SDA-net load). M not supported: no probe move from F to A2, the released pad ≥ 3.26 V in every arm, pad modes read back at each mode change, no reboot, A1 and A2 agree to 0.1 mV.
+- **Strength:** measured-refuted (H2, H3; one board, one rigid, A/B/A, 3 captures per arm, static DC level at TPIO43/TPIO44, TCA channel 2 open); `lab/evidence/V7R-014/`
+- Deviations: (1) u3-static was not rebuilt for the flash: rebuilds differ from 493a0235 only in debug-path bytes (raw notes); the original binary was flashed (user). (2) Operator re-seated both probes (springs + tips) after the first V7: one extra full placement; V5 not repeated on the new spring seat, `noise_floor.py` on `val_V7_03` passes instead (4.33 / 2.21 mV rms). (3) CH1 tip re-seated on A after `val_V7_02` (ground level): one extra single-tip move. (4) Operator pressed AUTO once; every setting re-set and read back before V7. (5) U3 resets in the v7 log beyond the two planned plug-ins, before F; none from F to A2 (c4). (6) First boot banner not logged (logger started after the flash). (7) A-arm and B means are not offset-corrected (V5a offsets −11.83 / −14.27 mV); no row boundary is within 20 mV.
+- Revert-on-null done: yes (not a null; revert per card) — U3 on v7-clean motion-play-v7-diag (90053af, upload 17:36:43 2026-10-26), Nano blank (unchanged), probes off the board, both boards unplugged
 - Result commit: self
