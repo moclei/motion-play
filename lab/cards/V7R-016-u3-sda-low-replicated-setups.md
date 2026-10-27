@@ -118,6 +118,8 @@ The session runs every SCPI command, esptool call, marker and capture; one instr
 - P1 (v7 unplugged at the Mac end; CH2 spring only re-seated on C): operator: "1. Both springs on c, tips on a and b -- yes 2. nothing". Re-validation after the re-seat (deviation from "V7 + V8"): V8 per arm, plus the idle-high pass band 3.135–3.465 V on both channels from the counted captures and CH2 min > −0.15 V; full V7 needs an idle-bus image (reflash), not done.
 - User on time: "plenty of time, stop asking because we have enough time" — the 105-min stop rule is waived (decision).
 
+- S-0r (file label `St0r`; v7 plugged in after P1, breadboard untouched): operator: "1. yes 2. go". V8 `val_V8_St0r_01.png`: band `Write:80`, `Write:d6` (no red mark after), `Write:e0`; panel C2 Vamp 3.1829 V, Vbase 79.866 mV (session read). Captures St0r_01..02 (13:55–13:56); `[scope]` BQ 610/610 (n 210→820), bq_codes=0000000000, sda_drv=2 scl_drv=2, tca=ina=n, t monotonic, no other lines. Frame tool: D6, 9th low, period 2.500 µs ×2, bit V_OL [681.8 673.7 677.2] [681.5 673.3 677.0] mV → 677.42 mV. Re-seat checks: idle CH1 3.2726/3.2723 V, idle CH2 3.2613/3.2603 V (pass 3.135–3.465 V); CH2 min 0.030/0.027 V, max 3.359/3.336 V (pass, no spikes).
+
 ### Measured values (from log; cite `lab/evidence/V7R-016/...`)
 ### Interpretation (session; labelled as such)
 
