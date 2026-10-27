@@ -89,6 +89,10 @@ The session runs every SCPI command, flash and capture; one instruction block pe
 
 ## Actual result
 ### Raw observations (operator, verbatim; symptoms not interpretations)
+**Session 2026-10-26 s02** (log `lab/log/2026-10-26_s02.yaml`).
+- Image check (session, before S0): rebuild of `lab/evidence/V7R-012/src/u3/` → `ca2ba6af…` ≠ `f8ebf3fc…`. Original V7R-012 binary found at an earlier session's scratchpad (`…/31eb2470…/scratchpad/u3drv/.pio/build/u3-drv2/firmware.bin`), sha256 = `f8ebf3fc…` (matches `firmware.sha256`). Original vs rebuild: 271712 B both, 5 segments; 4 identical; segment 0x3c030020 differs in 32 bytes at file 0xb0 (embedded ELF SHA256); remaining differences in the trailing checksum/hash. Plan: flash the original f8ebf3fc binary (user told before flashing).
+- S0: "1. J6 has the pigtail, other two are empty / All else as it should be"
+- R: "All read their proper values"; asked for digits: "Same. they're good". Digits not reported — R_meas taken as nominal 47 k / 10 k / 4.7 kΩ (deviation).
 ### Measured values (from log; cite `lab/evidence/V7R-015/...`)
 ### Interpretation (session; labelled as such)
 
