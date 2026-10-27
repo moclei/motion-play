@@ -135,6 +135,8 @@ The session runs every SCPI command, esptool call, marker and capture; one instr
 
 - R4.7-1 (file label `R4p7_1`; retry: USB replug in the new Mac port, blue in row 20 since the first attempt): operator: "1. on, D5 off 2. go". Boot check 15:00:28 (t=13560, n=130). V8 `val_V8_R4p7_1_01.png`: `Write:80`, `Write:d6` (red mark after), `Write:e0` (session read). Captures R4p7_1_01..02 (15:00–15:01); BQ 0/620 (n 130→750), codes 2222222222, drv 2/2, tca=ina=n, t monotonic, no other lines. Frame tool: D6, 9th high, period 2.500 µs ×2, bit V_OL [897.0 889.7 893.5] [897.8 889.2 892.3] mV → 893.25 mV; idle CH1 3.2732/3.2729 V, CH2 3.2616/3.2619 V; CH2 min 0.015/0.033 V.
 
+- R47-1 (file label `R47_1`; block 1; blue row 20 → row 10, USB replug): operator: "1. 10 2. on, D5 off 3. go". Boot check 15:03:40 (t=7653, n=70). V8 `val_V8_R47_1_01.png`: `Write:80`, `Write:d6` (red mark after), `Write:e0`; panel Vbase C1 660.13 mV (session read). Captures R47_1_01..02 (15:04:29, 15:04:39; V8 15:04:14); BQ 0/620 (n 70→690), drv 2/2, tca=ina=n, t monotonic, no other lines. **Codes: one line `15:04:10.136 [scope] t=37653 n=350 ... bq=0 bq_codes=2222552222`** — two BQ cycles returned code 5; the previous line is t=34653 n=340 (15:04:07.082), so t advanced 3000 ms for 10 cycles (other lines: 1000 ms per 10). Every other line in the session so far: codes all 0 or all 2. Not during a capture. Frame tool: D6, 9th high, period 2.500 µs ×2, bit V_OL [704.0 695.0 699.4] [705.5 696.5 699.4] mV → 699.97 mV; idle CH1 3.2731/3.2734 V, CH2 3.2604/3.2614 V; CH2 min 0.027/0.024 V.
+
 ### Measured values (from log; cite `lab/evidence/V7R-016/...`)
 ### Interpretation (session; labelled as such)
 
