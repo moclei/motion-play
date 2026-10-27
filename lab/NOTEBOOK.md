@@ -254,3 +254,10 @@ The "belief changes" line replaces overwriting a "current working theory": STATE
 - map edits: none to §2–3 (no new data); §8 rewritten; `last_checkpoint: V7R-014`; STATE trimmed to 150 lines (seeding provenance line removed; it is in git history).
 - bench state at end: unchanged from s01 (both boards unpowered, probes off, v7 on diag 90053af, Nano blank).
 - next: V7R-015 pre-registration (this session, after this commit).
+
+## 2026-10-26 · checkpoint session (cont.) · V7R-015 pre-registered (far-end pull-up current dose series); not run
+- session: debugger (same conversation as the checkpoint) · operator: user (no bench) · boards: none
+- cards: V7R-015 pre-registered (this commit), not run. Image u3-drv2 rebuilt at the run from `lab/evidence/V7R-012/src/u3/`, checked against `firmware.sha256` (loadable segments if the whole-file hash differs) before flashing.
+- decisions: user: "keep going, write it up and draft the next test"; on the card: "1. approved" (u3-drv2 delta), "2. ok" (J6 rigid cable out, pigtail J5 → J6 at S0 before probes), "3. yes, I have both" (47 kΩ, 4.7 kΩ).
+- bench state at end: unchanged from s01.
+- next: V7R-015 run (full scope validation at S1 first).
