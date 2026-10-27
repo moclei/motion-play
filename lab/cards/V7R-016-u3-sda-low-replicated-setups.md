@@ -107,6 +107,10 @@ The session runs every SCPI command, esptool call, marker and capture; one instr
 
 ## Actual result
 ### Raw observations (operator, verbatim; symptoms not interpretations)
+**Session 2026-10-27 s03** (log `lab/log/2026-10-27_s03.yaml`; validation carried from `2026-10-26_s02`).
+- Start: v7 on `/dev/cu.usbmodem14401`, still the V7R-015 S0b boot (`[scope]` t=38823130 at 11:12, n=357360, bq=n, bq_codes=0000000000). V7R-015 v7 log (captures copy) runs to 08:15 with bq=n throughout.
+- Scope read-back at C0: CH1 and CH2 0.5 V/div, −1.65 V (as V7R-015's counted arms); the card's Setup line "CH1 1 V/div −3.3 V" was copied from the 2026-10-26_s02 `channels` header and is wrong (deviation, text only).
+- C0: operator: "1. yes 2. go". V8 `val_V8_C0_01.png`: band `Write:80`, `Write:d6` (no red mark after), `Write:e0` (session read). Captures C0_01..02 (12:04–12:05); `[scope]` bq=n, bq_codes=0000000000, sda_drv=2 scl_drv=2, tca=ina=n; no reset line (t continuous from 38.8 Ms). Frame tool: D6, 9th low, period 2.500 µs ×2, bit V_OL [682.1 674.1 677.9] [682.4 673.3 677.0] mV → arm 677.80 mV; idle CH1 3.2746/3.2739 V.
 ### Measured values (from log; cite `lab/evidence/V7R-016/...`)
 ### Interpretation (session; labelled as such)
 
