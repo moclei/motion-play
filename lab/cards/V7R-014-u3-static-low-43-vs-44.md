@@ -97,6 +97,14 @@ Session 2026-10-26 s01 (log `lab/log/2026-10-26_s01.yaml`).
 ### Measured values (from log; cite `lab/evidence/V7R-014/...`)
 - Validation: V3/V4 Vamp CH1 3.0037 V, CH2 3.0208 V. V5 (`val_V5ctl_01` / `val_V5_01`): excess CH1 0.00, CH2 1.72 mV rms, PASS (springs' first seat). V5 on the re-seated springs, `noise_floor.py` with `val_V7_03` as DUT: excess CH1 4.33, CH2 2.21 mV rms (≤ 5; idle-high pad, not a ground point). V7 (`val_V7_03`): CH1 3.273 V, CH2 3.262 V, idle, PASS. V8 (`val_V8_01`, 20 µs/div, 0x6B write trigger): band `Write:80`, `Write:d6` (red mark), `Write:e0`.
 - F (U3 mode f, 400 kHz; `i2c_frame/F_0n_frame.txt`): F_01 D6, 9th high, 2.500 µs, V_OL 901.1/892.2/896.6 mV; F_02 D6, high, 2.500, 900.7/891.7/896.4; F_03 D6, high, 2.500, 900.7/892.2/896.0. **Vref = 896.40 mV** (n = 9). `[scope]` at 17:33:09: n=930 tca=930 ina=930 bq=0. CH1 idle −45…−25 µs: 3.2752 / 3.2748 / 3.2750 V. c6 pass.
+- A1/B/A2 (EDGE CH1, AUTO, 10 µs/div, 10 kpts; mean / sd over the whole record, CSV; not offset-corrected — V5a offsets CH1 −11.83, CH2 −14.27 mV):
+  | Capture | CH1 mean mV | CH1 sd | CH2 mean mV | CH2 sd |
+  |---|---|---|---|---|
+  | A1_01 / _02 / _03 | 845.69 / 845.72 / 845.89 | 8.04 / 8.06 / 7.88 | 3260.46 / 3260.79 / 3260.45 | 5.42 / 5.36 / 5.41 |
+  | B_01 / _02 / _03 | 3272.84 / 3273.63 / 3272.98 | 5.45 / 5.71 / 5.59 | 48.61 / 49.28 / 48.41 | 5.78 / 5.88 / 6.09 |
+  | A2_01 / _02 / _03 | 845.52 / 845.32 / 846.14 | 8.00 / 8.23 / 7.89 | 3260.39 / 3260.36 / 3261.08 | 5.46 / 5.61 / 5.37 |
+- V43(A1) = 845.77, V43(A2) = 845.66, anchor |A1 − A2| = 0.10 mV; **V43 = 845.71 mV**; **V44 = 48.77 mV**; V43 − Vref = −50.69 mV.
+- Controls: c1 released pad 3.260 V (A1, A2 CH2), 3.273 V (B CH1). c2 `[regs]` at each mode change: both pads `mcu_sel=1 out_sig=256 od=1 oe=1`; driven pad `out=0 in=0`, other `out=1 in=1` (A1 17:34:11, B 17:34:37, A2 17:35:02). c3 `tca_write_err=0 tca_reg=0x04` at each. c4 no banner and uptime monotonic from `>>> f` (17:31:36) to the end of A2. c5 driven-channel sd 7.88–8.23 (A), 5.78–6.09 mV (B). Operator: no bench action during A1–A2.
 ### Interpretation (session; labelled as such)
 
 ## Conclusion
