@@ -1,15 +1,13 @@
 ---
 as_of: V7R-014            # highest card ID with status recorded|abandoned that this file reflects (V7R-000 = sentinel, nothing recorded)
 updated: 2026-10-26       # date of the last edit
-last_checkpoint: V7R-011  # card ID at which the last step-back checkpoint ran (context-strategy §4.3)
+last_checkpoint: V7R-014  # card ID at which the last step-back checkpoint ran (context-strategy §4.3)
 open_cards: []                              # cards with status pre-registered|run; must match lab/cards/ (checked)
 ---
 
 # v7 I²C fault — current state
 
-> Debugger sessions: this is L0. Other sessions: read sections 1–4 and stop.
-> Never restate a result here. Cite its card. Max ~150 lines; the check warns beyond that.
-> Sections 1–8 seeded from `docs/research/v7-retry/decisioning.md` §2 (context-strategy §4.4); section 6 from the baseline tags and notebook 2026-10-21 s02.
+> Debugger sessions: this is L0. Other sessions: read sections 1–4 and stop. Never restate a result here. Cite its card. Max ~150 lines; the check warns beyond that.
 
 ## 1. Symptom                                   (≤ 6 lines)
 Observable behaviour only, in operator terms: what fails, how it is seen, the minimal repro config. No mechanism words.
@@ -135,8 +133,8 @@ Verdict is trustworthy | suspect | unknown | not tested; a row is deleted when a
 | L-Ph24a | log-based; trustworthy as a binary result; multi-variable | master: identity; F-5 | none (V7R-004 replicates master-dependence with an S3) |
 
 ## 8. Next                                      (≤ 6 lines)
-- V7R-014 recorded (row 1: GPIO43 as plain GPIO, I²C detached, holds 846 mV static; GPIO44 49 mV). Open: what on the GPIO43 side (U3 pad/driver, module path, or the SDA-net load) holds the low; not separated.
-- **Step-back checkpoint due now** (V7R-012…014 since V7R-011); no new card until it is written. Timebox 15/15 cards · week 1/8 (the checkpoint addresses it). Master bundle region: 10 cards. Planner relays open: 2026-10-24 (i2c_frame window), 2026-10-26 (card build reproducibility).
+- Checkpoint @ V7R-014 (notebook 2026-10-26): continue (user). Candidate lead "U3's GPIO43 sink path is resistive (~0.5–0.7 kΩ), so its low sits above BQ/VCNL V_IL" — argued, not promoted; open challenge: a 47 kΩ far end also triggers (L-Ph5) but adds only ~+33 mV at that resistance.
+- Next: V7R-015 far-end pull-up current stub/47k/10k/4.7k/stub (slope, BQ threshold, 47 kΩ challenge); then (g) static GPIO43 low on a second v7 board; desk: timing from V7R-009 CSVs. Timebox: 14/20 cards · week 1/8 (raised from 15 and miscount 15→14 corrected at this checkpoint). Master bundle region: 10 cards. Planner relays open: 2026-10-24, 2026-10-26.
 
 ## 9. Lookups (L1 routing)                      (≤ 15 rows)
 Where to go for detail that is not L0; load only the named section or query.
