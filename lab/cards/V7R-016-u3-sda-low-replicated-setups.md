@@ -137,6 +137,9 @@ The session runs every SCPI command, esptool call, marker and capture; one instr
 
 - R47-1 (file label `R47_1`; block 1; blue row 20 → row 10, USB replug): operator: "1. 10 2. on, D5 off 3. go". Boot check 15:03:40 (t=7653, n=70). V8 `val_V8_R47_1_01.png`: `Write:80`, `Write:d6` (red mark after), `Write:e0`; panel Vbase C1 660.13 mV (session read). Captures R47_1_01..02 (15:04:29, 15:04:39; V8 15:04:14); BQ 0/620 (n 70→690), drv 2/2, tca=ina=n, t monotonic, no other lines. **Codes: one line `15:04:10.136 [scope] t=37653 n=350 ... bq=0 bq_codes=2222552222`** — two BQ cycles returned code 5; the previous line is t=34653 n=340 (15:04:07.082), so t advanced 3000 ms for 10 cycles (other lines: 1000 ms per 10). Every other line in the session so far: codes all 0 or all 2. Not during a capture. Frame tool: D6, 9th high, period 2.500 µs ×2, bit V_OL [704.0 695.0 699.4] [705.5 696.5 699.4] mV → 699.97 mV; idle CH1 3.2731/3.2734 V, CH2 3.2604/3.2614 V; CH2 min 0.027/0.024 V.
 
+- Operator on R47-1's 15:04:05–10 window: "I don't think so, but I can't rule out that something got slightly bumped or a phone or charger was nearby. Nothing that I saw though."
+- R4.7-2 (file label `R4p7_2`; block 2; blue row 10 → row 20, USB replug): operator: "2. Blue now in row 20 3. PWR LED on, D5 off 4. go". Boot check 15:07:57 (t=48654, n=480). V8 `val_V8_R4p7_2_01.png`: `Write:80`, `Write:d6` (red mark after), `Write:e0` (session read). Captures R4p7_2_01..02 (15:08–15:09); BQ 0/640 (n 480→1120), codes 2222222222 only, drv 2/2, tca=ina=n, t monotonic, no other lines. Frame tool: D6, 9th high, period 2.501/2.500 µs, bit V_OL [898.4 891.0 894.3] [897.4 890.5 893.6] mV → 894.20 mV; idle CH1 3.2742/3.2737 V, CH2 3.2620/3.2612 V; CH2 min 0.034/0.029 V.
+
 ### Measured values (from log; cite `lab/evidence/V7R-016/...`)
 ### Interpretation (session; labelled as such)
 
