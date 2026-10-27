@@ -140,6 +140,8 @@ The session runs every SCPI command, esptool call, marker and capture; one instr
 - Operator on R47-1's 15:04:05–10 window: "I don't think so, but I can't rule out that something got slightly bumped or a phone or charger was nearby. Nothing that I saw though."
 - R4.7-2 (file label `R4p7_2`; block 2; blue row 10 → row 20, USB replug): operator: "2. Blue now in row 20 3. PWR LED on, D5 off 4. go". Boot check 15:07:57 (t=48654, n=480). V8 `val_V8_R4p7_2_01.png`: `Write:80`, `Write:d6` (red mark after), `Write:e0` (session read). Captures R4p7_2_01..02 (15:08–15:09); BQ 0/640 (n 480→1120), codes 2222222222 only, drv 2/2, tca=ina=n, t monotonic, no other lines. Frame tool: D6, 9th high, period 2.501/2.500 µs, bit V_OL [898.4 891.0 894.3] [897.4 890.5 893.6] mV → 894.20 mV; idle CH1 3.2742/3.2737 V, CH2 3.2620/3.2612 V; CH2 min 0.034/0.029 V.
 
+- R47-2 (file label `R47_2`; block 2; blue row 20 → row 10, USB replug): operator: "1. 10 2. PWR on, D5 off 3. go". Boot check 15:11:58 (t=22654, n=220). V8 `val_V8_R47_2_01.png`: `Write:80`, `Write:d6` (red mark after), `Write:e0` (session read). Captures R47_2_01..02 (15:12–15:13); BQ 0/630 (n 220→850), codes 2222222222 only, drv 2/2, tca=ina=n, t monotonic, no other lines. Frame tool: D6, 9th high, period 2.500 µs ×2, bit V_OL [705.3 696.9 699.8] [705.7 696.8 700.2] mV → 700.78 mV; idle CH1 3.2739/3.2742 V, CH2 3.2607/3.2614 V; CH2 min 0.027/0.032 V.
+
 ### Measured values (from log; cite `lab/evidence/V7R-016/...`)
 ### Interpretation (session; labelled as such)
 
