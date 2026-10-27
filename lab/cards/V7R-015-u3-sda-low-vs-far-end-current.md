@@ -92,7 +92,11 @@ The session runs every SCPI command, flash and capture; one instruction block pe
 **Session 2026-10-26 s02** (log `lab/log/2026-10-26_s02.yaml`).
 - Image check (session, before S0): rebuild of `lab/evidence/V7R-012/src/u3/` → `ca2ba6af…` ≠ `f8ebf3fc…`. Original V7R-012 binary found at an earlier session's scratchpad (`…/31eb2470…/scratchpad/u3drv/.pio/build/u3-drv2/firmware.bin`), sha256 = `f8ebf3fc…` (matches `firmware.sha256`). Original vs rebuild: 271712 B both, 5 segments; 4 identical; segment 0x3c030020 differs in 32 bytes at file 0xb0 (embedded ELF SHA256); remaining differences in the trailing checksum/hash. Plan: flash the original f8ebf3fc binary (user told before flashing).
 - S0: "1. J6 has the pigtail, other two are empty / All else as it should be"
-- R: "All read their proper values"; asked for digits: "Same. they're good". Digits not reported — R_meas taken as nominal 47 k / 10 k / 4.7 kΩ (deviation).
+- R: "All read their proper values"; asked for digits: "Same. they're good". Digits not reported — R_meas taken as nominal 47 k / 10 k / 4.7 kΩ (deviation).- Validation (log `2026-10-26_s02`): V1 AUTO pressed (badge read STOP after AUTO; session sent `:RUN`, status TD); V2 CH1/CH2 PROBe 10 (−110 header errors with 1 s SCPI waits, clean at 2–3 s); V3/V4 CH1 Vamp 3.0208 V (`val_V3_01`), CH2 Vamp 3.0208 V (`val_V3_02`), clock Δ 0 s; V5 PASS excess 1.33 / 0.00 mV rms (ctl sd 5.28 / 5.05); V7 PASS 3.272 / 3.260 V (`val_V7_01`, relbus 2a77cdd9; CH2 sd 32.5 mV, 2.78–3.61 V); decode by menu "all as listed", read-back IIC/CHAN2/CHAN1/1.65/1.65.
+- relbus startup scan (23:27, pigtail stub on J6, before u3-drv2): `t=9377 TCA2 INA:. BQ:X(2) TCA:.` (v7 log).
+- Flash: first attempt 23:41:54 did not run (esptool import failed; marker voided in the v7 log). u3-drv2 original f8ebf3fc written at 0x10000 (`--flash_mode keep`, hash verified) 23:42:18; copy at `lab/evidence/V7R-015/u3-drv2-f8ebf3fc.bin`.
+- S0a: operator: "1. 3.276 2. on" (V_rail 3.276 V, PWR LED on). V8 `val_V8_S0a_01.png`: band `Write:80`, `Write:d6` (red mark after), `Write:e0` (session read of PNG). Captures S0a_01..03 (23:48–23:49); `[scope]` n=3730→4400, bq=0, bq_codes=2222222222, sda_drv=2 scl_drv=2, tca=ina=n. Frame tool: D6, 9th high, period 2.500/2.500/2.501 µs, bit V_OL [788.0 780.1 782.9] [787.8 778.7 783.2] [787.0 779.9 782.9] mV; idle CH1 3.2744/3.2744/3.2743 V.
+
 ### Measured values (from log; cite `lab/evidence/V7R-015/...`)
 ### Interpretation (session; labelled as such)
 
