@@ -142,6 +142,8 @@ The session runs every SCPI command, esptool call, marker and capture; one instr
 
 - R47-2 (file label `R47_2`; block 2; blue row 20 → row 10, USB replug): operator: "1. 10 2. PWR on, D5 off 3. go". Boot check 15:11:58 (t=22654, n=220). V8 `val_V8_R47_2_01.png`: `Write:80`, `Write:d6` (red mark after), `Write:e0` (session read). Captures R47_2_01..02 (15:12–15:13); BQ 0/630 (n 220→850), codes 2222222222 only, drv 2/2, tca=ina=n, t monotonic, no other lines. Frame tool: D6, 9th high, period 2.500 µs ×2, bit V_OL [705.3 696.9 699.8] [705.7 696.8 700.2] mV → 700.78 mV; idle CH1 3.2739/3.2742 V, CH2 3.2607/3.2614 V; CH2 min 0.027/0.032 V.
 
+- S-2 (file label `S_2`; block 2; blue row 10 → row 25, USB replug): operator: "1. 25 2. PWR LED on, D5 off 3. go". Boot check 15:18:33 (t=8658, n=80). V8 `val_V8_S_2_01.png`: `Write:80`, `Write:d6` (no red mark), `Write:e0` (session read). Captures S_2_01..02 (15:18–15:19); BQ 650/650 (n 80→730), codes 0000000000 only, drv 2/2, tca=ina=n, t monotonic, no other lines. Frame tool: D6, 9th low, period 2.500 µs ×2, bit V_OL [680.8 672.0 675.9] [681.3 673.4 677.1] mV → 676.75 mV; idle CH1 3.2731/3.2742 V, CH2 3.2608/3.2614 V; CH2 min 0.032/0.024 V.
+
 ### Measured values (from log; cite `lab/evidence/V7R-016/...`)
 ### Interpretation (session; labelled as such)
 
