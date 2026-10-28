@@ -358,3 +358,7 @@ The "belief changes" line replaces overwriting a "current working theory": STATE
 ## 2026-10-27 · checkpoint (cont.) · battery history follow-up
 - observation (user, verbatim answers): #0003 battery: "#0003 never had a battery, I'm certain". What "bricked" looked like: "I forget, but I remember it being clear that they were 'cooked'". Which boards: "No" (not remembered).
 - (Interpretation, argued; operator recollection, not measured) a battery-connect event is not how #0003's GPIO43 got its resistance; the battery remains unassessed as a cause of the two cooked boards only.
+
+## 2026-10-27 · checkpoint (cont.) · board names; battery-cooked boards identified
+- observation (user): the two boards damaged by battery connection are known: two further v7 boards, not brought to the bench. User's naming: #0001 and #0002 (the cooked pair), #0003 (barcode, the test board), #0004 = "Board X" (unmarked), #0005 = "Board #3" (marker). Mapping of these to legacy B1/B2 not established. Supersedes the previous entry's "Which boards: No".
+- STATE §6 boards updated to these names.
