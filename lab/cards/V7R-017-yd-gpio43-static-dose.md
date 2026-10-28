@@ -87,7 +87,9 @@ The session sends every mode command and records every serial line; one instruct
 - First enumeration `/dev/cu.usbmodem1234561` (factory firmware); esptool auto-reset: "Failed to connect to ESP32-S3: No serial data received."
 - S0b (BOOT held, RST pressed, BOOT released): operator: "the rgb led is now remaining on red, and the same one of the three other LEDs is red". Port `/dev/cu.usbmodem14101`. esptool: "Chip is ESP32-S3 (revision v0.2)", "Crystal is 40MHz", MAC 98:88:e0:04:3c:14.
 - Flash: yd-static 19:53:49–19:53:55, SUCCESS, "Hash of data verified", firmware.bin sha256 56a0ef90. No serial output for ~12 s after (logger from 19:54:06).
-- S0c (RST once): operator: "One of the other two LEDs seemed to light up a little bit, just for half a second as I pressed the button, didn't catch which one or exactly what happened. The RGB and other lit LED stayed red as they were". Log: yd-static running, mode r; `[regs]` gpio=43 and gpio=4 both `mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oe=1 out=1 in=1`.
+- S0c (RST once): operator: "One of the other two LEDs seemed to light up a little bit, just for half a second as I pressed the button, didn't catch which one or exactly what happened. The RGB and other lit LED stayed red as they were". Log: yd-static running, mode r; `[regs]` gpio=43 and gpio=4 both `mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oe=1 out=1 in=1`.- S1: operator: "1. 9.999, 4.695 2. 3.296V" (R_meas 9.999 kΩ / 4.695 kΩ out of circuit, the same digits as V7R-016's pair; V_rail 3.296 V, 3V3 row to GND row).
+- 43-A1 (mode 3 sent 21:14:48; `[regs]` gpio=43 `out=0 in=0`, gpio=4 `out=1 in=0`): operator: "1. All three readings were 0.043V 2. The second of the three regular LEDs, the one that I thought had flashed earlier when I pressed RST, is now steady on green. That's the only LED change".
+
 ### Measured values (from log; cite `lab/evidence/V7R-017/...`)
 ### Interpretation (session; labelled as such)
 
