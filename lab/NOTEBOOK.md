@@ -344,3 +344,8 @@ The "belief changes" line replaces overwriting a "current working theory": STATE
 
 ## 2026-10-27 · checkpoint (cont.) · correction to desk (e): the v6 comparison for the boot-log route
 - desk (e) called the ROM boot log on GPIO43 "weak as a damage route" because v6 worked (F-1). That overstates it: v6's master was the T-Display-S3 (bare ESP32-S3R8, own LDO, own PCB path to the header; CL-01, CL-02), and v6 ran the MCU and the bus pull-ups on separate regulators (CL-03). The ROM drives TXD0 at boot on both (CL-02), but v6 differs in package, pad path and supply, so v6 working does not test the route on a WROOM-1 with a shared rail. Status: argued, not weakened by v6. Card C (scope SDA at power-up/boot) covers it.
+
+## 2026-10-27 · checkpoint (cont.) · decisions: unmarked board named "Board X"; found-board tests postponed; card C next
+- decisions: user: the unmarked v7 is "Board X". User: postpone the found-board tests indefinitely ("if the other two boards aren't both broken, they're going to show the exact same behavior … my prerogative") and do card C (scope SDA on #0003 at power-up, reset, flashing, cable plug-in) next, then F.
+- consequence (recorded, not argued against): master: identity (a) unit vs (b)/(c) stays untested; C and F do not separate it.
+- next: pre-register card C (V7R-018) in a fresh session; this one is at about half its context.
