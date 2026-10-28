@@ -97,6 +97,7 @@ The session sends every mode command and records every serial line; one instruct
 - 4-B (10 kΩ, 3V3 row → GPIO4 row): operator: "1. 0.022V / 0.022V / 0.022V 2. jumpers".
 - Correction (operator, before S8): "Shoot, the last one (s7) was actually with the 4.7kohm, not the 10kohm. Should I switch and do the 10kohm now?" → the S7 readings (22 mV ×3) are arm **4-C** (4.7 kΩ); 4-B (10 kΩ) taken next (order deviation: GPIO4 arms A1, C, B, A2).
 - 4-B (10 kΩ, swapped in at S8): operator: "1. 0.011V / 0.011V / 0.011V 2. GPIO43 arms - do you mean TX? I got those ones right, just this time it was switched by accident" (43-B = 10 kΩ, 43-C = 4.7 kΩ as recorded).
+- 4-A2 (resistor and jumpers out): operator: "1. 0.000V  / 0.000V / 0.000V".
 
 ### Measured values (from log; cite `lab/evidence/V7R-017/...`)
 ### Interpretation (session; labelled as such)
