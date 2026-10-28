@@ -1,7 +1,7 @@
 ---
 test_id: V7R-017
 title: "GPIO43 vs GPIO4 static low on a YD-ESP32-23 dev board (ESP32-S3-WROOM-1-N16R8, never in a v7): DMM dose with none / 10 kΩ / 4.7 kΩ to 3.3 V"
-status: run
+status: recorded
 created: 2026-10-27
 prereg_commit: self
 baseline:
@@ -98,13 +98,25 @@ The session sends every mode command and records every serial line; one instruct
 - Correction (operator, before S8): "Shoot, the last one (s7) was actually with the 4.7kohm, not the 10kohm. Should I switch and do the 10kohm now?" → the S7 readings (22 mV ×3) are arm **4-C** (4.7 kΩ); 4-B (10 kΩ) taken next (order deviation: GPIO4 arms A1, C, B, A2).
 - 4-B (10 kΩ, swapped in at S8): operator: "1. 0.011V / 0.011V / 0.011V 2. GPIO43 arms - do you mean TX? I got those ones right, just this time it was switched by accident" (43-B = 10 kΩ, 43-C = 4.7 kΩ as recorded).
 - 4-A2 (resistor and jumpers out): operator: "1. 0.000V  / 0.000V / 0.000V".
+- End (mode r sent 21:30:28, `low=none`): operator: "1. yes 2. leave it" (YD LEDs off after unplugging; dev board left on yd-static). Serial log: one `sketch=yd_static_low` banner (21:10:24), no reset/panic lines through the run.
 
 ### Measured values (from log; cite `lab/evidence/V7R-017/...`)
+V_rail 3.296 V; R_meas 9.999 / 4.695 kΩ. Arm value = mean of 3 DMM readings. I_ext = (V_rail − V)/R_meas.
+| Pin | A1 (none) | B (10 kΩ) | C (4.7 kΩ) | A2 (none) | I_ext B / C (mA) | R_slope | intercept | residuals |
+|---|---|---|---|---|---|---|---|---|
+| GPIO43 (TX; TX LED lit) | 43.0 mV | 52.33 mV | 63.33 mV | 43.0 mV | 0.3244 / 0.6885 | **29.5 Ω** | 42.9 mV | ≤ 0.16 mV |
+| GPIO4 (control) | 0.0 mV | 11.0 mV | 22.0 mV | 0.0 mV | 0.3285 / 0.6973 | **31.5 Ω** | 0.2 mV | ≤ 0.42 mV |
+Controls: c1 `[regs]` at each mode change as declared (gpio=43 `out=0 in=0` in mode 3; gpio=4 `out=0 in=0` in mode c; other pin `out=1`; both `mcu_sel=1 od=1 out_sig=256 oe=1 fun_drv=2`); c2 no reboot; c3 V_rail 3.296 V; c4 anchors 0 mV (both pins); c5 R_meas within 0.1 % of nominal. DMM resolution 1 mV (≈ 1.5–3 Ω on the slope).
+Reference (U3, V7R-016, scope, slope vs far-end current): 427 Ω; V7R-014 GPIO44 on U3 ≈ 32 Ω (desk (d)).
+Sources: `lab/evidence/V7R-017/2026-10-27_V7R-017_yd_01.txt` (serial, `=== <arm>` markers), `src/yd/` (sketch, env), this card's raw notes (DMM readings are operator-reported; no capture files).
+
 ### Interpretation (session; labelled as such)
+Interpretation (V7R-017): a WROOM-1-N16R8 module (die rev v0.2, same as U3) that was never in a v7 pulls GPIO43 low through ~30 Ω, the same as its GPIO4 and as U3's GPIO44, and ~14× below U3's GPIO43 measured the same way (427 Ω). The ~0.5 kΩ is therefore not a property of GPIO43 on this module type; it belongs to U3 on v7 — the unit, or something v7 does to the pin. The GPIO43 intercept (43 mV) fits the TX LED's ~1.4 mA through ~30 Ω. Not separated: one dev board; different board, LDO and loads; DMM vs scope (the comparison is a 14× ratio against fixed thresholds, not a few-mV difference).
 
 ## Conclusion
-- Outcome row matched: ...
-- Hypotheses excluded: ...
-- **Strength:** measured-refuted | measured-supported | argued | not tested
-- Revert-on-null done: yes/no (commit)
+- Outcome row matched: **R1** — R_slope(43) = 29.5 Ω ≤ 60 Ω and R_slope(4) = 31.5 Ω ≤ 60 Ω; controls c1–c5 pass.
+- Hypotheses excluded: H1 (the ~0.5 kΩ is a property of GPIO43 on this module type) — on this module. H2 supported (weakly).
+- **Strength:** measured-refuted for H1 (one dev board, one module, A/B/C/A per pin, 3 DMM readings per arm, static); `lab/evidence/V7R-017/`
+- Deviations: (1) GPIO4 arm order A1, C, B, A2 (operator fitted 4.7 kΩ at S7; corrected before S8); static, anchors 0 mV. (2) Flash needed manual download mode (factory firmware on TinyUSB CDC) and a RST press to run. (3) Board marked V1.3; schematic used is V1.4; TX LED behaviour seen as declared (green, lit with GPIO43 low, off with it released).
+- Revert-on-null done: n/a for v7 (not touched); dev board left on yd-static (user: "leave it"), unplugged
 - Result commit: self

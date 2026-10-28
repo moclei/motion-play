@@ -1,0 +1,1857 @@
+=== logger start 19:54:06 (V7R-017; yd-static 56a0ef90 flashed 19:53:55; port /dev/cu.usbmodem14101)
+21:10:24.135 
+21:10:24.136 [static] sketch=yd_static_low version=1.0-yd; modes r/3/c by serial; boot mode r
+21:10:24.136 [static] mode=r low=none
+21:10:24.136 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:10:24.136 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=0
+21:10:25.971 [static] t=2655 mode=r
+21:10:25.972 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:10:25.972 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:10:28.005 [static] t=4655 mode=r
+21:10:28.005 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:10:28.005 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:10:30.032 [static] t=6655 mode=r
+21:10:30.033 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:10:30.033 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:10:32.071 [static] t=8655 mode=r
+21:10:32.072 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:10:32.072 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:10:34.105 [static] t=10655 mode=r
+21:10:34.105 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:10:34.105 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:10:36.142 [static] t=12655 mode=r
+21:10:36.142 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:10:36.142 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:10:37.975 [static] t=14655 mode=r
+21:10:37.975 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:10:37.975 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:10:40.006 [static] t=16655 mode=r
+21:10:40.006 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:10:40.006 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:10:42.023 [static] t=18655 mode=r
+21:10:42.023 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:10:42.023 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:10:44.054 [static] t=20655 mode=r
+21:10:44.054 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:10:44.054 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:10:46.089 [static] t=22655 mode=r
+21:10:46.089 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:10:46.089 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:10:48.124 [static] t=24655 mode=r
+21:10:48.124 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:10:48.124 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:10:49.949 [static] t=26655 mode=r
+21:10:49.949 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:10:49.949 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:10:51.980 [static] t=28655 mode=r
+21:10:51.980 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:10:51.981 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:10:54.009 [static] t=30655 mode=r
+21:10:54.009 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:10:54.009 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:10:56.042 [static] t=32655 mode=r
+21:10:56.042 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:10:56.043 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:10:58.073 [static] t=34655 mode=r
+21:10:58.073 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:10:58.073 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:11:00.099 [static] t=36655 mode=r
+21:11:00.099 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:11:00.099 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:11:02.130 [static] t=38655 mode=r
+21:11:02.131 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:11:02.131 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:11:03.998 [static] t=40655 mode=r
+21:11:03.998 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:11:03.998 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:11:06.034 [static] t=42655 mode=r
+21:11:06.034 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:11:06.034 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:11:08.067 [static] t=44655 mode=r
+21:11:08.067 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:11:08.068 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:11:10.103 [static] t=46655 mode=r
+21:11:10.103 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:11:10.103 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:11:12.135 [static] t=48655 mode=r
+21:11:12.135 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:11:12.135 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:11:13.958 [static] t=50655 mode=r
+21:11:13.958 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:11:13.958 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:11:15.986 [static] t=52655 mode=r
+21:11:15.987 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:11:15.987 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:11:18.086 [static] t=54655 mode=r
+21:11:18.086 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:11:18.086 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=0
+21:11:20.122 [static] t=56655 mode=r
+21:11:20.122 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:11:20.122 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=0
+21:11:21.949 [static] t=58655 mode=r
+21:11:21.949 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:11:21.950 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=0
+21:11:23.979 [static] t=60655 mode=r
+21:11:23.980 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:11:23.980 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=0
+21:11:26.001 [static] t=62655 mode=r
+21:11:26.001 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:11:26.001 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:11:28.035 [static] t=64655 mode=r
+21:11:28.035 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:11:28.035 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:11:30.073 [static] t=66655 mode=r
+21:11:30.073 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:11:30.073 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:11:32.142 [static] t=68655 mode=r
+21:11:32.142 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:11:32.142 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:11:33.978 [static] t=70655 mode=r
+21:11:33.978 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:11:33.978 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:11:36.019 [static] t=72655 mode=r
+21:11:36.019 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:11:36.019 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:11:38.051 [static] t=74655 mode=r
+21:11:38.052 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:11:38.052 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:11:40.090 [static] t=76655 mode=r
+21:11:40.091 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:11:40.091 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:11:42.132 [static] t=78655 mode=r
+21:11:42.132 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:11:42.132 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:11:43.961 [static] t=80655 mode=r
+21:11:43.961 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:11:43.961 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=0
+21:11:45.988 [static] t=82655 mode=r
+21:11:45.988 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:11:45.988 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=0
+21:11:48.022 [static] t=84655 mode=r
+21:11:48.022 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:11:48.022 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=0
+21:11:50.053 [static] t=86655 mode=r
+21:11:50.053 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:11:50.053 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=0
+21:11:52.091 [static] t=88655 mode=r
+21:11:52.091 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:11:52.091 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=0
+21:11:54.126 [static] t=90655 mode=r
+21:11:54.126 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:11:54.126 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=0
+21:11:55.954 [static] t=92655 mode=r
+21:11:55.954 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:11:55.954 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=0
+21:11:57.991 [static] t=94655 mode=r
+21:11:57.991 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:11:57.991 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=0
+21:12:00.041 [static] t=96655 mode=r
+21:12:00.041 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:12:00.041 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=0
+21:12:02.079 [static] t=98655 mode=r
+21:12:02.079 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:12:02.079 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=0
+21:12:04.112 [static] t=100655 mode=r
+21:12:04.112 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:12:04.112 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=0
+21:12:06.142 [static] t=102655 mode=r
+21:12:06.142 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:12:06.142 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=0
+21:12:07.978 [static] t=104655 mode=r
+21:12:07.978 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:12:07.979 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=0
+21:12:10.016 [static] t=106655 mode=r
+21:12:10.016 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:12:10.017 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=0
+21:12:12.046 [static] t=108655 mode=r
+21:12:12.046 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:12:12.046 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=0
+21:12:14.082 [static] t=110655 mode=r
+21:12:14.082 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:12:14.082 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=0
+21:12:16.110 [static] t=112655 mode=r
+21:12:16.110 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:12:16.110 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=0
+21:12:18.146 [static] t=114655 mode=r
+21:12:18.146 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:12:18.146 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=0
+21:12:19.975 [static] t=116655 mode=r
+21:12:19.975 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:12:19.975 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=0
+21:12:22.008 [static] t=118655 mode=r
+21:12:22.008 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:12:22.008 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=0
+21:12:24.038 [static] t=120655 mode=r
+21:12:24.038 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:12:24.038 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:12:26.075 [static] t=122655 mode=r
+21:12:26.075 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:12:26.076 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:12:28.107 [static] t=124655 mode=r
+21:12:28.108 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:12:28.108 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:12:30.147 [static] t=126655 mode=r
+21:12:30.147 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:12:30.147 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:12:31.976 [static] t=128655 mode=r
+21:12:31.976 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:12:31.976 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=0
+21:12:34.010 [static] t=130655 mode=r
+21:12:34.010 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:12:34.010 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=0
+21:12:36.048 [static] t=132655 mode=r
+21:12:36.048 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:12:36.048 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=0
+21:12:38.080 [static] t=134655 mode=r
+21:12:38.081 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:12:38.081 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=0
+21:12:40.106 [static] t=136655 mode=r
+21:12:40.106 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:12:40.106 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=0
+21:12:42.136 [static] t=138655 mode=r
+21:12:42.137 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:12:42.137 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=0
+21:12:43.964 [static] t=140655 mode=r
+21:12:43.964 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:12:43.964 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=0
+21:12:45.997 [static] t=142655 mode=r
+21:12:45.997 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:12:45.998 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=0
+21:12:48.029 [static] t=144655 mode=r
+21:12:48.029 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:12:48.029 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=0
+21:12:50.061 [static] t=146655 mode=r
+21:12:50.061 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:12:50.062 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=0
+21:12:52.099 [static] t=148655 mode=r
+21:12:52.099 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:12:52.099 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=0
+21:12:54.131 [static] t=150655 mode=r
+21:12:54.131 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:12:54.131 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=0
+21:12:55.966 [static] t=152655 mode=r
+21:12:55.966 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:12:55.966 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=0
+21:12:58.002 [static] t=154655 mode=r
+21:12:58.002 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:12:58.002 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=0
+21:13:00.036 [static] t=156655 mode=r
+21:13:00.036 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:13:00.036 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=0
+21:13:02.076 [static] t=158655 mode=r
+21:13:02.076 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:13:02.076 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=0
+21:13:04.108 [static] t=160655 mode=r
+21:13:04.108 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:13:04.108 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=0
+21:13:06.143 [static] t=162655 mode=r
+21:13:06.143 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:13:06.144 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=0
+21:13:07.981 [static] t=164655 mode=r
+21:13:07.982 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:13:07.982 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=0
+21:13:10.013 [static] t=166655 mode=r
+21:13:10.014 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:13:10.014 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=0
+21:13:12.048 [static] t=168655 mode=r
+21:13:12.048 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:13:12.048 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=0
+21:13:14.082 [static] t=170655 mode=r
+21:13:14.082 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:13:14.082 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=0
+21:13:16.123 [static] t=172655 mode=r
+21:13:16.123 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:13:16.123 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=0
+21:13:17.956 [static] t=174655 mode=r
+21:13:17.956 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:13:17.956 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=0
+21:13:20.003 [static] t=176655 mode=r
+21:13:20.003 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:13:20.003 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:13:22.036 [static] t=178655 mode=r
+21:13:22.036 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:13:22.036 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:13:24.070 [static] t=180655 mode=r
+21:13:24.070 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:13:24.070 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:13:26.099 [static] t=182655 mode=r
+21:13:26.099 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:13:26.100 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:13:28.130 [static] t=184655 mode=r
+21:13:28.130 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:13:28.130 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:13:29.968 [static] t=186655 mode=r
+21:13:29.968 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:13:29.969 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:13:32.003 [static] t=188655 mode=r
+21:13:32.004 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:13:32.004 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:13:34.040 [static] t=190655 mode=r
+21:13:34.040 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:13:34.040 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:13:36.075 [static] t=192655 mode=r
+21:13:36.075 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:13:36.075 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:13:38.105 [static] t=194655 mode=r
+21:13:38.106 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:13:38.106 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:13:40.141 [static] t=196655 mode=r
+21:13:40.142 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:13:40.142 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=0
+21:13:41.973 [static] t=198655 mode=r
+21:13:41.973 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:13:41.973 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=0
+21:13:44.006 [static] t=200655 mode=r
+21:13:44.006 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:13:44.007 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=0
+21:13:46.040 [static] t=202655 mode=r
+21:13:46.040 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:13:46.040 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=0
+21:13:48.069 [static] t=204655 mode=r
+21:13:48.070 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:13:48.071 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=0
+21:13:50.097 [static] t=206655 mode=r
+21:13:50.098 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:13:50.098 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=0
+21:13:52.125 [static] t=208655 mode=r
+21:13:52.125 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:13:52.125 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=0
+21:13:53.956 [static] t=210655 mode=r
+21:13:53.956 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:13:53.956 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=0
+21:13:56.015 [static] t=212655 mode=r
+21:13:56.015 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:13:56.015 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=0
+21:13:58.058 [static] t=214655 mode=r
+21:13:58.058 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:13:58.058 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=0
+21:14:00.091 [static] t=216655 mode=r
+21:14:00.091 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:14:00.091 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=0
+21:14:02.128 [static] t=218655 mode=r
+21:14:02.128 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:14:02.128 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=0
+21:14:03.962 [static] t=220655 mode=r
+21:14:03.962 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:14:03.962 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=0
+21:14:05.992 [static] t=222655 mode=r
+21:14:05.992 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:14:05.992 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=0
+21:14:08.023 [static] t=224655 mode=r
+21:14:08.023 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:14:08.023 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=0
+21:14:10.050 [static] t=226655 mode=r
+21:14:10.050 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:14:10.050 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=0
+21:14:12.087 [static] t=228655 mode=r
+21:14:12.087 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:14:12.087 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=0
+21:14:14.125 [static] t=230655 mode=r
+21:14:14.125 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:14:14.125 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=0
+21:14:15.957 [static] t=232655 mode=r
+21:14:15.957 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:14:15.957 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=0
+21:14:17.992 [static] t=234655 mode=r
+21:14:17.992 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:14:17.992 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=0
+21:14:20.021 [static] t=236655 mode=r
+21:14:20.021 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:14:20.021 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=0
+21:14:22.050 [static] t=238655 mode=r
+21:14:22.051 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:14:22.051 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=0
+21:14:24.088 [static] t=240655 mode=r
+21:14:24.088 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:14:24.088 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=0
+21:14:26.115 [static] t=242655 mode=r
+21:14:26.116 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:14:26.116 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=0
+21:14:27.946 [static] t=244655 mode=r
+21:14:27.946 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:14:28.149 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:14:29.974 [static] t=246655 mode=r
+21:14:29.974 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:14:29.974 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:14:32.045 [static] t=248655 mode=r
+21:14:32.045 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:14:32.045 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:14:34.072 [static] t=250655 mode=r
+21:14:34.072 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:14:34.072 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:14:36.105 [static] t=252655 mode=r
+21:14:36.105 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:14:36.105 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:14:38.133 [static] t=254655 mode=r
+21:14:38.133 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:14:38.133 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:14:39.962 [static] t=256655 mode=r
+21:14:39.962 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:14:39.962 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:14:41.987 [static] t=258655 mode=r
+21:14:41.987 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:14:41.987 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:14:44.021 [static] t=260655 mode=r
+21:14:44.022 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:14:44.022 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:14:46.060 [static] t=262655 mode=r
+21:14:46.060 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:14:46.060 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=0
+21:14:48.094 [static] t=264655 mode=r
+21:14:48.094 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:14:48.094 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=0
+=== 43-A1 (mode 3, no resistor) 21:14:48
+21:14:48.899 >>> 3
+21:14:49.101 [static] mode=3 low=GPIO43
+21:14:49.102 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:14:49.102 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=0
+21:14:50.927 [static] t=267608 mode=3
+21:14:50.927 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:14:50.927 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=0
+21:14:52.953 [static] t=269608 mode=3
+21:14:52.953 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:14:52.953 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=0
+21:14:54.987 [static] t=271608 mode=3
+21:14:54.987 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:14:54.987 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=0
+21:14:57.022 [static] t=273608 mode=3
+21:14:57.022 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:14:57.022 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=0
+21:14:59.051 [static] t=275608 mode=3
+21:14:59.052 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:14:59.052 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=0
+21:15:01.087 [static] t=277608 mode=3
+21:15:01.087 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:15:01.088 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=0
+21:15:02.916 [static] t=279608 mode=3
+21:15:02.917 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:15:02.917 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=0
+21:15:04.950 [static] t=281608 mode=3
+21:15:04.951 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:15:04.951 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=0
+21:15:06.980 [static] t=283608 mode=3
+21:15:06.980 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:15:06.980 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=0
+21:15:09.014 [static] t=285608 mode=3
+21:15:09.014 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:15:09.014 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=0
+21:15:11.044 [static] t=287608 mode=3
+21:15:11.044 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:15:11.044 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=0
+21:15:13.074 [static] t=289608 mode=3
+21:15:13.074 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:15:13.074 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=0
+21:15:14.907 [static] t=291608 mode=3
+21:15:14.907 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:15:14.907 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:15:16.936 [static] t=293608 mode=3
+21:15:16.937 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:15:16.937 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:15:18.964 [static] t=295608 mode=3
+21:15:18.965 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:15:18.965 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:15:20.997 [static] t=297608 mode=3
+21:15:20.998 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:15:20.998 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:15:23.031 [static] t=299608 mode=3
+21:15:23.031 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:15:23.031 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:15:25.067 [static] t=301608 mode=3
+21:15:25.067 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:15:25.067 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:15:27.101 [static] t=303608 mode=3
+21:15:27.101 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:15:27.101 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:15:28.928 [static] t=305608 mode=3
+21:15:28.928 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:15:28.929 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:15:30.967 [static] t=307608 mode=3
+21:15:30.968 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:15:30.968 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:15:32.998 [static] t=309608 mode=3
+21:15:32.998 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:15:32.998 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:15:35.032 [static] t=311608 mode=3
+21:15:35.032 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:15:35.032 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:15:37.061 [static] t=313608 mode=3
+21:15:37.062 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:15:37.062 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:15:39.091 [static] t=315608 mode=3
+21:15:39.091 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:15:39.091 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:15:40.923 [static] t=317608 mode=3
+21:15:40.923 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:15:40.923 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:15:42.958 [static] t=319608 mode=3
+21:15:42.958 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:15:42.958 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:15:44.991 [static] t=321608 mode=3
+21:15:44.991 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:15:44.991 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=0
+21:15:47.024 [static] t=323608 mode=3
+21:15:47.025 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:15:47.025 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=0
+21:15:49.046 [static] t=325608 mode=3
+21:15:49.046 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:15:49.046 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=0
+21:15:51.087 [static] t=327608 mode=3
+21:15:51.087 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:15:51.087 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=0
+21:15:52.920 [static] t=329608 mode=3
+21:15:52.920 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:15:52.920 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=0
+21:15:54.947 [static] t=331608 mode=3
+21:15:54.948 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:15:54.948 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=0
+21:15:56.980 [static] t=333608 mode=3
+21:15:56.980 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:15:56.980 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=0
+21:15:59.015 [static] t=335608 mode=3
+21:15:59.015 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:15:59.015 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=0
+21:16:01.048 [static] t=337608 mode=3
+21:16:01.048 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:16:01.049 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=0
+21:16:03.076 [static] t=339608 mode=3
+21:16:03.076 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:16:03.076 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=0
+21:16:04.899 [static] t=341608 mode=3
+21:16:04.899 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:16:04.899 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=0
+21:16:06.936 [static] t=343608 mode=3
+21:16:06.937 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:16:06.937 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=0
+21:16:08.961 [static] t=345608 mode=3
+21:16:08.962 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:16:08.962 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=0
+21:16:10.992 [static] t=347608 mode=3
+21:16:10.992 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:16:10.992 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=0
+21:16:13.016 [static] t=349608 mode=3
+21:16:13.016 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:16:13.016 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:16:15.046 [static] t=351608 mode=3
+21:16:15.046 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:16:15.046 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:16:17.079 [static] t=353608 mode=3
+21:16:17.079 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:16:17.079 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:16:18.904 [static] t=355608 mode=3
+21:16:18.904 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:16:18.904 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:16:20.934 [static] t=357608 mode=3
+21:16:20.934 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:16:20.935 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:16:22.970 [static] t=359608 mode=3
+21:16:22.970 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:16:22.971 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:16:25.006 [static] t=361608 mode=3
+21:16:25.006 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:16:25.006 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:16:27.039 [static] t=363608 mode=3
+21:16:27.039 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:16:27.039 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:16:29.061 [static] t=365608 mode=3
+21:16:29.061 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:16:29.061 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=0
+21:16:31.097 [static] t=367608 mode=3
+21:16:31.097 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:16:31.097 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=0
+21:16:32.934 [static] t=369608 mode=3
+21:16:32.935 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:16:32.935 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=0
+21:16:34.972 [static] t=371608 mode=3
+21:16:34.972 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:16:34.972 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=0
+21:16:37.006 [static] t=373608 mode=3
+21:16:37.006 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:16:37.006 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=0
+21:16:39.035 [static] t=375608 mode=3
+21:16:39.035 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:16:39.035 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=0
+21:16:41.072 [static] t=377608 mode=3
+21:16:41.073 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:16:41.073 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=0
+21:16:42.901 [static] t=379608 mode=3
+21:16:42.901 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:16:42.901 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=0
+21:16:44.930 [static] t=381608 mode=3
+21:16:44.930 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:16:44.930 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=0
+21:16:46.965 [static] t=383608 mode=3
+21:16:46.966 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:16:46.966 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=0
+21:16:48.995 [static] t=385608 mode=3
+21:16:48.996 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:16:48.996 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=0
+21:16:51.030 [static] t=387608 mode=3
+21:16:51.030 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:16:51.030 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=0
+21:16:53.055 [static] t=389608 mode=3
+21:16:53.055 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:16:53.055 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=0
+21:16:55.083 [static] t=391608 mode=3
+21:16:55.083 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:16:55.084 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=0
+21:16:56.910 [static] t=393608 mode=3
+21:16:56.910 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:16:56.911 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=0
+21:16:58.943 [static] t=395608 mode=3
+21:16:58.943 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:16:58.943 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=0
+21:17:00.979 [static] t=397608 mode=3
+21:17:00.979 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:17:00.979 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=0
+21:17:03.010 [static] t=399608 mode=3
+21:17:03.010 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:17:03.010 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=0
+21:17:05.040 [static] t=401608 mode=3
+21:17:05.040 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:17:05.040 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:17:07.071 [static] t=403608 mode=3
+21:17:07.072 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:17:07.072 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:17:08.905 [static] t=405608 mode=3
+21:17:08.905 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:17:08.905 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:17:10.946 [static] t=407608 mode=3
+21:17:10.946 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:17:10.946 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:17:12.973 [static] t=409608 mode=3
+21:17:12.973 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:17:12.973 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:17:15.002 [static] t=411608 mode=3
+21:17:15.003 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:17:15.003 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=0
+21:17:17.029 [static] t=413608 mode=3
+21:17:17.029 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:17:17.029 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=0
+21:17:19.055 [static] t=415608 mode=3
+21:17:19.055 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:17:19.055 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=0
+21:17:21.087 [static] t=417608 mode=3
+21:17:21.087 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:17:21.087 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=0
+21:17:22.912 [static] t=419608 mode=3
+21:17:22.912 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:17:22.912 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=0
+21:17:24.944 [static] t=421608 mode=3
+21:17:24.944 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:17:24.944 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=0
+21:17:26.979 [static] t=423608 mode=3
+21:17:26.980 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:17:26.980 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=0
+21:17:29.011 [static] t=425608 mode=3
+21:17:29.012 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:17:29.012 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=0
+21:17:31.043 [static] t=427608 mode=3
+21:17:31.056 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:17:31.057 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=0
+21:17:33.095 [static] t=429608 mode=3
+21:17:33.095 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:17:33.095 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=0
+21:17:34.923 [static] t=431608 mode=3
+21:17:34.923 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:17:34.923 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=0
+21:17:36.954 [static] t=433608 mode=3
+21:17:36.955 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:17:36.955 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=0
+21:17:38.989 [static] t=435608 mode=3
+21:17:38.989 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:17:38.989 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:17:41.026 [static] t=437608 mode=3
+21:17:41.027 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:17:41.027 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:17:43.052 [static] t=439608 mode=3
+21:17:43.053 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:17:43.053 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:17:45.085 [static] t=441608 mode=3
+21:17:45.085 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:17:45.085 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:17:46.919 [static] t=443608 mode=3
+21:17:46.919 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:17:46.919 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:17:48.952 [static] t=445608 mode=3
+21:17:48.952 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:17:48.952 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:17:50.991 [static] t=447608 mode=3
+21:17:50.991 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:17:50.991 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=0
+21:17:53.019 [static] t=449608 mode=3
+21:17:53.019 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:17:53.019 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=0
+21:17:55.054 [static] t=451608 mode=3
+21:17:55.054 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:17:55.054 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=0
+21:17:57.088 [static] t=453608 mode=3
+21:17:57.089 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:17:57.089 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=0
+21:17:58.903 [static] t=455608 mode=3
+21:17:58.903 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:17:58.903 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=0
+21:18:00.936 [static] t=457608 mode=3
+21:18:00.936 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:18:00.937 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=0
+21:18:02.970 [static] t=459608 mode=3
+21:18:02.970 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:18:02.970 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=0
+21:18:05.002 [static] t=461608 mode=3
+21:18:05.002 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:18:05.002 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=0
+21:18:07.025 [static] t=463608 mode=3
+21:18:07.025 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:18:07.025 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=0
+21:18:09.046 [static] t=465608 mode=3
+21:18:09.046 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:18:09.046 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=0
+21:18:11.073 [static] t=467608 mode=3
+21:18:11.073 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:18:11.073 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=0
+21:18:12.909 [static] t=469608 mode=3
+21:18:12.909 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:18:12.909 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=0
+21:18:14.939 [static] t=471608 mode=3
+21:18:14.939 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:18:14.939 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=0
+21:18:16.986 [static] t=473608 mode=3
+21:18:16.986 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:18:16.987 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=0
+21:18:19.016 [static] t=475608 mode=3
+21:18:19.017 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:18:19.017 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=0
+21:18:21.046 [static] t=477608 mode=3
+21:18:21.046 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:18:21.046 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:18:23.071 [static] t=479608 mode=3
+21:18:23.071 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:18:23.071 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:18:24.903 [static] t=481608 mode=3
+21:18:24.903 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:18:24.903 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:18:26.928 [static] t=483608 mode=3
+21:18:26.928 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:18:26.928 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:18:28.956 [static] t=485608 mode=3
+21:18:28.957 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:18:28.957 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:18:30.985 [static] t=487608 mode=3
+21:18:30.985 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:18:30.985 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:18:33.024 [static] t=489608 mode=3
+21:18:33.024 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:18:33.024 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:18:35.056 [static] t=491608 mode=3
+21:18:35.056 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:18:35.056 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:18:37.092 [static] t=493608 mode=3
+21:18:37.093 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:18:37.093 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=0
+21:18:38.924 [static] t=495608 mode=3
+21:18:38.925 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:18:38.925 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=0
+21:18:40.963 [static] t=497608 mode=3
+21:18:40.963 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:18:40.963 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=0
+21:18:42.996 [static] t=499608 mode=3
+21:18:42.997 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:18:42.997 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=0
+21:18:45.026 [static] t=501608 mode=3
+21:18:45.026 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:18:45.026 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=0
+21:18:47.062 [static] t=503608 mode=3
+21:18:47.062 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:18:47.062 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=0
+21:18:49.094 [static] t=505608 mode=3
+21:18:49.095 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:18:49.095 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=0
+21:18:50.919 [static] t=507608 mode=3
+21:18:50.919 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:18:50.919 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=0
+21:18:52.953 [static] t=509608 mode=3
+21:18:52.954 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:18:52.954 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=0
+21:18:54.978 [static] t=511608 mode=3
+21:18:54.978 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:18:54.978 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=0
+21:18:57.012 [static] t=513608 mode=3
+21:18:57.012 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:18:57.012 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=0
+21:18:59.041 [static] t=515608 mode=3
+21:18:59.041 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:18:59.041 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=0
+21:19:01.076 [static] t=517608 mode=3
+21:19:01.076 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:19:01.076 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=0
+21:19:02.904 [static] t=519608 mode=3
+21:19:02.904 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:19:02.904 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:19:04.950 [static] t=521608 mode=3
+21:19:04.950 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:19:04.950 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:19:06.973 [static] t=523608 mode=3
+21:19:06.973 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:19:06.973 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:19:09.011 [static] t=525608 mode=3
+21:19:09.011 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:19:09.011 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:19:11.042 [static] t=527608 mode=3
+21:19:11.043 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:19:11.043 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:19:13.076 [static] t=529608 mode=3
+21:19:13.076 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:19:13.076 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:19:14.906 [static] t=531608 mode=3
+21:19:14.906 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:19:14.906 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=0
+21:19:16.934 [static] t=533608 mode=3
+21:19:16.934 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:19:16.934 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=0
+21:19:18.972 [static] t=535608 mode=3
+21:19:18.972 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:19:18.972 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=0
+21:19:20.999 [static] t=537608 mode=3
+21:19:20.999 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:19:20.999 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=0
+21:19:23.018 [static] t=539608 mode=3
+21:19:23.018 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:19:23.018 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=0
+21:19:25.047 [static] t=541608 mode=3
+21:19:25.047 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:19:25.047 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=0
+21:19:27.086 [static] t=543608 mode=3
+21:19:27.086 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:19:27.086 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=0
+21:19:28.916 [static] t=545608 mode=3
+21:19:28.916 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:19:28.916 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=0
+21:19:30.943 [static] t=547608 mode=3
+21:19:30.943 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:19:30.943 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=0
+21:19:32.974 [static] t=549608 mode=3
+21:19:32.974 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:19:32.974 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=0
+21:19:35.010 [static] t=551608 mode=3
+21:19:35.010 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:19:35.010 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=0
+21:19:37.031 [static] t=553608 mode=3
+21:19:37.031 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:19:37.031 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=0
+21:19:39.048 [static] t=555608 mode=3
+21:19:39.048 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:19:39.048 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=0
+21:19:41.093 [static] t=557608 mode=3
+21:19:41.093 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:19:41.093 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=0
+21:19:42.922 [static] t=559608 mode=3
+21:19:42.923 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:19:42.923 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=0
+21:19:44.943 [static] t=561608 mode=3
+21:19:44.943 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:19:44.943 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=0
+21:19:46.972 [static] t=563608 mode=3
+21:19:46.972 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:19:46.972 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=0
+21:19:49.002 [static] t=565608 mode=3
+21:19:49.002 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:19:49.002 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:19:51.031 [static] t=567608 mode=3
+21:19:51.031 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:19:51.031 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:19:53.060 [static] t=569608 mode=3
+21:19:53.060 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:19:53.061 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:19:55.098 [static] t=571608 mode=3
+21:19:55.098 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:19:55.098 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:19:56.928 [static] t=573608 mode=3
+21:19:56.928 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:19:56.929 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:19:58.958 [static] t=575608 mode=3
+21:19:58.958 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:19:58.958 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:20:00.994 [static] t=577608 mode=3
+21:20:00.994 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:20:00.994 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=0
+21:20:03.029 [static] t=579608 mode=3
+21:20:03.030 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:20:03.030 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=0
+21:20:05.062 [static] t=581608 mode=3
+21:20:05.063 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:20:05.063 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=0
+21:20:07.098 [static] t=583608 mode=3
+21:20:07.098 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:20:07.099 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=0
+21:20:08.935 [static] t=585608 mode=3
+21:20:08.935 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:20:08.935 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=0
+21:20:10.968 [static] t=587608 mode=3
+21:20:10.968 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:20:10.968 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=0
+21:20:13.012 [static] t=589608 mode=3
+21:20:13.012 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:20:13.012 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=0
+21:20:15.049 [static] t=591608 mode=3
+21:20:15.049 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:20:15.049 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=0
+21:20:17.073 [static] t=593608 mode=3
+21:20:17.074 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:20:17.074 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=0
+21:20:18.904 [static] t=595608 mode=3
+21:20:18.904 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:20:18.904 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=0
+21:20:20.937 [static] t=597608 mode=3
+21:20:20.937 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:20:20.937 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=0
+21:20:22.964 [static] t=599608 mode=3
+21:20:22.964 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:20:22.964 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=0
+21:20:24.998 [static] t=601608 mode=3
+21:20:24.998 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:20:24.998 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=0
+21:20:27.028 [static] t=603608 mode=3
+21:20:27.028 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:20:27.028 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=0
+21:20:29.059 [static] t=605608 mode=3
+21:20:29.059 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:20:29.059 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=0
+21:20:31.091 [static] t=607608 mode=3
+21:20:31.092 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:20:31.092 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=0
+21:20:32.925 [static] t=609608 mode=3
+21:20:32.925 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:20:32.925 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=0
+21:20:34.961 [static] t=611608 mode=3
+21:20:34.961 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:20:34.961 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:20:36.991 [static] t=613608 mode=3
+21:20:36.991 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:20:36.991 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:20:39.028 [static] t=615608 mode=3
+21:20:39.028 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:20:39.028 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:20:41.056 [static] t=617608 mode=3
+21:20:41.056 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:20:41.056 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:20:43.091 [static] t=619608 mode=3
+21:20:43.091 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:20:43.091 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=0
+21:20:44.918 [static] t=621608 mode=3
+21:20:44.919 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:20:44.919 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=0
+21:20:46.948 [static] t=623608 mode=3
+21:20:46.948 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:20:46.948 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=0
+21:20:48.982 [static] t=625608 mode=3
+21:20:48.982 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:20:48.983 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=0
+21:20:51.017 [static] t=627608 mode=3
+21:20:51.017 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:20:51.017 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=0
+21:20:53.057 [static] t=629608 mode=3
+21:20:53.057 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:20:53.057 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=0
+=== 43-B reported 21:20:54
+21:20:55.091 [static] t=631608 mode=3
+21:20:55.091 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:20:55.091 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=0
+21:20:56.917 [static] t=633608 mode=3
+21:20:56.917 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:20:56.917 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=0
+21:20:58.947 [static] t=635608 mode=3
+21:20:58.947 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:20:58.947 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=0
+21:21:00.987 [static] t=637608 mode=3
+21:21:00.987 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:21:00.987 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=0
+21:21:03.028 [static] t=639608 mode=3
+21:21:03.029 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:21:03.029 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=0
+21:21:05.056 [static] t=641608 mode=3
+21:21:05.056 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:21:05.056 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=0
+21:21:07.081 [static] t=643608 mode=3
+21:21:07.081 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:21:07.081 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=0
+21:21:08.911 [static] t=645608 mode=3
+21:21:08.911 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:21:08.911 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=0
+21:21:10.940 [static] t=647608 mode=3
+21:21:10.940 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:21:10.940 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=0
+21:21:12.986 [static] t=649608 mode=3
+21:21:12.986 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:21:12.986 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=0
+21:21:15.018 [static] t=651608 mode=3
+21:21:15.018 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:21:15.018 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=0
+21:21:17.056 [static] t=653608 mode=3
+21:21:17.056 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:21:17.056 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=0
+21:21:19.088 [static] t=655608 mode=3
+21:21:19.088 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:21:19.088 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=0
+21:21:20.921 [static] t=657608 mode=3
+21:21:20.921 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:21:20.921 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=0
+21:21:22.954 [static] t=659608 mode=3
+21:21:22.954 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:21:22.954 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=0
+21:21:24.986 [static] t=661608 mode=3
+21:21:24.986 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:21:24.986 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=0
+21:21:27.018 [static] t=663608 mode=3
+21:21:27.018 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:21:27.019 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=0
+21:21:29.045 [static] t=665608 mode=3
+21:21:29.045 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:21:29.045 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=0
+21:21:31.079 [static] t=667608 mode=3
+21:21:31.080 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:21:31.080 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=0
+21:21:32.909 [static] t=669608 mode=3
+21:21:32.909 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:21:32.909 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=0
+21:21:34.930 [static] t=671608 mode=3
+21:21:34.930 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:21:34.930 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:21:36.963 [static] t=673608 mode=3
+21:21:36.963 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:21:36.963 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:21:39.000 [static] t=675608 mode=3
+21:21:39.000 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:21:39.000 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:21:41.034 [static] t=677608 mode=3
+21:21:41.035 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:21:41.035 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:21:43.061 [static] t=679608 mode=3
+21:21:43.062 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:21:43.062 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:21:45.094 [static] t=681608 mode=3
+21:21:45.094 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:21:45.094 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:21:46.927 [static] t=683608 mode=3
+21:21:46.928 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:21:46.928 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=0
+21:21:48.958 [static] t=685608 mode=3
+21:21:48.958 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:21:48.958 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=0
+21:21:50.991 [static] t=687608 mode=3
+21:21:50.991 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:21:50.991 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=0
+21:21:53.023 [static] t=689608 mode=3
+21:21:53.023 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:21:53.023 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=0
+21:21:55.052 [static] t=691608 mode=3
+21:21:55.053 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:21:55.053 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=0
+21:21:57.090 [static] t=693608 mode=3
+21:21:57.090 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:21:57.090 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=0
+21:21:58.919 [static] t=695608 mode=3
+21:21:58.919 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:21:58.919 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=0
+21:22:00.947 [static] t=697608 mode=3
+21:22:00.948 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:22:00.948 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=0
+21:22:02.978 [static] t=699608 mode=3
+21:22:02.978 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:22:02.978 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=0
+21:22:05.013 [static] t=701608 mode=3
+21:22:05.013 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:22:05.013 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=0
+21:22:07.044 [static] t=703608 mode=3
+21:22:07.045 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:22:07.045 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=0
+21:22:09.084 [static] t=705608 mode=3
+21:22:09.084 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:22:09.084 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=0
+21:22:10.920 [static] t=707608 mode=3
+21:22:10.920 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:22:10.920 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=0
+21:22:12.955 [static] t=709608 mode=3
+21:22:12.955 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:22:12.955 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=0
+21:22:14.987 [static] t=711608 mode=3
+21:22:14.987 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:22:14.987 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=0
+21:22:17.020 [static] t=713608 mode=3
+21:22:17.020 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:22:17.020 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=0
+=== 43-C reported 21:22:18
+21:22:19.046 [static] t=715608 mode=3
+21:22:19.046 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:22:19.046 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=0
+21:22:21.097 [static] t=717608 mode=3
+21:22:21.097 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:22:21.097 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=0
+21:22:22.926 [static] t=719608 mode=3
+21:22:22.926 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:22:22.926 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=0
+21:22:24.955 [static] t=721608 mode=3
+21:22:24.956 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:22:24.956 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=0
+21:22:26.986 [static] t=723608 mode=3
+21:22:26.986 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:22:26.987 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=0
+21:22:29.014 [static] t=725608 mode=3
+21:22:29.015 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:22:29.015 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=0
+21:22:31.052 [static] t=727608 mode=3
+21:22:31.052 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:22:31.052 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=0
+21:22:33.093 [static] t=729608 mode=3
+21:22:33.093 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:22:33.093 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=0
+21:22:34.920 [static] t=731608 mode=3
+21:22:34.920 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:22:34.920 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=0
+21:22:36.953 [static] t=733608 mode=3
+21:22:36.953 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:22:36.953 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=0
+21:22:38.984 [static] t=735608 mode=3
+21:22:38.985 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:22:38.985 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:22:41.011 [static] t=737608 mode=3
+21:22:41.011 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:22:41.011 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:22:43.048 [static] t=739608 mode=3
+21:22:43.048 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:22:43.049 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:22:45.081 [static] t=741608 mode=3
+21:22:45.081 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:22:45.081 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:22:46.913 [static] t=743608 mode=3
+21:22:46.913 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:22:46.913 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:22:48.948 [static] t=745608 mode=3
+21:22:48.949 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:22:48.949 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:22:50.975 [static] t=747608 mode=3
+21:22:50.976 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:22:50.976 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:22:52.997 [static] t=749608 mode=3
+21:22:52.998 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:22:52.998 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:22:55.028 [static] t=751608 mode=3
+21:22:55.028 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:22:55.028 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:22:57.059 [static] t=753608 mode=3
+21:22:57.059 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:22:57.059 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:22:59.088 [static] t=755608 mode=3
+21:22:59.088 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:22:59.088 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=0
+21:23:00.915 [static] t=757608 mode=3
+21:23:00.915 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:23:00.915 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=0
+21:23:02.945 [static] t=759608 mode=3
+21:23:02.945 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:23:02.945 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=0
+21:23:04.984 [static] t=761608 mode=3
+21:23:04.984 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:23:04.984 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=0
+21:23:07.017 [static] t=763608 mode=3
+21:23:07.017 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:23:07.018 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=0
+21:23:09.053 [static] t=765608 mode=3
+21:23:09.053 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:23:09.053 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=0
+21:23:11.089 [static] t=767608 mode=3
+21:23:11.089 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:23:11.089 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=0
+21:23:12.924 [static] t=769608 mode=3
+21:23:12.924 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:23:12.924 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=0
+21:23:14.963 [static] t=771608 mode=3
+21:23:14.963 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:23:14.963 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=0
+21:23:16.996 [static] t=773608 mode=3
+21:23:16.996 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:23:16.996 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=0
+21:23:19.025 [static] t=775608 mode=3
+21:23:19.025 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:23:19.025 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=0
+21:23:21.055 [static] t=777608 mode=3
+21:23:21.055 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:23:21.055 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=0
+21:23:23.091 [static] t=779608 mode=3
+21:23:23.091 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:23:23.091 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=0
+21:23:24.916 [static] t=781608 mode=3
+21:23:24.917 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:23:24.917 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=0
+21:23:26.943 [static] t=783608 mode=3
+21:23:26.943 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:23:26.943 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=0
+21:23:28.971 [static] t=785608 mode=3
+21:23:28.971 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:23:28.972 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=0
+21:23:31.000 [static] t=787608 mode=3
+21:23:31.000 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:23:31.001 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:23:33.030 [static] t=789608 mode=3
+21:23:33.030 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:23:33.030 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+=== 43-A2 reported 21:23:35
+21:23:35.060 [static] t=791608 mode=3
+21:23:35.060 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:23:35.060 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+=== 4-A1 (mode c, no resistor) 21:23:35
+21:23:35.263 >>> c
+21:23:35.468 [static] mode=c low=GPIO4
+21:23:35.468 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:23:35.468 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:23:37.298 [static] t=793977 mode=c
+21:23:37.298 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:23:37.298 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:23:39.329 [static] t=795977 mode=c
+21:23:39.330 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:23:39.330 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:23:41.368 [static] t=797977 mode=c
+21:23:41.368 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:23:41.368 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:23:43.392 [static] t=799977 mode=c
+21:23:43.392 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:23:43.392 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:23:45.425 [static] t=801977 mode=c
+21:23:45.425 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:23:45.425 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:23:47.457 [static] t=803977 mode=c
+21:23:47.457 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:23:47.457 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:23:49.291 [static] t=805977 mode=c
+21:23:49.292 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:23:49.292 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:23:51.326 [static] t=807977 mode=c
+21:23:51.326 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:23:51.326 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:23:53.360 [static] t=809977 mode=c
+21:23:53.360 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:23:53.360 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:23:55.381 [static] t=811977 mode=c
+21:23:55.381 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:23:55.381 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:23:57.423 [static] t=813977 mode=c
+21:23:57.423 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:23:57.423 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:23:59.451 [static] t=815977 mode=c
+21:23:59.452 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:23:59.452 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:24:01.288 [static] t=817977 mode=c
+21:24:01.288 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:24:01.288 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:24:03.327 [static] t=819977 mode=c
+21:24:03.327 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:24:03.327 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:24:05.355 [static] t=821977 mode=c
+21:24:05.355 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:24:05.355 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:24:07.384 [static] t=823977 mode=c
+21:24:07.385 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:24:07.385 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:24:09.416 [static] t=825977 mode=c
+21:24:09.416 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:24:09.417 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:24:11.449 [static] t=827977 mode=c
+21:24:11.449 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:24:11.449 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:24:13.279 [static] t=829977 mode=c
+21:24:13.280 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:24:13.280 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:24:15.298 [static] t=831977 mode=c
+21:24:15.299 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:24:15.299 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:24:17.330 [static] t=833977 mode=c
+21:24:17.330 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:24:17.330 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:24:19.366 [static] t=835977 mode=c
+21:24:19.366 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:24:19.366 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:24:21.397 [static] t=837977 mode=c
+21:24:21.397 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:24:21.398 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:24:23.420 [static] t=839977 mode=c
+21:24:23.420 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:24:23.420 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:24:25.436 [static] t=841977 mode=c
+21:24:25.436 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:24:25.436 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:24:27.463 [static] t=843977 mode=c
+21:24:27.464 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:24:27.464 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:24:29.300 [static] t=845977 mode=c
+21:24:29.300 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:24:29.300 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:24:31.335 [static] t=847977 mode=c
+21:24:31.335 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:24:31.335 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:24:33.369 [static] t=849977 mode=c
+21:24:33.370 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:24:33.370 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:24:35.398 [static] t=851977 mode=c
+21:24:35.399 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:24:35.399 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:24:37.424 [static] t=853977 mode=c
+21:24:37.424 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:24:37.424 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:24:39.462 [static] t=855977 mode=c
+21:24:39.462 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:24:39.462 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:24:41.284 [static] t=857977 mode=c
+21:24:41.284 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:24:41.284 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:24:43.316 [static] t=859977 mode=c
+21:24:43.316 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:24:43.316 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:24:45.375 [static] t=861977 mode=c
+21:24:45.375 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:24:45.375 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:24:47.408 [static] t=863977 mode=c
+21:24:47.408 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:24:47.409 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:24:49.430 [static] t=865977 mode=c
+21:24:49.431 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:24:49.431 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:24:51.461 [static] t=867977 mode=c
+21:24:51.461 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:24:51.461 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:24:53.290 [static] t=869977 mode=c
+21:24:53.290 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:24:53.290 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:24:55.309 [static] t=871977 mode=c
+21:24:55.309 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:24:55.309 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:24:57.336 [static] t=873977 mode=c
+21:24:57.336 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:24:57.337 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:24:59.366 [static] t=875977 mode=c
+21:24:59.366 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:24:59.366 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:25:01.398 [static] t=877977 mode=c
+21:25:01.398 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:25:01.398 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:25:03.429 [static] t=879977 mode=c
+21:25:03.429 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:25:03.429 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:25:05.458 [static] t=881977 mode=c
+21:25:05.458 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:25:05.458 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:25:07.289 [static] t=883977 mode=c
+21:25:07.289 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:25:07.289 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:25:09.318 [static] t=885977 mode=c
+21:25:09.318 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:25:09.319 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:25:11.411 [static] t=887977 mode=c
+21:25:11.412 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:25:11.412 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+=== 4-A1 reported 21:25:12
+21:25:13.447 [static] t=889977 mode=c
+21:25:13.447 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:25:13.447 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:25:15.268 [static] t=891977 mode=c
+21:25:15.268 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:25:15.269 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:25:17.300 [static] t=893977 mode=c
+21:25:17.300 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:25:17.300 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:25:19.324 [static] t=895977 mode=c
+21:25:19.325 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:25:19.325 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:25:21.355 [static] t=897977 mode=c
+21:25:21.355 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:25:21.355 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:25:23.387 [static] t=899977 mode=c
+21:25:23.387 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:25:23.387 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:25:25.425 [static] t=901977 mode=c
+21:25:25.426 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:25:25.426 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:25:27.455 [static] t=903977 mode=c
+21:25:27.455 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:25:27.455 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:25:29.287 [static] t=905977 mode=c
+21:25:29.287 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:25:29.287 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:25:31.321 [static] t=907977 mode=c
+21:25:31.322 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:25:31.322 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:25:33.357 [static] t=909977 mode=c
+21:25:33.357 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:25:33.357 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:25:35.395 [static] t=911977 mode=c
+21:25:35.395 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:25:35.396 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:25:37.416 [static] t=913977 mode=c
+21:25:37.417 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:25:37.417 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:25:39.451 [static] t=915977 mode=c
+21:25:39.451 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:25:39.451 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:25:41.279 [static] t=917977 mode=c
+21:25:41.280 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:25:41.280 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:25:43.306 [static] t=919977 mode=c
+21:25:43.306 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:25:43.306 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:25:45.336 [static] t=921977 mode=c
+21:25:45.336 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:25:45.336 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:25:47.376 [static] t=923977 mode=c
+21:25:47.376 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:25:47.376 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:25:49.412 [static] t=925977 mode=c
+21:25:49.412 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:25:49.412 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:25:51.442 [static] t=927977 mode=c
+21:25:51.443 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:25:51.443 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:25:53.281 [static] t=929977 mode=c
+21:25:53.287 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:25:53.287 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:25:55.318 [static] t=931977 mode=c
+21:25:55.318 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:25:55.318 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:25:57.348 [static] t=933977 mode=c
+21:25:57.348 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:25:57.348 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:25:59.372 [static] t=935977 mode=c
+21:25:59.372 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:25:59.372 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:26:01.410 [static] t=937977 mode=c
+21:26:01.411 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:26:01.411 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:26:03.445 [static] t=939977 mode=c
+21:26:03.445 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:26:03.445 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:26:05.271 [static] t=941977 mode=c
+21:26:05.271 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:26:05.272 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:26:07.311 [static] t=943977 mode=c
+21:26:07.311 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:26:07.311 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:26:09.351 [static] t=945977 mode=c
+21:26:09.351 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:26:09.351 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:26:11.386 [static] t=947977 mode=c
+21:26:11.386 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:26:11.386 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:26:13.419 [static] t=949977 mode=c
+21:26:13.420 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:26:13.420 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:26:15.444 [static] t=951977 mode=c
+21:26:15.444 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:26:15.444 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:26:17.265 [static] t=953977 mode=c
+21:26:17.265 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:26:17.265 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:26:19.299 [static] t=955977 mode=c
+21:26:19.299 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:26:19.299 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:26:21.333 [static] t=957977 mode=c
+21:26:21.333 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:26:21.333 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:26:23.366 [static] t=959977 mode=c
+21:26:23.366 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:26:23.366 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:26:25.386 [static] t=961977 mode=c
+21:26:25.386 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:26:25.386 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:26:27.418 [static] t=963977 mode=c
+21:26:27.418 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:26:27.418 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:26:29.451 [static] t=965977 mode=c
+21:26:29.451 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:26:29.451 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:26:31.283 [static] t=967977 mode=c
+21:26:31.283 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:26:31.283 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:26:33.311 [static] t=969977 mode=c
+21:26:33.323 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:26:33.324 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:26:35.383 [static] t=971977 mode=c
+21:26:35.383 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:26:35.383 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:26:37.411 [static] t=973977 mode=c
+21:26:37.411 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:26:37.411 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:26:39.447 [static] t=975977 mode=c
+21:26:39.447 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:26:39.447 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:26:41.276 [static] t=977977 mode=c
+21:26:41.276 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:26:41.276 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:26:43.308 [static] t=979977 mode=c
+21:26:43.308 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:26:43.308 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:26:45.338 [static] t=981977 mode=c
+21:26:45.339 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:26:45.339 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+=== 4-B reported 21:26:46
+21:26:47.369 [static] t=983977 mode=c
+21:26:47.369 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:26:47.369 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:26:49.392 [static] t=985977 mode=c
+21:26:49.392 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:26:49.392 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:26:51.413 [static] t=987977 mode=c
+21:26:51.413 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:26:51.413 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:26:53.447 [static] t=989977 mode=c
+21:26:53.448 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:26:53.448 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:26:55.279 [static] t=991977 mode=c
+21:26:55.279 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:26:55.280 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:26:57.314 [static] t=993977 mode=c
+21:26:57.314 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:26:57.314 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:26:59.340 [static] t=995977 mode=c
+21:26:59.340 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:26:59.340 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:27:01.368 [static] t=997977 mode=c
+21:27:01.368 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:27:01.368 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:27:03.402 [static] t=999977 mode=c
+21:27:03.402 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:27:03.402 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:27:05.432 [static] t=1001977 mode=c
+21:27:05.432 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:27:05.432 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:27:07.261 [static] t=1003977 mode=c
+21:27:07.261 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:27:07.466 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:27:09.290 [static] t=1005977 mode=c
+21:27:09.290 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:27:09.290 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:27:11.323 [static] t=1007977 mode=c
+21:27:11.323 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:27:11.323 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:27:13.351 [static] t=1009977 mode=c
+21:27:13.351 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:27:13.351 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:27:15.378 [static] t=1011977 mode=c
+21:27:15.378 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:27:15.379 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:27:17.412 [static] t=1013977 mode=c
+21:27:17.413 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:27:17.413 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:27:19.450 [static] t=1015977 mode=c
+21:27:19.450 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:27:19.450 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:27:21.286 [static] t=1017977 mode=c
+21:27:21.286 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:27:21.286 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:27:23.321 [static] t=1019977 mode=c
+21:27:23.322 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:27:23.322 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:27:25.353 [static] t=1021977 mode=c
+21:27:25.353 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:27:25.353 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:27:27.387 [static] t=1023977 mode=c
+21:27:27.388 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:27:27.388 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:27:29.429 [static] t=1025977 mode=c
+21:27:29.429 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:27:29.429 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:27:31.458 [static] t=1027977 mode=c
+21:27:31.458 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:27:31.458 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:27:33.290 [static] t=1029977 mode=c
+21:27:33.290 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:27:33.291 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:27:35.326 [static] t=1031977 mode=c
+21:27:35.326 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:27:35.326 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:27:37.361 [static] t=1033977 mode=c
+21:27:37.361 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:27:37.361 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+=== correction 21:27:39: S7 reading was with 4.7 kOhm (= 4-C); 4-B (10 kOhm) next
+21:27:39.392 [static] t=1035977 mode=c
+21:27:39.392 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:27:39.392 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:27:41.422 [static] t=1037977 mode=c
+21:27:41.422 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:27:41.422 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:27:43.456 [static] t=1039977 mode=c
+21:27:43.457 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:27:43.457 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:27:45.284 [static] t=1041977 mode=c
+21:27:45.284 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:27:45.284 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:27:47.315 [static] t=1043977 mode=c
+21:27:47.315 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:27:47.316 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:27:49.357 [static] t=1045977 mode=c
+21:27:49.357 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:27:49.357 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:27:51.391 [static] t=1047977 mode=c
+21:27:51.391 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:27:51.391 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:27:53.432 [static] t=1049977 mode=c
+21:27:53.432 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:27:53.432 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:27:55.455 [static] t=1051977 mode=c
+21:27:55.455 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:27:55.456 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:27:57.279 [static] t=1053977 mode=c
+21:27:57.279 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:27:57.279 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:27:59.308 [static] t=1055977 mode=c
+21:27:59.309 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:27:59.309 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:28:01.339 [static] t=1057977 mode=c
+21:28:01.340 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:28:01.340 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:28:03.368 [static] t=1059977 mode=c
+21:28:03.368 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:28:03.368 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:28:05.409 [static] t=1061977 mode=c
+21:28:05.409 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:28:05.409 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:28:07.435 [static] t=1063977 mode=c
+21:28:07.436 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:28:07.436 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:28:09.265 [static] t=1065977 mode=c
+21:28:09.265 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:28:09.468 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:28:11.303 [static] t=1067977 mode=c
+21:28:11.304 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:28:11.304 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:28:13.337 [static] t=1069977 mode=c
+21:28:13.337 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:28:13.337 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:28:15.371 [static] t=1071977 mode=c
+21:28:15.372 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:28:15.372 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:28:17.401 [static] t=1073977 mode=c
+21:28:17.401 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:28:17.401 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:28:19.434 [static] t=1075977 mode=c
+21:28:19.435 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:28:19.435 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:28:21.280 [static] t=1077977 mode=c
+21:28:21.280 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:28:21.280 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:28:23.317 [static] t=1079977 mode=c
+21:28:23.317 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:28:23.317 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:28:25.352 [static] t=1081977 mode=c
+21:28:25.352 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:28:25.352 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:28:27.384 [static] t=1083977 mode=c
+21:28:27.384 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:28:27.384 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:28:29.416 [static] t=1085977 mode=c
+21:28:29.416 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:28:29.416 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:28:31.446 [static] t=1087977 mode=c
+21:28:31.446 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:28:31.446 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:28:33.276 [static] t=1089977 mode=c
+21:28:33.277 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:28:33.277 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:28:35.307 [static] t=1091977 mode=c
+21:28:35.307 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:28:35.307 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:28:37.335 [static] t=1093977 mode=c
+21:28:37.335 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:28:37.335 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:28:39.363 [static] t=1095977 mode=c
+21:28:39.364 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:28:39.364 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:28:41.389 [static] t=1097977 mode=c
+21:28:41.389 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:28:41.389 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:28:43.426 [static] t=1099977 mode=c
+21:28:43.426 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:28:43.426 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:28:45.453 [static] t=1101977 mode=c
+21:28:45.454 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:28:45.454 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:28:47.288 [static] t=1103977 mode=c
+21:28:47.288 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:28:47.288 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:28:49.315 [static] t=1105977 mode=c
+21:28:49.315 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:28:49.315 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:28:51.353 [static] t=1107977 mode=c
+21:28:51.353 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:28:51.353 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:28:53.383 [static] t=1109977 mode=c
+21:28:53.383 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:28:53.383 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:28:55.420 [static] t=1111977 mode=c
+21:28:55.420 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:28:55.420 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:28:57.457 [static] t=1113977 mode=c
+21:28:57.457 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:28:57.457 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:28:59.285 [static] t=1115977 mode=c
+21:28:59.285 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:28:59.285 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:29:01.316 [static] t=1117977 mode=c
+21:29:01.316 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:29:01.316 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:29:03.348 [static] t=1119977 mode=c
+21:29:03.348 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:29:03.348 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:29:05.377 [static] t=1121977 mode=c
+21:29:05.377 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:29:05.377 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+=== 4-B reported 21:29:06
+21:29:07.407 [static] t=1123977 mode=c
+21:29:07.407 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:29:07.407 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:29:09.437 [static] t=1125977 mode=c
+21:29:09.437 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:29:09.437 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:29:11.465 [static] t=1127977 mode=c
+21:29:11.465 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:29:11.465 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:29:13.302 [static] t=1129977 mode=c
+21:29:13.302 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:29:13.302 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:29:15.334 [static] t=1131977 mode=c
+21:29:15.334 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:29:15.334 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:29:17.414 [static] t=1133977 mode=c
+21:29:17.414 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:29:17.414 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:29:19.455 [static] t=1135977 mode=c
+21:29:19.455 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:29:19.455 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:29:21.290 [static] t=1137977 mode=c
+21:29:21.291 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:29:21.291 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:29:23.316 [static] t=1139977 mode=c
+21:29:23.316 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:29:23.316 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:29:25.351 [static] t=1141977 mode=c
+21:29:25.351 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:29:25.351 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:29:27.393 [static] t=1143977 mode=c
+21:29:27.393 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:29:27.393 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:29:29.433 [static] t=1145977 mode=c
+21:29:29.433 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:29:29.433 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:29:31.462 [static] t=1147977 mode=c
+21:29:31.462 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:29:31.462 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:29:33.290 [static] t=1149977 mode=c
+21:29:33.291 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:29:33.291 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:29:35.327 [static] t=1151977 mode=c
+21:29:35.328 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:29:35.328 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:29:37.358 [static] t=1153977 mode=c
+21:29:37.359 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:29:37.359 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:29:39.391 [static] t=1155977 mode=c
+21:29:39.391 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:29:39.391 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:29:41.421 [static] t=1157977 mode=c
+21:29:41.421 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:29:41.421 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:29:43.460 [static] t=1159977 mode=c
+21:29:43.460 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:29:43.460 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:29:45.291 [static] t=1161977 mode=c
+21:29:45.291 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:29:45.291 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:29:47.324 [static] t=1163977 mode=c
+21:29:47.324 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:29:47.324 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:29:49.360 [static] t=1165977 mode=c
+21:29:49.360 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:29:49.360 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:29:51.399 [static] t=1167977 mode=c
+21:29:51.399 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:29:51.399 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:29:53.428 [static] t=1169977 mode=c
+21:29:53.428 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:29:53.428 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:29:55.460 [static] t=1171977 mode=c
+21:29:55.460 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:29:55.460 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:29:57.285 [static] t=1173977 mode=c
+21:29:57.285 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:29:57.285 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:29:59.316 [static] t=1175977 mode=c
+21:29:59.316 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:29:59.316 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:30:01.344 [static] t=1177977 mode=c
+21:30:01.344 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:30:01.344 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:30:03.385 [static] t=1179977 mode=c
+21:30:03.386 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:30:03.386 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:30:05.421 [static] t=1181977 mode=c
+21:30:05.421 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:30:05.421 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:30:07.453 [static] t=1183977 mode=c
+21:30:07.453 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:30:07.453 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:30:09.283 [static] t=1185977 mode=c
+21:30:09.284 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:30:09.284 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:30:11.324 [static] t=1187977 mode=c
+21:30:11.324 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:30:11.324 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:30:13.355 [static] t=1189977 mode=c
+21:30:13.356 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:30:13.356 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:30:15.393 [static] t=1191977 mode=c
+21:30:15.393 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:30:15.393 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:30:17.419 [static] t=1193977 mode=c
+21:30:17.419 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:30:17.419 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:30:19.443 [static] t=1195977 mode=c
+21:30:19.443 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:30:19.443 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:30:21.270 [static] t=1197977 mode=c
+21:30:21.270 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:30:21.270 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:30:23.306 [static] t=1199977 mode=c
+21:30:23.306 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:30:23.307 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:30:25.342 [static] t=1201977 mode=c
+21:30:25.342 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:30:25.342 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+21:30:27.377 [static] t=1203977 mode=c
+21:30:27.377 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:30:27.377 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=0 in=0
+=== 4-A2 reported 21:30:27
+=== End (mode r) 21:30:27
+21:30:27.996 >>> r
+21:30:28.196 [static] mode=r low=none
+21:30:28.196 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:30:28.197 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=0
+21:30:30.033 [static] t=1206709 mode=r
+21:30:30.033 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:30:30.033 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:30:32.069 [static] t=1208709 mode=r
+21:30:32.069 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:30:32.069 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:30:34.103 [static] t=1210709 mode=r
+21:30:34.103 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:30:34.104 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:30:36.138 [static] t=1212709 mode=r
+21:30:36.138 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:30:36.139 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:30:38.168 [static] t=1214709 mode=r
+21:30:38.168 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:30:38.168 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:30:39.996 [static] t=1216709 mode=r
+21:30:40.201 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:30:40.202 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=0
+21:30:42.032 [static] t=1218709 mode=r
+21:30:42.032 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:30:42.032 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=0
+21:30:44.067 [static] t=1220709 mode=r
+21:30:44.067 [regs] gpio=43 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=1
+21:30:44.067 [regs] gpio=4 mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oen_sel=0 oe=1 out=1 in=0
+=== logger stopped 21:31:20 (End: YD unplugged, left on yd-static)
