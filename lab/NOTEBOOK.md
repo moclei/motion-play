@@ -326,3 +326,10 @@ The "belief changes" line replaces overwriting a "current working theory": STATE
 - map edits: master: identity row rewritten to the (a)/(b)/(c) framing with the lead verdict; §8 rewritten; `last_checkpoint: V7R-017`.
 - bench state at end: unchanged from the V7R-017 entry.
 - next: user's choice from the queue; pre-register after it.
+
+## 2026-10-27 · checkpoint (cont.) · board identity correction: #0003 is probably not legacy B3
+- session: debugger · operator: user · no bench.
+- observation (user): two more v7 boards found, working state unknown. One has "Board #3" in black marker on the back; the other is unmarked. Neither has a barcode. User: the marker board is likely the legacy "Board 3" (L-Ph9), not #0003.
+- correction to the checkpoint @ V7R-017 entry, challenge (1): legacy B1 and B3 showing the NACK at first run says nothing about #0003's history, since #0003 is probably not B3. "Damaged during this investigation" is therefore not weakened for #0003 (argued). STATE §3 master: identity and §6 boards updated.
+- note: legacy L-Ph results are log-based or unvalidated and are not taken at face value; V7R-010 is this track's (2026-10-25, validated scope).
+- next: (h) on both found boards, if they power up.
