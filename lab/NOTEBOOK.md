@@ -349,3 +349,8 @@ The "belief changes" line replaces overwriting a "current working theory": STATE
 - decisions: user: the unmarked v7 is "Board X". User: postpone the found-board tests indefinitely ("if the other two boards aren't both broken, they're going to show the exact same behavior … my prerogative") and do card C (scope SDA on #0003 at power-up, reset, flashing, cable plug-in) next, then F.
 - consequence (recorded, not argued against): master: identity (a) unit vs (b)/(c) stays untested; C and F do not separate it.
 - next: pre-register card C (V7R-018) in a fresh session; this one is at about half its context.
+
+## 2026-10-27 · checkpoint (cont.) · card C design decisions (for V7R-018 pre-registration)
+- decisions: user: (1) cable event = hot-plug sensor rigid #1 into the empty J5 while powered (option a), done last; (2) include the SW2 reset-button press, with a declared pivot/abandon if reaching SW2 near the probes proves difficult at the bench; (3) no battery on the bench for card C.
+- observation not in a card (user, verbatim): "I found that adding the battery is what bricked two of the v7 boards, back in original testing. But I didn't do it methodically so I don't know exactly why. Could be a clue though (or maybe not)". Which boards, what "bricked" looked like, and whether #0003 ever had a battery fitted: not recorded. Relevance: unassessed; a battery-connect event is a candidate stress route for master: identity (c), not tested.
+- next: fresh session pre-registers V7R-018 from STATE §8 and this entry.
