@@ -91,6 +91,7 @@ The session sends every mode command and records every serial line; one instruct
 - S1: operator: "1. 9.999, 4.695 2. 3.296V" (R_meas 9.999 kΩ / 4.695 kΩ out of circuit, the same digits as V7R-016's pair; V_rail 3.296 V, 3V3 row to GND row).
 - 43-A1 (mode 3 sent 21:14:48; `[regs]` gpio=43 `out=0 in=0`, gpio=4 `out=1 in=0`): operator: "1. All three readings were 0.043V 2. The second of the three regular LEDs, the one that I thought had flashed earlier when I pressed RST, is now steady on green. That's the only LED change".
 - 43-B (10 kΩ, 3V3 row → TX row): operator: "1. 0.052V / 0.052V / 0.053V 2. With jumpers".
+- 43-C (4.7 kΩ, same fitting, 10 kΩ out): operator: "1. 0.063V / 0.063V / 0.064V".
 
 ### Measured values (from log; cite `lab/evidence/V7R-017/...`)
 ### Interpretation (session; labelled as such)
