@@ -1,7 +1,7 @@
 ---
 test_id: V7R-017
 title: "GPIO43 vs GPIO4 static low on a YD-ESP32-23 dev board (ESP32-S3-WROOM-1-N16R8, never in a v7): DMM dose with none / 10 kΩ / 4.7 kΩ to 3.3 V"
-status: pre-registered
+status: run
 created: 2026-10-27
 prereg_commit: self
 baseline:
@@ -81,6 +81,13 @@ The session sends every mode command and records every serial line; one instruct
 
 ## Actual result
 ### Raw observations (operator, verbatim; symptoms not interpretations)
+**Session 2026-10-27 s04** (serial log `lab/captures/V7R-017/2026-10-27_V7R-017_yd_01.txt`).
+- Seating (operator, before S0): YD across two separate breadboard sections, one header row each. Pinout: "3v3 is on the same side as the OTG USB, on the opposite edge. 3V3 is the first two pins when you start from that edge ... After the two 3V3 pins there is a RST pin, then the GPIO4 pin is next. TX is on the opposite side -- if you start from the same edge that the 3V3 pins start on ... it goes: GND, TX, RX, 1, 2..."
+- S0: operator: "I plugged in the USB which has "USB" on the underside of the board, in silkscreen. The other USB has the label "COM". There are two unconnected pads near the "USB" one which have the silkscreen "USB-OTG" ... unconnected"; "There is an RGB led that is cycling between red, green and blue. There is another LED, one of three, the one nearest to the RGB LED, that is on and is red. The other two are off. None of those have silkscreen labels on the board". Board markings as given before pre-registration (YD-ESP32-23, 2022-V1.3, ESP32-S3-N16R8 can); no other markings (operator).
+- First enumeration `/dev/cu.usbmodem1234561` (factory firmware); esptool auto-reset: "Failed to connect to ESP32-S3: No serial data received."
+- S0b (BOOT held, RST pressed, BOOT released): operator: "the rgb led is now remaining on red, and the same one of the three other LEDs is red". Port `/dev/cu.usbmodem14101`. esptool: "Chip is ESP32-S3 (revision v0.2)", "Crystal is 40MHz", MAC 98:88:e0:04:3c:14.
+- Flash: yd-static 19:53:49–19:53:55, SUCCESS, "Hash of data verified", firmware.bin sha256 56a0ef90. No serial output for ~12 s after (logger from 19:54:06).
+- S0c (RST once): operator: "One of the other two LEDs seemed to light up a little bit, just for half a second as I pressed the button, didn't catch which one or exactly what happened. The RGB and other lit LED stayed red as they were". Log: yd-static running, mode r; `[regs]` gpio=43 and gpio=4 both `mcu_sel=1 fun_drv=2 wpu=0 wpd=0 ie=1 od=1 out_sig=256 oe=1 out=1 in=1`.
 ### Measured values (from log; cite `lab/evidence/V7R-017/...`)
 ### Interpretation (session; labelled as such)
 
