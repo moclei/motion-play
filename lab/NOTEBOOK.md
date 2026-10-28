@@ -354,3 +354,7 @@ The "belief changes" line replaces overwriting a "current working theory": STATE
 - decisions: user: (1) cable event = hot-plug sensor rigid #1 into the empty J5 while powered (option a), done last; (2) include the SW2 reset-button press, with a declared pivot/abandon if reaching SW2 near the probes proves difficult at the bench; (3) no battery on the bench for card C.
 - observation not in a card (user, verbatim): "I found that adding the battery is what bricked two of the v7 boards, back in original testing. But I didn't do it methodically so I don't know exactly why. Could be a clue though (or maybe not)". Which boards, what "bricked" looked like, and whether #0003 ever had a battery fitted: not recorded. Relevance: unassessed; a battery-connect event is a candidate stress route for master: identity (c), not tested.
 - next: fresh session pre-registers V7R-018 from STATE §8 and this entry.
+
+## 2026-10-27 · checkpoint (cont.) · battery history follow-up
+- observation (user, verbatim answers): #0003 battery: "#0003 never had a battery, I'm certain". What "bricked" looked like: "I forget, but I remember it being clear that they were 'cooked'". Which boards: "No" (not remembered).
+- (Interpretation, argued; operator recollection, not measured) a battery-connect event is not how #0003's GPIO43 got its resistance; the battery remains unassessed as a cause of the two cooked boards only.
