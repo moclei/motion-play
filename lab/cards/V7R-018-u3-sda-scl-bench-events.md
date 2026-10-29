@@ -110,6 +110,11 @@ The session runs every SCPI command, build, flash, marker and capture; one instr
 
 ## Actual result
 ### Raw observations (operator, verbatim; symptoms not interpretations)
+- Session 2026-10-28 (log `lab/log/2026-10-28_s01.yaml`; card named `2026-10-27_s04`, the date rolled over). Ports: v7 `/dev/cu.usbmodem14301` (MAC 44:1b:f6:c5:58:c4), Nano `/dev/cu.usbmodem14101`. P0: "v7 pwr on"; scope "showing results from prior card, status = STOP".
+- V1: AUTO → status "T'D". After AUTO the Cal wave was not visible on CH1 ("I don't see the wave"); V3 settings by SCPI (plus CH1/CH2 offset −1.5 V, not in the procedure) → "square wave, flat tops". V2: first `:PROBe?` reads empty with three stale `-110 Command header err` in the queue; after draining, 10/10, display 1/1.
+- V5a: "both tips and springs direct on the [Cal ground] terminal". V5b/V7 placement: "Ch1 tip on A, Ch2 tip on B, springs on C"; nothing near an X pad.
+- Flashes: relbus (fresh build f8572de2; diag rebuild 5c156423 differs from V7R-016 End's 166f5f40, builds not byte-reproducible) 16:18:20–16:18:31; diag 166f5f40 (`lab/evidence/V7R-018/diag-166f5f40.bin`, copied from the V7R-016 session's build dir) by esptool write_flash 0x10000 16:19:14–16:19:26, hash verified. Decode menu: no field differed.
+- Logger start 16:22:56: every TCA2 row `INA:. BQ:. TCA:. PCA:X(2) VCNL:X(2)` (8/8). X1 (user, look only): "The J6 black wire was out, so was the blue wire. The 10kohm resistor is in place, the black and blue wires were just out hanging". When they came out: not known. X2 (v7 unplugged): black back in the 'V' rail, blue in row 15: "both are good"; probes unmoved: "yes".
 ### Measured values (from log; cite `lab/evidence/V7R-018/...`)
 ### Interpretation (session; labelled as such)
 
