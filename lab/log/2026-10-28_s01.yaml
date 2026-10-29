@@ -254,3 +254,96 @@ measurements:
       preamble: {CH1: "2,2,10000,1,2.000000E-6,-2.000000E-3,0.000000,1.3333E-04,-15000,32768", CH2: "2,2,10000,1,2.000000E-6,-2.000000E-3,0.000000,1.3333E-04,-15000,32768"}
     scope_clock: {set_to: "2026-10-28T20:43:38", read_back: "2026-10-28 20:43:38", ok: true, delta_s: 0.0}
     scpi_errors: []
+  - test_id: "V7R-018"
+    arm: "val_V8"
+    time: "2026-10-28T21:04:16"
+    trigger: {type: "IIC", sweep: "AUTO", when: "ADDR", scl: "CHAN2", sda: "CHAN1", address: "107", direction: "WRIT", awidth: "7", clevel_V: 1.5, dlevel_V: 1.65}
+    timebase_s_div: 0.0001
+    method: "auto"
+    feature: "TODO"
+    values:
+      - {name: "VPP", ch: "CH1", value_mV: 3326.5, raw: "3.3265E+00"}
+      - {name: "VPP", ch: "CH2", value_mV: 3311.3, raw: "3.3113E+00"}
+    captures: ["2026-10-28_V7R-018_val_V8_02.png", "2026-10-28_V7R-018_val_V8_02.csv", "2026-10-28_V7R-018_val_V8_02.setup.bin"]
+    raw_observation: "TODO"
+    source: "tools/lab/capture.py"
+    scope_settings:
+      channels:
+        CH1: {probe: "10", bw_limit: "OFF", scale: "5.000000E-01", offset: "-1.650000E+00", coupling: "DC", invert: "0", units: "VOLT"}
+        CH2: {probe: "10", bw_limit: "OFF", scale: "5.000000E-01", offset: "-1.650000E+00", coupling: "DC", invert: "0", units: "VOLT"}
+      timebase: {scale: "1.000000E-4", offset: "0.000000", mode: "MAIN"}
+      acquire: {srate: "6.250000E+6", mdepth: "1.0000E+04", type: "NORM"}
+      trigger: {mode: "IIC", sweep: "AUTO", when: "ADDR", clevel: "1.500000E0", scl: "CHAN2", sda: "CHAN1", dlevel: "1.650000E0", awidth: "7", address: "107", direction: "WRIT"}
+      bus1: {mode: "IIC", scl_source: "CHAN2", sda_source: "CHAN1", address: "RW", threshold_sda: "1.650000E0", threshold_scl: "1.650000E0"}
+      measure: {threshold_type: "PERC", max_pct: "7.000000E+01", mid_pct: "5.000000E+01", min_pct: "3.000000E+01", amsource: "OFF"}
+      trigger_status: {before: "STOP", after_stop: "STOP"}
+    waveform:
+      mode: "RAW"
+      format: "ASCii"
+      points: 10000
+      read: "single"
+      preamble: {CH1: "2,2,10000,1,1.600000E-7,-8.000000E-4,0.000000,6.6667E-05,-24750,32768", CH2: "2,2,10000,1,1.600000E-7,-8.000000E-4,0.000000,6.6667E-05,-24750,32768"}
+    scope_clock: {set_to: "2026-10-28T21:04:16", read_back: "2026-10-28 21:04:16", ok: true, delta_s: 0.0}
+    scpi_errors: []
+  - test_id: "V7R-018"
+    arm: "val_V8"
+    time: "2026-10-28T21:04:43"
+    trigger: {type: "IIC", sweep: "AUTO", when: "ADDR", scl: "CHAN2", sda: "CHAN1", address: "107", direction: "WRIT", awidth: "7", clevel_V: 1.5, dlevel_V: 1.65}
+    timebase_s_div: 2.0e-05
+    method: "auto"
+    feature: "TODO"
+    values:
+      - {name: "VPP", ch: "CH1", value_mV: 3352.8, raw: "3.3528E+00"}
+      - {name: "VPP", ch: "CH2", value_mV: 3300.2, raw: "3.3002E+00"}
+    captures: ["2026-10-28_V7R-018_val_V8_03.png", "2026-10-28_V7R-018_val_V8_03.csv", "2026-10-28_V7R-018_val_V8_03.setup.bin"]
+    raw_observation: "TODO"
+    source: "tools/lab/capture.py"
+    scope_settings:
+      channels:
+        CH1: {probe: "10", bw_limit: "OFF", scale: "5.000000E-01", offset: "-1.650000E+00", coupling: "DC", invert: "0", units: "VOLT"}
+        CH2: {probe: "10", bw_limit: "OFF", scale: "5.000000E-01", offset: "-1.650000E+00", coupling: "DC", invert: "0", units: "VOLT"}
+      timebase: {scale: "2.000000E-5", offset: "0.000000", mode: "MAIN"}
+      acquire: {srate: "3.125000E+7", mdepth: "1.0000E+04", type: "NORM"}
+      trigger: {mode: "IIC", sweep: "AUTO", when: "ADDR", clevel: "1.500000E0", scl: "CHAN2", sda: "CHAN1", dlevel: "1.650000E0", awidth: "7", address: "107", direction: "WRIT"}
+      bus1: {mode: "IIC", scl_source: "CHAN2", sda_source: "CHAN1", address: "RW", threshold_sda: "1.650000E0", threshold_scl: "1.650000E0"}
+      measure: {threshold_type: "PERC", max_pct: "7.000000E+01", mid_pct: "5.000000E+01", min_pct: "3.000000E+01", amsource: "OFF"}
+      trigger_status: {before: "STOP", after_stop: "STOP"}
+    waveform:
+      mode: "RAW"
+      format: "ASCii"
+      points: 10000
+      read: "single"
+      preamble: {CH1: "2,2,10000,1,3.200000E-8,-1.600000E-4,0.000000,6.6667E-05,-24750,32768", CH2: "2,2,10000,1,3.200000E-8,-1.600000E-4,0.000000,6.6667E-05,-24750,32768"}
+    scope_clock: {set_to: "2026-10-28T21:04:43", read_back: "2026-10-28 21:04:43", ok: true, delta_s: 0.0}
+    scpi_errors: []
+  - test_id: "V7R-018"
+    arm: "val_V8"
+    time: "2026-10-28T21:05:21"
+    trigger: {type: "IIC", sweep: "AUTO", when: "ADDR", scl: "CHAN2", sda: "CHAN1", address: "107", direction: "WRIT", awidth: "7", clevel_V: 1.5, dlevel_V: 1.65}
+    timebase_s_div: 2.0e-05
+    method: "auto"
+    feature: "TODO"
+    values:
+      - {name: "VPP", ch: "CH1", value_mV: 3358.9, raw: "3.3589E+00"}
+      - {name: "VPP", ch: "CH2", value_mV: 3333.3, raw: "3.3333E+00"}
+    captures: ["2026-10-28_V7R-018_val_V8_04.png", "2026-10-28_V7R-018_val_V8_04.csv", "2026-10-28_V7R-018_val_V8_04.setup.bin"]
+    raw_observation: "TODO"
+    source: "tools/lab/capture.py"
+    scope_settings:
+      channels:
+        CH1: {probe: "10", bw_limit: "OFF", scale: "5.000000E-01", offset: "-1.650000E+00", coupling: "DC", invert: "0", units: "VOLT"}
+        CH2: {probe: "10", bw_limit: "OFF", scale: "5.000000E-01", offset: "-1.650000E+00", coupling: "DC", invert: "0", units: "VOLT"}
+      timebase: {scale: "2.000000E-5", offset: "0.000000", mode: "MAIN"}
+      acquire: {srate: "3.125000E+7", mdepth: "1.0000E+04", type: "NORM"}
+      trigger: {mode: "IIC", sweep: "AUTO", when: "ADDR", clevel: "1.500000E0", scl: "CHAN2", sda: "CHAN1", dlevel: "1.650000E0", awidth: "7", address: "107", direction: "WRIT"}
+      bus1: {mode: "IIC", scl_source: "CHAN2", sda_source: "CHAN1", address: "RW", threshold_sda: "1.650000E0", threshold_scl: "1.650000E0"}
+      measure: {threshold_type: "PERC", max_pct: "7.000000E+01", mid_pct: "5.000000E+01", min_pct: "3.000000E+01", amsource: "OFF"}
+      trigger_status: {before: "STOP", after_stop: "STOP"}
+    waveform:
+      mode: "RAW"
+      format: "ASCii"
+      points: 10000
+      read: "single"
+      preamble: {CH1: "2,2,10000,1,3.200000E-8,-1.600000E-4,0.000000,6.6667E-05,-24750,32768", CH2: "2,2,10000,1,3.200000E-8,-1.600000E-4,0.000000,6.6667E-05,-24750,32768"}
+    scope_clock: {set_to: "2026-10-28T21:05:21", read_back: "2026-10-28 21:05:21", ok: true, delta_s: 0.0}
+    scpi_errors: []

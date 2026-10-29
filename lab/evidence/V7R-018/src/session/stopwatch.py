@@ -1,7 +1,7 @@
 # stopwatch.py <serial_log> <mode> <delay_s> [timeout_s] — V7R-018 session helper.
 # Waits for an event in the v7 serial log, then <delay_s> later sends :STOP to the scope and
 # appends "=== STOP sent (<mode>)" to the log. Modes: reboot (a diag line whose t= is below the
-# previous one, or the first t= line after a gap of > 3 s), tca1pca (a TCA1 row with PCA:.).
+# previous one, or the first t= line after a gap of > 3 s), pca (any diag row with PCA:.).
 import re, socket, sys, time
 log, mode, delay = sys.argv[1], sys.argv[2], float(sys.argv[3])
 timeout = float(sys.argv[4]) if len(sys.argv) > 4 else 600
@@ -19,7 +19,7 @@ while time.time() - t0 < timeout and not hit:
         if (last_t is not None and t < last_t) or (time.time() - last_wall > 3 and last_t is not None):
             hit = line.strip()
         last_t, last_wall = t, time.time()
-    if mode == 'tca1pca' and 'TCA1' in line and 'PCA:.' in line:
+    if mode == 'pca' and 'PCA:.' in line:
         hit = line.strip()
 with open(log, 'a') as g:
     if not hit:
