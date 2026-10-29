@@ -106,6 +106,8 @@ The session runs every SCPI command, build, flash, marker and capture; one instr
 | R0–R2 | One action per arm, as the arm table | PWR LED; probes untouched | what you did and when (the terminal's clock); anything seen on the board or the scope screen |
 | End | Session stops loggers; unplug the v7 at the Mac end; rigid #1 out of J5 or left (user's call); probes per the user's call; unplug the Nano | no LEDs | bench state |
 
+**Amendment (2026-10-28, before R0; user chose option A).** Roll mode forces memory depth 1 M at 20 kSa/s (50 µs/point), and `:ACQuire:MDEPth 10k` is ignored. c2 for roll arms becomes "memory depth reads 1 M (roll) and type PEAK". Roll captures use `capture.py --chunked` (not bench-verified). R0 is the trial: if the CSV min/max and VMAX/VMIN disagree by more than 30 mV (c3), or a capture takes more than 5 min, roll arms fall back to the scope's VMAX/VMIN plus the PNG (option B), and c3 is recorded as not checked. Nothing else changes.
+
 --- RUN ---
 
 ## Actual result
