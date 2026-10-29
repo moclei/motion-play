@@ -362,3 +362,13 @@ The "belief changes" line replaces overwriting a "current working theory": STATE
 ## 2026-10-27 · checkpoint (cont.) · board names; battery-cooked boards identified
 - observation (user): the two boards damaged by battery connection are known: two further v7 boards, not brought to the bench. User's naming: #0001 and #0002 (the cooked pair), #0003 (barcode, the test board), #0004 = "Board X" (unmarked), #0005 = "Board #3" (marker). Mapping of these to legacy B1/B2 not established. Supersedes the previous entry's "Which boards: No".
 - STATE §6 boards updated to these names.
+
+## 2026-10-28 · s01 · V7R-018 (card C): SDA/SCL through bench events; ROM lows ~0.59 V; SDA undershoot with rigid on J5
+- session: debugger · direct · operator: user · boards: v7 #0003 (v7-clean diag 166f5f40; relbus f8572de2 for V7 only), Nano ESP32 (blank, powered), rigid #1
+- cards: V7R-018 pre-registered (b00bd95) → amended before R0 (d2bf8af; roll capture) → raw per arm (bb00813 … 3e8d418) → recorded (this commit).
+- map: master: identity (c) — V7R-018 added (no crossing at power-up / SW2 / reflash; J5 hot-plug crossing, weak); master: module/path and master: pin role — V7R-018 (ROM U0TXD lows 588.8 mV at power-up); measurement — V7R-018 (roll capture method). Tombstone: H5 + event excursions. Checkpoint due at V7R-020.
+- belief changes: (Interpretation, labelled) was "the elevated GPIO43 low could depend on post-boot pad setup or routing (ROM/boot-time not covered by V7R-011)", now "it is present when the ROM drives GPIO43 through IO_MUX at power-up", because V7R-018 T1. Was "routine bench events might stress SDA (card C)", now "no crossing at USB power-up, SW2 reset or USB reflash at 5 ms peak resolution; a rigid on J5 brings SDA lows to −0.4 V each iteration (M not separated)", because V7R-018 X1/R2.
+- decisions: user: full validation with one full placement ("1. ok"); SW2 pressed by hand ("2. yes"); E4 rigid-end fitted, board end into J5 ("3. yes"); roll capture option A then fallback B ("Let's try (a)"); end: rigid left in J5, probes seated, v7 and Nano left plugged in.
+- observations not in a card: none beyond the card's raw block (J6 black/blue out at X1; rigid light flicker at E4).
+- bench state at end: v7 #0003 and Nano **plugged in and powered** (user), v7 on v7-clean diag 166f5f40; probes seated at S1 (validated 2026-10-28); rigid #1 in J5; J6 pigtail blue in row 15 (10 kΩ), black in 'V' rail; scope on in roll/PEAK; loggers stopped.
+- next: card F (STATE §8). Desk candidate: J5 SDA undershoot real vs probe ringing.

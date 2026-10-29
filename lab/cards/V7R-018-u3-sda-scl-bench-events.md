@@ -1,7 +1,7 @@
 ---
 test_id: V7R-018
 title: "U3 SDA (TPIO43) and SCL (TPIO44) through bench events on #0003 — power-up, SW2 reset, reflash of the same image, rigid #1 hot-plugged into J5 — excursions outside the rails, and the ROM's TX low on GPIO43 at power-up"
-status: pre-registered
+status: recorded
 created: 2026-10-27
 prereg_commit: self
 baseline:
@@ -129,11 +129,31 @@ The session runs every SCPI command, build, flash, marker and capture; one instr
 - E4: armed 21:07:23 (roll RUN, stopwatch pca 15 s). Operator: "power LED lit, D5 not lit"; "Scope status STOP"; rigid switches "1 is on, 2 is off"; "It's possible. I didn't see anything out of place but plugging in J5 took a bit of pushing and I think the light on the rigid came on, then off again, then on finally, perhaps indicating that it connected and disconnected briefly before finally connecting". Stopwatch hit 21:29:43.000 on `t=1603262  TCA1  INA:. BQ:X(2) TCA:. PCA:. VCNL:X(2)`; STOP 21:29:59. Diag after: TCA1 `BQ:X(2) PCA:. VCNL:X(2)`; TCA0 `BQ:.`; TCA2 `BQ:X(2)`. Screen: CH1 min −0.4092 (t −0.95 s) / max 3.6947 V (t −25.50 s); CH2 min −0.0995 (t −15.10 s) / max 3.5669 V (t −17.60 s); VMAX/VMIN identical. Points beyond R0 envelope ± 50 mV: CH1 > 3.449 V at −25.50 (3.695), −23.20 (3.483), −21.20 (3.483), −19.20 (3.476), −17.55 (3.550), −17.20 (3.468), −17.10 (3.471), −16.90 (3.555); CH1 < −0.25 V at −15.10 (−0.386), −13.10 (−0.399), −11.05 (−0.381), −9.05 (−0.404), −7.10 (−0.374), −4.95 (−0.379), −2.95 (−0.399), −0.95 (−0.409); CH2 > 3.449 V at −25.50 (3.527), −17.60 (3.567), −16.90 (3.567); CH2 < −0.25 V none. PNG `E4_01.png`: ~2 s bursts throughout; small upward spikes above the 3.3 V line at ~−25.5 s and ~−17 s.
 - R2 (operator "go", hands off; rigid #1 on J5): roll 56 s, STOP. Screen: CH1 min −0.4296 / max 3.3892 V; CH2 min −0.1044 / max 3.3573 V. CH1 < −0.25 V at 25 of 25 ~2 s iterations (−0.356 to −0.430 V); CH1 > 3.449 V none; CH2 beyond envelope none. Diag TCA1 `BQ:X(2) PCA:. VCNL:X(2)` at 21:35:45.
 ### Measured values (from log; cite `lab/evidence/V7R-018/...`)
+Limits: V_hi = 3.272 + 0.30 = 3.572 V (V7 CH1); V_lo = −0.30 V. R0 envelope ± 50 mV: CH1 3.449 / −0.266 V; CH2 3.443 / −0.149 V. Roll arms: screen data, 1000 × 50 ms, PEAK (`captures/<arm>_01_screen.csv`, `<arm>_01.png`).
+| Arm | CH1 max | CH1 min | CH2 max | CH2 min | Crosses a limit (and the R0 envelope) |
+|---|---|---|---|---|---|
+| R0 | 3.399 | −0.216 | 3.393 | −0.099 | — (reference) |
+| E1a power-up | 3.425 | −0.211 | 3.458 | −0.115 | none |
+| E2 SW2 | 3.432 | −0.206 | 3.461 | −0.089 | none |
+| E3 reflash (811 pts) | 3.427 | −0.216 | 3.458 | −0.112 | none |
+| R1 | 3.399 | −0.200 | 3.360 | −0.092 | — (anchor) |
+| E4 hot-plug J5 | **3.695** (−25.50 s, 1 bin) | **−0.409** (8 bins, every ~2 s from −15.1 s) | 3.567 | −0.099 | CH1 both; CH2 none |
+| R2 (rigid on J5) | 3.389 | **−0.430** (25/25 iterations, −0.356 to −0.430) | 3.357 | −0.104 | CH1 low; CH2 none (recorded, not an anchor) |
+Anchor R1 − R0: CH1 max 0.0, CH1 min 15.3, CH2 max 32.8, CH2 min 7.6 mV (all ≤ 50): pass.
+Controls: c1 pass (R0 CH1 −0.216, CH2 −0.099 V ≤ 0.50); c2 pass as amended (roll PEAK, 1 M; E1b NORM, 10 k); c3 not independent (VMAX/VMIN = screen data to the digit; option B); c4 pass (TCA2 `BQ:X(2)` after E1a, E2, E3, E4; E4 adds TCA1 `PCA:.`); c5 pass (`captures/…val_V8_01.png` before R0, `…val_V8_04.png` before R1).
+E1b (`captures/2026-10-28_V7R-018_E1b_01.csv`, `e1b_tx.py`): burst present (CH1-only activity 10.9–13 ms and 16–18 ms; 143 falls after the ramp bin, CH2 > 1.65 V at each); V_TX median **588.8 mV** (n 452, 540.4–626.9, sd 16.2); model 676 mV; normal-pad model ≈ 45 mV.
+E3 (`captures/…E3_01.png`): CH1-only activity for ~10.5 s during the flash, lows near the same level by eye (not counted).
+
 ### Interpretation (session; labelled as such)
+- (Interpretation, V7R-018) The ROM drives GPIO43 at power-up, at an SW2 reset and through a USB flash, and its lows sit at ~0.59 V, not ~0.05 V: the elevated low is present before any application code configures the pad, through the IO_MUX UART path. V_TX is 88 mV below the R28-only model; this card doesn't separate why (ROM pull-up state, drive setting, or the model's R28 nominal).
+- (Interpretation, V7R-018) The SDA low-side crossing (−0.36 to −0.43 V) is a steady-state feature of every diag iteration while rigid #1 is on J5 (R2), not a plug-in transient; SCL's lows stay at −0.1 V in the same frames. Probe ringing on SDA's fall edges with the extra J5 load (M) is not separated from a real undershoot. Magnitude (argued): ~0.1 V past the limit, µs-scale ringing, no low-impedance source; as a damage route this is weak.
+- (Interpretation, V7R-018) The single +3.695 V bin at E4 −25.5 s coincides with the operator's "light came on, then off, then on" during a firm push; CH2 reached 3.527 V in the same bin. Partial contact, hand coupling and probe pickup are not separated. ≤ 50 ms wide by resolution; peak only.
+- Power-up, reset and reflash produce no crossing on either line at this resolution (5 ms/point peak).
 
 ## Conclusion
-- Outcome row matched: ...
-- Hypotheses excluded: ...
-- **Strength:** ...
-- Revert-on-null done: ...
+- Outcome row matched: **X1** (E4 only: CH1 crosses V_hi and V_lo, CH2 neither; E1a, E2, E3 cross nothing) and **T1** (burst present, V_TX 588.8 mV, 11.8 mV inside the 577 mV edge).
+- Hypotheses excluded: H3 (no excursion anywhere), H2 for E4 (common excursion), H5 (the elevated low needs something present only after boot). H1 supported (weakly) for E4 only; the low-side part persists with the rigid connected (R2), so it is not specific to the plug-in event. H4 supported (weakly). M not excluded for the E4/R2 SDA undershoot.
+- **Strength:** measured-refuted for H5 (one board, one power-up, 452 samples) and for H1/H2 at power-up, SW2 reset and USB reflash (one event each, 5 ms peak resolution, limits ±0.3 V); measured-supported (weak) for H1 at a rigid hot-plug into J5 (one event; low side steady-state with the rigid; high side one 50 ms bin); `lab/evidence/V7R-018/`
+- Deviations: (1) session log `2026-10-28_s01` (date rolled over), not `2026-10-27_s04`. (2) J6 black and blue found out of the breadboard after V7 (X1), restored before V8 (X2); V7 ran with them out. (3) Roll forces 1 M points; amendment (option A) tried, `--chunked` failed; option B (screen data, VMAX/VMIN) used; c3 not independent. (4) E1a attempt 1 not captured (session stopwatch 600 s timeout); one extra uncaptured USB power-up. (5) V8 before R1 without a replug (diag frames); two recaptures (timebase dropped after roll; decode display off after roll, `:BUS1:DISPlay ON`). (6) E3's roll held ~40 s, not 50 s. (7) E2 not pivoted (SW2 pressed). (8) End: v7 and Nano left powered, rigid #1 left in J5, probes seated at S1 (user).
+- Revert-on-null done: n/a (no delta); U3 on v7-clean diag 166f5f40 (reflashed at E3, 21:03:00)
 - Result commit: self

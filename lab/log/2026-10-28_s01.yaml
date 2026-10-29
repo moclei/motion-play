@@ -28,7 +28,7 @@ measurements:
     trigger: {type: "EDGE", sweep: "AUTO", source: "CHAN1", slope: "POS", level_V: 1.5}
     timebase_s_div: 0.0002
     method: "auto"
-    feature: "TODO"
+    feature: "V3 CH1 Cal square wave"
     values:
       - {name: "VAMP", ch: "CH1", value_mV: 3003.7, raw: "3.0037E+00"}
       - {name: "VTOP", ch: "CH1", value_mV: 2967.7, raw: "2.9677E+00"}
@@ -37,7 +37,7 @@ measurements:
       - {name: "VTOP", ch: "CH2", valid: false, raw: "9.9000E+37"}
       - {name: "VBASe", ch: "CH2", valid: false, raw: "9.9000E+37"}
     captures: ["2026-10-28_V7R-018_val_V3_01.png", "2026-10-28_V7R-018_val_V3_01.csv", "2026-10-28_V7R-018_val_V3_01.setup.bin"]
-    raw_observation: "TODO"
+    raw_observation: "flat tops, square corners (user)"
     source: "tools/lab/capture.py"
     scope_settings:
       channels:
@@ -57,13 +57,19 @@ measurements:
       preamble: {CH1: "2,2,10000,1,4.000000E-7,-2.000000E-3,0.000000,1.3333E-04,-11250,32768", CH2: "2,2,10000,1,4.000000E-7,-2.000000E-3,0.000000,6.6667E-06,-492423,32768"}
     scope_clock: {set_to: "2026-10-28T10:19:04", read_back: "2026-10-28 10:19:05", ok: true, delta_s: 1.0}
     scpi_errors: []
+    ai_read:
+      - capture: 2026-10-28_V7R-018_val_V3_01.png
+        settings_seen: {CH1_v_div: 1V, CH1_offset: -1.50V, CH2_v_div: 50mV, timebase: 200us/div, acq: Norm 2.5MSa/s 10kpts, trigger: edge CH1 rising 1.50V}
+        values_seen: {Vbase_C1: -36.000mV, Vpp_C1: 3.1721V, Vamp_C2: '*****'}
+        mismatch: none
+
   - test_id: "V7R-018"
     arm: "val_V3"
     time: "2026-10-28T11:38:25"
     trigger: {type: "EDGE", sweep: "AUTO", source: "CHAN2", slope: "POS", level_V: 1.5}
     timebase_s_div: 0.0002
     method: "auto"
-    feature: "TODO"
+    feature: "V3 CH2 Cal square wave"
     values:
       - {name: "VAMP", ch: "CH1", valid: false, raw: "9.9000E+37"}
       - {name: "VTOP", ch: "CH1", valid: false, raw: "9.9000E+37"}
@@ -72,7 +78,7 @@ measurements:
       - {name: "VTOP", ch: "CH2", value_mV: 2967.7, raw: "2.9677E+00"}
       - {name: "VBASe", ch: "CH2", value_mV: -36.0, raw: "-3.6000E-02"}
     captures: ["2026-10-28_V7R-018_val_V3_02.png", "2026-10-28_V7R-018_val_V3_02.csv", "2026-10-28_V7R-018_val_V3_02.setup.bin"]
-    raw_observation: "TODO"
+    raw_observation: "yes (CH2 on Cal)"
     source: "tools/lab/capture.py"
     scope_settings:
       channels:
@@ -93,18 +99,24 @@ measurements:
     scope_clock: {set_to: "2026-10-28T11:38:25", read_back: "2026-10-28 11:38:25", ok: true, delta_s: 0.0}
     scpi_errors: []
     channel_drift: ["CH2.v_div_V: earlier val_V3 entry 0.05, scope 1.0", "CH2.offset_V: earlier val_V3 entry -3.28282, scope -1.5"]
+    ai_read:
+      - capture: 2026-10-28_V7R-018_val_V3_02.png
+        settings_seen: {CH1_v_div: 1V, CH2_v_div: 1V, offsets: -1.50V, timebase: 200us/div, trigger: edge CH2 rising 1.50V}
+        values_seen: {Vamp_C2: 3.0037V, Vtop_C2: 2.9677V, Vbase_C2: -36.000mV, Vpp_C2: 3.1588V}
+        mismatch: none
+
   - test_id: "V7R-018"
     arm: "val_V5ctl"
     time: "2026-10-28T12:30:20"
     trigger: {type: "EDGE", sweep: "AUTO", source: "CHAN1", slope: "POS", level_V: 1.5}
     timebase_s_div: 1.0e-05
     method: "auto"
-    feature: "TODO"
+    feature: "V5a noise control on Cal ground"
     values:
       - {name: "VPP", ch: "CH1", value_mV: 21.6, raw: "2.1600E-02"}
       - {name: "VPP", ch: "CH2", value_mV: 25.133, raw: "2.5133E-02"}
     captures: ["2026-10-28_V7R-018_val_V5ctl_01.png", "2026-10-28_V7R-018_val_V5ctl_01.csv", "2026-10-28_V7R-018_val_V5ctl_01.setup.bin"]
-    raw_observation: "TODO"
+    raw_observation: "both tips and springs direct on the Cal ground terminal"
     source: "tools/lab/capture.py"
     scope_settings:
       channels:
@@ -124,18 +136,20 @@ measurements:
       preamble: {CH1: "2,2,10000,1,1.600000E-8,-8.000000E-5,0.000000,6.6667E-05,-24750,32768", CH2: "2,2,10000,1,1.600000E-8,-8.000000E-5,0.000000,6.6667E-05,-24750,32768"}
     scope_clock: {set_to: "2026-10-28T12:30:20", read_back: "2026-10-28 12:30:20", ok: true, delta_s: 0.0}
     scpi_errors: []
+    ai_read: []   # PNG not opened by the session; values from the CSV (noise_floor.py / i2c_frame.py)
+
   - test_id: "V7R-018"
     arm: "val_V5"
     time: "2026-10-28T16:11:58"
     trigger: {type: "EDGE", sweep: "AUTO", source: "CHAN1", slope: "POS", level_V: 1.5}
     timebase_s_div: 1.0e-05
     method: "auto"
-    feature: "TODO"
+    feature: "V5b noise on pad C, v7 powered"
     values:
       - {name: "VPP", ch: "CH1", value_mV: 23.2, raw: "2.3200E-02"}
       - {name: "VPP", ch: "CH2", value_mV: 24.133, raw: "2.4133E-02"}
     captures: ["2026-10-28_V7R-018_val_V5_01.png", "2026-10-28_V7R-018_val_V5_01.csv", "2026-10-28_V7R-018_val_V5_01.setup.bin"]
-    raw_observation: "TODO"
+    raw_observation: "power on"
     source: "tools/lab/capture.py"
     scope_settings:
       channels:
@@ -155,18 +169,20 @@ measurements:
       preamble: {CH1: "2,2,10000,1,1.600000E-8,-8.000000E-5,0.000000,6.6667E-05,-24750,32768", CH2: "2,2,10000,1,1.600000E-8,-8.000000E-5,0.000000,6.6667E-05,-24750,32768"}
     scope_clock: {set_to: "2026-10-28T16:11:58", read_back: "2026-10-28 16:11:58", ok: true, delta_s: 0.0}
     scpi_errors: []
+    ai_read: []   # PNG not opened by the session; values from the CSV (noise_floor.py / i2c_frame.py)
+
   - test_id: "V7R-018"
     arm: "val_V7"
     time: "2026-10-28T16:18:59"
     trigger: {type: "EDGE", sweep: "AUTO", source: "CHAN1", slope: "POS", level_V: 1.5}
     timebase_s_div: 1.0e-05
     method: "auto"
-    feature: "TODO"
+    feature: "V7 idle high, relbus"
     values:
       - {name: "VPP", ch: "CH1", value_mV: 38.0, raw: "3.8000E-02"}
       - {name: "VPP", ch: "CH2", value_mV: 27.0, raw: "2.7000E-02"}
     captures: ["2026-10-28_V7R-018_val_V7_01.png", "2026-10-28_V7R-018_val_V7_01.csv", "2026-10-28_V7R-018_val_V7_01.setup.bin"]
-    raw_observation: "TODO"
+    raw_observation: "Ch1 tip on A, Ch2 tip on B, springs on C; pwr on"
     source: "tools/lab/capture.py"
     scope_settings:
       channels:
@@ -186,18 +202,20 @@ measurements:
       preamble: {CH1: "2,2,10000,1,1.600000E-8,-8.000000E-5,0.000000,6.6667E-05,-24750,32768", CH2: "2,2,10000,1,1.600000E-8,-8.000000E-5,0.000000,6.6667E-05,-24750,32768"}
     scope_clock: {set_to: "2026-10-28T16:18:59", read_back: "2026-10-28 16:18:59", ok: true, delta_s: 0.0}
     scpi_errors: []
+    ai_read: []   # PNG not opened by the session; values from the CSV (noise_floor.py / i2c_frame.py)
+
   - test_id: "V7R-018"
     arm: "val_V8"
     time: "2026-10-28T18:25:25"
     trigger: {type: "IIC", sweep: "AUTO", when: "ADDR", scl: "CHAN2", sda: "CHAN1", address: "107", direction: "WRIT", awidth: "7", clevel_V: 1.5, dlevel_V: 1.5}
     timebase_s_div: 2.0e-05
     method: "auto"
-    feature: "TODO"
+    feature: "V8 decode at power-up"
     values:
       - {name: "VPP", ch: "CH1", value_mV: 3337.8, raw: "3.3378E+00"}
       - {name: "VPP", ch: "CH2", value_mV: 3287.2, raw: "3.2872E+00"}
     captures: ["2026-10-28_V7R-018_val_V8_01.png", "2026-10-28_V7R-018_val_V8_01.csv", "2026-10-28_V7R-018_val_V8_01.setup.bin"]
-    raw_observation: "TODO"
+    raw_observation: "pwr on (J6 black/blue restored at X2)"
     source: "tools/lab/capture.py"
     scope_settings:
       channels:
@@ -217,13 +235,19 @@ measurements:
       preamble: {CH1: "2,2,10000,1,3.200000E-8,-1.600000E-4,0.000000,6.6667E-05,-24750,32768", CH2: "2,2,10000,1,3.200000E-8,-1.600000E-4,0.000000,6.6667E-05,-24750,32768"}
     scope_clock: {set_to: "2026-10-28T18:25:25", read_back: "2026-10-28 18:25:25", ok: true, delta_s: 0.0}
     scpi_errors: []
+    ai_read:
+      - capture: 2026-10-28_V7R-018_val_V8_01.png
+        settings_seen: {CH1_v_div: 500mV, CH2_v_div: 500mV, offsets: -1.65V, timebase: 20us/div, trigger: I2C CH1}
+        values_seen: {decode: 'Write:d6 A:0', Vbase_C1: 643.06mV, Vbase_C2: 54.266mV}
+        mismatch: none
+
   - test_id: "V7R-018"
     arm: "E1b"
     time: "2026-10-28T20:43:38"
     trigger: {type: "EDGE", sweep: "AUTO", source: "CHAN1", slope: "POS", level_V: 1.65}
     timebase_s_div: 0.002
     method: "auto"
-    feature: "TODO"
+    feature: "E1b power-up, ROM output on SDA"
     values:
       - {name: "VMAX", ch: "CH1", value_mV: 3320.4, raw: "3.3204E+00"}
       - {name: "VMIN", ch: "CH1", value_mV: -42.667, raw: "-4.2667E-02"}
@@ -234,7 +258,7 @@ measurements:
       - {name: "VTOP", ch: "CH2", value_mV: 3245.9, raw: "3.2459E+00"}
       - {name: "VBASe", ch: "CH2", value_mV: 708.53, raw: "7.0853E-01"}
     captures: ["2026-10-28_V7R-018_E1b_01.png", "2026-10-28_V7R-018_E1b_01.csv", "2026-10-28_V7R-018_E1b_01.setup.bin"]
-    raw_observation: "TODO"
+    raw_observation: "E1b-1 pwr off; E1b-2 power on"
     source: "tools/lab/capture.py"
     scope_settings:
       channels:
@@ -254,18 +278,24 @@ measurements:
       preamble: {CH1: "2,2,10000,1,2.000000E-6,-2.000000E-3,0.000000,1.3333E-04,-15000,32768", CH2: "2,2,10000,1,2.000000E-6,-2.000000E-3,0.000000,1.3333E-04,-15000,32768"}
     scope_clock: {set_to: "2026-10-28T20:43:38", read_back: "2026-10-28 20:43:38", ok: true, delta_s: 0.0}
     scpi_errors: []
+    ai_read:
+      - capture: 2026-10-28_V7R-018_E1b_01.png
+        settings_seen: {CH1_v_div: 1V, CH2_v_div: 1V, offsets: -2.00V, timebase: 2ms/div, delay: 8.00ms, acq: Norm 500kSa/s 10kpts, trigger: edge CH1 rising 1.65V}
+        values_seen: {Vbase_C1: 583.46mV, Vamp_C2: 2.5373V, Vtop_C2: 3.2458V, Vbase_C2: 708.53mV}
+        mismatch: none
+
   - test_id: "V7R-018"
     arm: "val_V8"
     time: "2026-10-28T21:04:16"
     trigger: {type: "IIC", sweep: "AUTO", when: "ADDR", scl: "CHAN2", sda: "CHAN1", address: "107", direction: "WRIT", awidth: "7", clevel_V: 1.5, dlevel_V: 1.65}
     timebase_s_div: 0.0001
     method: "auto"
-    feature: "TODO"
+    feature: "V8 re-check before R1, no replug"
     values:
       - {name: "VPP", ch: "CH1", value_mV: 3326.5, raw: "3.3265E+00"}
       - {name: "VPP", ch: "CH2", value_mV: 3311.3, raw: "3.3113E+00"}
     captures: ["2026-10-28_V7R-018_val_V8_02.png", "2026-10-28_V7R-018_val_V8_02.csv", "2026-10-28_V7R-018_val_V8_02.setup.bin"]
-    raw_observation: "TODO"
+    raw_observation: "none (session)"
     source: "tools/lab/capture.py"
     scope_settings:
       channels:
@@ -285,18 +315,24 @@ measurements:
       preamble: {CH1: "2,2,10000,1,1.600000E-7,-8.000000E-4,0.000000,6.6667E-05,-24750,32768", CH2: "2,2,10000,1,1.600000E-7,-8.000000E-4,0.000000,6.6667E-05,-24750,32768"}
     scope_clock: {set_to: "2026-10-28T21:04:16", read_back: "2026-10-28 21:04:16", ok: true, delta_s: 0.0}
     scpi_errors: []
+    ai_read:
+      - capture: 2026-10-28_V7R-018_val_V8_02.png
+        settings_seen: {timebase: 100us/div (set dropped), CH1/CH2: 500mV -1.65V}
+        values_seen: {decode band: absent}
+        mismatch: none
+
   - test_id: "V7R-018"
     arm: "val_V8"
     time: "2026-10-28T21:04:43"
     trigger: {type: "IIC", sweep: "AUTO", when: "ADDR", scl: "CHAN2", sda: "CHAN1", address: "107", direction: "WRIT", awidth: "7", clevel_V: 1.5, dlevel_V: 1.65}
     timebase_s_div: 2.0e-05
     method: "auto"
-    feature: "TODO"
+    feature: "V8 re-check before R1, no replug"
     values:
       - {name: "VPP", ch: "CH1", value_mV: 3352.8, raw: "3.3528E+00"}
       - {name: "VPP", ch: "CH2", value_mV: 3300.2, raw: "3.3002E+00"}
     captures: ["2026-10-28_V7R-018_val_V8_03.png", "2026-10-28_V7R-018_val_V8_03.csv", "2026-10-28_V7R-018_val_V8_03.setup.bin"]
-    raw_observation: "TODO"
+    raw_observation: "none (session)"
     source: "tools/lab/capture.py"
     scope_settings:
       channels:
@@ -316,18 +352,24 @@ measurements:
       preamble: {CH1: "2,2,10000,1,3.200000E-8,-1.600000E-4,0.000000,6.6667E-05,-24750,32768", CH2: "2,2,10000,1,3.200000E-8,-1.600000E-4,0.000000,6.6667E-05,-24750,32768"}
     scope_clock: {set_to: "2026-10-28T21:04:43", read_back: "2026-10-28 21:04:43", ok: true, delta_s: 0.0}
     scpi_errors: []
+    ai_read:
+      - capture: 2026-10-28_V7R-018_val_V8_03.png
+        settings_seen: {timebase: 20us/div, CH1/CH2: 500mV -1.65V}
+        values_seen: {decode band: absent (BUS1 display 0)}
+        mismatch: none
+
   - test_id: "V7R-018"
     arm: "val_V8"
     time: "2026-10-28T21:05:21"
     trigger: {type: "IIC", sweep: "AUTO", when: "ADDR", scl: "CHAN2", sda: "CHAN1", address: "107", direction: "WRIT", awidth: "7", clevel_V: 1.5, dlevel_V: 1.65}
     timebase_s_div: 2.0e-05
     method: "auto"
-    feature: "TODO"
+    feature: "V8 re-check before R1, no replug"
     values:
       - {name: "VPP", ch: "CH1", value_mV: 3358.9, raw: "3.3589E+00"}
       - {name: "VPP", ch: "CH2", value_mV: 3333.3, raw: "3.3333E+00"}
     captures: ["2026-10-28_V7R-018_val_V8_04.png", "2026-10-28_V7R-018_val_V8_04.csv", "2026-10-28_V7R-018_val_V8_04.setup.bin"]
-    raw_observation: "TODO"
+    raw_observation: "none (session)"
     source: "tools/lab/capture.py"
     scope_settings:
       channels:
@@ -347,3 +389,8 @@ measurements:
       preamble: {CH1: "2,2,10000,1,3.200000E-8,-1.600000E-4,0.000000,6.6667E-05,-24750,32768", CH2: "2,2,10000,1,3.200000E-8,-1.600000E-4,0.000000,6.6667E-05,-24750,32768"}
     scope_clock: {set_to: "2026-10-28T21:05:21", read_back: "2026-10-28 21:05:21", ok: true, delta_s: 0.0}
     scpi_errors: []
+    ai_read:
+      - capture: 2026-10-28_V7R-018_val_V8_04.png
+        settings_seen: {timebase: 20us/div, CH1/CH2: 500mV -1.65V, trigger: I2C CH1}
+        values_seen: {decode: 'Write:d6'}
+        mismatch: none
