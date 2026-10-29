@@ -217,3 +217,40 @@ measurements:
       preamble: {CH1: "2,2,10000,1,3.200000E-8,-1.600000E-4,0.000000,6.6667E-05,-24750,32768", CH2: "2,2,10000,1,3.200000E-8,-1.600000E-4,0.000000,6.6667E-05,-24750,32768"}
     scope_clock: {set_to: "2026-10-28T18:25:25", read_back: "2026-10-28 18:25:25", ok: true, delta_s: 0.0}
     scpi_errors: []
+  - test_id: "V7R-018"
+    arm: "E1b"
+    time: "2026-10-28T20:43:38"
+    trigger: {type: "EDGE", sweep: "AUTO", source: "CHAN1", slope: "POS", level_V: 1.65}
+    timebase_s_div: 0.002
+    method: "auto"
+    feature: "TODO"
+    values:
+      - {name: "VMAX", ch: "CH1", value_mV: 3320.4, raw: "3.3204E+00"}
+      - {name: "VMIN", ch: "CH1", value_mV: -42.667, raw: "-4.2667E-02"}
+      - {name: "VTOP", ch: "CH1", value_mV: 3245.9, raw: "3.2459E+00"}
+      - {name: "VBASe", ch: "CH1", value_mV: 583.47, raw: "5.8347E-01"}
+      - {name: "VMAX", ch: "CH2", value_mV: 3407.9, raw: "3.4079E+00"}
+      - {name: "VMIN", ch: "CH2", value_mV: 708.53, raw: "7.0853E-01"}
+      - {name: "VTOP", ch: "CH2", value_mV: 3245.9, raw: "3.2459E+00"}
+      - {name: "VBASe", ch: "CH2", value_mV: 708.53, raw: "7.0853E-01"}
+    captures: ["2026-10-28_V7R-018_E1b_01.png", "2026-10-28_V7R-018_E1b_01.csv", "2026-10-28_V7R-018_E1b_01.setup.bin"]
+    raw_observation: "TODO"
+    source: "tools/lab/capture.py"
+    scope_settings:
+      channels:
+        CH1: {probe: "10", bw_limit: "OFF", scale: "1.000000E+00", offset: "-2.000000E+00", coupling: "DC", invert: "0", units: "VOLT"}
+        CH2: {probe: "10", bw_limit: "OFF", scale: "1.000000E+00", offset: "-2.000000E+00", coupling: "DC", invert: "0", units: "VOLT"}
+      timebase: {scale: "2.000000E-3", offset: "8.000000E-3", mode: "MAIN"}
+      acquire: {srate: "5.000000E+5", mdepth: "1.0000E+04", type: "NORM"}
+      trigger: {mode: "EDGE", sweep: "AUTO", source: "CHAN1", slope: "POS", level: "1.650000E0"}
+      bus1: {mode: "IIC", scl_source: "CHAN2", sda_source: "CHAN1", address: "RW", threshold_sda: "1.650000E0", threshold_scl: "1.650000E0"}
+      measure: {threshold_type: "PERC", max_pct: "7.000000E+01", mid_pct: "5.000000E+01", min_pct: "3.000000E+01", amsource: "OFF"}
+      trigger_status: {before: "STOP", after_stop: "STOP"}
+    waveform:
+      mode: "RAW"
+      format: "ASCii"
+      points: 10000
+      read: "single"
+      preamble: {CH1: "2,2,10000,1,2.000000E-6,-2.000000E-3,0.000000,1.3333E-04,-15000,32768", CH2: "2,2,10000,1,2.000000E-6,-2.000000E-3,0.000000,1.3333E-04,-15000,32768"}
+    scope_clock: {set_to: "2026-10-28T20:43:38", read_back: "2026-10-28 20:43:38", ok: true, delta_s: 0.0}
+    scpi_errors: []
