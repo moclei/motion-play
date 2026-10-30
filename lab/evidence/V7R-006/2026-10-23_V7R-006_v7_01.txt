@@ -1,0 +1,1586 @@
+2026-10-23T23:14:53.291 BQ24195 configured: IINLIM=2A, watchdog disabled
+2026-10-23T23:14:53.291 [PowerMonitor] INA219 configured: 10mR shunt, 1mA/LSB, 8A max
+2026-10-23T23:14:53.291 [PWR after BQ config] VSYS=4.21 V, I=0 mA
+2026-10-23T23:14:53.291 Display initialized
+2026-10-23T23:14:53.291 [PWR after display init] VSYS=4.21 V, I=0 mA
+2026-10-23T23:14:53.291 
+2026-10-23T23:14:53.291 === Starting System Initialization ===
+2026-10-23T23:14:53.291 
+2026-10-23T23:14:53.291 [DIAG_NO_WIFI] Skipping WiFi/MQTT init, forcing radio off
+2026-10-23T23:14:53.292 WARNING: Cloud config unavailable, sensors will use defaults
+2026-10-23T23:14:53.292 
+2026-10-23T23:14:53.292 [Config] Detection mode: heuristic (useMLDetection=0)
+2026-10-23T23:14:53.292 Initializing sensors...
+2026-10-23T23:14:53.292 [PWR before sensor init] VSYS=4.21 V, I=0 mA
+2026-10-23T23:14:53.292 Initializing Sensor Manager...
+2026-10-23T23:14:53.292 [ 54522][W][Wire.cpp:301] begin(): Bus already started in Master Mode.
+2026-10-23T23:14:53.292 I2C: 400 kHz, default drive, no filters, default pulls [v7-clean]
+2026-10-23T23:14:53.292 Configuration:
+2026-10-23T23:14:53.292   Sample Rate: 1000 Hz
+2026-10-23T23:14:53.292   LED Current: 200mA
+2026-10-23T23:14:53.292   Integration Time: 1T
+2026-10-23T23:14:53.292   High Resolution: enabled
+2026-10-23T23:14:53.292   Read Ambient: enabled
+2026-10-23T23:14:53.292 TCA9548A initialized
+2026-10-23T23:14:53.292 
+2026-10-23T23:14:53.292 
+2026-10-23T23:14:53.292 ╔══════════════════════════════════════════════════════════════════════════════╗
+2026-10-23T23:14:53.292 ║                        I2C DEBUG SCAN - TROUBLESHOOTING                      ║
+2026-10-23T23:14:53.292 ╠══════════════════════════════════════════════════════════════════════════════╣
+2026-10-23T23:14:53.292 ║ STEP 1: Scanning main I2C bus (no TCA channel selected)                      ║
+2026-10-23T23:14:53.292 ╠══════════════════════════════════════════════════════════════════════════════╣
+2026-10-23T23:14:53.292 ║   Found device at 0x40 - Unknown
+2026-10-23T23:14:53.292 ║   Found device at 0x6B - Unknown
+2026-10-23T23:14:53.292 ║   Found device at 0x70 - TCA9548A (main mux)
+2026-10-23T23:14:53.292 ║   Total: 3 device(s) on main bus
+2026-10-23T23:14:53.292 ╠══════════════════════════════════════════════════════════════════════════════╣
+2026-10-23T23:14:53.292 ║ STEP 2: Scanning each TCA9548A channel for connected devices                 ║
+2026-10-23T23:14:53.292 ╠══════════════════════════════════════════════════════════════════════════════╣
+2026-10-23T23:14:53.292 ║ TCA Channel 0:
+2026-10-23T23:14:53.292 ║   ✓ Found: 0x40 (Unknown)
+2026-10-23T23:14:53.292 ║   ✓ Found: 0x6B (Unknown)
+2026-10-23T23:14:53.292 ║ TCA Channel 1:
+2026-10-23T23:14:53.292 ║   ✓ Found: 0x40 (Unknown)
+2026-10-23T23:14:53.292 ║   ✓ Found: 0x6B (Unknown)
+2026-10-23T23:14:53.292 ║ TCA Channel 2:
+2026-10-23T23:14:53.292 ║   ✓ Found: 0x40 (Unknown)
+2026-10-23T23:14:53.292 ║   ✓ Found: 0x76 (PCA9546A?)
+2026-10-23T23:14:53.292 ║ TCA Channel 3:
+2026-10-23T23:14:53.292 ║   ✓ Found: 0x40 (Unknown)
+2026-10-23T23:14:53.292 ║   ✓ Found: 0x6B (Unknown)
+2026-10-23T23:14:53.292 ║ TCA Channel 4:
+2026-10-23T23:14:53.292 ║   ✓ Found: 0x40 (Unknown)
+2026-10-23T23:14:53.292 ║   ✓ Found: 0x6B (Unknown)
+2026-10-23T23:14:53.292 ║ TCA Channel 5:
+2026-10-23T23:14:53.292 ║   ✓ Found: 0x40 (Unknown)
+2026-10-23T23:14:53.292 ║   ✓ Found: 0x6B (Unknown)
+2026-10-23T23:14:53.292 ║ TCA Channel 6:
+2026-10-23T23:14:53.494 ║   ✓ Found: 0x40 (Unknown)
+2026-10-23T23:14:53.494 ║   ✓ Found: 0x6B (Unknown)
+2026-10-23T23:14:53.494 ║ TCA Channel 7:
+2026-10-23T23:14:53.494 ║   ✓ Found: 0x40 (Unknown)
+2026-10-23T23:14:53.494 ║   ✓ Found: 0x6B (Unknown)
+2026-10-23T23:14:53.494 ╠══════════════════════════════════════════════════════════════════════════════╣
+2026-10-23T23:14:53.494 ║ STEP 3: Direct PCA9546A address probe at 0x74 on TCA channel 0               ║
+2026-10-23T23:14:53.494 ╠══════════════════════════════════════════════════════════════════════════════╣
+2026-10-23T23:14:53.494 ║   TCA channel 0 selected successfully                                       ║
+2026-10-23T23:14:53.494 ║   Attempt 1: Address 0x74 -> Error 2 (NACK on address)
+2026-10-23T23:14:53.494 ║   Attempt 2: Address 0x74 -> Error 2 (NACK on address)
+2026-10-23T23:14:53.494 ║   Attempt 3: Address 0x74 -> Error 2 (NACK on address)
+2026-10-23T23:14:53.695 ║   Attempting to read control register from 0x74...                          ║
+2026-10-23T23:14:53.695 [ 54958][E][Wire.cpp:499] requestFrom(): i2cWriteReadNonStop returned Error -1
+2026-10-23T23:14:53.695 ║   ⚠️ Write OK but read returned 0 bytes                                    ║
+2026-10-23T23:14:53.695 ╠══════════════════════════════════════════════════════════════════════════════╣
+2026-10-23T23:14:53.695 ║ DEBUG SCAN COMPLETE - Check results above for clues                          ║
+2026-10-23T23:14:53.695 ╚══════════════════════════════════════════════════════════════════════════════╝
+2026-10-23T23:14:53.695 
+2026-10-23T23:14:53.696 Scanning for PCA9546A multiplexers on TCA channels...
+2026-10-23T23:14:53.696   Scanning TCA channel 0
+2026-10-23T23:14:53.696     No PCA found on this channel
+2026-10-23T23:14:53.696   Scanning TCA channel 1
+2026-10-23T23:14:53.696     No PCA found on this channel
+2026-10-23T23:14:53.696   Scanning TCA channel 2
+2026-10-23T23:14:53.696     PCA9546A found at 0x76
+2026-10-23T23:14:53.696 Found 1 sensor board(s)
+2026-10-23T23:14:53.696 Initializing sensor 0 (P1S1)...
+2026-10-23T23:14:53.696   No sensor board on this channel
+2026-10-23T23:14:53.696 Initializing sensor 1 (P1S2)...
+2026-10-23T23:14:53.696   No sensor board on this channel
+2026-10-23T23:14:53.696 Initializing sensor 2 (P2S1)...
+2026-10-23T23:14:53.696   No sensor board on this channel
+2026-10-23T23:14:53.696 Initializing sensor 3 (P2S2)...
+2026-10-23T23:14:53.696   No sensor board on this channel
+2026-10-23T23:14:53.696 Initializing sensor 4 (P3S1)...
+2026-10-23T23:14:53.696   PCA ch 0 selected (ctrl reg = 0x01)
+2026-10-23T23:14:53.696   ERROR: No VCNL4040 at 0x60 (I2C error: 2)
+2026-10-23T23:14:53.696   Scanning this PCA channel for any I2C device...
+2026-10-23T23:14:53.696     Found device at 0x40
+2026-10-23T23:14:53.696     Found device at 0x70
+2026-10-23T23:14:53.696     Found device at 0x76
+2026-10-23T23:14:53.696 Initializing sensor 5 (P3S2)...
+2026-10-23T23:14:53.696   PCA ch 1 selected (ctrl reg = 0x02)
+2026-10-23T23:14:53.696   ERROR: No VCNL4040 at 0x60 (I2C error: 2)
+2026-10-23T23:14:53.696   Scanning this PCA channel for any I2C device...
+2026-10-23T23:14:53.696     Found device at 0x40
+2026-10-23T23:14:53.696     Found device at 0x70
+2026-10-23T23:14:53.696     Found device at 0x76
+2026-10-23T23:14:53.696 Initialized 0 / 6 sensors
+2026-10-23T23:14:53.696 ERROR: No sensors initialized!
+2026-10-23T23:14:53.696 [PWR after sensor init] VSYS=4.23 V, I=86 mA
+2026-10-23T23:14:53.696 ERROR: Sensor initialization failed!
+2026-10-23T23:14:53.696 
+2026-10-23T23:14:53.697 ==============================================================
+2026-10-23T23:14:53.697 I2C BUS DIAGNOSTIC LOOP (continuous — press RESET to stop)
+2026-10-23T23:14:53.697 ==============================================================
+2026-10-23T23:14:53.697 PCA detection summary (from init):
+2026-10-23T23:14:53.697   TCA ch 0: (nothing detected)
+2026-10-23T23:14:53.697   TCA ch 1: (nothing detected)
+2026-10-23T23:14:53.697   TCA ch 2: PCA9546A at 0x76
+2026-10-23T23:14:53.697 
+2026-10-23T23:14:53.697 Probing: INA(0x40)  BQ(0x6B)  TCA(0x70)  PCA(0x76)  VCNL(0x60)
+2026-10-23T23:14:53.697 Legend:  '.' = ACK,  'X(n)' = error n
+2026-10-23T23:14:53.697          1=data_too_long 2=NACK_addr 3=NACK_data 4=other 5=timeout/bus_hang
+2026-10-23T23:14:53.697 
+2026-10-23T23:14:53.697 Expected when working correctly:
+2026-10-23T23:14:53.697   BASE           -> INA, BQ, TCA present; PCA, VCNL absent
+2026-10-23T23:14:53.697   TCA{0,1,2}     -> INA, BQ, TCA present; PCA present only on
+2026-10-23T23:14:53.697                     channels that have a rigid; VCNL absent
+2026-10-23T23:14:53.697   TCA+PCA0/1     -> INA, BQ, TCA, PCA, VCNL all present
+2026-10-23T23:14:53.697 
+2026-10-23T23:14:53.697 --- Iteration 1 ---
+2026-10-23T23:14:53.697 t=  55088  BASE        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:14:53.697 t=  55094  TCA0        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:14:53.697 t=  55100  TCA1        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:14:53.697 t=  55108  TCA2        INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:14:53.697 t=  55111  TCA2+PCA0   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:14:53.902 t=  55115  TCA2+PCA1   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:14:53.902 
+2026-10-23T23:14:55.730 --- Iteration 2 ---
+2026-10-23T23:14:55.730 t=  57119  BASE        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:14:55.730 t=  57125  TCA0        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:14:55.730 t=  57131  TCA1        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:14:55.730 t=  57139  TCA2        INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:14:55.730 t=  57142  TCA2+PCA0   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:14:55.730 t=  57146  TCA2+PCA1   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:14:55.731 
+2026-10-23T23:14:57.758 --- Iteration 3 ---
+2026-10-23T23:14:57.758 t=  59150  BASE        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:14:57.758 t=  59156  TCA0        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:14:57.758 t=  59162  TCA1        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:14:57.758 t=  59170  TCA2        INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:14:57.758 t=  59173  TCA2+PCA0   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:14:57.758 t=  59177  TCA2+PCA1   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:14:57.758 
+2026-10-23T23:14:59.775 --- Iteration 4 ---
+2026-10-23T23:14:59.775 t=  61181  BASE        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:14:59.775 t=  61187  TCA0        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:14:59.775 t=  61193  TCA1        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:14:59.979 t=  61201  TCA2        INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:14:59.979 t=  61204  TCA2+PCA0   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:14:59.979 t=  61208  TCA2+PCA1   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:14:59.979 
+2026-10-23T23:15:01.824 --- Iteration 5 ---
+2026-10-23T23:15:01.825 t=  63211  BASE        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:15:01.825 t=  63217  TCA0        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:15:01.825 t=  63223  TCA1        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:15:01.825 t=  63231  TCA2        INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:15:01.825 t=  63234  TCA2+PCA0   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:15:01.825 t=  63238  TCA2+PCA1   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:15:01.825 
+2026-10-23T23:15:03.856 --- Iteration 6 ---
+2026-10-23T23:15:03.856 t=  65241  BASE        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:15:03.856 t=  65247  TCA0        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:15:03.856 t=  65253  TCA1        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:15:03.856 t=  65261  TCA2        INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:15:03.856 t=  65264  TCA2+PCA0   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:15:03.856 t=  65268  TCA2+PCA1   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:15:03.856 
+2026-10-23T23:15:05.886 --- Iteration 7 ---
+2026-10-23T23:15:05.886 t=  67272  BASE        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:15:05.886 t=  67278  TCA0        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:15:05.886 t=  67284  TCA1        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:15:05.886 t=  67292  TCA2        INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:15:05.886 t=  67295  TCA2+PCA0   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:15:05.886 t=  67299  TCA2+PCA1   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:15:05.886 
+2026-10-23T23:15:07.938 --- Iteration 8 ---
+2026-10-23T23:15:07.938 t=  69303  BASE        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:15:07.938 t=  69309  TCA0        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:15:07.939 t=  69315  TCA1        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:15:07.939 t=  69323  TCA2        INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:15:07.939 t=  69326  TCA2+PCA0   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:15:07.939 t=  69330  TCA2+PCA1   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:15:07.939 
+2026-10-23T23:15:09.974 --- Iteration 9 ---
+2026-10-23T23:15:09.974 t=  71334  BASE        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:15:09.975 t=  71340  TCA0        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:15:09.975 t=  71346  TCA1        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:15:09.975 t=  71354  TCA2        INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:15:09.975 t=  71357  TCA2+PCA0   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:15:09.975 t=  71361  TCA2+PCA1   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:15:09.975 
+2026-10-23T23:15:12.010 --- Iteration 10 ---
+2026-10-23T23:15:12.011 t=  73364  BASE        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:15:12.011 t=  73370  TCA0        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:15:12.011 t=  73376  TCA1        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:15:12.011 t=  73384  TCA2        INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:15:12.011 t=  73387  TCA2+PCA0   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:15:12.011 t=  73391  TCA2+PCA1   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:15:12.011 
+2026-10-23T23:15:14.043 --- Iteration 11 ---
+2026-10-23T23:15:14.043 t=  75394  BASE        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:15:14.043 t=  75400  TCA0        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:15:14.043 t=  75406  TCA1        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:15:14.043 t=  75414  TCA2        INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:15:14.043 t=  75417  TCA2+PCA0   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:15:14.043 t=  75421  TCA2+PCA1   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:15:14.043 
+2026-10-23T23:15:16.075 --- Iteration 12 ---
+2026-10-23T23:15:16.075 t=  77424  BASE        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:15:16.075 t=  77430  TCA0        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:15:16.075 t=  77436  TCA1        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:15:16.075 t=  77444  TCA2        INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:15:16.075 t=  77447  TCA2+PCA0   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:15:16.075 t=  77451  TCA2+PCA1   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:15:16.075 
+2026-10-23T23:15:18.111 --- Iteration 13 ---
+2026-10-23T23:15:18.134 t=  79455  BASE        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:15:18.134 t=  79461  TCA0        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:15:18.134 t=  79467  TCA1        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:15:18.134 t=  79475  TCA2        INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:15:18.134 t=  79478  TCA2+PCA0   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:15:18.140 t=  79482  TCA2+PCA1   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:15:18.157 
+2026-10-23T23:15:20.190 --- Iteration 14 ---
+2026-10-23T23:15:20.190 t=  81486  BASE        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:15:20.190 t=  81492  TCA0        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:15:20.190 t=  81498  TCA1        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:15:20.190 t=  81506  TCA2        INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:15:20.190 t=  81509  TCA2+PCA0   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:15:20.190 t=  81513  TCA2+PCA1   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:15:20.190 
+2026-10-23T23:15:22.219 --- Iteration 15 ---
+2026-10-23T23:15:22.219 t=  83516  BASE        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:15:22.220 t=  83522  TCA0        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:15:22.220 t=  83528  TCA1        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:15:22.220 t=  83536  TCA2        INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:15:22.220 t=  83539  TCA2+PCA0   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:15:22.220 t=  83543  TCA2+PCA1   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:15:22.220 
+2026-10-23T23:15:24.249 --- Iteration 16 ---
+2026-10-23T23:15:24.249 t=  85546  BASE        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:15:24.249 t=  85552  TCA0        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:15:24.249 t=  85558  TCA1        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:15:24.249 t=  85566  TCA2        INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:15:24.249 t=  85569  TCA2+PCA0   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:15:24.249 t=  85573  TCA2+PCA1   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:15:24.249 
+2026-10-23T23:15:26.286 --- Iteration 17 ---
+2026-10-23T23:15:26.286 t=  87577  BASE        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:15:26.286 t=  87583  TCA0        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:15:26.286 t=  87589  TCA1        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:15:26.286 t=  87597  TCA2        INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:15:26.286 t=  87600  TCA2+PCA0   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:15:26.286 t=  87604  TCA2+PCA1   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:15:26.287 
+2026-10-23T23:15:28.315 --- Iteration 18 ---
+2026-10-23T23:15:28.316 t=  89608  BASE        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:15:28.316 t=  89614  TCA0        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:15:28.316 t=  89620  TCA1        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:15:28.316 t=  89628  TCA2        INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:15:28.316 t=  89631  TCA2+PCA0   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:15:28.316 t=  89635  TCA2+PCA1   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:15:28.316 
+2026-10-23T23:15:30.357 --- Iteration 19 ---
+2026-10-23T23:15:30.357 t=  91639  BASE        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:15:30.357 t=  91645  TCA0        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:15:30.357 t=  91651  TCA1        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:15:30.357 t=  91659  TCA2        INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:15:30.357 t=  91662  TCA2+PCA0   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:15:30.357 t=  91666  TCA2+PCA1   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:15:30.357 
+2026-10-23T23:15:32.389 --- Iteration 20 ---
+2026-10-23T23:15:32.389 t=  93669  BASE        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:15:32.389 t=  93675  TCA0        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:15:32.389 t=  93681  TCA1        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:15:32.389 t=  93689  TCA2        INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:15:32.389 t=  93692  TCA2+PCA0   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:15:32.390 t=  93696  TCA2+PCA1   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:15:32.390 
+2026-10-23T23:15:34.422 --- Iteration 21 ---
+2026-10-23T23:15:34.422 t=  95699  BASE        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:15:34.422 t=  95705  TCA0        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:15:34.422 t=  95711  TCA1        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:15:34.422 t=  95719  TCA2        INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:15:34.422 t=  95722  TCA2+PCA0   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:15:34.422 t=  95726  TCA2+PCA1   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:15:34.422 
+2026-10-23T23:15:36.462 --- Iteration 22 ---
+2026-10-23T23:15:36.462 t=  97729  BASE        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:15:36.462 t=  97735  TCA0        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:15:36.462 t=  97741  TCA1        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:15:36.462 t=  97749  TCA2        INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:15:36.462 t=  97752  TCA2+PCA0   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:15:36.462 t=  97756  TCA2+PCA1   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:15:36.462 
+2026-10-23T23:15:38.514 --- Iteration 23 ---
+2026-10-23T23:15:38.515 t=  99760  BASE        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:15:38.515 t=  99766  TCA0        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:15:38.515 t=  99772  TCA1        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:15:38.515 t=  99780  TCA2        INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:15:38.515 t=  99783  TCA2+PCA0   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:15:38.515 t=  99787  TCA2+PCA1   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:15:38.515 
+2026-10-23T23:15:40.546 --- Iteration 24 ---
+2026-10-23T23:15:40.546 t= 101791  BASE        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:15:40.546 t= 101797  TCA0        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:15:40.546 t= 101803  TCA1        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:15:40.546 t= 101811  TCA2        INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:15:40.546 t= 101814  TCA2+PCA0   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:15:40.546 t= 101818  TCA2+PCA1   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:15:40.546 
+2026-10-23T23:15:42.570 --- Iteration 25 ---
+2026-10-23T23:15:42.570 t= 103821  BASE        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:15:42.570 t= 103827  TCA0        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:15:42.570 t= 103833  TCA1        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:15:42.570 t= 103841  TCA2        INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:15:42.570 t= 103844  TCA2+PCA0   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:15:42.570 t= 103848  TCA2+PCA1   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:15:42.570 
+2026-10-23T23:15:50.764 [   897][I][esp32-hal-i2c.c:75] i2cInit(): Initialising I2C Master: sda=43 scl=44 freq=100000
+2026-10-23T23:15:50.765 
+2026-10-23T23:15:50.765 [probe] sketch=v7_pca_master_probe version=1.0 board=Espressif ESP32-S3-DevKitC-1-N8 (8 MB QD, No PSRAM) i2c_clock=400000 Hz
+2026-10-23T23:15:50.765 TCA9548A initialized
+2026-10-23T23:15:50.765 Scanning for PCA9546A multiplexers on TCA channels...
+2026-10-23T23:15:50.765   Scanning TCA channel 0
+2026-10-23T23:15:50.765     No PCA found on this channel
+2026-10-23T23:15:50.765   Scanning TCA channel 1
+2026-10-23T23:15:50.765     No PCA found on this channel
+2026-10-23T23:15:50.765   Scanning TCA channel 2
+2026-10-23T23:15:50.765     PCA9546A found at 0x76
+2026-10-23T23:15:50.765 Found 1 sensor board(s)
+2026-10-23T23:15:50.765 
+2026-10-23T23:15:50.765 ==============================================================
+2026-10-23T23:15:50.765 I2C BUS DIAGNOSTIC LOOP (continuous — press RESET to stop)
+2026-10-23T23:15:50.765 ==============================================================
+2026-10-23T23:15:50.765 PCA detection summary (from init):
+2026-10-23T23:15:50.765   TCA ch 0: (nothing detected)
+2026-10-23T23:15:50.765   TCA ch 1: (nothing detected)
+2026-10-23T23:15:50.765   TCA ch 2: PCA9546A at 0x76
+2026-10-23T23:15:50.765 
+2026-10-23T23:15:50.765 Probing: INA(0x40)  BQ(0x6B)  TCA(0x70)  PCA(0x76)  VCNL(0x60)
+2026-10-23T23:15:50.765 Legend:  '.' = ACK,  'X(n)' = error n
+2026-10-23T23:15:50.765          1=data_too_long 2=NACK_addr 3=NACK_data 4=other 5=timeout/bus_hang
+2026-10-23T23:15:50.765 
+2026-10-23T23:15:50.765 Expected when working correctly:
+2026-10-23T23:15:50.765   BASE           -> INA, BQ, TCA present; PCA, VCNL absent
+2026-10-23T23:15:50.765   TCA{0,1,2}     -> INA, BQ, TCA present; PCA present only on
+2026-10-23T23:15:50.765                     channels that have a rigid; VCNL absent
+2026-10-23T23:15:50.765   TCA+PCA0/1     -> INA, BQ, TCA, PCA, VCNL all present
+2026-10-23T23:15:50.765 
+2026-10-23T23:15:50.765 --- Iteration 1 ---
+2026-10-23T23:15:50.765 t=    934  BASE        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:15:50.765 t=    940  TCA0        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:15:50.765 t=    946  TCA1        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:15:50.765 t=    954  TCA2        INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:15:50.765 t=    957  TCA2+PCA0   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:15:50.765 t=    961  TCA2+PCA1   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:15:50.765 
+2026-10-23T23:15:52.802 --- Iteration 2 ---
+2026-10-23T23:15:52.802 t=   2964  BASE        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:15:52.802 t=   2970  TCA0        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:15:52.802 t=   2976  TCA1        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:15:52.802 t=   2984  TCA2        INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:15:52.802 t=   2987  TCA2+PCA0   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:15:52.802 t=   2991  TCA2+PCA1   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:15:52.802 
+2026-10-23T23:15:54.837 --- Iteration 3 ---
+2026-10-23T23:15:54.837 t=   4994  BASE        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:15:54.837 t=   5000  TCA0        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:15:54.837 t=   5006  TCA1        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:15:54.837 t=   5014  TCA2        INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:15:54.837 t=   5017  TCA2+PCA0   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:15:54.837 t=   5021  TCA2+PCA1   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:15:54.837 
+2026-10-23T23:15:56.867 --- Iteration 4 ---
+2026-10-23T23:15:56.867 t=   7024  BASE        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:15:56.867 t=   7030  TCA0        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:15:56.867 t=   7036  TCA1        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:15:56.867 t=   7044  TCA2        INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:15:56.867 t=   7047  TCA2+PCA0   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:15:56.867 t=   7051  TCA2+PCA1   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:15:56.867 
+2026-10-23T23:15:58.903 --- Iteration 5 ---
+2026-10-23T23:15:58.903 t=   9054  BASE        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:15:58.903 t=   9060  TCA0        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:15:58.903 t=   9066  TCA1        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:15:58.903 t=   9074  TCA2        INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:15:58.903 t=   9077  TCA2+PCA0   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:15:58.903 t=   9081  TCA2+PCA1   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:15:58.903 
+2026-10-23T23:16:00.942 --- Iteration 6 ---
+2026-10-23T23:16:00.942 t=  11084  BASE        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:16:00.942 t=  11090  TCA0        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:16:00.942 t=  11096  TCA1        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:16:00.942 t=  11104  TCA2        INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:16:00.942 t=  11107  TCA2+PCA0   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:16:00.942 t=  11111  TCA2+PCA1   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:16:00.942 
+2026-10-23T23:16:02.980 --- Iteration 7 ---
+2026-10-23T23:16:02.980 t=  13114  BASE        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:16:02.980 t=  13120  TCA0        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:16:02.983 t=  13126  TCA1        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:16:02.983 t=  13134  TCA2        INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:16:02.983 t=  13137  TCA2+PCA0   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:16:02.983 t=  13141  TCA2+PCA1   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:16:02.983 
+2026-10-23T23:16:05.014 --- Iteration 8 ---
+2026-10-23T23:16:05.014 t=  15144  BASE        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:16:05.014 t=  15150  TCA0        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:16:05.014 t=  15156  TCA1        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:16:05.014 t=  15164  TCA2        INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:16:05.014 t=  15167  TCA2+PCA0   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:16:05.014 t=  15171  TCA2+PCA1   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:16:05.014 
+2026-10-23T23:16:07.048 --- Iteration 9 ---
+2026-10-23T23:16:07.048 t=  17174  BASE        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:16:07.048 t=  17180  TCA0        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:16:07.048 t=  17186  TCA1        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:16:07.048 t=  17194  TCA2        INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:16:07.048 t=  17197  TCA2+PCA0   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:16:07.048 t=  17201  TCA2+PCA1   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:16:07.048 
+2026-10-23T23:16:09.079 --- Iteration 10 ---
+2026-10-23T23:16:09.079 t=  19204  BASE        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:16:09.079 t=  19210  TCA0        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:16:09.080 t=  19216  TCA1        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:16:09.080 t=  19224  TCA2        INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:16:09.080 t=  19227  TCA2+PCA0   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:16:09.080 t=  19231  TCA2+PCA1   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:16:09.080 
+2026-10-23T23:16:11.123 --- Iteration 11 ---
+2026-10-23T23:16:11.123 t=  21234  BASE        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:16:11.123 t=  21240  TCA0        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:16:11.123 t=  21246  TCA1        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:16:11.123 t=  21254  TCA2        INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:16:11.123 t=  21257  TCA2+PCA0   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:16:11.123 t=  21261  TCA2+PCA1   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:16:11.123 
+2026-10-23T23:16:13.154 --- Iteration 12 ---
+2026-10-23T23:16:13.154 t=  23264  BASE        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:16:13.154 t=  23270  TCA0        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:16:13.154 t=  23276  TCA1        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:16:13.154 t=  23284  TCA2        INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:16:13.154 t=  23287  TCA2+PCA0   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:16:13.154 t=  23291  TCA2+PCA1   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:16:13.154 
+2026-10-23T23:16:15.196 --- Iteration 13 ---
+2026-10-23T23:16:15.197 t=  25294  BASE        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:16:15.197 t=  25300  TCA0        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:16:15.197 t=  25306  TCA1        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:16:15.197 t=  25314  TCA2        INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:16:15.197 t=  25317  TCA2+PCA0   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:16:15.197 t=  25321  TCA2+PCA1   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:16:15.197 
+2026-10-23T23:16:17.231 --- Iteration 14 ---
+2026-10-23T23:16:17.231 t=  27324  BASE        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:16:17.231 t=  27330  TCA0        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:16:17.231 t=  27336  TCA1        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:16:17.231 t=  27344  TCA2        INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:16:17.231 t=  27347  TCA2+PCA0   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:16:17.232 t=  27351  TCA2+PCA1   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:16:17.232 
+2026-10-23T23:16:19.273 --- Iteration 15 ---
+2026-10-23T23:16:19.273 t=  29354  BASE        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:16:19.273 t=  29360  TCA0        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:16:19.273 t=  29366  TCA1        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:16:19.273 t=  29374  TCA2        INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:16:19.273 t=  29377  TCA2+PCA0   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:16:19.273 t=  29381  TCA2+PCA1   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:16:19.273 
+2026-10-23T23:16:21.308 --- Iteration 16 ---
+2026-10-23T23:16:21.308 t=  31384  BASE        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:16:21.308 t=  31390  TCA0        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:16:21.309 t=  31396  TCA1        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:16:21.309 t=  31404  TCA2        INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:16:21.309 t=  31407  TCA2+PCA0   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:16:21.309 t=  31411  TCA2+PCA1   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:16:21.309 
+2026-10-23T23:16:23.347 --- Iteration 17 ---
+2026-10-23T23:16:23.347 t=  33414  BASE        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:16:23.347 t=  33420  TCA0        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:16:23.347 t=  33426  TCA1        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:16:23.347 t=  33434  TCA2        INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:16:23.348 t=  33437  TCA2+PCA0   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:16:23.348 t=  33441  TCA2+PCA1   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:16:23.348 
+2026-10-23T23:16:25.378 --- Iteration 18 ---
+2026-10-23T23:16:25.378 t=  35444  BASE        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:16:25.379 t=  35450  TCA0        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:16:25.379 t=  35456  TCA1        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:16:25.379 t=  35464  TCA2        INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:16:25.379 t=  35467  TCA2+PCA0   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:16:25.379 t=  35471  TCA2+PCA1   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:16:25.379 
+2026-10-23T23:16:27.227 --- Iteration 19 ---
+2026-10-23T23:16:27.431 t=  37474  BASE        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:16:27.432 t=  37480  TCA0        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:16:27.432 t=  37486  TCA1        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:16:27.432 t=  37494  TCA2        INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:16:27.432 t=  37497  TCA2+PCA0   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:16:27.432 t=  37501  TCA2+PCA1   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:16:27.432 
+2026-10-23T23:16:29.265 --- Iteration 20 ---
+2026-10-23T23:16:29.265 t=  39504  BASE        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:16:29.469 t=  39510  TCA0        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:16:29.469 t=  39516  TCA1        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:16:29.469 t=  39524  TCA2        INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:16:29.469 t=  39527  TCA2+PCA0   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:16:29.469 t=  39531  TCA2+PCA1   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:16:29.469 
+2026-10-23T23:16:31.293 --- Iteration 21 ---
+2026-10-23T23:16:31.293 t=  41534  BASE        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:16:31.496 t=  41540  TCA0        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:16:31.496 t=  41546  TCA1        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:16:31.496 t=  41554  TCA2        INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:16:31.496 t=  41557  TCA2+PCA0   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:16:31.496 t=  41561  TCA2+PCA1   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:16:31.496 
+2026-10-23T23:16:33.326 --- Iteration 22 ---
+2026-10-23T23:16:33.326 t=  43564  BASE        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:16:33.527 t=  43570  TCA0        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:16:33.527 t=  43576  TCA1        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:16:33.527 t=  43584  TCA2        INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:16:33.527 t=  43587  TCA2+PCA0   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:16:33.527 t=  43591  TCA2+PCA1   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:16:33.527 
+2026-10-23T23:16:35.354 --- Iteration 23 ---
+2026-10-23T23:16:35.354 t=  45595  BASE        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:16:35.559 t=  45601  TCA0        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:16:35.559 t=  45607  TCA1        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:16:35.559 t=  45615  TCA2        INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:16:35.559 t=  45618  TCA2+PCA0   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:16:35.559 t=  45622  TCA2+PCA1   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:16:35.559 
+2026-10-23T23:17:11.379 BQ24195 not found at 0x6B - skipping (bare T-Display?)
+2026-10-23T23:17:11.379 [PowerMonitor] INA219 configured: 10mR shunt, 1mA/LSB, 8A max
+2026-10-23T23:17:11.379 [PWR after BQ config] VSYS=4.31 V, I=0 mA
+2026-10-23T23:17:11.379 Display initialized
+2026-10-23T23:17:11.379 [PWR after display init] VSYS=4.31 V, I=0 mA
+2026-10-23T23:17:11.379 
+2026-10-23T23:17:11.380 === Starting System Initialization ===
+2026-10-23T23:17:11.380 
+2026-10-23T23:17:11.380 [DIAG_NO_WIFI] Skipping WiFi/MQTT init, forcing radio off
+2026-10-23T23:17:11.380 WARNING: Cloud config unavailable, sensors will use defaults
+2026-10-23T23:17:11.380 
+2026-10-23T23:17:11.380 [Config] Detection mode: heuristic (useMLDetection=0)
+2026-10-23T23:17:11.380 Initializing sensors...
+2026-10-23T23:17:11.380 [PWR before sensor init] VSYS=4.31 V, I=0 mA
+2026-10-23T23:17:11.380 Initializing Sensor Manager...
+2026-10-23T23:17:11.380 [  1037][W][Wire.cpp:301] begin(): Bus already started in Master Mode.
+2026-10-23T23:17:11.380 I2C: 400 kHz, default drive, no filters, default pulls [v7-clean]
+2026-10-23T23:17:11.380 Configuration:
+2026-10-23T23:17:11.380   Sample Rate: 1000 Hz
+2026-10-23T23:17:11.380   LED Current: 200mA
+2026-10-23T23:17:11.380   Integration Time: 1T
+2026-10-23T23:17:11.380   High Resolution: enabled
+2026-10-23T23:17:11.380   Read Ambient: enabled
+2026-10-23T23:17:11.380 TCA9548A initialized
+2026-10-23T23:17:11.380 
+2026-10-23T23:17:11.380 
+2026-10-23T23:17:11.380 ╔══════════════════════════════════════════════════════════════════════════════╗
+2026-10-23T23:17:11.380 ║                        I2C DEBUG SCAN - TROUBLESHOOTING                      ║
+2026-10-23T23:17:11.380 ╠══════════════════════════════════════════════════════════════════════════════╣
+2026-10-23T23:17:11.380 ║ STEP 1: Scanning main I2C bus (no TCA channel selected)                      ║
+2026-10-23T23:17:11.380 ╠══════════════════════════════════════════════════════════════════════════════╣
+2026-10-23T23:17:11.380 ║   Found device at 0x40 - Unknown
+2026-10-23T23:17:11.380 ║   Found device at 0x6B - Unknown
+2026-10-23T23:17:11.380 ║   Found device at 0x70 - TCA9548A (main mux)
+2026-10-23T23:17:11.380 ║   Total: 3 device(s) on main bus
+2026-10-23T23:17:11.380 ╠══════════════════════════════════════════════════════════════════════════════╣
+2026-10-23T23:17:11.380 ║ STEP 2: Scanning each TCA9548A channel for connected devices                 ║
+2026-10-23T23:17:11.380 ╠══════════════════════════════════════════════════════════════════════════════╣
+2026-10-23T23:17:11.380 ║ TCA Channel 0:
+2026-10-23T23:17:11.380 ║   ✓ Found: 0x40 (Unknown)
+2026-10-23T23:17:11.381 ║   ✓ Found: 0x6B (Unknown)
+2026-10-23T23:17:11.381 ║ TCA Channel 1:
+2026-10-23T23:17:11.381 ║   ✓ Found: 0x40 (Unknown)
+2026-10-23T23:17:11.381 ║   ✓ Found: 0x6B (Unknown)
+2026-10-23T23:17:11.381 ║ TCA Channel 2:
+2026-10-23T23:17:11.381 ║   ✓ Found: 0x40 (Unknown)
+2026-10-23T23:17:11.381 ║   ✓ Found: 0x76 (PCA9546A?)
+2026-10-23T23:17:11.381 ║ TCA Channel 3:
+2026-10-23T23:17:11.381 ║   ✓ Found: 0x40 (Unknown)
+2026-10-23T23:17:11.381 ║   ✓ Found: 0x6B (Unknown)
+2026-10-23T23:17:11.381 ║ TCA Channel 4:
+2026-10-23T23:17:11.381 ║   ✓ Found: 0x40 (Unknown)
+2026-10-23T23:17:11.381 ║   ✓ Found: 0x6B (Unknown)
+2026-10-23T23:17:11.381 ║ TCA Channel 5:
+2026-10-23T23:17:11.381 ║   ✓ Found: 0x40 (Unknown)
+2026-10-23T23:17:11.381 ║   ✓ Found: 0x6B (Unknown)
+2026-10-23T23:17:11.381 ║ TCA Channel 6:
+2026-10-23T23:17:11.582 ║   ✓ Found: 0x40 (Unknown)
+2026-10-23T23:17:11.582 ║   ✓ Found: 0x6B (Unknown)
+2026-10-23T23:17:11.583 ║ TCA Channel 7:
+2026-10-23T23:17:11.583 ║   ✓ Found: 0x40 (Unknown)
+2026-10-23T23:17:11.583 ║   ✓ Found: 0x6B (Unknown)
+2026-10-23T23:17:11.583 ╠══════════════════════════════════════════════════════════════════════════════╣
+2026-10-23T23:17:11.583 ║ STEP 3: Direct PCA9546A address probe at 0x74 on TCA channel 0               ║
+2026-10-23T23:17:11.583 ╠══════════════════════════════════════════════════════════════════════════════╣
+2026-10-23T23:17:11.583 ║   TCA channel 0 selected successfully                                       ║
+2026-10-23T23:17:11.583 ║   Attempt 1: Address 0x74 -> Error 2 (NACK on address)
+2026-10-23T23:17:11.583 ║   Attempt 2: Address 0x74 -> Error 2 (NACK on address)
+2026-10-23T23:17:11.583 ║   Attempt 3: Address 0x74 -> Error 2 (NACK on address)
+2026-10-23T23:17:11.783 ║   Attempting to read control register from 0x74...                          ║
+2026-10-23T23:17:11.783 [  1473][E][Wire.cpp:499] requestFrom(): i2cWriteReadNonStop returned Error -1
+2026-10-23T23:17:11.783 ║   ⚠️ Write OK but read returned 0 bytes                                    ║
+2026-10-23T23:17:11.783 ╠══════════════════════════════════════════════════════════════════════════════╣
+2026-10-23T23:17:11.783 ║ DEBUG SCAN COMPLETE - Check results above for clues                          ║
+2026-10-23T23:17:11.783 ╚══════════════════════════════════════════════════════════════════════════════╝
+2026-10-23T23:17:11.783 
+2026-10-23T23:17:11.783 Scanning for PCA9546A multiplexers on TCA channels...
+2026-10-23T23:17:11.784   Scanning TCA channel 0
+2026-10-23T23:17:11.784     No PCA found on this channel
+2026-10-23T23:17:11.784   Scanning TCA channel 1
+2026-10-23T23:17:11.784     No PCA found on this channel
+2026-10-23T23:17:11.784   Scanning TCA channel 2
+2026-10-23T23:17:11.784     PCA9546A found at 0x76
+2026-10-23T23:17:11.784 Found 1 sensor board(s)
+2026-10-23T23:17:11.784 Initializing sensor 0 (P1S1)...
+2026-10-23T23:17:11.784   No sensor board on this channel
+2026-10-23T23:17:11.784 Initializing sensor 1 (P1S2)...
+2026-10-23T23:17:11.784   No sensor board on this channel
+2026-10-23T23:17:11.784 Initializing sensor 2 (P2S1)...
+2026-10-23T23:17:11.784   No sensor board on this channel
+2026-10-23T23:17:11.784 Initializing sensor 3 (P2S2)...
+2026-10-23T23:17:11.784   No sensor board on this channel
+2026-10-23T23:17:11.784 Initializing sensor 4 (P3S1)...
+2026-10-23T23:17:11.784   PCA ch 0 selected (ctrl reg = 0x01)
+2026-10-23T23:17:11.784   ERROR: No VCNL4040 at 0x60 (I2C error: 2)
+2026-10-23T23:17:11.784   Scanning this PCA channel for any I2C device...
+2026-10-23T23:17:11.784     Found device at 0x40
+2026-10-23T23:17:11.784     Found device at 0x70
+2026-10-23T23:17:11.784     Found device at 0x76
+2026-10-23T23:17:11.784 Initializing sensor 5 (P3S2)...
+2026-10-23T23:17:11.784   PCA ch 1 selected (ctrl reg = 0x02)
+2026-10-23T23:17:11.784   ERROR: No VCNL4040 at 0x60 (I2C error: 2)
+2026-10-23T23:17:11.784   Scanning this PCA channel for any I2C device...
+2026-10-23T23:17:11.784     Found device at 0x40
+2026-10-23T23:17:11.784     Found device at 0x70
+2026-10-23T23:17:11.784     Found device at 0x76
+2026-10-23T23:17:11.784 Initialized 0 / 6 sensors
+2026-10-23T23:17:11.784 ERROR: No sensors initialized!
+2026-10-23T23:17:11.784 [PWR after sensor init] VSYS=4.29 V, I=65 mA
+2026-10-23T23:17:11.784 ERROR: Sensor initialization failed!
+2026-10-23T23:17:11.784 
+2026-10-23T23:17:11.784 ==============================================================
+2026-10-23T23:17:11.784 I2C BUS DIAGNOSTIC LOOP (continuous — press RESET to stop)
+2026-10-23T23:17:11.785 ==============================================================
+2026-10-23T23:17:11.785 PCA detection summary (from init):
+2026-10-23T23:17:11.785   TCA ch 0: (nothing detected)
+2026-10-23T23:17:11.785   TCA ch 1: (nothing detected)
+2026-10-23T23:17:11.785   TCA ch 2: PCA9546A at 0x76
+2026-10-23T23:17:11.785 
+2026-10-23T23:17:11.785 Probing: INA(0x40)  BQ(0x6B)  TCA(0x70)  PCA(0x76)  VCNL(0x60)
+2026-10-23T23:17:11.785 Legend:  '.' = ACK,  'X(n)' = error n
+2026-10-23T23:17:11.785          1=data_too_long 2=NACK_addr 3=NACK_data 4=other 5=timeout/bus_hang
+2026-10-23T23:17:11.785 
+2026-10-23T23:17:11.785 Expected when working correctly:
+2026-10-23T23:17:11.785   BASE           -> INA, BQ, TCA present; PCA, VCNL absent
+2026-10-23T23:17:11.785   TCA{0,1,2}     -> INA, BQ, TCA present; PCA present only on
+2026-10-23T23:17:11.785                     channels that have a rigid; VCNL absent
+2026-10-23T23:17:11.785   TCA+PCA0/1     -> INA, BQ, TCA, PCA, VCNL all present
+2026-10-23T23:17:11.785 
+2026-10-23T23:17:11.785 --- Iteration 1 ---
+2026-10-23T23:17:11.785 t=   1603  BASE        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:17:11.785 t=   1609  TCA0        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:17:11.785 t=   1615  TCA1        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:17:11.785 t=   1623  TCA2        INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:17:11.785 t=   1626  TCA2+PCA0   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:17:11.785 t=   1630  TCA2+PCA1   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:17:11.785 
+2026-10-23T23:17:13.816 --- Iteration 2 ---
+2026-10-23T23:17:13.816 t=   3634  BASE        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:17:13.816 t=   3640  TCA0        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:17:13.816 t=   3646  TCA1        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:17:13.816 t=   3654  TCA2        INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:17:13.816 t=   3657  TCA2+PCA0   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:17:13.816 t=   3661  TCA2+PCA1   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:17:13.816 
+2026-10-23T23:17:15.870 --- Iteration 3 ---
+2026-10-23T23:17:15.871 t=   5665  BASE        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:17:15.871 t=   5671  TCA0        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:17:15.871 t=   5677  TCA1        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:17:15.871 t=   5685  TCA2        INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:17:15.871 t=   5688  TCA2+PCA0   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:17:15.871 t=   5692  TCA2+PCA1   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:17:15.871 
+2026-10-23T23:17:17.912 --- Iteration 4 ---
+2026-10-23T23:17:17.912 t=   7695  BASE        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:17:17.912 t=   7701  TCA0        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:17:17.912 t=   7707  TCA1        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:17:17.912 t=   7715  TCA2        INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:17:17.912 t=   7718  TCA2+PCA0   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:17:17.912 t=   7722  TCA2+PCA1   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:17:17.912 
+2026-10-23T23:17:19.946 --- Iteration 5 ---
+2026-10-23T23:17:19.946 t=   9725  BASE        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:17:19.946 t=   9731  TCA0        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:17:19.946 t=   9737  TCA1        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:17:19.946 t=   9745  TCA2        INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:17:19.946 t=   9748  TCA2+PCA0   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:17:19.946 t=   9752  TCA2+PCA1   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:17:19.946 
+2026-10-23T23:17:21.983 --- Iteration 6 ---
+2026-10-23T23:17:21.983 t=  11755  BASE        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:17:21.983 t=  11761  TCA0        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:17:21.983 t=  11767  TCA1        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:17:21.983 t=  11775  TCA2        INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:17:21.983 t=  11778  TCA2+PCA0   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:17:21.983 t=  11782  TCA2+PCA1   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:17:21.983 
+2026-10-23T23:17:24.028 --- Iteration 7 ---
+2026-10-23T23:17:24.037 t=  13786  BASE        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:17:24.037 t=  13792  TCA0        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:17:24.037 t=  13798  TCA1        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:17:24.037 t=  13806  TCA2        INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:17:24.037 t=  13809  TCA2+PCA0   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:17:24.037 t=  13813  TCA2+PCA1   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:17:24.037 
+2026-10-23T23:17:26.067 --- Iteration 8 ---
+2026-10-23T23:17:26.067 t=  15817  BASE        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:17:26.067 t=  15823  TCA0        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:17:26.067 t=  15829  TCA1        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:17:26.067 t=  15837  TCA2        INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:17:26.068 t=  15840  TCA2+PCA0   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:17:26.068 t=  15844  TCA2+PCA1   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:17:26.068 
+2026-10-23T23:17:28.098 --- Iteration 9 ---
+2026-10-23T23:17:28.099 t=  17848  BASE        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:17:28.099 t=  17854  TCA0        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:17:28.099 t=  17860  TCA1        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:17:28.099 t=  17868  TCA2        INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:17:28.099 t=  17871  TCA2+PCA0   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:17:28.099 t=  17875  TCA2+PCA1   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:17:28.099 
+2026-10-23T23:17:30.130 --- Iteration 10 ---
+2026-10-23T23:17:30.131 t=  19878  BASE        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:17:30.131 t=  19884  TCA0        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:17:30.131 t=  19890  TCA1        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:17:30.131 t=  19898  TCA2        INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:17:30.131 t=  19901  TCA2+PCA0   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:17:30.131 t=  19905  TCA2+PCA1   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:17:30.131 
+2026-10-23T23:17:32.173 --- Iteration 11 ---
+2026-10-23T23:17:32.173 t=  21908  BASE        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:17:32.173 t=  21914  TCA0        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:17:32.173 t=  21920  TCA1        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:17:32.173 t=  21928  TCA2        INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:17:32.173 t=  21931  TCA2+PCA0   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:17:32.173 t=  21935  TCA2+PCA1   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:17:32.173 
+2026-10-23T23:17:34.204 --- Iteration 12 ---
+2026-10-23T23:17:34.204 t=  23939  BASE        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:17:34.204 t=  23945  TCA0        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:17:34.204 t=  23951  TCA1        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:17:34.204 t=  23959  TCA2        INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:17:34.204 t=  23962  TCA2+PCA0   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:17:34.204 t=  23966  TCA2+PCA1   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:17:34.204 
+2026-10-23T23:17:36.243 --- Iteration 13 ---
+2026-10-23T23:17:36.243 t=  25970  BASE        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:17:36.243 t=  25976  TCA0        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:17:36.243 t=  25982  TCA1        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:17:36.243 t=  25990  TCA2        INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:17:36.243 t=  25993  TCA2+PCA0   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:17:36.243 t=  25997  TCA2+PCA1   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:17:36.243 
+2026-10-23T23:17:38.273 --- Iteration 14 ---
+2026-10-23T23:17:38.273 t=  28000  BASE        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:17:38.273 t=  28006  TCA0        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:17:38.273 t=  28012  TCA1        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:17:38.273 t=  28020  TCA2        INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:17:38.273 t=  28023  TCA2+PCA0   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:17:38.273 t=  28027  TCA2+PCA1   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:17:38.273 
+2026-10-23T23:17:40.309 --- Iteration 15 ---
+2026-10-23T23:17:40.309 t=  30030  BASE        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:17:40.309 t=  30036  TCA0        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:17:40.309 t=  30042  TCA1        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:17:40.309 t=  30050  TCA2        INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:17:40.309 t=  30053  TCA2+PCA0   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:17:40.309 t=  30057  TCA2+PCA1   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:17:40.309 
+2026-10-23T23:17:42.339 --- Iteration 16 ---
+2026-10-23T23:17:42.339 t=  32060  BASE        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:17:42.339 t=  32066  TCA0        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:17:42.339 t=  32072  TCA1        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:17:42.339 t=  32080  TCA2        INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:17:42.339 t=  32083  TCA2+PCA0   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:17:42.339 t=  32087  TCA2+PCA1   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:17:42.339 
+2026-10-23T23:17:44.370 --- Iteration 17 ---
+2026-10-23T23:17:44.370 t=  34091  BASE        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:17:44.370 t=  34097  TCA0        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:17:44.370 t=  34103  TCA1        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:17:44.370 t=  34111  TCA2        INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:17:44.370 t=  34114  TCA2+PCA0   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:17:44.370 t=  34118  TCA2+PCA1   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:17:44.370 
+2026-10-23T23:17:46.406 --- Iteration 18 ---
+2026-10-23T23:17:46.406 t=  36122  BASE        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:17:46.406 t=  36128  TCA0        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:17:46.406 t=  36134  TCA1        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:17:46.406 t=  36142  TCA2        INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:17:46.406 t=  36145  TCA2+PCA0   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:17:46.407 t=  36149  TCA2+PCA1   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:17:46.407 
+2026-10-23T23:17:48.432 --- Iteration 19 ---
+2026-10-23T23:17:48.432 t=  38152  BASE        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:17:48.432 t=  38158  TCA0        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:17:48.432 t=  38164  TCA1        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:17:48.432 t=  38172  TCA2        INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:17:48.432 t=  38175  TCA2+PCA0   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:17:48.432 t=  38179  TCA2+PCA1   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:17:48.432 
+2026-10-23T23:17:50.469 --- Iteration 20 ---
+2026-10-23T23:17:50.469 t=  40182  BASE        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:17:50.469 t=  40188  TCA0        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:17:50.469 t=  40194  TCA1        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:17:50.469 t=  40202  TCA2        INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:17:50.469 t=  40205  TCA2+PCA0   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:17:50.469 t=  40209  TCA2+PCA1   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:17:50.469 
+2026-10-23T23:17:52.506 --- Iteration 21 ---
+2026-10-23T23:17:52.506 t=  42213  BASE        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:17:52.506 t=  42219  TCA0        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:17:52.506 t=  42225  TCA1        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:17:52.506 t=  42233  TCA2        INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:17:52.507 t=  42236  TCA2+PCA0   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:17:52.507 t=  42240  TCA2+PCA1   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:17:52.507 
+2026-10-23T23:17:54.543 --- Iteration 22 ---
+2026-10-23T23:17:54.543 t=  44244  BASE        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:17:54.543 t=  44250  TCA0        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:17:54.543 t=  44256  TCA1        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:17:54.543 t=  44264  TCA2        INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:17:54.543 t=  44267  TCA2+PCA0   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:17:54.543 t=  44271  TCA2+PCA1   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:17:54.543 
+2026-10-23T23:17:56.585 --- Iteration 23 ---
+2026-10-23T23:17:56.585 t=  46275  BASE        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:17:56.585 t=  46281  TCA0        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:17:56.585 t=  46287  TCA1        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:17:56.585 t=  46295  TCA2        INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:17:56.585 t=  46298  TCA2+PCA0   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:17:56.586 t=  46302  TCA2+PCA1   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:17:56.586 
+2026-10-23T23:17:58.618 --- Iteration 24 ---
+2026-10-23T23:17:58.618 t=  48305  BASE        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:17:58.618 t=  48311  TCA0        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:17:58.618 t=  48317  TCA1        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:17:58.618 t=  48325  TCA2        INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:17:58.618 t=  48328  TCA2+PCA0   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:17:58.618 t=  48332  TCA2+PCA1   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:17:58.618 
+2026-10-23T23:18:00.645 --- Iteration 25 ---
+2026-10-23T23:18:00.646 t=  50335  BASE        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:18:00.646 t=  50341  TCA0        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:18:00.646 t=  50347  TCA1        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:18:00.646 t=  50355  TCA2        INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:18:00.646 t=  50358  TCA2+PCA0   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:18:00.646 t=  50362  TCA2+PCA1   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:18:00.646 
+2026-10-23T23:18:02.692 --- Iteration 26 ---
+2026-10-23T23:18:02.692 t=  52365  BASE        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:18:02.693 t=  52371  TCA0        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:18:02.693 t=  52377  TCA1        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:18:02.693 t=  52385  TCA2        INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:18:02.693 t=  52388  TCA2+PCA0   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:18:02.693 t=  52392  TCA2+PCA1   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:18:02.693 
+2026-10-23T23:18:04.725 --- Iteration 27 ---
+2026-10-23T23:18:04.725 t=  54396  BASE        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:18:04.725 t=  54402  TCA0        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:18:04.725 t=  54408  TCA1        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:18:04.725 t=  54416  TCA2        INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:18:04.725 t=  54419  TCA2+PCA0   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:18:04.725 t=  54423  TCA2+PCA1   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:18:04.725 
+2026-10-23T23:18:06.752 --- Iteration 28 ---
+2026-10-23T23:18:06.752 t=  56427  BASE        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:18:06.752 t=  56433  TCA0        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:18:06.752 t=  56439  TCA1        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:18:06.752 t=  56447  TCA2        INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:18:06.752 t=  56450  TCA2+PCA0   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:18:06.752 t=  56454  TCA2+PCA1   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:18:06.752 
+2026-10-23T23:18:08.794 --- Iteration 29 ---
+2026-10-23T23:18:08.794 t=  58457  BASE        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:18:08.794 t=  58463  TCA0        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:18:08.794 t=  58469  TCA1        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:18:08.794 t=  58477  TCA2        INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:18:08.794 t=  58480  TCA2+PCA0   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:18:08.794 t=  58484  TCA2+PCA1   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:18:08.794 
+2026-10-23T23:18:10.833 --- Iteration 30 ---
+2026-10-23T23:18:10.833 t=  60488  BASE        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:18:10.833 t=  60494  TCA0        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:18:10.833 t=  60500  TCA1        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:18:10.833 t=  60508  TCA2        INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:18:10.833 t=  60511  TCA2+PCA0   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:18:10.833 t=  60515  TCA2+PCA1   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:18:10.834 
+2026-10-23T23:18:12.864 --- Iteration 31 ---
+2026-10-23T23:18:12.864 t=  62518  BASE        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:18:12.864 t=  62524  TCA0        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:18:12.864 t=  62530  TCA1        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:18:12.864 t=  62538  TCA2        INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:18:12.864 t=  62541  TCA2+PCA0   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:18:12.864 t=  62545  TCA2+PCA1   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:18:12.864 
+2026-10-23T23:18:14.697 --- Iteration 32 ---
+2026-10-23T23:18:14.902 t=  64549  BASE        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:18:14.902 t=  64555  TCA0        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:18:14.902 t=  64561  TCA1        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:18:14.902 t=  64569  TCA2        INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:18:14.902 t=  64572  TCA2+PCA0   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:18:14.902 t=  64576  TCA2+PCA1   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:18:14.902 
+2026-10-23T23:18:16.729 --- Iteration 33 ---
+2026-10-23T23:18:16.934 t=  66580  BASE        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:18:16.934 t=  66586  TCA0        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:18:16.934 t=  66592  TCA1        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:18:16.934 t=  66600  TCA2        INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:18:16.934 t=  66603  TCA2+PCA0   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:18:16.934 t=  66607  TCA2+PCA1   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:18:16.934 
+2026-10-23T23:18:18.959 --- Iteration 34 ---
+2026-10-23T23:18:18.959 t=  68610  BASE        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:18:18.959 t=  68616  TCA0        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:18:18.959 t=  68622  TCA1        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:18:18.959 t=  68630  TCA2        INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:18:18.959 t=  68633  TCA2+PCA0   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:18:18.959 t=  68637  TCA2+PCA1   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:18:18.959 
+2026-10-23T23:18:20.789 --- Iteration 35 ---
+2026-10-23T23:18:20.992 t=  70640  BASE        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:18:20.992 t=  70646  TCA0        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:18:20.992 t=  70652  TCA1        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:18:20.992 t=  70660  TCA2        INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:18:20.992 t=  70663  TCA2+PCA0   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:18:20.992 t=  70667  TCA2+PCA1   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:18:20.992 
+2026-10-23T23:18:22.828 --- Iteration 36 ---
+2026-10-23T23:18:22.828 t=  72670  BASE        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:18:22.828 t=  72676  TCA0        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:18:23.033 t=  72682  TCA1        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:18:23.033 t=  72690  TCA2        INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:18:23.033 t=  72693  TCA2+PCA0   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:18:23.033 t=  72697  TCA2+PCA1   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:18:23.033 
+2026-10-23T23:18:24.860 --- Iteration 37 ---
+2026-10-23T23:18:24.860 t=  74701  BASE        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:18:24.860 t=  74707  TCA0        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:18:25.065 t=  74713  TCA1        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:18:25.065 t=  74721  TCA2        INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:18:25.065 t=  74724  TCA2+PCA0   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:18:25.065 t=  74728  TCA2+PCA1   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:18:25.065 
+2026-10-23T23:18:26.895 --- Iteration 38 ---
+2026-10-23T23:18:26.896 t=  76731  BASE        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:18:26.896 t=  76737  TCA0        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:18:26.896 t=  76743  TCA1        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:18:27.097 t=  76751  TCA2        INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:18:27.098 t=  76754  TCA2+PCA0   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:18:27.098 t=  76758  TCA2+PCA1   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:18:27.098 
+2026-10-23T23:18:28.923 --- Iteration 39 ---
+2026-10-23T23:18:28.923 t=  78761  BASE        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:18:28.923 t=  78767  TCA0        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:18:29.125 t=  78773  TCA1        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:18:29.125 t=  78781  TCA2        INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:18:29.125 t=  78784  TCA2+PCA0   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:18:29.125 t=  78788  TCA2+PCA1   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:18:29.125 
+2026-10-23T23:18:30.945 --- Iteration 40 ---
+2026-10-23T23:18:30.946 t=  80791  BASE        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:18:31.151 t=  80797  TCA0        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:18:31.151 t=  80803  TCA1        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:18:31.151 t=  80811  TCA2        INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:18:31.151 t=  80814  TCA2+PCA0   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:18:31.151 t=  80818  TCA2+PCA1   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:18:31.151 
+2026-10-23T23:18:32.979 --- Iteration 41 ---
+2026-10-23T23:18:32.979 t=  82822  BASE        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:18:32.979 t=  82828  TCA0        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:18:33.182 t=  82834  TCA1        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:18:33.182 t=  82842  TCA2        INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:18:33.182 t=  82845  TCA2+PCA0   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:18:33.182 t=  82849  TCA2+PCA1   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:18:33.182 
+2026-10-23T23:18:35.015 --- Iteration 42 ---
+2026-10-23T23:18:35.015 t=  84853  BASE        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:18:35.015 t=  84859  TCA0        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:18:35.220 t=  84865  TCA1        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:18:35.220 t=  84873  TCA2        INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:18:35.220 t=  84876  TCA2+PCA0   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:18:35.220 t=  84880  TCA2+PCA1   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:18:35.220 
+2026-10-23T23:18:37.051 --- Iteration 43 ---
+2026-10-23T23:18:37.051 t=  86884  BASE        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:18:37.051 t=  86890  TCA0        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:18:37.051 t=  86896  TCA1        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:18:37.254 t=  86904  TCA2        INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:18:37.255 t=  86907  TCA2+PCA0   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:18:37.255 t=  86911  TCA2+PCA1   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:18:37.255 
+2026-10-23T23:18:39.087 --- Iteration 44 ---
+2026-10-23T23:18:39.087 t=  88914  BASE        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:18:39.087 t=  88920  TCA0        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:18:39.087 t=  88926  TCA1        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:18:39.087 t=  88934  TCA2        INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:18:39.290 t=  88937  TCA2+PCA0   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:18:39.290 t=  88941  TCA2+PCA1   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:18:39.291 
+2026-10-23T23:18:41.117 --- Iteration 45 ---
+2026-10-23T23:18:41.117 t=  90944  BASE        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:18:41.117 t=  90950  TCA0        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:18:41.117 t=  90956  TCA1        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:18:41.117 t=  90964  TCA2        INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:18:41.321 t=  90967  TCA2+PCA0   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:18:41.321 t=  90971  TCA2+PCA1   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:18:41.321 
+2026-10-23T23:18:43.151 --- Iteration 46 ---
+2026-10-23T23:18:43.151 t=  92974  BASE        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:18:43.151 t=  92980  TCA0        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:18:43.151 t=  92986  TCA1        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:18:43.151 t=  92994  TCA2        INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:18:43.151 t=  92997  TCA2+PCA0   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:18:43.355 t=  93001  TCA2+PCA1   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:18:43.355 
+2026-10-23T23:18:45.182 --- Iteration 47 ---
+2026-10-23T23:18:45.182 t=  95005  BASE        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:18:45.182 t=  95011  TCA0        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:18:45.182 t=  95017  TCA1        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:18:45.182 t=  95025  TCA2        INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:18:45.182 t=  95028  TCA2+PCA0   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:18:45.384 t=  95032  TCA2+PCA1   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:18:45.384 
+2026-10-23T23:18:47.215 --- Iteration 48 ---
+2026-10-23T23:18:47.216 t=  97036  BASE        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:18:47.216 t=  97042  TCA0        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:18:47.216 t=  97048  TCA1        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:18:47.216 t=  97056  TCA2        INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:18:47.216 t=  97059  TCA2+PCA0   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:18:47.216 t=  97063  TCA2+PCA1   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:18:47.216 
+2026-10-23T23:18:49.244 --- Iteration 49 ---
+2026-10-23T23:18:49.244 t=  99066  BASE        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:18:49.244 t=  99072  TCA0        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:18:49.244 t=  99078  TCA1        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:18:49.245 t=  99086  TCA2        INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:18:49.245 t=  99089  TCA2+PCA0   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:18:49.245 t=  99093  TCA2+PCA1   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:18:49.245 
+2026-10-23T23:18:51.266 --- Iteration 50 ---
+2026-10-23T23:18:51.266 t= 101097  BASE        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:18:51.266 t= 101103  TCA0        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:18:51.266 t= 101109  TCA1        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:18:51.472 t= 101117  TCA2        INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:18:51.472 t= 101120  TCA2+PCA0   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:18:51.472 t= 101124  TCA2+PCA1   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:18:51.472 
+2026-10-23T23:18:53.304 --- Iteration 51 ---
+2026-10-23T23:18:53.305 t= 103127  BASE        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:18:53.305 t= 103133  TCA0        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:18:53.305 t= 103139  TCA1        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:18:53.305 t= 103147  TCA2        INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:18:53.305 t= 103150  TCA2+PCA0   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:18:53.305 t= 103154  TCA2+PCA1   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:18:53.305 
+2026-10-23T23:18:55.337 --- Iteration 52 ---
+2026-10-23T23:18:55.337 t= 105158  BASE        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:18:55.337 t= 105164  TCA0        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:18:55.338 t= 105170  TCA1        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:18:55.338 t= 105178  TCA2        INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:18:55.338 t= 105181  TCA2+PCA0   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:18:55.338 t= 105185  TCA2+PCA1   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:18:55.338 
+2026-10-23T23:18:57.365 --- Iteration 53 ---
+2026-10-23T23:18:57.365 t= 107188  BASE        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:18:57.365 t= 107194  TCA0        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:18:57.365 t= 107200  TCA1        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:18:57.365 t= 107208  TCA2        INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:18:57.365 t= 107211  TCA2+PCA0   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:18:57.365 t= 107215  TCA2+PCA1   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:18:57.365 
+2026-10-23T23:18:59.393 --- Iteration 54 ---
+2026-10-23T23:18:59.393 t= 109218  BASE        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:18:59.393 t= 109224  TCA0        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:18:59.393 t= 109230  TCA1        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:18:59.393 t= 109238  TCA2        INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:18:59.394 t= 109241  TCA2+PCA0   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:18:59.596 t= 109245  TCA2+PCA1   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:18:59.597 
+2026-10-23T23:19:01.425 --- Iteration 55 ---
+2026-10-23T23:19:01.426 t= 111248  BASE        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:19:01.426 t= 111254  TCA0        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:19:01.426 t= 111260  TCA1        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:19:01.426 t= 111268  TCA2        INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:19:01.426 t= 111271  TCA2+PCA0   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:19:01.426 t= 111275  TCA2+PCA1   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:19:01.426 
+2026-10-23T23:19:03.461 --- Iteration 56 ---
+2026-10-23T23:19:03.461 t= 113278  BASE        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:19:03.461 t= 113284  TCA0        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:19:03.461 t= 113290  TCA1        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:19:03.461 t= 113298  TCA2        INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:19:03.461 t= 113301  TCA2+PCA0   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:19:03.461 t= 113305  TCA2+PCA1   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:19:03.462 
+2026-10-23T23:19:05.494 --- Iteration 57 ---
+2026-10-23T23:19:05.494 t= 115309  BASE        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:19:05.494 t= 115315  TCA0        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:19:05.494 t= 115321  TCA1        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:19:05.494 t= 115329  TCA2        INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:19:05.494 t= 115332  TCA2+PCA0   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:19:05.494 t= 115336  TCA2+PCA1   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:19:05.494 
+2026-10-23T23:19:07.527 --- Iteration 58 ---
+2026-10-23T23:19:07.527 t= 117340  BASE        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:19:07.527 t= 117346  TCA0        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:19:07.527 t= 117352  TCA1        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:19:07.527 t= 117360  TCA2        INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:19:07.527 t= 117363  TCA2+PCA0   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:19:07.528 t= 117367  TCA2+PCA1   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:19:07.528 
+2026-10-23T23:19:09.558 --- Iteration 59 ---
+2026-10-23T23:19:09.558 t= 119370  BASE        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:19:09.558 t= 119376  TCA0        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:19:09.558 t= 119382  TCA1        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:19:09.558 t= 119390  TCA2        INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:19:09.558 t= 119393  TCA2+PCA0   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:19:09.558 t= 119397  TCA2+PCA1   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:19:09.558 
+2026-10-23T23:19:11.602 --- Iteration 60 ---
+2026-10-23T23:19:11.602 t= 121400  BASE        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:19:11.602 t= 121406  TCA0        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:19:11.602 t= 121412  TCA1        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:19:11.602 t= 121420  TCA2        INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:19:11.602 t= 121423  TCA2+PCA0   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:19:11.602 t= 121427  TCA2+PCA1   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:19:11.602 
+2026-10-23T23:19:13.657 --- Iteration 61 ---
+2026-10-23T23:19:13.657 t= 123430  BASE        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:19:13.657 t= 123436  TCA0        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:19:13.658 t= 123442  TCA1        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:19:13.658 t= 123450  TCA2        INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:19:13.658 t= 123453  TCA2+PCA0   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:19:13.658 t= 123457  TCA2+PCA1   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:19:13.658 
+2026-10-23T23:19:15.694 --- Iteration 62 ---
+2026-10-23T23:19:15.694 t= 125461  BASE        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:19:15.694 t= 125467  TCA0        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:19:15.694 t= 125473  TCA1        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:19:15.694 t= 125481  TCA2        INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:19:15.694 t= 125484  TCA2+PCA0   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:19:15.694 t= 125488  TCA2+PCA1   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:19:15.694 
+2026-10-23T23:19:17.721 --- Iteration 63 ---
+2026-10-23T23:19:17.722 t= 127492  BASE        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:19:17.722 t= 127498  TCA0        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:19:17.722 t= 127504  TCA1        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:19:17.722 t= 127512  TCA2        INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:19:17.722 t= 127515  TCA2+PCA0   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:19:17.722 t= 127519  TCA2+PCA1   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:19:17.722 
+2026-10-23T23:19:19.775 --- Iteration 64 ---
+2026-10-23T23:19:19.775 t= 129522  BASE        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:19:19.775 t= 129528  TCA0        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:19:19.775 t= 129534  TCA1        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:19:19.775 t= 129542  TCA2        INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:19:19.775 t= 129545  TCA2+PCA0   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:19:19.775 t= 129549  TCA2+PCA1   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:19:19.775 
+2026-10-23T23:19:21.851 --- Iteration 65 ---
+2026-10-23T23:19:21.851 t= 131552  BASE        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:19:21.851 t= 131558  TCA0        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:19:21.851 t= 131564  TCA1        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:19:21.852 t= 131572  TCA2        INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:19:21.852 t= 131575  TCA2+PCA0   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:19:21.852 t= 131579  TCA2+PCA1   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:19:21.852 
+2026-10-23T23:19:23.923 --- Iteration 66 ---
+2026-10-23T23:19:23.923 t= 133582  BASE        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:19:23.923 t= 133588  TCA0        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:19:23.923 t= 133594  TCA1        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:19:23.923 t= 133602  TCA2        INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:19:23.923 t= 133605  TCA2+PCA0   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:19:23.923 t= 133609  TCA2+PCA1   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:19:23.923 
+2026-10-23T23:19:25.791 --- Iteration 67 ---
+2026-10-23T23:19:25.791 t= 135613  BASE        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:19:25.791 t= 135619  TCA0        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:19:25.791 t= 135625  TCA1        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:19:25.791 t= 135633  TCA2        INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:19:25.792 t= 135636  TCA2+PCA0   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:19:25.792 t= 135640  TCA2+PCA1   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:19:25.792 
+2026-10-23T23:19:27.862 --- Iteration 68 ---
+2026-10-23T23:19:27.862 t= 137644  BASE        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:19:27.862 t= 137650  TCA0        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:19:27.862 t= 137656  TCA1        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:19:27.862 t= 137664  TCA2        INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:19:27.862 t= 137667  TCA2+PCA0   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:19:27.862 t= 137671  TCA2+PCA1   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:19:27.862 
+2026-10-23T23:19:29.914 --- Iteration 69 ---
+2026-10-23T23:19:29.914 t= 139674  BASE        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:19:29.914 t= 139680  TCA0        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:19:29.915 t= 139686  TCA1        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:19:29.915 t= 139694  TCA2        INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:19:29.915 t= 139697  TCA2+PCA0   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:19:29.915 t= 139701  TCA2+PCA1   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:19:29.915 
+2026-10-23T23:19:31.980 --- Iteration 70 ---
+2026-10-23T23:19:31.980 t= 141704  BASE        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:19:31.980 t= 141710  TCA0        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:19:31.980 t= 141716  TCA1        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:19:31.980 t= 141724  TCA2        INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:19:31.980 t= 141727  TCA2+PCA0   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:19:31.980 t= 141731  TCA2+PCA1   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:19:31.980 
+2026-10-23T23:19:34.051 --- Iteration 71 ---
+2026-10-23T23:19:34.051 t= 143734  BASE        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:19:34.051 t= 143740  TCA0        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:19:34.051 t= 143746  TCA1        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:19:34.051 t= 143754  TCA2        INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:19:34.051 t= 143757  TCA2+PCA0   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:19:34.051 t= 143761  TCA2+PCA1   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:19:34.051 
+2026-10-23T23:19:35.916 --- Iteration 72 ---
+2026-10-23T23:19:35.916 t= 145765  BASE        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:19:36.117 t= 145771  TCA0        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:19:36.117 t= 145777  TCA1        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:19:36.117 t= 145785  TCA2        INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:19:36.118 t= 145788  TCA2+PCA0   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:19:36.118 t= 145792  TCA2+PCA1   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:19:36.118 
+2026-10-23T23:19:37.971 --- Iteration 73 ---
+2026-10-23T23:19:37.971 t= 147796  BASE        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:19:37.971 t= 147802  TCA0        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:19:37.971 t= 147808  TCA1        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:19:37.971 t= 147816  TCA2        INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:19:37.971 t= 147819  TCA2+PCA0   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:19:38.179 t= 147823  TCA2+PCA1   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:19:38.180 
+2026-10-23T23:19:40.047 --- Iteration 74 ---
+2026-10-23T23:19:40.047 t= 149826  BASE        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:19:40.047 t= 149832  TCA0        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:19:40.047 t= 149838  TCA1        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:19:40.047 t= 149846  TCA2        INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:19:40.047 t= 149849  TCA2+PCA0   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:19:40.047 t= 149853  TCA2+PCA1   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:19:40.047 
+2026-10-23T23:19:42.129 --- Iteration 75 ---
+2026-10-23T23:19:42.129 t= 151856  BASE        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:19:42.129 t= 151862  TCA0        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:19:42.129 t= 151868  TCA1        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:19:42.129 t= 151876  TCA2        INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:19:42.129 t= 151879  TCA2+PCA0   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:19:42.129 t= 151883  TCA2+PCA1   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:19:42.129 
+2026-10-23T23:19:44.208 --- Iteration 76 ---
+2026-10-23T23:19:44.208 t= 153886  BASE        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:19:44.208 t= 153892  TCA0        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:19:44.208 t= 153898  TCA1        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:19:44.208 t= 153906  TCA2        INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:19:44.209 t= 153909  TCA2+PCA0   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:19:44.209 t= 153913  TCA2+PCA1   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:19:44.209 
+2026-10-23T23:19:46.070 --- Iteration 77 ---
+2026-10-23T23:19:46.070 t= 155917  BASE        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:19:46.273 t= 155923  TCA0        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:19:46.273 t= 155929  TCA1        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:19:46.273 t= 155937  TCA2        INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:19:46.273 t= 155940  TCA2+PCA0   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:19:46.273 t= 155944  TCA2+PCA1   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:19:46.273 
+2026-10-23T23:19:48.119 --- Iteration 78 ---
+2026-10-23T23:19:48.119 t= 157948  BASE        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:19:48.119 t= 157954  TCA0        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:19:48.119 t= 157960  TCA1        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:19:48.119 t= 157968  TCA2        INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:19:48.327 t= 157971  TCA2+PCA0   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:19:48.327 t= 157975  TCA2+PCA1   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:19:48.327 
+2026-10-23T23:19:50.170 --- Iteration 79 ---
+2026-10-23T23:19:50.170 t= 159978  BASE        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:19:50.170 t= 159984  TCA0        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:19:50.170 t= 159990  TCA1        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:19:50.170 t= 159998  TCA2        INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:19:50.170 t= 160001  TCA2+PCA0   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:19:50.170 t= 160005  TCA2+PCA1   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:19:50.170 
+2026-10-23T23:19:52.228 --- Iteration 80 ---
+2026-10-23T23:19:52.228 t= 162009  BASE        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:19:52.228 t= 162015  TCA0        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:19:52.228 t= 162021  TCA1        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:19:52.228 t= 162029  TCA2        INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:19:52.228 t= 162032  TCA2+PCA0   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:19:52.228 t= 162036  TCA2+PCA1   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:19:52.228 
+2026-10-23T23:19:54.307 --- Iteration 81 ---
+2026-10-23T23:19:54.307 t= 164039  BASE        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:19:54.307 t= 164045  TCA0        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:19:54.307 t= 164051  TCA1        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:19:54.307 t= 164059  TCA2        INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:19:54.307 t= 164062  TCA2+PCA0   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:19:54.307 t= 164066  TCA2+PCA1   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:19:54.307 
+2026-10-23T23:19:56.377 --- Iteration 82 ---
+2026-10-23T23:19:56.378 t= 166070  BASE        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:19:56.378 t= 166076  TCA0        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:19:56.378 t= 166082  TCA1        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:19:56.378 t= 166090  TCA2        INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:19:56.378 t= 166093  TCA2+PCA0   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:19:56.378 t= 166097  TCA2+PCA1   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:19:56.378 
+2026-10-23T23:19:58.246 --- Iteration 83 ---
+2026-10-23T23:19:58.455 t= 168101  BASE        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:19:58.455 t= 168107  TCA0        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:19:58.455 t= 168113  TCA1        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:19:58.455 t= 168121  TCA2        INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:19:58.455 t= 168124  TCA2+PCA0   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:19:58.455 t= 168128  TCA2+PCA1   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:19:58.455 
+2026-10-23T23:20:00.316 --- Iteration 84 ---
+2026-10-23T23:20:00.316 t= 170131  BASE        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:20:00.316 t= 170137  TCA0        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:20:00.316 t= 170143  TCA1        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:20:00.316 t= 170151  TCA2        INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:20:00.316 t= 170154  TCA2+PCA0   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:20:00.316 t= 170158  TCA2+PCA1   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:20:00.316 
+2026-10-23T23:20:02.379 --- Iteration 85 ---
+2026-10-23T23:20:02.379 t= 172162  BASE        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:20:02.379 t= 172168  TCA0        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:20:02.379 t= 172174  TCA1        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:20:02.379 t= 172182  TCA2        INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:20:02.379 t= 172185  TCA2+PCA0   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:20:02.380 t= 172189  TCA2+PCA1   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:20:02.380 
+2026-10-23T23:20:04.451 --- Iteration 86 ---
+2026-10-23T23:20:04.451 t= 174193  BASE        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:20:04.451 t= 174199  TCA0        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:20:04.451 t= 174205  TCA1        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:20:04.451 t= 174213  TCA2        INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:20:04.451 t= 174216  TCA2+PCA0   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:20:04.451 t= 174220  TCA2+PCA1   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:20:04.451 
+2026-10-23T23:20:06.525 --- Iteration 87 ---
+2026-10-23T23:20:06.525 t= 176224  BASE        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:20:06.526 t= 176230  TCA0        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:20:06.526 t= 176236  TCA1        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:20:06.526 t= 176244  TCA2        INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:20:06.526 t= 176247  TCA2+PCA0   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:20:06.526 t= 176251  TCA2+PCA1   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:20:06.526 
+2026-10-23T23:20:08.588 --- Iteration 88 ---
+2026-10-23T23:20:08.588 t= 178255  BASE        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:20:08.588 t= 178261  TCA0        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:20:08.588 t= 178267  TCA1        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:20:08.588 t= 178275  TCA2        INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:20:08.588 t= 178278  TCA2+PCA0   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:20:08.588 t= 178282  TCA2+PCA1   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:20:08.588 
+2026-10-23T23:20:10.451 --- Iteration 89 ---
+2026-10-23T23:20:10.451 t= 180285  BASE        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:20:10.451 t= 180291  TCA0        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:20:10.451 t= 180297  TCA1        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:20:10.657 t= 180305  TCA2        INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:20:10.657 t= 180308  TCA2+PCA0   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:20:10.657 t= 180312  TCA2+PCA1   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:20:10.657 
+2026-10-23T23:20:12.525 --- Iteration 90 ---
+2026-10-23T23:20:12.525 t= 182315  BASE        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:20:12.525 t= 182321  TCA0        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:20:12.525 t= 182327  TCA1        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:20:12.525 t= 182335  TCA2        INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:20:12.525 t= 182338  TCA2+PCA0   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:20:12.525 t= 182342  TCA2+PCA1   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:20:12.525 
+2026-10-23T23:20:14.586 --- Iteration 91 ---
+2026-10-23T23:20:14.587 t= 184345  BASE        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:20:14.587 t= 184351  TCA0        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:20:14.587 t= 184357  TCA1        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:20:14.587 t= 184365  TCA2        INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:20:14.587 t= 184368  TCA2+PCA0   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:20:14.587 t= 184372  TCA2+PCA1   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:20:14.587 
+2026-10-23T23:20:16.647 --- Iteration 92 ---
+2026-10-23T23:20:16.648 t= 186376  BASE        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:20:16.648 t= 186382  TCA0        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:20:16.648 t= 186388  TCA1        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:20:16.648 t= 186396  TCA2        INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:20:16.648 t= 186399  TCA2+PCA0   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:20:16.648 t= 186403  TCA2+PCA1   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:20:16.648 
+2026-10-23T23:20:18.705 --- Iteration 93 ---
+2026-10-23T23:20:18.705 t= 188406  BASE        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:20:18.705 t= 188412  TCA0        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:20:18.705 t= 188418  TCA1        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:20:18.705 t= 188426  TCA2        INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:20:18.705 t= 188429  TCA2+PCA0   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:20:18.705 t= 188433  TCA2+PCA1   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:20:18.705 
+2026-10-23T23:20:20.754 --- Iteration 94 ---
+2026-10-23T23:20:20.754 t= 190437  BASE        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:20:20.754 t= 190443  TCA0        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:20:20.755 t= 190449  TCA1        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:20:20.755 t= 190457  TCA2        INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:20:20.755 t= 190460  TCA2+PCA0   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:20:20.755 t= 190464  TCA2+PCA1   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:20:20.755 
+2026-10-23T23:20:22.611 --- Iteration 95 ---
+2026-10-23T23:20:22.812 t= 192467  BASE        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:20:22.812 t= 192473  TCA0        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:20:22.812 t= 192479  TCA1        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:20:22.812 t= 192487  TCA2        INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:20:22.812 t= 192490  TCA2+PCA0   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:20:22.812 t= 192494  TCA2+PCA1   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:20:22.812 
+2026-10-23T23:20:24.657 --- Iteration 96 ---
+2026-10-23T23:20:24.657 t= 194498  BASE        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:20:24.657 t= 194504  TCA0        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:20:24.867 t= 194510  TCA1        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:20:24.867 t= 194518  TCA2        INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:20:24.867 t= 194521  TCA2+PCA0   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:20:24.867 t= 194525  TCA2+PCA1   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:20:24.867 
+2026-10-23T23:20:26.733 --- Iteration 97 ---
+2026-10-23T23:20:26.733 t= 196529  BASE        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:20:26.733 t= 196535  TCA0        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:20:26.733 t= 196541  TCA1        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:20:26.733 t= 196549  TCA2        INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:20:26.733 t= 196552  TCA2+PCA0   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:20:26.733 t= 196556  TCA2+PCA1   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:20:26.733 
+2026-10-23T23:20:28.788 --- Iteration 98 ---
+2026-10-23T23:20:28.789 t= 198559  BASE        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:20:28.789 t= 198565  TCA0        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:20:28.789 t= 198571  TCA1        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:20:28.789 t= 198579  TCA2        INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:20:28.789 t= 198582  TCA2+PCA0   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:20:28.789 t= 198586  TCA2+PCA1   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:20:28.789 
+2026-10-23T23:20:30.873 --- Iteration 99 ---
+2026-10-23T23:20:30.873 t= 200589  BASE        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:20:30.873 t= 200595  TCA0        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:20:30.873 t= 200601  TCA1        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:20:30.873 t= 200609  TCA2        INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:20:30.873 t= 200612  TCA2+PCA0   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:20:30.873 t= 200616  TCA2+PCA1   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:20:30.873 
+2026-10-23T23:20:32.950 --- Iteration 100 ---
+2026-10-23T23:20:32.950 t= 202619  BASE        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:20:32.950 t= 202625  TCA0        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:20:32.950 t= 202631  TCA1        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:20:32.950 t= 202639  TCA2        INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:20:32.950 t= 202642  TCA2+PCA0   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:20:32.950 t= 202646  TCA2+PCA1   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:20:32.950 
+2026-10-23T23:20:34.798 --- Iteration 101 ---
+2026-10-23T23:20:34.798 t= 204650  BASE        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:20:34.999 t= 204656  TCA0        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:20:34.999 t= 204662  TCA1        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:20:34.999 t= 204670  TCA2        INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:20:34.999 t= 204673  TCA2+PCA0   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:20:34.999 t= 204677  TCA2+PCA1   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:20:34.999 
+2026-10-23T23:20:36.844 --- Iteration 102 ---
+2026-10-23T23:20:36.844 t= 206681  BASE        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:20:36.844 t= 206687  TCA0        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:20:36.844 t= 206693  TCA1        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:20:37.050 t= 206701  TCA2        INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:20:37.051 t= 206704  TCA2+PCA0   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:20:37.051 t= 206708  TCA2+PCA1   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:20:37.051 
+2026-10-23T23:20:38.916 --- Iteration 103 ---
+2026-10-23T23:20:38.916 t= 208712  BASE        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:20:38.916 t= 208718  TCA0        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:20:38.916 t= 208724  TCA1        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:20:38.916 t= 208732  TCA2        INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:20:38.916 t= 208735  TCA2+PCA0   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:20:38.916 t= 208739  TCA2+PCA1   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:20:38.916 
+2026-10-23T23:20:40.994 --- Iteration 104 ---
+2026-10-23T23:20:40.995 t= 210742  BASE        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:20:40.995 t= 210748  TCA0        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:20:40.995 t= 210754  TCA1        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:20:40.995 t= 210762  TCA2        INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:20:40.995 t= 210765  TCA2+PCA0   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:20:40.995 t= 210769  TCA2+PCA1   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:20:40.995 
+2026-10-23T23:20:43.057 --- Iteration 105 ---
+2026-10-23T23:20:43.057 t= 212772  BASE        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:20:43.057 t= 212778  TCA0        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:20:43.058 t= 212784  TCA1        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:20:43.058 t= 212792  TCA2        INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:20:43.058 t= 212795  TCA2+PCA0   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:20:43.058 t= 212799  TCA2+PCA1   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:20:43.058 
+2026-10-23T23:20:45.124 --- Iteration 106 ---
+2026-10-23T23:20:45.124 t= 214802  BASE        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:20:45.124 t= 214808  TCA0        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:20:45.124 t= 214814  TCA1        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:20:45.124 t= 214822  TCA2        INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:20:45.124 t= 214825  TCA2+PCA0   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:20:45.124 t= 214829  TCA2+PCA1   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:20:45.124 
+2026-10-23T23:20:46.989 --- Iteration 107 ---
+2026-10-23T23:20:46.989 t= 216833  BASE        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:20:46.989 t= 216839  TCA0        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:20:47.197 t= 216845  TCA1        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:20:47.197 t= 216853  TCA2        INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:20:47.197 t= 216856  TCA2+PCA0   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:20:47.197 t= 216860  TCA2+PCA1   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:20:47.197 
+2026-10-23T23:20:49.069 --- Iteration 108 ---
+2026-10-23T23:20:49.069 t= 218864  BASE        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:20:49.069 t= 218870  TCA0        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:20:49.069 t= 218876  TCA1        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:20:49.069 t= 218884  TCA2        INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:20:49.069 t= 218887  TCA2+PCA0   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:20:49.069 t= 218891  TCA2+PCA1   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:20:49.069 
+2026-10-23T23:20:51.156 --- Iteration 109 ---
+2026-10-23T23:20:51.156 t= 220894  BASE        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:20:51.156 t= 220900  TCA0        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:20:51.156 t= 220906  TCA1        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:20:51.156 t= 220914  TCA2        INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:20:51.156 t= 220917  TCA2+PCA0   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:20:51.156 t= 220921  TCA2+PCA1   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:20:51.156 
+2026-10-23T23:20:53.232 --- Iteration 110 ---
+2026-10-23T23:20:53.232 t= 222924  BASE        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:20:53.232 t= 222930  TCA0        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:20:53.232 t= 222936  TCA1        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:20:53.232 t= 222944  TCA2        INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:20:53.232 t= 222947  TCA2+PCA0   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:20:53.232 t= 222951  TCA2+PCA1   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:20:53.232 
+2026-10-23T23:20:55.097 --- Iteration 111 ---
+2026-10-23T23:20:55.307 t= 224954  BASE        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:20:55.307 t= 224960  TCA0        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:20:55.307 t= 224966  TCA1        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:20:55.307 t= 224974  TCA2        INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:20:55.307 t= 224977  TCA2+PCA0   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:20:55.307 t= 224981  TCA2+PCA1   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:20:55.307 
+2026-10-23T23:20:57.173 --- Iteration 112 ---
+2026-10-23T23:20:57.174 t= 226985  BASE        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:20:57.174 t= 226991  TCA0        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:20:57.174 t= 226997  TCA1        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:20:57.174 t= 227005  TCA2        INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:20:57.174 t= 227008  TCA2+PCA0   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:20:57.174 t= 227012  TCA2+PCA1   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:20:57.174 
+2026-10-23T23:20:59.247 --- Iteration 113 ---
+2026-10-23T23:20:59.247 t= 229016  BASE        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:20:59.247 t= 229022  TCA0        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:20:59.247 t= 229028  TCA1        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:20:59.247 t= 229036  TCA2        INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:20:59.247 t= 229039  TCA2+PCA0   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:20:59.247 t= 229043  TCA2+PCA1   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:20:59.247 
+2026-10-23T23:21:01.323 --- Iteration 114 ---
+2026-10-23T23:21:01.323 t= 231046  BASE        INA:.    BQ:X(2) TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:21:01.323 t= 231052  TCA0        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:21:01.323 t= 231058  TCA1        INA:.    BQ:X(2) TCA:.    PCA:X(2) VCNL:X(2)
+2026-10-23T23:21:01.323 t= 231066  TCA2        INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:21:01.323 t= 231069  TCA2+PCA0   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:21:01.323 t= 231073  TCA2+PCA1   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2)
+2026-10-23T23:21:01.323 
+2026-10-23T23:21:02.644 [logger] read failed: [Errno 6] Device not configured

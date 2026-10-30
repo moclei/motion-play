@@ -1,0 +1,44 @@
+i2c_frame: lab/captures/V7R-010/crop/2026-10-24_V7R-010_S1_01.crop.csv
+  4374 points at 1.6e-08 s per sample, -29.98..+39.98 us; SDA CH1, SCL CH2; V_DD 3.3 V -> 0.990 / 1.650 / 2.310 V
+
+  mode: frame (START at -20.03 us)
+  START at -20.03 us
+  STOP at +6.78 us
+  SDA at SCL rising: 1 1 0 1 0 1 1 0 | 1  -> D6, 9th bit high (NACK)
+  SCL rising edges of the address byte: -17.49, -14.98, -12.48, -9.98, -7.48, -4.98, -2.48, +0.02, +2.52 us
+  SCL period 2.501 us (min 2.498, max 2.507)
+  rise 30->70 % CH1: 131.4 ns @ -18.50 us, 134.0 ns @ -10.97 us, 132.4 ns @ -5.97 us, 132.0 ns @ +1.53 us, 131.2 ns @ +6.78 us
+  rise 30->70 % CH2: 123.1 ns @ -17.49 us, 124.6 ns @ -14.98 us, 125.4 ns @ -12.48 us, 125.0 ns @ -9.98 us, 126.7 ns @ -7.48 us, 124.5 ns @ -4.98 us, 125.4 ns @ -2.48 us, 124.8 ns @ +0.02 us, 126.9 ns @ +2.52 us, 129.0 ns @ +5.02 us
+  V_OL address bit 5: 902.2 mV, t=-12.37..-11.45 us, n=57, sd 13.2 mV
+    FLAG > 0.2 V on a working bus: investigate the setup (lab/procedures/known-good-reference.md)
+  V_OL address bit 3: 894.5 mV, t=-7.37..-6.44 us, n=58, sd 12.3 mV
+    FLAG > 0.2 V on a working bus: investigate the setup (lab/procedures/known-good-reference.md)
+  V_OL R/W bit 0: 899.0 mV, t=+0.13..+1.05 us, n=57, sd 12.6 mV
+    FLAG > 0.2 V on a working bus: investigate the setup (lab/procedures/known-good-reference.md)
+  idle high CH1: 3272.9 mV, t=+11.79..+39.98 us, n=1763, sd 7.77 mV
+  idle high CH2: 3262.3 mV, t=+11.79..+39.98 us, n=1763, sd 27.36 mV
+
+  pass table (lab/procedures/known-good-reference.md; limits copied from it):
+  FAIL  V_OL          CH1  address bit 5: 902.2 mV  (limit <= 0.4 V)
+  FAIL  V_OL          CH1  address bit 3: 894.5 mV  (limit <= 0.4 V)
+  FAIL  V_OL          CH1  R/W bit 0: 899.0 mV  (limit <= 0.4 V)
+  PASS  Idle high     CH1  3.2729 V (from 5 us after the last edge)  (limit 3.135-3.465 V)
+  PASS  Idle high     CH2  3.2623 V (from 5 us after the last edge)  (limit 3.135-3.465 V)
+  PASS  Rise 30->70 % CH1  max 134.0 ns of 5 edges  (limit <= 300 ns)
+  PASS  Rise 30->70 % CH2  max 129.0 ns of 10 edges  (limit <= 300 ns)
+  FAIL  Decode        CH1  D6 NACK  (limit D6 then ACK)
+  note: record the scope panel RTIMe beside the CSV rise time; it has no pass role.
+
+  frame FAIL
+
+# values_csv entries (paste under the capture's log entry; offset_mV is validation.V5.offset_mV of CH1)
+    values_csv:
+      - {name: V_OL, ch: CH1, value_mV: 902.2, gate: "address bit 5, t=-12.37..-11.45 us (n=57, sd 13.2 mV)", offset_mV: TODO}
+      - {name: V_OL, ch: CH1, value_mV: 894.5, gate: "address bit 3, t=-7.37..-6.44 us (n=58, sd 12.3 mV)", offset_mV: TODO}
+      - {name: V_OL, ch: CH1, value_mV: 899.0, gate: "R/W bit 0, t=+0.13..+1.05 us (n=57, sd 12.6 mV)", offset_mV: TODO}
+      - {name: idle_high, ch: CH1, value_mV: 3272.9, gate: "from 5 us after the last edge, t=+11.79..+39.98 us (n=1763)"}
+      - {name: idle_high, ch: CH2, value_mV: 3262.3, gate: "from 5 us after the last edge, t=+11.79..+39.98 us (n=1763)"}
+      - {name: rise_30_70, ch: CH1, value: "131.4, 134.0, 132.4, 132.0, 131.2 ns", max_ns: 134.0, gate: "every SDA rising edge in the record (-18.50, -10.97, -5.97, +1.53, +6.78 us); 0.99->2.31 V, linear interpolation"}
+      - {name: rise_30_70, ch: CH2, value: "123.1, 124.6, 125.4, 125.0, 126.7, 124.5, 125.4, 124.8, 126.9, 129.0 ns", max_ns: 129.0, gate: "every SCL rising edge in the record (-17.49, -14.98, -12.48, -9.98, -7.48, -4.98, -2.48, +0.02, +2.52, +5.02 us); 0.99->2.31 V, linear interpolation"}
+      - {name: decode_bits, ch: CH1, value: "SDA at SCL rising: 1 1 0 1 0 1 1 0 | 1 (D6, 9th clock high = NACK)", gate: "SCL rising -17.49 ... +2.52 us"}
+      - {name: SCL_period, ch: CH2, value_us: 2.50, gate: "rising edges -17.49 ... +2.52 us"}

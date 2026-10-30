@@ -34,6 +34,7 @@ revert_on_null: n/a           # yes | no (justify) | n/a (no firmware/hardware c
 ## Setup
 - Measurement log: `lab/log/2026-11-04_session-01.yaml`. Validation must read `passed: true` before step 1.
 - Channels, probes, points: per log `channels`.
+- Probe moves (user rule, 2026-10-25): list every probe position in run order and count the moves (springs + both tips = full move; one tip = single move). Choose the order, and any anchor/repeat arm, that needs the fewest and smallest moves; group cards that share a position into one session. Flag every full move to the user before pre-registering. Each move risks a short, a scraped pad, repeated seating, and bench time.
 
 ## Procedure (physical steps for the operator)
 | Step | Do | Check before continuing | Report back |

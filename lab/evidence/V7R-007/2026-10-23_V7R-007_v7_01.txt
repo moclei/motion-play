@@ -1,0 +1,115 @@
+2026-10-23T23:40:45.334 [PowerMonitor] INA219 configured: 10mR shunt, 1mA/LSB, 8A max
+2026-10-23T23:40:45.334 [PWR after BQ config] VSYS=4.32 V, I=0 mA
+2026-10-23T23:40:45.334 Display initialized
+2026-10-23T23:40:45.334 [PWR after display init] VSYS=4.32 V, I=0 mA
+2026-10-23T23:40:45.334 
+2026-10-23T23:40:45.334 ==============================================================
+2026-10-23T23:40:45.334 [DIAG_RELEASE_I2C] Bus-release diagnostic mode
+2026-10-23T23:40:45.335 ==============================================================
+2026-10-23T23:40:45.335 Skipping WiFi/MQTT/sensor init.
+2026-10-23T23:40:45.335 Running 5-iteration diagnostic burst to prove BQ NACK reproduces
+2026-10-23T23:40:45.335 on the ESP32 side, then releasing the I2C bus to an external master.
+2026-10-23T23:40:45.335 
+2026-10-23T23:40:45.335 Probing: INA(0x40)  BQ(0x6B)  TCA(0x70)
+2026-10-23T23:40:45.335 Legend:  '.' = ACK,  'X(n)' = error n
+2026-10-23T23:40:45.335          (with failing-config cable in J6, expect BQ:X(2) on TCA2 row)
+2026-10-23T23:40:45.335 
+2026-10-23T23:40:45.335 --- Iteration 1 ---
+2026-10-23T23:40:45.335 t=    965  BASE        INA:.    BQ:.    TCA:.
+2026-10-23T23:40:45.335 t=    969  TCA0        INA:.    BQ:.    TCA:.
+2026-10-23T23:40:45.335 t=    973  TCA1        INA:.    BQ:.    TCA:.
+2026-10-23T23:40:45.335 t=    977  TCA2        INA:.    BQ:X(2) TCA:.
+2026-10-23T23:40:45.335 
+2026-10-23T23:40:46.761 --- Iteration 2 ---
+2026-10-23T23:40:46.761 t=   2480  BASE        INA:.    BQ:.    TCA:.
+2026-10-23T23:40:46.762 t=   2484  TCA0        INA:.    BQ:.    TCA:.
+2026-10-23T23:40:46.762 t=   2488  TCA1        INA:.    BQ:.    TCA:.
+2026-10-23T23:40:46.762 t=   2492  TCA2        INA:.    BQ:X(2) TCA:.
+2026-10-23T23:40:46.762 
+2026-10-23T23:40:48.177 --- Iteration 3 ---
+2026-10-23T23:40:48.177 t=   3995  BASE        INA:.    BQ:.    TCA:.
+2026-10-23T23:40:48.177 t=   3999  TCA0        INA:.    BQ:.    TCA:.
+2026-10-23T23:40:48.381 t=   4003  TCA1        INA:.    BQ:.    TCA:.
+2026-10-23T23:40:48.381 t=   4007  TCA2        INA:.    BQ:X(2) TCA:.
+2026-10-23T23:40:48.381 
+2026-10-23T23:40:49.800 --- Iteration 4 ---
+2026-10-23T23:40:49.801 t=   5510  BASE        INA:.    BQ:.    TCA:.
+2026-10-23T23:40:49.801 t=   5514  TCA0        INA:.    BQ:.    TCA:.
+2026-10-23T23:40:49.801 t=   5518  TCA1        INA:.    BQ:.    TCA:.
+2026-10-23T23:40:49.801 t=   5522  TCA2        INA:.    BQ:X(2) TCA:.
+2026-10-23T23:40:49.801 
+2026-10-23T23:40:51.222 --- Iteration 5 ---
+2026-10-23T23:40:51.222 t=   7025  BASE        INA:.    BQ:.    TCA:.
+2026-10-23T23:40:51.222 t=   7029  TCA0        INA:.    BQ:.    TCA:.
+2026-10-23T23:40:51.222 t=   7033  TCA1        INA:.    BQ:.    TCA:.
+2026-10-23T23:40:51.222 t=   7037  TCA2        INA:.    BQ:X(2) TCA:.
+2026-10-23T23:40:51.222 
+2026-10-23T23:40:52.848 Burst complete. Closing all TCA channels for clean baseline...
+2026-10-23T23:40:52.848 Releasing I2C bus...
+2026-10-23T23:40:52.848 
+2026-10-23T23:40:52.848 ==============================================================
+2026-10-23T23:40:52.848 BUS RELEASED
+2026-10-23T23:40:52.848 ==============================================================
+2026-10-23T23:40:52.848 ESP32 is no longer driving SDA/SCL. All TCA channels are closed
+2026-10-23T23:40:52.848 (clean baseline). BQ24195 is configured (IINLIM=2A, watchdog
+2026-10-23T23:40:52.848 disabled) and will retain that state indefinitely.
+2026-10-23T23:40:52.848 
+2026-10-23T23:40:52.848 Connect an Arduino Nano ESP32 (or any 3.3V Arduino) to:
+2026-10-23T23:40:52.848   Arduino SDA   <-> main PCB TPIO43 (SDA)
+2026-10-23T23:40:52.848   Arduino SCL   <-> main PCB TPIO44 (SCL)
+2026-10-23T23:40:52.848   Arduino GND   <-> main PCB GND test pad (shared ground required)
+2026-10-23T23:40:52.849 
+2026-10-23T23:40:52.849 Then flash and run:
+2026-10-23T23:40:52.849   tools/arduino-sketches/v7_bq_master_probe/v7_bq_master_probe.ino
+2026-10-23T23:40:52.849 
+2026-10-23T23:40:52.849 The Arduino sketch probes BQ on the closed-bus baseline, then opens
+2026-10-23T23:40:52.849 TCA channel 2 from its own master, and reports whether BQ ACKs in
+2026-10-23T23:40:52.849 each state. Expected outcomes:
+2026-10-23T23:40:52.849   - BQ NACKs Arduino on TCA2 -> Story D-revised confirmed
+2026-10-23T23:40:52.849   - BQ ACKs Arduino on TCA2  -> Story F confirmed
+2026-10-23T23:40:52.849 
+2026-10-23T23:40:52.849 ESP32 will print a heartbeat every 5 seconds so you can confirm it
+2026-10-23T23:40:52.849 is still alive while the Arduino has the bus. Press RESET to exit.
+2026-10-23T23:40:52.849 ==============================================================
+2026-10-23T23:40:52.849 
+2026-10-23T23:40:52.849 [heartbeat] t=8599 ms — ESP32 alive, bus released
+2026-10-23T23:40:57.925 [heartbeat] t=13599 ms — ESP32 alive, bus released
+2026-10-23T23:41:02.803 [heartbeat] t=18599 ms — ESP32 alive, bus released
+2026-10-23T23:41:07.871 [heartbeat] t=23599 ms — ESP32 alive, bus released
+2026-10-23T23:41:12.952 [heartbeat] t=28599 ms — ESP32 alive, bus released
+2026-10-23T23:41:17.836 [heartbeat] t=33599 ms — ESP32 alive, bus released
+2026-10-23T23:41:22.930 [heartbeat] t=38599 ms — ESP32 alive, bus released
+2026-10-23T23:41:27.811 [heartbeat] t=43599 ms — ESP32 alive, bus released
+2026-10-23T23:41:32.889 [heartbeat] t=48599 ms — ESP32 alive, bus released
+2026-10-23T23:41:37.801 [heartbeat] t=53599 ms — ESP32 alive, bus released
+2026-10-23T23:41:42.886 [heartbeat] t=58599 ms — ESP32 alive, bus released
+2026-10-23T23:41:47.964 [heartbeat] t=63599 ms — ESP32 alive, bus released
+2026-10-23T23:41:52.870 [heartbeat] t=68599 ms — ESP32 alive, bus released
+2026-10-23T23:41:57.771 [heartbeat] t=73599 ms — ESP32 alive, bus released
+2026-10-23T23:42:02.836 [heartbeat] t=78599 ms — ESP32 alive, bus released
+2026-10-23T23:42:07.924 [heartbeat] t=83599 ms — ESP32 alive, bus released
+2026-10-23T23:42:12.798 [heartbeat] t=88599 ms — ESP32 alive, bus released
+2026-10-23T23:42:17.907 [heartbeat] t=93599 ms — ESP32 alive, bus released
+2026-10-23T23:42:22.829 [heartbeat] t=98599 ms — ESP32 alive, bus released
+2026-10-23T23:42:27.904 [heartbeat] t=103599 ms — ESP32 alive, bus released
+2026-10-23T23:42:32.785 [heartbeat] t=108599 ms — ESP32 alive, bus released
+2026-10-23T23:42:37.889 [heartbeat] t=113599 ms — ESP32 alive, bus released
+2026-10-23T23:42:42.941 [heartbeat] t=118599 ms — ESP32 alive, bus released
+2026-10-23T23:42:47.815 [heartbeat] t=123599 ms — ESP32 alive, bus released
+2026-10-23T23:42:52.908 [heartbeat] t=128599 ms — ESP32 alive, bus released
+2026-10-23T23:42:57.803 [heartbeat] t=133599 ms — ESP32 alive, bus released
+2026-10-23T23:43:02.915 [heartbeat] t=138599 ms — ESP32 alive, bus released
+2026-10-23T23:43:07.787 [heartbeat] t=143599 ms — ESP32 alive, bus released
+2026-10-23T23:43:12.880 [heartbeat] t=148599 ms — ESP32 alive, bus released
+2026-10-23T23:43:17.969 [heartbeat] t=153599 ms — ESP32 alive, bus released
+2026-10-23T23:43:22.857 [heartbeat] t=158599 ms — ESP32 alive, bus released
+2026-10-23T23:43:27.961 [heartbeat] t=163599 ms — ESP32 alive, bus released
+2026-10-23T23:43:32.855 [heartbeat] t=168599 ms — ESP32 alive, bus released
+2026-10-23T23:43:37.945 [heartbeat] t=173599 ms — ESP32 alive, bus released
+2026-10-23T23:43:42.836 [heartbeat] t=178599 ms — ESP32 alive, bus released
+2026-10-23T23:43:47.920 [heartbeat] t=183599 ms — ESP32 alive, bus released
+2026-10-23T23:43:52.802 [heartbeat] t=188599 ms — ESP32 alive, bus released
+2026-10-23T23:43:57.893 [heartbeat] t=193599 ms — ESP32 alive, bus released
+2026-10-23T23:44:02.968 [heartbeat] t=198599 ms — ESP32 alive, bus released
+2026-10-23T23:44:07.854 [heartbeat] t=203599 ms — ESP32 alive, bus released
+2026-10-23T23:44:12.940 [heartbeat] t=208599 ms — ESP32 alive, bus released

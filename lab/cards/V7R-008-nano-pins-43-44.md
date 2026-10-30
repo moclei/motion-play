@@ -1,0 +1,129 @@
+---
+test_id: V7R-008
+title: "Pin role on the Nano ESP32 master: I²C on GPIO11/12 (A4/A5) vs GPIO43/44 (D1/D0, UART0 pins), U3 released, rigid on J6, A/B/A"
+status: recorded
+created: 2026-10-24
+prereg_commit: self
+baseline:
+  name: v7-clean
+  firmware_commit: "90053af"
+  firmware_env: motion-play-v7-relbus   # U3 released in all arms (as V7R-007). Nano: probe @ ee10efd built twice (A: unchanged; B: Wire.begin(D1, D0)), both with core debug level 3. Deltas approved by the user for this card ("sure")
+  board_id: v7-B3             # v7 #0003; U3 die rev v0.2. Master under test: Arduino Nano ESP32 (S3 rev v0.1, MAC 34:85:18:7b:eb:38)
+  hardware_config: "As V7R-007 (notebook 2026-10-23 s03 cont. bench state): v7 #0003, no battery, J4 empty. J6: sensor rigid #1 (SW1 ON = PCA 0x76, SW2 OFF) via ~400 mm cable. J5: pigtail, black in breadboard 'V' rail with the 10 kΩ, blue + yellow dangling, red → Nano GND column. TPIO43 green / TPIO44 yellow pad wires → ~175 mm F-M Dupont → Nano: A arms A4 (green) / A5 (yellow); B arm D1/TX (green) / D0/RX (yellow). USB-C Mac ↔ v7 J7; USB-C Mac ↔ Nano. Scope probes on Cal ground."
+variable_changed: "Nano I²C pins: GPIO11/12 (A4/A5; Wire.begin() default) vs GPIO43/44 (D1/D0; Wire.begin(D1, D0)) — image pin argument and jumper position move together"
+structure: A/B/A
+revert_on_null: yes           # end: jumpers on A4/A5, Nano on the blank sketch, U3 on v7-clean motion-play-v7-diag — the V7R-007 end state
+---
+
+# V7R-008 — Pin role on the Nano: GPIO11/12 vs GPIO43/44
+
+Map region cut: **master: pin role** — the U3 bundle item "U3 drives SDA/SCL from GPIO43/44, the UART0 TX/RX pins". After V7R-006 (image) and V7R-007 (core), the bundle is module/path, die rev, supply, U3→TPIO copper, pin role, board variant/flags. This card moves the Nano onto the same GPIO numbers as U3; nothing else about the master changes. Fourth card on the master bundle: its region review falls due after this card is recorded (decisioning §4.2).
+
+## Hypotheses in play
+| ID | Hypothesis | Source |
+|---|---|---|
+| H1 | Driving I²C from GPIO43/44 (UART0 pins: IO_MUX/matrix state, ROM boot output on GPIO43, pad characteristics) is necessary for the NACK with an S3 master: the Nano on GPIO43/44 gets VCNL and BQ X(2) | map: master: pin role |
+| H2 | Pin role is not the distinguishing factor: the Nano on GPIO43/44 gets VCNL and BQ ACK; what's left of the U3 bundle is module/path, die rev, supply, U3→TPIO copper, board variant | map: master: module/path, master supply |
+| M  | Readout or setup artefact: jumper on the wrong Nano pin or poor contact, wrong image (banner, i2cInit pin line), U3 not released, rigid not detected | always listed |
+
+## Confounds (declared; not separated by this card)
+- The jumper move is part of the variable: different Nano header pins, same Dupont jumpers. A contact or wrong-pin error shows as M (controls fail: INA/TCA/PCA NACK or no PCA found).
+- Both Nano images built with `build.code_debug=3` (V7R-007's were 0) so the `i2cInit(): … sda=… scl=…` line reads back the pins. A and B differ only by the `Wire.begin` line.
+- The Nano ESP32 board may route its D0/D1 header pins through components (series resistors, other loads) that its A4/A5 pins don't have — not checked against the Nano schematic.
+- B arm boots the Nano with GPIO43 connected to the v7 SDA, so the S3 ROM's boot output on UART0 TX (if enabled on this Nano) reaches SDA before the sketch starts — part of the pin role, as on U3.
+- Between arms the Nano is reflashed with jumpers still on the previous pins (that run is uncounted), then unplugged, rewired and replugged; the counted run is the boot after replugging. U3 stays powered and released throughout.
+
+## Predictions and exclusions (written before the run)
+Counted (Nano log, the boot after replug for B and A2; A1 the boot after flashing): `VCNL:` on `TCA2+PCA0` and `TCA2+PCA1`, probe iterations 1–10 → 20 per arm. Secondary: `BQ:` on the TCA2 row, 10 per arm.
+Controls in every counted arm: banner `sketch=v7_pca_master_probe version=1.0 … i2c_clock=400000 Hz`; `i2cInit()` line shows sda=11 scl=12 (A) or sda=43 scl=44 (B); PCA detection summary `TCA ch 2: PCA9546A at 0x76`; BASE `INA:. BQ:. TCA:.`; TCA2 row `INA:. TCA:. PCA:.`; TCA2+PCA rows `PCA:.`; TCA0 row `BQ:.`. U3: one `BUS RELEASED`, heartbeat throughout, no reboot.
+
+| Outcome (numeric) | Excludes | Supports (weakly) |
+|---|---|---|
+| A1, A2: VCNL '.' ≥ 18/20 each; B: VCNL '.' ≥ 18/20 and TCA2 BQ '.' ≥ 9/10; controls pass | H1 (measured-refuted: GPIO43/44 not sufficient on an S3 master with its own module/supply) | H2 |
+| A1, A2: VCNL '.' ≥ 18/20 each; B: VCNL X(2) ≥ 18/20 and TCA2 BQ X(2) ≥ 9/10; controls pass | H2 (measured-refuted: pin role moves the symptom) | H1 |
+| A1, A2: VCNL '.' ≥ 18/20; B: VCNL and BQ separate (one '.' at threshold, the other X(2) at threshold) | — (symptoms separate) | — ; record, decide with the user |
+| B: VCNL non-'.' in 3–17/20, or BQ non-'.' in 2–8/10 | — (intermittent) | — ; extend B to 30 iterations, decide with the user |
+| A1 or A2: VCNL '.' < 18/20; or A2 vs A1 differ by > 2/20; or any control fails; or a counted code other than 2; or U3 reboots / no heartbeat | — (result void) | M; stop and investigate |
+| No `BUS RELEASED` / no Nano banner / wrong i2cInit pins | — (setup void) | M |
+
+## Setup
+- Readout: both ports at 115200, session logger (PlatformIO's python) with host time and `=== <arm>` markers: `lab/captures/V7R-008/2026-10-24_V7R-008_v7_01.txt`, `..._nano_01.txt`. Ports by USB serial number (`ioreg`): v7 44:1B:F6:C5:58:C4, Nano 34:85:18:7B:EB:38.
+- U3: `motion-play-v7-relbus` from a detached worktree at `v7-clean` (90053af) at the start; `motion-play-v7-diag` at the end.
+- Nano A image: probe @ ee10efd unchanged (sha256 0218ffa2…0d48201); Nano B image: same with line 393 `Wire.begin();` → `Wire.begin(D1, D0);` (sha256 01d9ea5a…0ef64542; with pin remap, D1/D0 → GPIO43/44 via `digitalPinToGPIONumber` in `i2cInit`, io_pin_remap.h). Both compiled with Arduino IDE's arduino-cli, `arduino:esp32:nano_nora:USBMode=hwcdc`, `--build-property build.code_debug=3`, core 2.0.18-arduino.5; written with esptool v4.5.1 (0x0 / 0x8000 / 0xe000 boot_app0 / 0x10000). Built clean before pre-registration.
+- End: Nano blank sketch (2.0.18 hwcdc), U3 diag. All flashing by the session; no resets beyond uploads and the operator's Nano power cycles in the procedure. No scope.
+
+## Procedure (physical steps for the operator)
+| Step | Do | Check before continuing | Report back |
+|---|---|---|---|
+| S1 | Plug both Mac ends (Nano first, then v7) | LED on each | LEDs |
+| A1 | Nothing (session: U3 relbus, Nano A image, count) | — | — |
+| S2 | (session has flashed the B image) Unplug the Nano's Mac end; move green jumper A4 → D1/TX, yellow A5 → D0/RX; plug the Nano's Mac end | Jumpers on the pins labelled D1/TX and D0/RX; nothing else moved; Nano LED on | Pin labels as printed on the Nano |
+| B | Nothing (session counts) | — | — |
+| S3 | (session has flashed the A image) Unplug the Nano's Mac end; move green back to A4, yellow back to A5; plug the Nano's Mac end | Jumpers on A4/A5; Nano LED on | Done |
+| A2 | Nothing (session counts, then reverts both boards) | — | — |
+| S4 | Unplug both Mac ends | No LEDs | Bench state |
+
+--- RUN ---
+
+## Actual result
+### Raw observations (operator, verbatim; symptoms not interpretations)
+- S1 (operator): "both on" (Nano first, then v7). Ports by USB serial (`ioreg`): Nano → `/dev/cu.usbmodem14201`, v7 → `/dev/cu.usbmodem14401`.
+- U3 (session): `motion-play-v7-relbus` uploaded 00:26:12–00:26:42 (`Chip is ESP32-S3 (revision v0.2)`, `MAC: 44:1b:f6:c5:58:c4`, 4 hashes verified, SUCCESS). Relbus burst (uncounted) TCA2 `INA:. BQ:X(2) TCA:.` 5/5; `BUS RELEASED` 00:26:50.675.
+- A1 (session): Nano A image written 00:26:52–00:26:55 (`Chip is ESP32-S3 (revision v0.1)`, `MAC: 34:85:18:7b:eb:38`, 4 hashes verified, hard reset). Log (`=== A1 00:26:55`): `[probe] sketch=v7_pca_master_probe version=1.0 board=NANO_ESP32 i2c_clock=400000 Hz`; `TCA9548A initialized`; summary `TCA ch 2: PCA9546A at 0x76`. **No `i2cInit()` line**: the string `Initialising I2C Master` is absent from the A image ELF — `--build-property build.code_debug=3` did not take effect (same for the B image, same flags). Iterations 1–10 (t = 1517 … 19816 ms; host 00:26:57.077 … 00:27:15.418), every iteration identical: BASE, TCA0, TCA1 `INA:. BQ:. TCA:. PCA:X(2) VCNL:X(2)`; TCA2 `INA:. BQ:. TCA:. PCA:. VCNL:X(2)`; TCA2+PCA0/1 `INA:. BQ:. TCA:. PCA:. VCNL:.`. Counted: VCNL '.' 20/20; TCA2 BQ '.' 10/10. Controls pass except the i2cInit pin readback (absent). U3 heartbeat 00:27:15.690 (t=33574 ms).
+- Stop and decision (session → user): pin-readback control unavailable in both images. User: "carry on" — continue without it; the INA/TCA/PCA ACK controls stand in (a Nano on unconnected pins gets no ACK from any device). Recorded as a deviation.
+- B image (session): written 00:30:07 with the jumpers still on A4/A5 (uncounted; log marker `=== B-image-uncounted 00:30:10`): banner present, every row INA/BQ/TCA/PCA/VCNL X(2).
+- S2 (operator): "There isn't a TX/D1 or RX/D0 pin on the nano exactly, there is "TX1" and "RX0", which are on the side of the nano that includes D2-D12". Session: TX1 = D1 and RX0 = D0 (Nano silkscreen names); green → TX1, yellow → RX0. Operator: "both led's show the boards are powered".
+- Deviation: the Nano logger stopped at the S2 unplug (00:35:17, `Device not configured`) and was not restarted, so the first boot after the replug (time not logged) was not captured. With the user's agreement, the operator unplugged the Nano again (jumpers unchanged), the session armed the logger (`=== B 11:20:21`), and the operator replugged it: "plugged in, LED is on". Port up 11:20:38.4. This second replug is the counted B boot.
+- B (session): banner `[probe] sketch=v7_pca_master_probe version=1.0 board=NANO_ESP32 i2c_clock=400000 Hz`; then `ERROR: Failed to initialize TCA9548A`; PCA summary `TCA ch 0/1/2: (nothing detected)`. Iterations 1–10 (t = 3092 … 21268 ms; host 11:20:39.072 … 11:20:57.200) all the same: BASE, TCA0, TCA1, TCA2 `INA:X(2) BQ:X(2) TCA:X(2) PCA:X(2) VCNL:X(2)`. No TCA2+PCA rows were printed (no PCA detected). U3 heartbeat throughout (11:20:55.612, t=39253574 ms; no reboot since 00:26).
+- Stop: the controls failed (INA/TCA/PCA NACK, no PCA found), so per the card B is void (row M). The session has stopped and is consulting the user.
+- B retry (user chose: reseat jumpers). Operator: unplugged the wires from RX0/TX1, reseated the Nano in the breadboard, green (TPIO43) → TX1, yellow (TPIO44) → RX0, J5 red → Nano GND; J5 black on the 'V' rail with the 10 kΩ; J5 blue + yellow unconnected. Asked: red was in Nano GND before the reseat: "Yes it was"; Nano fully seated before: "I think so, but can't be certain". Logger armed (`=== B-retry 11:35:59`); operator: "plugged in, LEDs showing power is on".
+- Nano did not appear on USB (no port, not in `ioreg`) at 11:40, 11:41–11:43 or 11:45. v7 enumerated throughout. Operator: "The LED turns off when I unplug the nano. I plugged that cable into a different port on the mac and the LED is back on now"; still not on USB. Operator: Nano straddles the centre gap, nothing else in its rows, same USB-C cable as at 11:20.
+- Diagnostic (user agreed): green, yellow and red removed from the Nano, USB plugged in → Nano on USB at 11:59:32 (serial 34:85:18:7B:EB:38, `/dev/cu.usbmodem14101`, a different Mac port from 14201). No serial output captured.
+- Wire-by-wire (session-armed logger before each plug-in, same Mac port `/dev/cu.usbmodem14101`): red only (`=== diag-red-only`) → on USB 12:08:24, banner, all rows X(2); red + green (`=== diag-red-green`) → on USB 12:10:58, banner, all rows X(2); red + green + yellow (`=== diag-all-three`) → on USB 12:13:30. The not-on-USB condition of 11:36–11:45 did not recur.
+- B retry, all three wires (`=== diag-all-three`): banner `[probe] sketch=v7_pca_master_probe version=1.0 board=NANO_ESP32 i2c_clock=400000 Hz`; `ERROR: Failed to initialize TCA9548A`; `TCA ch 0/1/2: (nothing detected)`. Iterations 1–10 (t = 3093 … 21268 ms; host 12:13:30.721 … 12:13:48.818): BASE, TCA0, TCA1, TCA2 `INA:X(2) BQ:X(2) TCA:X(2) PCA:X(2) VCNL:X(2)`, 10/10 each. U3 heartbeat 12:13:50.742 (t=42428574 ms). Controls fail again: B remains void (row M). Stopped; consulting the user.
+- Operator continuity check (meter): "I tested continuity on the TPIO44 to RX0 and TPIO43 to TX1 traces and yes I'm getting beeps on both."
+- User chose option 2 (pin readback). Added delta (approved: "Let's go for option 2"): B′ = B image + one `[pins]` print after the banner, reading back `digitalPinToGPIONumber(D1/D0)`, GPIO-matrix out-select for GPIO43/44 (`GPIO_FUNC{43,44}_OUT_SEL_CFG` & 0x1FF, with `I2CEXT0_SDA/SCL_OUT_IDX` for comparison) and IO_MUX MCU_SEL for GPIO43/44 (diff vs B: 3 `soc/` includes + the print; sketch sha256 ced318fc…; bin sha256 6784f838…, same compile flags as B). Readback only; I²C calls unchanged. Flashed with the wires on TX1/RX0; the counted B′ run is the boot after the flash.
+- B′ after flash (`=== Bprime 13:26:24`): the logger opened late, so the banner, `[pins]` and iterations 1–4 were not captured; iterations 5–10 all rows X(2). Nano port gone 13:40:43 (operator unplugged for the replug the session asked for); logger armed (`=== Bprime-replug`); operator: "plugged in".
+- B′ counted (boot after replug, port up 13:41:08.6): banner as before; `[pins] D1=1->GPIO43 D0=0->GPIO44 out_sel43=90 out_sel44=89 (I2C0 sda_out=90 scl_out=89) mcu_sel43=1 mcu_sel44=1`; `ERROR: Failed to initialize TCA9548A`; `TCA ch 0/1/2: (nothing detected)`. Iterations 1–10 (t = 3098 … 21270 ms; host 13:41:09.239 … 13:41:27.369): BASE, TCA0, TCA1, TCA2 `INA:X(2) BQ:X(2) TCA:X(2) PCA:X(2) VCNL:X(2)`, 10/10 each. U3 heartbeat 13:41:30.837 (t=47688574 ms). Controls (INA/TCA/PCA ACK) fail; output routing of the image checked; input routing (I2C0 SDA/SCL in-select) not read back.
+- User chose the input readback before closing ("do the input readback first"). B″ = B′ + one `[pins-in]` print: `GPIO_FUNC{I2CEXT0_SDA_IN_IDX, I2CEXT0_SCL_IN_IDX}_IN_SEL_CFG` & 0xFF (in_sel [5:0], inv [6], sig-route [7]), IO_MUX FUN_IE and FUN_PU for GPIO43/44, GPIO_PIN43/44 pad_driver (open-drain), GPIO_IN1 levels for 43/44 (sketch sha256 2701af00…, bin 2143b8c2…, same flags). Readback only. Flashed by the session; counted boot is the replug after the flash.
+- B″ counted (boot after replug; operator: "plugged in"; port up 13:47:25.9): banner as before; `[pins] D1=1->GPIO43 D0=0->GPIO44 out_sel43=90 out_sel44=89 (I2C0 sda_out=90 scl_out=89) mcu_sel43=1 mcu_sel44=1`; `[pins-in] sda_in_cfg=0xab scl_in_cfg=0xac (in_sel[5:0] sig_route[7]) ie43=1 ie44=1 wpu43=1 wpu44=1 od43=1 od44=1 lvl43=1 lvl44=` — line cut there by the sketch's print buffer (lvl44 not reported); `ERROR: Failed to initialize TCA9548A`; `TCA ch 0/1/2: (nothing detected)`. Iterations 1–10 (t = 2774 … 20942 ms; host 13:47:26.573 … 13:47:44.671): BASE, TCA0, TCA1, TCA2 `INA:X(2) BQ:X(2) TCA:X(2) PCA:X(2) VCNL:X(2)`, 10/10 each. U3 heartbeat 13:47:45.760.
+- Revert to A image (session): A build (sketch sha256 0218ffa2…, same bin as A1) written 13:48:08 with the wires on TX1/RX0 (uncounted; `=== A-image-flash`).
+- S3 (operator): "A4/A5, unplugged". Logger armed (`=== A2 13:49:56`). Operator: "plugged in". Nano not on USB at 13:53:12 (v7 present). Session raised it with the user; no reply yet when the Nano appeared on USB at 13:58:05.3 (`/dev/cu.usbmodem14101`) and disappeared at 13:58:15.6 (`Device not configured`). No operator report covers this interval.
+- A2 (partial, 13:58:05.9–13:58:14.1): banner `[probe] sketch=v7_pca_master_probe version=1.0 board=NANO_ESP32 i2c_clock=400000 Hz`; `ERROR: Failed to initialize TCA9548A`; `TCA ch 0/1/2: (nothing detected)`; iterations 1–4 (t = 3098 … 11184 ms): BASE, TCA0, TCA1, TCA2 `INA:X(2) BQ:X(2) TCA:X(2) PCA:X(2) VCNL:X(2)`. Iterations 5–10 not captured. U3 heartbeat 13:53:05.833 and later. A2 differs from A1 (A1: every control ACK): void row. Stopped; consulting the user.
+- Operator on the 13:58 run: "I was just moving the nano on the breadboard and testing that the led came on, please disregard that last action." Uncounted.
+- A2 retry (`=== A2-retry`): Nano on USB 14:06:40.4 – 14:06:47.3 (no operator report for the unplug). Banner; `ERROR: Failed to initialize TCA9548A`; `TCA ch 0/1/2: (nothing detected)`; iterations 1–4 (t = 3091 … 9143 ms): BASE, TCA0, TCA1, TCA2 all `INA:X(2) BQ:X(2) TCA:X(2) PCA:X(2) VCNL:X(2)`. Not a full arm.
+- Operator, verbatim: "If either or both A4 and A5 are plugged in (from the v7 board's SCL and SDA test pads) then the nano led does not turn on. If neither are plugged in then the nano's led is turning on as normal. GND being present makes no difference. I tested continuity on all 3 wires where they insert into the breadboard and they seem to have proper continuity. Previously you had been asking me if the Nano LED was coming on and I was fairly sure it was, every time I responded that, but the way I had initially soldered the header pins onto the nano, I had soldered them on the top side instead of the bottom (by mistake) and so the LED sits on the under side of the nano as it inserts into the breadboard, and I may have missed it whenever the LED stopped turning on -- I may (or may not) have falsely reported it on at some step."
+- Consequence for the record: operator "LED on" reports in this card are unreliable from S2 onward (the LED faces the breadboard). Nano power state per step is known only where the Nano appeared on USB.
+- User chose to redo A2 with the S1 power order (both unplugged; wires on A4/A5; Nano plugged first, then v7; U3 relbus re-runs at boot): "let's do (a)". If A2 passes, B is repeated with the same order (both unplugged, rewire, Nano first).
+- A2 redo: operator "both unplugged, A4/A5/GND", then "both in" (Nano port up 14:22:30.2, v7 14:22:31.9). U3 relbus boot: `BQ24195 not found at 0x6B - skipping (bare T-Display?)`; burst TCA2 `INA:. BQ:X(2) TCA:.` 5/5; `BUS RELEASED` 14:22:43.090. Nano booted before the v7 (uncounted section: BASE `INA:. BQ:. TCA:. PCA:X(2) VCNL:X(2)` 10, one BASE `INA:. BQ:X(5) TCA:. PCA:. VCNL:X(2)`, TCA2 `PCA:.` 10 / `PCA:X(2)` 1). Session reset the Nano with esptool `chip_id` (`--after hard_reset`, no flash; user: "yes to the reset") at 14:23:01.4.
+- A2 counted (`=== A2-redo-reset`): banner; `TCA9548A initialized`; `TCA ch 2: PCA9546A at 0x76`. Iterations 1–10 (t = 1517 … 19817 ms; host 14:23:02.905 … 14:23:21.228): BASE, TCA0, TCA1 `INA:. BQ:. TCA:. PCA:X(2) VCNL:X(2)`; TCA2 `INA:. BQ:. TCA:. PCA:. VCNL:X(2)`; TCA2+PCA0/1 `INA:. BQ:. TCA:. PCA:. VCNL:.`, 10/10 each. VCNL '.' 20/20; TCA2 BQ '.' 10/10. Controls pass. U3 heartbeat 14:23:23.128 (t=51646 ms).
+- B redo, user chose the B″ image (readbacks included): "Go with your recommendation". Same order as the A2 redo: flash B″ with wires on A4/A5 (all powered, uncounted); both unplugged; wires to TX1/RX0; Nano first, then v7; after `BUS RELEASED`, session resets the Nano (esptool, no flash) and counts.
+- B redo: B″ flashed 14:25:59 with wires on A4/A5 (uncounted). Operator: "both unplugged, TX1/RX0/GND", then "both in" (Nano port 14:32:59.9, v7 14:33:01.7). U3: `BQ24195 not found at 0x6B - skipping (bare T-Display?)`; burst TCA2 `INA:. BQ:X(2) TCA:.` 5/5; `BUS RELEASED` 14:33:10.864. Uncounted pre-reset Nano section (booted before the v7): `[pins-in] … lvl43=0 …`; BASE `INA:. BQ:X(2) TCA:. PCA:X(2) VCNL:X(2)` 7, all-X(2) 1; TCA0 `INA:. BQ:X(2) TCA:. PCA:X(2) VCNL:X(2)` 7, `INA:X(2) BQ:. TCA:. PCA:X(5) VCNL:.` 1; TCA1 `INA:. BQ:X(2) TCA:.` 8; TCA2 `INA:X(2) BQ:X(2) TCA:. PCA:. VCNL:X(2)` 7, `INA:. BQ:X(2) TCA:. PCA:X(2)` 1. Session esptool reset of the Nano at 14:33:22.1.
+- B counted (`=== Bredo-reset`): banner; `[pins]` as before (GPIO43 → I2C0 SDA out 90, GPIO44 → SCL out 89, MCU_SEL 1); `[pins-in] sda_in_cfg=0xab scl_in_cfg=0xac … ie=1/1 wpu=1/1 od=1/1 lvl43=1 lvl44=` (cut); `TCA9548A initialized`; `TCA ch 2: PCA9546A at 0x76`. Iteration 1 (t = 1517 ms): BASE, TCA0, TCA1 `INA:. BQ:X(2) TCA:. PCA:X(2) VCNL:X(2)`; TCA2 `INA:X(2) BQ:X(2) TCA:. PCA:. VCNL:X(2)`; TCA2+PCA0, TCA2+PCA1 all X(2). Iterations 2–10 (t = 3547 … 19789 ms): every row all X(2). Counted: VCNL X(2) 20/20; TCA2 BQ X(2) 10/10; controls fail (INA/TCA NACK from iteration 1 TCA2+PCA0 on) → void row. U3 heartbeat 14:33:40.980.
+- User chose to close the card: "ok, let's go with (a)". Closing sequence: A image flashed (wires on TX1/RX0, all powered, uncounted); both unplugged; wires to A4/A5; Nano first, then v7; after `BUS RELEASED`, session resets the Nano and counts A3; then revert (Nano blank, U3 diag) and S4.
+### Measured values (from log; cite `lab/evidence/V7R-008/...`)
+Sources: `lab/evidence/V7R-008/2026-10-24_V7R-008_nano_01.txt` (all Nano runs; arm markers `=== …`; sections trimmed after ~140 lines, full captures in `lab/captures/V7R-008/`, gitignored), `lab/evidence/V7R-008/2026-10-24_V7R-008_v7_01.txt` (U3 relbus boots, `BUS RELEASED`, heartbeats; trimmed likewise).
+
+| Run (marker) | Nano image · pins | Power order / boot | Counted | VCNL '.' | VCNL X(2) | TCA2 BQ '.' | TCA2 BQ X(2) | Controls |
+|---|---|---|---|---|---|---|---|---|
+| A1 (`=== A1`) | A · A4/A5 | Nano then v7 (S1); boot after flash | it 1–10 | 20/20 | 0/20 | 10/10 | 0/10 | pass (no pin line) |
+| B (`=== B 11:20`) | B · TX1/RX0 | Nano replugged, v7 live | it 1–10 | 0/20 (no PCA rows) | — | 0/10 | 10/10 | fail: all X(2), no TCA/PCA |
+| B retry (`=== diag-all-three`) | B · TX1/RX0 | Nano replugged, v7 live | it 1–10 | — | — | 0/10 | 10/10 | fail: all X(2) |
+| B′ (`=== Bprime-replug`) | B′ · TX1/RX0 | Nano replugged, v7 live | it 1–10 | — | — | 0/10 | 10/10 | fail: all X(2); pins GPIO43/44 out |
+| B″ (`=== Bdprime`) | B″ · TX1/RX0 | Nano replugged, v7 live | it 1–10 | — | — | 0/10 | 10/10 | fail: all X(2); pins in/out GPIO43/44 |
+| A2 (`=== A2`, `=== A2-retry`) | A · A4/A5 | Nano replugged, v7 live | it 1–4 only | — | — | 0/4 | 4/4 | fail: all X(2) |
+| A2 redo (`=== A2-redo-reset`) | A · A4/A5 | Nano then v7, Nano reset after `BUS RELEASED` | it 1–10 | 20/20 | 0/20 | 10/10 | 0/10 | pass |
+| B redo (`=== Bredo-reset`) | B″ · TX1/RX0 | Nano then v7, Nano reset after `BUS RELEASED` | it 1–10 | 0/20 | 20/20 | 0/10 | 10/10 | fail: INA/TCA ACK at BASE/TCA0/TCA1 in it 1 only, all X(2) from it 1 TCA2+PCA0 on |
+| A3 (`=== A3-reset`) | A · A4/A5 | Nano then v7, Nano reset after `BUS RELEASED` | it 1–10 | 20/20 | 0/20 | 10/10 | 0/10 | pass |
+
+U3 (`motion-play-v7-relbus`): every boot printed the burst TCA2 `INA:. BQ:X(2) TCA:.` 5/5 and one `BUS RELEASED`; heartbeat present through every run; no reboot other than the operator's power cycles. Relbus boots after the full power cycles (14:22, 14:33, 14:46) printed `BQ24195 not found at 0x6B - skipping (bare T-Display?)`.
+### Interpretation (session; labelled as such)
+Interpretation: the pre-registered B arm never produced a countable result. With the Nano replugged while the v7 was powered, every run (A image on A4/A5 included) got no ACK from any device, and the operator found the Nano's LED off whenever the v7 SDA/SCL wires were attached; that fits the Nano being fed through its I/O pins from the v7's pull-ups (back-powering) while unpowered, which the card did not anticipate. With the S1 power order and a session reset of the Nano, A2 and A3 match A1; under that order the Nano on GPIO43/44 (pins confirmed by register readback, in and out) got ACK from INA/TCA at first and then no ACK from anything for the rest of the run, which A never showed. The card's question (does pin role move the BQ/VCNL NACK) is not answered: the controls failed in B, so H1 and H2 both stand. What the run adds is an unexplained observation: an S3 master on GPIO43/44 of a NORA-W106 on this bus loses every device within the first iteration.
+
+## Conclusion
+- Outcome row matched: void row (B: controls fail in every attempt — INA/TCA/PCA X(2); A1, A2 redo and A3 pass: VCNL '.' 20/20, BQ '.' 10/10 each) (`lab/evidence/V7R-008/2026-10-24_V7R-008_nano_01.txt`, `lab/evidence/V7R-008/2026-10-24_V7R-008_v7_01.txt`).
+- Hypotheses excluded: none. H1 and H2 not tested (B void). M supported for the replug runs (Nano power-up with the v7 live and the bus wires attached); not separated for the B redo (pins and wiring checked; bus state not observed).
+- **Strength:** not tested (H1, H2); observation only for the B-redo pattern (one run, one board, one Nano); `lab/evidence/V7R-008/`
+- Deviations: (1) build.code_debug=3 had no effect; the i2cInit pin line was missing (user: "carry on"); replaced in later B runs by user-approved readback images B′ and B″ (readback prints only). (2) The Nano logger stopped at the S2 unplug and was not restarted; B re-captured on a second replug (user agreed). (3) Unplanned operator actions: Nano reseated in the breadboard; wire-by-wire USB diagnostic; meter continuity checks; 13:58 placement/LED test (operator: disregard). (4) A2 and B redone with a different procedure: both boards off, Nano powered first, then v7, then a session esptool reset of the Nano (`chip_id`, no flash) after `BUS RELEASED` (user approved each). (5) An extra A3 arm after the B redo. (6) Operator "LED on" reports from S2 on unreliable (LED faces the breadboard).
+- Revert-on-null done: yes — Nano on the blank sketch (14:47:24), U3 on v7-clean motion-play-v7-diag (14:47:24–14:48:01, SUCCESS); jumpers on A4/A5; S4 operator: "both off"
+- Result commit: self
