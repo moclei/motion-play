@@ -6,7 +6,6 @@ open_cards: []                               # cards with status pre-registered|
 ---
 
 # v7 I²C fault — current state
-
 > Debugger sessions: this is L0. Other sessions: read sections 1–4 and stop. Never restate a result here. Cite its card. Max ~150 lines; the check warns beyond that.
 
 ## 1. Symptom                                   (≤ 6 lines)
