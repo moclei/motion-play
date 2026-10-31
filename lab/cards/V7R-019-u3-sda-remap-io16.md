@@ -83,6 +83,7 @@ The session runs every flash, SCPI command, capture and mode command; one instru
 ## Actual result
 ### Raw observations (operator, verbatim; symptoms not interpretations)
 - Pre-run decisions (2026-10-30), user: "1. approve 2. yes 3. about 3 hours" — u3-remap firmware delta approved; rigid J5→J6 and pigtail J6→J5 approved; bench time ~3 h. Session date rolled to 2026-10-30: log `lab/log/2026-10-30_s01.yaml` and file prefix `2026-10-30_V7R-019_*` (card text says 2026-10-29; deviation).
+- S1–S2, operator: "1. both off 2. yes" — v7 and Nano unplugged at the Mac end, LEDs off; probes and springs lifted off S1 and parked clear.
 ### Measured values (from log; cite `lab/evidence/V7R-019/...`)
 ### Interpretation (session; labelled as such)
 
