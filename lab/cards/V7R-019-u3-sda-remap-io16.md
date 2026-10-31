@@ -58,6 +58,7 @@ Anchor: |A1 − A2| ≤ 20 mV; A1 and A2 ≥ 0.80 V; BQ ≤ 5 % and VCNL ≤ 5 %
 - Measurement log: `lab/log/2026-10-29_s01.yaml` (new session). Full validation at S1 per `lab/procedures/dho804-setup-validation.md` (V1–V8): V7 with u3-remap in boot mode `r` (all three pads released; replaces the relbus image), V8 in mode `a`. Validation must read `passed: true` before A1. Scope left in roll/PEAK by V7R-018: reset to the validation settings (timebase, acquisition normal, 10 kpts, decode display on).
 - Scope (counted arms): as V7R-013 (0.5 V/div, −1.65 V, BW OFF, DC, 10 kpts; V8 at 20 µs/div, counted at 10 µs/div; trigger I²C ADDR 107 WRITE, SINGLE; decode set by hand this session). Captures `val_V8_<arm>`, counted `A1`, `B`, `A2` (`2026-10-29_V7R-019_*`).
 - **Probe moves (user rule, 2026-10-25), in run order:** S1 → lifted (soldering, S2) → S1 re-seated (S9): **one full move**, flagged to the user; none between arms. Physical actions after S9: Mac-end USB plugs only.
+- **Amendment (2026-10-30, before S3; user's proposal, accepted):** the TPIO16 wire is a grey male-to-female Dupont jumper (~180 mm before cutting), female end cut off, stripped, strands twisted and tinned, soldered to TPIO16; its male pin goes straight into the Nano A4 column at S7. Replaces "~68 mm 26 AWG + tinned end into a female-to-male Dupont": one contact fewer. Path TPIO16 → SDA is then ~180 mm jumper + A4 column + green's ~175 mm Dupont + ~68 mm green to pad A. Wire dressed (taped) so its weight doesn't pull on the pad. S3, S7 and End read with this wire.
 - Picture for the solder pad: `lab/evidence/V7R-019/img/v7-tpio16.png` (G = TPIO16; A, B, C = S1), from tools/lab/probe_points at c2acffc. TPIO16: 2.0 mm round pad, front, 19.2 mm from TPIO43 at the same x (desk e).
 - Readout: v7 and Nano serial logged by the session to `lab/captures/V7R-019/2026-10-29_V7R-019_{v7,nano}_01.txt`, `=== <arm>` markers. Mode commands `a` / `b` / `a` sent by the session on the v7 port.
 - Image: u3-remap flashed by esptool at 0x10000 with `--flash_mode keep` (as V7R-014) from the committed binary (`shasum -c` first), with the TPIO16 wire not yet joined to the net. Banner `[remap] sketch=v7_sda_remap version=1.0` and boot mode r checked before S7.
@@ -84,6 +85,7 @@ The session runs every flash, SCPI command, capture and mode command; one instru
 ### Raw observations (operator, verbatim; symptoms not interpretations)
 - Pre-run decisions (2026-10-30), user: "1. approve 2. yes 3. about 3 hours" — u3-remap firmware delta approved; rigid J5→J6 and pigtail J6→J5 approved; bench time ~3 h. Session date rolled to 2026-10-30: log `lab/log/2026-10-30_s01.yaml` and file prefix `2026-10-30_V7R-019_*` (card text says 2026-10-29; deviation).
 - S1–S2, operator: "1. both off 2. yes" — v7 and Nano unplugged at the Mac end, LEDs off; probes and springs lifted off S1 and parked clear.
+- Fixture, operator (before S3): proposed soldering a cut Dupont jumper instead of 26 AWG + Dupont; "I have one, it's gray male-to-female, it is about 180mm". Amendment in Setup.
 ### Measured values (from log; cite `lab/evidence/V7R-019/...`)
 ### Interpretation (session; labelled as such)
 
