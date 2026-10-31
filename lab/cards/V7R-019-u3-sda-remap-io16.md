@@ -1,7 +1,7 @@
 ---
 test_id: V7R-019
 title: "U3 drives SDA from GPIO43 / GPIO16 / GPIO43 (TPIO16 wired to the SDA net, the idle pad an input), rigid #1 on J6, 400 kHz: SDA low at TPIO43 and BQ / VCNL ACK"
-status: pre-registered
+status: recorded
 created: 2026-10-29
 prereg_commit: self
 baseline:
@@ -100,12 +100,22 @@ The session runs every flash, SCPI command, capture and mode command; one instru
 - A1 (mode a, 22:56:02; regs: GPIO43 out_sig 90 oe 1 od 1 wpu 1; GPIO16 out_sig 256 oe 0 wpu 0 in 1; GPIO44 out_sig 89; sda_in_sel 43): `[remap]` n=580 at 22:57:01: tca=ina=pca=580, bq=0, v0=0, v1=0, last=02022; no reboot. Captures A1_01..03 (10 µs/div): D6, 9th high ×3, period 2.500 µs; bit V_OL [901.3 892.9 896.6] [900.6 892.3 894.4] [900.9 892.9 896.0] mV → A1 = 896.43 mV; idle CH1 −45..−25 µs 3.2744 / 3.2739 / 3.2740 V.
 - B (mode b, 22:57:15; regs: GPIO16 out_sig 90 oe 1 od 1 wpu 1; GPIO43 out_sig 256 oe 0 wpu 0 in 1; GPIO44 out_sig 89; sda_in_sel 16): `[remap]` n=10 at 22:57:15.855 already tca=ina=bq=pca=v0=v1=10, last=00000; n=710 at 22:58:26: all six counts 710, no line with a non-zero code; no reboot; dwell 22:57:15–22:58:28 (73 s). Captures B_01..03: D6, 9th low ×3, period 2.500 / 2.501 / 2.500 µs; bit V_OL [115.3 104.0 108.2] [116.5 104.1 108.6] [114.8 104.1 109.0] mV → B = 109.40 mV; idle CH1 3.2743 / 3.2750 / 3.2746 V. capture.py NOTE on B_01: panel VPP CH1 invalid (panel item only; not counted).
 - A2 (mode a, 22:58:28; regs as A1): n=630 at 22:59:31: tca=ina=pca=630, bq=0, v0=0, v1=0, last=02022; no reboot (two banners in the v7 log: S6 check 22:16 and V7 replug 22:54). Captures A2_01..03: D6, 9th high ×3, period 2.500 µs; bit V_OL [902.0 893.0 896.5] [900.4 892.8 896.9] [900.5 891.9 897.1] mV → A2 = 896.79 mV; idle CH1 3.2749 / 3.2740 / 3.2737 V.
+- End, operator: "1. grey pin taped 2. good, D5 off, good 3. left seated"; then "I hadn't plugged back in the nano and v7 yet. They are plugged in now and all is as it should be" (session had found no USB ports at 23:09). Session: mode r sent 22:59:53; v7 logger stopped; esptool write_flash 0x10000 `lab/evidence/V7R-018/diag-166f5f40.bin` (SHA-1 166f5f40 matches the name) 23:12:49, ESP32-S3 v0.2, MAC 44:1b:f6:c5:58:c4, hash verified. Diag output after: TCA1 (pigtail, J5) and TCA2 (rigid, J6) rows BQ:X(2), TCA2 rows VCNL:X(2), PCA:'.' on TCA2.
 ### Measured values (from log; cite `lab/evidence/V7R-019/...`)
+| Arm | SDA driver | V_OL (mean of 9 bit-means) | 9th bit ×3 | BQ ACK | VCNL ACK (v0 / v1) | INA / TCA / PCA | SCL period | CH1 idle |
+|---|---|---|---|---|---|---|---|---|
+| A1 | GPIO43 | 896.43 mV | high | 0/580 | 0/580, 0/580 | 580/580 each | 2.500 µs | 3.274 V |
+| B | GPIO16 | 109.40 mV | low | 710/710 | 710/710, 710/710 | 710/710 each | 2.500–2.501 µs | 3.275 V |
+| A2 | GPIO43 | 896.79 mV | high | 0/630 | 0/630, 0/630 | 630/630 each | 2.500 µs | 3.274 V |
+
+A = 896.61 mV; |A1 − A2| = 0.36 mV; Δ = V_OL(B) − A = −787.21 mV. Sources: `lab/evidence/V7R-019/csv/`, `i2c_frame/<arm>_<nn>_frame.txt` (arm.py), `png/`, `2026-10-30_V7R-019_v7_01.txt`. Validation: `lab/log/2026-10-30_s01.yaml` (V5 excess 1.60 / 1.43 mV rms; V7 3.273 / 3.260 V; V8 Write:d6). PNG read (session): val_V8_A1_01 `Write:80`, `Write:d6` + red mark, `Write:ec`; B_01 `Write:d6`, no red mark, SDA lows at the level of SCL's (~0.1 V on the 0.5 V/div grid). Other counted PNGs not opened (context budget); their values come from the CSVs.
 ### Interpretation (session; labelled as such)
+Interpretation (V7R-019): on this U3, same boot, same rail, same far-end path, the SDA net's low is ~0.90 V when GPIO43 drives it and ~0.11 V when GPIO16 drives it through ~0.4 m of wire, and BQ and both VCNLs go from 0 % to 100 % ACK with it. Argued (R28 2.2 kΩ nominal, R1 4.7 kΩ, internal pull-up 45 kΩ): I_total in B ≈ 2.2 mA, so ≈ 50 Ω from net to ground through GPIO16 and the fixture, against desk (d)'s ~545 Ω for GPIO43; above the 30–50 Ω the magnitude line assumed, not separated (wire, Dupont and breadboard contacts are inside it).
 
 ## Conclusion
-- Outcome row matched: ...
-- Hypotheses excluded: ...
-- **Strength:** ...
-- Revert-on-null done: ...
+- Outcome row matched: **Row 1** — V_OL(B) = 109.40 mV ≤ 0.25 V; BQ 100 %, VCNL 100 % (both) in B. Anchor passes (|A1 − A2| 0.36 mV; A1, A2 ≥ 0.80 V; BQ and VCNL 0 % in A1, A2); every control passes (decode D6 ×9, 9th bit agrees with the log, routing read-back as declared, tca = ina = pca = n, no reboot, SCL 2.50 µs, CH1 idle ≥ 3.24 V).
+- Hypotheses excluded: H2 (the elevated low whenever U3 drives the net), H4 (NACK needs more than the level). H1 supported (weakly): the elevated low goes with GPIO43's path. H3 supported (weakly): with the far-end path present and the low at ~0.11 V, BQ and VCNL ACK. M not supported (anchor, routing and contact controls pass).
+- **Strength:** measured-refuted for H2 and H4; measured-supported for H1 and H3 (one board, one rigid, A/B/A, 3 captures per arm, ≥ 580 cycles per arm); fix route (i) SDA on GPIO16 measured-supported on this unit (BQ and VCNL clear; bodge fixture, not a layout); `lab/evidence/V7R-019/`
+- Deviations: (1) session date 2026-10-30, log `2026-10-30_s01` (card says 2026-10-29). (2) TPIO16 wire is a cut grey Dupont jumper (~170 mm; amendment before S3). (3) V5b placement springs C, tips C10.1 (as V7R-018). (4) Arm marker sent to U3 by the session at 22:48:14: brief b/r/a switching, V5b captured in mode a (V5 passed). (5) V8 started by mode command, not a replug. (6) Counted PNGs other than B_01 not opened by the session. (7) B dwell 73 s.
+- Revert-on-null done: yes — grey jumper out of the A4 column, taped (soldered wire left on TPIO16); diag 166f5f40 reflashed 23:12:49; rigid left in J6, pigtail in J5; probes left seated at S1 (user)
 - Result commit: self

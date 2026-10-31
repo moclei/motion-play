@@ -372,3 +372,13 @@ The "belief changes" line replaces overwriting a "current working theory": STATE
 - observations not in a card: none beyond the card's raw block (J6 black/blue out at X1; rigid light flicker at E4).
 - bench state at end: v7 #0003 and Nano **plugged in and powered** (user), v7 on v7-clean diag 166f5f40; probes seated at S1 (validated 2026-10-28); rigid #1 in J5; J6 pigtail blue in row 15 (10 kΩ), black in 'V' rail; scope on in roll/PEAK; loggers stopped.
 - next: card F (STATE §8). Desk candidate: J5 SDA undershoot real vs probe ringing.
+
+## 2026-10-30 · s01 · V7R-019 (card F): SDA from GPIO16 → 109 mV, BQ + both VCNL ACK 100 %; GPIO43 → 896 mV, 0 %
+- session: debugger · direct · operator: user · branch `debug/v7-track-4` · boards: v7 #0003 (u3-remap bd97d883 for validation and arms; diag 166f5f40 at End), Nano ESP32 (blank, powered), rigid #1
+- cards: V7R-019 pre-registered (8993678) → pre-run decisions (4f7ab39) → fixture amendment before S3 (bdaf495) → raw per step (73c8f4f … a10df82) → recorded (this commit).
+- map: master: module/path, master: pin role, master supply, slave: BQ × master, symptom identity — V7R-019 added. Tombstones: H2 (low whenever U3 drives the net), H4 (NACK needs more than the level). Checkpoint due at V7R-020.
+- belief changes: (Interpretation, labelled) was "U3's elevated low could belong to GPIO43's path or to U3 driving this net at all (V7R-014 left pad vs net load open)", now "it goes with GPIO43's path: GPIO16 on the same net, rail and boot gives 109 mV", because V7R-019 Row 1. Was "BQ's NACK follows the level (argued; level and path presence not separated, V7R-016 B3)", now "with the far-end path present, a 109 mV low gives BQ and both VCNL 100 % ACK", because V7R-019 B.
+- decisions: user: TPIO16 wire approved ("I'm ok with soldering a wire onto TPIO16, yes"); u3-remap delta, rigid J5→J6 / pigtail J6→J5, ~3 h bench ("1. approve 2. yes 3. about 3 hours"); TPIO16 wire as a cut grey Dupont jumper (user's proposal); continue past the 50 % context warning ("50% is the early warning, 70% is the stop line"); probes left seated.
+- observations not in a card: none beyond the card's raw block. Session error: marker text sent to U3 at 22:48 (card deviation 4).
+- bench state at end: v7 #0003 on diag 166f5f40 (23:12:49), plugged in and powered; Nano blank, powered; probes seated at S1 (validated 2026-10-30); rigid #1 in J6, pigtail in J5 (blue row 15 / 10 kΩ, black 'V' rail, red Nano GND); grey jumper soldered on TPIO16, male pin taped, off the net; scope stopped at 10 µs/div, I²C 0x6B trigger; loggers stopped.
+- next: checkpoint (V7R-020 due; STATE §8 candidates). Fix route (i) as a permanent change is a Planner relay, not a card.
