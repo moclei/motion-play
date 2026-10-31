@@ -87,6 +87,7 @@ The session runs every flash, SCPI command, capture and mode command; one instru
 - S1–S2, operator: "1. both off 2. yes" — v7 and Nano unplugged at the Mac end, LEDs off; probes and springs lifted off S1 and parked clear.
 - Fixture, operator (before S3): proposed soldering a cut Dupont jumper instead of 26 AWG + Dupont; "I have one, it's gray male-to-female, it is about 180mm". Amendment in Setup.
 - S3–S4, operator: "1. Like, 170mm maybe 2. Lookks good 3. Nothing 4. about 2.1 M 5. same as the other one" — grey jumper ~170 mm after cutting, soldered on TPIO16; joint looks good; DMM TPIO16↔TPIO43 "Nothing" (wire not yet joined to the net); TPIO16↔C9.1 ~2.1 MΩ; item 5 wording recorded as given (meaning asked at S5).
+- S4 correction, operator: "\"Nothing\" was a mistake - forget that response. \"2.1M\" and \"Same as the other one\" both were meant to refer to report items 3 and 4. So both the resistence measurements I took were around \"2.1 M\".\" — corrected: TPIO16↔TPIO43 ≈ 2.1 MΩ, TPIO16↔C9.1 ≈ 2.1 MΩ (DMM display 'M' = megohms).
 ### Measured values (from log; cite `lab/evidence/V7R-019/...`)
 ### Interpretation (session; labelled as such)
 
