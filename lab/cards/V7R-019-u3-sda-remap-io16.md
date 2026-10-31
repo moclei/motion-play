@@ -86,6 +86,7 @@ The session runs every flash, SCPI command, capture and mode command; one instru
 - Pre-run decisions (2026-10-30), user: "1. approve 2. yes 3. about 3 hours" — u3-remap firmware delta approved; rigid J5→J6 and pigtail J6→J5 approved; bench time ~3 h. Session date rolled to 2026-10-30: log `lab/log/2026-10-30_s01.yaml` and file prefix `2026-10-30_V7R-019_*` (card text says 2026-10-29; deviation).
 - S1–S2, operator: "1. both off 2. yes" — v7 and Nano unplugged at the Mac end, LEDs off; probes and springs lifted off S1 and parked clear.
 - Fixture, operator (before S3): proposed soldering a cut Dupont jumper instead of 26 AWG + Dupont; "I have one, it's gray male-to-female, it is about 180mm". Amendment in Setup.
+- S3–S4, operator: "1. Like, 170mm maybe 2. Lookks good 3. Nothing 4. about 2.1 M 5. same as the other one" — grey jumper ~170 mm after cutting, soldered on TPIO16; joint looks good; DMM TPIO16↔TPIO43 "Nothing" (wire not yet joined to the net); TPIO16↔C9.1 ~2.1 MΩ; item 5 wording recorded as given (meaning asked at S5).
 ### Measured values (from log; cite `lab/evidence/V7R-019/...`)
 ### Interpretation (session; labelled as such)
 
