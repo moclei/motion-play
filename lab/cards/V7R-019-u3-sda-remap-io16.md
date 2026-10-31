@@ -89,6 +89,7 @@ The session runs every flash, SCPI command, capture and mode command; one instru
 - S3–S4, operator: "1. Like, 170mm maybe 2. Lookks good 3. Nothing 4. about 2.1 M 5. same as the other one" — grey jumper ~170 mm after cutting, soldered on TPIO16; joint looks good; DMM TPIO16↔TPIO43 "Nothing" (wire not yet joined to the net); TPIO16↔C9.1 ~2.1 MΩ; item 5 wording recorded as given (meaning asked at S5).
 - S4 correction, operator: "\"Nothing\" was a mistake - forget that response. \"2.1M\" and \"Same as the other one\" both were meant to refer to report items 3 and 4. So both the resistence measurements I took were around \"2.1 M\".\" — corrected: TPIO16↔TPIO43 ≈ 2.1 MΩ, TPIO16↔C9.1 ≈ 2.1 MΩ (DMM display 'M' = megohms).
 - S5, operator: "1. Rigid is in J6, pigtail is in J5. SW1 is on, SW2 is off 2. all as it should be".
+- S6, operator: "1. good 2. good" — Nano and v7 plugged in (Nano first); LEDs reported good (D5 state not separately described).
 ### Measured values (from log; cite `lab/evidence/V7R-019/...`)
 ### Interpretation (session; labelled as such)
 
