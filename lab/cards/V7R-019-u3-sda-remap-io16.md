@@ -91,6 +91,7 @@ The session runs every flash, SCPI command, capture and mode command; one instru
 - S5, operator: "1. Rigid is in J6, pigtail is in J5. SW1 is on, SW2 is off 2. all as it should be".
 - S6, operator: "1. good 2. good" — Nano and v7 plugged in (Nano first); LEDs reported good (D5 state not separately described).
 - S6 flash (session): `shasum -c` OK; esptool write_flash --flash_mode keep 0x10000 u3-remap/firmware.bin to /dev/cu.usbmodem14301 — Chip ESP32-S3 (revision v0.2), MAC 44:1b:f6:c5:58:c4, 272960 bytes, hash verified, 22:15:52. RTS reset 22:16:08: banner `[remap] sketch=v7_sda_remap version=1.0 … boot mode r`; mode r regs: GPIO43, GPIO16, GPIO44 all mcu_sel=1 out_sig=256 oe=0 wpu=0 wpd=0 ie=1; in: 43=1, 16=0, 44=1; sda_in_sel=56 (`lab/captures/V7R-019/2026-10-30_V7R-019_v7_01.txt`). Grey jumper not joined.
+- S7–S8, operator (after asking to confirm A4 holds both green and grey): "1. next to green in A4 2. good, D5 off 3. good" — v7 and Nano unplugged, grey male pin into the Nano A4 column beside green, Nano then v7 plugged in; v7 PWR good, D5 off; Nano LEDs good.
 ### Measured values (from log; cite `lab/evidence/V7R-019/...`)
 ### Interpretation (session; labelled as such)
 
