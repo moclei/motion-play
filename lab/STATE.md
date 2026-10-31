@@ -136,8 +136,7 @@ Verdict is trustworthy | suspect | unknown | not tested; a row is deleted when a
 | L-Ph24a | log-based; trustworthy as a binary result; multi-variable | master: identity; F-5 | none (V7R-004 replicates master-dependence with an S3) |
 ## 8. Next                                      (≤ 6 lines)
 - Next: **user's direction after checkpoint @ V7R-019** (notebook 2026-10-31). Queue (not ranked): (h) GPIO43 vs GPIO44 low side on #0004 / #0005 (boot check first; unit vs batch/design); (j) #0003 static dose at module castellation 37 vs board pad (joint vs inside module); (k) V7R-019 extended (J4/J5, power cycles, dwell); (l) Planner relay for fix route (i) (SDA off GPIO43; GPIO16 is LED_DATA).
-- Desk: pad-37 footprint; timing CSVs; V7R-014 846 vs 911 mV. Still open: V7R-015 S0a; J5 undershoot real vs probe ringing; ROM V_TX 88 mV under the R28 model. Battery: unassessed.
-- Timebox 19/20 · week 2/8 — next recorded card triggers the overall decision (continue / parallel respin / outside help). Relays open 2026-10-24, 2026-10-26.
+- Desk: pad-37 footprint; timing CSVs; V7R-014 846 vs 911 mV. Still open: V7R-015 S0a; J5 undershoot real vs probe ringing; ROM V_TX 88 mV under the R28 model. Battery: unassessed. Timebox 19/20 · week 2/8 — next recorded card triggers the overall decision (continue / parallel respin / outside help). Relays open 2026-10-24, 2026-10-26.
 ## 9. Lookups (L1 routing)                      (≤ 15 rows)
 Where to go for detail that is not L0; load only the named section or query.
 | When you need… | Load | Section/query |
