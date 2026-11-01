@@ -85,6 +85,9 @@ The session runs every flash, mode command and serial log; one instruction block
 - S1c: "OK the v7 is on now, but the RGB LED (D5) is on and colored blue. One of the probes had slipped and had move it's ground spring from C9.1 to C9.2, so that probe was bridging C9.2 and the SCL testpad I guess"
 - S1d (incident, make safe): spring "was already moved, both probes are off the board and parked"; time plugged in with the spring on C9.2 "maybe one minute"; "Nothing warm"; C9 pads / spring tip marked: "No".
 - S1e (#0003 unpowered, DMM ohms, black U8.1): U8.1 → tab (+3.3 V) "306.1, not climbing"; U8.1 → pin 3 (+5 V) "This one seems to start at about 600k but then keep getting lower. After 5 seconds it was still rapidly lowering and after a minute or two it seemed to settle at around 260k.." No pre-incident reference for #0003.
+- S1f: "Powered on, LED's back to being good now"; warm: "No". Session: both ports enumerated (Nano 14101, #0003 14301). Pre-flash diag (v7-clean diag 166f5f40) 5 s: TCA1 row BQ X(2) ×2, all other rows INA/BQ/TCA '.' (`lab/captures/V7R-020/2026-11-01_V7R-020_0003_prediag.txt`).
+- #0003 flash: esptool "Chip is ESP32-S3 (revision v0.2)", "MAC: 44:1b:f6:c5:58:c4", app 0x10000 hash verified. Banner printed before the logger opened (not captured; deviation); `[static] mode=r tca_write_err=0 tca_reg=0x04`, both pads `od=1 out_sig=256 oe=1 out=1`, `wpu=0`.
+- R-r (#0003, DMM at Nano A4 / A5, black Nano GND column): "Both A4 and A5 read 3.279 V"
 - Deviation: both scope probes lifted off #0003 and parked (not in the card; card uses no scope). Scope probes need a full re-seat + V1–V8 before any later scope card.
 ### Measured values (from log; cite `lab/evidence/V7R-020/...`)
 ### Interpretation (session; labelled as such)
