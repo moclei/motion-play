@@ -1,7 +1,7 @@
 ---
 test_id: V7R-020
 title: "GPIO43 vs GPIO44 static low (plain open-drain GPIO, I²C detached) on v7 #0004 and #0005, with #0003 as the same-instrument reference: DMM at TPIO43 / TPIO44 against the on-board 2.2 kΩ pull-ups"
-status: pre-registered
+status: run
 created: 2026-10-31
 prereg_commit: self
 baseline:
@@ -78,6 +78,13 @@ The session runs every flash, mode command and serial log; one instruction block
 
 ## Actual result
 ### Raw observations (operator, verbatim; symptoms not interpretations)
+- Session date 2026-11-01 (card says 2026-10-31).
+- Approvals (user): "1. approve 2. yes 3. yes" (u3-static delta; rigid out of J6; power #0004/#0005 from the Mac if no short).
+- S1: "LEDs off"; "J4, J5 and J6 are empty" then "Oh sorry, pigtail is in J5"; probes as left: "yes".
+- S1b: "both plugged in". Session: only `/dev/cu.usbmodem14101` enumerated (one Espressif VID 0x303A device; #0003 previously 14301).
+- S1c: "OK the v7 is on now, but the RGB LED (D5) is on and colored blue. One of the probes had slipped and had move it's ground spring from C9.1 to C9.2, so that probe was bridging C9.2 and the SCL testpad I guess"
+- S1d (incident, make safe): spring "was already moved, both probes are off the board and parked"; time plugged in with the spring on C9.2 "maybe one minute"; "Nothing warm"; C9 pads / spring tip marked: "No".
+- Deviation: both scope probes lifted off #0003 and parked (not in the card; card uses no scope). Scope probes need a full re-seat + V1–V8 before any later scope card.
 ### Measured values (from log; cite `lab/evidence/V7R-020/...`)
 ### Interpretation (session; labelled as such)
 
