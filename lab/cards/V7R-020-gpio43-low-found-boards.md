@@ -88,6 +88,7 @@ The session runs every flash, mode command and serial log; one instruction block
 - S1f: "Powered on, LED's back to being good now"; warm: "No". Session: both ports enumerated (Nano 14101, #0003 14301). Pre-flash diag (v7-clean diag 166f5f40) 5 s: TCA1 row BQ X(2) ×2, all other rows INA/BQ/TCA '.' (`lab/captures/V7R-020/2026-11-01_V7R-020_0003_prediag.txt`).
 - #0003 flash: esptool "Chip is ESP32-S3 (revision v0.2)", "MAC: 44:1b:f6:c5:58:c4", app 0x10000 hash verified. Banner printed before the logger opened (not captured; deviation); `[static] mode=r tca_write_err=0 tca_reg=0x04`, both pads `od=1 out_sig=256 oe=1 out=1`, `wpu=0`.
 - R-r (#0003, DMM at Nano A4 / A5, black Nano GND column): "Both A4 and A5 read 3.279 V"
+- R-3a (#0003, GPIO43 low): A4 "0.64V all three times"; A5 "3.28V"
 - Deviation: both scope probes lifted off #0003 and parked (not in the card; card uses no scope). Scope probes need a full re-seat + V1–V8 before any later scope card.
 ### Measured values (from log; cite `lab/evidence/V7R-020/...`)
 ### Interpretation (session; labelled as such)
