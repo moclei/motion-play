@@ -84,6 +84,7 @@ The session runs every flash, mode command and serial log; one instruction block
 - S1b: "both plugged in". Session: only `/dev/cu.usbmodem14101` enumerated (one Espressif VID 0x303A device; #0003 previously 14301).
 - S1c: "OK the v7 is on now, but the RGB LED (D5) is on and colored blue. One of the probes had slipped and had move it's ground spring from C9.1 to C9.2, so that probe was bridging C9.2 and the SCL testpad I guess"
 - S1d (incident, make safe): spring "was already moved, both probes are off the board and parked"; time plugged in with the spring on C9.2 "maybe one minute"; "Nothing warm"; C9 pads / spring tip marked: "No".
+- S1e (#0003 unpowered, DMM ohms, black U8.1): U8.1 → tab (+3.3 V) "306.1, not climbing"; U8.1 → pin 3 (+5 V) "This one seems to start at about 600k but then keep getting lower. After 5 seconds it was still rapidly lowering and after a minute or two it seemed to settle at around 260k.." No pre-incident reference for #0003.
 - Deviation: both scope probes lifted off #0003 and parked (not in the card; card uses no scope). Scope probes need a full re-seat + V1–V8 before any later scope card.
 ### Measured values (from log; cite `lab/evidence/V7R-020/...`)
 ### Interpretation (session; labelled as such)
