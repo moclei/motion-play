@@ -89,6 +89,7 @@ The session runs every flash, mode command and serial log; one instruction block
 - #0003 flash: esptool "Chip is ESP32-S3 (revision v0.2)", "MAC: 44:1b:f6:c5:58:c4", app 0x10000 hash verified. Banner printed before the logger opened (not captured; deviation); `[static] mode=r tca_write_err=0 tca_reg=0x04`, both pads `od=1 out_sig=256 oe=1 out=1`, `wpu=0`.
 - R-r (#0003, DMM at Nano A4 / A5, black Nano GND column): "Both A4 and A5 read 3.279 V"
 - R-3a (#0003, GPIO43 low): A4 "0.64V all three times"; A5 "3.28V"
+- R-4 (#0003, GPIO44 low): A5 "0.050V all three times (would flicker between 0.049V and 0.050V, but mostly be 0.050V)"; A4 "3.280V"
 - Deviation: both scope probes lifted off #0003 and parked (not in the card; card uses no scope). Scope probes need a full re-seat + V1–V8 before any later scope card.
 ### Measured values (from log; cite `lab/evidence/V7R-020/...`)
 ### Interpretation (session; labelled as such)
