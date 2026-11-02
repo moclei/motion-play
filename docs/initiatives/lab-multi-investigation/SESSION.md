@@ -161,6 +161,6 @@ Entry: started from `RELAY-orchestrator.md`. Branch `feat/lab-multi-investigatio
 
 **Outcome:** Loop complete — 4 workers dispatched, 1 orchestration run, 0 unresolved blockers. Awaiting W3 (user merges PR #89).
 
-Parked for a cross-initiative home (no `docs/initiatives/MASTER.md` exists; user asked where these go):
+Cross-initiative note: the user directed it to `v8-debug-board` TASKS.md § Deferred (added there). Recorded here for reference:
 - To `v8-debug-board`: its Phase 2 power relay (`debugger/RELAY-power.md`) can run as `PWR` cards once PR #89 is merged. The Debugger scaffolds at intake: `python3 tools/lab/new_investigation.py --name power --prefix PWR --title "<title>"`, then decides whether board #0004 also belongs to `power` in `lab/BENCH.md`.
 - Follow-ups (out of scope here): capture/ingest accept a closed investigation's prefix; v7 STATE sits at its 150-line cap; recorded cards V7R-019/020 cite "STATE §6" for content now in `lab/BENCH.md`; the hook does not enforce the BENCH.md same-commit rule (PLAN Open Question); the checker skips MEMORY from a clone at another path unless `--memory-dir` is given.
