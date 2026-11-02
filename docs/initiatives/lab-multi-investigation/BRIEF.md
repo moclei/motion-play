@@ -19,4 +19,4 @@ Out: creating the power investigation itself (the Debugger scaffolds it at intak
 - Must land before `v8-debug-board` hands over `debugger/RELAY-power.md` (end of its Phase 2).
 - Edits to `lab/` content (v7 STATE, BENCH.md) are shown to the user as a diff and applied only on approval. The Debugger owns `lab/`.
 - Python 3.7, stdlib (PyYAML optional, as today). `tools/lab/tests/run_tests.py` must pass after every phase.
-- The branch is cut from `debug/v7-track-4` and merged back. No open v7 card may be affected.
+- The branch is cut from `main` and merged back by PR. No open v7 card may be affected.

@@ -40,12 +40,12 @@ Its entries cite card IDs, as STATE does. A card that changes a board or what's 
   
   `tool_tests.py` gets cases for a second prefix in capture, ingest and validate_log, and for the scaffold.
 - Hook acceptance always runs in a throwaway clone: a second-prefix card recorded without its STATE is rejected; recorded with the *other* investigation's STATE it is rejected; with its own STATE it is accepted.
-- Concurrency: Debugger sessions may commit to `debug/v7-track-4` during this work. Merge that branch in before Phase 3's `lab/` edits and again before the final merge back.
+- Concurrency: Debugger sessions may commit on their own branches during this work. Merge `main` (and any open Debugger branch) in before Phase 3's `lab/` edits and again before the final merge back.
 
 **User waits.**
 - **W1** (Phase 3): approve the v7 STATE front-matter + §6 diff and the new `lab/BENCH.md`.
 - **W2** (Phase 3): the user applies the role-draft changes, or declines them.
-- **W3** (Phase 3): the user merges the branch into `debug/v7-track-4`.
+- **W3** (Phase 3): the user merges the PR to `main`.
 
 ## Rejected Approaches
 - A registry file (`lab/investigations.yaml`): it duplicates what the folder already says, and the user preferred the folder.

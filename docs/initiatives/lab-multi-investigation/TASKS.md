@@ -26,13 +26,13 @@
 
 ## Phase 3: BENCH.md, v7 front matter, docs, merge
 
-- [ ] Merge the latest `debug/v7-track-4` in. If a v7 card is open (`open_cards` not empty), stop and ask the user before touching `lab/`
+- [ ] Merge the latest `main` in (and any open Debugger branch the user names). If a v7 card is open (`open_cards` not empty), stop and ask the user before touching `lab/`
 - [ ] Draft `lab/BENCH.md`. Move the boards, fixtures, flashed-now and bench-at-last-stop content out of the v7 STATE's §6 *verbatim*, adding which investigations use each board. Reduce §6 to its baselines plus a pointer. Add `prefix: V7R`, `title`, `status: open` to the v7 STATE front matter. Remove the Phase 1 `V7R` fallback
 - [ ] **W1:** show the user the diff (STATE + BENCH.md), and apply it only on approval. `check_state.py` on the real lab gives the same results as the baseline (the BENCH.md warning gone)
 - [ ] PROTOCOL.md § lab/: one investigation folder per fault, the shared files, BENCH.md, the scaffold command. Present it as a diff for approval
 - [ ] **W2:** draft the role-draft changes (`docs/research/v7-retry/debugger-role-draft.md`) as a diff for the user: choosing an investigation at session start (`check_state.py` lists the open investigations, the user picks one, then `--load --inv`); BENCH.md read at start and updated in the same commit as a card that changes boards or flashing; scaffolding a new investigation at relay intake. The user applies or declines
 - [ ] End-to-end check in a throwaway clone: scaffold `power`/`PWR`, pre-register and record a dummy `PWR-001` with its STATE, check the hook and checker, then delete the clone. Log it in SESSION.md
-- [ ] **W3:** tell the user the branch is ready to merge into `debug/v7-track-4`, and that `v8-debug-board` Phase 2's power relay can now run as `PWR` cards
+- [ ] **W3:** open a PR to `main` for the user to merge, and that `v8-debug-board` Phase 2's power relay can now run as `PWR` cards
 - [ ] 🔄 Handoff
 
 ## Deferred

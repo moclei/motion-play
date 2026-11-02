@@ -12,7 +12,7 @@ On 2026-10-31 the user opened a parallel respin track: a v8 main board built as 
 - tools/CONTEXT.md (Critical Rule, Source-Hash Rule)
 
 ## State
-Branch: everything is on `debug/v7-track-4` (planning branches folded in 2026-11-02). Run `lab-multi-investigation` first; then cut `feat/v8-debug-board` from `debug/v7-track-4` after that initiative has merged back.
+Branch: everything is on `main` (merged 2026-11-02). Run `lab-multi-investigation` first; cut `feat/v8-debug-board` from `main` after that initiative has merged.
 Build: n/a (no code yet)
 TASKS.md current: yes
 

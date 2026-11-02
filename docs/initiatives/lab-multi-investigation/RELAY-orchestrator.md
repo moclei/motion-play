@@ -12,7 +12,7 @@ role:orchestrator
 - docs/research/v7-retry/context-strategy.md §4.1, §4.2, §6 (section-scoped)
 
 ## State
-Branch: everything (these docs, v8 docs, the lab move) is on `debug/v7-track-4`. Cut `feat/lab-multi-investigation` from it; W3 merges back into it.
+Branch: everything (these docs, v8 docs, the lab move) is on `main` (merged 2026-11-02). Cut `feat/lab-multi-investigation` from `main`; W3 merges it back to `main` (via PR). Debugger sessions branch from `main` too.
 Build: `run_tests.py` OK, `check_state.py` OK (0 warnings)
 TASKS.md current: yes
 
