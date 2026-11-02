@@ -149,3 +149,18 @@ Notes on the ranking:
 - BQ missing from I²C, but VSYS = 4.30 V on USB means the BQ's buck is running. So the BQ's power stage is alive and only its I²C is absent: consistent with an open SDA/SCL/joint on U5 (legacy B2's "BQ I²C open", Phase 8) rather than a dead BQ. This fits the BENCH.md note that #0005 may be legacy B2 rather than B3.
 - VSYS 4.30 V rather than VSYS_MIN + 150 mV (3.65 V): with charge enabled and no cell, the BQ charges the BAT node, which is only Q2's body diode into C30 47 µF and R33/R34. BAT sits near VREG 4.208 V and SYS follows it. The BQ datasheet asks for BATFET_DIS when no battery is fitted (§8.3.1.2.1); v7 can't do that without I²C.
 - Battery relevance: none. #0005 is the Phase 1 BQ fault seen on a board whose BQ I²C is missing.
+
+**Task 3.** Wrote `debugger/RELAY-power.md` (PROTOCOL template, role: debugger). It carries: a plain-words summary first; boards #0001, #0002 (user supplies), #0004, with #0005 as the power reference and #0003 untouched unless the user says so; steps 0 recollection → 1 visual → 2 per-rail ohms + two continuity checks (BAT_RAW ↔ J7 shell, BAT_RAW ↔ USB_DN) → 3 diode mode on Q2/U5/U6/U8 → 4 current-limited PSU per input (VBUS, battery-side PSU, Q2 under a set load) → 5 optional real-cell hot-plug (user-gated, not reversible); a result → mechanism table; the explicit "no change to the debug track's order unless the user says so"; PWR prefix and scaffold command.
+
+**Task 4.** Filled `hardware/pcb-main-v8/CONTEXT.md` "Battery connection damaged boards…" with the ranked list (short form), #0004/#0005, a pointer to the relay, and the design deviations Phase 7 should fix whatever the bench finds.
+
+**Task 5.** `lab-multi-investigation` is merged: `36ab0ad` (PR #89) is an ancestor of `main` and of this branch; `tools/lab/new_investigation.py` exists. The relay doesn't wait. Message for the user is in the return report (W1 opens).
+
+**Handoff, for Phase 3 and Phase 7:**
+- W1 is open: Phase 7 stops until the Debugger's `PWR` cards land and the user cites them.
+- Phase 7 inputs, beyond the bench: the "Design deviations" list in the v8 CONTEXT battery section (blocking reverse protection, full gate drive, battery-side fuse, 10 µF on BAT, PMID ≥ 60 µF, + pad clearance, J7 shell net, cell-temperature sensing).
+- Phase 3 (test points): VBAT, BAT_RAW, BOOST_EN, U6 VCC/FB and the Q2 pins were the hard-to-reach points in this relay; worth test points on v8.
+- Open, argued only: TPS61088 VIN → VOUT body-diode path when disabled (not read from SLVSCM7; the relay's step 4a measures it); `reset_reason=9` = brownout read from the ESP-IDF enum, not checked against the old image's core.
+- Not actioned, for the Orchestrator (GARDEN-type): `circuit-context.json` gives R2's `function` as "PMOS gate bias resistor to BAT_RAW (turns Q2 off if reverse…)", but R2 is the BOOST_EN pull-down (stale annotation from v6).
+
+PLAN Approach and Technical Notes still describe the work; no approach changed, nothing rejected. Commits: `f21ce81` (task 1), `6bc68fd` (task 2), `5b25500` (task 3), `84058b4` (task 4), plus task 5 and this handoff.
