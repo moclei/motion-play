@@ -107,3 +107,14 @@ Entry: started from `RELAY-orchestrator.md`. Branch `feat/lab-multi-investigatio
 - **BENCH.md shape:** boards as a table (ID | Condition | Mods | Role | Investigations), cells verbatim from the old §6 `Boards:` bullet split on its own ` | ` separators (trailing periods kept); the closing "#0004 could be B1, B2 or a spare." is a line under the table. Every board says `v7-i2c` (the only investigation). Fixtures: the fixtures half of the old first bullet (the Baselines half stays in §6), tagged `(v7-i2c)`. Flashed now and Bench at last stop: the old bullets verbatim.
 - **For the user:** recorded cards V7R-019/020 cite "STATE §6" for board naming and the bench; those citations now resolve to BENCH.md (historical cards untouched, per BRIEF). Whether #0004 ("power-path case") belongs to the power investigation is the Debugger's call at intake; BENCH.md lists it as v7-i2c only.
 - **Next Worker:** apply the approved patches (`git apply <patch>`), tick task 2 with W1, run `run_tests.py` and `check_state.py` again on the real lab, then the end-to-end clone check and the PR.
+
+#### Result
+| # | Phase | Result | Escalation evaluated? | Commit | Notes |
+|---|-------|--------|-----------------------|--------|-------|
+| 3 | Phase 3 (part 1): merge main, draft approval diffs | PARTIAL | Yes — planned stop at W1; resolvable without replanning | 961bf45 | task 1 done; w1/protocol/w2 patches drafted, not applied |
+
+#### Verification
+- Working tree clean; only TASKS.md (task 1) and SESSION.md changed on the branch. `open_cards: []` confirmed by the Worker.
+- All three patches pass `git apply --check` on 961bf45 and touch disjoint files. Read the `lab/` half of w1: §6 content appears in BENCH.md (boards split into table cells on the original ` | ` separators; fixtures, flashed-now and bench-at-last-stop lines unchanged); STATE gains the three keys; §6 keeps heading, cap and baselines. Read protocol.patch: one paragraph rewritten.
+- Not re-run here (the Worker ran it in a scratch worktree): tests 123 PASS and real-lab checker `RESULT: OK (0 warnings)` with w1 applied. The next Worker re-runs both on the branch after applying.
+- For the user: w1 must be applied whole (the code half alone fails 3 tests); the v7 STATE sits at exactly the 150-line cap; #0004 is tagged `v7-i2c` pending the power intake.
