@@ -8,15 +8,17 @@ Usage:
   python3 tools/lab/check_state.py --root <dir>/lab --memory-dir <dir> --now YYYY-MM-DD  # fixtures
 
 Findings are printed one per line as `[TAG] message`. Tags:
-  STALE           STATE.md as_of is behind the highest recorded|abandoned card. HARD FAILURE (exit 1).
+  STALE           STATE as_of is behind the highest recorded|abandoned card. HARD FAILURE (exit 1).
   OPEN-CARDS      open_cards does not match the cards whose status is pre-registered|run.
   LOST-RESULT     a card in `run` with no commit (card or its evidence) in the last 7 days.
   CHECKPOINT-DUE  >= 3 recorded cards since last_checkpoint, or > 14 days since the last notebook entry.
-  CAP             a STATE.md section (or the whole file) is over its cap.
+  CAP             a STATE section (or the whole file) is over its cap.
   STALE-HASH      a generated file cited in Lookups has a source hash that no longer matches.
   MEMORY          the auto-memory directory mentions v7 (it must not hold v7 state, §2.5).
   CARD / AS-OF    housekeeping: unparseable card, test_id/filename mismatch, as_of ahead of the cards.
 Everything except STALE is a warning (exit 0).
+
+STATE is lab/investigations/STATE-v7-I2C.md (STATE_REL below, relative to the lab root).
 
 Cap counting rule: a section's count excludes its heading, its one-line field
 definition (the first non-blank, non-table line under the heading), the table
@@ -37,6 +39,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import lablib  # noqa: E402
 
+STATE_REL = Path("investigations") / "STATE-v7-I2C.md"  # relative to the lab root (--root)
 FILE_CAP = 150
 LOST_DAYS = 7
 CHECKPOINT_EVERY = 3
@@ -202,7 +205,7 @@ def lookup_paths(lines):
 
 def run_checks(root, base, memory_dir, today):
     findings = []
-    state_path = root / "STATE.md"
+    state_path = root / STATE_REL
     if not state_path.is_file():
         print("ERROR: %s not found" % state_path)
         sys.exit(2)
@@ -213,7 +216,7 @@ def run_checks(root, base, memory_dir, today):
     last_cp = lablib.id_num(sfm.get("last_checkpoint"))
     open_listed = sfm.get("open_cards") or []
     if as_of is None:
-        findings.append(("STALE", "STATE.md as_of %r is not a V7R-NNN ID" % sfm.get("as_of")))
+        findings.append(("STALE", "STATE as_of %r is not a V7R-NNN ID" % sfm.get("as_of")))
         as_of = -1
     if last_cp is None:
         last_cp = 0
@@ -275,7 +278,7 @@ def run_checks(root, base, memory_dir, today):
     # 5. caps
     total = len(state_text.splitlines())
     if total > FILE_CAP:
-        findings.append(("CAP", "STATE.md is %d lines (cap ~%d)" % (total, FILE_CAP)))
+        findings.append(("CAP", "STATE is %d lines (cap ~%d)" % (total, FILE_CAP)))
     lookups = []
     for heading, lines in state_sections(body):
         if heading[3:].strip().startswith("9."):
@@ -396,7 +399,7 @@ def main(argv=None):
     stale = any(t == "STALE" for t, _ in findings)
     warns = sum(1 for t, _ in findings if t != "STALE")
     if stale:
-        print("RESULT: STALE. Blocks new work: reconcile STATE.md from the cards above, commit, then proceed.")
+        print("RESULT: STALE. Blocks new work: reconcile %s from the cards above, commit, then proceed." % (Path("lab") / STATE_REL))
     else:
         print("RESULT: OK (%d warning%s)" % (warns, "" if warns == 1 else "s"))
 
