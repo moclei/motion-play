@@ -434,3 +434,9 @@ The "belief changes" line replaces overwriting a "current working theory": STATE
 - moved: `lab/STATE.md` → `lab/investigations/STATE-v7-I2C.md` (git mv; content and front matter unchanged). `check_state.py`, `precommit.py` (rule 1), their fixtures and the live docs now use the new path. Reason: `lab/` will hold several bench investigations, one `lab/investigations/STATE-<NAME>.md` each. The card prefix stays `V7R-`; cards, notebook, log, evidence, relays, procedures and templates stay where they are.
 - mapping: earlier entries (including this file's header note), cards, relays and logs that cite `lab/STATE.md`, `STATE.md` or "STATE §N" now mean `lab/investigations/STATE-v7-I2C.md`, same sections. They are not rewritten.
 - next: unchanged from the entry above.
+
+## 2026-11-02 · housekeeping · final layout: lab/investigations/v7-i2c/{STATE.md,NOTEBOOK.md} (desk, no bench)
+- session: direct (user request, branch `chore/lab-investigations-move`) · operator: none · boards: none touched
+- moved: `lab/investigations/STATE-v7-I2C.md` → `lab/investigations/v7-i2c/STATE.md` and `lab/NOTEBOOK.md` → `lab/investigations/v7-i2c/NOTEBOOK.md` (git mv; content unchanged). One folder per investigation. Supersedes the path in the earlier same-day housekeeping entry. Cards, log, evidence, captures, inbox, procedures, templates and relays stay where they are.
+- mapping: earlier entries, cards, relays and logs that cite `lab/STATE.md`, `lab/investigations/STATE-v7-I2C.md` or "STATE §N" now mean `lab/investigations/v7-i2c/STATE.md`, same sections; citations of `lab/NOTEBOOK.md` now mean this file. They are not rewritten.
+- next: unchanged from the decision entry above.
