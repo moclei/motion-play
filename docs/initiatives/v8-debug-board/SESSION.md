@@ -300,3 +300,14 @@ After approval: change the Parts status line to "approved by the user <date> (W2
 These stay as solder pads: row d downstream, row e links, rows g, i, j, k, and the LED load jumpers. Row h is unchanged (0 Ω + unfitted header). The user also asked for the TVS (TPD2E2U06) unit price. Points 3–6 of the walkthrough (rail links, test-point spacing, IC1 swap, kept v7 parts including D5 at 3.3 V drive) were accepted as written.
 
 Re-dispatch: Worker #4 resumed with its context to apply the jumper change, close task 5 and do the Handoff.
+
+**Addendum (Worker #4, after the user's W2 part 2 decision).** Applied to `hardware/pcb-main-v8/CONTEXT.md`:
+- Jumper matrix: rows a, b, c, d (upstream), e (usage text) and f now describe pin headers with shunts. A status line says the implementation changed per W2 part 2, not the positions.
+- New Parts → Jumper headers subsection. Row a is one 1 × 4 per line (U3_IO16 / bus / U3_IO43 / UART0). The v7 shunt on 2–3 physically excludes both v8 shunts. Row d upstream is a 2 × 3 per line: the bus line is on the odd row and the three resistors are on the even row, so one shunt picks exactly one value. Row c is a 1 × 3. Rows b and f are 1 × 2.
+- Counts: 16 headers (11 × 1×2, 1 × 1×3, 2 × 1×4, 2 × 2×3). Shunts: 12 fitted in v8, 13 in all-v7, supply 15 per board. 13 SJ2 and 4 SJ3 remain.
+- Shunt: C5305, open-top, 3 A, 920 428 in stock. Row c's argued worst-case peak is about 1.2 A (six VCNL4040 IR LEDs at the 200 mA LED_I maximum, all lined up).
+- TVS price: US$0.3254 each (1–49 tier): about $0.98 for 3 and $4.88 for 15. JLC minimum buy is 5. Extended-part loading fee is about $3 per unique part per order.
+- Parts status: "approved by the user 2026-11-02 (W2 part 2), with the header/pad jumper split". Footprints table updated: default-closed SJ2 now covers the LED loads only, and SJ3 covers rows g, i, j, k.
+- One cost recorded in row b: the header in the TVS GND leg adds a few nH to the clamp path (argued). The layout rule is to put it beside TVS pin 4.
+
+Task 5 and the Phase 4 Handoff are ticked. PLAN is unchanged: the approach still holds, nothing was rejected. Phase 7 carry-forward: row c's regulators, the row h 0 Ω current rating per rail, R44 shunt stock (2), and the STAT LED rail.

@@ -114,14 +114,16 @@ Phase 7 fills this in.
 
 **Status: approved by the user 2026-11-02 (W2 part 1), including the v7-valued defaults of rows d, f, h and i.** Rows a–h are the PLAN candidates; i–k come from changelist §3 and Phases 1–2. Every row has a v7 position that rebuilds v7's net membership for the nets it touches (Phase 9/11 check this against `c2acffc`). Defaults are the v8 position (BRIEF), except where the row says v8 = v7 because no fix is claimed. "SJ2" = 2-pad solder jumper, "SJ3" = 3-pad solder jumper (centre common); footprints and the SJ3 pad rule are in Parts.
 
+**Implementation changed by the W2 part 2 decision (user, 2026-11-02):** rows a, b, c, d (upstream) and f are now 2.54 mm pin headers with push-on shunts instead of solder jumpers. The positions (v7, v8, defaults) did not change; only the implementation column did. For a header row, "default" means where the shunt ships fitted. Details and footprints: Parts → Jumper headers.
+
 | # | Toggles | v7 position | v8 position (default) | v6 (where it differs) | Map row / CL-ID | Implementation |
 |---|---|---|---|---|---|---|
-| a | Bus master pins, SDA and SCL separately | SDA = GPIO43, SCL = GPIO44; UART0 header disconnected | SDA = GPIO16, SCL = GPIO15; GPIO43/44 to the UART0 header | T-Display pins "43"/"44" (other die path) | master: module/path, pin role; V7R-019; CL-02 | Per line: SJ3 (centre = bus SDA or SCL; side 1 = GPIO43/44; side 2 = GPIO16/15) + SJ2 GPIO43/44 → UART0 header (open in v7). Both SJ3 open = U3 off the bus (row e) |
-| b | Cable-facing protection on CH0–CH2 SDA/SCL | Bypassed: series R shorted, TVS ground leg open | Fitted: series R in line, TVS to GND | as v7 (none) | notebook 2026-10-31 candidate (1); net-stress form of (c) | Per line: series R with an SJ2 across it (closed = v7). Per connector: TVS array with an SJ2 in its GND leg (open = v7). 9 jumpers. Residual in v7 position: the floating TVS's capacitance stays on the lines (argued, small: TPD2E2U06, 1.9 pF max, Parts) |
-| c | MCU 3.3 V vs bus/pull-up 3.3 V | Shared: one regulator feeds U3 and the pull-ups, TCA, INA219, J4–J6 | Separate: +3.3V_MCU and +3.3V_BUS from two regulators | Separate (AP2112K for the bus, T-Display LDO for the MCU) | master supply; CL-03, CL-08 | SJ3 on the +3.3V_BUS feed (side 1 = MCU regulator output, side 2 = bus regulator output). Phase 7 picks the parts; for a faithful v7 position the shared regulator should be the v7 type (AMS1117, CL-08) or the difference recorded. Back-powering U3 through the pull-ups when only the bus rail is up: Phase 7 checks |
-| d | On-board pull-up values | Upstream 2.2 kΩ (R28/R29); no on-board pull-ups downstream | Upstream 2.2 kΩ (**v8 = v7**: no pull-up fix is claimed; notebook fix (ii) "not pursued"); downstream none fitted | as v7 | master: pull-up current; desk (d) | Upstream per line: three resistors (2.2 k, 4.7 k, 10 k) each in series with an SJ2 (2.2 k closed). Downstream per channel line: one footprint (4.7 kΩ, Parts) in series with an SJ2, open. Values and rise time: Parts |
-| e | External master on the bus | Header disconnected | Header disconnected | — | master: identity; V7R-004 / F-12 method | 4-pin header (SDA, SCL, GND, +3.3V_BUS sense) on the bus side, joined by SJ2 per line (open). To use: open both (a) SJ3s, close these. No second master footprint (OQ-2) |
-| f | BQ on the I²C bus | Connected | Connected (**v8 = v7**; firmware still talks to it) | — | symptom identity: causal; STATE §3; L-Ph8 | SJ2 on U5 SDA and SCL (closed). Applies only if Phase 7 keeps the BQ24195 or another I²C charger |
+| a | Bus master pins, SDA and SCL separately | SDA = GPIO43, SCL = GPIO44; UART0 header disconnected | SDA = GPIO16, SCL = GPIO15; GPIO43/44 to the UART0 header | T-Display pins "43"/"44" (other die path) | master: module/path, pin role; V7R-019; CL-02 | Per line: one 1 × 4 header, pins 1–4 = U3_IO16 / I2C_SDA / U3_IO43 / UART0_TX (SCL line: U3_IO15 / I2C_SCL / U3_IO44 / UART0_RX). v8: shunts on 1–2 and 3–4. v7: one shunt on 2–3, which physically blocks both other positions, so GPIO43 can't be on the bus and the UART0 header at once. No bus shunt (1–2 and 2–3 empty) = U3 off the bus (row e) |
+| b | Cable-facing protection on CH0–CH2 SDA/SCL | Bypassed: series R shorted, TVS ground leg open | Fitted: series R in line, TVS to GND | as v7 (none) | notebook 2026-10-31 candidate (1); net-stress form of (c) | Per line: series R with a 1 × 2 header across it (shunt off = v8; shunt on = v7). Per connector: TVS with a 1 × 2 header in its GND leg (shunt on = v8; off = v7). 9 headers. The header in the TVS return adds a few nH (argued), which raises the clamp during the ns ESD edge; the header sits beside TVS pin 4 with its GND pin on a via at the pad, and the 47 Ω series R takes more of the burden. Residual in v7 position: the floating TVS's capacitance stays on the lines (argued, small: TPD2E2U06, 1.9 pF max, Parts) |
+| c | MCU 3.3 V vs bus/pull-up 3.3 V | Shared: one regulator feeds U3 and the pull-ups, TCA, INA219, J4–J6 | Separate: +3.3V_MCU and +3.3V_BUS from two regulators | Separate (AP2112K for the bus, T-Display LDO for the MCU) | master supply; CL-03, CL-08 | 1 × 3 header on the +3.3V_BUS feed: pin 2 = +3.3V_BUS, pin 1 = bus regulator output (v8, shunt fitted), pin 3 = MCU regulator output (v7). No shunt = bus rail unpowered (neither position). Phase 7 picks the parts; for a faithful v7 position the shared regulator should be the v7 type (AMS1117, CL-08) or the difference recorded. Back-powering U3 through the pull-ups when only the bus rail is up: Phase 7 checks |
+| d | On-board pull-up values | Upstream 2.2 kΩ (R28/R29); no on-board pull-ups downstream | Upstream 2.2 kΩ (**v8 = v7**: no pull-up fix is claimed; notebook fix (ii) "not pursued"); downstream none fitted | as v7 | master: pull-up current; desk (d) | Upstream per line: one 2 × 3 selector header; odd pins 1/3/5 = the bus line, even pins 2/4/6 = 2.2 k / 4.7 k / 10 k, each resistor's other end on I2C_PU_RAIL. A shunt across a column (1–2, 3–4 or 5–6) picks one value; 1–2 (2.2 k) ships fitted. One shunt can't connect two values. No shunt = no upstream pull-up. Downstream per channel line: one footprint (4.7 kΩ, Parts) in series with an SJ2, open. Values and rise time: Parts |
+| e | External master on the bus | Header disconnected | Header disconnected | — | master: identity; V7R-004 / F-12 method | 4-pin header (SDA, SCL, GND, +3.3V_BUS sense) on the bus side, joined by SJ2 per line (open). To use: take the (a) bus shunts off (leave 1–2 and 2–3 empty), close these. No second master footprint (OQ-2) |
+| f | BQ on the I²C bus | Connected | Connected (**v8 = v7**; firmware still talks to it) | — | symptom identity: causal; STATE §3; L-Ph8 | 1 × 2 header on U5 SDA and on U5 SCL (shunt fitted). Applies only if Phase 7 keeps the BQ24195 or another I²C charger |
 | g | LED_DATA source | GPIO16 drives D5 + IC1 | GPIO18 drives D5 + IC1; GPIO16 free for the bus | — | desk (e); CL-06 | SJ3: centre = LED_DATA (D5 DIN, IC1 1A, test point), side 1 = GPIO16, side 2 = GPIO18. Interlock: (a) SDA = v8 with (g) = v7 puts the LED loads on SDA, which is V7R-019's fixture state (allowed, a deliberate third state) |
 | h | Rail current-measure links | Closed | Closed (**v8 = v7**) | — | debug goal | Per rail: 0 Ω (1206) with an unpopulated 2-pin 2.54 mm header beside it; lift the 0 Ω to insert an ammeter. Rails chosen in Phase 7 (candidates: +3.3V_MCU, +3.3V_BUS, +5V core loads, +5V_TO_LEDS, VSYS) |
 | i | Boost enable | SW1 → BOOST_EN (R2 pull-down) | SW1 (**v8 = v7**) | EN tied to VIN (VSYS_SENSE): always on | CL-11; #0004 boost not running (Phase 2, V7R-020) | SJ3: centre = BOOST_EN (or its Phase 7 equivalent), side 1 = SW1 common, side 2 = boost VIN. Lets the bench take SW1 out of the path |
@@ -165,7 +167,7 @@ Rows considered and not added: D5 on-board pixel isolation (CL-06; row g already
 **MCU and control.** EN, GPIO0_BOOT, TCA_RESET, CHRG_INT, LED_DATA (the (g) centre), INT1–INT3 (GPIO13/12/11), GPIO3/45/46 (bare strap pads, see GPIO allocation). No pads on the USB pair.
 
 **Headers** (signal pin beside a GND pin):
-- UART0: 1 × 4, 2.54 mm: GND, TX (GPIO43), RX (GPIO44), NC. 3.3 V logic. Joined through the (a) SJ2s.
+- UART0: 1 × 4, 2.54 mm: GND, TX (GPIO43), RX (GPIO44), NC. 3.3 V logic. Joined through the (a) selector headers (pins 3–4).
 - External master (row e): 1 × 4, 2.54 mm: GND, SDA, SCL, +3.3V_BUS (sense/reference only).
 - Spare GPIO: 2 × 15, 2.54 mm, signal row + GND row: GPIO1, 2, 4, 5, 6, 7, 8, 9, 14, 17, 38, 39, 40, 41, 42.
 
@@ -185,7 +187,7 @@ Rows considered and not added: D5 on-board pixel isolation (CL-06; row g already
 
 Phase 4 filled the non-power parts below. Phase 7 adds the power parts (charger, boost, LDOs, battery connector, fuses, shunt).
 
-**Status (non-power, Phase 4): pending user approval (W2 part 2).** Stock: JLCPCB parts API (`selectSmtComponentList`, the same data as the JLC parts page), checked 2026-11-02. The JLC MCP was not available to the Worker. "basic" / "extended" is JLC's library type (extended parts carry a per-part assembly fee). Stock moves: Phase 19 preflight re-checks every number.
+**Status (non-power, Phase 4): approved by the user 2026-11-02 (W2 part 2), with the header/pad jumper split.** Stock: JLCPCB parts API (`selectSmtComponentList`, the same data as the JLC parts page), checked 2026-11-02. The JLC MCP was not available to the Worker. "basic" / "extended" is JLC's library type (extended parts carry a per-part assembly fee). Stock moves: Phase 19 preflight re-checks every number.
 
 ### Cable-facing protection (jumper row b)
 
@@ -196,7 +198,9 @@ Per connector J4–J6: one dual TVS on CHn_SDA_CONN / CHn_SCL_CONN, and one seri
 | TVS, 2-line, per connector | TI **TPD2E2U06DRLR** (SOT-553-5): IO1 = pin 3, IO2 = pin 5, GND = pin 4, pins 1–2 NC | C1972959 (extended) | 4 078 | `Package_TO_SOT_SMD:SOT-553` (Phase 8 checks the symbol pin map against TI's DRL pinout) |
 | Alternate TVS | TI TPD4E05U06DQAR (4-line, 0.5 pF, USON-10 0.5 mm pitch; two channels unused) | C138714 (extended) | 121 301 | `Package_SON:USON-10_2.5x1.0mm_P0.5mm` |
 | Series R, per line | **47 Ω** 1 % 0603 | C23182 (basic) | 1 557 821 | `Resistor_SMD:R_0603_1608Metric` |
-| Bypass (v7 position) | SJ2 across each series R (closed = v7); SJ2 in each TVS GND leg (open = v7) | — | — | see Footprints |
+| Bypass (v7 position) | 1 × 2 header across each series R (shunt on = v7); 1 × 2 header in each TVS GND leg (shunt off = v7) | — | — | see Jumper headers |
+
+**TPD2E2U06 price (JLC parts API, 2026-11-02).** US$0.3254 each in the 1–49 tier, so ≈ $0.98 for 3 (one board) and ≈ $4.88 for 15 (five boards). JLC's minimum buy for this part is 5 (API `leastPatchNumber`), with 1 attrition part. It is an extended part, so JLC adds a one-off loading fee per unique extended part per order: about US$3 (JLC assembly FAQ; their Oct 2026 blog gives $3.07 for Economic PCBA, with Preferred Extended parts exempt). Confirm in the live quote at Phase 19.
 
 **TPD2E2U06 (TI SLLSEG9C, rev. Dec 2019, §6.5).** V_RWM 5.5 V. Line capacitance 1.5 pF typ, 1.9 pF max (1 MHz, 2.5 V bias). Leakage 10 nA max at 2.5 V. Clamp IO→GND 9.7 V at 1 A and 12.4 V at 5 A (TLP); R_DYN 0.5 Ω (DRL). Unidirectional to GND: there is no rail pin, so with its GND leg open (v7 position) the only thing left on the line is its capacitance.
 
@@ -223,9 +227,9 @@ All are KiCad 9 stock libraries (checked present in `/Applications/KiCad/KiCad.a
 
 | Use | Footprint | Notes |
 |---|---|---|
-| SJ2, default **open** | `Jumper:SolderJumper-2_P1.3mm_Open_RoundedPad1.0x1.5mm` | Close with a solder blob. Rows a (UART0 side in v7), b (series-R bypass), d (4.7 k, 10 k, downstream), e, j (the D+ to GND SJ2; closed only in v7) |
-| SJ2, default **closed** | `Jumper:SolderJumper-2_P1.3mm_Bridged_RoundedPad1.0x1.5mm` | Copper bridge from the factory: cut it to open, then it behaves as an open SJ2 (blob to re-close). JLC can't place a solder blob, so this is how "closed by default" ships. Rows a (UART0 SJ2 in v8), b (TVS GND leg), d (2.2 k), f, LED series jumpers |
-| SJ3 | `Jumper:SolderJumper-3_P1.3mm_Bridged12_RoundedPad1.0x1.5mm_NumberLabels` | Pads 1–2 bridged from the factory. **Pad rule: pad 2 = common (the matrix's "centre"), pad 1 = the default position, pad 3 = the other position.** Rows a ×2, c, g, i, j, k. For row i the default (pad 1) is SW1, which is also the v7 position. The matrix's "side 1 / side 2" wording names positions, not pad numbers |
+| SJ2, default **open** | `Jumper:SolderJumper-2_P1.3mm_Open_RoundedPad1.0x1.5mm` | Close with a solder blob. Rows d (downstream, 6), e (2), j (the D+ to GND SJ2; closed only in v7) |
+| SJ2, default **closed** | `Jumper:SolderJumper-2_P1.3mm_Bridged_RoundedPad1.0x1.5mm` | Copper bridge from the factory: cut it to open, then it behaves as an open SJ2 (blob to re-close). JLC can't place a solder blob, so this is how "closed by default" ships. LED load jumpers only (D1, BUS, +5V, VBUS: 4) |
+| SJ3 | `Jumper:SolderJumper-3_P1.3mm_Bridged12_RoundedPad1.0x1.5mm_NumberLabels` | Pads 1–2 bridged from the factory. **Pad rule: pad 2 = common (the matrix's "centre"), pad 1 = the default position, pad 3 = the other position.** Rows g, i, j, k (j and k only if Phase 7 keeps the BQ24195). For row i the default (pad 1) is SW1, which is also the v7 position. The matrix's "side 1 / side 2" wording names positions, not pad numbers |
 | 0 Ω link, signal | `Resistor_SMD:R_0603_1608Metric`, 0 Ω C21189 (basic, 20.45 M) | Where a jumper must be removable more than a few times, a 0603 0 Ω is the alternative to a bridged SJ2 |
 | 0 Ω link, rail current-measure (row h) | `Resistor_SMD:R_1206_3216Metric`, 0 Ω C17888 (basic, 1.72 M) + `Connector_PinHeader_2.54mm:PinHeader_1x02_P2.54mm_Vertical` beside it, not fitted | C17888 is listed at 250 mW; its current rating isn't in the JLC listing. **Phase 7 checks the rating per rail**: +5V_TO_LEDS (behind F1, 3 A) probably needs a 2512 0 Ω or a pair |
 | Signal test point | `TestPoint:TestPoint_Pad_D1.5mm` | Round, SMD. v7's TP1–TP4 used this; TPIO used D2.0 mm |
@@ -236,6 +240,37 @@ All are KiCad 9 stock libraries (checked present in `/Applications/KiCad/KiCad.a
 - **Gap between a signal test point and its ground point: 1.0–3.0 mm, copper edge to copper edge.** With a D1.5 signal pad and a 2.5 mm square ground pad that is 3.0–5.0 mm centre to centre, which matches the old working value.
 - The 1.0 mm minimum keeps a slipping spring off the signal pad (a spring on the signal pad shorts it to GND).
 - Not demonstrated on a board: the Rigol stock-probe spring (springs for it are on hand, `lab/procedures/known-good-reference.md`). Optional user check, not blocking: measure each probe's tip-to-spring reach with calipers; if it's well over 3 mm, the Phase 13 placement rules can relax the maximum.
+
+### Jumper headers (W2 part 2 decision)
+
+The jumpers that get switched often are 2.54 mm pin headers with push-on shunts (user, 2026-11-02): rows a, b, c, d upstream and f. Row d downstream, row e, rows g, i, j, k and the LED load jumpers stay as solder pads (Footprints above); row h is unchanged. Headers are hand-fit, or JLC through-hole if Phase 19 chooses it, as in the Headers table below. "Default" = where the shunt ships fitted.
+
+| Row | Per board | Footprint | Pins | v8 (default) | v7 |
+|---|---|---|---|---|---|
+| a | 2 (SDA, SCL) | `Connector_PinHeader_2.54mm:PinHeader_1x04_P2.54mm_Vertical` | 1 U3_IO16/15, 2 I2C_SDA/SCL, 3 U3_IO43/44, 4 UART0_TX/RX | shunts 1–2 + 3–4 | shunt 2–3 only |
+| b | 9 (6 bypass, 3 TVS GND) | `Connector_PinHeader_2.54mm:PinHeader_1x02_P2.54mm_Vertical` | bypass: CHn_x / CHn_x_CONN; GND leg: TVS pin 4 / GND | bypass off, GND leg on | bypass on, GND leg off |
+| c | 1 | `Connector_PinHeader_2.54mm:PinHeader_1x03_P2.54mm_Vertical` | 1 bus regulator out, 2 +3.3V_BUS, 3 MCU regulator out | shunt 1–2 | shunt 2–3 |
+| d upstream | 2 (SDA, SCL) | `Connector_PinHeader_2.54mm:PinHeader_2x03_P2.54mm_Vertical` | odd 1/3/5 = bus line; even 2/4/6 = 2.2 k / 4.7 k / 10 k to I2C_PU_RAIL | shunt 1–2 (2.2 k) | shunt 1–2 (2.2 k) |
+| f | 2 (SDA, SCL) | `PinHeader_1x02_P2.54mm_Vertical` | bus line / BQ_SDA or BQ_SCL | shunt on | shunt on |
+
+**Counts.** 16 jumper headers per board: 11 × 1×2, 1 × 1×3, 2 × 1×4, 2 × 2×3. Shunts fitted: 12 in the v8 default, 13 in the all-v7 configuration; supply 15 per board (75 for 5 boards). Solder pads left: 13 SJ2 (9 default-open: d downstream 6, e 2, j 1; 4 factory-bridged: LED loads) and 4 SJ3 (g, i, j, k; j and k only if Phase 7 keeps the BQ24195). The old count of 9 row-b jumpers is now 9 headers.
+
+**v7 positions stay reproducible.** Each v7 position joins exactly the nets v7 had joined: a (2–3) puts U3_IO43/44 on the bus and leaves UART0_TX/RX open; b (bypass on, GND leg off) shorts the 47 Ω and leaves the TVS on its capacitance only; c (2–3) feeds the bus rail from the MCU regulator; d (1–2) is R28/R29's 2.2 k; f (on) keeps the BQ on the bus. The headers add their own pins to those nets (≈ 1 pF each, argued), as the solder jumpers' pads did. Phase 9/11 check the v7 positions against `c2acffc` as before.
+
+**Arrangements chosen.**
+- Row a as one 1 × 4 per line instead of a 1 × 3 plus a 1 × 2: the v7 shunt (2–3) shares a pin with both v8 shunts, so the hardware can't be left with GPIO43 on the bus and the UART0 header at once.
+- Row d as a 2 × 3 with the bus line on the odd row: a 2-pin shunt bridges one column (one value) or two pins in the same row (no effect), so one shunt can never put two values in parallel. Unselected resistors hang only from I2C_PU_RAIL with an open end, so they add no stub to the bus beyond the header pin. Two values at once (deliberate stress) needs a second shunt.
+
+**Parts** (stock from the JLC parts API, 2026-11-02; all extended).
+| Item | Part | LCSC | Stock | Rating |
+|---|---|---|---|---|
+| Shunt | 2.54 mm, open-top, 1 × 2 | C5305 | 920 428 | 3 A. Open-top, so a probe tip can touch the shunt's metal from above |
+| 1 × 2 header | PZ254V-11-02P | C492401 | 878 135 | 3 A |
+| 1 × 3 header | PZ254V-11-03P | C2937625 | 728 380 | 3 A |
+| 1 × 4 header | PZ254V-11-04P | C2691448 | 427 246 | 3 A |
+| 2 × 3 header | PZ254V-12-06P-T | C56153599 | 1 000 | (no rating listed) |
+
+**Row c current vs the 3 A shunt (argued).** Only the bus rail's load passes the shunt, not U3's. That load is the pull-ups, TCA, INA219 (each mA or less) and three sensor modules on J4–J6: the rigid board's PCA and LED (≈ 1–3 mA each), and six VCNL4040s whose IR LEDs pulse at up to 200 mA each (VCNL4040 LED_I maximum; the firmware setting wasn't checked), from the flex boards' 2.2 µF anode capacitors. Even if all six pulses lined up, the peak is ≈ 1.2 A + a few tens of mA, below 3 A; the average is far lower. The shunt's contact resistance (tens of mΩ, typical for the class, argued) drops a few mV at that peak.
 
 ### Debug LEDs, pull-up options, headers
 

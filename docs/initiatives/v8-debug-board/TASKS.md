@@ -40,8 +40,8 @@
 - [x] Footprints: solder jumpers (2- and 3-way), 0 Ω links, test-point pads sized for the Sensepeek/Rigol tips, ground-spring points. Prefer KiCad stock libraries, and record each footprint name
 - [x] Debug LEDs, pull-up option resistors, header(s) for an external master / UART0 (if OQ-2 says yes). Stock check
 - [x] Review the remaining v7 parts (TCA9548A, INA219, SN74AHCT125, WS2812B-MINI, USBLC6, connectors) for swap candidates. Note only those with a reason. Stock check for everything kept
-- [ ] Fill `hardware/pcb-main-v8/CONTEXT.md` Parts. **W2 (part 2):** user approves the parts list
-- [ ] 🔄 Handoff
+- [x] Fill `hardware/pcb-main-v8/CONTEXT.md` Parts. **W2 (part 2):** user approves the parts list
+- [x] 🔄 Handoff
 
 # --- handoff point ---
 
