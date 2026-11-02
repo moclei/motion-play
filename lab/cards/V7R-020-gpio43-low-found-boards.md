@@ -106,6 +106,7 @@ The session runs every flash, mode command and serial log; one instruction block
 - #0005 3a confirmed: "All three showed 0.644". #0005 4 (GPIO44 low): SCL "0.046V all three times"; SDA "3.300V"
 - #0005 3b (GPIO43 low, repeat): SDA "0.644V all three times". Session: one banner, no reset line in `2026-11-01_V7R-020_0005_01.txt` from r to 3b.
 - E1: #0005 unplugged (left on u3-static). #0003 unpowered, Nano unpowered but wired at TPIO43/44 (extra reference, not counted): diode mode, red U8.1: SDA "0.465 all three times"; SCL "0.462 all three times"
+- E2: rigid #1 into J6 with both unplugged; operator: "1. rigid seated, switches are good 2. All powered on, all good". Pigtail wiring re-stated by operator before power (J5; GND → Nano GND, V → 'V' rail, blue → 10 kΩ far side, yellow free; TPIO43 → A4, TPIO44 → A5), matches STATE §6. Session: ports 14101 (Nano) and 14301 (#0003) enumerated.
 - Deviation: both scope probes lifted off #0003 and parked (not in the card; card uses no scope). Scope probes need a full re-seat + V1–V8 before any later scope card.
 ### Measured values (from log; cite `lab/evidence/V7R-020/...`)
 ### Interpretation (session; labelled as such)
