@@ -217,6 +217,26 @@ Per connector J4–J6: one dual TVS on CHn_SDA_CONN / CHn_SCL_CONN, and one seri
 - **Series R cost on rise time:** 47 Ω × the connector-side capacitance (≈ 100 pF) ≈ 5 ns. Negligible.
 - **Series R cost on the low level** (the one that matters on this bus). When a far-end device pulls low, the main board's pull-up current crosses the series R: 2.9 V / 2.2 k ≈ 1.3 mA × 47 Ω ≈ 62 mV added at the master. Worst-case sum at U3: VCNL VOL 0.4 V + PCA Ron 20 Ω max × 2.5 mA (50 mV) + 62 mV + TCA Ron 30 Ω max × 1.3 mA (40 mV) ≈ 0.55 V, against VIL = 0.3 · VDD = 0.99 V. 100 Ω would make it ≈ 0.62 V. 47 Ω was chosen to keep the added offset under ≈ 60 mV on a board that is built to study low levels; the row (b) SJ2 removes it entirely for A/B.
 
+### Footprints: jumpers, links, test points, ground points
+
+All are KiCad 9 stock libraries (checked present in `/Applications/KiCad/KiCad.app/Contents/SharedSupport/footprints/`). No LCSC part: solder jumpers and pads are copper only.
+
+| Use | Footprint | Notes |
+|---|---|---|
+| SJ2, default **open** | `Jumper:SolderJumper-2_P1.3mm_Open_RoundedPad1.0x1.5mm` | Close with a solder blob. Rows a (UART0 side in v7), b (series-R bypass), d (4.7 k, 10 k, downstream), e, j (the D+ to GND SJ2; closed only in v7) |
+| SJ2, default **closed** | `Jumper:SolderJumper-2_P1.3mm_Bridged_RoundedPad1.0x1.5mm` | Copper bridge from the factory: cut it to open, then it behaves as an open SJ2 (blob to re-close). JLC can't place a solder blob, so this is how "closed by default" ships. Rows a (UART0 SJ2 in v8), b (TVS GND leg), d (2.2 k), f, LED series jumpers |
+| SJ3 | `Jumper:SolderJumper-3_P1.3mm_Bridged12_RoundedPad1.0x1.5mm_NumberLabels` | Pads 1–2 bridged from the factory. **Pad rule: pad 2 = common (the matrix's "centre"), pad 1 = the default position, pad 3 = the other position.** Rows a ×2, c, g, i, j, k. For row i the default (pad 1) is SW1, which is also the v7 position. The matrix's "side 1 / side 2" wording names positions, not pad numbers |
+| 0 Ω link, signal | `Resistor_SMD:R_0603_1608Metric`, 0 Ω C21189 (basic, 20.45 M) | Where a jumper must be removable more than a few times, a 0603 0 Ω is the alternative to a bridged SJ2 |
+| 0 Ω link, rail current-measure (row h) | `Resistor_SMD:R_1206_3216Metric`, 0 Ω C17888 (basic, 1.72 M) + `Connector_PinHeader_2.54mm:PinHeader_1x02_P2.54mm_Vertical` beside it, not fitted | C17888 is listed at 250 mW; its current rating isn't in the JLC listing. **Phase 7 checks the rating per rail**: +5V_TO_LEDS (behind F1, 3 A) probably needs a 2512 0 Ω or a pair |
+| Signal test point | `TestPoint:TestPoint_Pad_D1.5mm` | Round, SMD. v7's TP1–TP4 used this; TPIO used D2.0 mm |
+| Ground point | `TestPoint:TestPoint_Pad_2.5x2.5mm` | Square, so it reads as GND at a glance. Big enough for two springs (V7R-019 V5b: two tips and two springs "won't fit" on a 0603 pad) |
+| Strap pads (GPIO3/45/46) | `TestPoint:TestPoint_Pad_D1.0mm` | Bare pad only (GPIO allocation) |
+
+**Ground-spring reach (replaces the 5 mm working rule).** Measured on the bench, with SQ500 springs, edge to edge (copper), `lab/procedures/known-good-reference.md` ground table: pad F → U5 pins 5/6 at **2.64 mm** (V7R-009, V7R-010: "springs on F, 0 mm") and pad C → TPIO43/44 at **3.05 mm** on v7 (V7R-010 master end). The spring's maximum reach has not been measured, so the rule stays inside what has been done:
+- **Gap between a signal test point and its ground point: 1.0–3.0 mm, copper edge to copper edge.** With a D1.5 signal pad and a 2.5 mm square ground pad that is 3.0–5.0 mm centre to centre, which matches the old working value.
+- The 1.0 mm minimum keeps a slipping spring off the signal pad (a spring on the signal pad shorts it to GND).
+- Not demonstrated on a board: the Rigol stock-probe spring (springs for it are on hand, `lab/procedures/known-good-reference.md`). Optional user check, not blocking: measure each probe's tip-to-spring reach with calipers; if it's well over 3 mm, the Phase 13 placement rules can relax the maximum.
+
 ## Layout rules pointer
 
 Phases 13–15 fill this in. The rules will live in `tools/pcb-context/` (rules config and CONTEXT).
