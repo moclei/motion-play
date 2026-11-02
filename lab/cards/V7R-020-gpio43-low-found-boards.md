@@ -102,6 +102,7 @@ The session runs every flash, mode command and serial log; one instruction block
 - S5b #0005 download mode (BOOT held while plugging in): "OK done". esptool: "Chip is ESP32-S3 (revision v0.2)", "MAC: 44:1b:f6:c5:58:a4", app 0x10000 hash verified; `run` did not start the app (no reply to `r`).
 - S5c RESET pressed: "PWR is on, D5 is still blue". Banner `[static] sketch=v7_static_low version=1.0`, `mode=r tca_write_err=0 tca_reg=0x04`, both pads `od=1 out_sig=256 oe=1 out=1`, `wpu=0`; one banner (no boot loop on u3-static).
 - #0005 r (DMM on pads, black U8.1): "Both read 3.300V"
+- #0005 3a (GPIO43 low): SDA "0.644V" (one value reported for the three readings); SCL "3.300V"
 - Deviation: both scope probes lifted off #0003 and parked (not in the card; card uses no scope). Scope probes need a full re-seat + V1–V8 before any later scope card.
 ### Measured values (from log; cite `lab/evidence/V7R-020/...`)
 ### Interpretation (session; labelled as such)
