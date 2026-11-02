@@ -716,7 +716,7 @@ def scaffold_tests(tmp):
     check("scaffold: bad name and bad prefix -> refused, both named",
           rc == 2 and "--name 'Bad_Name'" in out and "--prefix 'pw'" in out, out)
 
-    # a lone investigation without `prefix` (the real lab until Phase 3) -> refused
+    # an existing investigation without `prefix` -> refused
     lone = tmp / "s2" / "lab"
     (lone / "investigations" / "v7-i2c").mkdir(parents=True)
     (lone / "investigations" / "v7-i2c" / "STATE.md").write_text("---\nas_of: V7R-020\n---\n")

@@ -30,8 +30,6 @@ Findings are printed one per line as `[TAG] message`. Tags:
   CARD / AS-OF    housekeeping: unparseable card, test_id/filename mismatch, as_of ahead of the cards.
 Everything except STALE, NO-PREFIX and DUP-PREFIX is a warning (exit 0).
 
-Phase 1 fallback (removed in Phase 3): a lone investigation with no `prefix` is V7R.
-
 Cap counting rule: a section's count excludes its heading, its one-line field
 definition (the first non-blank, non-table line under the heading), the table
 header row and separator row, and blank lines. `rows` caps count table data
@@ -347,9 +345,7 @@ def run_checks(root, base, memory_dir, today, only=None):
 
     # Registry checks
     for inv in invs:
-        if inv.prefix_fallback:
-            info.append("%s: STATE has no `prefix`; using %s (Phase 1 fallback)" % (inv.name, inv.prefix))
-        elif inv.prefix is None:
+        if inv.prefix is None:
             glob.append(("NO-PREFIX", "%s: STATE front matter has no `prefix`; its cards cannot be checked"
                          % inv.state_path.relative_to(base)))
         elif not lablib.PREFIX_RE.match(inv.prefix):

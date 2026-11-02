@@ -23,9 +23,6 @@ CARD_RE = re.compile(r"^%s-.+\.md$" % ID_PAT)   # card filename: groups prefix, 
 ID_RE = re.compile(r"^%s$" % ID_PAT)            # bare ID: groups prefix, num
 PREFIX_RE = re.compile(r"^%s$" % PREFIX_PAT)
 INVESTIGATIONS_DIR = "investigations"        # relative to the lab root
-# Phase 1 fallback (lab-multi-investigation): while the real v7 STATE has no
-# `prefix`, a lone investigation without one is treated as V7R. Removed in Phase 3.
-LEGACY_PREFIX = "V7R"
 RECORDED = ("recorded", "abandoned")
 OPEN = ("pre-registered", "run")
 
@@ -131,7 +128,7 @@ def parse_id(card_id):
     return (m.group("prefix"), int(m.group("num"))) if m else None
 
 
-def id_num(card_id, prefix=LEGACY_PREFIX):
+def id_num(card_id, prefix):
     """'V7R-012' -> 12. The ID's prefix must equal `prefix` (None = any);
     anything else -> None."""
     p = parse_id(card_id)
@@ -140,7 +137,7 @@ def id_num(card_id, prefix=LEGACY_PREFIX):
     return p[1]
 
 
-def fmt_id(n, prefix=LEGACY_PREFIX):
+def fmt_id(n, prefix):
     return "%s-%03d" % (prefix, n)
 
 
@@ -156,7 +153,6 @@ class Investigation:
         self.text = text
         raw = fm.get("prefix")
         self.prefix = str(raw).strip() if raw is not None and str(raw).strip() else None
-        self.prefix_fallback = False
         self.title = str(fm.get("title") or name).strip()
         self.status = str(fm.get("status") or "open").strip().lower()
         self.state_path = state_path
@@ -172,13 +168,10 @@ class Investigation:
 
 def build_registry(entries):
     """entries: [(name, state_text, state_path, notebook_path)] -> [Investigation],
-    sorted by name, with the Phase 1 V7R fallback applied."""
+    sorted by name."""
     invs = []
     for name, text, sp, nb in sorted(entries, key=lambda e: e[0]):
         invs.append(Investigation(name, front_matter(text or ""), sp, nb, text))
-    if len(invs) == 1 and invs[0].prefix is None:  # Phase 1 fallback, removed in Phase 3
-        invs[0].prefix = LEGACY_PREFIX
-        invs[0].prefix_fallback = True
     return invs
 
 

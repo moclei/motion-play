@@ -62,7 +62,7 @@ def refusals(root, name, prefix, title):
     elif prefix in card_prefixes(root):
         why.append("prefix %s is already used by card files in lab/cards/ (%s-NNN-*.md)" % (prefix, prefix))
     for inv in invs:
-        if inv.prefix is None or inv.prefix_fallback:
+        if inv.prefix is None:
             why.append("lab/%s/%s/STATE.md declares no `prefix`; add it to its front matter first, or that "
                        "investigation can't be told apart once a second one exists" % (lablib.INVESTIGATIONS_DIR, inv.name))
     return why
