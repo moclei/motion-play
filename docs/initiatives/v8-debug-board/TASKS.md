@@ -16,9 +16,9 @@
 
 - [ ] Rank the mechanisms by which connecting a battery could cook a v7 board. Cover at least: reverse insertion in BT1, the Q2 orientation and gate drive, hot-plug inrush/ringing on BAT, abs-max on every BAT_RAW/VBAT/VSYS member, the TS network, the boost enabled into a load at plug-in, and BT1 body over B.Cu copper (CL-10, CL-20). Each gets the datasheet value, which board observation would confirm or refute it, and whether the test is reversible
 - [ ] Explain #0004's state (V7R-020 card: +5 V ≈ 3.75 V, +3.3 V ≈ 2.69 V, no USB device) and #0005's brownout loop and missing BQ, against the same path. Mark everything argued
-- [ ] Write `docs/initiatives/v8-debug-board/RELAY-debugger-power.md` (PROTOCOL relay template, role: Debugger). Include: the boards (#0001, #0002, #0004, user supplies), a non-destructive-first bench sequence (visual/thermal, per-rail resistance to GND, diode-mode on Q2/U5/U6/U8 pins, then powered from a current-limited supply on each input), what each result discriminates between, and an explicit "no change to the debug track's order unless the user says so"
+- [ ] Write `docs/initiatives/v8-debug-board/debugger/RELAY-power.md` (PROTOCOL relay template, role: Debugger). Include: the boards (#0001, #0002, #0004, user supplies), a non-destructive-first bench sequence (visual/thermal, per-rail resistance to GND, diode-mode on Q2/U5/U6/U8 pins, then powered from a current-limited supply on each input), what each result discriminates between, and an explicit "no change to the debug track's order unless the user says so"
 - [ ] Fill `hardware/pcb-main-v8/CONTEXT.md` Inherited v7 faults → battery (ranked mechanisms, pointer to the relay)
-- [ ] Tell the user the relay is ready (W1 opens). Add OQ-6 to the handoff summary
+- [ ] Tell the user the relay is ready (W1 opens), and check OQ-8 is settled
 - [ ] 🔄 Handoff
 
 # --- handoff point ---
@@ -181,7 +181,7 @@
 - [ ] Fab outputs: gerbers, drill, BOM, CPL (Fabrication Toolkit or kicad-cli), 5 assembled. Cross-check CPL rotations against footprints
 - [ ] Preflight: stock for every LCSC part (BQ-class parts first), substitutions recorded as built (CL-14 lesson), hand-fit parts listed
 - [ ] **W-order (user):** user places the order. Record the order date and any checkout substitutions in `hardware/pcb-main-v8/CONTEXT.md`
-- [ ] Write the bring-up relay for the Debugger (`RELAY-debugger-bringup.md`): power-on sequence, the v7-config jumper set, and the A/B/A cards the board enables. Update PROJECT.md status line
+- [ ] Write the bring-up relay for the Debugger (`debugger/RELAY-bringup.md`): power-on sequence, the v7-config jumper set, and the A/B/A cards the board enables. Update PROJECT.md status line
 - [ ] 🔄 Handoff
 
 ## Deferred

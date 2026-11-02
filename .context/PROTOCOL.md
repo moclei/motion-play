@@ -41,7 +41,9 @@ docs/initiatives/
     ├── PLAN.md                # Technical approach, decisions — semi-stable
     ├── TASKS.md               # Execution checklist — living
     ├── SESSION.md             # Run log — append-only; Orchestrator and Workers both write
-    └── RELAY-<purpose>.md     # Session bootstrap prompts — once they have been run they never get updated again.
+    ├── RELAY-<purpose>.md     # Session bootstrap prompts — once they have been run they never get updated again.
+    └── debugger/              # Optional: requests to the Debugger
+        └── RELAY-<purpose>.md # Same rules as other relays
 ```
 
 **Principle:** If you feel the urge to create a document that is not part of these prescribed ones -- don't. Instead, notify the user of why you had wanted to, so we can reflect on it and consider improvements to the PROTOCOL for the future.
@@ -173,7 +175,10 @@ Relays are always written on request — by the current session, for the next on
 | Research / ideation session | `role:planner` | `RELAY-planner.md` | Enough explored to start an initiative |
 | Planner session | `role:orchestrator` | `RELAY-orchestrator.md` | Initiative docs complete, ready to build |
 | Orchestrator session | Bugfix / playtesting session | `RELAY-bugfix-<date>.md` | Build complete, testing needed |
-| Debugger session | `role:planner` | `RELAY-planner.md` (in the new initiative's folder) | A fix, a design change or a tool is needed |
+| Debugger session | `role:planner` | `lab/relays/<date>_RELAY-planner-<slug>.md` (the initiative doesn't exist yet) | A fix, a design change or a tool is needed |
+| Initiative session (Planner, Orchestrator, or a Worker whose task names it) | Debugger | `debugger/RELAY-<purpose>.md` (in the initiative folder) | The initiative needs bench evidence it can't produce: a measurement, a board inspection, or bring-up of new hardware |
+
+**Initiative → Debugger:** the relay is a request, not an instruction. The user points a Debugger session at it, and the Debugger and the user decide where it goes in the bench queue. The Debugger works in `lab/` as usual. Results come back as cards. The initiative waits on a user gate that cites those card IDs. If a return relay is needed, the user asks the Debugger for one. If the results change the initiative's shape, the Debugger → Planner row applies.
 
 **Relay template:**
 
@@ -257,6 +262,6 @@ Branch for every initiative: `feat/<initiative-slug>` or `design/<what-youre-try
 
 ## Maintenance Rules
 
-1. **No orphan documents.** Every file in an initiative folder is one of: BRIEF.md, PLAN.md, TASKS.md, SESSION.md, RELAY-*.md.
+1. **No orphan documents.** Every file in an initiative folder is one of: BRIEF.md, PLAN.md, TASKS.md, SESSION.md, RELAY-*.md, or debugger/RELAY-*.md.
 2. **No stale tasks.** If a task is no longer relevant, remove it.
 3. **One active focus.** At most one or two initiatives in active development at once.

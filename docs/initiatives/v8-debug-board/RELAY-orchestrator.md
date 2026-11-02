@@ -30,4 +30,4 @@ TASKS.md current: yes
 Run the initiative from Phase 1. Phases 1–6 have no user gate except W2 at the end of Phases 3–4. Phases 5–6 can run while the Debugger does the Phase 2 bench relay. Phase 7 stops on W1 if the bench findings haven't landed: report it, don't skip ahead past Phase 7. Phases 8+ depend on Phase 7.
 
 ## Open questions
-See PLAN Open Questions OQ-1 to OQ-7. Each names the phase that needs it. OQ-6 (no initiative → Debugger relay row in PROTOCOL) is surfaced to the user at Phase 2.
+See PLAN Open Questions OQ-1 to OQ-8. Each names the phase that needs it.
