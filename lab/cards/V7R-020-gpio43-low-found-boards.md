@@ -104,6 +104,7 @@ The session runs every flash, mode command and serial log; one instruction block
 - #0005 r (DMM on pads, black U8.1): "Both read 3.300V"
 - #0005 3a (GPIO43 low): SDA "0.644V" (one value reported for the three readings); SCL "3.300V"
 - #0005 3a confirmed: "All three showed 0.644". #0005 4 (GPIO44 low): SCL "0.046V all three times"; SDA "3.300V"
+- #0005 3b (GPIO43 low, repeat): SDA "0.644V all three times". Session: one banner, no reset line in `2026-11-01_V7R-020_0005_01.txt` from r to 3b.
 - Deviation: both scope probes lifted off #0003 and parked (not in the card; card uses no scope). Scope probes need a full re-seat + V1–V8 before any later scope card.
 ### Measured values (from log; cite `lab/evidence/V7R-020/...`)
 ### Interpretation (session; labelled as such)
