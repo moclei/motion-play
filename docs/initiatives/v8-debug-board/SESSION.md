@@ -278,3 +278,14 @@ Re-dispatch: Worker #3 resumed with its context to record the answers, finish ta
 After approval: change the Parts status line to "approved by the user <date> (W2 part 2)", tick task 5, then the Handoff.
 
 **Handoff notes.** PLAN Approach/Technical Notes still describe the work; no approach change, nothing rejected, PLAN not edited. No Deferred items. OQ-5 still open. Commits: `b4cecb0` (task 1), `281e7ae` (task 2), `ce7d66b` (task 3), `4452d09` (task 4), `761d29b` (task 5 WIP), plus this notes commit.
+
+#### Result
+| # | Phase | Result | Escalation evaluated? | Commit | Notes |
+|---|-------|--------|-----------------------|--------|-------|
+| 4 | Phase 4: Design intent — parts (non-power) | PARTIAL | Yes — resolvable without replanning: the stop is the planned user gate (W2 part 2) | 9fec430 | Tasks 1–4 done; task 5 and Handoff await the user |
+
+#### Verification
+- TASKS.md Phase 4: tasks 1–4 `[x]`; task 5 and Handoff `[ ]`. Working tree clean. PLAN.md unchanged. Nothing under `lab/` edited (`lab/procedures/known-good-reference.md` read only).
+- Edits to the W2-part-1-approved sections were checked line by line: rows b and d, the Ground points rule and the STAT LED row only fill in what Phase 3 had deferred to Phase 4 (implementation detail, the measured 1.0–3.0 mm spacing rule, the STAT pull-up rail). No approved decision changed.
+- Stock checked through JLCPCB's public parts API (the JLC MCP isn't in the Worker's tools), dated 2026-11-02. Watch items carried forward: WS2812B-MINI-X2 has 152 in stock; R44 shunt has 2 (Phase 7).
+- Loop paused for the user: W2 part 2.
