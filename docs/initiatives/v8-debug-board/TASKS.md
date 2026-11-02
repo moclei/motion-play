@@ -25,7 +25,7 @@
 
 ## Phase 3: Design intent — GPIO, jumpers, test points (desk)
 
-- [ ] Re-read the card V7R-019 conclusion, the notebook 2026-10-31 decision and 2026-11-02 entries, and STATE §8. Record which debug-track inputs have landed since this plan was written (card (j), etc., OQ-5)
+- [~] Re-read the card V7R-019 conclusion, the notebook 2026-10-31 decision and 2026-11-02 entries, and STATE §8. Record which debug-track inputs have landed since this plan was written (card (j), etc., OQ-5)
 - [ ] GPIO allocation table for U3 (WROOM-1-N16R8 pinout, strapping pins, USB, PSRAM-reserved pins): SDA/SCL default pair and alternate pair, UART0 freed for the boot log, LED_DATA, TCA_RESET, CHRG_INT, INT1–3, debug LEDs, spare GPIOs out to test points
 - [ ] Jumper matrix: take PLAN rows a–h and add any others the changelist §3 supports. For each: v7/v8/v6 position, map row or CL-ID, implementation type, default. Present OQ-2 and OQ-4 to the user with options, and record the answers
 - [ ] Test-point and ground-point list: every I²C net on both sides of the TCA (upstream + CH0–CH2 SDA/SCL), every rail (VBUS, PMID, VSYS, VBAT, BAT_RAW, +5V, each +3.3V), spare GPIOs, UART0; ground point within spring reach of each. Debug LEDs (which signals, which colours)

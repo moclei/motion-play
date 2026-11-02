@@ -164,3 +164,24 @@ Notes on the ranking:
 - Not actioned, for the Orchestrator (GARDEN-type): `circuit-context.json` gives R2's `function` as "PMOS gate bias resistor to BAT_RAW (turns Q2 off if reverse…)", but R2 is the BOOST_EN pull-down (stale annotation from v6).
 
 PLAN Approach and Technical Notes still describe the work; no approach changed, nothing rejected. Commits: `f21ce81` (task 1), `6bc68fd` (task 2), `5b25500` (task 3), `84058b4` (task 4), plus task 5 and this handoff.
+
+#### Result
+| # | Phase | Result | Escalation evaluated? | Commit | Notes |
+|---|-------|--------|-----------------------|--------|-------|
+| 2 | Phase 2: Power path — battery failure mechanisms and bench relay | DONE | No — clean completion | 351383b | 5 tasks + handoff; commits f21ce81, 6bc68fd, 5b25500, 84058b4, bd3e2e3, 351383b |
+
+#### Verification
+- TASKS.md Phase 2: all six items `[x]`. Working tree clean. PLAN.md unchanged; no date-stamped headings. Nothing under `lab/` touched.
+- `debugger/RELAY-power.md` follows the PROTOCOL relay template (role line, Context, Load, State, What was done, Your task, Open questions). It names #0001/#0002/#0004 as the suspect boards and #0005 as the reference, orders the sequence non-destructive first (the real-cell hot-plug is step 5, optional and user-gated), and carries the "no change to the debug track's order" line. #0003 is excluded unless the user says otherwise.
+- `hardware/pcb-main-v8/CONTEXT.md` battery subsection filled (ranked mechanisms, relay pointer, design deviations for Phase 7).
+- W1 is open. It closes when the Debugger's PWR cards land; Phase 7 checks for them.
+- Worker #1's open AO3401A G/S question is answered in practice by the legacy Phase 18 run (argued from one board, per the Worker). Not re-verified here.
+- GARDEN-type item raised with the user, not actioned: `hardware/pcb-main/kicad/circuit-context.json` annotation for R2 is stale v6 text ("PMOS gate bias to BAT_RAW"; R2 is the BOOST_EN pull-down).
+
+---
+
+### Worker #3 — Phase 3: Design intent — GPIO, jumpers, test points (desk)
+
+**Dispatch:** standard spawn prompt, plus:
+- Additional reading: SESSION.md Worker #1 and #2 `#### Notes`; `hardware/pcb-main-v8/CONTEXT.md`; PLAN Technical Notes jumper matrix and Open Questions OQ-2, OQ-4, OQ-5; `docs/research/v7-retry/v6-v7-changelist.md` §3; `lab/investigations/v7-i2c/STATE.md` §8, its NOTEBOOK (grep the dates) and card V7R-019 (read-only).
+- The Worker can't talk to the user. For OQ-2/OQ-4 and W2 (part 1) it prepares the options and the approval summary, and returns them in its report; the Orchestrator puts them to the user.
