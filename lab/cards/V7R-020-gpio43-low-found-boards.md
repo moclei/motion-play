@@ -103,6 +103,7 @@ The session runs every flash, mode command and serial log; one instruction block
 - S5c RESET pressed: "PWR is on, D5 is still blue". Banner `[static] sketch=v7_static_low version=1.0`, `mode=r tca_write_err=0 tca_reg=0x04`, both pads `od=1 out_sig=256 oe=1 out=1`, `wpu=0`; one banner (no boot loop on u3-static).
 - #0005 r (DMM on pads, black U8.1): "Both read 3.300V"
 - #0005 3a (GPIO43 low): SDA "0.644V" (one value reported for the three readings); SCL "3.300V"
+- #0005 3a confirmed: "All three showed 0.644". #0005 4 (GPIO44 low): SCL "0.046V all three times"; SDA "3.300V"
 - Deviation: both scope probes lifted off #0003 and parked (not in the card; card uses no scope). Scope probes need a full re-seat + V1–V8 before any later scope card.
 ### Measured values (from log; cite `lab/evidence/V7R-020/...`)
 ### Interpretation (session; labelled as such)
