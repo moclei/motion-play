@@ -92,6 +92,7 @@ The session runs every flash, mode command and serial log; one instruction block
 - R-4 (#0003, GPIO44 low): A5 "0.050V all three times (would flicker between 0.049V and 0.050V, but mostly be 0.050V)"; A4 "3.280V"
 - R-3b (#0003, GPIO43 low, repeat): A4 "0.641V all three times". Session: no reset/boot line in `2026-11-01_V7R-020_0003_01.txt` from r to 3b.
 - S2 #0004: markings: "It had no markings so I took a black sharpie and wrote \"#0004\" on it"; look-over: "No burn marks or discoloring. Pristine really"; U8.1 → tab "304.9 (settled)"; U8.1 → pin 3 "It started around 3m and kept dropping. After 15s it was about 1.5m and was still dropping"
+- S2 #0005: markings: "This one had \"Board #3\" written on it. I wrote \"#0005\" on it in sharpie"; look-over: "Don't see any burn marks or anything at all really"; U8.1 → tab "304.4"; U8.1 → pin 3 "Same as the last one, started at around 3m and started dropping, was around 1.5m after 15s or so."
 - Deviation: both scope probes lifted off #0003 and parked (not in the card; card uses no scope). Scope probes need a full re-seat + V1–V8 before any later scope card.
 ### Measured values (from log; cite `lab/evidence/V7R-020/...`)
 ### Interpretation (session; labelled as such)
