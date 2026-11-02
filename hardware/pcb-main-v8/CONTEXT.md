@@ -237,6 +237,43 @@ All are KiCad 9 stock libraries (checked present in `/Applications/KiCad/KiCad.a
 - The 1.0 mm minimum keeps a slipping spring off the signal pad (a spring on the signal pad shorts it to GND).
 - Not demonstrated on a board: the Rigol stock-probe spring (springs for it are on hand, `lab/procedures/known-good-reference.md`). Optional user check, not blocking: measure each probe's tip-to-spring reach with calipers; if it's well over 3 mm, the Phase 13 placement rules can relax the maximum.
 
+### Debug LEDs, pull-up options, headers
+
+**Debug LEDs** (the seven in Test points, plus D5 kept). All 0603, footprint `LED_SMD:LED_0603_1608Metric`; series resistors 0603, `Resistor_SMD:R_0603_1608Metric`. Target ≈ 1 mA (Test points). Vf at 1 mA is argued from the listed Vf at 5–20 mA, so currents are approximate; the resistor can be swapped on the bench. Phase 8 checks each LED's cathode mark against the footprint.
+| LED | Rail / signal | Part | LCSC | Stock | Resistor | LCSC (stock) | ≈ I |
+|---|---|---|---|---|---|---|---|
+| D1 (kept) | +3.3V_MCU | Emerald green, A-SP192DGHC-C01-4T (v7 part) | C19171301 (extended) | 69 023 | 1 kΩ (v7 R1) | C22548 (extended, 14.5 M) | 0.5–0.9 mA |
+| BUS | +3.3V_BUS | same green | C19171301 (extended) | 69 023 | 1 kΩ | C21190 (basic, 30.1 M) | 0.5–0.9 mA |
+| +5V | +5V | Yellow, KT-0603Y | C2287 (extended) | 110 877 | 3.3 kΩ | C22978 (basic, 5.1 M) | ≈ 0.95 mA |
+| VBUS | Protected_VBUS | Red, KT-0603R | C2286 (basic) | 6 977 221 | 3.3 kΩ | C22978 (basic) | ≈ 0.95 mA |
+| STAT | charger STAT (open drain) | Orange, KT-0603O | C111340 (extended) | 18 999 | 2.2 kΩ to **VSYS** | C4190 (basic, 5.3 M) | ≈ 0.85 mA |
+| DBG1 | GPIO47 (high = on) | Blue, KT-0603B | C2288 (extended) | 139 571 | 470 Ω | C23179 (basic, 4.4 M) | ≈ 1.3 mA |
+| DBG2 | GPIO48 (high = on) | White, KT-0603W | C2290 (basic) | 1 220 705 | 470 Ω | C23179 (basic) | ≈ 1.3 mA |
+| D5 (kept) | LED_DATA | WS2812B-MINI (v7) | C4154873 | see v7 review below | — | — | — |
+
+- STAT anode on VSYS: VSYS exists whenever the charger runs, whether or not SW1 has the boost on, so the LED shows charging with the board "off". Conditional, like the STAT LED itself, on Phase 7 keeping the BQ24195 (the BQ's STAT is open drain, SLUSB97A; `docs/references/bq24195/DATASHEET_REFERENCE.md` pin table). Phase 7 confirms the rail.
+- Rail LEDs (BUS, +5V, VBUS, and D1) each have a default-closed SJ2 in series (Test points), so their ≈ 1 mA can be removed for a v7-load A/B.
+- The extended LEDs could be swapped for basic ones only by changing colour (JLC basic 0603 LEDs found: red C2286, white C2290). Not worth a colour change for a few cents of fee.
+
+**Pull-up option resistors (jumper row d).** All 1 % 0603, `Resistor_SMD:R_0603_1608Metric`, each in series with its SJ2.
+| Position | Per line | Value | LCSC | Stock | SJ2 default |
+|---|---|---|---|---|---|
+| Upstream (I2C_SDA, I2C_SCL) | 3 | 2.2 kΩ | C4190 (basic) | 5 302 703 | closed |
+| | | 4.7 kΩ | C23162 (basic) | 14 856 287 | open |
+| | | 10 kΩ | C25804 (basic) | 47 170 710 | open |
+| Downstream (CH0–CH2 SDA/SCL, TCA side) | 1 | 4.7 kΩ | C23162 (basic) | 14 856 287 | open |
+- v7 used Yageo 2.2 kΩ C114662 (extended) for R28/R29. C4190 is the same value and tolerance as a basic part; the A/B depends on the value, not the maker.
+- Allowed combinations (from the rise-time table above): one upstream value at a time; downstream only with upstream 4.7 k or 10 k. 2.2 k upstream + downstream sinks ≈ 3.2 mA, over the 3 mA I²C limit. Two upstream values together (2.2 k ∥ 4.7 k = 1.5 k) also exceed it with a rigid board attached: a deliberate stress setting only.
+- Downstream value 4.7 kΩ matches the rigid board's own pull-ups (`hardware/CONTEXT.md`). Its use is to recover rise time when the upstream is raised to 10 k (322 → 229 ns at 200 pF).
+
+**Headers.** Footprints are KiCad stock. Hand-fit by the user (JLC through-hole assembly is not needed for break-away headers); the LCSC numbers are there if Phase 19 decides to have JLC fit them.
+| Header | Pins | Footprint | LCSC (if assembled) | Stock |
+|---|---|---|---|---|
+| UART0 | 1 × 4: GND, TX (GPIO43), RX (GPIO44), NC | `Connector_PinHeader_2.54mm:PinHeader_1x04_P2.54mm_Vertical` | C2691448 (PZ254V-11-04P, extended) | 427 246 |
+| External master (row e) | 1 × 4: GND, SDA, SCL, +3.3V_BUS (sense) | same | C2691448 | 427 246 |
+| Spare GPIO | 2 × 15: signal row + GND row (GPIO1, 2, 4–9, 14, 17, 38–42) | `Connector_PinHeader_2.54mm:PinHeader_2x15_P2.54mm_Vertical` | C22465939 (PZ254V-12-30P, extended) | 498 |
+| Rail current-measure (row h) | 1 × 2 per rail, **not fitted** | `Connector_PinHeader_2.54mm:PinHeader_1x02_P2.54mm_Vertical` | C492401 (PZ254V-11-02P, extended) | 878 135 |
+
 ## Layout rules pointer
 
 Phases 13–15 fill this in. The rules will live in `tools/pcb-context/` (rules config and CONTEXT).
