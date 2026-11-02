@@ -1,19 +1,28 @@
 """Shared helpers for the lab/ tooling (check_state.py, precommit.py).
 
+IDs are `<PREFIX>-NNN`. Each investigation is a folder lab/investigations/<name>/
+whose STATE.md front matter declares its `prefix`, `title` and `status`
+(open|closed); the folders are the registry (`investigations(root)`).
+
 Stdlib only. PyYAML is used when importable; otherwise a minimal parser
 handles the subset our front matter uses (scalars, comments, nested maps,
 flow lists like `[]` or `[V7R-001, V7R-002]`).
 """
 import datetime
 import re
+from pathlib import Path
 
 try:
     import yaml  # type: ignore
 except ImportError:  # pragma: no cover - exercised only without PyYAML
     yaml = None
 
-CARD_RE = re.compile(r"^V7R-(\d{3,})-.+\.md$")
-ID_RE = re.compile(r"^V7R-(\d{3,})$")
+PREFIX_PAT = r"[A-Z][A-Z0-9]{1,5}"
+ID_PAT = r"(?P<prefix>%s)-(?P<num>\d{3,})" % PREFIX_PAT
+CARD_RE = re.compile(r"^%s-.+\.md$" % ID_PAT)   # card filename: groups prefix, num
+ID_RE = re.compile(r"^%s$" % ID_PAT)            # bare ID: groups prefix, num
+PREFIX_RE = re.compile(r"^%s$" % PREFIX_PAT)
+INVESTIGATIONS_DIR = "investigations"        # relative to the lab root
 RECORDED = ("recorded", "abandoned")
 OPEN = ("pre-registered", "run")
 
@@ -113,14 +122,115 @@ def front_matter(text):
         return {}
 
 
-def id_num(card_id):
-    """'V7R-012' -> 12; anything else -> None."""
+def parse_id(card_id):
+    """'PWR-012' -> ('PWR', 12); anything else -> None."""
     m = ID_RE.match(str(card_id).strip()) if card_id is not None else None
-    return int(m.group(1)) if m else None
+    return (m.group("prefix"), int(m.group("num"))) if m else None
 
 
-def fmt_id(n):
-    return "V7R-%03d" % n
+def id_num(card_id, prefix):
+    """'V7R-012' -> 12. The ID's prefix must equal `prefix` (None = any);
+    anything else -> None."""
+    p = parse_id(card_id)
+    if p is None or (prefix is not None and p[0] != prefix):
+        return None
+    return p[1]
+
+
+def fmt_id(n, prefix):
+    return "%s-%03d" % (prefix, n)
+
+
+# ---------------------------------------------------------------- registry
+
+class Investigation:
+    """One lab/investigations/<name>/ folder, from its STATE front matter."""
+
+    def __init__(self, name, fm, state_path=None, notebook_path=None, text=None):
+        fm = fm if isinstance(fm, dict) else {}
+        self.name = name
+        self.fm = fm
+        self.text = text
+        raw = fm.get("prefix")
+        self.prefix = str(raw).strip() if raw is not None and str(raw).strip() else None
+        self.title = str(fm.get("title") or name).strip()
+        self.status = str(fm.get("status") or "open").strip().lower()
+        self.state_path = state_path
+        self.notebook_path = notebook_path
+
+    @property
+    def is_open(self):
+        return self.status != "closed"
+
+    def __repr__(self):
+        return "Investigation(%s, %s, %s)" % (self.name, self.prefix, self.status)
+
+
+def build_registry(entries):
+    """entries: [(name, state_text, state_path, notebook_path)] -> [Investigation],
+    sorted by name."""
+    invs = []
+    for name, text, sp, nb in sorted(entries, key=lambda e: e[0]):
+        invs.append(Investigation(name, front_matter(text or ""), sp, nb, text))
+    return invs
+
+
+def investigations(root):
+    """Discover lab/investigations/*/STATE.md under the lab root `root`."""
+    d = Path(root) / INVESTIGATIONS_DIR
+    entries = []
+    if d.is_dir():
+        for sub in sorted(d.iterdir()):
+            sp = sub / "STATE.md"
+            if sub.is_dir() and sp.is_file():
+                entries.append((sub.name, sp.read_text(encoding="utf-8"), sp, sub / "NOTEBOOK.md"))
+    return build_registry(entries)
+
+
+def prefixes(invs):
+    """{prefix: [Investigation]} for investigations that have a prefix."""
+    out = {}
+    for inv in invs:
+        if inv.prefix:
+            out.setdefault(inv.prefix, []).append(inv)
+    return out
+
+
+ID_HELP = "<PREFIX>-NNN, e.g. V7R-012 (PREFIX = an investigation's `prefix`)"
+
+
+def registered_prefixes(root):
+    """Sorted prefixes declared under the lab root `root` (one investigation each or not)."""
+    return sorted(prefixes(investigations(root)))
+
+
+def check_id(card_id, known):
+    """Validate a test/card ID against the registered prefixes `known`.
+
+    Returns (prefix, num). Raises ValueError with an operator-facing message if the ID
+    is not `<PREFIX>-NNN` or no investigation declares its prefix.
+    """
+    p = parse_id(card_id)
+    if p is None:
+        raise ValueError("%r is not %s" % (card_id, ID_HELP))
+    prefix = p[0]
+    if prefix not in known:
+        raise ValueError("%r: no investigation declares prefix %s (lab/%s/<name>/STATE.md `prefix:`); "
+                         "registered: %s" % (card_id, prefix, INVESTIGATIONS_DIR,
+                                             ", ".join(sorted(known)) or "none"))
+    return prefix, id_num(card_id, prefix)
+
+
+def next_id(root, prefix):
+    """Next free `<prefix>-NNN`: highest such card filename in lab/cards/ + 1."""
+    top = 0
+    cdir = Path(root) / "cards"
+    if cdir.is_dir():
+        for p in cdir.iterdir():
+            m = CARD_RE.match(p.name)
+            if m and m.group("prefix") == prefix:
+                top = max(top, int(m.group("num")))
+    return fmt_id(top + 1, prefix)
 
 
 def section(body, heading_prefix):

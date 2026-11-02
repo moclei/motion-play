@@ -2,24 +2,33 @@
 """Session-start check for lab/ (context-strategy.md §4.2, §8.2).
 
 Usage:
-  python3 tools/lab/check_state.py                 # check the real lab/
-  python3 tools/lab/check_state.py --load          # check, then print the default L1 load (§6.3)
+  python3 tools/lab/check_state.py                 # check every investigation in the real lab/
+  python3 tools/lab/check_state.py --inv <name>    # check one (folder name under lab/investigations/)
+  python3 tools/lab/check_state.py --load [--inv <name>]  # check, then print that investigation's L1 load (§6.3);
+                                                   # --inv is required when more than one is open
   python3 tools/lab/check_state.py --fresh <file>  # provenance check on one generated file (§8.2)
   python3 tools/lab/check_state.py --root <dir>/lab --memory-dir <dir> --now YYYY-MM-DD  # fixtures
 
+Investigations are discovered from lab/investigations/<name>/STATE.md; each STATE's
+front matter declares `prefix` (card IDs <PREFIX>-NNN), `title` and `status`
+(open|closed). Registry findings print first, then one group per investigation.
+Closed investigations are only checked for open cards.
+
 Findings are printed one per line as `[TAG] message`. Tags:
-  STALE           STATE as_of is behind the highest recorded|abandoned card. HARD FAILURE (exit 1).
+  STALE           STATE as_of is behind its highest recorded|abandoned card. HARD FAILURE (exit 1).
+  NO-PREFIX       a STATE has no (or a malformed) `prefix`. HARD FAILURE.
+  DUP-PREFIX      two investigations declare the same prefix. HARD FAILURE.
   OPEN-CARDS      open_cards does not match the cards whose status is pre-registered|run.
   LOST-RESULT     a card in `run` with no commit (card or its evidence) in the last 7 days.
   CHECKPOINT-DUE  >= 3 recorded cards since last_checkpoint, or > 14 days since the last notebook entry.
   CAP             a STATE section (or the whole file) is over its cap.
   STALE-HASH      a generated file cited in Lookups has a source hash that no longer matches.
-  MEMORY          the auto-memory directory mentions v7 (it must not hold v7 state, §2.5).
+  CLOSED-OPEN     a closed investigation still has open cards.
+  ORPHAN-CARD     a card whose prefix matches no investigation.
+  BENCH           lab/BENCH.md is missing.
+  MEMORY          the auto-memory directory mentions a lab investigation (v7 terms, a prefix or a title; §2.5).
   CARD / AS-OF    housekeeping: unparseable card, test_id/filename mismatch, as_of ahead of the cards.
-Everything except STALE is a warning (exit 0).
-
-STATE is lab/investigations/v7-i2c/STATE.md and the notebook lab/investigations/v7-i2c/NOTEBOOK.md
-(STATE_REL / NOTEBOOK_REL below, relative to the lab root).
+Everything except STALE, NO-PREFIX and DUP-PREFIX is a warning (exit 0).
 
 Cap counting rule: a section's count excludes its heading, its one-line field
 definition (the first non-blank, non-table line under the heading), the table
@@ -40,14 +49,12 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import lablib  # noqa: E402
 
-INVESTIGATION_REL = Path("investigations") / "v7-i2c"  # relative to the lab root (--root)
-STATE_REL = INVESTIGATION_REL / "STATE.md"
-NOTEBOOK_REL = INVESTIGATION_REL / "NOTEBOOK.md"
 FILE_CAP = 150
 LOST_DAYS = 7
 CHECKPOINT_EVERY = 3
 GAP_DAYS = 14
-MEMORY_RE = re.compile(r"v7|V7R-|BQ.*NACK", re.IGNORECASE)
+MEMORY_V7 = r"v7|V7R-|BQ.*NACK"  # plus every registered prefix and title (memory_re)
+HARD = ("STALE", "NO-PREFIX", "DUP-PREFIX")
 CAP_RE = re.compile(r"≤\s*(\d+)\s*(lines|rows)")
 SEP_RE = re.compile(r"^\|[\s:|-]+\|?$")
 IMAGE_EXT = {".png", ".jpg", ".jpeg", ".svg", ".gif", ".webp"}
@@ -94,16 +101,18 @@ def resolve_self(base, path, which):
 # ---------------------------------------------------------------- lab model
 
 class Card:
-    def __init__(self, path, num):
+    def __init__(self, path, prefix, num):
         self.path = path
+        self.prefix = prefix
         self.num = num
-        self.id = lablib.fmt_id(num)
+        self.id = lablib.fmt_id(num, prefix)
         self.text = path.read_text(encoding="utf-8")
         self.fm = lablib.front_matter(self.text)
         self.status = str(self.fm.get("status") or "").strip()
 
 
 def load_cards(root, findings):
+    """Every <PREFIX>-NNN-*.md card in lab/cards/, sorted by (prefix, num)."""
     cards = []
     cdir = root / "cards"
     if not cdir.is_dir():
@@ -111,14 +120,14 @@ def load_cards(root, findings):
     for p in sorted(cdir.iterdir()):
         m = lablib.CARD_RE.match(p.name)
         if not m:
-            continue  # .gitkeep and anything that isn't V7R-NNN-*.md
-        c = Card(p, int(m.group(1)))
+            continue  # .gitkeep and anything that isn't <PREFIX>-NNN-*.md
+        c = Card(p, m.group("prefix"), int(m.group("num")))
         if not c.fm:
             findings.append(("CARD", "%s: front matter missing or unparseable" % p.name))
         elif str(c.fm.get("test_id", "")).strip() != c.id:
             findings.append(("CARD", "%s: test_id %r does not match filename" % (p.name, c.fm.get("test_id"))))
         cards.append(c)
-    return sorted(cards, key=lambda c: c.num)
+    return sorted(cards, key=lambda c: (c.prefix, c.num))
 
 
 def state_sections(body):
@@ -206,25 +215,32 @@ def lookup_paths(lines):
 
 # ---------------------------------------------------------------- checks
 
-def run_checks(root, base, memory_dir, today):
+def memory_re(invs):
+    """The v7 terms plus every registered prefix (as `<PFX>-`) and title."""
+    terms = [MEMORY_V7]
+    for inv in invs:
+        if inv.prefix:
+            terms.append(re.escape(inv.prefix) + "-")
+        if inv.fm.get("title"):
+            terms.append(re.escape(inv.title))
+    return re.compile("|".join(terms), re.IGNORECASE)
+
+
+def check_investigation(inv, cards, root, base, today):
+    """The §4.2 checks for one open investigation over its own cards."""
     findings = []
-    state_path = root / STATE_REL
-    if not state_path.is_file():
-        print("ERROR: %s not found" % state_path)
-        sys.exit(2)
-    state_text = state_path.read_text(encoding="utf-8")
+    pfx = inv.prefix
+    state_text = inv.text
     fm_text, body = lablib.split_front_matter(state_text)
-    sfm = lablib.parse_yaml(fm_text) if fm_text else {}
-    as_of = lablib.id_num(sfm.get("as_of"))
-    last_cp = lablib.id_num(sfm.get("last_checkpoint"))
+    sfm = inv.fm
+    as_of = lablib.id_num(sfm.get("as_of"), pfx)
+    last_cp = lablib.id_num(sfm.get("last_checkpoint"), pfx)
     open_listed = sfm.get("open_cards") or []
     if as_of is None:
-        findings.append(("STALE", "STATE as_of %r is not a V7R-NNN ID" % sfm.get("as_of")))
+        findings.append(("STALE", "STATE as_of %r is not a %s-NNN ID" % (sfm.get("as_of"), pfx)))
         as_of = -1
     if last_cp is None:
         last_cp = 0
-
-    cards = load_cards(root, findings)
 
     # 1. as_of vs highest recorded|abandoned -> STALE (hard)
     done = [c for c in cards if c.status in lablib.RECORDED]
@@ -267,8 +283,8 @@ def run_checks(root, base, memory_dir, today):
     if len(since) >= CHECKPOINT_EVERY:
         reasons.append("%d recorded since last_checkpoint %s (%s)" % (
             len(since), sfm.get("last_checkpoint"), ", ".join(c.id for c in since)))
-    nb = root / NOTEBOOK_REL
-    if as_of > 0 and nb.is_file():
+    nb = inv.notebook_path
+    if as_of > 0 and nb is not None and nb.is_file():
         dates = re.findall(r"^## (\d{4}-\d{2}-\d{2})", nb.read_text(encoding="utf-8"), re.MULTILINE)
         if dates:
             last = max(dt.date.fromisoformat(d) for d in dates)
@@ -302,20 +318,73 @@ def run_checks(root, base, memory_dir, today):
             status, msg = check_fresh(p, base)
             if status == "STALE":
                 findings.append(("STALE-HASH", msg))
+    return findings
 
-    # 7. memory directory mentions v7
-    info = []
+
+def check_closed(inv, cards):
+    """A closed investigation is skipped, except that nothing of it may be open."""
+    listed = [str(x).strip() for x in (inv.fm.get("open_cards") or []) if x is not None]
+    actual = [c.id for c in cards if c.status in lablib.OPEN]
+    if listed or actual:
+        return [("CLOSED-OPEN", "investigation is closed but has open cards (open_cards: %s; pre-registered|run: %s)"
+                 % (", ".join(listed) or "[]", ", ".join(actual) or "none"))]
+    return []
+
+
+def run_checks(root, base, memory_dir, today, only=None):
+    """Return (invs, cards, global_findings, {inv name: findings}, info).
+
+    `only` limits the per-investigation checks to that investigation name."""
+    invs = lablib.investigations(root)
+    if not invs:
+        print("ERROR: no %s/*/STATE.md under %s" % (lablib.INVESTIGATIONS_DIR, root))
+        sys.exit(2)
+    glob, per, info = [], {}, []
+    cards = load_cards(root, glob)
+    by_prefix = lablib.prefixes(invs)
+
+    # Registry checks
+    for inv in invs:
+        if inv.prefix is None:
+            glob.append(("NO-PREFIX", "%s: STATE front matter has no `prefix`; its cards cannot be checked"
+                         % inv.state_path.relative_to(base)))
+        elif not lablib.PREFIX_RE.match(inv.prefix):
+            glob.append(("NO-PREFIX", "%s: prefix %r is not 2-6 capitals/digits starting with a letter"
+                         % (inv.state_path.relative_to(base), inv.prefix)))
+    dups = {p: v for p, v in by_prefix.items() if len(v) > 1}
+    for p, v in sorted(dups.items()):
+        glob.append(("DUP-PREFIX", "prefix %s is declared by %s" % (p, ", ".join(i.name for i in v))))
+    orphans = sorted({c.path.name for c in cards if c.prefix not in by_prefix})
+    for name in orphans:
+        glob.append(("ORPHAN-CARD", "%s: its prefix matches no investigation" % name))
+    if not (root / "BENCH.md").is_file():
+        glob.append(("BENCH", "%s missing (shared boards, fixtures, what's flashed, bench at last stop)"
+                     % (root / "BENCH.md").relative_to(base)))
+
+    # Per investigation
+    for inv in invs:
+        if only and inv.name != only:
+            continue
+        if inv.prefix is None or not lablib.PREFIX_RE.match(inv.prefix) or inv.prefix in dups:
+            per[inv.name] = None  # not checkable; the registry finding says why
+            continue
+        mine = [c for c in cards if c.prefix == inv.prefix]
+        per[inv.name] = (check_investigation(inv, mine, root, base, today) if inv.is_open
+                         else check_closed(inv, mine))
+
+    # Memory directory mentions a lab investigation
     if memory_dir.is_dir():
+        mre = memory_re(invs)
         for f in sorted(memory_dir.glob("*.md")):
             hits = [str(i + 1) for i, l in enumerate(f.read_text(encoding="utf-8", errors="replace").splitlines())
-                    if MEMORY_RE.search(l)]
+                    if mre.search(l)]
             if hits:
-                findings.append(("MEMORY", "%s mentions v7 (lines %s); v7 state belongs in lab/, not memory" % (
-                    f.name, ",".join(hits))))
+                glob.append(("MEMORY", "%s mentions a lab investigation (lines %s); investigation state belongs"
+                             " in lab/, not memory" % (f.name, ",".join(hits))))
     else:
         info.append("memory dir %s not found; memory check skipped" % memory_dir)
 
-    return sfm, cards, findings, info
+    return invs, cards, glob, per, info
 
 
 # ---------------------------------------------------------------- --load (§6.3)
@@ -372,7 +441,10 @@ def main(argv=None):
     ap.add_argument("--memory-dir", type=Path, default=None,
                     help="auto-memory dir to grep (default: $LAB_MEMORY_DIR or ~/.claude/projects/<repo-slug>/memory)")
     ap.add_argument("--now", default=None, help="override today's date (YYYY-MM-DD), for fixtures")
-    ap.add_argument("--load", action="store_true", help="after the check, print the default L1 load (§6.3)")
+    ap.add_argument("--inv", default=None, metavar="NAME",
+                    help="check only this investigation (folder name under lab/investigations/)")
+    ap.add_argument("--load", action="store_true",
+                    help="after the check, print the default L1 load (§6.3); needs --inv when several are open")
     ap.add_argument("--fresh", type=Path, metavar="FILE", help="provenance check on one generated file and exit")
     a = ap.parse_args(argv)
 
@@ -392,23 +464,58 @@ def main(argv=None):
     mem = a.memory_dir or (Path(os.environ["LAB_MEMORY_DIR"]) if os.environ.get("LAB_MEMORY_DIR")
                            else default_memory_dir(base))
 
-    sfm, cards, findings, info = run_checks(root, base, mem.expanduser(), today)
-    print("check_state: %s  as_of=%s  last_checkpoint=%s  cards=%d  date=%s" % (
-        root, sfm.get("as_of"), sfm.get("last_checkpoint"), len(cards), today))
-    for tag, msg in findings:
+    names = [i.name for i in lablib.investigations(root)]
+    if a.inv and a.inv not in names:
+        print("ERROR: --inv %s: no such investigation (have: %s)" % (a.inv, ", ".join(names) or "none"))
+        return 2
+    load_inv = a.inv
+    if a.load and not load_inv:
+        opened = [i.name for i in lablib.investigations(root) if i.is_open]
+        if len(opened) != 1:
+            print("ERROR: --load needs --inv <name> when %d investigations are open (%s)" % (
+                len(opened), ", ".join(opened) or "none"))
+            return 2
+        load_inv = opened[0]
+
+    invs, cards, glob, per, info = run_checks(root, base, mem.expanduser(), today, only=a.inv)
+    opened = [i for i in invs if i.is_open]
+    print("check_state: %s  investigations: %d open (%s), %d closed  cards=%d  date=%s" % (
+        root, len(opened), ", ".join("%s %s" % (i.name, i.prefix or "?") for i in opened),
+        len(invs) - len(opened), len(cards), today))
+    allf = list(glob)
+    for tag, msg in glob:
         print("[%s] %s" % (tag, msg))
+    for inv in invs:
+        if inv.name not in per:
+            continue
+        print("\n== %s (%s, %s): %s  as_of=%s  last_checkpoint=%s  cards=%d" % (
+            inv.name, inv.prefix or "no prefix", inv.status, inv.title, inv.fm.get("as_of"),
+            inv.fm.get("last_checkpoint"), sum(1 for c in cards if c.prefix == inv.prefix)))
+        if per[inv.name] is None:
+            print("(not checked: see the registry finding above)")
+            continue
+        for tag, msg in per[inv.name]:
+            print("[%s] %s" % (tag, msg))
+        allf.extend(per[inv.name])
+    print()
     for line in info:
         print("info: " + line)
-    stale = any(t == "STALE" for t, _ in findings)
-    warns = sum(1 for t, _ in findings if t != "STALE")
-    if stale:
-        print("RESULT: STALE. Blocks new work: reconcile %s from the cards above, commit, then proceed." % (Path("lab") / STATE_REL))
+    hard = [t for t, _ in allf if t in HARD]
+    warns = sum(1 for t, _ in allf if t not in HARD)
+    if hard:
+        stale = [i for i in invs if per.get(i.name) and any(t == "STALE" for t, _ in per[i.name])]
+        what = ["reconcile %s from the cards above, commit" % i.state_path.relative_to(base) for i in stale]
+        if any(t != "STALE" for t in hard):
+            what.append("fix the investigation registry (prefix in each STATE front matter)")
+        print("RESULT: %s. Blocks new work: %s, then proceed." % ("/".join(sorted(set(hard))), "; ".join(what)))
     else:
         print("RESULT: OK (%d warning%s)" % (warns, "" if warns == 1 else "s"))
 
     if a.load:
-        print_load(root, base, cards, today)
-    return 1 if stale else 0
+        inv = next(i for i in invs if i.name == load_inv)
+        print("\n=== LOAD: investigation %s (%s) ===" % (inv.name, inv.prefix))
+        print_load(root, base, [c for c in cards if c.prefix == inv.prefix], today)
+    return 1 if hard else 0
 
 
 if __name__ == "__main__":

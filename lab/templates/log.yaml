@@ -48,7 +48,7 @@ channels:                             # [REQ scope] per channel: ratio, bw_limit
   CH2: {probe: "SQ-500 #2", ratio: 10x, signal: SCL, point: U5.5, bw_limit: 20MHz, v_div: 1V, offset_V: 0, coupling: DC}
 
 measurements:                         # [REQ] at least one entry
-  - test_id: V7R-012                  # [REQ]
+  - test_id: V7R-012                  # [REQ] <PREFIX>-NNN of a registered investigation; example (v7)
     arm: A1                           # A1 | B | A2 | S1… | val (test-workflow-audit §4.4)
     time: "2026-11-04T10:42"
     trigger: {type: I2C, condition: address, value: "0x6B", source: CH2}

@@ -1,7 +1,10 @@
 #!/usr/bin/env python3
 """One-command DHO804 capture over the LAN (test-workflow-setup Phase 7; test-workflow-audit §5 item 1).
 
-    python3 tools/lab/capture.py --test V7R-012 --arm A1 [--session lab/log/2026-11-04_s01.yaml]
+    python3 tools/lab/capture.py --test <PREFIX>-NNN --arm A1 [--session lab/log/2026-11-04_s01.yaml]
+
+--test is a card ID whose prefix an investigation declares (lab/investigations/<name>/STATE.md
+`prefix:`), e.g. V7R-012.
 
 What it does, in order (every command below is marked verified on fw 00.01.05 in
 docs/initiatives/test-workflow-setup/PLAN.md "Verified instrument facts"):
@@ -45,6 +48,7 @@ from pathlib import Path
 HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE))
 from vendor.scpi import ScpiClient, ScpiError  # noqa: E402
+import lablib  # noqa: E402
 
 try:
     import yaml  # type: ignore
@@ -71,7 +75,6 @@ VERIFIED_FW = "00.01.05"
 SINGLE_READ_MAX = 10000          # RAW ASCii single read verified at 10 kpts only (PLAN, W4b S10)
 DEFAULT_ITEMS = ["VTOP", "VBASe", "VAMP", "VPP"]   # items verified on 00.01.05 (W4 S4, S8c)
 INVALID_MEAS = 9.0e37            # :MEASure:ITEM? answers ~9.9E37 when invalid (W4 S8b)
-TEST_RE = re.compile(r"^V7R-\d{3,}$")
 ARM_RE = re.compile(r"^[A-Za-z0-9]+(_[A-Za-z0-9]+)*$")   # A1, B, A2, S1, val_V5 (§4.4)
 FORBIDDEN_RE = re.compile(r"^:?SAV(E)?:(SET|MEM|STAT)", re.IGNORECASE)
 TODO = "TODO"
@@ -625,7 +628,7 @@ def write_outputs(root, args, cap, now):
 
 def main(argv=None):
     ap = argparse.ArgumentParser(description=__doc__.split("\n\n")[0])
-    ap.add_argument("--test", required=True, help="card ID, V7R-NNN")
+    ap.add_argument("--test", required=True, help="card ID, " + lablib.ID_HELP)
     ap.add_argument("--arm", required=True, help="A1 | B | A2 | S1… | val_V5 (§4.4)")
     ap.add_argument("--session", help="lab/log/<YYYY-MM-DD_sNN>.yaml (default: today's latest, else _s01)")
     ap.add_argument("--host", default=DEFAULT_HOST, help="scope IP (default %(default)s, or $DHO_HOST)")
@@ -641,14 +644,16 @@ def main(argv=None):
     args = ap.parse_args(argv)
     args.items = [i.strip() for i in args.items.split(",") if i.strip()]
 
-    if not TEST_RE.match(args.test):
-        print("capture: --test must look like V7R-012", file=sys.stderr)
+    root = Path(args.root)
+    try:
+        lablib.check_id(args.test, lablib.registered_prefixes(root / "lab"))
+    except ValueError as e:
+        print("capture: --test %s" % e, file=sys.stderr)
         return 2
     if not ARM_RE.match(args.arm):
         print("capture: --arm must be letters/digits/underscores, e.g. A1, B, S2, val_V5", file=sys.stderr)
         return 2
     now = datetime.datetime.fromisoformat(args.now) if args.now else datetime.datetime.now().replace(microsecond=0)
-    root = Path(args.root)
 
     client = ScpiClient(args.host, args.port, args.timeout)
     sc = Scope(client)

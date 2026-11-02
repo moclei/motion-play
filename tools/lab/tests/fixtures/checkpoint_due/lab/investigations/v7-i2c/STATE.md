@@ -3,6 +3,9 @@ as_of: V7R-003            # highest card ID with status recorded|abandoned that 
 updated: 2026-10-19       # date of the last edit
 last_checkpoint: V7R-000  # card ID at which the last step-back checkpoint ran (context-strategy §4.3)
 open_cards: []            # cards with status pre-registered|run; must match lab/cards/ (checked)
+prefix: V7R                # card ID prefix of this investigation (lab/cards/<prefix>-NNN-*.md)
+title: v7 I²C fault
+status: open              # open | closed
 ---
 
 # v7 I²C fault — current state

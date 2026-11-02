@@ -1,5 +1,5 @@
-"""Tests for capture.py, validate_log.py (+ its pre-commit rule), ingest_usb.py and
-backup_captures.sh.
+"""Tests for capture.py, validate_log.py (+ its pre-commit rule), ingest_usb.py,
+new_investigation.py and backup_captures.sh.
 
 Called from run_tests.py. capture.py runs against fake_scope.FakeScope, which replays the
 Phase 6 bench recordings in scope_fixtures/. No real scope is needed.
@@ -18,6 +18,7 @@ sys.path.insert(0, str(HERE))
 sys.path.insert(0, str(LAB))
 
 import capture  # noqa: E402
+import lablib  # noqa: E402
 import validate_log  # noqa: E402
 from fake_scope import FakeScope, FIX  # noqa: E402
 
@@ -41,8 +42,27 @@ def run(cmd, cwd=None):
     return p.returncode, p.stdout
 
 
-def run_capture(root, fake, *extra):
-    return run([sys.executable, str(LAB / "capture.py"), "--test", "V7R-012", "--arm", "A1",
+def seed_registry(root, **invs):
+    """Write lab/investigations/<name>/STATE.md (front matter only) under the repo root `root`
+    for each name=prefix; default: v7-i2c=V7R. Returns the lab/ dir."""
+    lab = root / "lab"
+    for name, pfx in (invs or {"v7-i2c": "V7R"}).items():
+        d = lab / "investigations" / name
+        d.mkdir(parents=True, exist_ok=True)
+        (d / "STATE.md").write_text("---\nas_of: %s-000\nprefix: %s\ntitle: %s\nstatus: open\n---\n"
+                                    % (pfx, pfx, name))
+    return lab
+
+
+def written(root):
+    """Files capture/ingest wrote under root (anything outside lab/investigations/)."""
+    return [p for p in root.rglob("*") if p.is_file() and "investigations" not in p.parts]
+
+
+def run_capture(root, fake, *extra, test="V7R-012", seed=True):
+    if seed:
+        seed_registry(root)
+    return run([sys.executable, str(LAB / "capture.py"), "--test", test, "--arm", "A1",
                 "--host", "127.0.0.1", "--port", str(fake.port), "--root", str(root),
                 "--now", NOW] + list(extra))
 
@@ -156,12 +176,13 @@ def capture_tests(tmp):
     dead = s.getsockname()[1]
     s.close()
     root = tmp / "c_conn"
+    seed_registry(root)
     rc, out = run([sys.executable, str(LAB / "capture.py"), "--test", "V7R-012", "--arm", "A1",
                    "--host", "127.0.0.1", "--port", str(dead), "--root", str(root), "--now", NOW])
     check("capture: connect failure names --host/$DHO_HOST and the Local Network hint, exit 1",
           rc == 1 and "--host" in out and "$DHO_HOST" in out and "Local Network" in out
           and "127.0.0.1:%d" % dead in out and "RIGOL_HOST" not in out and "server log" not in out
-          and "Nothing was written" in out and not root.exists(), out)
+          and "Nothing was written" in out and not written(root), out)
 
     # 3. deeper memory is refused, nothing written
     root3 = tmp / "c3"
@@ -169,7 +190,7 @@ def capture_tests(tmp):
     rc, out = run_capture(root3, f)
     f.close()
     check("capture: memory depth > 10k refused (exit 2), nothing written",
-          rc == 2 and "10k" in out and not (root3 / "lab").exists(), out)
+          rc == 2 and "10k" in out and not written(root3), out)
 
     # 4. --chunked reads 10k windows
     root4 = tmp / "c4"
@@ -232,6 +253,40 @@ def capture_tests(tmp):
     back = yaml.safe_load(capture.dump_yaml(obj))
     check("capture: YAML emitter round-trips through PyYAML", back == obj, capture.dump_yaml(obj))
 
+    # 11. a second investigation's prefix (PWR) is accepted once its STATE declares it
+    root11 = tmp / "c11"
+    seed_registry(root11, **{"v7-i2c": "V7R", "power": "PWR"})
+    f = FakeScope()
+    rc, out = run_capture(root11, f, test="PWR-001", seed=False)
+    f.close()
+    cap = root11 / "lab" / "captures" / "PWR-001"
+    names = sorted(p.name for p in cap.iterdir()) if cap.is_dir() else []
+    d11 = yaml.safe_load((root11 / "lab" / "log" / "2026-11-04_s01.yaml").read_text()) if rc == 0 else {}
+    rep = validate_log.validate(d11, "2026-11-04_s01", ["PWR", "V7R"]) if d11 else None
+    check("capture: --test PWR-001 with power/STATE.md declaring PWR -> lab/captures/PWR-001/, "
+          "test_id PWR-001, validator: no errors",
+          rc == 0 and names == ["2026-11-04_PWR-001_A1_01.csv", "2026-11-04_PWR-001_A1_01.png",
+                                "2026-11-04_PWR-001_A1_01.setup.bin"]
+          and d11["measurements"][0]["test_id"] == "PWR-001" and rep is not None and not rep.errors,
+          (out, names, rep and rep.errors))
+
+    # 12. a prefix no investigation declares is refused before the scope is touched
+    root12 = tmp / "c12"
+    f = FakeScope()
+    rc, out = run_capture(root12, f, test="PWR-001")
+    f.close()
+    check("capture: --test PWR-001 with only V7R registered -> refused (exit 2), names the prefix "
+          "and the registered ones, scope not contacted, nothing written",
+          rc == 2 and "no investigation declares prefix PWR" in out and "registered: V7R" in out
+          and not f.commands and not written(root12), (out, f.commands))
+
+    # 13. a malformed ID names the <PREFIX>-NNN form
+    f = FakeScope()
+    rc, out = run_capture(tmp / "c13", f, test="PWR-01")
+    f.close()
+    check("capture: --test PWR-01 -> refused (exit 2), message gives <PREFIX>-NNN",
+          rc == 2 and "<PREFIX>-NNN" in out and not f.commands, out)
+
 
 # ---------------------------------------------------------------- validate_log.py + hook
 
@@ -270,10 +325,39 @@ def validator_tests(tmp):
     rep = validate_log.validate_text(tpl.read_text(), "2026-11-04_s01")
     check("validate_log: lab/templates/log.yaml is valid", not rep.errors, rep.errors)
 
+    # second prefix: the pass fixture rewritten from V7R-001 to PWR-001
+    good = lf / "pass" / "2026-11-04_s01.yaml"
+    pwr_text = good.read_text().replace("V7R-001", "PWR-001")
+    rep = validate_log.validate_text(pwr_text, good.stem, ["PWR", "V7R"])
+    check("validate_log: PWR-001 log with PWR registered -> no errors", not rep.errors, rep.errors)
+    rep = validate_log.validate_text(pwr_text, good.stem, ["V7R"])
+    check("validate_log: PWR-001 log with only V7R registered -> one test_id error naming PWR",
+          len(rep.errors) == 1 and "test_id" in rep.errors[0] and "no investigation declares prefix PWR" in rep.errors[0],
+          rep.errors)
+    rep = validate_log.validate_text(pwr_text.replace("test_id: PWR-001", "test_id: V7R-001"), good.stem, ["PWR", "V7R"])
+    check("validate_log: PWR-001 captures under a V7R-001 measurement -> 'is not for V7R-001' per capture",
+          len(rep.errors) == 3 and all("is not for V7R-001" in e for e in rep.errors), rep.errors)
+    rep = validate_log.validate_text(pwr_text.replace("test_id: PWR-001", "test_id: PWR-1"), good.stem, ["PWR"])
+    check("validate_log: test_id PWR-1 -> error giving <PREFIX>-NNN",
+          len(rep.errors) == 1 and "<PREFIX>-NNN" in rep.errors[0], rep.errors)
+    vroot = tmp / "v_root"
+    seed_registry(vroot, **{"v7-i2c": "V7R", "power": "PWR"})
+    (vroot / "lab" / "log").mkdir()
+    pf = vroot / "lab" / "log" / good.name
+    pf.write_text(pwr_text)
+    rc, out = run([sys.executable, str(LAB / "validate_log.py"), str(pf), "--root", str(vroot)])
+    check("validate_log: CLI --root with power/STATE.md declaring PWR -> exit 0", rc == 0, out)
+    vroot2 = tmp / "v_root2"
+    seed_registry(vroot2)
+    rc, out = run([sys.executable, str(LAB / "validate_log.py"), str(pf), "--root", str(vroot2)])
+    check("validate_log: CLI --root with only V7R registered -> exit 1, names prefix PWR",
+          rc == 1 and "no investigation declares prefix PWR" in out, out)
+
     # pre-commit rule 4, in a scratch repo
     fail = lf / "fail" / "2026-11-04_s02.yaml"
     repo = tmp / "hookrepo"
     (repo / "lab" / "log").mkdir(parents=True)
+    seed_registry(repo)
     run(["git", "init", "-q"], cwd=str(repo))
     run(["git", "config", "user.email", "t@t"], cwd=str(repo))
     run(["git", "config", "user.name", "t"], cwd=str(repo))
@@ -294,6 +378,17 @@ def validator_tests(tmp):
     run(["git", "add", "-A"], cwd=str(repo))
     rc, out = run(hook, cwd=str(repo))
     check("precommit: TODO fields warn but do not reject", rc == 0 and "TODO" in out, out)
+    run(["git", "commit", "-q", "-m", "base", "--no-verify"], cwd=str(repo))
+    pwr = repo / "lab" / "log" / "2026-11-05_s01.yaml"
+    pwr.write_text(good.read_text().replace("V7R-001", "PWR-001").replace("2026-11-04_s01", "2026-11-05_s01"))
+    run(["git", "add", "-A"], cwd=str(repo))
+    rc, out = run(hook, cwd=str(repo))
+    check("precommit: staged PWR-001 log, no investigation declares PWR -> rejected",
+          rc == 1 and "no investigation declares prefix PWR" in out, out)
+    seed_registry(repo, power="PWR")
+    run(["git", "add", "-A"], cwd=str(repo))
+    rc, out = run(hook, cwd=str(repo))
+    check("precommit: same log with power/STATE.md (prefix PWR) staged -> accepted", rc == 0, out)
 
 
 # ---------------------------------------------------------------- noise_floor.py
@@ -505,6 +600,7 @@ def ingest_tests(tmp):
     before = sorted((p.name, p.stat().st_mtime) for p in stick.iterdir())
 
     root = tmp / "i1"
+    seed_registry(root)
     ing = [sys.executable, str(LAB / "ingest_usb.py"), "--src", str(stick), "--test", "V7R-012",
            "--arm", "A1", "--root", str(root), "--now", "2026-11-04T12:00:00"]
     rc, out = run(ing + ["--at", "2026-11-04T10:42"])
@@ -542,9 +638,92 @@ def ingest_tests(tmp):
     rc, out = run(ing + ["--at", "2026-11-05T09:00"])
     check("ingest: no file near --at -> exit 1", rc == 1 and "no scope file" in out, out)
 
+    # second prefix: PWR-003 with power/STATE.md declaring PWR; then an undeclared prefix
+    root2 = tmp / "i2"
+    seed_registry(root2, **{"v7-i2c": "V7R", "power": "PWR"})
+    ing2 = [sys.executable, str(LAB / "ingest_usb.py"), "--src", str(stick), "--arm", "A1",
+            "--root", str(root2), "--now", "2026-11-04T12:00:00", "--at", "2026-11-04T10:42",
+            "--files", "p6img1.png"]
+    rc, out = run(ing2 + ["--test", "PWR-003"])
+    cap2 = root2 / "lab" / "captures" / "PWR-003"
+    check("ingest: --test PWR-003 with PWR registered -> lab/captures/PWR-003/2026-11-04_PWR-003_A1_01.png",
+          rc == 0 and (cap2 / "2026-11-04_PWR-003_A1_01.png").exists(), out)
+    rc, out = run(ing2 + ["--test", "ZZZ-001"])
+    check("ingest: --test ZZZ-001, no investigation declares ZZZ -> exit 2, nothing written",
+          rc == 2 and "no investigation declares prefix ZZZ" in out
+          and not (root2 / "lab" / "captures" / "ZZZ-001").exists(), out)
+    rc, out = run(ing2 + ["--test", "pwr-003"])
+    check("ingest: --test pwr-003 -> exit 2, message gives <PREFIX>-NNN", rc == 2 and "<PREFIX>-NNN" in out, out)
+
     os.remove(str(stick / "p6img1.png"))
     after = sorted((p.name, p.stat().st_mtime) for p in stick.iterdir())
     check("ingest: stick untouched (names and mtimes)", before == after, (before, after))
+
+
+# ---------------------------------------------------------------- new_investigation.py
+
+def scaffold_tests(tmp):
+    """Fixture/temp roots only: never the real lab/ (a second investigation there would turn a
+    prefix-less v7 STATE into NO-PREFIX)."""
+    new = [sys.executable, str(LAB / "new_investigation.py")]
+    chk = [sys.executable, str(LAB / "check_state.py")]
+    base = tmp / "s1"
+    shutil.copytree(str(HERE / "fixtures" / "clean"), str(base))
+    lab = base / "lab"
+    args = ["--name", "power", "--prefix", "PWR", "--title", "Battery: power path",
+            "--root", str(lab), "--now", "2026-11-20"]
+    rc, out = run(new + args)
+    d = lab / "investigations" / "power"
+    st = (d / "STATE.md").read_text() if (d / "STATE.md").exists() else ""
+    nb = (d / "NOTEBOOK.md").read_text() if (d / "NOTEBOOK.md").exists() else ""
+    fm = lablib.front_matter(st)
+    check("scaffold: power/PWR into the clean fixture -> STATE + NOTEBOOK, sentinel front matter, "
+          "first card PWR-001",
+          rc == 0 and fm.get("as_of") == "PWR-000" and fm.get("last_checkpoint") == "PWR-000"
+          and fm.get("open_cards") == [] and fm.get("prefix") == "PWR" and fm.get("status") == "open"
+          and fm.get("title") == "Battery: power path" and str(fm.get("updated")) == "2026-11-20"
+          and "PWR-001" in out and "# Battery: power path — current state" in st
+          and "lab/investigations/power/STATE.md" in nb, (out, fm))
+    check("scaffold: no <PREFIX>/<TITLE>/<NAME>/<YYYY-MM-DD> left in either file",
+          not any(k in st + nb for k in ("<PREFIX>", "<TITLE>", "<NAME>", "<YYYY-MM-DD>")))
+    check("scaffold: does not touch git (fixture root is no repo, nothing else written)",
+          sorted(p.name for p in d.iterdir()) == ["NOTEBOOK.md", "STATE.md"])
+    ck = ["--root", str(lab), "--memory-dir", str(base / "memory"), "--now", "2026-11-20"]
+    rc, out = run(chk + ck)
+    check("scaffold: check_state.py --root on the result is clean (2 open, no findings, exit 0)",
+          rc == 0 and "2 open (power PWR, v7-i2c V7R)" in out and "RESULT: OK (0 warnings)" in out, out)
+    rc, out = run(chk + ck + ["--load", "--inv", "power"])
+    check("scaffold: --load --inv power on the result -> exit 0, no open cards",
+          rc == 0 and "investigation power (PWR)" in out, out)
+
+    before = sorted(str(p) for p in lab.rglob("*"))
+    st_before = st
+    rc, out = run(new + args)
+    check("scaffold: same name again -> refused (exit 2), existing STATE untouched",
+          rc == 2 and "already exists" in out and (d / "STATE.md").read_text() == st_before, out)
+    rc, out = run(new + ["--name", "power-b", "--prefix", "PWR", "--title", "x", "--root", str(lab)])
+    check("scaffold: prefix PWR under a new name -> refused (exit 2), names power/STATE.md, nothing written",
+          rc == 2 and "prefix PWR is already declared by lab/investigations/power/STATE.md" in out
+          and sorted(str(p) for p in lab.rglob("*")) == before, out)
+    rc, out = run(new + ["--name", "v7-again", "--prefix", "V7R", "--title", "x", "--root", str(lab)])
+    check("scaffold: prefix V7R (v7-i2c's) -> refused", rc == 2 and "prefix V7R is already declared" in out, out)
+    (lab / "cards").mkdir(exist_ok=True)
+    (lab / "cards" / "ZZZ-001-orphan.md").write_text("---\ntest_id: ZZZ-001\nstatus: pre-registered\n---\n")
+    rc, out = run(new + ["--name", "zed", "--prefix", "ZZZ", "--title", "x", "--root", str(lab)])
+    check("scaffold: prefix used only by a card file -> refused",
+          rc == 2 and "used by card files" in out and not (lab / "investigations" / "zed").exists(), out)
+    rc, out = run(new + ["--name", "Bad_Name", "--prefix", "pw", "--title", "x", "--root", str(lab)])
+    check("scaffold: bad name and bad prefix -> refused, both named",
+          rc == 2 and "--name 'Bad_Name'" in out and "--prefix 'pw'" in out, out)
+
+    # an existing investigation without `prefix` -> refused
+    lone = tmp / "s2" / "lab"
+    (lone / "investigations" / "v7-i2c").mkdir(parents=True)
+    (lone / "investigations" / "v7-i2c" / "STATE.md").write_text("---\nas_of: V7R-020\n---\n")
+    rc, out = run(new + ["--name", "power", "--prefix", "PWR", "--title", "x", "--root", str(lone)])
+    check("scaffold: existing investigation with no `prefix` -> refused, names it, nothing written",
+          rc == 2 and "v7-i2c/STATE.md declares no `prefix`" in out
+          and not (lone / "investigations" / "power").exists(), out)
 
 
 # ---------------------------------------------------------------- backup_captures.sh
@@ -603,6 +782,7 @@ def main():
         noise_floor_tests(tmp)
         i2c_frame_tests(tmp)
         ingest_tests(tmp)
+        scaffold_tests(tmp)
         backup_tests(tmp)
     finally:
         shutil.rmtree(str(tmp), ignore_errors=True)

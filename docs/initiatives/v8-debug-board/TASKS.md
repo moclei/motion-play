@@ -188,3 +188,4 @@
 
 [from: v8-debug-board] Board-model diff mode (audit phase 3), v6 ↔ v7 ↔ v8 relational diff.
 [from: v8-debug-board] Board-model run on the sensor-rigid and sensor-flex boards (audit says it must run on all three; validation is main-only here).
+[from: lab-multi-investigation] Once PR #89 is merged, the Phase 2 power relay (`debugger/RELAY-power.md`) runs as `PWR` cards: the Debugger scaffolds at intake with `python3 tools/lab/new_investigation.py --name power --prefix PWR --title "<title>"` and decides whether board #0004 also belongs to `power` in `lab/BENCH.md`.
