@@ -254,3 +254,27 @@ Re-dispatch: Worker #3 resumed with its context to record the answers, finish ta
 - OQ-2 = header only, so task 3's header question is settled: the external-master header plus UART0 header (and the spare-GPIO header from Phase 3).
 - Power parts belong to Phase 7, not here. Stock checks use the JLC MCP if it's available in the Worker's tools; otherwise record "stock not checked" and the reason per part.
 - W2 part 2: the Worker prepares the approval summary and returns it; the Orchestrator puts it to the user.
+
+#### Notes
+
+**Stock source.** The JLC MCP was not in the Worker's tools. Stock came from JLCPCB's public parts API (`POST jlcpcb.com/api/overseas-pcb-order/v1/shoppingCart/smtGood/selectSmtComponentList`, keyword = LCSC code), the same data as the JLC parts page, checked 2026-11-02. LCSC's own `wmsc.lcsc.com/ftps/wm/product/detail?productCode=Cxxxx` also answers. Both work from curl without a key; the scratch script isn't committed (a one-file helper could go in `tools/` if Phase 7/19 want it: Worker's suggestion, not done).
+
+**Task 1: cable-facing protection.** TPD2E2U06DRLR (C1972959, 4 078, SOT-553) per connector; alternate TPD4E05U06DQAR (C138714, 121 301, USON-10). 47 Ω series R (C23182, basic). V_RWM 5.5 V rather than a 3.3 V part, for nA leakage at 3.3 V. Rise-time table from datasheet values (TCA9548A SCPS207H downloaded to scratch, PCA9546A from `docs/references/`), with Cb ≈ 200 pF estimated (no measured value exists). Outcome: TVS and series R cost ≤ 5 ns; the real cost of the series R is ≈ 62 mV on the low level, which is why 47 Ω, not 100 Ω. The table also shows 10 k upstream alone exceeds 300 ns at 200 pF, and 2.2 k upstream + downstream exceeds 3 mA.
+
+**Task 2: footprints.** KiCad stock names in CONTEXT → Parts → Footprints. Default-closed jumpers use the factory-bridged SJ footprints (JLC can't place a solder blob). SJ3 pad rule: pad 2 = common, pad 1 = default position, pad 3 = other (row i's default is SW1 = v7). Ground-spring rule replaced: signal-to-ground gap 1.0–3.0 mm edge to edge, from bench-demonstrated SQ500 placements (2.64 mm pad F, 3.05 mm pad C on v7; `lab/procedures/known-good-reference.md`, read-only). Maximum spring reach not measured; optional user caliper check offered. Rail current-measure 0 Ω 1206: current rating unknown, Phase 7 checks per rail (+5V_TO_LEDS 3 A likely needs 2512).
+
+**Task 3: LEDs, pull-ups, headers.** LEDs 0603 KT series (green = v7 D1 part), resistors for ≈ 1 mA; STAT LED anode on VSYS (conditional on Phase 7 keeping the BQ). Upstream pull-ups 2.2 k / 4.7 k / 10 k basic; downstream 4.7 k. Headers hand-fit, LCSC numbers recorded. "pull-up rail chosen in Phase 4" and other forward pointers in the approved sections were resolved to point at Parts (pointer text only; no approved decision changed).
+
+**Task 4: v7 parts review.** One swap: IC1 SN74AHCT125PWR (0 stock; three unused gates with floating inputs) → SN74AHCT1G125DBVR C7484 (41 125). Thin stock: D5 WS2812B-MINI-X2 152 (fallback V3J C22371519). Flagged to Phase 7: R44 10 mΩ shunt C1322424 has **2** in stock. Considered, not changed: D5 DIN at 3.3 V vs VIH ≈ 3.5 V at 5 V VDD (moving it would break row g's v7 membership).
+
+**Task 5 (left `[ ]`: W2 part 2 awaits the user).** Parts section filled, headed "pending user approval (W2 part 2)".
+
+**For the Orchestrator to put to the user (W2 part 2):**
+1. Protection (row b): TI TPD2E2U06 dual TVS (1.5 pF, 5.5 V standoff) at each sensor connector, plus a 47 Ω series resistor per line. Cost on the bus: ~3–5 ns rise time and ~60 mV on the low level, both removable by the row b jumpers.
+2. Pull-up options (row d): upstream 2.2 k (default) / 4.7 k / 10 k; downstream 4.7 k per channel line (open). Allowed: one upstream value at a time; downstream only with 4.7 k or 10 k upstream.
+3. Jumpers: factory-bridged solder jumpers where the default is closed (cut to open); SJ3 pad 1 = default. Test points: 1.5 mm round signal pads, 2.5 mm square ground pads, 1–3 mm apart (the 3 mm is what the SQ500 springs have already reached on v7). Optional: measure the springs' reach with calipers to relax it.
+4. LEDs: green ×2, yellow, red, orange (STAT, on VSYS), blue, white, ≈ 1 mA each. Headers hand-fit.
+5. One swap: the LED level shifter becomes the single-gate SN74AHCT1G125 (the quad is out of stock and v7 left three gates floating). Everything else from v7 is kept. Watch items: WS2812B-MINI stock 152; R44 shunt stock 2 (Phase 7).
+After approval: change the Parts status line to "approved by the user <date> (W2 part 2)", tick task 5, then the Handoff.
+
+**Handoff notes.** PLAN Approach/Technical Notes still describe the work; no approach change, nothing rejected, PLAN not edited. No Deferred items. OQ-5 still open. Commits: `b4cecb0` (task 1), `281e7ae` (task 2), `ce7d66b` (task 3), `4452d09` (task 4), `761d29b` (task 5 WIP), plus this notes commit.
