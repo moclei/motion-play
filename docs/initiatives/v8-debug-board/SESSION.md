@@ -289,3 +289,14 @@ After approval: change the Parts status line to "approved by the user <date> (W2
 - Edits to the W2-part-1-approved sections were checked line by line: rows b and d, the Ground points rule and the STAT LED row only fill in what Phase 3 had deferred to Phase 4 (implementation detail, the measured 1.0–3.0 mm spacing rule, the STAT pull-up rail). No approved decision changed.
 - Stock checked through JLCPCB's public parts API (the JLC MCP isn't in the Worker's tools), dated 2026-11-02. Watch items carried forward: WS2812B-MINI-X2 has 152 in stock; R44 shunt has 2 (Phase 7).
 - Loop paused for the user: W2 part 2.
+
+**User decisions (2026-11-02), relayed by the Orchestrator:** W2 part 2 is approved, with one change to how the jumpers are built (what each jumper does is unchanged). Jumpers that are switched often become 2.54 mm pin headers with push-on shunts:
+- row a (both SJ3s and the two UART0 SJ2s)
+- row b (all 9: the series-R bypasses and the TVS GND legs)
+- row c
+- row d upstream (one select-one-of-three header per line, so a single shunt can't connect two values)
+- row f
+
+These stay as solder pads: row d downstream, row e links, rows g, i, j, k, and the LED load jumpers. Row h is unchanged (0 Ω + unfitted header). The user also asked for the TVS (TPD2E2U06) unit price. Points 3–6 of the walkthrough (rail links, test-point spacing, IC1 swap, kept v7 parts including D5 at 3.3 V drive) were accepted as written.
+
+Re-dispatch: Worker #4 resumed with its context to apply the jumper change, close task 5 and do the Handoff.
