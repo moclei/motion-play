@@ -1,7 +1,7 @@
 ---
 test_id: V7R-020
 title: "GPIO43 vs GPIO44 static low (plain open-drain GPIO, I²C detached) on v7 #0004 and #0005, with #0003 as the same-instrument reference: DMM at TPIO43 / TPIO44 against the on-board 2.2 kΩ pull-ups"
-status: run
+status: recorded
 created: 2026-10-31
 prereg_commit: self
 baseline:
@@ -113,11 +113,23 @@ The session runs every flash, mode command and serial log; one instruction block
 - E4 #0004 unplugged, alone, nothing in connectors; diode mode (extra, not counted). Order A, red U8.1, black on pad: SDA "0.462/ 0.462 / 0.462", SCL "0.458 / 0.458 / 0.458". Order B, black U8.1, red on pad: SDA "1.161 all three times", SCL "1.159 all three times".
 - Deviation: both scope probes lifted off #0003 and parked (not in the card; card uses no scope). Scope probes need a full re-seat + V1–V8 before any later scope card.
 ### Measured values (from log; cite `lab/evidence/V7R-020/...`)
+DMM DC V, static, operator-reported (3 readings per arm, all equal unless noted; no log yaml, DMM-only as V7R-017). R = V_L × R_pu / (V_idle − V_L), R_pu = R28 2.2 kΩ (schematic, not measured on any board; `wpu=0` in every read-back).
+| Board | V_idle 43 / 44 | 3a V_L43 | 4 V_L44 | 3b V_L43 | R43 (3a / 3b) | R44 | Outcome |
+|---|---|---|---|---|---|---|---|
+| #0003 (anchor; Nano wired, powered, blank sketch; rigid out) | 3.279 / 3.279 V | 0.64 V (2 digits reported) | 0.050 V | 0.641 V | 534 / 535 Ω | 34 Ω | anchor pass (0.55–0.80 V; ≤ 0.15 V) |
+| #0005 ("Board #3") | 3.300 / 3.300 V | 0.644 V | 0.046 V | 0.644 V | 533 / 533 Ω | 31 Ω | **E** |
+| #0004 | — (no boot: no USB device in normal or download mode) | — | — | — | — | — | unpowered branch only, no row |
+Controls: c1 `[regs]` as declared at each mode change on both boards (#0003 banner printed before the logger opened, regs captured; #0005 banner captured, one banner); c2 no reboot line r→3b on either board; c3 V_idle 3.279 / 3.300 V; c4 |3a − 3b| 1 mV (#0003, 3a at 10 mV resolution) / 0 mV (#0005); c5 #0003 v0.2 MAC 44:1b:f6:c5:58:c4, #0005 v0.2 MAC 44:1b:f6:c5:58:a4.
+Extras (not counted): rails unpowered, U8.1 → tab: #0003 306.1 Ω (after the probe short), #0004 304.9 Ω, #0005 304.4 Ω; U8.1 → +5 V: falling MΩ–kΩ drift on all three. Rails powered (black U8.1): #0003 +3.3 V 3.276 V, +5 V 5.096–5.098 V; #0004 +3.3 V 2.680–2.701 V, +5 V ≈ 3.75 V (3.7xx, moving). Diode mode, red U8.1 / black pad: #0004 SDA 0.462, SCL 0.458; #0003 (Nano wired, unpowered) 0.465 / 0.462. Reversed (black U8.1): #0004 1.161 / 1.159 (= S4d 1.162 / 1.160, so S4d was taken black on U8.1). #0005 old image (`motionplay-device-002`): reset loop ~1 s, `reset_reason=9`, after "Connecting to WiFi"; scan 0x40, 0x70 only, "BQ24195 not found at 0x6B"; VSYS 4.30 V.
+Sources: `lab/evidence/V7R-020/` — `2026-11-01_V7R-020_0003_01.txt`, `2026-11-01_V7R-020_0005_01.txt` (serial, `=== <arm>` markers), `2026-11-01_V7R-020_0005_preflash.txt`, `2026-11-01_V7R-020_0003_prediag.txt`, `2026-11-02_V7R-020_0003_postdiag.txt`, `fw/`; DMM readings in this card's raw block.
+
 ### Interpretation (session; labelled as such)
+Interpretation (V7R-020): a second v7 board, #0005, pulls GPIO43 low through 533 Ω and GPIO44 through 31 Ω — within 1–3 Ω of #0003 (534 / 34 Ω) on the same DMM and method. The ~0.53 kΩ is therefore not #0003's alone. Two boards agreeing to ~1 Ω fits a common cause (batch modules / assembly, or something the v7 design does to GPIO43) better than independent damage, which would scatter (argued). The YD module never on a v7 reads 29.5 Ω (V7R-017), so the module type alone doesn't give it. (b) vs (c) not separated: one order, one design. #0005's history is unknown (likely legacy B3, argued; its old image showed no BQ at 0x6B, which fits legacy B2's BQ-open board better, so the B-label mapping is uncertain). #0004 doesn't boot: its +5 V boost output sits at ~3.75 V (vs 5.10 V on #0003) and +3.3 V at ~2.69 V, below U3's 3.0 V minimum (argued: boost U6 not switching, LDO in dropout) — a power-path finding for the battery/power investigation, not about GPIO43. The diode test doesn't see the defect (#0003, known 534 Ω, SDA−SCL 3 mV).
 
 ## Conclusion
-- Outcome row matched:
-- Hypotheses excluded:
-- **Strength:**
-- Revert-on-null done:
+- Outcome row matched: **E** for #0005 — V_L43 0.644 V ≥ 0.40 V and V_L44 0.046 V ≤ 0.15 V; anchor and c1–c5 pass. #0004: unpowered branch only (no boot), no row; diode |Δ| 4 mV (< 50 mV, no asymmetry recorded). Across boards: one E, one no-row → per-board exclusion only.
+- Hypotheses excluded: H1 as "#0003 only" — by #0005. H2 supported (weakly; two boards; (b) and (c) not separated).
+- **Strength:** measured-refuted for H1 as "#0003 only" (one sibling board, A/B/A, 3 DMM readings per arm, static; #0005 history unknown); `lab/evidence/V7R-020/`
+- Deviations: (1) run 2026-11-01/02 (card says 2026-10-31); captures `2026-11-0x_*`. (2) No log yaml (DMM only, as V7R-017). (3) #0003 banner not captured (logger opened late); regs captured. (4) Probe incident at S1c: CH2 ground spring on C9.2 (+3.3 V) with #0003 powered, ~1 min; both probes parked; #0003 rail 306.1 Ω and diag pattern unchanged after; scope probes need re-seat + V1–V8 before any scope card. (5) Card said buttons "IO" / "RE"; silk is BOOT / RESET. (6) #0005 needed download mode and a RESET press (old image in a reset loop). (7) S4d diode readings taken with leads reversed (operator note; E4 re-take). (8) Extras S4c, E1, E3, E4 not in the card.
+- Revert-on-null done: yes for #0003 — rigid #1 back in J6, diag 166f5f40 reflashed 2026-11-02 11:18:16, diag pattern as V7R-019 End. #0005 left on u3-static 3c23d99a (user: "leave it on u3-static"); #0004 not flashed.
 - Result commit: self

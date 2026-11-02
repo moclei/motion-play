@@ -1,0 +1,15 @@
+t=  42011  TCA2        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2) 
+
+--- Iteration 7 ---
+t=  44014  BASE        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2) 
+t=  44019  TCA0        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2) 
+t=  44024  TCA1        INA:.    BQ:X(2) TCA:.    PCA:X(2) VCNL:X(2) 
+t=  44029  TCA2        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2) 
+
+--- Iteration 8 ---
+t=  46032  BASE        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2) 
+t=  46037  TCA0        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2) 
+t=  46042  TCA1        INA:.    BQ:X(2) TCA:.    PCA:X(2) VCNL:X(2) 
+t=  46047  TCA2        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2) 
+
+

@@ -1,0 +1,160 @@
+11:18:29.551 BQ24195 not found at 0x6B - skipping (bare T-Display?)
+11:18:29.551 [PowerMonitor] INA219 configured: 10mR shunt, 1mA/LSB, 8A max
+11:18:29.551 [PWR after BQ config] VSYS=4.34 V, I=0 mA
+11:18:29.551 Display initialized
+11:18:29.551 [PWR after display init] VSYS=4.34 V, I=0 mA
+11:18:29.551 
+11:18:29.551 === Starting System Initialization ===
+11:18:29.551 
+11:18:29.551 [DIAG_NO_WIFI] Skipping WiFi/MQTT init, forcing radio off
+11:18:29.552 WARNING: Cloud config unavailable, sensors will use defaults
+11:18:29.552 
+11:18:29.552 [Config] Detection mode: heuristic (useMLDetection=0)
+11:18:29.552 Initializing sensors...
+11:18:29.552 [PWR before sensor init] VSYS=4.34 V, I=0 mA
+11:18:29.552 Initializing Sensor Manager...
+11:18:29.552 [ 12837][W][Wire.cpp:301] begin(): Bus already started in Master Mode.
+11:18:29.552 I2C: 400 kHz, default drive, no filters, default pulls [v7-clean]
+11:18:29.552 Configuration:
+11:18:29.552   Sample Rate: 1000 Hz
+11:18:29.552   LED Current: 200mA
+11:18:29.552   Integration Time: 1T
+11:18:29.552   High Resolution: enabled
+11:18:29.552   Read Ambient: enabled
+11:18:29.552 TCA9548A initialized
+11:18:29.552 
+11:18:29.552 
+11:18:29.552 ╔══════════════════════════════════════════════════════════════════════════════╗
+11:18:29.552 ║                        I2C DEBUG SCAN - TROUBLESHOOTING                      ║
+11:18:29.552 ╠══════════════════════════════════════════════════════════════════════════════╣
+11:18:29.552 ║ STEP 1: Scanning main I2C bus (no TCA channel selected)                      ║
+11:18:29.570 ╠══════════════════════════════════════════════════════════════════════════════╣
+11:18:29.570 ║   Found device at 0x40 - Unknown                            
+11:18:29.570 ║   Found device at 0x6B - Unknown                            
+11:18:29.570 ║   Found device at 0x70 - TCA9548A (main mux)                            
+11:18:29.570 ║   Total: 3 device(s) on main bus                                            
+11:18:29.570 ╠══════════════════════════════════════════════════════════════════════════════╣
+11:18:29.570 ║ STEP 2: Scanning each TCA9548A channel for connected devices                 ║
+11:18:29.648 ╠══════════════════════════════════════════════════════════════════════════════╣
+11:18:29.648 ║ TCA Channel 0:                                                              
+11:18:29.649 ║   ✓ Found: 0x40 (Unknown)                                  
+11:18:29.649 ║   ✓ Found: 0x6B (Unknown)                                  
+11:18:29.649 ║ TCA Channel 1:                                                              
+11:18:29.649 ║   ✓ Found: 0x40 (Unknown)                                  
+11:18:29.649 ║ TCA Channel 2:                                                              
+11:18:29.705 ║   ✓ Found: 0x40 (Unknown)                                  
+11:18:29.705 ║   ✓ Found: 0x76 (PCA9546A?)                                  
+11:18:29.705 ║ TCA Channel 3:                                                              
+11:18:29.705 ║   ✓ Found: 0x40 (Unknown)                                  
+11:18:29.705 ║   ✓ Found: 0x6B (Unknown)                                  
+11:18:29.705 ║ TCA Channel 4:                                                              
+11:18:29.705 ║   ✓ Found: 0x40 (Unknown)                                  
+11:18:29.759 ║   ✓ Found: 0x6B (Unknown)                                  
+11:18:29.759 ║ TCA Channel 5:                                                              
+11:18:29.759 ║   ✓ Found: 0x40 (Unknown)                                  
+11:18:29.759 ║   ✓ Found: 0x6B (Unknown)                                  
+11:18:29.759 ║ TCA Channel 6:                                                              
+11:18:29.759 ║   ✓ Found: 0x40 (Unknown)                                  
+11:18:29.759 ║   ✓ Found: 0x6B (Unknown)                                  
+11:18:29.787 ║ TCA Channel 7:                                                              
+11:18:29.787 ║   ✓ Found: 0x40 (Unknown)                                  
+11:18:29.787 ║   ✓ Found: 0x6B (Unknown)                                  
+11:18:29.787 ╠══════════════════════════════════════════════════════════════════════════════╣
+11:18:29.787 ║ STEP 3: Direct PCA9546A address probe at 0x74 on TCA channel 0               ║
+11:18:29.937 ╠══════════════════════════════════════════════════════════════════════════════╣
+11:18:29.937 ║   TCA channel 0 selected successfully                                       ║
+11:18:29.937 ║   Attempt 1: Address 0x74 -> Error 2 (NACK on address)                    
+11:18:29.937 ║   Attempt 2: Address 0x74 -> Error 2 (NACK on address)                    
+11:18:29.988 ║   Attempt 3: Address 0x74 -> Error 2 (NACK on address)                    
+11:18:29.988 ║   Attempting to read control register from 0x74...                          ║
+11:18:29.988 [ 13273][E][Wire.cpp:499] requestFrom(): i2cWriteReadNonStop returned Error -1
+11:18:29.988 ║   ⚠️ Write OK but read returned 0 bytes                                    ║
+11:18:29.988 ╠══════════════════════════════════════════════════════════════════════════════╣
+11:18:30.009 ║ DEBUG SCAN COMPLETE - Check results above for clues                          ║
+11:18:30.010 ╚══════════════════════════════════════════════════════════════════════════════╝
+11:18:30.010 
+11:18:30.010 Scanning for PCA9546A multiplexers on TCA channels...
+11:18:30.010   Scanning TCA channel 0
+11:18:30.010     No PCA found on this channel
+11:18:30.010   Scanning TCA channel 1
+11:18:30.010     No PCA found on this channel
+11:18:30.085   Scanning TCA channel 2
+11:18:30.085     PCA9546A found at 0x76
+11:18:30.085 Found 1 sensor board(s)
+11:18:30.085 Initializing sensor 0 (P1S1)...
+11:18:30.086   No sensor board on this channel
+11:18:30.086 Initializing sensor 1 (P1S2)...
+11:18:30.086   No sensor board on this channel
+11:18:30.086 Initializing sensor 2 (P2S1)...
+11:18:30.086   No sensor board on this channel
+11:18:30.086 Initializing sensor 3 (P2S2)...
+11:18:30.086   No sensor board on this channel
+11:18:30.086 Initializing sensor 4 (P3S1)...
+11:18:30.086   PCA ch 0 selected (ctrl reg = 0x01)
+11:18:30.086   ERROR: No VCNL4040 at 0x60 (I2C error: 2)
+11:18:30.086   Scanning this PCA channel for any I2C device...
+11:18:30.113     Found device at 0x40
+11:18:30.113     Found device at 0x70
+11:18:30.113     Found device at 0x76
+11:18:30.113 Initializing sensor 5 (P3S2)...
+11:18:30.113   PCA ch 1 selected (ctrl reg = 0x02)
+11:18:30.113   ERROR: No VCNL4040 at 0x60 (I2C error: 2)
+11:18:30.114   Scanning this PCA channel for any I2C device...
+11:18:30.114     Found device at 0x40
+11:18:30.114     Found device at 0x70
+11:18:30.114     Found device at 0x76
+11:18:30.114 Initialized 0 / 6 sensors
+11:18:30.114 ERROR: No sensors initialized!
+11:18:30.114 [PWR after sensor init] VSYS=4.29 V, I=64 mA
+11:18:30.114 ERROR: Sensor initialization failed!
+11:18:30.114 
+11:18:30.114 ==============================================================
+11:18:30.114 I2C BUS DIAGNOSTIC LOOP (continuous — press RESET to stop)
+11:18:30.114 ==============================================================
+11:18:30.114 PCA detection summary (from init):
+11:18:30.114   TCA ch 0: (nothing detected)
+11:18:30.114   TCA ch 1: (nothing detected)
+11:18:30.114   TCA ch 2: PCA9546A at 0x76
+11:18:30.114 
+11:18:30.114 Probing: INA(0x40)  BQ(0x6B)  TCA(0x70)  PCA(0x76)  VCNL(0x60)
+11:18:30.114 Legend:  '.' = ACK,  'X(n)' = error n
+11:18:30.114          1=data_too_long 2=NACK_addr 3=NACK_data 4=other 5=timeout/bus_hang
+11:18:30.114 
+11:18:30.114 Expected when working correctly:
+11:18:30.140   BASE           -> INA, BQ, TCA present; PCA, VCNL absent
+11:18:30.140   TCA{0,1,2}     -> INA, BQ, TCA present; PCA present only on
+11:18:30.140                     channels that have a rigid; VCNL absent
+11:18:30.140   TCA+PCA0/1     -> INA, BQ, TCA, PCA, VCNL all present
+11:18:30.140 
+11:18:30.140 --- Iteration 1 ---
+11:18:30.140 t=  13403  BASE        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2) 
+11:18:30.140 t=  13409  TCA0        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2) 
+11:18:30.140 t=  13415  TCA1        INA:.    BQ:X(2) TCA:.    PCA:X(2) VCNL:X(2) 
+11:18:30.140 t=  13423  TCA2        INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2) 
+11:18:30.345 t=  13426  TCA2+PCA0   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2) 
+11:18:30.345 t=  13430  TCA2+PCA1   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2) 
+11:18:30.345 
+11:18:32.188 --- Iteration 2 ---
+11:18:32.188 t=  15434  BASE        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2) 
+11:18:32.189 t=  15440  TCA0        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2) 
+11:18:32.189 t=  15446  TCA1        INA:.    BQ:X(2) TCA:.    PCA:X(2) VCNL:X(2) 
+11:18:32.189 t=  15454  TCA2        INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2) 
+11:18:32.189 t=  15457  TCA2+PCA0   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2) 
+11:18:32.189 t=  15461  TCA2+PCA1   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2) 
+11:18:32.189 
+11:18:34.213 --- Iteration 3 ---
+11:18:34.214 t=  17464  BASE        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2) 
+11:18:34.214 t=  17470  TCA0        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2) 
+11:18:34.214 t=  17476  TCA1        INA:.    BQ:X(2) TCA:.    PCA:X(2) VCNL:X(2) 
+11:18:34.214 t=  17484  TCA2        INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2) 
+11:18:34.214 t=  17487  TCA2+PCA0   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2) 
+11:18:34.214 t=  17491  TCA2+PCA1   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2) 
+11:18:34.214 
+11:18:36.245 --- Iteration 4 ---
+11:18:36.245 t=  19494  BASE        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2) 
+11:18:36.245 t=  19500  TCA0        INA:.    BQ:.    TCA:.    PCA:X(2) VCNL:X(2) 
+11:18:36.245 t=  19506  TCA1        INA:.    BQ:X(2) TCA:.    PCA:X(2) VCNL:X(2) 
+11:18:36.245 t=  19514  TCA2        INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2) 
+11:18:36.245 t=  19517  TCA2+PCA0   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2) 
+11:18:36.245 t=  19521  TCA2+PCA1   INA:.    BQ:X(2) TCA:.    PCA:.    VCNL:X(2) 
+11:18:36.245 
