@@ -234,3 +234,23 @@ After the answers: record them in CONTEXT (drop "pending"), strike OQ-2/OQ-4 in 
 Re-dispatch: Worker #3 resumed with its context to record the answers, finish tasks 3 and 5, and do the Handoff. It continues its own block (Notes addendum).
 
 **Addendum (Worker #3, after the user's answers).** Recorded in `hardware/pcb-main-v8/CONTEXT.md`: the three sections now read "approved by the user 2026-11-02 (W2 part 1)"; the OQ-2/OQ-4 option tables are replaced by a short Decisions subsection (decision + reason + what was not chosen); row (e) now says "no second master footprint". PLAN: OQ-2 and OQ-4 struck as resolved 2026-11-02; OQ-5 left open (card (j) not run). TASKS: tasks 3 and 5 and the Phase 3 Handoff ticked. Carried to later phases, unchanged from the Handoff notes above: Phase 4 parts list (TVS + series R, SJ2/SJ3 footprints, measured spring reach replacing the 5 mm working rule, pull-up and LED parts, headers); Phase 7 (row c regulators with an AMS1117-type v7 position, row h rails, conditional rows i/j/k, the OQ-4 battery connector); Phase 12 (SDA and SCL pins set independently).
+
+#### Result (re-dispatch)
+| # | Phase | Result | Escalation evaluated? | Commit | Notes |
+|---|-------|--------|-----------------------|--------|-------|
+| 3 | Phase 3: Design intent — GPIO, jumpers, test points | DONE | Yes (earlier PARTIAL) — resolved by the user's answers | a10b44c | Tasks 3, 5 + Handoff closed |
+
+#### Verification (re-dispatch)
+- TASKS.md Phase 3: all six items `[x]`. Working tree clean. PLAN.md: OQ-2 and OQ-4 struck in the existing style; OQ-5 open; no date-stamped headings.
+- CONTEXT.md: the only remaining "pending" wording is the OQ-5 note (card (j) hasn't run), which is correct.
+- W2 part 1 closed. W2 part 2 (parts) is due at the end of Phase 4.
+
+---
+
+### Worker #4 — Phase 4: Design intent — parts (non-power)
+
+**Dispatch:** standard spawn prompt, plus:
+- Additional reading: SESSION.md Worker #3 `#### Notes` (including the addendum; its Phase 4 carry-forward list); `hardware/pcb-main-v8/CONTEXT.md` (GPIO allocation, Jumper matrix, Test points, Decisions); `hardware/CONTEXT.md`; `docs/research/v7-retry/v6-v7-changelist.md`.
+- OQ-2 = header only, so task 3's header question is settled: the external-master header plus UART0 header (and the spare-GPIO header from Phase 3).
+- Power parts belong to Phase 7, not here. Stock checks use the JLC MCP if it's available in the Worker's tools; otherwise record "stock not checked" and the reason per part.
+- W2 part 2: the Worker prepares the approval summary and returns it; the Orchestrator puts it to the user.
