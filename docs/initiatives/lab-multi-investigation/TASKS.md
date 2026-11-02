@@ -9,7 +9,7 @@
 - [x] Add `prefix`, `title`, `status` to every existing fixture's STATE (fixtures only; the real v7 STATE waits for Phase 3). `run_tests.py` unchanged
 - [x] `check_state.py`: run checks per investigation with grouped output, `--inv`, `--load` rules, and the new checks (no prefix, duplicate prefix, orphan card, BENCH.md missing as a warning), per PLAN. Build the MEMORY pattern from the registry. Until Phase 3 adds `prefix` to the real STATE, a single investigation with no prefix falls back to `V7R`, and this fallback is removed in Phase 3
 - [x] `precommit.py`: rules 1 and 3 per prefix
-- [ ] New fixtures `multi`, `closed`, `dup_prefix`, `no_prefix`, `orphan_card`; each condition fires exactly once. Hook acceptance in a throwaway clone (cases in PLAN Technical Notes); log the outputs in SESSION.md
+- [x] New fixtures `multi`, `closed`, `dup_prefix`, `no_prefix`, `orphan_card`; each condition fires exactly once. Hook acceptance in a throwaway clone (cases in PLAN Technical Notes); log the outputs in SESSION.md
 - [ ] 🔄 Handoff
 
 # --- handoff point ---

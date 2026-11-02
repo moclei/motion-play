@@ -29,6 +29,12 @@ CASES = {
     "cap":            ("CAP",            0, NOW),
     "stale_hash":     ("STALE-HASH",     0, NOW),
     "memory":         ("MEMORY",         0, NOW),
+    "multi":          ("STALE",          1, NOW),   # two open investigations, only `power` is STALE
+    "closed":         ("CLOSED-OPEN",    0, NOW),   # closed investigation with an open card
+    "dup_prefix":     ("DUP-PREFIX",     1, NOW),
+    "no_prefix":      ("NO-PREFIX",      1, NOW),   # two investigations, one without a prefix
+    "orphan_card":    ("ORPHAN-CARD",    0, NOW),
+    "no_bench":       ("BENCH",          0, NOW),   # lab/BENCH.md missing
 }
 
 # --fresh cases: (path under fixtures/, expected exit)
@@ -70,6 +76,34 @@ def main():
         failures += not ok
         print("%s %-15s expect %-15s got %s (exit %d)" % (
             "PASS" if ok else "FAIL", name, tag or "nothing", found or "nothing", rc))
+        if not ok:
+            print("  " + out.replace("\n", "\n  "))
+
+    # Multi-investigation: grouping, --inv, --load rules
+    m = FIX / "multi"
+    margs = ["--root", str(m / "lab"), "--memory-dir", str(m / "memory"), "--now", NOW]
+    rc, out = run(margs)
+    groups, cur = {}, None
+    for line in out.splitlines():
+        if line.startswith("== "):
+            cur = line[3:].split(" ")[0]
+        elif line.startswith("[") and cur:
+            groups.setdefault(cur, []).append(line[1:line.index("]")])
+    multi_checks = [
+        ("multi: STALE grouped under power only", groups == {"power": ["STALE"]}),
+        ("multi: --inv v7-i2c skips power -> no findings, exit 0", run(margs + ["--inv", "v7-i2c"])[0] == 0
+         and tags(run(margs + ["--inv", "v7-i2c"])[1]) == []),
+        ("multi: --load without --inv refused (exit 2)", run(margs + ["--load"])[0] == 2),
+        ("multi: --load --inv power loads PWR-001 only",
+         "PWR-001-fixture.md" in run(margs + ["--load", "--inv", "power"])[1]),
+        ("multi: --inv unknown -> exit 2", run(margs + ["--inv", "nope"])[0] == 2),
+        ("clean: --load with one open investigation needs no --inv",
+         run(["--root", str(FIX / "clean" / "lab"), "--memory-dir", str(FIX / "clean" / "memory"),
+              "--now", NOW, "--load"])[0] == 0),
+    ]
+    for label, ok in multi_checks:
+        failures += not ok
+        print("%s %s" % ("PASS" if ok else "FAIL", label))
         if not ok:
             print("  " + out.replace("\n", "\n  "))
 
