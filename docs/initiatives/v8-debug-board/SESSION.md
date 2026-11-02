@@ -199,3 +199,20 @@ PLAN Approach and Technical Notes still describe the work; no approach changed, 
 **Task 3: jumper matrix (left `[ ]`: OQ-2/OQ-4 answers await the user).** Written to CONTEXT § Jumper matrix, pending W2. Rows a–h from PLAN plus i (boost EN, CL-11; v6 = EN tied to VIN), j (BQ D+/D−, Phase 1 option 1), k (BQ OTG pull-up source, option 2); j and k are conditional on Phase 7 keeping the BQ24195. Rows where the default equals v7 because no fix is claimed: d (2.2 k upstream), f (BQ on bus), h (links closed), i (SW1). Row e is realised by the (a) SJ3s both open plus a header behind SJ2s. Rows considered and not added are listed in CONTEXT. OQ-2 recommended: option 1 (header only). OQ-4 recommended: A (≤ 100 × 100 mm, battery on a keyed cable connector). PLAN Open Questions not edited (answers pending).
 
 **Task 4: test points, ground points, debug LEDs.** Written to CONTEXT § Test points, pending W2. 12 channel-side I²C points (TCA side and connector side, because row b's series R splits each line), 8 upstream (bus side, U3 pin side for both pairs, BQ side), the pull-up rail, every v7 rail plus the Phase 2 hard-to-reach nodes, MCU control pins, and three headers (UART0, external master, 2 × 15 spare GPIO). Ground rule: own GND pad per test point, ≤ 5 mm centre-to-centre as a working value until Phase 4 measures the spring (argued), pads sized for two springs. Seven LEDs: D1 kept (green, +3.3V_MCU), BUS green, +5V yellow, VBUS red, STAT orange (conditional), DBG1 blue / DBG2 white on GPIO47/48; D5 kept. Rail LEDs each behind a closed SJ2 for v7-load A/B.
+
+**Task 5 (left `[ ]`: W2 part 1 awaits the user).** The GPIO allocation, Jumper matrix (with the OQ-2/OQ-4 option tables) and Test points sections of `hardware/pcb-main-v8/CONTEXT.md` are filled and each is headed "pending user approval". Nothing else in CONTEXT changed.
+
+**For the Orchestrator to put to the user (W2 part 1 + OQ-2 + OQ-4):**
+1. GPIO: bus moves to SDA = GPIO16 / SCL = GPIO15 by default (GPIO16 is the pad V7R-019 measured good); 43/44 become a UART0 boot-log header; LED_DATA moves to GPIO18; debug LEDs on GPIO47/48; 15 spares on a header; straps 3/45/46 as bare pads. Approve, or name a different default pair.
+2. Jumpers a–k (CONTEXT table). Four rows default to the v7 value because no fix is claimed: d (2.2 k upstream), f (BQ on bus), h (current links closed), i (SW1 drives boost EN). Approve those defaults? Rows j and k only exist if Phase 7 keeps the BQ24195.
+3. OQ-2: recommended option 1, external-master header only (no DevKitC footprint).
+4. OQ-4: recommended A, ≤ 100 × 100 mm with the battery on a keyed cable connector (removes holder-over-copper and blocks a reversed cell at the connector).
+5. Test points: every I²C net both sides of the TCA (with the protection split, 12 channel-side points), every rail, the Phase 2 hard-to-reach power nodes, own GND pad per point (≤ 5 mm working rule). Seven debug LEDs (colours in CONTEXT).
+After the answers: record them in CONTEXT (drop "pending"), strike OQ-2/OQ-4 in PLAN, tick tasks 3 and 5, then the Handoff.
+
+**Handoff notes (for whoever finishes Phase 3 and for Phase 4):**
+- Phase 4 inputs: TVS array (low C) + series R for 6 channel lines; SJ2/SJ3 footprints; the ground-spring reach (replace the 5 mm working rule with a measured value); three upstream pull-up values per line and the downstream option value; LED parts (red, yellow, green ×2, orange, blue, white) and resistors; 1 × 4 and 2 × 15 headers.
+- Phase 7 inputs: row c (two regulators; v7 position should use an AMS1117-type for fidelity, CL-08; check back-powering through pull-ups), row h rail list, rows i/j/k conditional on the charger choice, OQ-4 battery connector.
+- Phase 12: firmware must support SDA and SCL pins independently (four combinations).
+- OQ-5 still open (card (j) not run). PLAN Approach and Technical Notes still describe the work; nothing rejected; PLAN not edited.
+- Commits: `d945387` (task 1), `93590ae` (task 2), `54413de` (task 3, WIP), `ea75703` (task 4), plus this notes commit.
