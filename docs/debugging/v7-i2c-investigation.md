@@ -1,4 +1,4 @@
-> **FROZEN 2026-10. Historical only. Current state: `lab/STATE.md`.** This is the legacy notebook (volume 0). Its summary sections (Fastest read, TL;DR, Current working theory, Candidate fixes, Firmware state, Revert list, Immediate next steps) and the status line below are not current. Look up a phase by heading (`grep -n "^### Phase"`) and cite it as `L-PhNN` (`L-Ph24a` = Arduino-as-master, `L-Ph24b` = Exp 1 glitch filter).
+> **FROZEN 2026-10. Historical only. Current state: `lab/investigations/v7-i2c/STATE.md`.** This is the legacy notebook (volume 0). Its summary sections (Fastest read, TL;DR, Current working theory, Candidate fixes, Firmware state, Revert list, Immediate next steps) and the status line below are not current. Look up a phase by heading (`grep -n "^### Phase"`) and cite it as `L-PhNN` (`L-Ph24a` = Arduino-as-master, `L-Ph24b` = Exp 1 glitch filter).
 
 # Main PCB v7 — VCNL4040 I2C Silent Failure Investigation
 
