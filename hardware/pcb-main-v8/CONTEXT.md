@@ -150,7 +150,47 @@ Rows considered and not added: D5 on-board pixel isolation (CL-06; row g already
 
 ## Test points
 
-Phase 3 fills this in.
+**Status: proposed, pending user approval (W2 part 1).** Net names are v7's (`c2acffc`) where the net exists; new names come from the jumper matrix. Power-net names change if Phase 7 changes the power path; the rule "every rail gets a test point" stays. v7 had TP1 VSYS, TP2 VBAT, TP3 PVBUS, TP4 GND and TPIO10/16/21/43/44, and no +3.3V or +5V pad (CL-26).
+
+**Ground points.** Every signal or rail test point has its own GND pad beside it (not shared with a neighbour), within ground-spring reach. Working rule until Phase 4 measures the Sensepeek/Rigol spring: centre-to-centre ≤ 5 mm (argued). GND pads are big enough for two springs at once (V7R-019 V5b: "All four things won't fit on C"). Headers count as test points when a GND pin sits next to each signal pin.
+
+**I²C, master side of the TCA** (upstream).
+| Net | What it is | Why |
+|---|---|---|
+| I2C_SDA, I2C_SCL | Bus side of the (a) jumpers: pull-ups, TCA, INA219, BQ (via f), external header | Probe point S1-equivalent (v7 TPIO43/44 sat on U3's pin net; here the bus and the pin are separate nets) |
+| U3_IO43, U3_IO44 | U3 pins 37/36, between the module and the (a) jumper | Measures the pad itself (V7R-010 K point, card (j)); doubles as the UART0 TX/RX probe |
+| U3_IO16, U3_IO15 | U3 pins 9/8, between the module and the (a) jumper | Same for the v8 pair |
+| BQ_SDA, BQ_SCL | U5 side of jumper (f) | Isolates BQ's own pin level from the bus |
+| I2C_PU_RAIL | the rail feeding the upstream pull-ups (row c, d) | Pull-up current and rail droop at the pull-ups |
+
+**I²C, channel side of the TCA** (CH0–CH2 → J4–J6). With row (b) the series R splits each line into a TCA-side net and a connector-side net; both get a test point.
+| Net | Count |
+|---|---|
+| CHn_SDA, CHn_SCL (TCA side), n = 0..2 | 6 |
+| CHn_SDA_CONN, CHn_SCL_CONN (connector side, at J4–J6 pins 3/4) | 6 |
+
+**Rails** (v7 names; Phase 7 may rename). VBUS_RAW (before F2), Protected_VBUS (TP3), BQ_PMID, BQ_REGN, VSYS (TP1), VSYS_SENSE, VBAT (TP2), BAT_RAW, +5V, +5V_TO_LEDS, +3.3V_MCU, +3.3V_BUS (one point per 3.3 V regulator output; two if row c is separate). Each 0 Ω current link (row h) also gets a point on each side.
+
+**Power control nodes** (Phase 2 hand-off: hard to reach on v7): BOOST_EN, BOOST_VCC (U6 pin 1), BOOST_FB (U6 pin 17), PMOS_GATE (or Phase 7's equivalent series-FET gate), OTG_BIAS, BQ_TS, BQ_ILIM. Switch nodes (BQ_SW, BOOST_SW) get no pad (dv/dt; scope at the inductor pad instead).
+
+**MCU and control.** EN, GPIO0_BOOT, TCA_RESET, CHRG_INT, LED_DATA (the (g) centre), INT1–INT3 (GPIO13/12/11), GPIO3/45/46 (bare strap pads, see GPIO allocation). No pads on the USB pair.
+
+**Headers** (signal pin beside a GND pin):
+- UART0: 1 × 4, 2.54 mm: GND, TX (GPIO43), RX (GPIO44), NC. 3.3 V logic. Joined through the (a) SJ2s.
+- External master (row e): 1 × 4, 2.54 mm: GND, SDA, SCL, +3.3V_BUS (sense/reference only).
+- Spare GPIO: 2 × 15, 2.54 mm, signal row + GND row: GPIO1, 2, 4, 5, 6, 7, 8, 9, 14, 17, 38, 39, 40, 41, 42.
+
+**Debug LEDs.** Each rail LED draws ≈ 1 mA and has an SJ2 in series (closed), so its load can be removed for an A/B against v7 (v7 had only D1 on +3.3V).
+| LED | Signal | Colour | Notes |
+|---|---|---|---|
+| D1 (kept) | +3.3V_MCU | green | As v7 (R1 1 k) |
+| new | +3.3V_BUS | green, silk "BUS" | Lit only when the bus rail is up (row c) |
+| new | +5V | yellow | Shows the boost running (#0004 case) |
+| new | Protected_VBUS | red | USB input present |
+| new | charger STAT | orange | U5 STAT (pin 4, unconnected on v7) if Phase 7 keeps the BQ24195; open drain, pull-up rail chosen in Phase 4 |
+| new | GPIO47 | blue, "DBG1" | Firmware-driven |
+| new | GPIO48 | white, "DBG2" | Firmware-driven |
+| D5 (kept) | LED_DATA | RGB (WS2812B-MINI) | As v7, on the (g) centre |
 
 ## Parts
 
