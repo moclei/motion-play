@@ -1,5 +1,5 @@
-"""Tests for capture.py, validate_log.py (+ its pre-commit rule), ingest_usb.py and
-backup_captures.sh.
+"""Tests for capture.py, validate_log.py (+ its pre-commit rule), ingest_usb.py,
+new_investigation.py and backup_captures.sh.
 
 Called from run_tests.py. capture.py runs against fake_scope.FakeScope, which replays the
 Phase 6 bench recordings in scope_fixtures/. No real scope is needed.
@@ -18,6 +18,7 @@ sys.path.insert(0, str(HERE))
 sys.path.insert(0, str(LAB))
 
 import capture  # noqa: E402
+import lablib  # noqa: E402
 import validate_log  # noqa: E402
 from fake_scope import FakeScope, FIX  # noqa: E402
 
@@ -659,6 +660,72 @@ def ingest_tests(tmp):
     check("ingest: stick untouched (names and mtimes)", before == after, (before, after))
 
 
+# ---------------------------------------------------------------- new_investigation.py
+
+def scaffold_tests(tmp):
+    """Fixture/temp roots only: never the real lab/ (a second investigation there would turn a
+    prefix-less v7 STATE into NO-PREFIX)."""
+    new = [sys.executable, str(LAB / "new_investigation.py")]
+    chk = [sys.executable, str(LAB / "check_state.py")]
+    base = tmp / "s1"
+    shutil.copytree(str(HERE / "fixtures" / "clean"), str(base))
+    lab = base / "lab"
+    args = ["--name", "power", "--prefix", "PWR", "--title", "Battery: power path",
+            "--root", str(lab), "--now", "2026-11-20"]
+    rc, out = run(new + args)
+    d = lab / "investigations" / "power"
+    st = (d / "STATE.md").read_text() if (d / "STATE.md").exists() else ""
+    nb = (d / "NOTEBOOK.md").read_text() if (d / "NOTEBOOK.md").exists() else ""
+    fm = lablib.front_matter(st)
+    check("scaffold: power/PWR into the clean fixture -> STATE + NOTEBOOK, sentinel front matter, "
+          "first card PWR-001",
+          rc == 0 and fm.get("as_of") == "PWR-000" and fm.get("last_checkpoint") == "PWR-000"
+          and fm.get("open_cards") == [] and fm.get("prefix") == "PWR" and fm.get("status") == "open"
+          and fm.get("title") == "Battery: power path" and str(fm.get("updated")) == "2026-11-20"
+          and "PWR-001" in out and "# Battery: power path — current state" in st
+          and "lab/investigations/power/STATE.md" in nb, (out, fm))
+    check("scaffold: no <PREFIX>/<TITLE>/<NAME>/<YYYY-MM-DD> left in either file",
+          not any(k in st + nb for k in ("<PREFIX>", "<TITLE>", "<NAME>", "<YYYY-MM-DD>")))
+    check("scaffold: does not touch git (fixture root is no repo, nothing else written)",
+          sorted(p.name for p in d.iterdir()) == ["NOTEBOOK.md", "STATE.md"])
+    ck = ["--root", str(lab), "--memory-dir", str(base / "memory"), "--now", "2026-11-20"]
+    rc, out = run(chk + ck)
+    check("scaffold: check_state.py --root on the result is clean (2 open, no findings, exit 0)",
+          rc == 0 and "2 open (power PWR, v7-i2c V7R)" in out and "RESULT: OK (0 warnings)" in out, out)
+    rc, out = run(chk + ck + ["--load", "--inv", "power"])
+    check("scaffold: --load --inv power on the result -> exit 0, no open cards",
+          rc == 0 and "investigation power (PWR)" in out, out)
+
+    before = sorted(str(p) for p in lab.rglob("*"))
+    st_before = st
+    rc, out = run(new + args)
+    check("scaffold: same name again -> refused (exit 2), existing STATE untouched",
+          rc == 2 and "already exists" in out and (d / "STATE.md").read_text() == st_before, out)
+    rc, out = run(new + ["--name", "power-b", "--prefix", "PWR", "--title", "x", "--root", str(lab)])
+    check("scaffold: prefix PWR under a new name -> refused (exit 2), names power/STATE.md, nothing written",
+          rc == 2 and "prefix PWR is already declared by lab/investigations/power/STATE.md" in out
+          and sorted(str(p) for p in lab.rglob("*")) == before, out)
+    rc, out = run(new + ["--name", "v7-again", "--prefix", "V7R", "--title", "x", "--root", str(lab)])
+    check("scaffold: prefix V7R (v7-i2c's) -> refused", rc == 2 and "prefix V7R is already declared" in out, out)
+    (lab / "cards").mkdir(exist_ok=True)
+    (lab / "cards" / "ZZZ-001-orphan.md").write_text("---\ntest_id: ZZZ-001\nstatus: pre-registered\n---\n")
+    rc, out = run(new + ["--name", "zed", "--prefix", "ZZZ", "--title", "x", "--root", str(lab)])
+    check("scaffold: prefix used only by a card file -> refused",
+          rc == 2 and "used by card files" in out and not (lab / "investigations" / "zed").exists(), out)
+    rc, out = run(new + ["--name", "Bad_Name", "--prefix", "pw", "--title", "x", "--root", str(lab)])
+    check("scaffold: bad name and bad prefix -> refused, both named",
+          rc == 2 and "--name 'Bad_Name'" in out and "--prefix 'pw'" in out, out)
+
+    # a lone investigation without `prefix` (the real lab until Phase 3) -> refused
+    lone = tmp / "s2" / "lab"
+    (lone / "investigations" / "v7-i2c").mkdir(parents=True)
+    (lone / "investigations" / "v7-i2c" / "STATE.md").write_text("---\nas_of: V7R-020\n---\n")
+    rc, out = run(new + ["--name", "power", "--prefix", "PWR", "--title", "x", "--root", str(lone)])
+    check("scaffold: existing investigation with no `prefix` -> refused, names it, nothing written",
+          rc == 2 and "v7-i2c/STATE.md declares no `prefix`" in out
+          and not (lone / "investigations" / "power").exists(), out)
+
+
 # ---------------------------------------------------------------- backup_captures.sh
 
 def backup_tests(tmp):
@@ -715,6 +782,7 @@ def main():
         noise_floor_tests(tmp)
         i2c_frame_tests(tmp)
         ingest_tests(tmp)
+        scaffold_tests(tmp)
         backup_tests(tmp)
     finally:
         shutil.rmtree(str(tmp), ignore_errors=True)
