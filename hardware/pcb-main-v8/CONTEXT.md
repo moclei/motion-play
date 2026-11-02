@@ -77,7 +77,38 @@ Phase 7 fills this in.
 
 ## GPIO allocation
 
-Phase 3 fills this in.
+**Status: proposed, pending user approval (W2 part 1).** Sources: Espressif *ESP32-S3-WROOM-1 & WROOM-1U Datasheet* v1.8, Table 3-1 (pin definitions) and Chapter 4 (boot configurations); v7 `hardware/pcb-main/kicad/circuit-context.json` @ `c2acffc` (U3 pin → net); `firmware/include/pin_config.h`; changelist CL-02, CL-04, CL-05, CL-07; card V7R-019; NOTEBOOK desk (e) (2026-10-27).
+
+**Module constraints (datasheet v1.8).**
+- N16R8 has Octal SPI PSRAM: module pins 28–30 (IO35, IO36, IO37) "are connected to the Octal SPI PSRAM and are not available for other uses" (Table 3-1 note b). Leave them unconnected.
+- GPIO47/48 run at 1.8 V only on R16V modules (note c). On N16R8 they are ordinary 3.3 V GPIOs.
+- Strapping pins (Table 4-1): GPIO0 weak pull-up (1 = SPI boot); GPIO45 weak pull-down (0 = VDD_SPI 3.3 V with the default eFuse; 1 would select 1.8 V, Table 4-4); GPIO46 weak pull-down (boot mode with GPIO0, and ROM print control); GPIO3 floating, read as JTAG source only with JTAG eFuses burnt (Table 4-5; defaults 0). Nothing on the board may pull GPIO45 or GPIO46 high at reset.
+- ROM messages go to UART0 **and** USB Serial/JTAG by default (§4.3). So on v7 the ROM drives its boot log push-pull onto SDA through GPIO43 = U0TXD at every boot (CL-02, V7R-018). With the bus off GPIO43/44, the same log is readable on a UART0 header.
+- USB: GPIO19 = USB_D−, GPIO20 = USB_D+ (native USB / CDC, CL-07). Unchanged.
+
+**Allocation.** "v8" is the default jumper position; "v7" is the jumper position that rebuilds v7's net membership.
+| Module pin | GPIO | v7 net (`c2acffc`) | v8 use | Jumper | Notes |
+|---|---|---|---|---|---|
+| 37 | 43 (U0TXD) | /I2C_SDA | v7: SDA. v8: UART0 TX to the UART0 header | (a) SDA | Pad-37 joint is in V7R-010's measured path; card (j) pending (OQ-5) |
+| 36 | 44 (U0RXD) | /I2C_SCL | v7: SCL. v8: UART0 RX to the UART0 header | (a) SCL | |
+| 9 | 16 | /LED_DATA | v8: **SDA** (default pair). v7: LED_DATA | (a) SDA, (g) | The pad V7R-019 measured on #0003: SDA low 109 mV, BQ + both VCNL 100 % ACK (one board, bodge wire) |
+| 8 | 15 | — (no copper) | v8: **SCL** (default pair) | (a) SCL | Adjacent to pin 9; XTAL_32K_P function unused |
+| 11 | 18 | — | v8: LED_DATA (D5 DIN, IC1 1A) | (g) | Frees GPIO16 for the bus |
+| 18 | 10 | /TCA_RESET | TCA_RESET (R6 10 k pull-up), unchanged | — | Test point kept |
+| 23 | 21 | /CHRG_INT | CHRG_INT (BQ INT, R38 10 k pull-up), unchanged | — | Phase 7 may change the charger; then this is its INT/STAT input |
+| 21, 20, 19 | 13, 12, 11 | INT1, INT2, INT3 (U3 only, no-connect) | INT1–3 to test points (as v6 TPIO11–13, CL-05). Not wired to J4–J6 (4-pin, CL-16) | — | Reserved for a future second bus or sensor INT (dual-bus-i2c idea used 11/12) |
+| 24 | 47 | — | Debug LED DBG1 (blue), firmware-driven | — | |
+| 25 | 48 | — | Debug LED DBG2 (white), firmware-driven | — | |
+| 27 | 0 | GPIO0_BOOT (R51 10 k, SW3) | unchanged + test point | — | Strapping |
+| 3 | EN | EN (R50 10 k, C50 1 µF, SW2) | unchanged + test point | — | |
+| 13, 14 | 19, 20 | USB_DN_MCU / USB_DP_MCU | unchanged | — | No test pads on the USB pair (stubs on a 90 Ω pair) |
+| 39, 38, 4–7, 12, 17, 22, 10, 31, 32–35 | 1, 2, 4, 5, 6, 7, 8, 9, 14, 17, 38, 39, 40, 41, 42 | — | Spare: to the spare-GPIO header (15 signals) | — | 39–42 are the pad-JTAG pins (MTCK/MTDO/MTDI/MTMS); usable as GPIO with default eFuses |
+| 15, 26, 16 | 3, 45, 46 | — (module defaults) | Strapping spares: test pad only, nothing else on the net, silk "STRAP" | — | Never pull 45/46 up; see constraints |
+| 28–30 | 35–37 | — | Not connected (PSRAM) | — | |
+
+**Bus master pairs.** Default (v8) pair: SDA = GPIO16, SCL = GPIO15. Alternate (v7) pair: SDA = GPIO43, SCL = GPIO44. SDA and SCL each have their own jumper, so firmware must allow the four combinations (Phase 12 env/pin flags; the common ones are both-v8 and both-v7, and SDA-only matches V7R-019). Why GPIO16 for SDA: it is the only pad measured on a v7 to give a normal low on this bus with BQ and VCNL ACKing (V7R-019 Row 1), so the v8 default repeats a measured configuration. Argued, not measured: any ordinary pad would do (GPIO44 ≈ 32 Ω, V7R-014; dev-board GPIO43/GPIO4 ≈ 30 Ω, V7R-017).
+
+**Debug-track input still pending (OQ-5).** Card (j) (castellation 37 vs board pad) hasn't run. The allocation doesn't depend on it: jumper (a) keeps GPIO43 able to drive the bus, so v8 can repeat (j) and V7R-019 A/B/A without rework. If (j) points at the joint, Phase 4/8 review the U3 footprint pad and paste for pin 37.
 
 ## Jumper matrix
 
