@@ -1,0 +1,23 @@
+{
+  "_provenance": {
+    "source": "hardware/pcb-main/kicad/motion-play-main.kicad_pcb",
+    "source_ref": "c2acffc",
+    "source_sha256": "ff6857d0bf797fc745a59a91123e752c4233ac3682e1ce38f2e270348b26e5b3",
+    "generator": "tools/lab/probe_points/probe_points.py",
+    "generator_commit": "4714ce4",
+    "generated": "2026-10-29T18:06:24-07:00",
+    "points": "../../../../private/tmp/claude-501/-Users-marcocleirigh-Workspace-motion-play/2422036d-0c84-4fe4-863e-e6e31643db18/scratchpad/v7-tpio16.json",
+    "points_sha256": "e6f413945dda69798306f0124e5501771557b2d154a059d0d6467b934c99cc1a",
+    "kicad_cli": "9.0.4",
+    "calibration": {
+      "img_w": 6384,
+      "img_h": 4792,
+      "px0": 875,
+      "py0": 1385,
+      "mx0": 75.7,
+      "my0": 101.0,
+      "sx": 52.528344671201815,
+      "sy": 52.51948051948052
+    }
+  }
+}

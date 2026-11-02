@@ -1,0 +1,874 @@
+22:06:48.938 [PowerMonitor] INA219 configured: 10mR shunt, 1mA/LSB, 8A max
+22:06:48.938 [PWR after BQ config] VSYS=4.30 V, I=67 mA
+22:06:48.938 Display initialized
+22:06:48.938 [PWR after display init] VSYS=4.30 V, I=67 mA
+22:06:48.938 
+22:06:48.938 === Starting System Initialization ===
+22:06:48.938 
+22:06:48.938 Loading WiFi config...
+22:06:48.939 Attempting to mount LittleFS...
+22:06:48.939 LittleFS mounted successfully!
+22:06:48.939 Listing files in LittleFS root:
+22:06:48.939   Found file: README.md (1693 bytes)
+22:06:48.939   Found file: certs (0 bytes)
+22:06:48.939   Found file: config.json.example (475 bytes)
+22:06:48.939   Found file: config.json (423 bytes)
+22:06:49.011 Attempting to open /config.json...
+22:06:49.012 Config file opened successfully!
+22:06:49.012 [DBG] A: after file open
+22:06:49.012 [DBG] B: reset_reason=9
+22:06:49.012 [DBG] C: free_heap=304876
+22:06:49.012 [DBG] D: free_psram=8374195
+22:06:49.012 [DBG] Allocating DynamicJsonDocument(1024)...
+22:06:49.012 [DBG] Doc allocated. Parsing...
+22:06:49.012 [DBG] Parse returned. Closing file...
+22:06:49.012 [DBG] File closed.
+22:06:49.012 [DBG] Extracting ssid...
+22:06:49.012 [DBG] Extracting password...
+22:06:49.012 [DBG] Extracting deviceId...
+22:06:49.012 [DBG] ssid='Wombledon' deviceId='motionplay-device-002'
+22:06:49.012 API Endpoint: https://gur8ivkb44.execute-api.us-west-2.amazonaws.com/prod
+22:06:49.214 [DBG] loadConfig complete.
+22:06:49.215 Config loaded successfully
+22:06:49.215 Connecting to WiFi...
+22:06:49.215 Connecting to WiFi: Wombledon
+22:06:49.846 
+22:06:49.846 
+22:06:49.846 =================================
+22:06:49.846 Motion Play Device - BOOT
+22:06:49.846 =================================
+22:06:49.846 =================================
+22:06:49.846 
+22:06:49.846 === Configuring BQ24195 (input current limit) ===
+22:06:49.846 [   796][I][esp32-hal-i2c.c:75] i2cInit(): Initialising I2C Master: sda=43 scl=44 freq=100000
+22:06:49.846 [I2C SCAN] Scanning 0x03..0x77...
+22:06:49.846 [I2C SCAN]   Found device at 0x40
+22:06:49.846 [I2C SCAN]   Found device at 0x70
+22:06:49.846 [I2C SCAN] Done. 2 device(s) responded.
+22:06:49.846 BQ24195 not found at 0x6B - skipping (bare T-Display?)
+22:06:49.904 [PowerMonitor] INA219 configured: 10mR shunt, 1mA/LSB, 8A max
+22:06:49.904 [PWR after BQ config] VSYS=4.31 V, I=0 mA
+22:06:49.905 Display initialized
+22:06:49.905 [PWR after display init] VSYS=4.31 V, I=0 mA
+22:06:49.905 
+22:06:49.905 === Starting System Initialization ===
+22:06:49.905 
+22:06:49.905 Loading WiFi config...
+22:06:49.905 Attempting to mount LittleFS...
+22:06:49.905 LittleFS mounted successfully!
+22:06:49.905 Listing files in LittleFS root:
+22:06:49.905   Found file: README.md (1693 bytes)
+22:06:49.905   Found file: certs (0 bytes)
+22:06:49.905   Found file: config.json.example (475 bytes)
+22:06:49.905   Found file: config.json (423 bytes)
+22:06:49.905 Attempting to open /config.json...
+22:06:49.969 Config file opened successfully!
+22:06:49.969 [DBG] A: after file open
+22:06:49.969 [DBG] B: reset_reason=1
+22:06:49.969 [DBG] C: free_heap=304876
+22:06:49.969 [DBG] D: free_psram=8374195
+22:06:49.969 [DBG] Allocating DynamicJsonDocument(1024)...
+22:06:49.969 [DBG] Doc allocated. Parsing...
+22:06:49.969 [DBG] Parse returned. Closing file...
+22:06:49.970 [DBG] File closed.
+22:06:49.970 [DBG] Extracting ssid...
+22:06:49.970 [DBG] Extracting password...
+22:06:49.970 [DBG] Extracting deviceId...
+22:06:49.970 [DBG] ssid='Wombledon' deviceId='motionplay-device-002'
+22:06:49.970 API Endpoint: https://gur8ivkb44.execute-api.us-west-2.amazonaws.com/prod
+22:06:49.970 [DBG] loadConfig complete.
+22:06:50.170 Config loaded successfully
+22:06:50.170 Connecting to WiFi...
+22:06:50.170 Connecting to WiFi: Wombledon
+22:06:50.800 
+22:06:50.800 
+22:06:50.800 =================================
+22:06:50.800 Motion Play Device - BOOT
+22:06:50.800 =================================
+22:06:50.800 =================================
+22:06:50.800 
+22:06:50.800 === Configuring BQ24195 (input current limit) ===
+22:06:50.800 [   796][I][esp32-hal-i2c.c:75] i2cInit(): Initialising I2C Master: sda=43 scl=44 freq=100000
+22:06:50.800 [I2C SCAN] Scanning 0x03..0x77...
+22:06:50.800 [I2C SCAN]   Found device at 0x40
+22:06:50.800 [I2C SCAN]   Found device at 0x70
+22:06:50.800 [I2C SCAN] Done. 2 device(s) responded.
+22:06:50.800 BQ24195 not found at 0x6B - skipping (bare T-Display?)
+22:06:50.857 [PowerMonitor] INA219 configured: 10mR shunt, 1mA/LSB, 8A max
+22:06:50.857 [PWR after BQ config] VSYS=4.30 V, I=0 mA
+22:06:50.857 Display initialized
+22:06:50.858 [PWR after display init] VSYS=4.30 V, I=0 mA
+22:06:50.858 
+22:06:50.858 === Starting System Initialization ===
+22:06:50.858 
+22:06:50.858 Loading WiFi config...
+22:06:50.858 Attempting to mount LittleFS...
+22:06:50.858 LittleFS mounted successfully!
+22:06:50.858 Listing files in LittleFS root:
+22:06:50.858   Found file: README.md (1693 bytes)
+22:06:50.858   Found file: certs (0 bytes)
+22:06:50.858   Found file: config.json.example (475 bytes)
+22:06:50.858   Found file: config.json (423 bytes)
+22:06:50.858 Attempting to open /config.json...
+22:06:50.928 Config file opened successfully!
+22:06:50.928 [DBG] A: after file open
+22:06:50.928 [DBG] B: reset_reason=1
+22:06:50.928 [DBG] C: free_heap=304876
+22:06:50.928 [DBG] D: free_psram=8374195
+22:06:50.928 [DBG] Allocating DynamicJsonDocument(1024)...
+22:06:50.928 [DBG] Doc allocated. Parsing...
+22:06:50.928 [DBG] Parse returned. Closing file...
+22:06:50.928 [DBG] File closed.
+22:06:50.928 [DBG] Extracting ssid...
+22:06:50.928 [DBG] Extracting password...
+22:06:50.928 [DBG] Extracting deviceId...
+22:06:50.928 [DBG] ssid='Wombledon' deviceId='motionplay-device-002'
+22:06:50.928 API Endpoint: https://gur8ivkb44.execute-api.us-west-2.amazonaws.com/prod
+22:06:50.929 [DBG] loadConfig complete.
+22:06:51.129 Config loaded successfully
+22:06:51.129 Connecting to WiFi...
+22:06:51.129 Connecting to WiFi: Wombledon
+22:06:51.756 
+22:06:51.756 
+22:06:51.756 =================================
+22:06:51.756 Motion Play Device - BOOT
+22:06:51.756 =================================
+22:06:51.756 =================================
+22:06:51.756 
+22:06:51.756 === Configuring BQ24195 (input current limit) ===
+22:06:51.757 [   797][I][esp32-hal-i2c.c:75] i2cInit(): Initialising I2C Master: sda=43 scl=44 freq=100000
+22:06:51.757 [I2C SCAN] Scanning 0x03..0x77...
+22:06:51.757 [I2C SCAN]   Found device at 0x40
+22:06:51.757 [I2C SCAN]   Found device at 0x70
+22:06:51.757 [I2C SCAN] Done. 2 device(s) responded.
+22:06:51.757 BQ24195 not found at 0x6B - skipping (bare T-Display?)
+22:06:51.960 [PowerMonitor] INA219 configured: 10mR shunt, 1mA/LSB, 8A max
+22:06:51.960 [PWR after BQ config] VSYS=4.30 V, I=0 mA
+22:06:51.960 Display initialized
+22:06:51.960 [PWR after display init] VSYS=4.30 V, I=0 mA
+22:06:51.960 
+22:06:51.960 === Starting System Initialization ===
+22:06:51.960 
+22:06:51.960 Loading WiFi config...
+22:06:51.960 Attempting to mount LittleFS...
+22:06:51.960 LittleFS mounted successfully!
+22:06:51.960 Listing files in LittleFS root:
+22:06:51.960   Found file: README.md (1693 bytes)
+22:06:52.666 [PowerMonitor] INA219 configured: 10mR shunt, 1mA/LSB, 8A max
+22:06:52.667 [PWR after BQ config] VSYS=4.28 V, I=67 mA
+22:06:52.667 Display initialized
+22:06:52.667 [PWR after display init] VSYS=4.28 V, I=67 mA
+22:06:52.667 
+22:06:52.667 === Starting System Initialization ===
+22:06:52.667 
+22:06:52.667 Loading WiFi config...
+22:06:52.667 Attempting to mount LittleFS...
+22:06:52.667 LittleFS mounted successfully!
+22:06:52.667 Listing files in LittleFS root:
+22:06:52.667   Found file: README.md (1693 bytes)
+22:06:52.667   Found file: certs (0 bytes)
+22:06:52.667   Found file: config.json.example (475 bytes)
+22:06:52.667   Found file: config.json (423 bytes)
+22:06:52.735 Attempting to open /config.json...
+22:06:52.735 Config file opened successfully!
+22:06:52.735 [DBG] A: after file open
+22:06:52.735 [DBG] B: reset_reason=9
+22:06:52.735 [DBG] C: free_heap=304876
+22:06:52.735 [DBG] D: free_psram=8374195
+22:06:52.735 [DBG] Allocating DynamicJsonDocument(1024)...
+22:06:52.735 [DBG] Doc allocated. Parsing...
+22:06:52.735 [DBG] Parse returned. Closing file...
+22:06:52.735 [DBG] File closed.
+22:06:52.735 [DBG] Extracting ssid...
+22:06:52.735 [DBG] Extracting password...
+22:06:52.735 [DBG] Extracting deviceId...
+22:06:52.735 [DBG] ssid='Wombledon' deviceId='motionplay-device-002'
+22:06:52.735 API Endpoint: https://gur8ivkb44.execute-api.us-west-2.amazonaws.com/prod
+22:06:52.939 [DBG] loadConfig complete.
+22:06:52.939 Config loaded successfully
+22:06:52.939 Connecting to WiFi...
+22:06:52.939 Connecting to WiFi: Wombledon
+22:06:53.569 
+22:06:53.569 
+22:06:53.569 =================================
+22:06:53.569 Motion Play Device - BOOT
+22:06:53.569 =================================
+22:06:53.570 =================================
+22:06:53.570 
+22:06:53.570 === Configuring BQ24195 (input current limit) ===
+22:06:53.570 [   797][I][esp32-hal-i2c.c:75] i2cInit(): Initialising I2C Master: sda=43 scl=44 freq=100000
+22:06:53.570 [I2C SCAN] Scanning 0x03..0x77...
+22:06:53.570 [I2C SCAN]   Found device at 0x40
+22:06:53.570 [I2C SCAN]   Found device at 0x70
+22:06:53.570 [I2C SCAN] Done. 2 device(s) responded.
+22:06:53.570 BQ24195 not found at 0x6B - skipping (bare T-Display?)
+22:06:53.627 [PowerMonitor] INA219 configured: 10mR shunt, 1mA/LSB, 8A max
+22:06:53.627 [PWR after BQ config] VSYS=4.31 V, I=0 mA
+22:06:53.627 Display initialized
+22:06:53.627 [PWR after display init] VSYS=4.31 V, I=0 mA
+22:06:53.627 
+22:06:53.627 === Starting System Initialization ===
+22:06:53.627 
+22:06:53.627 Loading WiFi config...
+22:06:53.627 Attempting to mount LittleFS...
+22:06:53.627 LittleFS mounted successfully!
+22:06:53.627 Listing files in LittleFS root:
+22:06:53.627   Found file: README.md (1693 bytes)
+22:06:53.628   Found file: certs (0 bytes)
+22:06:53.628   Found file: config.json.example (475 bytes)
+22:06:53.628   Found file: config.json (423 bytes)
+22:06:53.628 Attempting to open /config.json...
+22:06:53.697 Config file opened successfully!
+22:06:53.697 [DBG] A: after file open
+22:06:53.697 [DBG] B: reset_reason=9
+22:06:53.698 [DBG] C: free_heap=304876
+22:06:53.698 [DBG] D: free_psram=8374195
+22:06:53.698 [DBG] Allocating DynamicJsonDocument(1024)...
+22:06:53.698 [DBG] Doc allocated. Parsing...
+22:06:53.698 [DBG] Parse returned. Closing file...
+22:06:53.698 [DBG] File closed.
+22:06:53.698 [DBG] Extracting ssid...
+22:06:53.698 [DBG] Extracting password...
+22:06:53.698 [DBG] Extracting deviceId...
+22:06:53.698 [DBG] ssid='Wombledon' deviceId='motionplay-device-002'
+22:06:53.698 API Endpoint: https://gur8ivkb44.execute-api.us-west-2.amazonaws.com/prod
+22:06:53.698 [DBG] loadConfig complete.
+22:06:53.901 Config loaded successfully
+22:06:53.901 Connecting to WiFi...
+22:06:53.902 Connecting to WiFi: Wombledon
+22:06:54.526 
+22:06:54.526 
+22:06:54.526 =================================
+22:06:54.526 Motion Play Device - BOOT
+22:06:54.526 =================================
+22:06:54.526 =================================
+22:06:54.526 
+22:06:54.526 === Configuring BQ24195 (input current limit) ===
+22:06:54.526 [   797][I][esp32-hal-i2c.c:75] i2cInit(): Initialising I2C Master: sda=43 scl=44 freq=100000
+22:06:54.526 [I2C SCAN] Scanning 0x03..0x77...
+22:06:54.526 [I2C SCAN]   Found device at 0x40
+22:06:54.526 [I2C SCAN]   Found device at 0x70
+22:06:54.526 [I2C SCAN] Done. 2 device(s) responded.
+22:06:54.526 BQ24195 not found at 0x6B - skipping (bare T-Display?)
+22:06:54.584 [PowerMonitor] INA219 configured: 10mR shunt, 1mA/LSB, 8A max
+22:06:54.584 [PWR after BQ config] VSYS=4.30 V, I=0 mA
+22:06:54.584 Display initialized
+22:06:54.584 [PWR after display init] VSYS=4.30 V, I=0 mA
+22:06:54.584 
+22:06:54.585 === Starting System Initialization ===
+22:06:54.585 
+22:06:54.585 Loading WiFi config...
+22:06:54.585 Attempting to mount LittleFS...
+22:06:54.585 LittleFS mounted successfully!
+22:06:54.585 Listing files in LittleFS root:
+22:06:54.585   Found file: README.md (1693 bytes)
+22:06:54.585   Found file: certs (0 bytes)
+22:06:54.585   Found file: config.json.example (475 bytes)
+22:06:54.585   Found file: config.json (423 bytes)
+22:06:54.585 Attempting to open /config.json...
+22:06:54.654 Config file opened successfully!
+22:06:54.654 [DBG] A: after file open
+22:06:54.655 [DBG] B: reset_reason=9
+22:06:54.655 [DBG] C: free_heap=304876
+22:06:54.655 [DBG] D: free_psram=8374195
+22:06:54.655 [DBG] Allocating DynamicJsonDocument(1024)...
+22:06:54.655 [DBG] Doc allocated. Parsing...
+22:06:54.655 [DBG] Parse returned. Closing file...
+22:06:54.655 [DBG] File closed.
+22:06:54.655 [DBG] Extracting ssid...
+22:06:54.655 [DBG] Extracting password...
+22:06:54.655 [DBG] Extracting deviceId...
+22:06:54.655 [DBG] ssid='Wombledon' deviceId='motionplay-device-002'
+22:06:54.655 API Endpoint: https://gur8ivkb44.execute-api.us-west-2.amazonaws.com/prod
+22:06:54.655 [DBG] loadConfig complete.
+22:06:54.860 Config loaded successfully
+22:06:54.860 Connecting to WiFi...
+22:06:54.860 Connecting to WiFi: Wombledon
+22:06:55.484 
+22:06:55.484 
+22:06:55.484 =================================
+22:06:55.484 Motion Play Device - BOOT
+22:06:55.484 =================================
+22:06:55.484 =================================
+22:06:55.484 
+22:06:55.484 === Configuring BQ24195 (input current limit) ===
+22:06:55.484 [   796][I][esp32-hal-i2c.c:75] i2cInit(): Initialising I2C Master: sda=43 scl=44 freq=100000
+22:06:55.484 [I2C SCAN] Scanning 0x03..0x77...
+22:06:55.484 [I2C SCAN]   Found device at 0x40
+22:06:55.484 [I2C SCAN]   Found device at 0x70
+22:06:55.484 [I2C SCAN] Done. 2 device(s) responded.
+22:06:55.484 BQ24195 not found at 0x6B - skipping (bare T-Display?)
+22:06:55.542 [PowerMonitor] INA219 configured: 10mR shunt, 1mA/LSB, 8A max
+22:06:55.542 [PWR after BQ config] VSYS=4.30 V, I=0 mA
+22:06:55.542 Display initialized
+22:06:55.542 [PWR after display init] VSYS=4.30 V, I=0 mA
+22:06:55.542 
+22:06:55.542 === Starting System Initialization ===
+22:06:55.542 
+22:06:55.542 Loading WiFi config...
+22:06:55.542 Attempting to mount LittleFS...
+22:06:55.542 LittleFS mounted successfully!
+22:06:55.542 Listing files in LittleFS root:
+22:06:55.542   Found file: README.md (1693 bytes)
+22:06:55.542   Found file: certs (0 bytes)
+22:06:55.542   Found file: config.json.example (475 bytes)
+22:06:55.542   Found file: config.json (423 bytes)
+22:06:55.542 Attempting to open /config.json...
+22:06:55.617 Config file opened successfully!
+22:06:55.617 [DBG] A: after file open
+22:06:55.617 [DBG] B: reset_reason=1
+22:06:55.617 [DBG] C: free_heap=304876
+22:06:55.617 [DBG] D: free_psram=8374195
+22:06:55.617 [DBG] Allocating DynamicJsonDocument(1024)...
+22:06:55.617 [DBG] Doc allocated. Parsing...
+22:06:55.617 [DBG] Parse returned. Closing file...
+22:06:55.617 [DBG] File closed.
+22:06:55.617 [DBG] Extracting ssid...
+22:06:55.618 [DBG] Extracting password...
+22:06:55.618 [DBG] Extracting deviceId...
+22:06:55.618 [DBG] ssid='Wombledon' deviceId='motionplay-device-002'
+22:06:55.618 API Endpoint: https://gur8ivkb44.execute-api.us-west-2.amazonaws.com/prod
+22:06:55.618 [DBG] loadConfig complete.
+22:06:55.822 Config loaded successfully
+22:06:55.822 Connecting to WiFi...
+22:06:55.822 Connecting to WiFi: Wombledon
+22:06:56.446 
+22:06:56.446 
+22:06:56.446 =================================
+22:06:56.446 Motion Play Device - BOOT
+22:06:56.446 =================================
+22:06:56.446 =================================
+22:06:56.446 
+22:06:56.446 === Configuring BQ24195 (input current limit) ===
+22:06:56.446 [   797][I][esp32-hal-i2c.c:75] i2cInit(): Initialising I2C Master: sda=43 scl=44 freq=100000
+22:06:56.446 [I2C SCAN] Scanning 0x03..0x77...
+22:06:56.447 [I2C SCAN]   Found device at 0x40
+22:06:56.447 [I2C SCAN]   Found device at 0x70
+22:06:56.447 [I2C SCAN] Done. 2 device(s) responded.
+22:06:56.447 BQ24195 not found at 0x6B - skipping (bare T-Display?)
+22:06:56.649 [PowerMonitor] INA219 configured: 10mR shunt, 1mA/LSB, 8A max
+22:06:56.649 [PWR after BQ config] VSYS=4.30 V, I=0 mA
+22:06:56.649 Display initialized
+22:06:56.649 [PWR after display init] VSYS=4.30 V, I=0 mA
+22:06:56.649 
+22:06:56.650 === Starting System Initialization ===
+22:06:56.650 
+22:06:56.650 Loading WiFi config...
+22:06:56.650 Attempting to mount LittleFS...
+22:06:56.650 LittleFS mounted successfully!
+22:06:56.650 Listing files in LittleFS root:
+22:06:56.650   Found file: README.md (1693 bytes)
+22:06:57.292 
+22:06:57.293 
+22:06:57.293 =================================
+22:06:57.293 Motion Play Device - BOOT
+22:06:57.293 =================================
+22:06:57.293 =================================
+22:06:57.293 
+22:06:57.293 === Configuring BQ24195 (input current limit) ===
+22:06:57.293 [   797][I][esp32-hal-i2c.c:75] i2cInit(): Initialising I2C Master: sda=43 scl=44 freq=100000
+22:06:57.293 [I2C SCAN] Scanning 0x03..0x77...
+22:06:57.293 [I2C SCAN]   Found device at 0x40
+22:06:57.293 [I2C SCAN]   Found device at 0x70
+22:06:57.293 [I2C SCAN] Done. 2 device(s) responded.
+22:06:57.293 BQ24195 not found at 0x6B - skipping (bare T-Display?)
+22:06:57.350 [PowerMonitor] INA219 configured: 10mR shunt, 1mA/LSB, 8A max
+22:06:57.351 [PWR after BQ config] VSYS=4.30 V, I=0 mA
+22:06:57.351 Display initialized
+22:06:57.351 [PWR after display init] VSYS=4.30 V, I=0 mA
+22:06:57.351 
+22:06:57.351 === Starting System Initialization ===
+22:06:57.351 
+22:06:57.351 Loading WiFi config...
+22:06:57.351 Attempting to mount LittleFS...
+22:06:57.351 LittleFS mounted successfully!
+22:06:57.351 Listing files in LittleFS root:
+22:06:57.351   Found file: README.md (1693 bytes)
+22:06:57.351   Found file: certs (0 bytes)
+22:06:57.351   Found file: config.json.example (475 bytes)
+22:06:57.351   Found file: config.json (423 bytes)
+22:06:57.351 Attempting to open /config.json...
+22:06:57.420 Config file opened successfully!
+22:06:57.420 [DBG] A: after file open
+22:06:57.420 [DBG] B: reset_reason=9
+22:06:57.420 [DBG] C: free_heap=304876
+22:06:57.421 [DBG] D: free_psram=8374195
+22:06:57.421 [DBG] Allocating DynamicJsonDocument(1024)...
+22:06:57.421 [DBG] Doc allocated. Parsing...
+22:06:57.421 [DBG] Parse returned. Closing file...
+22:06:57.421 [DBG] File closed.
+22:06:57.421 [DBG] Extracting ssid...
+22:06:57.421 [DBG] Extracting password...
+22:06:57.421 [DBG] Extracting deviceId...
+22:06:57.421 [DBG] ssid='Wombledon' deviceId='motionplay-device-002'
+22:06:57.421 API Endpoint: https://gur8ivkb44.execute-api.us-west-2.amazonaws.com/prod
+22:06:57.421 [DBG] loadConfig complete.
+22:06:57.624 Config loaded successfully
+22:06:57.624 Connecting to WiFi...
+22:06:57.624 Connecting to WiFi: Wombledon
+22:06:58.249 
+22:06:58.249 
+22:06:58.249 =================================
+22:06:58.249 Motion Play Device - BOOT
+22:06:58.250 =================================
+22:06:58.250 =================================
+22:06:58.250 
+22:06:58.250 === Configuring BQ24195 (input current limit) ===
+22:06:58.250 [   797][I][esp32-hal-i2c.c:75] i2cInit(): Initialising I2C Master: sda=43 scl=44 freq=100000
+22:06:58.250 [I2C SCAN] Scanning 0x03..0x77...
+22:06:58.250 [I2C SCAN]   Found device at 0x40
+22:06:58.250 [I2C SCAN]   Found device at 0x70
+22:06:58.250 [I2C SCAN] Done. 2 device(s) responded.
+22:06:58.250 BQ24195 not found at 0x6B - skipping (bare T-Display?)
+22:06:58.452 [PowerMonitor] INA219 configured: 10mR shunt, 1mA/LSB, 8A max
+22:06:58.452 [PWR after BQ config] VSYS=4.30 V, I=0 mA
+22:06:58.452 Display initialized
+22:06:58.452 [PWR after display init] VSYS=4.30 V, I=0 mA
+22:06:58.452 
+22:06:58.452 === Starting System Initialization ===
+22:06:58.452 
+22:06:58.452 Loading WiFi config...
+22:06:58.452 Attempting to mount LittleFS...
+22:06:58.452 LittleFS mounted successfully!
+22:06:58.452 Listing files in LittleFS root:
+22:06:58.452   Found file: README.md (1693 bytes)
+22:06:59.096 
+22:06:59.096 
+22:06:59.096 =================================
+22:06:59.096 Motion Play Device - BOOT
+22:06:59.096 =================================
+22:06:59.096 =================================
+22:06:59.096 
+22:06:59.097 === Configuring BQ24195 (input current limit) ===
+22:06:59.097 [   797][I][esp32-hal-i2c.c:75] i2cInit(): Initialising I2C Master: sda=43 scl=44 freq=100000
+22:06:59.097 [I2C SCAN] Scanning 0x03..0x77...
+22:06:59.097 [I2C SCAN]   Found device at 0x40
+22:06:59.097 [I2C SCAN]   Found device at 0x70
+22:06:59.097 [I2C SCAN] Done. 2 device(s) responded.
+22:06:59.097 BQ24195 not found at 0x6B - skipping (bare T-Display?)
+22:06:59.154 [PowerMonitor] INA219 configured: 10mR shunt, 1mA/LSB, 8A max
+22:06:59.154 [PWR after BQ config] VSYS=4.30 V, I=0 mA
+22:06:59.154 Display initialized
+22:06:59.154 [PWR after display init] VSYS=4.30 V, I=0 mA
+22:06:59.154 
+22:06:59.154 === Starting System Initialization ===
+22:06:59.154 
+22:06:59.155 Loading WiFi config...
+22:06:59.155 Attempting to mount LittleFS...
+22:06:59.155 LittleFS mounted successfully!
+22:06:59.155 Listing files in LittleFS root:
+22:06:59.155   Found file: README.md (1693 bytes)
+22:06:59.155   Found file: certs (0 bytes)
+22:06:59.155   Found file: config.json.example (475 bytes)
+22:06:59.155   Found file: config.json (423 bytes)
+22:06:59.155 Attempting to open /config.json...
+22:06:59.224 Config file opened successfully!
+22:06:59.240 [DBG] A: after file open
+22:06:59.240 [DBG] B: reset_reason=9
+22:06:59.240 [DBG] C: free_heap=304876
+22:06:59.240 [DBG] D: free_psram=8374195
+22:06:59.240 [DBG] Allocating DynamicJsonDocument(1024)...
+22:06:59.240 [DBG] Doc allocated. Parsing...
+22:06:59.240 [DBG] Parse returned. Closing file...
+22:06:59.240 [DBG] File closed.
+22:06:59.240 [DBG] Extracting ssid...
+22:06:59.240 [DBG] Extracting password...
+22:06:59.240 [DBG] Extracting deviceId...
+22:06:59.240 [DBG] ssid='Wombledon' deviceId='motionplay-device-002'
+22:06:59.240 API Endpoint: https://gur8ivkb44.execute-api.us-west-2.amazonaws.com/prod
+22:06:59.240 [DBG] loadConfig complete.
+22:06:59.443 Config loaded successfully
+22:06:59.443 Connecting to WiFi...
+22:06:59.443 Connecting to WiFi: Wombledon
+22:07:00.053 
+22:07:00.053 
+22:07:00.053 =================================
+22:07:00.053 Motion Play Device - BOOT
+22:07:00.053 =================================
+22:07:00.054 =================================
+22:07:00.054 
+22:07:00.054 === Configuring BQ24195 (input current limit) ===
+22:07:00.054 [   797][I][esp32-hal-i2c.c:75] i2cInit(): Initialising I2C Master: sda=43 scl=44 freq=100000
+22:07:00.054 [I2C SCAN] Scanning 0x03..0x77...
+22:07:00.054 [I2C SCAN]   Found device at 0x40
+22:07:00.054 [I2C SCAN]   Found device at 0x70
+22:07:00.054 [I2C SCAN] Done. 2 device(s) responded.
+22:07:00.054 BQ24195 not found at 0x6B - skipping (bare T-Display?)
+22:07:00.111 [PowerMonitor] INA219 configured: 10mR shunt, 1mA/LSB, 8A max
+22:07:00.111 [PWR after BQ config] VSYS=4.31 V, I=0 mA
+22:07:00.111 Display initialized
+22:07:00.111 [PWR after display init] VSYS=4.31 V, I=0 mA
+22:07:00.111 
+22:07:00.111 === Starting System Initialization ===
+22:07:00.111 
+22:07:00.111 Loading WiFi config...
+22:07:00.111 Attempting to mount LittleFS...
+22:07:00.111 LittleFS mounted successfully!
+22:07:00.112 Listing files in LittleFS root:
+22:07:00.112   Found file: README.md (1693 bytes)
+22:07:00.112   Found file: certs (0 bytes)
+22:07:00.112   Found file: config.json.example (475 bytes)
+22:07:00.112   Found file: config.json (423 bytes)
+22:07:00.112 Attempting to open /config.json...
+22:07:00.181 Config file opened successfully!
+22:07:00.182 [DBG] A: after file open
+22:07:00.182 [DBG] B: reset_reason=9
+22:07:00.182 [DBG] C: free_heap=304876
+22:07:00.182 [DBG] D: free_psram=8374195
+22:07:00.182 [DBG] Allocating DynamicJsonDocument(1024)...
+22:07:00.182 [DBG] Doc allocated. Parsing...
+22:07:00.182 [DBG] Parse returned. Closing file...
+22:07:00.182 [DBG] File closed.
+22:07:00.182 [DBG] Extracting ssid...
+22:07:00.182 [DBG] Extracting password...
+22:07:00.182 [DBG] Extracting deviceId...
+22:07:00.182 [DBG] ssid='Wombledon' deviceId='motionplay-device-002'
+22:07:00.182 API Endpoint: https://gur8ivkb44.execute-api.us-west-2.amazonaws.com/prod
+22:07:00.182 [DBG] loadConfig complete.
+22:07:00.386 Config loaded successfully
+22:07:00.386 Connecting to WiFi...
+22:07:00.386 Connecting to WiFi: Wombledon
+22:07:01.010 
+22:07:01.010 
+22:07:01.010 =================================
+22:07:01.010 Motion Play Device - BOOT
+22:07:01.010 =================================
+22:07:01.010 =================================
+22:07:01.010 
+22:07:01.010 === Configuring BQ24195 (input current limit) ===
+22:07:01.010 [   797][I][esp32-hal-i2c.c:75] i2cInit(): Initialising I2C Master: sda=43 scl=44 freq=100000
+22:07:01.011 [I2C SCAN] Scanning 0x03..0x77...
+22:07:01.011 [I2C SCAN]   Found device at 0x40
+22:07:01.011 [I2C SCAN]   Found device at 0x70
+22:07:01.011 [I2C SCAN] Done. 2 device(s) responded.
+22:07:01.011 BQ24195 not found at 0x6B - skipping (bare T-Display?)
+22:07:01.068 [PowerMonitor] INA219 configured: 10mR shunt, 1mA/LSB, 8A max
+22:07:01.069 [PWR after BQ config] VSYS=4.31 V, I=0 mA
+22:07:01.069 Display initialized
+22:07:01.069 [PWR after display init] VSYS=4.31 V, I=0 mA
+22:07:01.069 
+22:07:01.069 === Starting System Initialization ===
+22:07:01.069 
+22:07:01.069 Loading WiFi config...
+22:07:01.069 Attempting to mount LittleFS...
+22:07:01.069 LittleFS mounted successfully!
+22:07:01.069 Listing files in LittleFS root:
+22:07:01.069   Found file: README.md (1693 bytes)
+22:07:01.069   Found file: certs (0 bytes)
+22:07:01.069   Found file: config.json.example (475 bytes)
+22:07:01.069   Found file: config.json (423 bytes)
+22:07:01.069 Attempting to open /config.json...
+22:07:01.138 Config file opened successfully!
+22:07:01.138 [DBG] A: after file open
+22:07:01.138 [DBG] B: reset_reason=9
+22:07:01.138 [DBG] C: free_heap=304876
+22:07:01.138 [DBG] D: free_psram=8374195
+22:07:01.138 [DBG] Allocating DynamicJsonDocument(1024)...
+22:07:01.138 [DBG] Doc allocated. Parsing...
+22:07:01.138 [DBG] Parse returned. Closing file...
+22:07:01.138 [DBG] File closed.
+22:07:01.139 [DBG] Extracting ssid...
+22:07:01.139 [DBG] Extracting password...
+22:07:01.139 [DBG] Extracting deviceId...
+22:07:01.139 [DBG] ssid='Wombledon' deviceId='motionplay-device-002'
+22:07:01.139 API Endpoint: https://gur8ivkb44.execute-api.us-west-2.amazonaws.com/prod
+22:07:01.139 [DBG] loadConfig complete.
+22:07:01.343 Config loaded successfully
+22:07:01.343 Connecting to WiFi...
+22:07:01.343 Connecting to WiFi: Wombledon
+22:07:01.968 
+22:07:01.968 
+22:07:01.968 =================================
+22:07:01.968 Motion Play Device - BOOT
+22:07:01.968 =================================
+22:07:01.968 =================================
+22:07:01.968 
+22:07:01.968 === Configuring BQ24195 (input current limit) ===
+22:07:01.968 [   797][I][esp32-hal-i2c.c:75] i2cInit(): Initialising I2C Master: sda=43 scl=44 freq=100000
+22:07:01.968 [I2C SCAN] Scanning 0x03..0x77...
+22:07:01.968 [I2C SCAN]   Found device at 0x40
+22:07:01.968 [I2C SCAN]   Found device at 0x70
+22:07:01.968 [I2C SCAN] Done. 2 device(s) responded.
+22:07:01.968 BQ24195 not found at 0x6B - skipping (bare T-Display?)
+22:07:02.026 [PowerMonitor] INA219 configured: 10mR shunt, 1mA/LSB, 8A max
+22:07:02.026 [PWR after BQ config] VSYS=4.30 V, I=0 mA
+22:07:02.026 Display initialized
+22:07:02.026 [PWR after display init] VSYS=4.30 V, I=0 mA
+22:07:02.026 
+22:07:02.026 === Starting System Initialization ===
+22:07:02.026 
+22:07:02.026 Loading WiFi config...
+22:07:02.026 Attempting to mount LittleFS...
+22:07:02.027 LittleFS mounted successfully!
+22:07:02.027 Listing files in LittleFS root:
+22:07:02.027   Found file: README.md (1693 bytes)
+22:07:02.027   Found file: certs (0 bytes)
+22:07:02.027   Found file: config.json.example (475 bytes)
+22:07:02.027   Found file: config.json (423 bytes)
+22:07:02.027 Attempting to open /config.json...
+22:07:02.096 Config file opened successfully!
+22:07:02.096 [DBG] A: after file open
+22:07:02.096 [DBG] B: reset_reason=9
+22:07:02.096 [DBG] C: free_heap=304876
+22:07:02.096 [DBG] D: free_psram=8374195
+22:07:02.096 [DBG] Allocating DynamicJsonDocument(1024)...
+22:07:02.096 [DBG] Doc allocated. Parsing...
+22:07:02.097 [DBG] Parse returned. Closing file...
+22:07:02.097 [DBG] File closed.
+22:07:02.097 [DBG] Extracting ssid...
+22:07:02.097 [DBG] Extracting password...
+22:07:02.097 [DBG] Extracting deviceId...
+22:07:02.097 [DBG] ssid='Wombledon' deviceId='motionplay-device-002'
+22:07:02.097 API Endpoint: https://gur8ivkb44.execute-api.us-west-2.amazonaws.com/prod
+22:07:02.097 [DBG] loadConfig complete.
+22:07:02.299 Config loaded successfully
+22:07:02.299 Connecting to WiFi...
+22:07:02.299 Connecting to WiFi: Wombledon
+22:07:02.926 
+22:07:02.926 
+22:07:02.926 =================================
+22:07:02.926 Motion Play Device - BOOT
+22:07:02.926 =================================
+22:07:02.926 =================================
+22:07:02.927 
+22:07:02.927 === Configuring BQ24195 (input current limit) ===
+22:07:02.927 [   796][I][esp32-hal-i2c.c:75] i2cInit(): Initialising I2C Master: sda=43 scl=44 freq=100000
+22:07:02.927 [I2C SCAN] Scanning 0x03..0x77...
+22:07:02.927 [I2C SCAN]   Found device at 0x40
+22:07:02.927 [I2C SCAN]   Found device at 0x70
+22:07:02.927 [I2C SCAN] Done. 2 device(s) responded.
+22:07:02.927 BQ24195 not found at 0x6B - skipping (bare T-Display?)
+22:07:02.984 [PowerMonitor] INA219 configured: 10mR shunt, 1mA/LSB, 8A max
+22:07:02.984 [PWR after BQ config] VSYS=4.30 V, I=0 mA
+22:07:02.985 Display initialized
+22:07:02.985 [PWR after display init] VSYS=4.30 V, I=0 mA
+22:07:02.985 
+22:07:02.985 === Starting System Initialization ===
+22:07:02.985 
+22:07:02.985 Loading WiFi config...
+22:07:02.985 Attempting to mount LittleFS...
+22:07:02.985 LittleFS mounted successfully!
+22:07:02.985 Listing files in LittleFS root:
+22:07:02.985   Found file: README.md (1693 bytes)
+22:07:02.985   Found file: certs (0 bytes)
+22:07:02.985   Found file: config.json.example (475 bytes)
+22:07:02.985   Found file: config.json (423 bytes)
+22:07:02.985 Attempting to open /config.json...
+22:07:03.054 Config file opened successfully!
+22:07:03.054 [DBG] A: after file open
+22:07:03.054 [DBG] B: reset_reason=1
+22:07:03.054 [DBG] C: free_heap=304876
+22:07:03.054 [DBG] D: free_psram=8374195
+22:07:03.054 [DBG] Allocating DynamicJsonDocument(1024)...
+22:07:03.054 [DBG] Doc allocated. Parsing...
+22:07:03.054 [DBG] Parse returned. Closing file...
+22:07:03.055 [DBG] File closed.
+22:07:03.055 [DBG] Extracting ssid...
+22:07:03.055 [DBG] Extracting password...
+22:07:03.055 [DBG] Extracting deviceId...
+22:07:03.055 [DBG] ssid='Wombledon' deviceId='motionplay-device-002'
+22:07:03.055 API Endpoint: https://gur8ivkb44.execute-api.us-west-2.amazonaws.com/prod
+22:07:03.055 [DBG] loadConfig complete.
+22:07:03.259 Config loaded successfully
+22:07:03.259 Connecting to WiFi...
+22:07:03.259 Connecting to WiFi: Wombledon
+22:07:03.883 
+22:07:03.883 
+22:07:03.884 =================================
+22:07:03.884 Motion Play Device - BOOT
+22:07:03.884 =================================
+22:07:03.884 =================================
+22:07:03.884 
+22:07:03.884 === Configuring BQ24195 (input current limit) ===
+22:07:03.884 [   797][I][esp32-hal-i2c.c:75] i2cInit(): Initialising I2C Master: sda=43 scl=44 freq=100000
+22:07:03.884 [I2C SCAN] Scanning 0x03..0x77...
+22:07:03.884 [I2C SCAN]   Found device at 0x40
+22:07:03.884 [I2C SCAN]   Found device at 0x70
+22:07:03.884 [I2C SCAN] Done. 2 device(s) responded.
+22:07:03.884 BQ24195 not found at 0x6B - skipping (bare T-Display?)
+22:07:04.085 [PowerMonitor] INA219 configured: 10mR shunt, 1mA/LSB, 8A max
+22:07:04.086 [PWR after BQ config] VSYS=4.30 V, I=0 mA
+22:07:04.086 Display initialized
+22:07:04.086 [PWR after display init] VSYS=4.30 V, I=0 mA
+22:07:04.086 
+22:07:04.086 === Starting System Initialization ===
+22:07:04.086 
+22:07:04.086 Loading WiFi config...
+22:07:04.086 Attempting to mount LittleFS...
+22:07:04.086 LittleFS mounted successfully!
+22:07:04.086 Listing files in LittleFS root:
+22:07:04.086   Found file: README.md (1693 bytes)
+22:07:04.729 
+22:07:04.729 
+22:07:04.729 =================================
+22:07:04.729 Motion Play Device - BOOT
+22:07:04.729 =================================
+22:07:04.729 =================================
+22:07:04.729 
+22:07:04.729 === Configuring BQ24195 (input current limit) ===
+22:07:04.729 [   797][I][esp32-hal-i2c.c:75] i2cInit(): Initialising I2C Master: sda=43 scl=44 freq=100000
+22:07:04.729 [I2C SCAN] Scanning 0x03..0x77...
+22:07:04.729 [I2C SCAN]   Found device at 0x40
+22:07:04.729 [I2C SCAN]   Found device at 0x70
+22:07:04.729 [I2C SCAN] Done. 2 device(s) responded.
+22:07:04.729 BQ24195 not found at 0x6B - skipping (bare T-Display?)
+22:07:04.787 [PowerMonitor] INA219 configured: 10mR shunt, 1mA/LSB, 8A max
+22:07:04.787 [PWR after BQ config] VSYS=4.30 V, I=0 mA
+22:07:04.787 Display initialized
+22:07:04.787 [PWR after display init] VSYS=4.30 V, I=0 mA
+22:07:04.787 
+22:07:04.788 === Starting System Initialization ===
+22:07:04.788 
+22:07:04.788 Loading WiFi config...
+22:07:04.788 Attempting to mount LittleFS...
+22:07:04.788 LittleFS mounted successfully!
+22:07:04.788 Listing files in LittleFS root:
+22:07:04.788   Found file: README.md (1693 bytes)
+22:07:04.788   Found file: certs (0 bytes)
+22:07:04.788   Found file: config.json.example (475 bytes)
+22:07:04.788   Found file: config.json (423 bytes)
+22:07:04.788 Attempting to open /config.json...
+22:07:04.857 Config file opened successfully!
+22:07:04.857 [DBG] A: after file open
+22:07:04.857 [DBG] B: reset_reason=9
+22:07:04.857 [DBG] C: free_heap=304876
+22:07:04.857 [DBG] D: free_psram=8374195
+22:07:04.858 [DBG] Allocating DynamicJsonDocument(1024)...
+22:07:04.858 [DBG] Doc allocated. Parsing...
+22:07:04.858 [DBG] Parse returned. Closing file...
+22:07:04.858 [DBG] File closed.
+22:07:04.858 [DBG] Extracting ssid...
+22:07:04.858 [DBG] Extracting password...
+22:07:04.858 [DBG] Extracting deviceId...
+22:07:04.858 [DBG] ssid='Wombledon' deviceId='motionplay-device-002'
+22:07:04.858 API Endpoint: https://gur8ivkb44.execute-api.us-west-2.amazonaws.com/prod
+22:07:04.858 [DBG] loadConfig complete.
+22:07:05.063 Config loaded successfully
+22:07:05.063 Connecting to WiFi...
+22:07:05.063 Connecting to WiFi: Wombledon
+22:07:05.687 
+22:07:05.687 
+22:07:05.687 =================================
+22:07:05.687 Motion Play Device - BOOT
+22:07:05.687 =================================
+22:07:05.687 =================================
+22:07:05.688 
+22:07:05.688 === Configuring BQ24195 (input current limit) ===
+22:07:05.688 [   796][I][esp32-hal-i2c.c:75] i2cInit(): Initialising I2C Master: sda=43 scl=44 freq=100000
+22:07:05.688 [I2C SCAN] Scanning 0x03..0x77...
+22:07:05.688 [I2C SCAN]   Found device at 0x40
+22:07:05.688 [I2C SCAN]   Found device at 0x70
+22:07:05.688 [I2C SCAN] Done. 2 device(s) responded.
+22:07:05.688 BQ24195 not found at 0x6B - skipping (bare T-Display?)
+22:07:05.745 [PowerMonitor] INA219 configured: 10mR shunt, 1mA/LSB, 8A max
+22:07:05.745 [PWR after BQ config] VSYS=4.30 V, I=0 mA
+22:07:05.745 Display initialized
+22:07:05.745 [PWR after display init] VSYS=4.30 V, I=0 mA
+22:07:05.745 
+22:07:05.746 === Starting System Initialization ===
+22:07:05.746 
+22:07:05.746 Loading WiFi config...
+22:07:05.746 Attempting to mount LittleFS...
+22:07:05.746 LittleFS mounted successfully!
+22:07:05.746 Listing files in LittleFS root:
+22:07:05.746   Found file: README.md (1693 bytes)
+22:07:05.746   Found file: certs (0 bytes)
+22:07:05.746   Found file: config.json.example (475 bytes)
+22:07:05.746   Found file: config.json (423 bytes)
+22:07:05.746 Attempting to open /config.json...
+22:07:05.815 Config file opened successfully!
+22:07:05.815 [DBG] A: after file open
+22:07:05.816 [DBG] B: reset_reason=1
+22:07:05.816 [DBG] C: free_heap=304876
+22:07:05.816 [DBG] D: free_psram=8374195
+22:07:05.816 [DBG] Allocating DynamicJsonDocument(1024)...
+22:07:05.816 [DBG] Doc allocated. Parsing...
+22:07:05.816 [DBG] Parse returned. Closing file...
+22:07:05.816 [DBG] File closed.
+22:07:05.816 [DBG] Extracting ssid...
+22:07:05.816 [DBG] Extracting password...
+22:07:05.816 [DBG] Extracting deviceId...
+22:07:05.816 [DBG] ssid='Wombledon' deviceId='motionplay-device-002'
+22:07:05.816 API Endpoint: https://gur8ivkb44.execute-api.us-west-2.amazonaws.com/prod
+22:07:05.816 [DBG] loadConfig complete.
+22:07:06.021 Config loaded successfully
+22:07:06.021 Connecting to WiFi...
+22:07:06.021 Connecting to WiFi: Wombledon
+22:07:06.645 
+22:07:06.645 
+22:07:06.645 =================================
+22:07:06.645 Motion Play Device - BOOT
+22:07:06.645 =================================
+22:07:06.645 =================================
+22:07:06.645 
+22:07:06.645 === Configuring BQ24195 (input current limit) ===
+22:07:06.645 [   796][I][esp32-hal-i2c.c:75] i2cInit(): Initialising I2C Master: sda=43 scl=44 freq=100000
+22:07:06.646 [I2C SCAN] Scanning 0x03..0x77...
+22:07:06.646 [I2C SCAN]   Found device at 0x40
+22:07:06.646 [I2C SCAN]   Found device at 0x70
+22:07:06.646 [I2C SCAN] Done. 2 device(s) responded.
+22:07:06.646 BQ24195 not found at 0x6B - skipping (bare T-Display?)
+22:07:06.849 [PowerMonitor] INA219 configured: 10mR shunt, 1mA/LSB, 8A max
+22:07:06.849 [PWR after BQ config] VSYS=4.31 V, I=0 mA
+22:07:06.849 Display initialized
+22:07:06.849 [PWR after display init] VSYS=4.31 V, I=0 mA
+22:07:06.849 
+22:07:06.849 === Starting System Initialization ===
+22:07:06.849 
+22:07:06.849 Loading WiFi config...
+22:07:06.849 Attempting to mount LittleFS...
+22:07:06.849 LittleFS mounted successfully!
+22:07:06.849 Listing files in LittleFS root:
+22:07:06.849   Found file: README.md (1693 bytes)
+22:07:07.492 
+22:07:07.492 
+22:07:07.492 =================================
+22:07:07.493 Motion Play Device - BOOT
+22:07:07.493 =================================
+22:07:07.493 =================================
+22:07:07.493 
+22:07:07.493 === Configuring BQ24195 (input current limit) ===
+22:07:07.493 [   797][I][esp32-hal-i2c.c:75] i2cInit(): Initialising I2C Master: sda=43 scl=44 freq=100000
+22:07:07.493 [I2C SCAN] Scanning 0x03..0x77...
+22:07:07.493 [I2C SCAN]   Found device at 0x40
+22:07:07.493 [I2C SCAN]   Found device at 0x70
+22:07:07.493 [I2C SCAN] Done. 2 device(s) responded.
+22:07:07.493 BQ24195 not found at 0x6B - skipping (bare T-Display?)
+22:07:07.697 [PowerMonitor] INA219 configured: 10mR shunt, 1mA/LSB, 8A max
+22:07:07.697 [PWR after BQ config] VSYS=4.31 V, I=0 mA
+22:07:07.697 Display initialized
+22:07:07.697 [PWR after display init] VSYS=4.31 V, I=0 mA
+22:07:07.697 
+22:07:07.697 === Starting System Initialization ===
+22:07:07.697 
+22:07:07.697 Loading WiFi config...
+22:07:07.697 Attempting to mount LittleFS...
+22:07:07.697 LittleFS mounted successfully!
+22:07:07.697 Listing files in LittleFS root:
+22:07:07.697   Found file: README.md (1693 bytes)
+22:07:08.339 
+22:07:08.339 
+22:07:08.339 =================================
+22:07:08.339 Motion Play Device - BOOT
+22:07:08.339 =================================
+22:07:08.339 =================================
+22:07:08.339 
+22:07:08.340 === Configuring BQ24195 (input current limit) ===
+22:07:08.340 [   797][I][esp32-hal-i2c.c:75] i2cInit(): Initialising I2C Master: sda=43 scl=44 freq=100000
+22:07:08.340 [I2C SCAN] Scanning 0x03..0x77...
+22:07:08.340 [I2C SCAN]   Found device at 0x40
+22:07:08.340 [I2C SCAN]   Found device at 0x70
+22:07:08.340 [I2C SCAN] Done. 2 device(s) responded.
+22:07:08.340 BQ24195 not found at 0x6B - skipping (bare T-Display?)
+22:07:08.542 [PowerMonitor] INA219 configured: 10mR shunt, 1mA/LSB, 8A max
+22:07:08.542 [PWR after BQ config] VSYS=4.32 V, I=0 mA
+22:07:08.542 Display initialized
+22:07:08.542 [PWR after display init] VSYS=4.32 V, I=0 mA
+22:07:08.542 
+22:07:08.542 === Starting System Initialization ===
+22:07:08.542 
+22:07:08.542 Loading WiFi config...
+22:07:08.542 Attempting to mount LittleFS...
+22:07:08.542 LittleFS mounted successfully!
+22:07:08.543 Listing files in LittleFS root:
+22:07:08.543   Found file: README.md (1693 bytes)

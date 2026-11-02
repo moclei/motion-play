@@ -1,4 +1,4 @@
-> **RETIRED, superseded by `lab/STATE.md`; do not load.** Kept in place because other documents cite this path.
+> **RETIRED, superseded by `lab/investigations/v7-i2c/STATE.md`; do not load.** Kept in place because other documents cite this path.
 
 
 This is a handoff from a previous sessio where we have been debugging a specific, reproducible fault on a custom PCB across several days and multiple sessions. This prompt resumes that work with full continuity. We are not starting over — read the documentation and pick up where the previous session stopped.

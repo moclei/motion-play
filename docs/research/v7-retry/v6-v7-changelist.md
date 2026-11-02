@@ -22,10 +22,10 @@ The user isn't sure whether v6 was tested. This is what the repo and memory reco
 | Date | Event | Source |
 |---|---|---|
 | 2026-03-16 | **v6 ordered** from JLCPCB (PCBA) | `fd632ef` commit message; v6 gerber timestamps |
-| 2026-03-17 | ESP32 integration initiative opened. Its BRIEF says v7 fabrication is "gated on v6 validation". | `docs/initiatives/esp32-integration/BRIEF.md:39` |
+| 2026-03-17 | ESP32 integration initiative opened. Its BRIEF says v7 fabrication is "gated on v6 validation". | `docs/initiatives/archive/esp32-integration/BRIEF.md:39` |
 | 2026-03-26 | Main + sensor-rigid boards revised to 4-pin connectors (design only) | `cc5e603` |
 | 2026-04-03 | Q2 polarity-protection fix committed (v7 design) | `fae477e` (message gives no reason) |
-| 2026-04-07 | **v7 ordered.** The "Confirm v6 board validation is complete (gate for ordering)" checkbox was never ticked. | memory note; v7 gerber timestamps; `docs/initiatives/esp32-integration/TASKS.md:102` |
+| 2026-04-07 | **v7 ordered.** The "Confirm v6 board validation is complete (gate for ordering)" checkbox was never ticked. | memory note; v7 gerber timestamps; `docs/initiatives/archive/esp32-integration/TASKS.md:102` |
 | 2026-04-10 | **BQ24195 IINLIM brownout found on a v6 board and fixed in firmware.** "VSYS held steady, display booted normally." | memory `project_bq24195_iinlim_fix` |
 | 2026-04-13 | Firmware committed with `configureBQ24195()`, a new INA219 `PowerMonitor`, and LED-strip current-draw test modes with a display UI | `4da1c67` |
 | **2026-04-14** | **11 sensor sessions uploaded** (device-002, 15:17–17:12 PDT): 6/6 sensors active, **0 I²C errors on every sensor**, 400 kHz, `live_debug` captures with valid a→b / b→a detections. These are the last sessions in the table. | DynamoDB `MotionPlaySessions` (us-west-2), e.g. `device-002_30914`, `device-002_174516` |

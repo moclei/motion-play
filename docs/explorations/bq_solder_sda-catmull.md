@@ -1,4 +1,4 @@
-> **Pre-retry interpretation: conclusions not authoritative; see `lab/STATE.md`.** Reference facts may be cited from this file; its conclusions may not.
+> **Pre-retry interpretation: conclusions not authoritative; see `lab/investigations/v7-i2c/STATE.md`.** Reference facts may be cited from this file; its conclusions may not.
 
 # Scope probe direct on BQ24195 SDA pin 6 — procedure plan
 

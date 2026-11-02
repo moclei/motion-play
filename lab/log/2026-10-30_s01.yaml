@@ -1,0 +1,529 @@
+# 2026-10-30_s01.yaml — session log written by tools/lab/capture.py. Fill every TODO (template: lab/templates/log.yaml).
+session_id: "2026-10-30_s01"
+kind: "scope"
+operator: "user"
+ai_session: "debugger (V7R-019; debug/v7-track-4)"
+dut: {board_id: "v7-B3", firmware_commit: "90053af", firmware_env: "u3-remap bd97d883 (V7R-019 card delta; all validation and arms); End: motion-play-v7-diag 166f5f40", declared_baseline: "v7-clean"}
+scope: {model: "Rigol DHO804", serial: "DHO8A282M00872", firmware: "00.01.05", setup_file: "2026-10-30_V7R-019_val_V3_01.setup.bin"}
+validation:
+  passed: true
+  V2_probe_ratio: {CH1: "10x/fixed 10:1 (SQ500 #1)", CH2: "10x/fixed 10:1 (SQ500 #2)"}
+  V3_comp_png: "2026-10-30_V7R-019_val_V3_01.png (CH1), 2026-10-30_V7R-019_val_V3_02.png (CH2)"
+  V5:
+    ctl_sd_mV: {CH1: 5.42, CH2: 4.98}
+    dut_sd_mV: {CH1: 5.65, CH2: 5.18}
+    excess_rms_mV: {CH1: 1.6, CH2: 1.43}
+    offset_mV: {CH1: -12.83, CH2: -15.51}
+  V6_ground: {method: "ground springs (both probes)", point: "pad C (C9.1); V5b tips on C10.1", length_mm: 0}
+  V7_idle_high_V: {CH1: 3.273, CH2: 3.260}   # val_V7_01, u3-remap mode r (all pads released), i2c_frame.py idle
+  V8_decode_ok: true   # val_V8_A1_01: Write:d6 then red mark (NACK, failing state), started by mode a, 20 us/div, address trigger 0x6B write (V7R-013 adaptation)
+  notes: ""
+channels:
+  CH1: {probe: "SQ500 #1", ratio: "10x", signal: "SDA", point: "TPIO43 (pad A)", bw_limit: "OFF", v_div_V: 1.0, offset_V: -1.5, coupling: "DC"}
+  CH2: {probe: "SQ500 #2", ratio: "10x", signal: "SCL", point: "TPIO44 (pad B)", bw_limit: "OFF", v_div_V: 2.0, offset_V: 0.0, coupling: "DC"}
+measurements:
+  - test_id: "V7R-019"
+    arm: "val_V3"
+    time: "2026-10-30T22:28:13"
+    trigger: {type: "EDGE", sweep: "AUTO", source: "CHAN1", slope: "POS", level_V: 1.5}
+    timebase_s_div: 0.0002
+    method: "auto"
+    feature: "V3 Cal square wave"
+    values:
+      - {name: "VAMP", ch: "CH1", value_mV: 3003.7, raw: "3.0037E+00"}
+      - {name: "VTOP", ch: "CH1", value_mV: 2967.7, raw: "2.9677E+00"}
+      - {name: "VBASe", ch: "CH1", value_mV: -36.0, raw: "-3.6000E-02"}
+      - {name: "VAMP", ch: "CH2", valid: false, raw: "9.9000E+37"}
+      - {name: "VTOP", ch: "CH2", valid: false, raw: "9.9000E+37"}
+      - {name: "VBASe", ch: "CH2", valid: false, raw: "9.9000E+37"}
+    captures: ["2026-10-30_V7R-019_val_V3_01.png", "2026-10-30_V7R-019_val_V3_01.csv", "2026-10-30_V7R-019_val_V3_01.setup.bin"]
+    raw_observation: "flat, square corners (user)"
+    ai_read:
+      - capture: 2026-10-30_V7R-019_val_V3_01.png
+        settings_seen: {CH1_v_div: 1V, CH2_v_div: 2V, timebase: 200us/div, trigger: "edge CH1 1.50V"}
+        values_seen: {Vamp_C1: 3.0037V, Vtop_C1: 2.9677V, Vbase_C1: -36.000mV}
+        mismatch: none
+    source: "tools/lab/capture.py"
+    scope_settings:
+      channels:
+        CH1: {probe: "10", bw_limit: "OFF", scale: "1.000000E+00", offset: "-1.500000E+00", coupling: "DC", invert: "0", units: "VOLT"}
+        CH2: {probe: "10", bw_limit: "OFF", scale: "2.000000E+00", offset: "0.000000E+00", coupling: "DC", invert: "0", units: "VOLT"}
+      timebase: {scale: "2.000000E-4", offset: "0.000000", mode: "MAIN"}
+      acquire: {srate: "2.500000E+6", mdepth: "1.0000E+04", type: "NORM"}
+      trigger: {mode: "EDGE", sweep: "AUTO", source: "CHAN1", slope: "POS", level: "1.500000E0"}
+      bus1: {mode: "IIC", scl_source: "CHAN2", sda_source: "CHAN1", address: "RW", threshold_sda: "1.650000E0", threshold_scl: "1.650000E0"}
+      measure: {threshold_type: "PERC", max_pct: "7.000000E+01", mid_pct: "5.000000E+01", min_pct: "3.000000E+01", amsource: "OFF"}
+      trigger_status: {before: "TD", after_stop: "STOP"}
+    waveform:
+      mode: "RAW"
+      format: "ASCii"
+      points: 10000
+      read: "single"
+      preamble: {CH1: "2,2,10000,1,4.000000E-7,-2.000000E-3,0.000000,1.3333E-04,-11250,32768", CH2: "2,2,10000,1,4.000000E-7,-2.000000E-3,0.000000,2.6667E-04,0,32768"}
+    scope_clock: {set_to: "2026-10-30T22:28:13", read_back: "2026-10-30 22:28:13", ok: true, delta_s: 0.0}
+    scpi_errors: []
+  - test_id: "V7R-019"
+    arm: "val_V3"
+    time: "2026-10-30T22:29:51"
+    trigger: {type: "EDGE", sweep: "AUTO", source: "CHAN2", slope: "POS", level_V: 1.5}
+    timebase_s_div: 0.0002
+    method: "auto"
+    feature: "V3 Cal square wave"
+    values:
+      - {name: "VAMP", ch: "CH1", valid: false, raw: "9.9000E+37"}
+      - {name: "VTOP", ch: "CH1", valid: false, raw: "9.9000E+37"}
+      - {name: "VBASe", ch: "CH1", valid: false, raw: "9.9000E+37"}
+      - {name: "VAMP", ch: "CH2", value_mV: 3020.8, raw: "3.0208E+00"}
+      - {name: "VTOP", ch: "CH2", value_mV: 2967.7, raw: "2.9677E+00"}
+      - {name: "VBASe", ch: "CH2", value_mV: -53.067, raw: "-5.3067E-02"}
+    captures: ["2026-10-30_V7R-019_val_V3_02.png", "2026-10-30_V7R-019_val_V3_02.csv", "2026-10-30_V7R-019_val_V3_02.setup.bin"]
+    raw_observation: "flat, square corners (user)"
+    ai_read:
+      - capture: 2026-10-30_V7R-019_val_V3_02.png
+        settings_seen: {CH1_v_div: 1V, CH2_v_div: 1V, timebase: 200us/div, trigger: "edge CH2 1.50V"}
+        values_seen: {Vamp_C2: 3.0208V, Vtop_C2: 2.9677V, Vbase_C2: -53.066mV}
+        mismatch: none
+    source: "tools/lab/capture.py"
+    scope_settings:
+      channels:
+        CH1: {probe: "10", bw_limit: "OFF", scale: "1.000000E+00", offset: "-1.500000E+00", coupling: "DC", invert: "0", units: "VOLT"}
+        CH2: {probe: "10", bw_limit: "OFF", scale: "1.000000E+00", offset: "-1.500000E+00", coupling: "DC", invert: "0", units: "VOLT"}
+      timebase: {scale: "2.000000E-4", offset: "0.000000", mode: "MAIN"}
+      acquire: {srate: "2.500000E+6", mdepth: "1.0000E+04", type: "NORM"}
+      trigger: {mode: "EDGE", sweep: "AUTO", source: "CHAN2", slope: "POS", level: "1.500000E0"}
+      bus1: {mode: "IIC", scl_source: "CHAN2", sda_source: "CHAN1", address: "RW", threshold_sda: "1.650000E0", threshold_scl: "1.650000E0"}
+      measure: {threshold_type: "PERC", max_pct: "7.000000E+01", mid_pct: "5.000000E+01", min_pct: "3.000000E+01", amsource: "OFF"}
+      trigger_status: {before: "TD", after_stop: "STOP"}
+    waveform:
+      mode: "RAW"
+      format: "ASCii"
+      points: 10000
+      read: "single"
+      preamble: {CH1: "2,2,10000,1,4.000000E-7,-2.000000E-3,0.000000,1.3333E-04,-11250,32768", CH2: "2,2,10000,1,4.000000E-7,-2.000000E-3,0.000000,1.3333E-04,-11250,32768"}
+    scope_clock: {set_to: "2026-10-30T22:29:51", read_back: "2026-10-30 22:29:51", ok: true, delta_s: 0.0}
+    scpi_errors: []
+    channel_drift: ["CH2.v_div_V: earlier val_V3 entry 2.0, scope 1.0", "CH2.offset_V: earlier val_V3 entry 0.0, scope -1.5"]
+  - test_id: "V7R-019"
+    arm: "val_V5ctl"
+    time: "2026-10-30T22:32:11"
+    trigger: {type: "EDGE", sweep: "AUTO", source: "CHAN1", slope: "POS", level_V: 1.5}
+    timebase_s_div: 1.0e-05
+    method: "auto"
+    feature: "V5a noise control, tips on Cal ground"
+    values:
+      - {name: "VPP", ch: "CH1", value_mV: 24.333, raw: "2.4333E-02"}
+      - {name: "VPP", ch: "CH2", value_mV: 28.133, raw: "2.8133E-02"}
+    captures: ["2026-10-30_V7R-019_val_V5ctl_01.png", "2026-10-30_V7R-019_val_V5ctl_01.csv", "2026-10-30_V7R-019_val_V5ctl_01.setup.bin"]
+    raw_observation: "direct on Cal ground (user)"
+    ai_read: []   # PNG not opened by the session; values from the CSV (noise_floor.py / i2c_frame.py)
+    source: "tools/lab/capture.py"
+    scope_settings:
+      channels:
+        CH1: {probe: "10", bw_limit: "OFF", scale: "5.000000E-01", offset: "-1.650000E+00", coupling: "DC", invert: "0", units: "VOLT"}
+        CH2: {probe: "10", bw_limit: "OFF", scale: "5.000000E-01", offset: "-1.650000E+00", coupling: "DC", invert: "0", units: "VOLT"}
+      timebase: {scale: "1.000000E-5", offset: "0.000000", mode: "MAIN"}
+      acquire: {srate: "6.250000E+7", mdepth: "1.0000E+04", type: "NORM"}
+      trigger: {mode: "EDGE", sweep: "AUTO", source: "CHAN1", slope: "POS", level: "1.500000E0"}
+      bus1: {mode: "IIC", scl_source: "CHAN2", sda_source: "CHAN1", address: "RW", threshold_sda: "1.650000E0", threshold_scl: "1.650000E0"}
+      measure: {threshold_type: "PERC", max_pct: "7.000000E+01", mid_pct: "5.000000E+01", min_pct: "3.000000E+01", amsource: "OFF"}
+      trigger_status: {before: "WAIT", after_stop: "STOP"}
+    waveform:
+      mode: "RAW"
+      format: "ASCii"
+      points: 10000
+      read: "single"
+      preamble: {CH1: "2,2,10000,1,1.600000E-8,-8.000000E-5,0.000000,6.6667E-05,-24750,32768", CH2: "2,2,10000,1,1.600000E-8,-8.000000E-5,0.000000,6.6667E-05,-24750,32768"}
+    scope_clock: {set_to: "2026-10-30T22:32:11", read_back: "2026-10-30 22:32:11", ok: true, delta_s: 0.0}
+    scpi_errors: []
+  - test_id: "V7R-019"
+    arm: "val_V5"
+    time: "2026-10-30T22:48:14"
+    trigger: {type: "EDGE", sweep: "AUTO", source: "CHAN1", slope: "POS", level_V: 1.5}
+    timebase_s_div: 1.0e-05
+    method: "auto"
+    feature: "V5b noise, springs C9.1, tips C10.1, v7 powered (mode a traffic, card deviation 4)"
+    values:
+      - {name: "VPP", ch: "CH1", value_mV: 24.533, raw: "2.4533E-02"}
+      - {name: "VPP", ch: "CH2", value_mV: 24.867, raw: "2.4867E-02"}
+    captures: ["2026-10-30_V7R-019_val_V5_01.png", "2026-10-30_V7R-019_val_V5_01.csv", "2026-10-30_V7R-019_val_V5_01.setup.bin"]
+    raw_observation: "Looks good; On, all good (user)"
+    ai_read: []   # PNG not opened by the session; values from the CSV (noise_floor.py / i2c_frame.py)
+    source: "tools/lab/capture.py"
+    scope_settings:
+      channels:
+        CH1: {probe: "10", bw_limit: "OFF", scale: "5.000000E-01", offset: "-1.650000E+00", coupling: "DC", invert: "0", units: "VOLT"}
+        CH2: {probe: "10", bw_limit: "OFF", scale: "5.000000E-01", offset: "-1.650000E+00", coupling: "DC", invert: "0", units: "VOLT"}
+      timebase: {scale: "1.000000E-5", offset: "0.000000", mode: "MAIN"}
+      acquire: {srate: "6.250000E+7", mdepth: "1.0000E+04", type: "NORM"}
+      trigger: {mode: "EDGE", sweep: "AUTO", source: "CHAN1", slope: "POS", level: "1.500000E0"}
+      bus1: {mode: "IIC", scl_source: "CHAN2", sda_source: "CHAN1", address: "RW", threshold_sda: "1.650000E0", threshold_scl: "1.650000E0"}
+      measure: {threshold_type: "PERC", max_pct: "7.000000E+01", mid_pct: "5.000000E+01", min_pct: "3.000000E+01", amsource: "OFF"}
+      trigger_status: {before: "WAIT", after_stop: "STOP"}
+    waveform:
+      mode: "RAW"
+      format: "ASCii"
+      points: 10000
+      read: "single"
+      preamble: {CH1: "2,2,10000,1,1.600000E-8,-8.000000E-5,0.000000,6.6667E-05,-24750,32768", CH2: "2,2,10000,1,1.600000E-8,-8.000000E-5,0.000000,6.6667E-05,-24750,32768"}
+    scope_clock: {set_to: "2026-10-30T22:48:14", read_back: "2026-10-30 22:48:14", ok: true, delta_s: 0.0}
+    scpi_errors: []
+  - test_id: "V7R-019"
+    arm: "val_V7"
+    time: "2026-10-30T22:54:49"
+    trigger: {type: "EDGE", sweep: "AUTO", source: "CHAN1", slope: "POS", level_V: 1.5}
+    timebase_s_div: 1.0e-05
+    method: "auto"
+    feature: "V7 idle high at A/B, mode r"
+    values:
+      - {name: "VPP", ch: "CH1", value_mV: 71.667, raw: "7.1667E-02"}
+      - {name: "VPP", ch: "CH2", value_mV: 41.733, raw: "4.1733E-02"}
+    captures: ["2026-10-30_V7R-019_val_V7_01.png", "2026-10-30_V7R-019_val_V7_01.csv", "2026-10-30_V7R-019_val_V7_01.setup.bin"]
+    raw_observation: "All looked good; Looks good (user)"
+    ai_read: []   # PNG not opened by the session; values from the CSV (noise_floor.py / i2c_frame.py)
+    source: "tools/lab/capture.py"
+    scope_settings:
+      channels:
+        CH1: {probe: "10", bw_limit: "OFF", scale: "5.000000E-01", offset: "-1.650000E+00", coupling: "DC", invert: "0", units: "VOLT"}
+        CH2: {probe: "10", bw_limit: "OFF", scale: "5.000000E-01", offset: "-1.650000E+00", coupling: "DC", invert: "0", units: "VOLT"}
+      timebase: {scale: "1.000000E-5", offset: "0.000000", mode: "MAIN"}
+      acquire: {srate: "6.250000E+7", mdepth: "1.0000E+04", type: "NORM"}
+      trigger: {mode: "EDGE", sweep: "AUTO", source: "CHAN1", slope: "POS", level: "1.500000E0"}
+      bus1: {mode: "IIC", scl_source: "CHAN2", sda_source: "CHAN1", address: "RW", threshold_sda: "1.650000E0", threshold_scl: "1.650000E0"}
+      measure: {threshold_type: "PERC", max_pct: "7.000000E+01", mid_pct: "5.000000E+01", min_pct: "3.000000E+01", amsource: "OFF"}
+      trigger_status: {before: "AUTO", after_stop: "STOP"}
+    waveform:
+      mode: "RAW"
+      format: "ASCii"
+      points: 10000
+      read: "single"
+      preamble: {CH1: "2,2,10000,1,1.600000E-8,-8.000000E-5,0.000000,6.6667E-05,-24750,32768", CH2: "2,2,10000,1,1.600000E-8,-8.000000E-5,0.000000,6.6667E-05,-24750,32768"}
+    scope_clock: {set_to: "2026-10-30T22:54:49", read_back: "2026-10-30 22:54:49", ok: true, delta_s: 0.0}
+    scpi_errors: []
+  - test_id: "V7R-019"
+    arm: "val_V8_A1"
+    time: "2026-10-30T22:56:09"
+    trigger: {type: "IIC", sweep: "AUTO", when: "ADDR", scl: "CHAN2", sda: "CHAN1", address: "107", direction: "WRIT", awidth: "7", clevel_V: 1.5, dlevel_V: 1.5}
+    timebase_s_div: 2.0e-05
+    method: "auto"
+    feature: "V8 decode, mode a"
+    values:
+      - {name: "VPP", ch: "CH1", value_mV: 3318.7, raw: "3.3187E+00"}
+      - {name: "VPP", ch: "CH2", value_mV: 3359.6, raw: "3.3596E+00"}
+    captures: ["2026-10-30_V7R-019_val_V8_A1_01.png", "2026-10-30_V7R-019_val_V8_A1_01.csv", "2026-10-30_V7R-019_val_V8_A1_01.setup.bin"]
+    raw_observation: "none (session-run)"
+    ai_read:
+      - capture: 2026-10-30_V7R-019_val_V8_A1_01.png
+        settings_seen: {CH1_v_div: 500mV, CH2_v_div: 500mV, timebase: 20us/div, trigger: "I2C CH1 1.50V"}
+        values_seen: {decode: "Write:80, Write:d6 + red mark, Write:ec", Vbase_C1: 856.40mV, Vbase_C2: 96.933mV}
+        mismatch: none
+    source: "tools/lab/capture.py"
+    scope_settings:
+      channels:
+        CH1: {probe: "10", bw_limit: "OFF", scale: "5.000000E-01", offset: "-1.650000E+00", coupling: "DC", invert: "0", units: "VOLT"}
+        CH2: {probe: "10", bw_limit: "OFF", scale: "5.000000E-01", offset: "-1.650000E+00", coupling: "DC", invert: "0", units: "VOLT"}
+      timebase: {scale: "2.000000E-5", offset: "0.000000", mode: "MAIN"}
+      acquire: {srate: "3.125000E+7", mdepth: "1.0000E+04", type: "NORM"}
+      trigger: {mode: "IIC", sweep: "AUTO", when: "ADDR", clevel: "1.500000E0", scl: "CHAN2", sda: "CHAN1", dlevel: "1.500000E0", awidth: "7", address: "107", direction: "WRIT"}
+      bus1: {mode: "IIC", scl_source: "CHAN2", sda_source: "CHAN1", address: "RW", threshold_sda: "1.650000E0", threshold_scl: "1.650000E0"}
+      measure: {threshold_type: "PERC", max_pct: "7.000000E+01", mid_pct: "5.000000E+01", min_pct: "3.000000E+01", amsource: "OFF"}
+      trigger_status: {before: "STOP", after_stop: "STOP"}
+    waveform:
+      mode: "RAW"
+      format: "ASCii"
+      points: 10000
+      read: "single"
+      preamble: {CH1: "2,2,10000,1,3.200000E-8,-1.600000E-4,0.000000,6.6667E-05,-24750,32768", CH2: "2,2,10000,1,3.200000E-8,-1.600000E-4,0.000000,6.6667E-05,-24750,32768"}
+    scope_clock: {set_to: "2026-10-30T22:56:09", read_back: "2026-10-30 22:56:09", ok: true, delta_s: 0.0}
+    scpi_errors: []
+  - test_id: "V7R-019"
+    arm: "A1"
+    time: "2026-10-30T22:56:36"
+    trigger: {type: "IIC", sweep: "AUTO", when: "ADDR", scl: "CHAN2", sda: "CHAN1", address: "107", direction: "WRIT", awidth: "7", clevel_V: 1.5, dlevel_V: 1.5}
+    timebase_s_div: 1.0e-05
+    method: "auto"
+    feature: "counted D6 frame, A1"
+    values:
+      - {name: "VPP", ch: "CH1", value_mV: 2803.3, raw: "2.8033E+00"}
+      - {name: "VPP", ch: "CH2", value_mV: 3274.2, raw: "3.2742E+00"}
+    captures: ["2026-10-30_V7R-019_A1_01.png", "2026-10-30_V7R-019_A1_01.csv", "2026-10-30_V7R-019_A1_01.setup.bin"]
+    raw_observation: "none (session-run; no operator action in arms)"
+    ai_read: []   # PNG not opened by the session; values from the CSV (noise_floor.py / i2c_frame.py)
+    source: "tools/lab/capture.py"
+    scope_settings:
+      channels:
+        CH1: {probe: "10", bw_limit: "OFF", scale: "5.000000E-01", offset: "-1.650000E+00", coupling: "DC", invert: "0", units: "VOLT"}
+        CH2: {probe: "10", bw_limit: "OFF", scale: "5.000000E-01", offset: "-1.650000E+00", coupling: "DC", invert: "0", units: "VOLT"}
+      timebase: {scale: "1.000000E-5", offset: "0.000000", mode: "MAIN"}
+      acquire: {srate: "6.250000E+7", mdepth: "1.0000E+04", type: "NORM"}
+      trigger: {mode: "IIC", sweep: "AUTO", when: "ADDR", clevel: "1.500000E0", scl: "CHAN2", sda: "CHAN1", dlevel: "1.500000E0", awidth: "7", address: "107", direction: "WRIT"}
+      bus1: {mode: "IIC", scl_source: "CHAN2", sda_source: "CHAN1", address: "RW", threshold_sda: "1.650000E0", threshold_scl: "1.650000E0"}
+      measure: {threshold_type: "PERC", max_pct: "7.000000E+01", mid_pct: "5.000000E+01", min_pct: "3.000000E+01", amsource: "OFF"}
+      trigger_status: {before: "STOP", after_stop: "STOP"}
+    waveform:
+      mode: "RAW"
+      format: "ASCii"
+      points: 10000
+      read: "single"
+      preamble: {CH1: "2,2,10000,1,1.600000E-8,-8.000000E-5,0.000000,6.6667E-05,-24750,32768", CH2: "2,2,10000,1,1.600000E-8,-8.000000E-5,0.000000,6.6667E-05,-24750,32768"}
+    scope_clock: {set_to: "2026-10-30T22:56:36", read_back: "2026-10-30 22:56:36", ok: true, delta_s: 0.0}
+    scpi_errors: []
+  - test_id: "V7R-019"
+    arm: "A1"
+    time: "2026-10-30T22:56:44"
+    trigger: {type: "IIC", sweep: "AUTO", when: "ADDR", scl: "CHAN2", sda: "CHAN1", address: "107", direction: "WRIT", awidth: "7", clevel_V: 1.5, dlevel_V: 1.5}
+    timebase_s_div: 1.0e-05
+    method: "auto"
+    feature: "counted D6 frame, A1"
+    values:
+      - {name: "VPP", ch: "CH1", value_mV: 2866.9, raw: "2.8669E+00"}
+      - {name: "VPP", ch: "CH2", value_mV: 3324.5, raw: "3.3245E+00"}
+    captures: ["2026-10-30_V7R-019_A1_02.png", "2026-10-30_V7R-019_A1_02.csv", "2026-10-30_V7R-019_A1_02.setup.bin"]
+    raw_observation: "none (session-run; no operator action in arms)"
+    ai_read: []   # PNG not opened by the session; values from the CSV (noise_floor.py / i2c_frame.py)
+    source: "tools/lab/capture.py"
+    scope_settings:
+      channels:
+        CH1: {probe: "10", bw_limit: "OFF", scale: "5.000000E-01", offset: "-1.650000E+00", coupling: "DC", invert: "0", units: "VOLT"}
+        CH2: {probe: "10", bw_limit: "OFF", scale: "5.000000E-01", offset: "-1.650000E+00", coupling: "DC", invert: "0", units: "VOLT"}
+      timebase: {scale: "1.000000E-5", offset: "0.000000", mode: "MAIN"}
+      acquire: {srate: "6.250000E+7", mdepth: "1.0000E+04", type: "NORM"}
+      trigger: {mode: "IIC", sweep: "AUTO", when: "ADDR", clevel: "1.500000E0", scl: "CHAN2", sda: "CHAN1", dlevel: "1.500000E0", awidth: "7", address: "107", direction: "WRIT"}
+      bus1: {mode: "IIC", scl_source: "CHAN2", sda_source: "CHAN1", address: "RW", threshold_sda: "1.650000E0", threshold_scl: "1.650000E0"}
+      measure: {threshold_type: "PERC", max_pct: "7.000000E+01", mid_pct: "5.000000E+01", min_pct: "3.000000E+01", amsource: "OFF"}
+      trigger_status: {before: "STOP", after_stop: "STOP"}
+    waveform:
+      mode: "RAW"
+      format: "ASCii"
+      points: 10000
+      read: "single"
+      preamble: {CH1: "2,2,10000,1,1.600000E-8,-8.000000E-5,0.000000,6.6667E-05,-24750,32768", CH2: "2,2,10000,1,1.600000E-8,-8.000000E-5,0.000000,6.6667E-05,-24750,32768"}
+    scope_clock: {set_to: "2026-10-30T22:56:44", read_back: "2026-10-30 22:56:44", ok: true, delta_s: 0.0}
+    scpi_errors: []
+  - test_id: "V7R-019"
+    arm: "A1"
+    time: "2026-10-30T22:56:52"
+    trigger: {type: "IIC", sweep: "AUTO", when: "ADDR", scl: "CHAN2", sda: "CHAN1", address: "107", direction: "WRIT", awidth: "7", clevel_V: 1.5, dlevel_V: 1.5}
+    timebase_s_div: 1.0e-05
+    method: "auto"
+    feature: "counted D6 frame, A1"
+    values:
+      - {name: "VPP", ch: "CH1", value_mV: 2782.0, raw: "2.7820E+00"}
+      - {name: "VPP", ch: "CH2", value_mV: 3323.9, raw: "3.3239E+00"}
+    captures: ["2026-10-30_V7R-019_A1_03.png", "2026-10-30_V7R-019_A1_03.csv", "2026-10-30_V7R-019_A1_03.setup.bin"]
+    raw_observation: "none (session-run; no operator action in arms)"
+    ai_read: []   # PNG not opened by the session; values from the CSV (noise_floor.py / i2c_frame.py)
+    source: "tools/lab/capture.py"
+    scope_settings:
+      channels:
+        CH1: {probe: "10", bw_limit: "OFF", scale: "5.000000E-01", offset: "-1.650000E+00", coupling: "DC", invert: "0", units: "VOLT"}
+        CH2: {probe: "10", bw_limit: "OFF", scale: "5.000000E-01", offset: "-1.650000E+00", coupling: "DC", invert: "0", units: "VOLT"}
+      timebase: {scale: "1.000000E-5", offset: "0.000000", mode: "MAIN"}
+      acquire: {srate: "6.250000E+7", mdepth: "1.0000E+04", type: "NORM"}
+      trigger: {mode: "IIC", sweep: "AUTO", when: "ADDR", clevel: "1.500000E0", scl: "CHAN2", sda: "CHAN1", dlevel: "1.500000E0", awidth: "7", address: "107", direction: "WRIT"}
+      bus1: {mode: "IIC", scl_source: "CHAN2", sda_source: "CHAN1", address: "RW", threshold_sda: "1.650000E0", threshold_scl: "1.650000E0"}
+      measure: {threshold_type: "PERC", max_pct: "7.000000E+01", mid_pct: "5.000000E+01", min_pct: "3.000000E+01", amsource: "OFF"}
+      trigger_status: {before: "STOP", after_stop: "STOP"}
+    waveform:
+      mode: "RAW"
+      format: "ASCii"
+      points: 10000
+      read: "single"
+      preamble: {CH1: "2,2,10000,1,1.600000E-8,-8.000000E-5,0.000000,6.6667E-05,-24750,32768", CH2: "2,2,10000,1,1.600000E-8,-8.000000E-5,0.000000,6.6667E-05,-24750,32768"}
+    scope_clock: {set_to: "2026-10-30T22:56:52", read_back: "2026-10-30 22:56:52", ok: true, delta_s: 0.0}
+    scpi_errors: []
+  - test_id: "V7R-019"
+    arm: "B"
+    time: "2026-10-30T22:57:28"
+    trigger: {type: "IIC", sweep: "AUTO", when: "ADDR", scl: "CHAN2", sda: "CHAN1", address: "107", direction: "WRIT", awidth: "7", clevel_V: 1.5, dlevel_V: 1.5}
+    timebase_s_div: 1.0e-05
+    method: "auto"
+    feature: "counted D6 frame, B"
+    values:
+      - {name: "VPP", ch: "CH1", valid: false, raw: "9.9000E+37"}
+      - {name: "VPP", ch: "CH2", value_mV: 3342.4, raw: "3.3424E+00"}
+    captures: ["2026-10-30_V7R-019_B_01.png", "2026-10-30_V7R-019_B_01.csv", "2026-10-30_V7R-019_B_01.setup.bin"]
+    raw_observation: "none (session-run; no operator action in arms)"
+    ai_read:
+      - capture: 2026-10-30_V7R-019_B_01.png
+        settings_seen: {CH1_v_div: 500mV, CH2_v_div: 500mV, timebase: 10us/div, trigger: "I2C CH1 1.50V"}
+        values_seen: {decode: "Write:d6, no red mark", Vbase_C2: 96.933mV}
+        mismatch: none
+    source: "tools/lab/capture.py"
+    scope_settings:
+      channels:
+        CH1: {probe: "10", bw_limit: "OFF", scale: "5.000000E-01", offset: "-1.650000E+00", coupling: "DC", invert: "0", units: "VOLT"}
+        CH2: {probe: "10", bw_limit: "OFF", scale: "5.000000E-01", offset: "-1.650000E+00", coupling: "DC", invert: "0", units: "VOLT"}
+      timebase: {scale: "1.000000E-5", offset: "0.000000", mode: "MAIN"}
+      acquire: {srate: "6.250000E+7", mdepth: "1.0000E+04", type: "NORM"}
+      trigger: {mode: "IIC", sweep: "AUTO", when: "ADDR", clevel: "1.500000E0", scl: "CHAN2", sda: "CHAN1", dlevel: "1.500000E0", awidth: "7", address: "107", direction: "WRIT"}
+      bus1: {mode: "IIC", scl_source: "CHAN2", sda_source: "CHAN1", address: "RW", threshold_sda: "1.650000E0", threshold_scl: "1.650000E0"}
+      measure: {threshold_type: "PERC", max_pct: "7.000000E+01", mid_pct: "5.000000E+01", min_pct: "3.000000E+01", amsource: "OFF"}
+      trigger_status: {before: "STOP", after_stop: "STOP"}
+    waveform:
+      mode: "RAW"
+      format: "ASCii"
+      points: 10000
+      read: "single"
+      preamble: {CH1: "2,2,10000,1,1.600000E-8,-8.000000E-5,0.000000,6.6667E-05,-24750,32768", CH2: "2,2,10000,1,1.600000E-8,-8.000000E-5,0.000000,6.6667E-05,-24750,32768"}
+    scope_clock: {set_to: "2026-10-30T22:57:28", read_back: "2026-10-30 22:57:28", ok: true, delta_s: 0.0}
+    scpi_errors: []
+  - test_id: "V7R-019"
+    arm: "B"
+    time: "2026-10-30T22:57:36"
+    trigger: {type: "IIC", sweep: "AUTO", when: "ADDR", scl: "CHAN2", sda: "CHAN1", address: "107", direction: "WRIT", awidth: "7", clevel_V: 1.5, dlevel_V: 1.5}
+    timebase_s_div: 1.0e-05
+    method: "auto"
+    feature: "counted D6 frame, B"
+    values:
+      - {name: "VPP", ch: "CH1", value_mV: 3721.5, raw: "3.7215E+00"}
+      - {name: "VPP", ch: "CH2", value_mV: 3322.4, raw: "3.3224E+00"}
+    captures: ["2026-10-30_V7R-019_B_02.png", "2026-10-30_V7R-019_B_02.csv", "2026-10-30_V7R-019_B_02.setup.bin"]
+    raw_observation: "none (session-run; no operator action in arms)"
+    ai_read: []   # PNG not opened by the session; values from the CSV (noise_floor.py / i2c_frame.py)
+    source: "tools/lab/capture.py"
+    scope_settings:
+      channels:
+        CH1: {probe: "10", bw_limit: "OFF", scale: "5.000000E-01", offset: "-1.650000E+00", coupling: "DC", invert: "0", units: "VOLT"}
+        CH2: {probe: "10", bw_limit: "OFF", scale: "5.000000E-01", offset: "-1.650000E+00", coupling: "DC", invert: "0", units: "VOLT"}
+      timebase: {scale: "1.000000E-5", offset: "0.000000", mode: "MAIN"}
+      acquire: {srate: "6.250000E+7", mdepth: "1.0000E+04", type: "NORM"}
+      trigger: {mode: "IIC", sweep: "AUTO", when: "ADDR", clevel: "1.500000E0", scl: "CHAN2", sda: "CHAN1", dlevel: "1.500000E0", awidth: "7", address: "107", direction: "WRIT"}
+      bus1: {mode: "IIC", scl_source: "CHAN2", sda_source: "CHAN1", address: "RW", threshold_sda: "1.650000E0", threshold_scl: "1.650000E0"}
+      measure: {threshold_type: "PERC", max_pct: "7.000000E+01", mid_pct: "5.000000E+01", min_pct: "3.000000E+01", amsource: "OFF"}
+      trigger_status: {before: "STOP", after_stop: "STOP"}
+    waveform:
+      mode: "RAW"
+      format: "ASCii"
+      points: 10000
+      read: "single"
+      preamble: {CH1: "2,2,10000,1,1.600000E-8,-8.000000E-5,0.000000,6.6667E-05,-24750,32768", CH2: "2,2,10000,1,1.600000E-8,-8.000000E-5,0.000000,6.6667E-05,-24750,32768"}
+    scope_clock: {set_to: "2026-10-30T22:57:36", read_back: "2026-10-30 22:57:36", ok: true, delta_s: 0.0}
+    scpi_errors: []
+  - test_id: "V7R-019"
+    arm: "B"
+    time: "2026-10-30T22:57:44"
+    trigger: {type: "IIC", sweep: "AUTO", when: "ADDR", scl: "CHAN2", sda: "CHAN1", address: "107", direction: "WRIT", awidth: "7", clevel_V: 1.5, dlevel_V: 1.5}
+    timebase_s_div: 1.0e-05
+    method: "auto"
+    feature: "counted D6 frame, B"
+    values:
+      - {name: "VPP", ch: "CH1", value_mV: 3873.9, raw: "3.8739E+00"}
+      - {name: "VPP", ch: "CH2", value_mV: 3329.3, raw: "3.3293E+00"}
+    captures: ["2026-10-30_V7R-019_B_03.png", "2026-10-30_V7R-019_B_03.csv", "2026-10-30_V7R-019_B_03.setup.bin"]
+    raw_observation: "none (session-run; no operator action in arms)"
+    ai_read: []   # PNG not opened by the session; values from the CSV (noise_floor.py / i2c_frame.py)
+    source: "tools/lab/capture.py"
+    scope_settings:
+      channels:
+        CH1: {probe: "10", bw_limit: "OFF", scale: "5.000000E-01", offset: "-1.650000E+00", coupling: "DC", invert: "0", units: "VOLT"}
+        CH2: {probe: "10", bw_limit: "OFF", scale: "5.000000E-01", offset: "-1.650000E+00", coupling: "DC", invert: "0", units: "VOLT"}
+      timebase: {scale: "1.000000E-5", offset: "0.000000", mode: "MAIN"}
+      acquire: {srate: "6.250000E+7", mdepth: "1.0000E+04", type: "NORM"}
+      trigger: {mode: "IIC", sweep: "AUTO", when: "ADDR", clevel: "1.500000E0", scl: "CHAN2", sda: "CHAN1", dlevel: "1.500000E0", awidth: "7", address: "107", direction: "WRIT"}
+      bus1: {mode: "IIC", scl_source: "CHAN2", sda_source: "CHAN1", address: "RW", threshold_sda: "1.650000E0", threshold_scl: "1.650000E0"}
+      measure: {threshold_type: "PERC", max_pct: "7.000000E+01", mid_pct: "5.000000E+01", min_pct: "3.000000E+01", amsource: "OFF"}
+      trigger_status: {before: "STOP", after_stop: "STOP"}
+    waveform:
+      mode: "RAW"
+      format: "ASCii"
+      points: 10000
+      read: "single"
+      preamble: {CH1: "2,2,10000,1,1.600000E-8,-8.000000E-5,0.000000,6.6667E-05,-24750,32768", CH2: "2,2,10000,1,1.600000E-8,-8.000000E-5,0.000000,6.6667E-05,-24750,32768"}
+    scope_clock: {set_to: "2026-10-30T22:57:44", read_back: "2026-10-30 22:57:44", ok: true, delta_s: 0.0}
+    scpi_errors: []
+  - test_id: "V7R-019"
+    arm: "A2"
+    time: "2026-10-30T22:58:41"
+    trigger: {type: "IIC", sweep: "AUTO", when: "ADDR", scl: "CHAN2", sda: "CHAN1", address: "107", direction: "WRIT", awidth: "7", clevel_V: 1.5, dlevel_V: 1.5}
+    timebase_s_div: 1.0e-05
+    method: "auto"
+    feature: "counted D6 frame, A2"
+    values:
+      - {name: "VPP", ch: "CH1", value_mV: 2844.1, raw: "2.8441E+00"}
+      - {name: "VPP", ch: "CH2", value_mV: 3315.5, raw: "3.3155E+00"}
+    captures: ["2026-10-30_V7R-019_A2_01.png", "2026-10-30_V7R-019_A2_01.csv", "2026-10-30_V7R-019_A2_01.setup.bin"]
+    raw_observation: "none (session-run; no operator action in arms)"
+    ai_read: []   # PNG not opened by the session; values from the CSV (noise_floor.py / i2c_frame.py)
+    source: "tools/lab/capture.py"
+    scope_settings:
+      channels:
+        CH1: {probe: "10", bw_limit: "OFF", scale: "5.000000E-01", offset: "-1.650000E+00", coupling: "DC", invert: "0", units: "VOLT"}
+        CH2: {probe: "10", bw_limit: "OFF", scale: "5.000000E-01", offset: "-1.650000E+00", coupling: "DC", invert: "0", units: "VOLT"}
+      timebase: {scale: "1.000000E-5", offset: "0.000000", mode: "MAIN"}
+      acquire: {srate: "6.250000E+7", mdepth: "1.0000E+04", type: "NORM"}
+      trigger: {mode: "IIC", sweep: "AUTO", when: "ADDR", clevel: "1.500000E0", scl: "CHAN2", sda: "CHAN1", dlevel: "1.500000E0", awidth: "7", address: "107", direction: "WRIT"}
+      bus1: {mode: "IIC", scl_source: "CHAN2", sda_source: "CHAN1", address: "RW", threshold_sda: "1.650000E0", threshold_scl: "1.650000E0"}
+      measure: {threshold_type: "PERC", max_pct: "7.000000E+01", mid_pct: "5.000000E+01", min_pct: "3.000000E+01", amsource: "OFF"}
+      trigger_status: {before: "STOP", after_stop: "STOP"}
+    waveform:
+      mode: "RAW"
+      format: "ASCii"
+      points: 10000
+      read: "single"
+      preamble: {CH1: "2,2,10000,1,1.600000E-8,-8.000000E-5,0.000000,6.6667E-05,-24750,32768", CH2: "2,2,10000,1,1.600000E-8,-8.000000E-5,0.000000,6.6667E-05,-24750,32768"}
+    scope_clock: {set_to: "2026-10-30T22:58:41", read_back: "2026-10-30 22:58:41", ok: true, delta_s: 0.0}
+    scpi_errors: []
+  - test_id: "V7R-019"
+    arm: "A2"
+    time: "2026-10-30T22:58:49"
+    trigger: {type: "IIC", sweep: "AUTO", when: "ADDR", scl: "CHAN2", sda: "CHAN1", address: "107", direction: "WRIT", awidth: "7", clevel_V: 1.5, dlevel_V: 1.5}
+    timebase_s_div: 1.0e-05
+    method: "auto"
+    feature: "counted D6 frame, A2"
+    values:
+      - {name: "VPP", ch: "CH1", value_mV: 2871.1, raw: "2.8711E+00"}
+      - {name: "VPP", ch: "CH2", value_mV: 3329.3, raw: "3.3293E+00"}
+    captures: ["2026-10-30_V7R-019_A2_02.png", "2026-10-30_V7R-019_A2_02.csv", "2026-10-30_V7R-019_A2_02.setup.bin"]
+    raw_observation: "none (session-run; no operator action in arms)"
+    ai_read: []   # PNG not opened by the session; values from the CSV (noise_floor.py / i2c_frame.py)
+    source: "tools/lab/capture.py"
+    scope_settings:
+      channels:
+        CH1: {probe: "10", bw_limit: "OFF", scale: "5.000000E-01", offset: "-1.650000E+00", coupling: "DC", invert: "0", units: "VOLT"}
+        CH2: {probe: "10", bw_limit: "OFF", scale: "5.000000E-01", offset: "-1.650000E+00", coupling: "DC", invert: "0", units: "VOLT"}
+      timebase: {scale: "1.000000E-5", offset: "0.000000", mode: "MAIN"}
+      acquire: {srate: "6.250000E+7", mdepth: "1.0000E+04", type: "NORM"}
+      trigger: {mode: "IIC", sweep: "AUTO", when: "ADDR", clevel: "1.500000E0", scl: "CHAN2", sda: "CHAN1", dlevel: "1.500000E0", awidth: "7", address: "107", direction: "WRIT"}
+      bus1: {mode: "IIC", scl_source: "CHAN2", sda_source: "CHAN1", address: "RW", threshold_sda: "1.650000E0", threshold_scl: "1.650000E0"}
+      measure: {threshold_type: "PERC", max_pct: "7.000000E+01", mid_pct: "5.000000E+01", min_pct: "3.000000E+01", amsource: "OFF"}
+      trigger_status: {before: "STOP", after_stop: "STOP"}
+    waveform:
+      mode: "RAW"
+      format: "ASCii"
+      points: 10000
+      read: "single"
+      preamble: {CH1: "2,2,10000,1,1.600000E-8,-8.000000E-5,0.000000,6.6667E-05,-24750,32768", CH2: "2,2,10000,1,1.600000E-8,-8.000000E-5,0.000000,6.6667E-05,-24750,32768"}
+    scope_clock: {set_to: "2026-10-30T22:58:49", read_back: "2026-10-30 22:58:49", ok: true, delta_s: 0.0}
+    scpi_errors: []
+  - test_id: "V7R-019"
+    arm: "A2"
+    time: "2026-10-30T22:58:57"
+    trigger: {type: "IIC", sweep: "AUTO", when: "ADDR", scl: "CHAN2", sda: "CHAN1", address: "107", direction: "WRIT", awidth: "7", clevel_V: 1.5, dlevel_V: 1.5}
+    timebase_s_div: 1.0e-05
+    method: "auto"
+    feature: "counted D6 frame, A2"
+    values:
+      - {name: "VPP", ch: "CH1", value_mV: 2846.5, raw: "2.8465E+00"}
+      - {name: "VPP", ch: "CH2", value_mV: 3295.3, raw: "3.2953E+00"}
+    captures: ["2026-10-30_V7R-019_A2_03.png", "2026-10-30_V7R-019_A2_03.csv", "2026-10-30_V7R-019_A2_03.setup.bin"]
+    raw_observation: "none (session-run; no operator action in arms)"
+    ai_read: []   # PNG not opened by the session; values from the CSV (noise_floor.py / i2c_frame.py)
+    source: "tools/lab/capture.py"
+    scope_settings:
+      channels:
+        CH1: {probe: "10", bw_limit: "OFF", scale: "5.000000E-01", offset: "-1.650000E+00", coupling: "DC", invert: "0", units: "VOLT"}
+        CH2: {probe: "10", bw_limit: "OFF", scale: "5.000000E-01", offset: "-1.650000E+00", coupling: "DC", invert: "0", units: "VOLT"}
+      timebase: {scale: "1.000000E-5", offset: "0.000000", mode: "MAIN"}
+      acquire: {srate: "6.250000E+7", mdepth: "1.0000E+04", type: "NORM"}
+      trigger: {mode: "IIC", sweep: "AUTO", when: "ADDR", clevel: "1.500000E0", scl: "CHAN2", sda: "CHAN1", dlevel: "1.500000E0", awidth: "7", address: "107", direction: "WRIT"}
+      bus1: {mode: "IIC", scl_source: "CHAN2", sda_source: "CHAN1", address: "RW", threshold_sda: "1.650000E0", threshold_scl: "1.650000E0"}
+      measure: {threshold_type: "PERC", max_pct: "7.000000E+01", mid_pct: "5.000000E+01", min_pct: "3.000000E+01", amsource: "OFF"}
+      trigger_status: {before: "STOP", after_stop: "STOP"}
+    waveform:
+      mode: "RAW"
+      format: "ASCii"
+      points: 10000
+      read: "single"
+      preamble: {CH1: "2,2,10000,1,1.600000E-8,-8.000000E-5,0.000000,6.6667E-05,-24750,32768", CH2: "2,2,10000,1,1.600000E-8,-8.000000E-5,0.000000,6.6667E-05,-24750,32768"}
+    scope_clock: {set_to: "2026-10-30T22:58:57", read_back: "2026-10-30 22:58:57", ok: true, delta_s: 0.0}
+    scpi_errors: []

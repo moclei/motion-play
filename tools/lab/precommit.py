@@ -3,7 +3,7 @@
 
 Reads the staged index (not the working tree) and rejects the commit when:
   1. a staged card's front matter moves to `status: recorded|abandoned` and
-     lab/STATE.md is not staged with `as_of` = the highest such card ID;
+     lab/investigations/v7-i2c/STATE.md is not staged with `as_of` = the highest such card ID;
   2. a card staged as `recorded` has an empty (or still `<hash>`) Result commit,
      or no `lab/evidence/<ID>/` reference in its `## Conclusion`;
   3. a staged card's V7R-NNN number is used by another card file;
@@ -25,7 +25,7 @@ import validate_log  # noqa: E402
 
 CARD_PATH_RE = re.compile(r"^lab/cards/(V7R-(\d{3,})-.+\.md)$")
 LOG_PATH_RE = re.compile(r"^lab/log/([^/]+)\.yaml$")
-STATE = "lab/STATE.md"
+STATE = "lab/investigations/v7-i2c/STATE.md"
 
 
 def git(*args, check=False):
@@ -100,13 +100,13 @@ def main():
                 path, len(rep.todos), ", ".join(rep.todos[:4]), ", ..." if len(rep.todos) > 4 else ""))
         warnings.extend("%s: %s" % (path, w) for w in rep.warnings)
 
-    # Rule 1: STATE.md staged with as_of = highest transitioned ID
+    # Rule 1: STATE staged with as_of = highest transitioned ID
     if transitions:
         top = max(transitions)
         names = ", ".join("%s (%s)" % (p, s) for _, _, p, s in sorted(transitions))
         if STATE not in staged:
             errors.append("%s moves to recorded|abandoned, but %s is not staged. "
-                          "Update STATE.md (as_of: %s, map cells, open_cards) in the same commit."
+                          "Update it (as_of: %s, map cells, open_cards) in the same commit."
                           % (names, STATE, top[1]))
         else:
             as_of = lablib.front_matter(blob(":" + STATE) or "").get("as_of")

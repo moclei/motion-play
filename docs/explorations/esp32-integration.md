@@ -180,7 +180,7 @@ These should be consulted during schematic design:
 
 Proceed with Option A (direct ESP32-S3-WROOM-1-N16R8 integration) as the next board revision after v6 boards arrive and are validated. The decision to drop the display, unify USB through J7, and upgrade the LDO to AMS1117-3.3 are confirmed. This change eliminates the last hand-assembly step, reduces board area by ~50%, saves ~$8-14 per board in BOM cost, and simplifies the system from two USB-C ports to one.
 
-This should be scoped as an initiative (`docs/initiatives/esp32-integration/`) once v6 validation is complete and we're ready to begin schematic work.
+This should be scoped as an initiative (`docs/initiatives/archive/esp32-integration/`) once v6 validation is complete and we're ready to begin schematic work.
 
 ## Decision
 
@@ -188,4 +188,4 @@ This should be scoped as an initiative (`docs/initiatives/esp32-integration/`) o
 
 Proceeding with Option A: direct ESP32-S3-WROOM-1-N16R8 integration. Schematic work begins now on a branch, in parallel with v6 board validation. Firmware changes (DisplayManager removal, board definition) are part of the same initiative, phased after hardware. A physical on/off slide switch (>= 3A) is also included in the scope, enabled by freed board space.
 
-See initiative: `docs/initiatives/esp32-integration/`
+See initiative: `docs/initiatives/archive/esp32-integration/`

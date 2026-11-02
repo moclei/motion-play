@@ -117,4 +117,4 @@ Proceed with the integrated power management initiative: integrate USB-C input, 
 
 **Status: Decided**
 
-Proceeding with initiative: `docs/initiatives/integrated-power/`
+Proceeding with initiative: `docs/initiatives/archive/integrated-power/`

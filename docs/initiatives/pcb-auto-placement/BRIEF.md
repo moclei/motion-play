@@ -34,5 +34,5 @@ What's out:
 - Depends on `pcb-layout-context.json` (with `--pads`) and `tools/schematic-gen/spec.json` as inputs
 - Board: 101.4×40mm, outline from (62.6, 101) to (164, 141) in KiCad coordinates
 - Power section occupies the left ~40mm; existing components (T-Display-S3, TCA9548A, level shifter, sensor connectors, AP2112K) on the right side must not be moved
-- Parent initiative: `docs/initiatives/integrated-power/` (Phase 5 — PCB layout)
-- Predecessor: `docs/initiatives/pcb-layout-context/` (built the base extraction tool)
+- Parent initiative: `docs/initiatives/archive/integrated-power/` (Phase 5 — PCB layout)
+- Predecessor: `docs/initiatives/archive/pcb-layout-context/` (built the base extraction tool)

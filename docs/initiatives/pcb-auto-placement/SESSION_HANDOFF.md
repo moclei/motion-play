@@ -42,7 +42,7 @@ Option B is simpler since the manual work was just thermal vias (minutes to redo
 - `docs/initiatives/pcb-auto-placement/BRIEF.md` — initiative scope
 - `docs/initiatives/pcb-auto-placement/PLAN.md` — technical approach, U6 rotation logic, resolved issues
 - `docs/initiatives/pcb-auto-placement/TASKS.md` — Phase 3 complete, all tasks checked
-- `docs/initiatives/integrated-power/TASKS.md` — Phase 5 layout tasks, visual review + routing next
+- `docs/initiatives/archive/integrated-power/TASKS.md` — Phase 5 layout tasks, visual review + routing next
 - `hardware/pcb-main/kicad/placement-report.json` — expected positions for all 46 components
 - `tools/pcb-context/place_power.py` — the placement script
 - `tools/pcb-context/extract.py` — PCB context extraction with --pads flag
