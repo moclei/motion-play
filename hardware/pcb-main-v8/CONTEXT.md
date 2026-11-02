@@ -185,6 +185,38 @@ Rows considered and not added: D5 on-board pixel isolation (CL-06; row g already
 
 Phase 4 (non-power) and Phase 7 (power) fill this in.
 
+**Status (non-power, Phase 4): pending user approval (W2 part 2).** Stock: JLCPCB parts API (`selectSmtComponentList`, the same data as the JLC parts page), checked 2026-11-02. The JLC MCP was not available to the Worker. "basic" / "extended" is JLC's library type (extended parts carry a per-part assembly fee). Stock moves: Phase 19 preflight re-checks every number.
+
+### Cable-facing protection (jumper row b)
+
+Per connector J4–J6: one dual TVS on CHn_SDA_CONN / CHn_SCL_CONN, and one series resistor per line between the TCA pin and the connector. 3 TVS, 6 resistors.
+
+| Item | Part | LCSC | Stock | Footprint |
+|---|---|---|---|---|
+| TVS, 2-line, per connector | TI **TPD2E2U06DRLR** (SOT-553-5): IO1 = pin 3, IO2 = pin 5, GND = pin 4, pins 1–2 NC | C1972959 (extended) | 4 078 | `Package_TO_SOT_SMD:SOT-553` (Phase 8 checks the symbol pin map against TI's DRL pinout) |
+| Alternate TVS | TI TPD4E05U06DQAR (4-line, 0.5 pF, USON-10 0.5 mm pitch; two channels unused) | C138714 (extended) | 121 301 | `Package_SON:USON-10_2.5x1.0mm_P0.5mm` |
+| Series R, per line | **47 Ω** 1 % 0603 | C23182 (basic) | 1 557 821 | `Resistor_SMD:R_0603_1608Metric` |
+| Bypass (v7 position) | SJ2 across each series R (closed = v7); SJ2 in each TVS GND leg (open = v7) | — | — | see Footprints |
+
+**TPD2E2U06 (TI SLLSEG9C, rev. Dec 2019, §6.5).** V_RWM 5.5 V. Line capacitance 1.5 pF typ, 1.9 pF max (1 MHz, 2.5 V bias). Leakage 10 nA max at 2.5 V. Clamp IO→GND 9.7 V at 1 A and 12.4 V at 5 A (TLP); R_DYN 0.5 Ω (DRL). Unidirectional to GND: there is no rail pin, so with its GND leg open (v7 position) the only thing left on the line is its capacitance.
+
+**Why V_RWM 5.5 V and not 3.3 V.** The task asked for "3.3 V working voltage": the bus runs at 3.3 V, so any V_RWM ≥ 3.6 V (3.3 V + 10 %) works. A 5–5.5 V part leaks nA at 3.3 V; a 3.3 V-rated part is specified only at its V_RWM and leaks µA there, which shows up as a DC load on a bus whose fault is a low-level question. The clamp still sits above the TCA9548A's 7 V abs-max (SCPS207H §6.1: SDx/SCx −0.5 to 7 V, ±20 mA input current). That is why the series R is there: during a strike the TVS takes the bulk of the current and the 47 Ω limits what reaches the TCA's own ESD structure, to roughly (12.4 − 7) V / 47 Ω ≈ 115 mA for the ns-scale pulse (argued; 100 Ω would halve it, at the VOL cost below).
+
+**Rise time (argued, from datasheet values; no measured channel capacitance exists).** tr (30→70 %) = 0.8473 · Rp · Cb (PCA9546A datasheet §9.2.2, Eq. 2; UM10204 limit 300 ns at 400 kHz, which the firmware runs). When a channel is in use, the TCA and the rigid board's PCA are both switches, so the line sees the main board's upstream pull-up, the rigid board's R1/R2 (4.7 k, `hardware/CONTEXT.md`) and the selected sensor's 4.7 k (R6–R9) in parallel.
+- Cb estimate ≈ 200 pF worst: TCA upstream Cio(off) 28 pF max + channel 7.5 pF (SCPS207H) + ESP32/BQ/INA219/test-point stubs ≈ 40 pF + an 825 mm cable (module 3, `docs/explorations/sensor-alternatives.md`) at ≈ 70–100 pF/m + rigid PCA + flex + VCNL ≈ 30 pF.
+
+| Upstream (row d) | Downstream on-board (row d) | Rp effective | tr at 200 pF | Sink at VOL 0.4 V |
+|---|---|---|---|---|
+| 2.2 k (v7, v8 default) | none | 1.14 k | 193 ns | 2.5 mA |
+| 4.7 k | none | 1.57 k | 266 ns | 1.8 mA |
+| 10 k | none | 1.90 k | 322 ns (over 300 ns; 242 ns at 150 pF) | 1.5 mA |
+| 10 k | 4.7 k | 1.35 k | 229 ns | 2.1 mA |
+| 2.2 k | 4.7 k | 0.92 k | 155 ns | 3.2 mA (over the 3 mA I²C IOL at 0.4 V: don't use) |
+
+- **TVS cost:** 1.9 pF max adds 0.8473 × 1.90 k × 1.9 pF ≈ 3 ns in the slowest row. Negligible.
+- **Series R cost on rise time:** 47 Ω × the connector-side capacitance (≈ 100 pF) ≈ 5 ns. Negligible.
+- **Series R cost on the low level** (the one that matters on this bus). When a far-end device pulls low, the main board's pull-up current crosses the series R: 2.9 V / 2.2 k ≈ 1.3 mA × 47 Ω ≈ 62 mV added at the master. Worst-case sum at U3: VCNL VOL 0.4 V + PCA Ron 20 Ω max × 2.5 mA (50 mV) + 62 mV + TCA Ron 30 Ω max × 1.3 mA (40 mV) ≈ 0.55 V, against VIL = 0.3 · VDD = 0.99 V. 100 Ω would make it ≈ 0.62 V. 47 Ω was chosen to keep the added offset under ≈ 60 mV on a board that is built to study low levels; the row (b) SJ2 removes it entirely for A/B.
+
 ## Layout rules pointer
 
 Phases 13–15 fill this in. The rules will live in `tools/pcb-context/` (rules config and CONTEXT).

@@ -36,7 +36,7 @@
 
 ## Phase 4: Design intent — parts (non-power)
 
-- [~] Cable-facing protection for CH0–CH2 SDA/SCL: TVS array (low capacitance, 3.3 V working voltage) and series R value. Justify against I²C rise time with 4.7 k (rigid) and on-board pull-ups. LCSC part + stock via the JLC MCP
+- [x] Cable-facing protection for CH0–CH2 SDA/SCL: TVS array (low capacitance, 3.3 V working voltage) and series R value. Justify against I²C rise time with 4.7 k (rigid) and on-board pull-ups. LCSC part + stock via the JLC MCP
 - [ ] Footprints: solder jumpers (2- and 3-way), 0 Ω links, test-point pads sized for the Sensepeek/Rigol tips, ground-spring points. Prefer KiCad stock libraries, and record each footprint name
 - [ ] Debug LEDs, pull-up option resistors, header(s) for an external master / UART0 (if OQ-2 says yes). Stock check
 - [ ] Review the remaining v7 parts (TCA9548A, INA219, SN74AHCT125, WS2812B-MINI, USBLC6, connectors) for swap candidates. Note only those with a reason. Stock check for everything kept
