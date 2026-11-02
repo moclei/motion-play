@@ -8,7 +8,7 @@
 - [x] Check Q2's symbol/footprint pin mapping against the part's datasheet pinout (v6 used a SPICE symbol, CL-09), and BT1's polarity marking against the footprint's +/− pads
 - [x] Root-cause "BQ needs an I²C command" from `docs/references/bq24195/DATASHEET_REFERENCE.md`: input source detection with D+/D− tied to GND, ILIM pin vs IINLIM register, watchdog expiry and register reset, HIZ/VINDPM. State the root cause, and list hardware fix options (keep BQ24195 with pin changes, or swap to a part that needs no I²C to run at the target current), each with trade-offs
 - [x] Create `hardware/pcb-main-v8/CONTEXT.md` with sections: Purpose, Inherited v7 faults, Power path, GPIO allocation, Jumper matrix, Test points, Parts, Layout rules pointer. Fill only Purpose and Inherited v7 faults → BQ (root cause + options, with citations)
-- [ ] 🔄 Handoff
+- [x] 🔄 Handoff
 
 # --- handoff point ---
 

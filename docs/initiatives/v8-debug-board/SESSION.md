@@ -73,3 +73,17 @@ CL references: CL-09 (Q2 symbol GSD, R34 to GND, `fae477e`), CL-11 (SW1 on BOOST
   3. *Keep BQ24195; wire D+/D− to the real USB pair.* *Trade-offs:* you get the true source class (PC 100/500 mA, wall charger 1.5 A). But the BQ drives 0.6 V and current sinks onto the same pair as U3's native USB during enumeration, adds load to the pair, and still gives 100 mA from a PC with OTG low. Not recommended.
   4. *Swap to a part that needs no I²C to run at the target current.* Phase 7 candidates, to check against datasheets and stock (none verified here): standalone NVDC buck chargers with a resistor-set input limit (e.g. TI BQ25616 class), or a linear power-path charger (BQ24074/5 class, ≤ 1.5 A input, more heat). *Trade-offs:* a new footprint and support network, losing I²C telemetry/control (STAT/PG pins instead), and different boost/OTG behaviour. It may get away from the chronic C90862 stock problem (hardware/CONTEXT.md). Some standalone chargers also run D+/D− detection, so the same pin trap has to be checked for each one.
   Options 1–3 keep U5 on the I²C bus (jumper (f) still applies). Firmware can keep `configureBQ24195()` as an optional raise above 1.5 A, but boot no longer depends on it.
+
+**Task 4.** Created `hardware/pcb-main-v8/CONTEXT.md` with all eight sections. Purpose and "Inherited v7 faults → BQ24195" are filled; the BQ section is the durable version of Task 3. The others say which phase fills them. There is also an empty "Battery connection damaged boards" subsection for Phase 2.
+
+**Handoff, for Phase 2:**
+- Carry these into the mechanism ranking (Task 2 above). **Q2 is in load-switch orientation** (S on BAT_RAW, D on VBAT). Its body diode does not block a reversed cell, which would drive VBAT/U5 BAT to about −Vcell + 0.7 V (abs-min −0.3 V). Also, **R33/R34 give only about −Vcell/2 of gate drive**, below the −2.5 V where AO3401A Rds(on) is specified, while carrying up to 2048 mA default ICHG.
+- The plain Keystone 1042 may be unpolarized (1042P is the "polarized" variant per distributor listings). BT1 is hand-fit with no LCSC number, so which holder is on each board is a bench question for the relay.
+- AO3401A G/S pin order: one visual check of datasheet page 1 is still open. D = pin 3 is confirmed.
+- The relay could add one cheap discriminator on the BQ path: REG08[7:6] / REG00 readback on a v7 board with the firmware write disabled, to confirm SDP / 100 mA. This is optional.
+
+**Not actioned, for the Orchestrator** (refinements to existing docs, so GARDEN-type, not initiative Deferred):
+- `docs/references/bq24195/DATASHEET_REFERENCE.md` says "Minimum ILIM current: 500 mA" and that 2.7 kΩ clamps at 500 mA. SLUSB97A §8.3.5.1 doesn't support that. The reference also omits the 100 mA-SDP → HIZ rule (§8.3.1.3.5) and the 45-min SDP timer.
+- `firmware/src/main.cpp`: the comment above the BQ defines says the default is "~500 mA". It is 100 mA with OTG low. The "IINLIM=2A" log line is capped by R32 at about 1.47 A. Phase 12 touches this function anyway.
+
+PLAN Approach and Technical Notes still describe the work, and no approach changed. Commits: `6a5d793` (task 1), `3ca8380` (task 2), `0e37837` (task 3), `cff9d35` (task 4), plus this handoff.
