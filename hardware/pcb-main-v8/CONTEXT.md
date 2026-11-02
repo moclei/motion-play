@@ -77,7 +77,7 @@ Phase 7 fills this in.
 
 ## GPIO allocation
 
-**Status: proposed, pending user approval (W2 part 1).** Sources: Espressif *ESP32-S3-WROOM-1 & WROOM-1U Datasheet* v1.8, Table 3-1 (pin definitions) and Chapter 4 (boot configurations); v7 `hardware/pcb-main/kicad/circuit-context.json` @ `c2acffc` (U3 pin → net); `firmware/include/pin_config.h`; changelist CL-02, CL-04, CL-05, CL-07; card V7R-019; NOTEBOOK desk (e) (2026-10-27).
+**Status: approved by the user 2026-11-02 (W2 part 1).** Sources: Espressif *ESP32-S3-WROOM-1 & WROOM-1U Datasheet* v1.8, Table 3-1 (pin definitions) and Chapter 4 (boot configurations); v7 `hardware/pcb-main/kicad/circuit-context.json` @ `c2acffc` (U3 pin → net); `firmware/include/pin_config.h`; changelist CL-02, CL-04, CL-05, CL-07; card V7R-019; NOTEBOOK desk (e) (2026-10-27).
 
 **Module constraints (datasheet v1.8).**
 - N16R8 has Octal SPI PSRAM: module pins 28–30 (IO35, IO36, IO37) "are connected to the Octal SPI PSRAM and are not available for other uses" (Table 3-1 note b). Leave them unconnected.
@@ -112,7 +112,7 @@ Phase 7 fills this in.
 
 ## Jumper matrix
 
-**Status: proposed, pending user approval (W2 part 1); OQ-2 and OQ-4 answers pending.** Rows a–h are the PLAN candidates; i–k come from changelist §3 and Phases 1–2. Every row has a v7 position that rebuilds v7's net membership for the nets it touches (Phase 9/11 check this against `c2acffc`). Defaults are the v8 position (BRIEF), except where the row says v8 = v7 because no fix is claimed. "SJ2" = 2-pad solder jumper, "SJ3" = 3-pad solder jumper (centre common); footprints are chosen in Phase 4.
+**Status: approved by the user 2026-11-02 (W2 part 1), including the v7-valued defaults of rows d, f, h and i.** Rows a–h are the PLAN candidates; i–k come from changelist §3 and Phases 1–2. Every row has a v7 position that rebuilds v7's net membership for the nets it touches (Phase 9/11 check this against `c2acffc`). Defaults are the v8 position (BRIEF), except where the row says v8 = v7 because no fix is claimed. "SJ2" = 2-pad solder jumper, "SJ3" = 3-pad solder jumper (centre common); footprints are chosen in Phase 4.
 
 | # | Toggles | v7 position | v8 position (default) | v6 (where it differs) | Map row / CL-ID | Implementation |
 |---|---|---|---|---|---|---|
@@ -120,7 +120,7 @@ Phase 7 fills this in.
 | b | Cable-facing protection on CH0–CH2 SDA/SCL | Bypassed: series R shorted, TVS ground leg open | Fitted: series R in line, TVS to GND | as v7 (none) | notebook 2026-10-31 candidate (1); net-stress form of (c) | Per line: series R with an SJ2 across it (closed = v7). Per connector: TVS array with an SJ2 in its GND leg (open = v7). 9 jumpers. Residual in v7 position: the floating TVS's capacitance stays on the lines (argued, small; Phase 4 picks a low-C part) |
 | c | MCU 3.3 V vs bus/pull-up 3.3 V | Shared: one regulator feeds U3 and the pull-ups, TCA, INA219, J4–J6 | Separate: +3.3V_MCU and +3.3V_BUS from two regulators | Separate (AP2112K for the bus, T-Display LDO for the MCU) | master supply; CL-03, CL-08 | SJ3 on the +3.3V_BUS feed (side 1 = MCU regulator output, side 2 = bus regulator output). Phase 7 picks the parts; for a faithful v7 position the shared regulator should be the v7 type (AMS1117, CL-08) or the difference recorded. Back-powering U3 through the pull-ups when only the bus rail is up: Phase 7 checks |
 | d | On-board pull-up values | Upstream 2.2 kΩ (R28/R29); no on-board pull-ups downstream | Upstream 2.2 kΩ (**v8 = v7**: no pull-up fix is claimed; notebook fix (ii) "not pursued"); downstream none fitted | as v7 | master: pull-up current; desk (d) | Upstream per line: three resistors (2.2 k, 4.7 k, 10 k) each in series with an SJ2 (2.2 k closed). Downstream per channel line: one footprint (value Phase 4) in series with an SJ2, open. Values and rise time: Phase 4 |
-| e | External master on the bus | Header disconnected | Header disconnected | — | master: identity; V7R-004 / F-12 method | 4-pin header (SDA, SCL, GND, +3.3V_BUS sense) on the bus side, joined by SJ2 per line (open). To use: open both (a) SJ3s, close these. OQ-2 decides whether a second master footprint is added |
+| e | External master on the bus | Header disconnected | Header disconnected | — | master: identity; V7R-004 / F-12 method | 4-pin header (SDA, SCL, GND, +3.3V_BUS sense) on the bus side, joined by SJ2 per line (open). To use: open both (a) SJ3s, close these. No second master footprint (OQ-2) |
 | f | BQ on the I²C bus | Connected | Connected (**v8 = v7**; firmware still talks to it) | — | symptom identity: causal; STATE §3; L-Ph8 | SJ2 on U5 SDA and SCL (closed). Applies only if Phase 7 keeps the BQ24195 or another I²C charger |
 | g | LED_DATA source | GPIO16 drives D5 + IC1 | GPIO18 drives D5 + IC1; GPIO16 free for the bus | — | desk (e); CL-06 | SJ3: centre = LED_DATA (D5 DIN, IC1 1A, test point), side 1 = GPIO16, side 2 = GPIO18. Interlock: (a) SDA = v8 with (g) = v7 puts the LED loads on SDA, which is V7R-019's fixture state (allowed, a deliberate third state) |
 | h | Rail current-measure links | Closed | Closed (**v8 = v7**) | — | debug goal | Per rail: 0 Ω (1206) with an unpopulated 2-pin 2.54 mm header beside it; lift the 0 Ω to insert an ammeter. Rails chosen in Phase 7 (candidates: +3.3V_MCU, +3.3V_BUS, +5V core loads, +5V_TO_LEDS, VSYS) |
@@ -132,25 +132,14 @@ Rows considered and not added: D5 on-board pixel isolation (CL-06; row g already
 
 **All-v7 configuration** (for A/B/A): a = v7 both lines, b = bypassed, c = shared, d = 2.2 k upstream only, e = open, f = closed, g = GPIO16, h = closed, i = SW1, j = GND, k = +3.3V. The bring-up relay (Phase 19) carries this list.
 
-### Open questions for the user (OQ-2, OQ-4), recommended defaults marked
+### Decisions (user, 2026-11-02)
 
-**OQ-2: second master footprint behind jumper (e)?**
-| Option | Gains | Costs |
-|---|---|---|
-| **1. No second footprint; a 4-pin external-master header behind SJ2s (recommended)** | Same method the bench already uses (Nano ESP32 as external master, V7R-004); no extra copper on the bus by default; small | A dev-board A/B is flying leads, not the same copper |
-| 2. DevKitC-1 socket (2 × 22 headers) with its SDA/SCL wired to the (a) jumpers as a third position | On-board module vs dev board on the same bus copper; tests "module vs die" directly | ≈ 55 × 28 mm of board; more nets near the bus; DevKitC's own 3.3 V vs our rails is a new rail question (row c); SJ3 becomes a 4-way selector |
-| 3. Header for an external S3/SAMD21 at a fixed pinout (e.g. Nano ESP32 footprint) | Plug-in A/B without wires | The board then fixes which dev board is used; same rail question |
-
-**OQ-4: board size ceiling; 18650 on board or on a cable?** (PLAN: JLC pricing steps at 100 × 100 mm; not re-checked here.)
-| Option | Gains | Costs |
-|---|---|---|
-| **A. ≤ 100 × 100 mm; battery on a cable through a keyed, polarised connector (recommended)** | Cheapest tier for 5 boards; no holder body over copper (Phase 2 mechanism 5 gone); a keyed connector blocks a reversed cell (mechanism 1) at the connector; the cell can be fitted after the board is checked | Battery-in-holder behaviour of v7 can't be A/B'd on v8 (the v7 boards still can); Phase 7 picks the connector (v6 used a JST-PH 2-pin, CL-10) |
-| B. > 100 × 100 mm (e.g. 150 × 100) with an on-board holder (polarised 1042P class) and copper kept clear under it | Self-contained board, closest to v7's battery arrangement | Higher price tier; holder over copper needs a keepout; reversed-cell risk depends on the holder |
-| C. ≤ 100 × 100 mm with an on-board holder | Price tier and on-board cell | The 18650 holder (≈ 77 mm, Phase 1 BT1 pads ±39.7 mm) takes most of one side: crowds test points and ground points, which are the board's purpose |
+- **OQ-2: no second master footprint.** Row (e) is a 4-pin external-master header behind open SJ2s only. Reason: it is the method the bench already uses (Nano ESP32 as external master, V7R-004) and adds no bus copper by default. Not chosen: a DevKitC-1 socket or a fixed dev-board footprint (board area, more nets near the bus, a new 3.3 V rail question).
+- **OQ-4: board ≤ 100 × 100 mm; the 18650 is on a cable through a keyed, polarised connector.** Reason: the cheapest JLC tier (PLAN), no holder body over copper (Phase 2 mechanism 5), and a reversed cell is blocked at the connector (mechanism 1). Cost: v7's battery-in-holder arrangement can't be A/B'd on v8 (the v7 boards still can). Phase 7 picks the connector (v6 used a JST-PH 2-pin, CL-10).
 
 ## Test points
 
-**Status: proposed, pending user approval (W2 part 1).** Net names are v7's (`c2acffc`) where the net exists; new names come from the jumper matrix. Power-net names change if Phase 7 changes the power path; the rule "every rail gets a test point" stays. v7 had TP1 VSYS, TP2 VBAT, TP3 PVBUS, TP4 GND and TPIO10/16/21/43/44, and no +3.3V or +5V pad (CL-26).
+**Status: approved by the user 2026-11-02 (W2 part 1), including the seven debug LEDs.** Net names are v7's (`c2acffc`) where the net exists; new names come from the jumper matrix. Power-net names change if Phase 7 changes the power path; the rule "every rail gets a test point" stays. v7 had TP1 VSYS, TP2 VBAT, TP3 PVBUS, TP4 GND and TPIO10/16/21/43/44, and no +3.3V or +5V pad (CL-26).
 
 **Ground points.** Every signal or rail test point has its own GND pad beside it (not shared with a neighbour), within ground-spring reach. Working rule until Phase 4 measures the Sensepeek/Rigol spring: centre-to-centre ≤ 5 mm (argued). GND pads are big enough for two springs at once (V7R-019 V5b: "All four things won't fit on C"). Headers count as test points when a GND pin sits next to each signal pin.
 

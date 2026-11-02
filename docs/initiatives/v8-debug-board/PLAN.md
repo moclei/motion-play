@@ -52,9 +52,9 @@ Review before ordering = the user's review + an AI partner review answered from 
 
 ## Open Questions
 - OQ-1 (by Phase 16): which nets AI may route. Default: the user routes switching power (BQ_SW, BOOST_SW loops), the USB pair and battery/high-current paths. AI routes test-point stubs, LEDs, jumpers and the I²C channels, and the user reviews them.
-- OQ-2 (by Phase 3): add a second master footprint (e.g. DevKitC-1 headers, or a header for an external S3/SAMD21) behind jumper (e)? This gives an on-board module vs dev-board A/B.
+- ~~OQ-2 (by Phase 3): add a second master footprint (e.g. DevKitC-1 headers, or a header for an external S3/SAMD21) behind jumper (e)?~~ Resolved 2026-11-02: no. Jumper (e) is an external-master header behind open solder jumpers only (`hardware/pcb-main-v8/CONTEXT.md` Jumper matrix → Decisions).
 - OQ-3 (by Phase 13): kiutils-only writes, or allow pcbnew Python / Freerouting for routing experiments and zone refill?
-- OQ-4 (by Phase 3): board size ceiling. JLC pricing steps at 100 × 100 mm. Is 18650 on-board or on a cable?
+- ~~OQ-4 (by Phase 3): board size ceiling. JLC pricing steps at 100 × 100 mm. Is 18650 on-board or on a cable?~~ Resolved 2026-11-02: ≤ 100 × 100 mm; the 18650 goes on a keyed, polarised cable connector (Phase 7 picks it).
 - OQ-5 (by Phase 3): debug-track inputs still pending: card (j), pad-37 joint vs inside the module, bears on the U3 footprint/pad and on jumper (a).
 - ~~OQ-6 (protocol): no initiative → Debugger relay row~~ Resolved 2026-11-02: row added to PROTOCOL.md; relays go in `debugger/`.
 - ~~OQ-8 (by Phase 2 end): Debugger home for non-v7 investigations~~ Resolved 2026-11-02: built by `lab-multi-investigation` (PR #89, merged). One folder per investigation, `lab/investigations/<name>/{STATE.md,NOTEBOOK.md}`, prefix in STATE front matter; shared boards/bench state in `lab/BENCH.md`; scaffold with `tools/lab/new_investigation.py`. The power relay runs as `PWR` cards.
