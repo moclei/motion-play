@@ -126,3 +126,14 @@ Entry: started from `RELAY-orchestrator.md`. Branch `feat/lab-multi-investigatio
 ### Worker #4 — Phase 3 (part 2): apply approved patches, end-to-end check, PR
 
 **Dispatch:** Phase 3 remaining tasks. Apply w1, protocol and w2 patches unchanged (all approved), re-verify on the branch, run the end-to-end check, open the PR (W3). Additional reading: Worker #3 `#### Notes` and the Verification under it.
+
+**Patches applied (each `git apply --check` clean, applied unchanged):** w1 → `8de323e` (tasks 2 + W1 ticked), protocol → `03f3866`, w2 → `17ca761`.
+
+**After W1, on the branch (real lab):** `run_tests.py` `OK: 0 failure(s)`. `check_state.py`: `investigations: 1 open (v7-i2c V7R), 0 closed  cards=20`, `== v7-i2c (V7R, open): v7 I²C fault  as_of=V7R-020  last_checkpoint=V7R-019  cards=20`, no findings, `RESULT: OK (0 warnings)`, exit 0. No `[CAP]`, no `[BENCH]`, no fallback `info:` line. v7 STATE is 150 lines. `--load`: exit 0; open cards none; V7R-019 (prereg 8993678, result 4256a78), V7R-020 (prereg 3efc253, result 45240c9); no log today. Same as baseline.
+
+**End-to-end check (throwaway clone of `17ca761`, `core.hooksPath .githooks`, deleted afterwards):**
+- E0 `new_investigation.py --name power --prefix PWR --title "Battery and power path"` → exit 0, wrote STATE + NOTEBOOK. A second scaffold with prefix PWR → REFUSED exit 2; name `power` again → REFUSED exit 2. Checker: `2 open (power PWR, v7-i2c V7R)`, power `as_of=PWR-000 cards=0`, `RESULT: OK (0 warnings)`. Commit ACCEPTED.
+- E1 dummy `PWR-001` card from `lab/templates/card.md` (status pre-registered) + power STATE `open_cards: [PWR-001]` → ACCEPTED. Checker OK (0 warnings), power `cards=1`. `--load` without `--inv` → exit 2 ("--load needs --inv <name> when 2 investigations are open"). `--load --inv power` lists PWR-001 as open, prereg self resolved.
+- E2 PWR-001 → `status: recorded` (Result commit self, Conclusion cites `lab/evidence/PWR-001/`): no STATE staged → REJECTED (power STATE not staged); only the *v7* STATE staged → REJECTED (same message); power STATE with `as_of: PWR-000` → REJECTED ("expected PWR-001"); power STATE `as_of: PWR-001`, `open_cards: []` → ACCEPTED (warning only: evidence dir has no files in the index). Checker: power `as_of=PWR-001`, `RESULT: OK (0 warnings)`; `--inv power` OK; `--load --inv power` shows PWR-001 recorded with both `self` hashes resolved.
+- E3 a second `PWR-001` card → REJECTED ("duplicate ID PWR-001, also used by lab/cards/PWR-001-dummy.md"). `lablib.next_id(lab, 'PWR')` → PWR-002. V7R and PWR cards coexist (cards=21).
+- The checker's default memory dir is derived from the clone path, so the MEMORY check was skipped there; re-run with `--memory-dir` set to the real memory dir: `RESULT: OK (0 warnings)`.
