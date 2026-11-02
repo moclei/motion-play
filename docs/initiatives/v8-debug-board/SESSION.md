@@ -311,3 +311,23 @@ Re-dispatch: Worker #4 resumed with its context to apply the jumper change, clos
 - One cost recorded in row b: the header in the TVS GND leg adds a few nH to the clamp path (argued). The layout rule is to put it beside TVS pin 4.
 
 Task 5 and the Phase 4 Handoff are ticked. PLAN is unchanged: the approach still holds, nothing was rejected. Phase 7 carry-forward: row c's regulators, the row h 0 Ω current rating per rail, R44 shunt stock (2), and the STAT LED rail.
+
+#### Result (re-dispatch)
+| # | Phase | Result | Escalation evaluated? | Commit | Notes |
+|---|-------|--------|-----------------------|--------|-------|
+| 4 | Phase 4: Design intent — parts (non-power) | DONE | Yes (earlier PARTIAL) — resolved by the user's W2 part 2 answer | abfaf2e | Header/pad split applied; task 5 + Handoff closed |
+
+#### Verification (re-dispatch)
+- TASKS.md Phase 4: all six items `[x]`. Working tree clean. PLAN.md unchanged; OQ-5 open.
+- CONTEXT.md: Parts status reads approved (W2 part 2, header/pad split). The Jumper matrix status says only the implementation changed, not the positions. 16 headers (rows a, b, c, d-upstream, f) as the user decided; the rest stay pads.
+- Row a's 1×4 arrangement is a Worker design choice inside the decision: v7 uses a single shunt on 2–3, which physically prevents GPIO43 being on the bus and on UART0 at once. It keeps the approved positions.
+- W2 is now closed except for the power path, which Phase 7 closes.
+- Stock watch carried to Phase 19: the 2×3 header C56153599 has 1,000 in stock (10 needed for 5 boards); WS2812B-MINI has 152; R44 has 2 (Phase 7).
+
+---
+
+### Worker #5 — Phase 5: Board model — parse and validate (audit phase 1)
+
+**Dispatch:** standard spawn prompt, plus:
+- Additional reading: `docs/research/v7-retry/kicad-extraction-audit.md` §3–§6.1 (the spec and fixture table); `tools/CONTEXT.md` (Critical Rule, Source-Hash Rule, pcb-context section); `tools/pcb-context/README.md` and the existing scripts there (`extract.py`, `routing_extract.py`, `routing_audit.py`, `place_power.py`, `audit-specs/`) to reuse rather than duplicate.
+- This phase is independent of the hardware design phases; it validates on v7 `c2acffc` only.
