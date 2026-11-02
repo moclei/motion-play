@@ -274,6 +274,35 @@ All are KiCad 9 stock libraries (checked present in `/Applications/KiCad/KiCad.a
 | Spare GPIO | 2 × 15: signal row + GND row (GPIO1, 2, 4–9, 14, 17, 38–42) | `Connector_PinHeader_2.54mm:PinHeader_2x15_P2.54mm_Vertical` | C22465939 (PZ254V-12-30P, extended) | 498 |
 | Rail current-measure (row h) | 1 × 2 per rail, **not fitted** | `Connector_PinHeader_2.54mm:PinHeader_1x02_P2.54mm_Vertical` | C492401 (PZ254V-11-02P, extended) | 878 135 |
 
+### Kept v7 parts (non-power) and swap review
+
+Footprints carry over from the v7 project (`c2acffc`) unless a row says otherwise. Every v7 part on the I²C path is kept, so each jumper's v7 position reproduces v7's parts as well as its nets.
+
+**Swaps (each with a reason).**
+| v7 | Swap to | Reason | LCSC | Stock |
+|---|---|---|---|---|
+| IC1 SN74AHCT125PWR (TSSOP-14), C36365 | **SN74AHCT1G125DBVR** (TI, SOT-23-5), `Package_TO_SOT_SMD:SOT-23-5` | (1) C36365 is at **0 stock** (also the G4/E4 variants). (2) v7 uses one gate (1A = LED_DATA, 1Y = DATA_TO_LEDS, 1OE = GND); the other three gates' inputs have no net, i.e. float (v7 `circuit-context.json`). The single gate is the same AHCT family (TTL input thresholds, 5 V output), so LED_DATA sees the same kind of load. IC1 has no I²C role, so no jumper is needed for v7 fidelity | C7484 (extended) | 41 125 |
+
+**Kept, with stock.**
+| Ref (v7) | Part | LCSC | Stock | Note |
+|---|---|---|---|---|
+| U4 | TCA9548APWR | C130026 (extended) | 23 309 | Same part as v6/v7 (changelist: I²C circuitry unchanged). SCPS207H values used above |
+| U7 | INA219AIDCNR | C87469 (extended) | 8 920 | On the bus as in v7. Its shunt (R44, 10 mΩ, C1322424) has **2 in stock**: power part, flagged to Phase 7 |
+| U9 | USBLC6-2SC6 | C7519 (extended) | 40 183 | Jumpering it was rejected in Phase 3 |
+| D5 | WS2812B-MINI-X2 | C4154873 (extended) | **152** | Enough for 5 boards, but thin. Fallback if it runs out: WS2812B-MINI-V3J C22371519 (43 048); Phase 8 checks its pinout against the v7 footprint first |
+| U3 | ESP32-S3-WROOM-1-N16R8 | C2913202 (extended) | 34 388 | Footprint pad 37 is reviewed in Phase 8 if card (j) points at the joint (OQ-5) |
+| J4–J6 | SM04B-SRSS-TB | C160404 (extended) | 61 118 | |
+| J7 | TYPE-C-31-M-12 | C165948 (extended) | 176 891 | Its shell net is a Phase 7 item |
+| J3 | S3B-PH-SM4-TB (LED strip) | C265101 (extended) | 57 430 | |
+| SW2, SW3 | HX 3x4x2-2P tactile (RESET, BOOT) | C49234124 (extended) | 235 344 | |
+| R30, R31 | 5.1 kΩ (USB CC) | C23186 (basic) | 21 038 674 | |
+| R52, R53 | 22 Ω (USB series) | C23345 (basic) | 6 536 942 | |
+| MCU passives | 100 nF C14663, 10 µF C19702 / C96446, 1 µF C15849, 10 kΩ C25804 | basic | ≥ 7.6 M each | |
+
+**Considered, not changed.**
+- D5's DIN is driven at 3.3 V while its VDD is +5 V (WS2812B VIH = 0.7 · VDD ≈ 3.5 V, argued from the WS2812B family, not from this part's sheet). Moving D5 to the 5 V side (DATA_TO_LEDS) would fix that, but it changes LED_DATA's membership and row (g)'s v7 position (V7R-019's fixture had D5 DIN on the line). Kept as v7.
+- TCA9548A footprint: v7 uses a project-library `SOP65P640X120-24N`. Kept for continuity; the stock `Package_SO:TSSOP-24_4.4x7.8mm_P0.65mm` is the fallback if Phase 8 finds the project library awkward.
+
 ## Layout rules pointer
 
 Phases 13–15 fill this in. The rules will live in `tools/pcb-context/` (rules config and CONTEXT).
