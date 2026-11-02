@@ -1,4 +1,4 @@
-> **RETIRED, superseded by `lab/STATE.md`; do not load.** A future outside-review prompt is generated from `lab/STATE.md` (context-strategy §7.3), not maintained by hand.
+> **RETIRED, superseded by `lab/investigations/v7-i2c/STATE.md`; do not load.** A future outside-review prompt is generated from `lab/investigations/v7-i2c/STATE.md` (context-strategy §7.3), not maintained by hand.
 
 # Fresh-Perspective Handoff — v7 Main PCB I2C Fault
 

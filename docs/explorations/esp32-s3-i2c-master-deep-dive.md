@@ -1,4 +1,4 @@
-> **Pre-retry interpretation: conclusions not authoritative; see `lab/STATE.md`.** Reference facts may be cited from this file; its conclusions may not.
+> **Pre-retry interpretation: conclusions not authoritative; see `lab/investigations/v7-i2c/STATE.md`.** Reference facts may be cited from this file; its conclusions may not.
 
 # ESP32-S3 I2C peripheral configuration audit and experiment plan
 

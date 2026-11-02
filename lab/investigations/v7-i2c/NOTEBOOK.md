@@ -2,7 +2,7 @@
 
 > **L2, append-only.** New entries go at the bottom. Nothing is edited after the commit that adds it, except to fix a typo. Find entries with `grep -n "V7R-014"` or by date heading.
 >
-> **No result is written twice.** A test's hypotheses, predictions, raw observations, values and conclusion live in its card (`lab/cards/`). Capture numbers and setup live in the log (`lab/log/`). Current standing lives in `lab/STATE.md`. This file holds *everything between cards*: why a test was chosen, belief changes, decisions with the user, observations not covered by any card, dead ends that never became a card, checkpoints and bench incidents.
+> **No result is written twice.** A test's hypotheses, predictions, raw observations, values and conclusion live in its card (`lab/cards/`). Capture numbers and setup live in the log (`lab/log/`). Current standing lives in `lab/investigations/v7-i2c/STATE.md`. This file holds *everything between cards*: why a test was chosen, belief changes, decisions with the user, observations not covered by any card, dead ends that never became a card, checkpoints and bench incidents.
 
 ## Entry formats
 
@@ -428,3 +428,15 @@ The "belief changes" line replaces overwriting a "current working theory": STATE
 - Interpretation (V7R-019, V7R-020): v8 moving SDA off GPIO43 (relay §2) acts under (b) and under the TX-role form of (c); connector protection on SDA acts under the net-stress form of (c). So the assumption shapes the review emphasis, not the fix list (argued).
 - budget: beyond 20 cards; remaining cards are scoped to the v8 inputs ((j) joint vs inside module; (k) fix coverage; power path) rather than to (b) vs (c).
 - next: (j) in a fresh session (scope re-seat + V1–V8 first), or Planner work on the v8 relay.
+
+## 2026-11-02 · housekeeping · STATE moved to lab/investigations/STATE-v7-I2C.md (desk, no bench)
+- session: direct (user request, branch `chore/lab-investigations-move`) · operator: none · boards: none touched
+- moved: `lab/STATE.md` → `lab/investigations/STATE-v7-I2C.md` (git mv; content and front matter unchanged). `check_state.py`, `precommit.py` (rule 1), their fixtures and the live docs now use the new path. Reason: `lab/` will hold several bench investigations, one `lab/investigations/STATE-<NAME>.md` each. The card prefix stays `V7R-`; cards, notebook, log, evidence, relays, procedures and templates stay where they are.
+- mapping: earlier entries (including this file's header note), cards, relays and logs that cite `lab/STATE.md`, `STATE.md` or "STATE §N" now mean `lab/investigations/STATE-v7-I2C.md`, same sections. They are not rewritten.
+- next: unchanged from the entry above.
+
+## 2026-11-02 · housekeeping · final layout: lab/investigations/v7-i2c/{STATE.md,NOTEBOOK.md} (desk, no bench)
+- session: direct (user request, branch `chore/lab-investigations-move`) · operator: none · boards: none touched
+- moved: `lab/investigations/STATE-v7-I2C.md` → `lab/investigations/v7-i2c/STATE.md` and `lab/NOTEBOOK.md` → `lab/investigations/v7-i2c/NOTEBOOK.md` (git mv; content unchanged). One folder per investigation. Supersedes the path in the earlier same-day housekeeping entry. Cards, log, evidence, captures, inbox, procedures, templates and relays stay where they are.
+- mapping: earlier entries, cards, relays and logs that cite `lab/STATE.md`, `lab/investigations/STATE-v7-I2C.md` or "STATE §N" now mean `lab/investigations/v7-i2c/STATE.md`, same sections; citations of `lab/NOTEBOOK.md` now mean this file. They are not rewritten.
+- next: unchanged from the decision entry above.
