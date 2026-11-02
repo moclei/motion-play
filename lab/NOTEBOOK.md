@@ -420,3 +420,11 @@ The "belief changes" line replaces overwriting a "current working theory": STATE
 - observations not in a card: S1c probe incident — CH2 ground spring slipped C9.1 → C9.2 (+3.3 V) with #0003 powered, ~1 min (rail to GND through the probe grounds); D5 blue; nothing warm; after: rail 306.1 Ω, D5 normal, diag pattern and GPIO lows as before. #0004 power path: +5 V ≈ 3.75 V, +3.3 V ≈ 2.69 V, no USB device (Interpretation: boost U6 not running, argued). #0005 old image: brownout reset loop after WiFi start, BQ not found at 0x6B (Interpretation: fits legacy B2's BQ-open board as well as B3, argued). Relay 2026-10-31 §3 updated with both.
 - bench state at end: v7 #0003 on diag 166f5f40 (2026-11-02 11:18:16), plugged in and powered; Nano blank, powered; scope probes parked off the board (re-seat + V1–V8 before any scope card); rigid #1 in J6 (SW1 ON, SW2 OFF), pigtail in J5 (blue → 10 kΩ, black 'V' rail, red Nano GND); grey TPIO16 jumper taped; #0004, #0005 unplugged; loggers stopped.
 - next: overall decision (timebox 20/20) with the user; then per their choice — (j), (k), (l) or the (b)/(c) split.
+
+## 2026-11-02 · decision @ timebox 20/20 (decisioning §4.2; desk, no bench)
+- options put: continue (narrow) / parallel respin (open since 2026-10-31) / outside help (JLC question; condition met after V7R-020).
+- user: no module replacement ("beyond my bench capabilities"; not outsourced); no forum or outside question ("I would rather not"); "move forward on the assumption that it wasn't the batch".
+- decision: continue the bench track and the v8 respin track; outside help declined. Working assumption for design work: (c) v7-caused, not (b) batch — **argued (user prior), not tested**; (b) vs (c) stays not separated in the map and is not a tombstone.
+- Interpretation (V7R-019, V7R-020): v8 moving SDA off GPIO43 (relay §2) acts under (b) and under the TX-role form of (c); connector protection on SDA acts under the net-stress form of (c). So the assumption shapes the review emphasis, not the fix list (argued).
+- budget: beyond 20 cards; remaining cards are scoped to the v8 inputs ((j) joint vs inside module; (k) fix coverage; power path) rather than to (b) vs (c).
+- next: (j) in a fresh session (scope re-seat + V1–V8 first), or Planner work on the v8 relay.
