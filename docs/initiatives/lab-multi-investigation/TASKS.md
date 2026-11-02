@@ -4,7 +4,7 @@
 
 ## Phase 1: Registry, IDs, checker, hook
 
-- [~] Record the baseline: `run_tests.py` and `check_state.py` (plus `--load`) output on the real lab, in SESSION.md
+- [x] Record the baseline: `run_tests.py` and `check_state.py` (plus `--load`) output on the real lab, in SESSION.md
 - [ ] `lablib.py`: a generic ID/card pattern, `investigations(root)` discovery from STATE front matter, and per-prefix `next_id`. Keep any existing helper signatures that other tools call working
 - [ ] Add `prefix`, `title`, `status` to every existing fixture's STATE (fixtures only; the real v7 STATE waits for Phase 3). `run_tests.py` unchanged
 - [ ] `check_state.py`: run checks per investigation with grouped output, `--inv`, `--load` rules, and the new checks (no prefix, duplicate prefix, orphan card, BENCH.md missing as a warning), per PLAN. Build the MEMORY pattern from the registry. Until Phase 3 adds `prefix` to the real STATE, a single investigation with no prefix falls back to `V7R`, and this fallback is removed in Phase 3
