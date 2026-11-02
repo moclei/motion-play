@@ -17,6 +17,7 @@ For the Planner. Opened by the user's checkpoint decision (notebook 2026-10-31, 
 
 ## 3. Inputs the debug track will add as they land
 - V7R-020 (h): GPIO43 vs GPIO44 low side on #0004 / #0005 (unit vs batch/design).
+  - Landed 2026-11-02 (card `lab/cards/V7R-020-gpio43-low-found-boards.md`): #0005 GPIO43 533 Ω vs #0003 534 Ω (GPIO44 31 / 34 Ω) — not #0003 alone (measured-refuted for "unit only", one sibling); batch vs design not separated. Power path (extra, argued): #0004 powered from USB, +5 V ≈ 3.75 V (vs 5.10 V on #0003), +3.3 V ≈ 2.69 V, no USB device — boost U6 not running, LDO in dropout; #0005's old image reset-looped after "Connecting to WiFi" (reset_reason 9, VSYS 4.30 V) and found no BQ at 0x6B. Inputs for the battery/power investigation.
 - (j): GPIO43 static dose at the module castellation vs the board pad on #0003 (joint vs inside the module).
 The Planner should not wait on these to start scoping, but they bear on (2a)/(2b) and the footprint.
 
