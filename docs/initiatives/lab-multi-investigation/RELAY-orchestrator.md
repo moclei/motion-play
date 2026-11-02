@@ -12,8 +12,8 @@ role:orchestrator
 - docs/research/v7-retry/context-strategy.md §4.1, §4.2, §6 (section-scoped)
 
 ## State
-Branch: the docs are on `plan/v8-debug-board`, which contains all of `debug/v7-track-4` (`980caa0`). Cut `feat/lab-multi-investigation` from `plan/v8-debug-board`. W3 merges it into `debug/v7-track-4`, which also carries the v8 planning commits and the PROTOCOL relay edits there. The user knows this.
-Build: `run_tests.py` OK, `check_state.py` OK (0 warnings) at `980caa0`
+Branch: everything (these docs, v8 docs, the lab move) is on `debug/v7-track-4`. Cut `feat/lab-multi-investigation` from it; W3 merges back into it.
+Build: `run_tests.py` OK, `check_state.py` OK (0 warnings)
 TASKS.md current: yes
 
 ## What was done
