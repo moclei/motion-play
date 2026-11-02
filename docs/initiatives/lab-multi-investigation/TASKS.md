@@ -16,7 +16,7 @@
 
 ## Phase 2: Other tools, templates, scaffold
 
-- [ ] `capture.py`, `ingest_usb.py`, `validate_log.py`: generic ID check through the registry, with `<PREFIX>-NNN` in help and errors. Add `tool_tests.py` cases with a second prefix
+- [~] `capture.py`, `ingest_usb.py`, `validate_log.py`: generic ID check through the registry, with `<PREFIX>-NNN` in help and errors. Add `tool_tests.py` cases with a second prefix
 - [ ] `lab/templates/STATE.md` and `lab/templates/NOTEBOOK.md` per PLAN. `card.md` and `instruction.md` get `<PREFIX>-NNN` placeholders, and the v7 values are kept as labelled examples
 - [ ] `tools/lab/new_investigation.py` per PLAN, with tests: scaffold into a fixture root, then `check_state.py --root` on it is clean (sentinel state). A duplicate name or prefix is refused
 - [ ] `tools/CONTEXT.md` § Lab Tools: registry, ID pattern, the new script, `--inv`, BENCH.md

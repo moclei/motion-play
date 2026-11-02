@@ -39,3 +39,21 @@ Entry: started from `RELAY-orchestrator.md`. Branch `feat/lab-multi-investigatio
 - **Fallback scope:** the V7R fallback is in `lablib.build_registry` (search `LEGACY_PREFIX` / "Phase 1 fallback"), used by both checker and hook. It holds only while v7 is the only investigation; Phase 2's scaffold tests must use fixture roots, never the real lab, or v7 loses its prefix until Phase 3. Remove in Phase 3: the `build_registry` branch, the checker's `prefix_fallback` info line, the docstring line, and the default `prefix=LEGACY_PREFIX` on `id_num`/`fmt_id` once Phase 2 tools pass prefixes explicitly.
 - Added a `no_bench` fixture beyond the task list so the BENCH warning has its own exactly-once test. Added `CLOSED-OPEN` as the closed-investigation tag (PLAN didn't name one); PLAN Technical Notes updated with the tags and hook behaviour.
 - `capture.py`, `ingest_usb.py`, `validate_log.py` still have their own `V7R` regexes (Phase 2). They don't import the changed lablib names.
+
+#### Result
+| # | Phase | Result | Escalation evaluated? | Commit | Notes |
+|---|-------|--------|-----------------------|--------|-------|
+| 1 | Phase 1: Registry, IDs, checker, hook | DONE | No — clean completion | 8f57774 | 6 tasks + handoff; 7 commits after baseline |
+
+#### Verification
+- Working tree clean; Phase 1 all `[x]`, Phases 2–3 untouched `[ ]`. PLAN.md: no date-stamped headings. No changes under `lab/`.
+- Re-ran `run_tests.py`: `OK: 0 failure(s)`. Re-ran `check_state.py` on the real lab: exit 0, `RESULT: OK (1 warning)` — the warning is the expected `[BENCH]`; the fallback shows as an `info:` line, not a finding.
+- Beyond the task list, accepted as within PLAN: `CLOSED-OPEN` emitted as a warning (PLAN left the level open); extra `no_bench` fixture; Worker added three as-built bullets to PLAN Technical Notes (no change of approach).
+- Carries forward to Phase 3: adding the 3 front-matter keys to the 150-line v7 STATE trips `[CAP]` unless the §6 move lands in the same diff — check before W1. Fallback removal points: `lablib.build_registry` `LEGACY_PREFIX`, the checker's info line + docstring, the `V7R` default on `id_num`/`fmt_id`.
+- Carries forward to Phase 2: scaffold tests must run in fixture roots, never the real lab (a second investigation there would turn v7 into `NO-PREFIX` while the fallback is live).
+
+---
+
+### Worker #2 — Phase 2: Other tools, templates, scaffold
+
+**Dispatch:** standard spawn prompt, Phase 2 task list. Additional reading: `#### Notes` of Worker #1 above; `tools/CONTEXT.md` § Lab Tools; `docs/research/v7-retry/context-strategy.md` §4.1 (STATE skeleton for the template). Phase notes: tools should pass prefixes explicitly so the `V7R` default on `id_num`/`fmt_id` can go in Phase 3; scaffold tests in fixture roots only.
