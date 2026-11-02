@@ -93,6 +93,9 @@ The session runs every flash, mode command and serial log; one instruction block
 - R-3b (#0003, GPIO43 low, repeat): A4 "0.641V all three times". Session: no reset/boot line in `2026-11-01_V7R-020_0003_01.txt` from r to 3b.
 - S2 #0004: markings: "It had no markings so I took a black sharpie and wrote \"#0004\" on it"; look-over: "No burn marks or discoloring. Pristine really"; U8.1 → tab "304.9 (settled)"; U8.1 → pin 3 "It started around 3m and kept dropping. After 15s it was about 1.5m and was still dropping"
 - S2 #0005: markings: "This one had \"Board #3\" written on it. I wrote \"#0005\" on it in sharpie"; look-over: "Don't see any burn marks or anything at all really"; U8.1 → tab "304.4"; U8.1 → pin 3 "Same as the last one, started at around 3m and started dropping, was around 1.5m after 15s or so."
+- S3: #0003 and Nano unplugged, "All off"; same Mac port reused for found boards (user knows which).
+- S4 #0004 (USB-C J7 to the Mac, same port, same cable): PWR LED "On"; other LEDs "No"; warm "No". Session: no /dev/cu.usbmodem*, no VID 0x303A device in ioreg.
+- S4b #0004 download mode: silk labels are "RESET" and "BOOT" (card said IO / RE: render truncation); BOOT held while plugging in: "Done". Session: still no /dev/cu.usbmodem*, no VID 0x303A device (only the Mac's own devices and a USB Ethernet adapter).
 - Deviation: both scope probes lifted off #0003 and parked (not in the card; card uses no scope). Scope probes need a full re-seat + V1–V8 before any later scope card.
 ### Measured values (from log; cite `lab/evidence/V7R-020/...`)
 ### Interpretation (session; labelled as such)
