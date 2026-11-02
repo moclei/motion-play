@@ -301,7 +301,7 @@ Topic 3 of the v7-retry research (`docs/research/v7-retry/kicad-extraction-audit
 - tools/CONTEXT.md, tools/pcb-context/README.md
 - tools/pcb-context/routing_extract.py, routing_audit.py, extract.py — the code being replaced or extended
 - docs/initiatives/pcb-routing-audit-tool/BRIEF.md — prior constraints (kiutils, shapely, no pcbnew)
-- docs/initiatives/routing-verification/BRIEF.md — never executed; check whether any of its design-intent checks belong in scope
+- docs/initiatives/archive/routing-verification/BRIEF.md — never executed; check whether any of its design-intent checks belong in scope
 
 ## State
 Branch: n/a (the Orchestrator cuts `feat/pcb-board-model` from main at run time)

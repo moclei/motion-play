@@ -57,4 +57,4 @@ Review before ordering = the user's review + an AI partner review answered from 
 - OQ-4 (by Phase 3): board size ceiling. JLC pricing steps at 100 × 100 mm. Is 18650 on-board or on a cable?
 - OQ-5 (by Phase 3): debug-track inputs still pending: card (j), pad-37 joint vs inside the module, bears on the U3 footprint/pad and on jumper (a).
 - OQ-6 (protocol): PROTOCOL.md's relay table has no initiative → Debugger row; Phase 2 writes one anyway (`RELAY-debugger-power.md`). User to confirm or add the row.
-- OQ-7 (housekeeping): retire/archive `docs/initiatives/routing-verification/` (superseded here); `tools/CONTEXT.md` still refers to "the board-model initiative".
+- ~~OQ-7 (housekeeping): retire/archive `routing-verification`~~ Resolved 2026-11-02: moved to `docs/initiatives/archive/` (with `pcb-layout-context`, `esp32-integration`, `integrated-power`). The `tools/CONTEXT.md` wording about "the board-model initiative" is fixed in Phase 6.

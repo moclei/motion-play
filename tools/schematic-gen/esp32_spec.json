@@ -6,7 +6,7 @@
     "filename": "esp32_s3.kicad_sch",
     "project": "motion-play-main",
     "kicad_version": "20250114",
-    "source_doc": "docs/initiatives/esp32-integration/PLAN.md",
+    "source_doc": "docs/initiatives/archive/esp32-integration/PLAN.md",
     "root_sheet_uuid": "6e095bf3-d8d5-4f67-b79f-a2965409c7a9",
     "hierarchical_sheet_uuid": "3f1c02c7-ac9c-44c5-97f4-3f360ee54131",
     "total_components": 14,

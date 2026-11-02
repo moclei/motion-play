@@ -6,7 +6,7 @@
     "filename": "power_management.kicad_sch",
     "project": "motion-play-main",
     "kicad_version": "20250114",
-    "source_doc": "docs/initiatives/integrated-power/SCHEMATIC_SPEC.md",
+    "source_doc": "docs/initiatives/archive/integrated-power/SCHEMATIC_SPEC.md",
     "root_sheet_uuid": "6e095bf3-d8d5-4f67-b79f-a2965409c7a9",
     "hierarchical_sheet_uuid": "6b585d97-461f-477c-8d0a-cc1010f5954b",
     "total_components": 55,

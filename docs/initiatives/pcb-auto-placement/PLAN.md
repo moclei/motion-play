@@ -143,7 +143,7 @@ J8 (battery) at ~(67, 119) — left edge.
 | `tools/schematic-gen/spec.json` | Net topology, pin-to-net mappings, block assignments |
 | `hardware/pcb-main/kicad/pcb-layout-context.json` | Current extraction output (input for placement) |
 | `hardware/pcb-main/kicad/motion-play-main.kicad_pcb` | Target PCB file (placement writes here) |
-| `docs/initiatives/integrated-power/LAYOUT_GUIDE.md` | Placement rules, trace widths, thermal requirements |
+| `docs/initiatives/archive/integrated-power/LAYOUT_GUIDE.md` | Placement rules, trace widths, thermal requirements |
 
 ## Open Questions
 
