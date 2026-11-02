@@ -5,7 +5,7 @@
 ## Phase 1: Power path — v7 trace and BQ root cause (desk)
 
 - [x] Re-extract v7 `circuit-context.json` from `c2acffc` to scratch (`tools/schematic-context/extract.py`) and confirm it matches the committed copy. List every component and net on the battery → charger → boost → LDO path (BT1, Q2, R34, BAT_RAW, VBAT, PMID, VSYS, VSYS_SENSE, SW1/BOOST_EN, U5, U6, U8, TS network, ILIM R32, D+/D−), with pin → net. Cite CL-09, CL-11, CL-14
-- [ ] Check Q2's symbol/footprint pin mapping against the part's datasheet pinout (v6 used a SPICE symbol, CL-09), and BT1's polarity marking against the footprint's +/− pads
+- [x] Check Q2's symbol/footprint pin mapping against the part's datasheet pinout (v6 used a SPICE symbol, CL-09), and BT1's polarity marking against the footprint's +/− pads
 - [ ] Root-cause "BQ needs an I²C command" from `docs/references/bq24195/DATASHEET_REFERENCE.md`: input source detection with D+/D− tied to GND, ILIM pin vs IINLIM register, watchdog expiry and register reset, HIZ/VINDPM. State the root cause, and list hardware fix options (keep BQ24195 with pin changes, or swap to a part that needs no I²C to run at the target current), each with trade-offs
 - [ ] Create `hardware/pcb-main-v8/CONTEXT.md` with sections: Purpose, Inherited v7 faults, Power path, GPIO allocation, Jumper matrix, Test points, Parts, Layout rules pointer. Fill only Purpose and Inherited v7 faults → BQ (root cause + options, with citations)
 - [ ] 🔄 Handoff
