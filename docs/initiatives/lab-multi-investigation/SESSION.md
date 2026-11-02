@@ -118,3 +118,11 @@ Entry: started from `RELAY-orchestrator.md`. Branch `feat/lab-multi-investigatio
 - All three patches pass `git apply --check` on 961bf45 and touch disjoint files. Read the `lab/` half of w1: §6 content appears in BENCH.md (boards split into table cells on the original ` | ` separators; fixtures, flashed-now and bench-at-last-stop lines unchanged); STATE gains the three keys; §6 keeps heading, cap and baselines. Read protocol.patch: one paragraph rewritten.
 - Not re-run here (the Worker ran it in a scratch worktree): tests 123 PASS and real-lab checker `RESULT: OK (0 warnings)` with w1 applied. The next Worker re-runs both on the branch after applying.
 - For the user: w1 must be applied whole (the code half alone fails 3 tests); the v7 STATE sits at exactly the 150-line cap; #0004 is tagged `v7-i2c` pending the power intake.
+
+**User decisions (2026-11-02):** W1 approved as drafted (w1.patch). PROTOCOL § lab/ approved as drafted (protocol.patch). W2: user asked for w2.patch to be applied on the branch.
+
+---
+
+### Worker #4 — Phase 3 (part 2): apply approved patches, end-to-end check, PR
+
+**Dispatch:** Phase 3 remaining tasks. Apply w1, protocol and w2 patches unchanged (all approved), re-verify on the branch, run the end-to-end check, open the PR (W3). Additional reading: Worker #3 `#### Notes` and the Verification under it.
