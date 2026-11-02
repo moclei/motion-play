@@ -20,7 +20,7 @@
 - [ ] `lab/templates/STATE.md` and `lab/templates/NOTEBOOK.md` per PLAN. `card.md` and `instruction.md` get `<PREFIX>-NNN` placeholders, and the v7 values are kept as labelled examples
 - [ ] `tools/lab/new_investigation.py` per PLAN, with tests: scaffold into a fixture root, then `check_state.py --root` on it is clean (sentinel state). A duplicate name or prefix is refused
 - [ ] `tools/CONTEXT.md` § Lab Tools: registry, ID pattern, the new script, `--inv`, BENCH.md
-- [x] 🔄 Handoff
+- [ ] 🔄 Handoff
 
 # --- handoff point ---
 
@@ -33,6 +33,6 @@
 - [ ] **W2:** draft the role-draft changes (`docs/research/v7-retry/debugger-role-draft.md`) as a diff for the user: choosing an investigation at session start (`check_state.py` lists the open investigations, the user picks one, then `--load --inv`); BENCH.md read at start and updated in the same commit as a card that changes boards or flashing; scaffolding a new investigation at relay intake. The user applies or declines
 - [ ] End-to-end check in a throwaway clone: scaffold `power`/`PWR`, pre-register and record a dummy `PWR-001` with its STATE, check the hook and checker, then delete the clone. Log it in SESSION.md
 - [ ] **W3:** open a PR to `main` for the user to merge, and tell the user that `v8-debug-board` Phase 2's power relay can now run as `PWR` cards
-- [x] 🔄 Handoff
+- [ ] 🔄 Handoff
 
 ## Deferred
