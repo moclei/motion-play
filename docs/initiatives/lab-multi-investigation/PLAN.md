@@ -39,6 +39,9 @@ Its entries cite card IDs, as STATE does. A card that changes a board or what's 
   - `orphan_card`.
   
   `tool_tests.py` gets cases for a second prefix in capture, ingest and validate_log, and for the scaffold.
+- Checker tags as built: `NO-PREFIX`, `DUP-PREFIX` (hard, with `STALE`), `ORPHAN-CARD`, `BENCH`, and `CLOSED-OPEN` (a closed investigation whose `open_cards` is non-empty or that has a pre-registered|run card; warning). Registry findings print first, then one `== <name>` group per investigation. An investigation with no prefix or a duplicated prefix is listed but not checked. The MEMORY check is global (one memory dir).
+- The Phase 1 `V7R` fallback lives in `lablib.build_registry` (constant `LEGACY_PREFIX`), so the hook gets it too. It applies only while exactly one investigation exists; a second investigation before Phase 3 makes v7 a `NO-PREFIX`. `lablib.id_num`/`fmt_id` keep `V7R` as the default prefix for the Phase 2 tools until they move to the registry.
+- The hook reads the registry from the index (staged STATE front matter). A card moving to recorded|abandoned whose prefix no investigation declares is rejected.
 - Hook acceptance always runs in a throwaway clone: a second-prefix card recorded without its STATE is rejected; recorded with the *other* investigation's STATE it is rejected; with its own STATE it is accepted.
 - Concurrency: Debugger sessions may commit on their own branches during this work. Merge `main` (and any open Debugger branch) in before Phase 3's `lab/` edits and again before the final merge back.
 
