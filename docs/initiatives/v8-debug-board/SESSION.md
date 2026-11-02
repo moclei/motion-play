@@ -87,3 +87,23 @@ CL references: CL-09 (Q2 symbol GSD, R34 to GND, `fae477e`), CL-11 (SW1 on BOOST
 - `firmware/src/main.cpp`: the comment above the BQ defines says the default is "~500 mA". It is 100 mA with OTG low. The "IINLIM=2A" log line is capped by R32 at about 1.47 A. Phase 12 touches this function anyway.
 
 PLAN Approach and Technical Notes still describe the work, and no approach changed. Commits: `6a5d793` (task 1), `3ca8380` (task 2), `0e37837` (task 3), `cff9d35` (task 4), plus this handoff.
+
+#### Result
+| # | Phase | Result | Escalation evaluated? | Commit | Notes |
+|---|-------|--------|-----------------------|--------|-------|
+| 1 | Phase 1: Power path — v7 trace and BQ root cause | DONE | No — clean completion | 37627b5 | 4 tasks + handoff; commits 6a5d793, 3ca8380, 0e37837, cff9d35, 37627b5 |
+
+#### Verification
+- TASKS.md Phase 1: all five items `[x]`. Working tree clean. PLAN.md unchanged; no date-stamped headings.
+- `hardware/pcb-main-v8/CONTEXT.md` exists with the eight sections Task 4 named. Only Purpose and Inherited v7 faults → BQ are filled; the battery subsection is a Phase 2 placeholder. The BQ root cause cites SLUSB97A section numbers, and the four fix options each carry trade-offs, as the task asked.
+- Nothing outside the plan was done: `.kicad_*` files were only read through kiutils/extract.py in scratch, and nothing under `lab/` was touched.
+- Carried forward to Phase 2: the Q2 orientation and gate-drive findings, the BT1 1042 vs 1042P polarisation question, and the open AO3401A G/S visual check (Handoff notes above).
+- Two doc corrections the Worker flagged (`docs/references/bq24195/DATASHEET_REFERENCE.md` ILIM "500 mA" minimum; `firmware/src/main.cpp` "~500 mA" comment) are GARDEN-type. Raised with the user, not actioned by this initiative. Phase 12 touches the `main.cpp` comment anyway.
+
+---
+
+### Worker #2 — Phase 2: Power path — battery failure mechanisms and bench relay (desk)
+
+**Dispatch:** standard spawn prompt, plus:
+- Additional reading: SESSION.md Worker #1 `#### Notes` (the Phase 1 trace, Q2/BT1 findings, Handoff items); `hardware/pcb-main-v8/CONTEXT.md`; card V7R-020 and `lab/BENCH.md` (read-only); `.context/PROTOCOL.md` Relays (template, Initiative → Debugger row); TASKS Deferred `[from: lab-multi-investigation]` note (PWR prefix, scaffold command).
+- `lab-multi-investigation` merged at `36ab0ad` (PR #89); state that in the relay.
