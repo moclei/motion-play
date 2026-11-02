@@ -107,6 +107,7 @@ The session runs every flash, mode command and serial log; one instruction block
 - #0005 3b (GPIO43 low, repeat): SDA "0.644V all three times". Session: one banner, no reset line in `2026-11-01_V7R-020_0005_01.txt` from r to 3b.
 - E1: #0005 unplugged (left on u3-static). #0003 unpowered, Nano unpowered but wired at TPIO43/44 (extra reference, not counted): diode mode, red U8.1: SDA "0.465 all three times"; SCL "0.462 all three times"
 - E2: rigid #1 into J6 with both unplugged; operator: "1. rigid seated, switches are good 2. All powered on, all good". Pigtail wiring re-stated by operator before power (J5; GND → Nano GND, V → 'V' rail, blue → 10 kΩ far side, yellow free; TPIO43 → A4, TPIO44 → A5), matches STATE §6. Session: ports 14101 (Nano) and 14301 (#0003) enumerated.
+- E2 session: esptool write_flash 0x10000 `lab/evidence/V7R-018/diag-166f5f40.bin` (SHA-1 166f5f40… matches) 2026-11-02 11:18:16, ESP32-S3 v0.2, MAC 44:1b:f6:c5:58:c4, hash verified. Diag after (`lab/captures/V7R-020/2026-11-02_V7R-020_0003_postdiag.txt`): BASE/TCA0 PCA:X(2) VCNL:X(2); TCA1 BQ:X(2) PCA:X(2) VCNL:X(2); TCA2, TCA2+PCA0, TCA2+PCA1 BQ:X(2) VCNL:X(2), PCA:. — as V7R-019 End.
 - Deviation: both scope probes lifted off #0003 and parked (not in the card; card uses no scope). Scope probes need a full re-seat + V1–V8 before any later scope card.
 ### Measured values (from log; cite `lab/evidence/V7R-020/...`)
 ### Interpretation (session; labelled as such)
