@@ -216,3 +216,15 @@ After the answers: record them in CONTEXT (drop "pending"), strike OQ-2/OQ-4 in 
 - Phase 12: firmware must support SDA and SCL pins independently (four combinations).
 - OQ-5 still open (card (j) not run). PLAN Approach and Technical Notes still describe the work; nothing rejected; PLAN not edited.
 - Commits: `d945387` (task 1), `93590ae` (task 2), `54413de` (task 3, WIP), `ea75703` (task 4), plus this notes commit.
+
+#### Result
+| # | Phase | Result | Escalation evaluated? | Commit | Notes |
+|---|-------|--------|-----------------------|--------|-------|
+| 3 | Phase 3: Design intent — GPIO, jumpers, test points | PARTIAL | Yes — resolvable without replanning: the stop is the planned user gate (OQ-2, OQ-4, W2 part 1) | 2a5cb13 | Tasks 1, 2, 4 done; tasks 3, 5 and Handoff await the user |
+
+#### Verification
+- TASKS.md Phase 3: tasks 1, 2, 4 `[x]`; tasks 3, 5 and Handoff `[ ]`. Working tree clean. PLAN.md unchanged; no date-stamped headings. Nothing under `lab/` touched.
+- `hardware/pcb-main-v8/CONTEXT.md` GPIO allocation, Jumper matrix (rows a–k, OQ-2/OQ-4 option tables) and Test points sections are filled and marked "pending user approval".
+- OQ-5 stays open: no new debug-track cards since the plan (V7R-020 is the latest). Jumper (a) is designed not to depend on card (j).
+- Jumper rows i, j, k were added beyond PLAN rows a–h. That is inside task 3's remit ("add any others the changelist §3 supports"), not a scope change.
+- Loop paused for the user: OQ-2, OQ-4, the four v7-valued jumper defaults (d, f, h, i), and W2 part 1 approval.
