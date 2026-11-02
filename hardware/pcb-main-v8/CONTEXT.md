@@ -112,14 +112,14 @@ Phase 7 fills this in.
 
 ## Jumper matrix
 
-**Status: approved by the user 2026-11-02 (W2 part 1), including the v7-valued defaults of rows d, f, h and i.** Rows a–h are the PLAN candidates; i–k come from changelist §3 and Phases 1–2. Every row has a v7 position that rebuilds v7's net membership for the nets it touches (Phase 9/11 check this against `c2acffc`). Defaults are the v8 position (BRIEF), except where the row says v8 = v7 because no fix is claimed. "SJ2" = 2-pad solder jumper, "SJ3" = 3-pad solder jumper (centre common); footprints are chosen in Phase 4.
+**Status: approved by the user 2026-11-02 (W2 part 1), including the v7-valued defaults of rows d, f, h and i.** Rows a–h are the PLAN candidates; i–k come from changelist §3 and Phases 1–2. Every row has a v7 position that rebuilds v7's net membership for the nets it touches (Phase 9/11 check this against `c2acffc`). Defaults are the v8 position (BRIEF), except where the row says v8 = v7 because no fix is claimed. "SJ2" = 2-pad solder jumper, "SJ3" = 3-pad solder jumper (centre common); footprints and the SJ3 pad rule are in Parts.
 
 | # | Toggles | v7 position | v8 position (default) | v6 (where it differs) | Map row / CL-ID | Implementation |
 |---|---|---|---|---|---|---|
 | a | Bus master pins, SDA and SCL separately | SDA = GPIO43, SCL = GPIO44; UART0 header disconnected | SDA = GPIO16, SCL = GPIO15; GPIO43/44 to the UART0 header | T-Display pins "43"/"44" (other die path) | master: module/path, pin role; V7R-019; CL-02 | Per line: SJ3 (centre = bus SDA or SCL; side 1 = GPIO43/44; side 2 = GPIO16/15) + SJ2 GPIO43/44 → UART0 header (open in v7). Both SJ3 open = U3 off the bus (row e) |
-| b | Cable-facing protection on CH0–CH2 SDA/SCL | Bypassed: series R shorted, TVS ground leg open | Fitted: series R in line, TVS to GND | as v7 (none) | notebook 2026-10-31 candidate (1); net-stress form of (c) | Per line: series R with an SJ2 across it (closed = v7). Per connector: TVS array with an SJ2 in its GND leg (open = v7). 9 jumpers. Residual in v7 position: the floating TVS's capacitance stays on the lines (argued, small; Phase 4 picks a low-C part) |
+| b | Cable-facing protection on CH0–CH2 SDA/SCL | Bypassed: series R shorted, TVS ground leg open | Fitted: series R in line, TVS to GND | as v7 (none) | notebook 2026-10-31 candidate (1); net-stress form of (c) | Per line: series R with an SJ2 across it (closed = v7). Per connector: TVS array with an SJ2 in its GND leg (open = v7). 9 jumpers. Residual in v7 position: the floating TVS's capacitance stays on the lines (argued, small: TPD2E2U06, 1.9 pF max, Parts) |
 | c | MCU 3.3 V vs bus/pull-up 3.3 V | Shared: one regulator feeds U3 and the pull-ups, TCA, INA219, J4–J6 | Separate: +3.3V_MCU and +3.3V_BUS from two regulators | Separate (AP2112K for the bus, T-Display LDO for the MCU) | master supply; CL-03, CL-08 | SJ3 on the +3.3V_BUS feed (side 1 = MCU regulator output, side 2 = bus regulator output). Phase 7 picks the parts; for a faithful v7 position the shared regulator should be the v7 type (AMS1117, CL-08) or the difference recorded. Back-powering U3 through the pull-ups when only the bus rail is up: Phase 7 checks |
-| d | On-board pull-up values | Upstream 2.2 kΩ (R28/R29); no on-board pull-ups downstream | Upstream 2.2 kΩ (**v8 = v7**: no pull-up fix is claimed; notebook fix (ii) "not pursued"); downstream none fitted | as v7 | master: pull-up current; desk (d) | Upstream per line: three resistors (2.2 k, 4.7 k, 10 k) each in series with an SJ2 (2.2 k closed). Downstream per channel line: one footprint (value Phase 4) in series with an SJ2, open. Values and rise time: Phase 4 |
+| d | On-board pull-up values | Upstream 2.2 kΩ (R28/R29); no on-board pull-ups downstream | Upstream 2.2 kΩ (**v8 = v7**: no pull-up fix is claimed; notebook fix (ii) "not pursued"); downstream none fitted | as v7 | master: pull-up current; desk (d) | Upstream per line: three resistors (2.2 k, 4.7 k, 10 k) each in series with an SJ2 (2.2 k closed). Downstream per channel line: one footprint (4.7 kΩ, Parts) in series with an SJ2, open. Values and rise time: Parts |
 | e | External master on the bus | Header disconnected | Header disconnected | — | master: identity; V7R-004 / F-12 method | 4-pin header (SDA, SCL, GND, +3.3V_BUS sense) on the bus side, joined by SJ2 per line (open). To use: open both (a) SJ3s, close these. No second master footprint (OQ-2) |
 | f | BQ on the I²C bus | Connected | Connected (**v8 = v7**; firmware still talks to it) | — | symptom identity: causal; STATE §3; L-Ph8 | SJ2 on U5 SDA and SCL (closed). Applies only if Phase 7 keeps the BQ24195 or another I²C charger |
 | g | LED_DATA source | GPIO16 drives D5 + IC1 | GPIO18 drives D5 + IC1; GPIO16 free for the bus | — | desk (e); CL-06 | SJ3: centre = LED_DATA (D5 DIN, IC1 1A, test point), side 1 = GPIO16, side 2 = GPIO18. Interlock: (a) SDA = v8 with (g) = v7 puts the LED loads on SDA, which is V7R-019's fixture state (allowed, a deliberate third state) |
@@ -141,7 +141,7 @@ Rows considered and not added: D5 on-board pixel isolation (CL-06; row g already
 
 **Status: approved by the user 2026-11-02 (W2 part 1), including the seven debug LEDs.** Net names are v7's (`c2acffc`) where the net exists; new names come from the jumper matrix. Power-net names change if Phase 7 changes the power path; the rule "every rail gets a test point" stays. v7 had TP1 VSYS, TP2 VBAT, TP3 PVBUS, TP4 GND and TPIO10/16/21/43/44, and no +3.3V or +5V pad (CL-26).
 
-**Ground points.** Every signal or rail test point has its own GND pad beside it (not shared with a neighbour), within ground-spring reach. Working rule until Phase 4 measures the Sensepeek/Rigol spring: centre-to-centre ≤ 5 mm (argued). GND pads are big enough for two springs at once (V7R-019 V5b: "All four things won't fit on C"). Headers count as test points when a GND pin sits next to each signal pin.
+**Ground points.** Every signal or rail test point has its own GND pad beside it (not shared with a neighbour), within ground-spring reach. Spacing rule (Phase 4, from bench-demonstrated SQ500 spring placements): signal-to-ground gap 1.0–3.0 mm copper edge to copper edge (Parts → Footprints). GND pads are big enough for two springs at once (V7R-019 V5b: "All four things won't fit on C"). Headers count as test points when a GND pin sits next to each signal pin.
 
 **I²C, master side of the TCA** (upstream).
 | Net | What it is | Why |
@@ -176,14 +176,14 @@ Rows considered and not added: D5 on-board pixel isolation (CL-06; row g already
 | new | +3.3V_BUS | green, silk "BUS" | Lit only when the bus rail is up (row c) |
 | new | +5V | yellow | Shows the boost running (#0004 case) |
 | new | Protected_VBUS | red | USB input present |
-| new | charger STAT | orange | U5 STAT (pin 4, unconnected on v7) if Phase 7 keeps the BQ24195; open drain, pull-up rail chosen in Phase 4 |
+| new | charger STAT | orange | U5 STAT (pin 4, unconnected on v7) if Phase 7 keeps the BQ24195; open drain, LED anode on VSYS (Parts) |
 | new | GPIO47 | blue, "DBG1" | Firmware-driven |
 | new | GPIO48 | white, "DBG2" | Firmware-driven |
 | D5 (kept) | LED_DATA | RGB (WS2812B-MINI) | As v7, on the (g) centre |
 
 ## Parts
 
-Phase 4 (non-power) and Phase 7 (power) fill this in.
+Phase 4 filled the non-power parts below. Phase 7 adds the power parts (charger, boost, LDOs, battery connector, fuses, shunt).
 
 **Status (non-power, Phase 4): pending user approval (W2 part 2).** Stock: JLCPCB parts API (`selectSmtComponentList`, the same data as the JLC parts page), checked 2026-11-02. The JLC MCP was not available to the Worker. "basic" / "extended" is JLC's library type (extended parts carry a per-part assembly fee). Stock moves: Phase 19 preflight re-checks every number.
 
@@ -200,7 +200,7 @@ Per connector J4–J6: one dual TVS on CHn_SDA_CONN / CHn_SCL_CONN, and one seri
 
 **TPD2E2U06 (TI SLLSEG9C, rev. Dec 2019, §6.5).** V_RWM 5.5 V. Line capacitance 1.5 pF typ, 1.9 pF max (1 MHz, 2.5 V bias). Leakage 10 nA max at 2.5 V. Clamp IO→GND 9.7 V at 1 A and 12.4 V at 5 A (TLP); R_DYN 0.5 Ω (DRL). Unidirectional to GND: there is no rail pin, so with its GND leg open (v7 position) the only thing left on the line is its capacitance.
 
-**Why V_RWM 5.5 V and not 3.3 V.** The task asked for "3.3 V working voltage": the bus runs at 3.3 V, so any V_RWM ≥ 3.6 V (3.3 V + 10 %) works. A 5–5.5 V part leaks nA at 3.3 V; a 3.3 V-rated part is specified only at its V_RWM and leaks µA there, which shows up as a DC load on a bus whose fault is a low-level question. The clamp still sits above the TCA9548A's 7 V abs-max (SCPS207H §6.1: SDx/SCx −0.5 to 7 V, ±20 mA input current). That is why the series R is there: during a strike the TVS takes the bulk of the current and the 47 Ω limits what reaches the TCA's own ESD structure, to roughly (12.4 − 7) V / 47 Ω ≈ 115 mA for the ns-scale pulse (argued; 100 Ω would halve it, at the VOL cost below).
+**Why V_RWM 5.5 V and not 3.3 V.** The task asked for "3.3 V working voltage": the bus runs at 3.3 V, so any V_RWM ≥ 3.6 V (3.3 V + 10 %) works. A 5–5.5 V part leaks nA at 3.3 V; 3.3 V-rated parts are typically specified only at their V_RWM, in µA (argued from the class, not one part), which shows up as a DC load on a bus whose fault is a low-level question. The clamp still sits above the TCA9548A's 7 V abs-max (SCPS207H §6.1: SDx/SCx −0.5 to 7 V, ±20 mA input current). That is why the series R is there: during a strike the TVS takes the bulk of the current and the 47 Ω limits what reaches the TCA's own ESD structure, to roughly (12.4 − 7) V / 47 Ω ≈ 115 mA for the ns-scale pulse (argued; 100 Ω would halve it, at the VOL cost below).
 
 **Rise time (argued, from datasheet values; no measured channel capacitance exists).** tr (30→70 %) = 0.8473 · Rp · Cb (PCA9546A datasheet §9.2.2, Eq. 2; UM10204 limit 300 ns at 400 kHz, which the firmware runs). When a channel is in use, the TCA and the rigid board's PCA are both switches, so the line sees the main board's upstream pull-up, the rigid board's R1/R2 (4.7 k, `hardware/CONTEXT.md`) and the selected sensor's 4.7 k (R6–R9) in parallel.
 - Cb estimate ≈ 200 pF worst: TCA upstream Cio(off) 28 pF max + channel 7.5 pF (SCPS207H) + ESP32/BQ/INA219/test-point stubs ≈ 40 pF + an 825 mm cable (module 3, `docs/explorations/sensor-alternatives.md`) at ≈ 70–100 pF/m + rigid PCA + flex + VCNL ≈ 30 pF.
@@ -215,7 +215,7 @@ Per connector J4–J6: one dual TVS on CHn_SDA_CONN / CHn_SCL_CONN, and one seri
 
 - **TVS cost:** 1.9 pF max adds 0.8473 × 1.90 k × 1.9 pF ≈ 3 ns in the slowest row. Negligible.
 - **Series R cost on rise time:** 47 Ω × the connector-side capacitance (≈ 100 pF) ≈ 5 ns. Negligible.
-- **Series R cost on the low level** (the one that matters on this bus). When a far-end device pulls low, the main board's pull-up current crosses the series R: 2.9 V / 2.2 k ≈ 1.3 mA × 47 Ω ≈ 62 mV added at the master. Worst-case sum at U3: VCNL VOL 0.4 V + PCA Ron 20 Ω max × 2.5 mA (50 mV) + 62 mV + TCA Ron 30 Ω max × 1.3 mA (40 mV) ≈ 0.55 V, against VIL = 0.3 · VDD = 0.99 V. 100 Ω would make it ≈ 0.62 V. 47 Ω was chosen to keep the added offset under ≈ 60 mV on a board that is built to study low levels; the row (b) SJ2 removes it entirely for A/B.
+- **Series R cost on the low level** (the one that matters on this bus). When a far-end device pulls low, the main board's pull-up current crosses the series R: 2.9 V / 2.2 k ≈ 1.3 mA × 47 Ω ≈ 62 mV added at the master. Worst-case sum at U3: VCNL VOL 0.4 V + PCA Ron 20 Ω max × 2.5 mA (50 mV) + 62 mV + TCA Ron 30 Ω max × 1.3 mA (40 mV) ≈ 0.55 V, against VIL = 0.3 · VDD = 0.99 V. 100 Ω would make it ≈ 0.62 V. 47 Ω was chosen to keep the added offset to ≈ 60 mV on a board that is built to study low levels; the row (b) SJ2 removes it entirely for A/B.
 
 ### Footprints: jumpers, links, test points, ground points
 
