@@ -146,3 +146,21 @@ Entry: started from `RELAY-orchestrator.md`. Branch `feat/lab-multi-investigatio
 - End-to-end check passed (details above). Two things showed up only in the dummy run: (1) the hook prints a *warning* (not a rejection) when a recorded card cites `lab/evidence/<ID>/` but no evidence files are staged. This is expected. (2) The checker's default memory dir is derived from the repo path, so in a clone at another path the MEMORY check is skipped with an `info:` line. Pass `--memory-dir` there.
 - The user still needs to hear that `v8-debug-board` Phase 2's power relay can now run as `PWR` cards. The Orchestrator relays this. The first Debugger session for it runs `tools/lab/new_investigation.py --name power --prefix PWR --title "..."` at intake.
 - PR: https://github.com/moclei/motion-play/pull/89
+
+#### Result
+| # | Phase | Result | Escalation evaluated? | Commit | Notes |
+|---|-------|--------|-----------------------|--------|-------|
+| 4 | Phase 3 (part 2): apply approved patches, e2e, PR | DONE | No — clean completion | 1498ef9 | w1/protocol/w2 applied unchanged; e2e logged; PR #89 open |
+
+#### Verification
+- Working tree clean, branch in sync with origin. TASKS.md: no `[ ]` or `[~]` left. PLAN.md: no date-stamped headings.
+- Re-ran on the branch: `run_tests.py` `OK: 0 failure(s)`; real-lab `check_state.py` `RESULT: OK (0 warnings)` — baseline result, `[BENCH]` and fallback line gone. v7 STATE is 150 lines (at cap). Only `v7-i2c` exists under `lab/investigations/` (the e2e ran in a deleted clone).
+- PR #89: OPEN, `main` ← `feat/lab-multi-investigation`, MERGEABLE.
+
+---
+
+**Outcome:** Loop complete — 4 workers dispatched, 1 orchestration run, 0 unresolved blockers. Awaiting W3 (user merges PR #89).
+
+Parked for a cross-initiative home (no `docs/initiatives/MASTER.md` exists; user asked where these go):
+- To `v8-debug-board`: its Phase 2 power relay (`debugger/RELAY-power.md`) can run as `PWR` cards once PR #89 is merged. The Debugger scaffolds at intake: `python3 tools/lab/new_investigation.py --name power --prefix PWR --title "<title>"`, then decides whether board #0004 also belongs to `power` in `lab/BENCH.md`.
+- Follow-ups (out of scope here): capture/ingest accept a closed investigation's prefix; v7 STATE sits at its 150-line cap; recorded cards V7R-019/020 cite "STATE §6" for content now in `lab/BENCH.md`; the hook does not enforce the BENCH.md same-commit rule (PLAN Open Question); the checker skips MEMORY from a clone at another path unless `--memory-dir` is given.
