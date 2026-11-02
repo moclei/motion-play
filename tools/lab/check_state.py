@@ -110,9 +110,9 @@ def load_cards(root, findings):
         return cards
     for p in sorted(cdir.iterdir()):
         m = lablib.CARD_RE.match(p.name)
-        if not m:
+        if not m or m.group("prefix") != lablib.LEGACY_PREFIX:
             continue  # .gitkeep and anything that isn't V7R-NNN-*.md
-        c = Card(p, int(m.group(1)))
+        c = Card(p, int(m.group("num")))
         if not c.fm:
             findings.append(("CARD", "%s: front matter missing or unparseable" % p.name))
         elif str(c.fm.get("test_id", "")).strip() != c.id:
