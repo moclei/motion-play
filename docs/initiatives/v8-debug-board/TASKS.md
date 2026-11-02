@@ -18,7 +18,7 @@
 - [ ] Explain #0004's state (V7R-020 card: +5 V ≈ 3.75 V, +3.3 V ≈ 2.69 V, no USB device) and #0005's brownout loop and missing BQ, against the same path. Mark everything argued
 - [ ] Write `docs/initiatives/v8-debug-board/debugger/RELAY-power.md` (PROTOCOL relay template, role: Debugger). Include: the boards (#0001, #0002, #0004, user supplies), a non-destructive-first bench sequence (visual/thermal, per-rail resistance to GND, diode-mode on Q2/U5/U6/U8 pins, then powered from a current-limited supply on each input), what each result discriminates between, and an explicit "no change to the debug track's order unless the user says so"
 - [ ] Fill `hardware/pcb-main-v8/CONTEXT.md` Inherited v7 faults → battery (ranked mechanisms, pointer to the relay)
-- [ ] Tell the user the relay is ready (W1 opens), and check OQ-8 is settled
+- [ ] Tell the user the relay is ready (W1 opens), and confirm `lab-multi-investigation` is merged (otherwise the relay waits)
 - [ ] 🔄 Handoff
 
 # --- handoff point ---
