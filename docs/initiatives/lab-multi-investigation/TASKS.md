@@ -20,7 +20,7 @@
 - [x] `lab/templates/STATE.md` and `lab/templates/NOTEBOOK.md` per PLAN. `card.md` and `instruction.md` get `<PREFIX>-NNN` placeholders, and the v7 values are kept as labelled examples
 - [x] `tools/lab/new_investigation.py` per PLAN, with tests: scaffold into a fixture root, then `check_state.py --root` on it is clean (sentinel state). A duplicate name or prefix is refused
 - [x] `tools/CONTEXT.md` § Lab Tools: registry, ID pattern, the new script, `--inv`, BENCH.md
-- [ ] 🔄 Handoff
+- [x] 🔄 Handoff
 
 # --- handoff point ---
 

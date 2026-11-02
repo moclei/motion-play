@@ -57,3 +57,22 @@ Entry: started from `RELAY-orchestrator.md`. Branch `feat/lab-multi-investigatio
 ### Worker #2 — Phase 2: Other tools, templates, scaffold
 
 **Dispatch:** standard spawn prompt, Phase 2 task list. Additional reading: `#### Notes` of Worker #1 above; `tools/CONTEXT.md` § Lab Tools; `docs/research/v7-retry/context-strategy.md` §4.1 (STATE skeleton for the template). Phase notes: tools should pass prefixes explicitly so the `V7R` default on `id_num`/`fmt_id` can go in Phase 3; scaffold tests in fixture roots only.
+
+**Before (HEAD `c80bb24`):** `run_tests.py` 98 PASS, `OK: 0 failure(s)`. `check_state.py` (real lab) as at the end of Phase 1: exit 0, `RESULT: OK (1 warning)` (`[BENCH]`), fallback `info:` line.
+
+**After Phase 2:** `run_tests.py` 123 PASS (98 + 25 new), `OK: 0 failure(s)`. `check_state.py` on the real lab: unchanged from before (exit 0, `RESULT: OK (1 warning)`, only `[BENCH]`, same `info:` line, `== v7-i2c (V7R, open) … as_of=V7R-020 last_checkpoint=V7R-019 cards=20`). `--load`: unchanged (open cards none, V7R-019/V7R-020 conclusions, no log today). `validate_log.py lab/log/*.yaml`: 2026-10-20_s01 PENDING (TODOs, as before), the rest OK. Nothing under `lab/` changed except `lab/templates/`.
+
+#### Notes
+- Commits: `f2cdd8f` tools (capture, ingest, validate_log, + rule 4), `1518b3b` templates, `b48ea8b` scaffold, `2e05970` CONTEXT, then the handoff commit.
+- **ID check:** new `lablib.check_id(id, known)` + `lablib.registered_prefixes(lab_root)` + `lablib.ID_HELP`. `check_id` calls `id_num(card_id, prefix)` with the prefix explicitly, so no Phase 2 tool relies on the `V7R` default of `id_num`/`fmt_id`. The only `fmt_id`/`id_num` callers (`check_state.py`, `precommit.py`, `next_id`) already pass a prefix; Phase 3 can drop the `prefix=LEGACY_PREFIX` defaults.
+- capture/ingest check `--test` against `<--root>/lab` before contacting the scope / copying anything (exit 2). They accept a prefix of a *closed* investigation too (PLAN says "registered"); flagging that is not done.
+- **validate_log:** `validate(data, stem, prefixes=None)`; `None` = shape check only (used by direct callers that pass none, e.g. the template test). The CLI reads the registry from `--root <repo>` (default this repo). **precommit rule 4 now passes the staged registry's prefixes** (a small change to `precommit.py` beyond the three named tools, needed so the hook enforces the same rule); its docstring updated.
+- Tool tests: `seed_registry()` writes a front-matter-only STATE in each temp root (capture/ingest/hook roots had no registry before; "nothing written" checks now ignore `lab/investigations/`).
+- **Scaffold:** `--root` is the lab dir (as `check_state.py`), `--templates` defaults to the repo's `lab/templates/`. Title is written quoted in front matter (a `: ` in a title would otherwise break YAML). Beyond PLAN it also refuses: a prefix used only by card files, and any existing investigation with no `prefix` — this is the guard that keeps a scaffold on the real lab from turning v7 into `NO-PREFIX` while the fallback is live. It checks `inv.prefix is None or inv.prefix_fallback`; when Phase 3 removes the fallback, drop the `prefix_fallback` half.
+- Templates: `lab/templates/STATE.md` substitutes `<PREFIX>`, `<TITLE>`, `<NAME>`, `<YYYY-MM-DD>`; other `<...>` stay as fill-in placeholders. Its §6 is baselines + the BENCH.md pointer; §9 has two generic rows. `card.md` fixed a wrong example log name (`2026-11-04_session-01.yaml` → `_s01`) and gained a rule-1 line. `log.yaml` got a comment on `test_id` only (values unchanged, still validates).
+- `tools/CONTEXT.md` describes `lab/BENCH.md` as existing; it is created in Phase 3 (the checker warns until then). The fallback is not mentioned there, since it is transitional.
+
+#### Result
+| # | Phase | Result | Escalation evaluated? | Commit | Notes |
+|---|-------|--------|-----------------------|--------|-------|
+| 2 | Phase 2: Other tools, templates, scaffold | DONE | No — clean completion | (handoff commit) | 4 tasks + handoff |
