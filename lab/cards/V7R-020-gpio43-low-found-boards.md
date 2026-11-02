@@ -96,6 +96,7 @@ The session runs every flash, mode command and serial log; one instruction block
 - S3: #0003 and Nano unplugged, "All off"; same Mac port reused for found boards (user knows which).
 - S4 #0004 (USB-C J7 to the Mac, same port, same cable): PWR LED "On"; other LEDs "No"; warm "No". Session: no /dev/cu.usbmodem*, no VID 0x303A device in ioreg.
 - S4b #0004 download mode: silk labels are "RESET" and "BOOT" (card said IO / RE: render truncation); BOOT held while plugging in: "Done". Session: still no /dev/cu.usbmodem*, no VID 0x303A device (only the Mac's own devices and a USB Ethernet adapter).
+- S4c #0004 powered, DMM DC V, black U8.1 (extra observation, not in the card): U8 tab (+3.3 V) "Around 2.680, but kind of hovering there up to 2.701"; U8 pin 3 (+5 V) "Around 3.754, but going up and down a bit in the 3.7XX range". (+5V net = TPS61088 U6 VOUT → U8 VIN, D5 VDD, F1; circuit-context @ c2acffc, no provenance.)
 - Deviation: both scope probes lifted off #0003 and parked (not in the card; card uses no scope). Scope probes need a full re-seat + V1–V8 before any later scope card.
 ### Measured values (from log; cite `lab/evidence/V7R-020/...`)
 ### Interpretation (session; labelled as such)
