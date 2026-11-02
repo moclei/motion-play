@@ -228,3 +228,7 @@ After the answers: record them in CONTEXT (drop "pending"), strike OQ-2/OQ-4 in 
 - OQ-5 stays open: no new debug-track cards since the plan (V7R-020 is the latest). Jumper (a) is designed not to depend on card (j).
 - Jumper rows i, j, k were added beyond PLAN rows a–h. That is inside task 3's remit ("add any others the changelist §3 supports"), not a scope change.
 - Loop paused for the user: OQ-2, OQ-4, the four v7-valued jumper defaults (d, f, h, i), and W2 part 1 approval.
+
+**User decisions (2026-11-02), relayed by the Orchestrator:** OQ-4 = A (board ≤ 100 × 100 mm, 18650 on a keyed, polarised cable connector). OQ-2 = option 1 (external-master header only, no dev-board footprint). W2 part 1 = approved as written (GPIO allocation, jumper matrix a–k with the d/f/h/i v7 defaults, test-point list). GARDEN: the three doc errors from Workers #1–#2 added to `docs/initiatives/GARDEN.md` (new file; the protocol's prescribed location).
+
+Re-dispatch: Worker #3 resumed with its context to record the answers, finish tasks 3 and 5, and do the Handoff. It continues its own block (Notes addendum).
