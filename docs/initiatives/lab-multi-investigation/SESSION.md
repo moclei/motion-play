@@ -137,3 +137,12 @@ Entry: started from `RELAY-orchestrator.md`. Branch `feat/lab-multi-investigatio
 - E2 PWR-001 → `status: recorded` (Result commit self, Conclusion cites `lab/evidence/PWR-001/`): no STATE staged → REJECTED (power STATE not staged); only the *v7* STATE staged → REJECTED (same message); power STATE with `as_of: PWR-000` → REJECTED ("expected PWR-001"); power STATE `as_of: PWR-001`, `open_cards: []` → ACCEPTED (warning only: evidence dir has no files in the index). Checker: power `as_of=PWR-001`, `RESULT: OK (0 warnings)`; `--inv power` OK; `--load --inv power` shows PWR-001 recorded with both `self` hashes resolved.
 - E3 a second `PWR-001` card → REJECTED ("duplicate ID PWR-001, also used by lab/cards/PWR-001-dummy.md"). `lablib.next_id(lab, 'PWR')` → PWR-002. V7R and PWR cards coexist (cards=21).
 - The checker's default memory dir is derived from the clone path, so the MEMORY check was skipped there; re-run with `--memory-dir` set to the real memory dir: `RESULT: OK (0 warnings)`.
+
+**W3:** branch pushed; PR https://github.com/moclei/motion-play/pull/89 opened to `main` (not merged; the user merges). `origin/main` had no new commits since the Phase 3 merge, so the PR has no conflicts.
+
+#### Notes
+- Commits: `8de323e` w1 (BENCH.md, v7 STATE, fallback removal; tasks 2 + W1), `03f3866` PROTOCOL § lab/, `17ca761` w2 role draft, `0b2fa60` e2e log, then this handoff commit. All three patches applied unchanged.
+- Real lab on the branch after W1: `run_tests.py` OK (0 failures); `check_state.py` `RESULT: OK (0 warnings)`, no `[CAP]`; `--load` identical to baseline. The v7 STATE is at exactly 150 lines, so any added line will trigger `[CAP]`.
+- End-to-end check passed (details above). Two things showed up only in the dummy run: (1) the hook prints a *warning* (not a rejection) when a recorded card cites `lab/evidence/<ID>/` but no evidence files are staged. This is expected. (2) The checker's default memory dir is derived from the repo path, so in a clone at another path the MEMORY check is skipped with an `info:` line. Pass `--memory-dir` there.
+- The user still needs to hear that `v8-debug-board` Phase 2's power relay can now run as `PWR` cards. The Orchestrator relays this. The first Debugger session for it runs `tools/lab/new_investigation.py --name power --prefix PWR --title "..."` at intake.
+- PR: https://github.com/moclei/motion-play/pull/89
