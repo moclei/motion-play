@@ -26,7 +26,7 @@
 
 ## Phase 3: BENCH.md, v7 front matter, docs, merge
 
-- [ ] Merge the latest `main` in (and any open Debugger branch the user names). If a v7 card is open (`open_cards` not empty), stop and ask the user before touching `lab/`
+- [~] Merge the latest `main` in (and any open Debugger branch the user names). If a v7 card is open (`open_cards` not empty), stop and ask the user before touching `lab/`
 - [ ] Draft `lab/BENCH.md`. Move the boards, fixtures, flashed-now and bench-at-last-stop content out of the v7 STATE's §6 *verbatim*, adding which investigations use each board. Reduce §6 to its baselines plus a pointer. Add `prefix: V7R`, `title`, `status: open` to the v7 STATE front matter. Remove the Phase 1 `V7R` fallback
 - [ ] **W1:** show the user the diff (STATE + BENCH.md), and apply it only on approval. `check_state.py` on the real lab gives the same results as the baseline (the BENCH.md warning gone)
 - [ ] PROTOCOL.md § lab/: one investigation folder per fault, the shared files, BENCH.md, the scaffold command. Present it as a diff for approval

@@ -75,4 +75,18 @@ Entry: started from `RELAY-orchestrator.md`. Branch `feat/lab-multi-investigatio
 #### Result
 | # | Phase | Result | Escalation evaluated? | Commit | Notes |
 |---|-------|--------|-----------------------|--------|-------|
-| 2 | Phase 2: Other tools, templates, scaffold | DONE | No — clean completion | (handoff commit) | 4 tasks + handoff |
+| 2 | Phase 2: Other tools, templates, scaffold | DONE | No — clean completion | cf7e167 | 4 tasks + handoff |
+
+#### Verification
+- Worker #2 wrote the `#### Result` table itself (Orchestrator-owned); kept, with the commit filled in. Its Before/After lines sit above its Notes — left as written.
+- Working tree clean; Phase 2 all `[x]`, Phase 3 untouched. PLAN.md: one as-built bullet, no date-stamped headings. Under `lab/`, only `lab/templates/` changed (in scope per BRIEF).
+- Re-ran `run_tests.py`: `OK: 0 failure(s)`. Re-ran `check_state.py` on the real lab: exit 0, `RESULT: OK (1 warning)` (`[BENCH]`), fallback `info:` line — unchanged from Phase 1.
+- Beyond the task list, accepted: hook rule 4 passes registered prefixes to `validate_log` (keeps hook and tool consistent); the scaffold's two extra refusals.
+- Carries forward to Phase 3: fallback removal also covers the `prefix_fallback` half of `new_investigation.refusals()`. capture/ingest accept a closed investigation's prefix — noted, not in scope; surfaced to the user at closeout.
+- Phase 3 dispatch shape: the Worker cannot reach the user, and removing the fallback before the v7 STATE has `prefix` makes the real lab `NO-PREFIX`. So Worker #3 merges `main`, checks `open_cards`, and prepares the W1 (STATE + BENCH.md + fallback removal), PROTOCOL and W2 diffs as patches without applying them, then returns. The Orchestrator puts them to the user; a later Worker applies what is approved, runs the end-to-end check and opens the PR.
+
+---
+
+### Worker #3 — Phase 3 (part 1): merge main, draft the approval diffs
+
+**Dispatch:** Phase 3 tasks 1–2 plus drafting for W1, the PROTOCOL task and W2. Diffs are saved as patches in the session scratchpad, not applied to the branch (except the `main` merge). Additional reading: Worker #1 and #2 `#### Notes` and Verification; `lab/investigations/v7-i2c/STATE.md`; PROTOCOL § lab/; `docs/research/v7-retry/debugger-role-draft.md`.
