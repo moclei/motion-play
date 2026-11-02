@@ -32,7 +32,7 @@
 - [ ] PROTOCOL.md § lab/: one investigation folder per fault, the shared files, BENCH.md, the scaffold command. Present it as a diff for approval
 - [ ] **W2:** draft the role-draft changes (`docs/research/v7-retry/debugger-role-draft.md`) as a diff for the user: choosing an investigation at session start (`check_state.py` lists the open investigations, the user picks one, then `--load --inv`); BENCH.md read at start and updated in the same commit as a card that changes boards or flashing; scaffolding a new investigation at relay intake. The user applies or declines
 - [ ] End-to-end check in a throwaway clone: scaffold `power`/`PWR`, pre-register and record a dummy `PWR-001` with its STATE, check the hook and checker, then delete the clone. Log it in SESSION.md
-- [ ] **W3:** open a PR to `main` for the user to merge, and that `v8-debug-board` Phase 2's power relay can now run as `PWR` cards
+- [ ] **W3:** open a PR to `main` for the user to merge, and tell the user that `v8-debug-board` Phase 2's power relay can now run as `PWR` cards
 - [ ] 🔄 Handoff
 
 ## Deferred
