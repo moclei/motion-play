@@ -1,10 +1,11 @@
 #!/usr/bin/env python3
 """USB-stick ingest, the fallback to capture.py (test-workflow-audit §4.5, §4.9, §5 item 5).
 
-    python3 tools/lab/ingest_usb.py --src /Volumes/<STICK> --test V7R-012 --arm A1 \\
+    python3 tools/lab/ingest_usb.py --src /Volumes/<STICK> --test <PREFIX>-NNN --arm A1 \\
         --at 2026-11-04T10:42 [--files p6img.png p6wav.csv] [--dry-run]
 
---at is required: it is the time match and it dates the §4.4 names.
+--at is required: it is the time match and it dates the §4.4 names. --test is a card ID whose
+prefix an investigation declares (lab/investigations/<name>/STATE.md `prefix:`), e.g. V7R-012.
 
 1. Copies every file on the stick that is not already in the inbox into
    lab/inbox/usb-<YYYYMMDD-HHMMSS>/ (names and mtimes kept). Never writes to or deletes from the stick.
@@ -34,7 +35,9 @@ import sys
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
-TEST_RE = re.compile(r"^V7R-\d{3,}$")
+sys.path.insert(0, str(HERE))
+import lablib  # noqa: E402
+
 ARM_RE = re.compile(r"^[A-Za-z0-9]+(_[A-Za-z0-9]+)*$")
 SCOPE_EXT = {".png", ".bmp", ".jpg", ".csv", ".bin", ".wfm", ".stp"}
 SKIP_NAMES = {".Spotlight-V100", ".Trashes", ".fseventsd", "System Volume Information", ".TemporaryItems"}
@@ -157,7 +160,7 @@ def next_seq(cap_dir, prefix):
 def main(argv=None):
     ap = argparse.ArgumentParser(description=__doc__.split("\n\n")[0])
     ap.add_argument("--src", required=True, help="mounted stick, e.g. /Volumes/HANTEK")
-    ap.add_argument("--test", required=True, help="card ID, V7R-NNN")
+    ap.add_argument("--test", required=True, help="card ID, " + lablib.ID_HELP)
     ap.add_argument("--arm", required=True, help="A1 | B | A2 | S1… | val_V5 (§4.4)")
     ap.add_argument("--at", required=True, help="Mac local time of the save, YYYY-MM-DDTHH:MM[:SS]; "
                     "also dates the §4.4 names (the stick clock is not trusted)")
@@ -170,8 +173,14 @@ def main(argv=None):
     ap.add_argument("--now", help=argparse.SUPPRESS)   # tests: fixed inbox stamp
     args = ap.parse_args(argv)
 
-    if not TEST_RE.match(args.test) or not ARM_RE.match(args.arm):
-        print("ingest: --test must be V7R-NNN and --arm letters/digits/underscores", file=sys.stderr)
+    root = Path(args.root)
+    try:
+        lablib.check_id(args.test, lablib.registered_prefixes(root / "lab"))
+    except ValueError as e:
+        print("ingest: --test %s" % e, file=sys.stderr)
+        return 2
+    if not ARM_RE.match(args.arm):
+        print("ingest: --arm must be letters/digits/underscores, e.g. A1, B, S2, val_V5", file=sys.stderr)
         return 2
     try:
         args.offset_min = [int(x) for x in args.offset_min.split(",") if x.strip()]
@@ -183,7 +192,6 @@ def main(argv=None):
     if not src.is_dir():
         print("ingest: %s is not a directory (is the stick mounted?)" % src, file=sys.stderr)
         return 2
-    root = Path(args.root)
     now = datetime.datetime.fromisoformat(args.now) if args.now else datetime.datetime.now()
     inbox = root / "lab" / "inbox"
 

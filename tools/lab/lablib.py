@@ -203,6 +203,31 @@ def prefixes(invs):
     return out
 
 
+ID_HELP = "<PREFIX>-NNN, e.g. V7R-012 (PREFIX = an investigation's `prefix`)"
+
+
+def registered_prefixes(root):
+    """Sorted prefixes declared under the lab root `root` (one investigation each or not)."""
+    return sorted(prefixes(investigations(root)))
+
+
+def check_id(card_id, known):
+    """Validate a test/card ID against the registered prefixes `known`.
+
+    Returns (prefix, num). Raises ValueError with an operator-facing message if the ID
+    is not `<PREFIX>-NNN` or no investigation declares its prefix.
+    """
+    p = parse_id(card_id)
+    if p is None:
+        raise ValueError("%r is not %s" % (card_id, ID_HELP))
+    prefix = p[0]
+    if prefix not in known:
+        raise ValueError("%r: no investigation declares prefix %s (lab/%s/<name>/STATE.md `prefix:`); "
+                         "registered: %s" % (card_id, prefix, INVESTIGATIONS_DIR,
+                                             ", ".join(sorted(known)) or "none"))
+    return prefix, id_num(card_id, prefix)
+
+
 def next_id(root, prefix):
     """Next free `<prefix>-NNN`: highest such card filename in lab/cards/ + 1."""
     top = 0

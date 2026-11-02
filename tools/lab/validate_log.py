@@ -4,7 +4,8 @@ markers in lab/templates/log.yaml). Branches on `kind`:
 
   both kinds   session_id (YYYY-MM-DD_sNN, equal to the file stem), kind, every dut.* field
                (declared_baseline is v7-clean | v6-ref | other), at least one measurement, and per
-               measurement test_id (V7R-NNN), feature, raw_observation.
+               measurement test_id (<PREFIX>-NNN, PREFIX declared by an
+               investigation's STATE.md), feature, raw_observation.
   kind: scope  also scope.model/firmware; validation.passed (bool) + V2_probe_ratio, V5 (per-channel
                maps ctl_sd_mV, dut_sd_mV, excess_rms_mV, offset_mV; optional vpp_panel_mV; written by
                tools/lab/noise_floor.py), V6_ground {method, point, length_mm}, V7_idle_high_V; every
@@ -18,7 +19,10 @@ false (an ERROR with passed: true); it is then neither a TODO nor an error. A lo
 legacy `V5_noise_floor_mVpp` (mVpp number, V7R-001) gets a warning, not an error. Warnings never
 fail: validation.passed false, legacy V5, and a PNG capture with no ai_read entry.
 
-    python3 tools/lab/validate_log.py lab/log/2026-11-04_s01.yaml [...] [--allow-todo]
+    python3 tools/lab/validate_log.py lab/log/2026-11-04_s01.yaml [...] [--allow-todo] [--root <repo>]
+
+The registered prefixes come from <repo>/lab/investigations/*/STATE.md (default: this repo).
+validate()/validate_text() called with prefixes=None check the ID shape only.
 
 Exit: 0 valid; 1 errors; 3 no errors but TODOs remain (0 with --allow-todo); 2 usage/PyYAML missing.
 The pre-commit hook (precommit.py) rejects staged logs with errors and only warns on TODOs.
@@ -28,14 +32,18 @@ import re
 import sys
 from pathlib import Path
 
+HERE = Path(__file__).resolve().parent
+sys.path.insert(0, str(HERE))
+import lablib  # noqa: E402
+
 try:
     import yaml  # type: ignore
 except ImportError:  # pragma: no cover
     yaml = None
 
 SESSION_RE = re.compile(r"^\d{4}-\d{2}-\d{2}_s\d{2,}$")
-TEST_RE = re.compile(r"^V7R-\d{3,}$")
-CAPTURE_RE = re.compile(r"^\d{4}-\d{2}-\d{2}_(V7R-\d{3,})_[A-Za-z0-9]+(?:_[A-Za-z0-9]+)*_\d{2,}\.[A-Za-z0-9.]+$")
+CAPTURE_RE = re.compile(r"^\d{4}-\d{2}-\d{2}_(%s-\d{3,})_[A-Za-z0-9]+(?:_[A-Za-z0-9]+)*_\d{2,}\.[A-Za-z0-9.]+$"
+                        % lablib.PREFIX_PAT)
 KINDS = ("log-only", "scope")
 BASELINES = ("v7-clean", "v6-ref", "other")
 METHODS = ("auto", "cursor", "both")
@@ -108,8 +116,20 @@ def check_v5(v5, r, path="validation.V5"):
             r.warnings.append("%s.%s: unknown key" % (path, k))
 
 
-def validate(data, stem=None):
+def validate(data, stem=None, prefixes=None):
+    """prefixes: the registered card prefixes (None = check the ID shape only)."""
     r = Report()
+
+    def bad_id(tid):
+        """Error text for a test_id that is not a usable ID, else None."""
+        if prefixes is None:
+            return None if lablib.parse_id(tid) else "%r is not %s" % (tid, lablib.ID_HELP)
+        try:
+            lablib.check_id(tid, prefixes)
+        except ValueError as e:
+            return str(e)
+        return None
+
     if not isinstance(data, dict):
         r.errors.append("top level is not a mapping")
         return r
@@ -226,8 +246,12 @@ def validate(data, stem=None):
             r.errors.append("%s: must be a mapping" % at)
             continue
         tid = m.get("test_id")
-        if need(at + ".test_id", tid) and not TEST_RE.match(str(tid)):
-            r.errors.append("%s.test_id: %r is not V7R-NNN" % (at, tid))
+        tid_ok = False
+        if need(at + ".test_id", tid):
+            why = bad_id(str(tid))
+            tid_ok = why is None
+            if why:
+                r.errors.append("%s.test_id: %s" % (at, why))
         need(at + ".feature", m.get("feature"))
         need(at + ".raw_observation", m.get("raw_observation"))
         if not scope:
@@ -263,7 +287,7 @@ def validate(data, stem=None):
                     mm = CAPTURE_RE.match(str(c))
                     if not mm:
                         r.errors.append("%s.captures: %r is not YYYY-MM-DD_<test-id>_<arm>_<nn>.<ext> (§4.4)" % (at, c))
-                    elif TEST_RE.match(str(tid or "")) and mm.group(1) != tid:
+                    elif tid_ok and mm.group(1) != tid:
                         r.errors.append("%s.captures: %r is not for %s" % (at, c, tid))
                     if str(c).lower().endswith(".png") and c not in read:
                         r.warnings.append("%s: no ai_read entry for %s yet" % (at, c))
@@ -272,7 +296,7 @@ def validate(data, stem=None):
     return r
 
 
-def validate_text(text, stem=None):
+def validate_text(text, stem=None, prefixes=None):
     if yaml is None:
         r = Report()
         r.errors.append("PyYAML is not installed; cannot validate session logs")
@@ -283,23 +307,33 @@ def validate_text(text, stem=None):
         r = Report()
         r.errors.append("YAML does not parse: %s" % str(e).replace("\n", " "))
         return r
-    return validate(data, stem)
+    return validate(data, stem, prefixes)
 
 
 def main(argv=None):
     argv = list(sys.argv[1:] if argv is None else argv)
     allow = "--allow-todo" in argv
-    files = [a for a in argv if a != "--allow-todo"]
+    argv = [a for a in argv if a != "--allow-todo"]
+    root = HERE.parents[1]
+    if "--root" in argv:
+        i = argv.index("--root")
+        if i + 1 >= len(argv):
+            argv = ["-"]  # usage error below
+        else:
+            root = Path(argv[i + 1])
+            del argv[i:i + 2]
+    files = argv
     if not files or any(a.startswith("-") for a in files):
-        print("usage: validate_log.py <log.yaml> [...] [--allow-todo]", file=sys.stderr)
+        print("usage: validate_log.py <log.yaml> [...] [--allow-todo] [--root <repo>]", file=sys.stderr)
         return 2
+    known = lablib.registered_prefixes(root / "lab")
     if yaml is None:
         print("validate_log: PyYAML is required (pip install pyyaml)", file=sys.stderr)
         return 2
     worst = 0
     for f in files:
         p = Path(f)
-        r = validate_text(p.read_text(encoding="utf-8"), p.stem)
+        r = validate_text(p.read_text(encoding="utf-8"), p.stem, known)
         code = r.exit_code(allow)
         label = {0: "OK", 1: "INVALID", 3: "PENDING (TODOs)"}[code]
         print("%s: %s" % (p, label))

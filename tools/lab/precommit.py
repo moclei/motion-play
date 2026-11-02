@@ -10,7 +10,8 @@ Reads the staged index (not the working tree) and rejects the commit when:
      or no `lab/evidence/<ID>/` reference in its `## Conclusion`;
   3. a staged card's <PREFIX>-NNN ID is used by another card file (same prefix, same number);
   4. a staged session log lab/log/*.yaml fails validate_log.py (missing or malformed
-     §4.6 required fields). TODO placeholders left by capture.py only warn.
+     §4.6 required fields, or a test_id whose prefix no staged investigation declares).
+     TODO placeholders left by capture.py only warn.
 
 `Result commit: self` is valid (the recording commit can't hold its own hash;
 see the self-reference note in lab/templates/card.md).
@@ -101,12 +102,16 @@ def main():
             elif not git("ls-files", "lab/evidence/%s/" % cid)[1].strip():
                 warnings.append("%s: lab/evidence/%s/ has no files in the index" % (path, cid))
 
-    # Rule 4: staged session logs pass validate_log.py (TODOs warn only)
+    # Rule 4: staged session logs pass validate_log.py (TODOs warn only); test_id prefixes
+    # must be declared by a staged investigation STATE
+    known = None
     for path in staged:
         m = LOG_PATH_RE.match(path)
         if not m:
             continue
-        rep = validate_log.validate_text(blob(":" + path) or "", m.group(1))
+        if known is None:
+            known = sorted(lablib.prefixes(staged_registry()))
+        rep = validate_log.validate_text(blob(":" + path) or "", m.group(1), known)
         errors.extend("%s: %s" % (path, e) for e in rep.errors)
         if rep.todos:
             warnings.append("%s: %d TODO field(s) still to fill (%s%s)" % (
