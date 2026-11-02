@@ -18,7 +18,8 @@ Findings are printed one per line as `[TAG] message`. Tags:
   CARD / AS-OF    housekeeping: unparseable card, test_id/filename mismatch, as_of ahead of the cards.
 Everything except STALE is a warning (exit 0).
 
-STATE is lab/investigations/STATE-v7-I2C.md (STATE_REL below, relative to the lab root).
+STATE is lab/investigations/v7-i2c/STATE.md and the notebook lab/investigations/v7-i2c/NOTEBOOK.md
+(STATE_REL / NOTEBOOK_REL below, relative to the lab root).
 
 Cap counting rule: a section's count excludes its heading, its one-line field
 definition (the first non-blank, non-table line under the heading), the table
@@ -39,7 +40,9 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import lablib  # noqa: E402
 
-STATE_REL = Path("investigations") / "STATE-v7-I2C.md"  # relative to the lab root (--root)
+INVESTIGATION_REL = Path("investigations") / "v7-i2c"  # relative to the lab root (--root)
+STATE_REL = INVESTIGATION_REL / "STATE.md"
+NOTEBOOK_REL = INVESTIGATION_REL / "NOTEBOOK.md"
 FILE_CAP = 150
 LOST_DAYS = 7
 CHECKPOINT_EVERY = 3
@@ -264,7 +267,7 @@ def run_checks(root, base, memory_dir, today):
     if len(since) >= CHECKPOINT_EVERY:
         reasons.append("%d recorded since last_checkpoint %s (%s)" % (
             len(since), sfm.get("last_checkpoint"), ", ".join(c.id for c in since)))
-    nb = root / "NOTEBOOK.md"
+    nb = root / NOTEBOOK_REL
     if as_of > 0 and nb.is_file():
         dates = re.findall(r"^## (\d{4}-\d{2}-\d{2})", nb.read_text(encoding="utf-8"), re.MULTILINE)
         if dates:

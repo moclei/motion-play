@@ -3,7 +3,7 @@
 
 Reads the staged index (not the working tree) and rejects the commit when:
   1. a staged card's front matter moves to `status: recorded|abandoned` and
-     lab/investigations/STATE-v7-I2C.md is not staged with `as_of` = the highest such card ID;
+     lab/investigations/v7-i2c/STATE.md is not staged with `as_of` = the highest such card ID;
   2. a card staged as `recorded` has an empty (or still `<hash>`) Result commit,
      or no `lab/evidence/<ID>/` reference in its `## Conclusion`;
   3. a staged card's V7R-NNN number is used by another card file;
@@ -25,7 +25,7 @@ import validate_log  # noqa: E402
 
 CARD_PATH_RE = re.compile(r"^lab/cards/(V7R-(\d{3,})-.+\.md)$")
 LOG_PATH_RE = re.compile(r"^lab/log/([^/]+)\.yaml$")
-STATE = "lab/investigations/STATE-v7-I2C.md"
+STATE = "lab/investigations/v7-i2c/STATE.md"
 
 
 def git(*args, check=False):

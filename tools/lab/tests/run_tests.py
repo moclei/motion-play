@@ -36,7 +36,7 @@ FRESH = [
     ("stale_hash/gen/board-context.json", 1),  # JSON _provenance, source changed
     ("stale_hash/gen/net-narrative.md", 0),    # Markdown front matter, fresh
     ("stale_hash/gen/net.png", 0),             # image + .meta.json sidecar, fresh
-    ("clean/lab/investigations/STATE-v7-I2C.md", 2),  # hand-written: no provenance
+    ("clean/lab/investigations/v7-i2c/STATE.md", 2),  # hand-written: no provenance
 ]
 
 
