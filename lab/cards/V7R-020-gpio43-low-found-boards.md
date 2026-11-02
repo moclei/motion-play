@@ -90,6 +90,7 @@ The session runs every flash, mode command and serial log; one instruction block
 - R-r (#0003, DMM at Nano A4 / A5, black Nano GND column): "Both A4 and A5 read 3.279 V"
 - R-3a (#0003, GPIO43 low): A4 "0.64V all three times"; A5 "3.28V"
 - R-4 (#0003, GPIO44 low): A5 "0.050V all three times (would flicker between 0.049V and 0.050V, but mostly be 0.050V)"; A4 "3.280V"
+- R-3b (#0003, GPIO43 low, repeat): A4 "0.641V all three times". Session: no reset/boot line in `2026-11-01_V7R-020_0003_01.txt` from r to 3b.
 - Deviation: both scope probes lifted off #0003 and parked (not in the card; card uses no scope). Scope probes need a full re-seat + V1–V8 before any later scope card.
 ### Measured values (from log; cite `lab/evidence/V7R-020/...`)
 ### Interpretation (session; labelled as such)
