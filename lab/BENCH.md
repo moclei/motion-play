@@ -11,9 +11,9 @@
 | YD-ESP32-23 (2022-V1.3, WROOM-1-N16R8, die rev v0.2, MAC 98:88:e0:04:3c:14) | healthy | none | module control (V7R-017). | v7-i2c |
 | Legacy: v7 B1 | bodge-damaged (L-Ph7) | rework | none. | v7-i2c |
 | v7 B2 | BQ I²C open (L-Ph8), never reflowed? | none known | symptom identity: causal, if it still exists. | v7-i2c |
-| v7 #0005 (sharpie; was "Board #3", likely legacy B3, argued; old image found no BQ at 0x6B, which fits B2, so mapping uncertain; v0.2, MAC 44:1b:f6:c5:58:a4) | boots on USB; old image brownout reset loop | none | GPIO43 533 Ω (V7R-020). | v7-i2c |
-| v7 #0004 (sharpie; unmarked before) | no USB device; +5 V ≈ 3.75 V, +3.3 V ≈ 2.69 V powered (V7R-020) | none | power-path case. | v7-i2c |
-| v7 #0001, #0002 (user names; no barcodes) | cooked by battery connection in legacy testing (user) | none known | not on the bench; mapping to legacy B1/B2 unknown. | v7-i2c |
+| v7 #0005 (sharpie; was "Board #3", likely legacy B3, argued; old image found no BQ at 0x6B, which fits B2, so mapping uncertain; v0.2, MAC 44:1b:f6:c5:58:a4) | boots on USB; old image brownout reset loop | none | GPIO43 533 Ω (V7R-020); power reference (PWR intake). | v7-i2c, power |
+| v7 #0004 (sharpie; unmarked before) | no USB device; +5 V ≈ 3.75 V, +3.3 V ≈ 2.69 V powered (V7R-020) | none | power-path case. | v7-i2c, power |
+| v7 #0001, #0002 (user names; no barcodes) | "burnt out" after a 30Q 18650 in BT1 in legacy testing (user); binned (user, 2026-11-02) | none known | gone; mapping to legacy B1/B2 unknown. | v7-i2c, power |
 
 #0004 could be B1, B2 or a spare.
 
