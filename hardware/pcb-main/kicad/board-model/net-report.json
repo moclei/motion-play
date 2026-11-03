@@ -1,0 +1,8164 @@
+{
+ "_provenance": {
+  "source": "hardware/pcb-main/kicad/motion-play-main.kicad_pcb",
+  "source_sha256": "ff6857d0bf797fc745a59a91123e752c4233ac3682e1ce38f2e270348b26e5b3",
+  "source_ref": "c2acffc",
+  "generator": "tools/pcb-context/net_report.py",
+  "generator_commit": "f93e72b92796da964e1071e3aba3c3fac3b362a8-dirty",
+  "generated": "2026-11-03T00:13:24+00:00",
+  "model": "hardware/pcb-main/kicad/board-model/board-model.json",
+  "model_sha256": "5f4f0c22b5ff43922e130f7662fd878bd4a0e93eca0f1d08611ae85f3df55252",
+  "model_generator_commit": "f93e72b92796da964e1071e3aba3c3fac3b362a8"
+ },
+ "board": "hardware/pcb-main/kicad/motion-play-main.kicad_pcb @ c2acffc",
+ "methods": {
+  "track_to_track": "target track copper (centreline buffered by width/2) to neighbour track copper, same layer",
+  "track_to_copper": "target track copper to all of the neighbour's same-layer copper (tracks, pads, vias, fills)",
+  "all_copper": "tracks + pads + via annular rings (+ the neighbour's same-layer zone fills), same layer, edge to edge",
+  "plan_view": "target copper on one layer to neighbour copper on another layer, edge to edge in plan view; zone fills on other layers are reference planes, not neighbours; separation = dielectric between",
+  "coupled": "mm of the target's track centrelines within the radius (edge to edge) of the neighbour's same-layer copper",
+  "radius": "max of the target's and the neighbour's class radius (board config neighbour_radii_mm)",
+  "reference_raw": "track centreline over the zone fills of the adjacent copper layer; fill holes count as no copper",
+  "reference_antipads_excl": "as raw, but fill holes that contain a drilled hole (via, PTH, NPTH) count as copper",
+  "bodies": "track centreline inside a footprint body polygon (courtyard, else fab, else pads), plan view"
+ },
+ "radii": {
+  "signal": 1.0,
+  "high_current": 3.0,
+  "high_dvdt": 5.0
+ },
+ "critical": [
+  {
+   "net": "/I2C_SDA",
+   "classes": [
+    "signal"
+   ],
+   "endpoints": [
+    {
+     "pad": "U3.37",
+     "ref": "U3",
+     "pin": "37",
+     "pin_function": "TXD0",
+     "part": "ESP32-S3-WROOM-1-N16R8",
+     "footprint": "JLC-MCP:WIRELM-SMD_ESP32-S3-WROOM-1",
+     "side": "front",
+     "role": "root",
+     "from_root_mm": null,
+     "vias_from_root": null,
+     "from_root_by_layer": null
+    },
+    {
+     "pad": "TPIO43.1",
+     "ref": "TPIO43",
+     "pin": "1",
+     "pin_function": "1",
+     "part": "TestPoint",
+     "footprint": "TestPoint:TestPoint_Pad_D2.0mm",
+     "side": "front",
+     "role": null,
+     "from_root_mm": 5.8679,
+     "vias_from_root": 0,
+     "from_root_by_layer": {
+      "F.Cu": 5.8679
+     }
+    },
+    {
+     "pad": "U4.23",
+     "ref": "U4",
+     "pin": "23",
+     "pin_function": "SDA",
+     "part": "TCA9548APWR",
+     "footprint": "motion-play-footprints:SOP65P640X120-24N",
+     "side": "front",
+     "role": null,
+     "from_root_mm": 9.4184,
+     "vias_from_root": 0,
+     "from_root_by_layer": {
+      "F.Cu": 9.4184
+     }
+    },
+    {
+     "pad": "R28.1",
+     "ref": "R28",
+     "pin": "1",
+     "pin_function": null,
+     "part": "2.2kΩ",
+     "footprint": "Resistor_SMD:R_0603_1608Metric",
+     "side": "front",
+     "role": null,
+     "from_root_mm": 19.3648,
+     "vias_from_root": 0,
+     "from_root_by_layer": {
+      "F.Cu": 19.3648
+     }
+    },
+    {
+     "pad": "U7.6",
+     "ref": "U7",
+     "pin": "6",
+     "pin_function": "SDA",
+     "part": "INA219AIDCNR",
+     "footprint": "INA219AIDCNR:SOT-23-8_L3.0-W1.7-P0.65-LS2.8-BR",
+     "side": "front",
+     "role": null,
+     "from_root_mm": 31.671,
+     "vias_from_root": 2,
+     "from_root_by_layer": {
+      "B.Cu": 26.3283,
+      "F.Cu": 5.3427
+     }
+    },
+    {
+     "pad": "U5.6",
+     "ref": "U5",
+     "pin": "6",
+     "pin_function": "SDA",
+     "part": "BQ24195RGER",
+     "footprint": "BQ24195RGET:VQFN-24_L4.0-W4.0-P0.50-TL-EP2.8",
+     "side": "front",
+     "role": null,
+     "from_root_mm": 47.6908,
+     "vias_from_root": 3,
+     "from_root_by_layer": {
+      "B.Cu": 36.9612,
+      "F.Cu": 10.7296
+     }
+    }
+   ],
+   "length_mm": 72.8982,
+   "length_by_layer": {
+    "B.Cu": 36.9805,
+    "F.Cu": 35.9177
+   },
+   "widths_mm": [
+    0.25
+   ],
+   "vias": 3,
+   "root": "U3.37",
+   "root_source": "config",
+   "longest_branch_from_root_mm": 47.6908,
+   "route_text": "U3.37 TXD0 (ESP32-S3-WROOM-1-N16R8)  — root (config)\n├─ F.Cu 3.9 mm w0.25 [1.5 diagonal (143.4,111.6)→(142.3,112.7); 2.4 along y=112.67 (x 142.3→139.9)] → junction (143.41, 111.60)\n│  ├─ F.Cu 2.0 mm w0.25 → TPIO43.1 (TestPoint)   ⟨5.9 mm from root, 0 vias; F 5.9⟩\n│  └─ F.Cu 5.5 mm w0.25 [2.2 along y=111.60 (x 143.4→145.6); 2.1 diagonal (145.6,111.6)→(147.0,110.1); 1.3 along y=110.14 (x 147.0→148.3)] → U4.23 SDA (TCA9548APWR)   ⟨9.4 mm from root, 0 vias; F 9.4⟩\n│     └─ F.Cu 9.9 mm w0.25 [7.1 along x=150.73 (y 102.0→109.0); 1.6 diagonal (150.7,109.0)→(149.6,110.1); 1.3 along y=110.14 (x 149.6→148.3)] → R28.1 (2.2kΩ)   ⟨19.4 mm from root, 0 vias; F 19.4⟩\n└─ F.Cu 1.5 mm w0.25 → via V196 (138.40, 112.65)\n   └─ B.Cu 26.3 mm w0.25 [9.2 diagonal (138.4,112.7)→(131.9,119.2); 17.1 along y=119.17 (x 131.9→114.8)] → via V198 (114.77, 119.17)\n      ├─ B.Cu 10.6 mm w0.25 [6.0 along y=122.19 (x 105.4→111.4); 4.2 diagonal (111.4,122.2)→(114.4,119.2)] → via V197 (105.37, 122.19)\n      │  └─ F.Cu 9.2 mm w0.25 [3.2 diagonal (98.1,120.4)→(100.4,122.7); 3.3 along y=122.70 (x 100.4→103.7); 1.2 along y=122.19 (x 104.2→105.4)] → U5.6 SDA (BQ24195RGER)   ⟨47.7 mm from root, 3 vias; B 37.0, F 10.7⟩\n      └─ F.Cu 3.8 mm w0.25 [3.8 along y=119.19 (x 110.9→114.8)] → U7.6 SDA (INA219AIDCNR)   ⟨31.7 mm from root, 2 vias; B 26.3, F 5.3⟩",
+   "chains": [
+    {
+     "id": "C0",
+     "a": "J:F.Cu:143.415:111.600",
+     "b": "U4.23",
+     "layer": "F.Cu",
+     "length_mm": 5.5052,
+     "widths": [
+      0.25
+     ],
+     "segments": [
+      "S522",
+      "S523",
+      "S525"
+     ],
+     "in_tree": true,
+     "legs": [
+      {
+       "length_mm": 2.17,
+       "dir": "along y=111.60 (x 143.4→145.6)"
+      },
+      {
+       "length_mm": 2.06,
+       "dir": "diagonal (145.6,111.6)→(147.0,110.1)"
+      },
+      {
+       "length_mm": 1.28,
+       "dir": "along y=110.14 (x 147.0→148.3)"
+      }
+     ]
+    },
+    {
+     "id": "C1",
+     "a": "J:F.Cu:143.415:111.600",
+     "b": "U3.37",
+     "layer": "F.Cu",
+     "length_mm": 3.9132,
+     "widths": [
+      0.25
+     ],
+     "segments": [
+      "S524",
+      "S529"
+     ],
+     "in_tree": true,
+     "legs": [
+      {
+       "length_mm": 1.51,
+       "dir": "diagonal (143.4,111.6)→(142.3,112.7)"
+      },
+      {
+       "length_mm": 2.4,
+       "dir": "along y=112.67 (x 142.3→139.9)"
+      }
+     ]
+    },
+    {
+     "id": "C2",
+     "a": "J:F.Cu:143.415:111.600",
+     "b": "TPIO43.1",
+     "layer": "F.Cu",
+     "length_mm": 1.9547,
+     "widths": [
+      0.25
+     ],
+     "segments": [
+      "S532",
+      "S537"
+     ],
+     "in_tree": true,
+     "legs": [
+      {
+       "length_mm": 0.87,
+       "dir": "diagonal (143.4,111.6)→(142.8,111.0)"
+      },
+      {
+       "length_mm": 1.08,
+       "dir": "along x=142.80 (y 111.0→109.9)"
+      }
+     ]
+    },
+    {
+     "id": "C3",
+     "a": "R28.1",
+     "b": "U4.23",
+     "layer": "F.Cu",
+     "length_mm": 9.9464,
+     "widths": [
+      0.25
+     ],
+     "segments": [
+      "S527",
+      "S530",
+      "S535"
+     ],
+     "in_tree": true,
+     "legs": [
+      {
+       "length_mm": 7.08,
+       "dir": "along x=150.73 (y 102.0→109.0)"
+      },
+      {
+       "length_mm": 1.55,
+       "dir": "diagonal (150.7,109.0)→(149.6,110.1)"
+      },
+      {
+       "length_mm": 1.31,
+       "dir": "along y=110.14 (x 149.6→148.3)"
+      }
+     ]
+    },
+    {
+     "id": "C4",
+     "a": "U3.37",
+     "b": "V196",
+     "layer": "F.Cu",
+     "length_mm": 1.525,
+     "widths": [
+      0.25
+     ],
+     "segments": [
+      "S538"
+     ],
+     "in_tree": true,
+     "legs": [
+      {
+       "length_mm": 1.55,
+       "dir": "along y=112.67 (x 139.9→138.4)"
+      }
+     ]
+    },
+    {
+     "id": "C5",
+     "a": "U5.6",
+     "b": "V197",
+     "layer": "F.Cu",
+     "length_mm": 9.2046,
+     "widths": [
+      0.25
+     ],
+     "segments": [
+      "S521",
+      "S531",
+      "S533",
+      "S534",
+      "S536"
+     ],
+     "in_tree": true,
+     "legs": [
+      {
+       "length_mm": 0.81,
+       "dir": "along x=98.14 (y 119.6→120.4)"
+      },
+      {
+       "length_mm": 3.23,
+       "dir": "diagonal (98.1,120.4)→(100.4,122.7)"
+      },
+      {
+       "length_mm": 3.28,
+       "dir": "along y=122.70 (x 100.4→103.7)"
+      },
+      {
+       "length_mm": 0.72,
+       "dir": "diagonal (103.7,122.7)→(104.2,122.2)"
+      },
+      {
+       "length_mm": 1.16,
+       "dir": "along y=122.19 (x 104.2→105.4)"
+      }
+     ]
+    },
+    {
+     "id": "C6",
+     "a": "U7.6",
+     "b": "V198",
+     "layer": "F.Cu",
+     "length_mm": 3.8177,
+     "widths": [
+      0.25
+     ],
+     "segments": [
+      "S528"
+     ],
+     "in_tree": true,
+     "legs": [
+      {
+       "length_mm": 3.83,
+       "dir": "along y=119.19 (x 110.9→114.8)"
+      }
+     ]
+    },
+    {
+     "id": "C7",
+     "a": "V196",
+     "b": "V198",
+     "layer": "B.Cu",
+     "length_mm": 26.3283,
+     "widths": [
+      0.25
+     ],
+     "segments": [
+      "S540",
+      "S544"
+     ],
+     "in_tree": true,
+     "legs": [
+      {
+       "length_mm": 9.23,
+       "dir": "diagonal (138.4,112.7)→(131.9,119.2)"
+      },
+      {
+       "length_mm": 17.1,
+       "dir": "along y=119.17 (x 131.9→114.8)"
+      }
+     ]
+    },
+    {
+     "id": "C8",
+     "a": "V197",
+     "b": "V198",
+     "layer": "B.Cu",
+     "length_mm": 10.6329,
+     "widths": [
+      0.25
+     ],
+     "segments": [
+      "S541",
+      "S542",
+      "S543"
+     ],
+     "in_tree": true,
+     "legs": [
+      {
+       "length_mm": 6.03,
+       "dir": "along y=122.19 (x 105.4→111.4)"
+      },
+      {
+       "length_mm": 4.24,
+       "dir": "diagonal (111.4,122.2)→(114.4,119.2)"
+      },
+      {
+       "length_mm": 0.38,
+       "dir": "along y=119.17 (x 114.4→114.8)"
+      }
+     ]
+    }
+   ],
+   "connected": true,
+   "islands": [
+    {
+     "pads": [
+      "R28.1",
+      "TPIO43.1",
+      "U3.37",
+      "U4.23",
+      "U5.6",
+      "U7.6"
+     ],
+     "vias": 3,
+     "zones": []
+    }
+   ],
+   "stubs": [],
+   "reference_planes": {
+    "runs": [
+     {
+      "layer": "B.Cu",
+      "plane_layer": "In2.Cu",
+      "dielectric_mm": 0.1,
+      "track_mm": 36.98,
+      "over_raw": {
+       "+3.3V": 28.94
+      },
+      "none_raw_mm": 8.04,
+      "over_antipads_excl": {
+       "+3.3V": 30.79
+      },
+      "none_antipads_excl_mm": 6.19
+     },
+     {
+      "layer": "F.Cu",
+      "plane_layer": "In1.Cu",
+      "dielectric_mm": 0.1,
+      "track_mm": 35.92,
+      "over_raw": {
+       "GND": 30.71
+      },
+      "none_raw_mm": 5.21,
+      "over_antipads_excl": {
+       "GND": 35.92
+      },
+      "none_antipads_excl_mm": 0.0
+     }
+    ],
+    "unreferenced_stretches_antipads_excl": [
+     {
+      "segment": "S541",
+      "layer": "B.Cu",
+      "plane_layer": "In2.Cu",
+      "length_mm": 6.01,
+      "from": [
+       105.38,
+       122.17
+      ],
+      "to": [
+       111.4,
+       122.17
+      ]
+     },
+     {
+      "segment": "S542",
+      "layer": "B.Cu",
+      "plane_layer": "In2.Cu",
+      "length_mm": 0.16,
+      "from": [
+       111.4,
+       122.17
+      ],
+      "to": [
+       111.51,
+       122.06
+      ]
+     },
+     {
+      "segment": "S539",
+      "layer": "B.Cu",
+      "plane_layer": "In2.Cu",
+      "length_mm": 0.02,
+      "from": [
+       105.37,
+       122.19
+      ],
+      "to": [
+       105.38,
+       122.17
+      ]
+     }
+    ],
+    "per_segment": [
+     {
+      "segment": "S520",
+      "layer": "F.Cu",
+      "plane_layer": "In1.Cu",
+      "length_mm": 0.02,
+      "over": {},
+      "none_raw_mm": 0.02,
+      "none_antipads_excl_mm": 0.0
+     },
+     {
+      "segment": "S521",
+      "layer": "F.Cu",
+      "plane_layer": "In1.Cu",
+      "length_mm": 1.16,
+      "over": {
+       "GND": 0.26
+      },
+      "none_raw_mm": 0.9,
+      "none_antipads_excl_mm": 0.0
+     },
+     {
+      "segment": "S522",
+      "layer": "F.Cu",
+      "plane_layer": "In1.Cu",
+      "length_mm": 1.28,
+      "over": {
+       "GND": 1.09
+      },
+      "none_raw_mm": 0.19,
+      "none_antipads_excl_mm": 0.0
+     },
+     {
+      "segment": "S523",
+      "layer": "F.Cu",
+      "plane_layer": "In1.Cu",
+      "length_mm": 2.17,
+      "over": {
+       "GND": 1.38
+      },
+      "none_raw_mm": 0.79,
+      "none_antipads_excl_mm": 0.0
+     },
+     {
+      "segment": "S524",
+      "layer": "F.Cu",
+      "plane_layer": "In1.Cu",
+      "length_mm": 1.51,
+      "over": {
+       "GND": 1.51
+      },
+      "none_raw_mm": 0.0,
+      "none_antipads_excl_mm": 0.0
+     },
+     {
+      "segment": "S525",
+      "layer": "F.Cu",
+      "plane_layer": "In1.Cu",
+      "length_mm": 2.06,
+      "over": {
+       "GND": 1.53
+      },
+      "none_raw_mm": 0.53,
+      "none_antipads_excl_mm": 0.0
+     },
+     {
+      "segment": "S526",
+      "layer": "F.Cu",
+      "plane_layer": "In1.Cu",
+      "length_mm": 0.03,
+      "over": {
+       "GND": 0.03
+      },
+      "none_raw_mm": 0.0,
+      "none_antipads_excl_mm": 0.0
+     },
+     {
+      "segment": "S527",
+      "layer": "F.Cu",
+      "plane_layer": "In1.Cu",
+      "length_mm": 7.08,
+      "over": {
+       "GND": 7.08
+      },
+      "none_raw_mm": 0.0,
+      "none_antipads_excl_mm": 0.0
+     },
+     {
+      "segment": "S528",
+      "layer": "F.Cu",
+      "plane_layer": "In1.Cu",
+      "length_mm": 3.82,
+      "over": {
+       "GND": 3.03
+      },
+      "none_raw_mm": 0.78,
+      "none_antipads_excl_mm": 0.0
+     },
+     {
+      "segment": "S529",
+      "layer": "F.Cu",
+      "plane_layer": "In1.Cu",
+      "length_mm": 2.4,
+      "over": {
+       "GND": 2.4
+      },
+      "none_raw_mm": 0.0,
+      "none_antipads_excl_mm": 0.0
+     },
+     {
+      "segment": "S530",
+      "layer": "F.Cu",
+      "plane_layer": "In1.Cu",
+      "length_mm": 1.31,
+      "over": {
+       "GND": 1.31
+      },
+      "none_raw_mm": 0.0,
+      "none_antipads_excl_mm": 0.0
+     },
+     {
+      "segment": "S531",
+      "layer": "F.Cu",
+      "plane_layer": "In1.Cu",
+      "length_mm": 0.72,
+      "over": {
+       "GND": 0.53
+      },
+      "none_raw_mm": 0.19,
+      "none_antipads_excl_mm": 0.0
+     },
+     {
+      "segment": "S532",
+      "layer": "F.Cu",
+      "plane_layer": "In1.Cu",
+      "length_mm": 1.08,
+      "over": {
+       "GND": 1.08
+      },
+      "none_raw_mm": 0.0,
+      "none_antipads_excl_mm": 0.0
+     },
+     {
+      "segment": "S533",
+      "layer": "F.Cu",
+      "plane_layer": "In1.Cu",
+      "length_mm": 3.23,
+      "over": {
+       "GND": 3.23
+      },
+      "none_raw_mm": 0.0,
+      "none_antipads_excl_mm": 0.0
+     },
+     {
+      "segment": "S534",
+      "layer": "F.Cu",
+      "plane_layer": "In1.Cu",
+      "length_mm": 0.81,
+      "over": {
+       "GND": 0.81
+      },
+      "none_raw_mm": 0.0,
+      "none_antipads_excl_mm": 0.0
+     },
+     {
+      "segment": "S535",
+      "layer": "F.Cu",
+      "plane_layer": "In1.Cu",
+      "length_mm": 1.55,
+      "over": {
+       "GND": 1.55
+      },
+      "none_raw_mm": 0.0,
+      "none_antipads_excl_mm": 0.0
+     },
+     {
+      "segment": "S536",
+      "layer": "F.Cu",
+      "plane_layer": "In1.Cu",
+      "length_mm": 3.28,
+      "over": {
+       "GND": 2.27
+      },
+      "none_raw_mm": 1.01,
+      "none_antipads_excl_mm": 0.0
+     },
+     {
+      "segment": "S537",
+      "layer": "F.Cu",
+      "plane_layer": "In1.Cu",
+      "length_mm": 0.87,
+      "over": {
+       "GND": 0.87
+      },
+      "none_raw_mm": 0.0,
+      "none_antipads_excl_mm": 0.0
+     },
+     {
+      "segment": "S538",
+      "layer": "F.Cu",
+      "plane_layer": "In1.Cu",
+      "length_mm": 1.53,
+      "over": {
+       "GND": 0.72
+      },
+      "none_raw_mm": 0.8,
+      "none_antipads_excl_mm": 0.0
+     },
+     {
+      "segment": "S539",
+      "layer": "B.Cu",
+      "plane_layer": "In2.Cu",
+      "length_mm": 0.02,
+      "over": {},
+      "none_raw_mm": 0.02,
+      "none_antipads_excl_mm": 0.02
+     },
+     {
+      "segment": "S540",
+      "layer": "B.Cu",
+      "plane_layer": "In2.Cu",
+      "length_mm": 9.23,
+      "over": {
+       "+3.3V": 8.63
+      },
+      "none_raw_mm": 0.6,
+      "none_antipads_excl_mm": 0.0
+     },
+     {
+      "segment": "S541",
+      "layer": "B.Cu",
+      "plane_layer": "In2.Cu",
+      "length_mm": 6.01,
+      "over": {},
+      "none_raw_mm": 6.01,
+      "none_antipads_excl_mm": 6.01
+     },
+     {
+      "segment": "S542",
+      "layer": "B.Cu",
+      "plane_layer": "In2.Cu",
+      "length_mm": 4.24,
+      "over": {
+       "+3.3V": 3.81
+      },
+      "none_raw_mm": 0.43,
+      "none_antipads_excl_mm": 0.16
+     },
+     {
+      "segment": "S543",
+      "layer": "B.Cu",
+      "plane_layer": "In2.Cu",
+      "length_mm": 0.38,
+      "over": {},
+      "none_raw_mm": 0.38,
+      "none_antipads_excl_mm": 0.0
+     },
+     {
+      "segment": "S544",
+      "layer": "B.Cu",
+      "plane_layer": "In2.Cu",
+      "length_mm": 17.1,
+      "over": {
+       "+3.3V": 16.5
+      },
+      "none_raw_mm": 0.6,
+      "none_antipads_excl_mm": 0.0
+     }
+    ]
+   },
+   "passes_under_or_over": [
+    {
+     "ref": "BT1",
+     "value": "Battery_Cell",
+     "side": "back",
+     "body_source": "courtyard",
+     "member": false,
+     "mm_by_layer": {
+      "B.Cu": 29.74,
+      "F.Cu": 13.04
+     },
+     "mm": 42.78
+    },
+    {
+     "ref": "U3",
+     "value": "ESP32-S3-WROOM-1-N16R8",
+     "side": "front",
+     "body_source": "courtyard",
+     "member": true,
+     "mm_by_layer": {
+      "B.Cu": 19.66,
+      "F.Cu": 2.55
+     },
+     "mm": 22.21
+    },
+    {
+     "ref": "U4",
+     "value": "TCA9548APWR",
+     "side": "front",
+     "body_source": "courtyard",
+     "member": true,
+     "mm_by_layer": {
+      "F.Cu": 9.88
+     },
+     "mm": 9.88
+    },
+    {
+     "ref": "C53",
+     "value": "100nF",
+     "side": "front",
+     "body_source": "courtyard",
+     "member": false,
+     "mm_by_layer": {
+      "B.Cu": 2.96
+     },
+     "mm": 2.96
+    },
+    {
+     "ref": "TPIO43",
+     "value": "TestPoint",
+     "side": "front",
+     "body_source": "courtyard",
+     "member": true,
+     "mm_by_layer": {
+      "F.Cu": 1.57
+     },
+     "mm": 1.57
+    },
+    {
+     "ref": "R28",
+     "value": "2.2kΩ",
+     "side": "front",
+     "body_source": "courtyard",
+     "member": true,
+     "mm_by_layer": {
+      "F.Cu": 0.73
+     },
+     "mm": 0.73
+    },
+    {
+     "ref": "U7",
+     "value": "INA219AIDCNR",
+     "side": "front",
+     "body_source": "pads",
+     "member": true,
+     "mm_by_layer": {
+      "F.Cu": 0.62
+     },
+     "mm": 0.62
+    },
+    {
+     "ref": "U5",
+     "value": "BQ24195RGER",
+     "side": "front",
+     "body_source": "pads",
+     "member": true,
+     "mm_by_layer": {
+      "F.Cu": 0.4
+     },
+     "mm": 0.4
+    }
+   ],
+   "neighbours": [
+    {
+     "net": "GND",
+     "classes": [
+      "high_current"
+     ],
+     "radius_mm": 3.0,
+     "same_layer": {
+      "all_copper_mm": 0.2,
+      "layer": "B.Cu",
+      "closest": [
+       "S544",
+       "V110"
+      ],
+      "track_to_track_mm": 23.31,
+      "track_to_track_closest": [
+       "S540",
+       "S396"
+      ],
+      "track_to_copper_mm": 0.2,
+      "track_to_copper_closest": [
+       "S544",
+       "V110"
+      ],
+      "by_layer_all_copper_mm": {
+       "B.Cu": 0.2,
+       "F.Cu": 0.24,
+       "In1.Cu": 0.5,
+       "In2.Cu": 2.35
+      }
+     },
+     "coupled_mm": {
+      "F.Cu": 27.61,
+      "B.Cu": 24.89
+     },
+     "plan_view": {
+      "all_copper_mm": 0.0,
+      "target_layer": "B.Cu",
+      "neighbour_layer": "F.Cu",
+      "separation_mm": 1.44,
+      "closest": [
+       "S544",
+       "C53.2"
+      ],
+      "track_crossings": 0
+     }
+    },
+    {
+     "net": "/I2C_SCL",
+     "classes": [
+      "signal"
+     ],
+     "radius_mm": 1.0,
+     "same_layer": {
+      "all_copper_mm": 0.2,
+      "layer": "F.Cu",
+      "closest": [
+       "V197",
+       "S547"
+      ],
+      "track_to_track_mm": 0.2,
+      "track_to_track_closest": [
+       "S533",
+       "S545"
+      ],
+      "track_to_copper_mm": 0.2,
+      "track_to_copper_closest": [
+       "S533",
+       "S545"
+      ],
+      "by_layer_all_copper_mm": {
+       "B.Cu": 0.21,
+       "F.Cu": 0.2,
+       "In1.Cu": 0.23,
+       "In2.Cu": 0.23
+      }
+     },
+     "coupled_mm": {
+      "F.Cu": 32.07,
+      "B.Cu": 20.3
+     },
+     "plan_view": {
+      "all_copper_mm": 0.0,
+      "target_layer": "F.Cu",
+      "neighbour_layer": "B.Cu",
+      "separation_mm": 1.44,
+      "closest": [
+       "S523",
+       "S575"
+      ],
+      "track_crossings": 2
+     }
+    },
+    {
+     "net": "+3.3V",
+     "classes": [
+      "high_current"
+     ],
+     "radius_mm": 3.0,
+     "same_layer": {
+      "all_copper_mm": 0.2,
+      "layer": "B.Cu",
+      "closest": [
+       "S544",
+       "V183"
+      ],
+      "track_to_track_mm": null,
+      "track_to_track_closest": null,
+      "track_to_copper_mm": 0.2,
+      "track_to_copper_closest": [
+       "S544",
+       "V183"
+      ],
+      "by_layer_all_copper_mm": {
+       "B.Cu": 0.2,
+       "F.Cu": 0.24,
+       "In1.Cu": 2.29,
+       "In2.Cu": 0.3
+      }
+     },
+     "coupled_mm": {
+      "F.Cu": 22.52,
+      "B.Cu": 13.3
+     },
+     "plan_view": {
+      "all_copper_mm": 0.0,
+      "target_layer": "B.Cu",
+      "neighbour_layer": "F.Cu",
+      "separation_mm": 1.44,
+      "closest": [
+       "S544",
+       "C53.1"
+      ],
+      "track_crossings": 0
+     }
+    },
+    {
+     "net": "/CHRG_INT",
+     "classes": [
+      "high_dvdt"
+     ],
+     "radius_mm": 5.0,
+     "same_layer": {
+      "all_copper_mm": 0.2,
+      "layer": "F.Cu",
+      "closest": [
+       "S536",
+       "V16"
+      ],
+      "track_to_track_mm": 0.23,
+      "track_to_track_closest": [
+       "S536",
+       "S164"
+      ],
+      "track_to_copper_mm": 0.2,
+      "track_to_copper_closest": [
+       "S536",
+       "V16"
+      ],
+      "by_layer_all_copper_mm": {
+       "B.Cu": 0.31,
+       "F.Cu": 0.2,
+       "In1.Cu": 1.47,
+       "In2.Cu": 1.47
+      }
+     },
+     "coupled_mm": {
+      "F.Cu": 9.2,
+      "B.Cu": 10.13
+     },
+     "plan_view": {
+      "all_copper_mm": 0.0,
+      "target_layer": "F.Cu",
+      "neighbour_layer": "B.Cu",
+      "separation_mm": 1.44,
+      "closest": [
+       "S521",
+       "S174"
+      ],
+      "track_crossings": 1
+     }
+    },
+    {
+     "net": "/Power Management/VSYS_SENSE",
+     "classes": [
+      "high_current"
+     ],
+     "radius_mm": 3.0,
+     "same_layer": {
+      "all_copper_mm": 0.57,
+      "layer": "F.Cu",
+      "closest": [
+       "V197",
+       "R44.2"
+      ],
+      "track_to_track_mm": 0.96,
+      "track_to_track_closest": [
+       "S521",
+       "S696"
+      ],
+      "track_to_copper_mm": 0.85,
+      "track_to_copper_closest": [
+       "S521",
+       "R44.2"
+      ],
+      "by_layer_all_copper_mm": {
+       "F.Cu": 0.57
+      }
+     },
+     "coupled_mm": {
+      "F.Cu": 6.0
+     },
+     "plan_view": {
+      "all_copper_mm": 0.0,
+      "target_layer": "B.Cu",
+      "neighbour_layer": "F.Cu",
+      "separation_mm": 1.44,
+      "closest": [
+       "S541",
+       "S702"
+      ],
+      "track_crossings": 1
+     }
+    },
+    {
+     "net": "/Power Management/BOOST_SW",
+     "classes": [
+      "high_current",
+      "high_dvdt"
+     ],
+     "radius_mm": 5.0,
+     "same_layer": {
+      "all_copper_mm": 1.52,
+      "layer": "F.Cu",
+      "closest": [
+       "V197",
+       "S723"
+      ],
+      "track_to_track_mm": 1.79,
+      "track_to_track_closest": [
+       "S521",
+       "S723"
+      ],
+      "track_to_copper_mm": 1.79,
+      "track_to_copper_closest": [
+       "S521",
+       "S723"
+      ],
+      "by_layer_all_copper_mm": {
+       "F.Cu": 1.52
+      }
+     },
+     "coupled_mm": {
+      "F.Cu": 4.89
+     },
+     "plan_view": {
+      "all_copper_mm": 1.52,
+      "target_layer": "In1.Cu",
+      "neighbour_layer": "F.Cu",
+      "separation_mm": 0.1,
+      "closest": [
+       "V197",
+       "S723"
+      ],
+      "track_crossings": 0
+     }
+    },
+    {
+     "net": "/Power Management/Protected_VBUS",
+     "classes": [
+      "high_current"
+     ],
+     "radius_mm": 3.0,
+     "same_layer": {
+      "all_copper_mm": 1.67,
+      "layer": "F.Cu",
+      "closest": [
+       "S533",
+       "C21.1"
+      ],
+      "track_to_track_mm": 1.69,
+      "track_to_track_closest": [
+       "S533",
+       "S72"
+      ],
+      "track_to_copper_mm": 1.67,
+      "track_to_copper_closest": [
+       "S533",
+       "C21.1"
+      ],
+      "by_layer_all_copper_mm": {
+       "F.Cu": 1.67
+      }
+     },
+     "coupled_mm": {
+      "F.Cu": 2.83
+     }
+    },
+    {
+     "net": "unconnected-(U3-IO2-Pad38)",
+     "classes": [
+      "signal"
+     ],
+     "radius_mm": 1.0,
+     "same_layer": {
+      "all_copper_mm": 0.37,
+      "layer": "F.Cu",
+      "closest": [
+       "U3.37",
+       "U3.38"
+      ],
+      "track_to_track_mm": null,
+      "track_to_track_closest": null,
+      "track_to_copper_mm": 0.68,
+      "track_to_copper_closest": [
+       "S538",
+       "U3.38"
+      ],
+      "by_layer_all_copper_mm": {
+       "F.Cu": 0.37
+      }
+     },
+     "coupled_mm": {
+      "F.Cu": 2.77
+     },
+     "plan_view": {
+      "all_copper_mm": 0.92,
+      "target_layer": "In1.Cu",
+      "neighbour_layer": "F.Cu",
+      "separation_mm": 0.1,
+      "closest": [
+       "V196",
+       "U3.38"
+      ],
+      "track_crossings": 0
+     }
+    },
+    {
+     "net": "/Power Management/BQ_SW",
+     "classes": [
+      "high_current",
+      "high_dvdt"
+     ],
+     "radius_mm": 5.0,
+     "same_layer": {
+      "all_copper_mm": 3.55,
+      "layer": "F.Cu",
+      "closest": [
+       "U5.6",
+       "U5.20"
+      ],
+      "track_to_track_mm": 3.97,
+      "track_to_track_closest": [
+       "S534",
+       "S621"
+      ],
+      "track_to_copper_mm": 3.8,
+      "track_to_copper_closest": [
+       "S534",
+       "U5.20"
+      ],
+      "by_layer_all_copper_mm": {
+       "F.Cu": 3.55
+      }
+     },
+     "coupled_mm": {
+      "F.Cu": 1.41
+     }
+    },
+    {
+     "net": "/Power Management/VSYS",
+     "classes": [
+      "high_current"
+     ],
+     "radius_mm": 3.0,
+     "same_layer": {
+      "all_copper_mm": 1.68,
+      "layer": "F.Cu",
+      "closest": [
+       "U7.6",
+       "U7.1"
+      ],
+      "track_to_track_mm": 2.53,
+      "track_to_track_closest": [
+       "S528",
+       "S659"
+      ],
+      "track_to_copper_mm": 2.09,
+      "track_to_copper_closest": [
+       "S528",
+       "U7.1"
+      ],
+      "by_layer_all_copper_mm": {
+       "F.Cu": 1.68
+      }
+     },
+     "coupled_mm": {
+      "F.Cu": 1.02
+     }
+    },
+    {
+     "net": "unconnected-(U5-STAT-Pad4)",
+     "classes": [
+      "signal"
+     ],
+     "radius_mm": 1.0,
+     "same_layer": {
+      "all_copper_mm": 0.7,
+      "layer": "F.Cu",
+      "closest": [
+       "U5.6",
+       "U5.4"
+      ],
+      "track_to_track_mm": null,
+      "track_to_track_closest": null,
+      "track_to_copper_mm": 0.73,
+      "track_to_copper_closest": [
+       "S534",
+       "U5.4"
+      ],
+      "by_layer_all_copper_mm": {
+       "F.Cu": 0.7
+      }
+     },
+     "coupled_mm": {
+      "F.Cu": 0.99
+     }
+    },
+    {
+     "net": "/Power Management/BQ_PMID",
+     "classes": [
+      "high_current"
+     ],
+     "radius_mm": 3.0,
+     "same_layer": {
+      "all_copper_mm": 2.85,
+      "layer": "F.Cu",
+      "closest": [
+       "U5.6",
+       "U5.23"
+      ],
+      "track_to_track_mm": 3.29,
+      "track_to_track_closest": [
+       "S534",
+       "S637"
+      ],
+      "track_to_copper_mm": 2.99,
+      "track_to_copper_closest": [
+       "S534",
+       "U5.23"
+      ],
+      "by_layer_all_copper_mm": {
+       "F.Cu": 2.85
+      }
+     },
+     "coupled_mm": {
+      "F.Cu": 0.01
+     }
+    },
+    {
+     "net": "/ESP32_S3/EN",
+     "classes": [
+      "signal"
+     ],
+     "radius_mm": 1.0,
+     "plan_view": {
+      "all_copper_mm": 0.0,
+      "target_layer": "B.Cu",
+      "neighbour_layer": "F.Cu",
+      "separation_mm": 1.44,
+      "closest": [
+       "S544",
+       "S8"
+      ],
+      "track_crossings": 1
+     }
+    },
+    {
+     "net": "/LED_DATA",
+     "classes": [
+      "high_dvdt"
+     ],
+     "radius_mm": 5.0,
+     "plan_view": {
+      "all_copper_mm": 0.0,
+      "target_layer": "B.Cu",
+      "neighbour_layer": "F.Cu",
+      "separation_mm": 1.44,
+      "closest": [
+       "S544",
+       "S12"
+      ],
+      "track_crossings": 1
+     }
+    },
+    {
+     "net": "/Power Management/VBAT",
+     "classes": [
+      "high_current"
+     ],
+     "radius_mm": 3.0,
+     "plan_view": {
+      "all_copper_mm": 0.0,
+      "target_layer": "F.Cu",
+      "neighbour_layer": "B.Cu",
+      "separation_mm": 1.44,
+      "closest": [
+       "S533",
+       "S793"
+      ],
+      "track_crossings": 1
+     }
+    },
+    {
+     "net": "unconnected-(U3-IO17-Pad10)",
+     "classes": [
+      "signal"
+     ],
+     "radius_mm": 1.0,
+     "plan_view": {
+      "all_copper_mm": 0.54,
+      "target_layer": "B.Cu",
+      "neighbour_layer": "F.Cu",
+      "separation_mm": 1.44,
+      "closest": [
+       "S544",
+       "U3.10"
+      ],
+      "track_crossings": 0
+     }
+    },
+    {
+     "net": "+5V",
+     "classes": [
+      "high_current"
+     ],
+     "radius_mm": 3.0,
+     "same_layer": {
+      "all_copper_mm": 0.56,
+      "layer": "In2.Cu",
+      "closest": [
+       "V197",
+       "Z6"
+      ],
+      "track_to_track_mm": null,
+      "track_to_track_closest": null,
+      "track_to_copper_mm": null,
+      "track_to_copper_closest": null,
+      "by_layer_all_copper_mm": {
+       "In2.Cu": 0.56
+      }
+     },
+     "coupled_mm": {}
+    },
+    {
+     "net": "/Power Management/OTG_BIAS",
+     "classes": [
+      "signal"
+     ],
+     "radius_mm": 1.0,
+     "same_layer": {
+      "all_copper_mm": 0.78,
+      "layer": "F.Cu",
+      "closest": [
+       "U5.6",
+       "U5.8"
+      ],
+      "track_to_track_mm": 1.27,
+      "track_to_track_closest": [
+       "S534",
+       "S806"
+      ],
+      "track_to_copper_mm": 1.08,
+      "track_to_copper_closest": [
+       "S534",
+       "U5.8"
+      ],
+      "by_layer_all_copper_mm": {
+       "F.Cu": 0.78
+      }
+     },
+     "coupled_mm": {}
+    },
+    {
+     "net": "unconnected-(U3-IO15-Pad8)",
+     "classes": [
+      "signal"
+     ],
+     "radius_mm": 1.0,
+     "plan_view": {
+      "all_copper_mm": 0.85,
+      "target_layer": "B.Cu",
+      "neighbour_layer": "F.Cu",
+      "separation_mm": 1.44,
+      "closest": [
+       "S544",
+       "U3.8"
+      ],
+      "track_crossings": 0
+     }
+    },
+    {
+     "net": "/ESP32_S3/USB_DN_MCU",
+     "classes": [
+      "high_dvdt"
+     ],
+     "radius_mm": 5.0,
+     "plan_view": {
+      "all_copper_mm": 4.35,
+      "target_layer": "B.Cu",
+      "neighbour_layer": "F.Cu",
+      "separation_mm": 1.44,
+      "closest": [
+       "S544",
+       "U3.13"
+      ],
+      "track_crossings": 0
+     }
+    },
+    {
+     "net": "/USB_DN",
+     "classes": [
+      "high_dvdt"
+     ],
+     "radius_mm": 5.0,
+     "plan_view": {
+      "all_copper_mm": 4.39,
+      "target_layer": "B.Cu",
+      "neighbour_layer": "F.Cu",
+      "separation_mm": 1.44,
+      "closest": [
+       "S544",
+       "R52.1"
+      ],
+      "track_crossings": 0
+     }
+    }
+   ],
+   "nearby_high_current": [
+    "GND",
+    "+3.3V",
+    "/Power Management/VSYS_SENSE",
+    "/Power Management/BOOST_SW",
+    "/Power Management/Protected_VBUS",
+    "/Power Management/BQ_SW",
+    "/Power Management/VSYS",
+    "/Power Management/BQ_PMID",
+    "/Power Management/VBAT",
+    "+5V"
+   ],
+   "nearby_high_dvdt": [
+    "/CHRG_INT",
+    "/Power Management/BOOST_SW",
+    "/Power Management/BQ_SW",
+    "/LED_DATA",
+    "/ESP32_S3/USB_DN_MCU",
+    "/USB_DN"
+   ],
+   "high_dvdt_pads_nearby": [
+    {
+     "pad": "U5.19",
+     "net": "/Power Management/BQ_SW",
+     "gap_mm": 3.88,
+     "target_layer": "F.Cu",
+     "pad_layer": "F.Cu",
+     "method": "all copper"
+    },
+    {
+     "pad": "U5.20",
+     "net": "/Power Management/BQ_SW",
+     "gap_mm": 3.55,
+     "target_layer": "F.Cu",
+     "pad_layer": "F.Cu",
+     "method": "all copper"
+    }
+   ],
+   "via_details": [
+    {
+     "via": "V196",
+     "position": [
+      138.4,
+      112.65
+     ],
+     "size_mm": 0.6,
+     "drill_mm": 0.3,
+     "connects_layers": [
+      "F.Cu",
+      "B.Cu"
+     ],
+     "reference_planes": {
+      "F.Cu": [
+       {
+        "plane_layer": "In1.Cu",
+        "nets_within_1mm": [
+         "GND"
+        ]
+       }
+      ],
+      "B.Cu": [
+       {
+        "plane_layer": "In2.Cu",
+        "nets_within_1mm": [
+         "+3.3V"
+        ]
+       }
+      ]
+     },
+     "nearest_plane_net_via": {
+      "+3.3V": {
+       "via": "V165",
+       "centre_to_centre_mm": 8.36
+      },
+      "GND": {
+       "via": "V104",
+       "centre_to_centre_mm": 3.97
+      }
+     }
+    },
+    {
+     "via": "V197",
+     "position": [
+      105.37,
+      122.1877
+     ],
+     "size_mm": 0.8,
+     "drill_mm": 0.4,
+     "connects_layers": [
+      "F.Cu",
+      "B.Cu"
+     ],
+     "reference_planes": {
+      "F.Cu": [
+       {
+        "plane_layer": "In1.Cu",
+        "nets_within_1mm": [
+         "GND"
+        ]
+       }
+      ],
+      "B.Cu": [
+       {
+        "plane_layer": "In2.Cu",
+        "nets_within_1mm": [
+         "+3.3V",
+         "+5V"
+        ]
+       }
+      ]
+     },
+     "nearest_plane_net_via": {
+      "+3.3V": {
+       "via": "V167",
+       "centre_to_centre_mm": 2.99
+      },
+      "+5V": {
+       "via": "V19",
+       "centre_to_centre_mm": 7.13
+      },
+      "GND": {
+       "via": "V84",
+       "centre_to_centre_mm": 3.15
+      }
+     }
+    },
+    {
+     "via": "V198",
+     "position": [
+      114.774,
+      119.174
+     ],
+     "size_mm": 0.6,
+     "drill_mm": 0.3,
+     "connects_layers": [
+      "F.Cu",
+      "B.Cu"
+     ],
+     "reference_planes": {
+      "F.Cu": [
+       {
+        "plane_layer": "In1.Cu",
+        "nets_within_1mm": [
+         "GND"
+        ]
+       }
+      ],
+      "B.Cu": [
+       {
+        "plane_layer": "In2.Cu",
+        "nets_within_1mm": [
+         "+3.3V"
+        ]
+       }
+      ]
+     },
+     "nearest_plane_net_via": {
+      "+3.3V": {
+       "via": "V164",
+       "centre_to_centre_mm": 5.13
+      },
+      "GND": {
+       "via": "V105",
+       "centre_to_centre_mm": 3.43
+      }
+     }
+    }
+   ]
+  },
+  {
+   "net": "/I2C_SCL",
+   "classes": [
+    "signal"
+   ],
+   "endpoints": [
+    {
+     "pad": "U3.36",
+     "ref": "U3",
+     "pin": "36",
+     "pin_function": "RXD0",
+     "part": "ESP32-S3-WROOM-1-N16R8",
+     "footprint": "JLC-MCP:WIRELM-SMD_ESP32-S3-WROOM-1",
+     "side": "front",
+     "role": "root",
+     "from_root_mm": null,
+     "vias_from_root": null,
+     "from_root_by_layer": null
+    },
+    {
+     "pad": "TPIO44.1",
+     "ref": "TPIO44",
+     "pin": "1",
+     "pin_function": "1",
+     "part": "TestPoint",
+     "footprint": "TestPoint:TestPoint_Pad_D2.0mm",
+     "side": "front",
+     "role": null,
+     "from_root_mm": 4.5573,
+     "vias_from_root": 0,
+     "from_root_by_layer": {
+      "F.Cu": 4.5573
+     }
+    },
+    {
+     "pad": "U4.22",
+     "ref": "U4",
+     "pin": "22",
+     "pin_function": "SCL",
+     "part": "TCA9548APWR",
+     "footprint": "motion-play-footprints:SOP65P640X120-24N",
+     "side": "front",
+     "role": null,
+     "from_root_mm": 10.1752,
+     "vias_from_root": 2,
+     "from_root_by_layer": {
+      "B.Cu": 3.5956,
+      "F.Cu": 6.5796
+     }
+    },
+    {
+     "pad": "R29.1",
+     "ref": "R29",
+     "pin": "1",
+     "pin_function": null,
+     "part": "2.2kΩ",
+     "footprint": "Resistor_SMD:R_0603_1608Metric",
+     "side": "front",
+     "role": null,
+     "from_root_mm": 19.6479,
+     "vias_from_root": 2,
+     "from_root_by_layer": {
+      "B.Cu": 3.5956,
+      "F.Cu": 16.0523
+     }
+    },
+    {
+     "pad": "U7.5",
+     "ref": "U7",
+     "pin": "5",
+     "pin_function": "SCL",
+     "part": "INA219AIDCNR",
+     "footprint": "INA219AIDCNR:SOT-23-8_L3.0-W1.7-P0.65-LS2.8-BR",
+     "side": "front",
+     "role": null,
+     "from_root_mm": 32.204,
+     "vias_from_root": 2,
+     "from_root_by_layer": {
+      "B.Cu": 27.4148,
+      "F.Cu": 4.7892
+     }
+    },
+    {
+     "pad": "U5.5",
+     "ref": "U5",
+     "pin": "5",
+     "pin_function": "SCL",
+     "part": "BQ24195RGER",
+     "footprint": "BQ24195RGET:VQFN-24_L4.0-W4.0-P0.50-TL-EP2.8",
+     "side": "front",
+     "role": null,
+     "from_root_mm": 48.0477,
+     "vias_from_root": 3,
+     "from_root_by_layer": {
+      "B.Cu": 35.9945,
+      "F.Cu": 12.0532
+     }
+    }
+   ],
+   "length_mm": 73.3019,
+   "length_by_layer": {
+    "B.Cu": 39.6405,
+    "F.Cu": 33.6614
+   },
+   "widths_mm": [
+    0.25
+   ],
+   "vias": 5,
+   "root": "U3.36",
+   "root_source": "config",
+   "longest_branch_from_root_mm": 48.0477,
+   "route_text": "U3.36 RXD0 (ESP32-S3-WROOM-1-N16R8)  — root (config)\n├─ F.Cu 2.4 mm w0.25 → junction (142.36, 113.94)\n│  ├─ F.Cu 2.3 mm w0.25 → via V201 (144.00, 112.30)\n│  │  └─ B.Cu 3.6 mm w0.25 [3.6 diagonal (144.0,112.3)→(146.5,109.7)] → via V203 (146.54, 109.72)\n│  │     └─ F.Cu 1.8 mm w0.25 → U4.22 SCL (TCA9548APWR)   ⟨10.2 mm from root, 2 vias; B 3.6, F 6.6⟩\n│  │        └─ F.Cu 9.5 mm w0.25 [1.4 diagonal (149.2,102.0)→(150.2,102.9); 6.0 along x=150.18 (y 102.9→109.0); 1.3 along y=109.50 (x 149.6→148.3)] → R29.1 (2.2kΩ)   ⟨19.6 mm from root, 2 vias; B 3.6, F 16.1⟩\n│  └─ F.Cu 2.1 mm w0.25 → TPIO44.1 (TestPoint)   ⟨4.6 mm from root, 0 vias; F 4.6⟩\n└─ F.Cu 1.5 mm w0.25 → via V202 (138.40, 113.95)\n   └─ B.Cu 27.4 mm w0.25 [17.1 along y=120.77 (x 113.8→130.9); 9.7 diagonal (130.9,120.8)→(137.8,114.0)] → via V199 (113.81, 120.77)\n      ├─ B.Cu 8.6 mm w0.25 [3.0 diagonal (113.8,120.8)→(111.7,122.9); 5.6 along y=122.90 (x 111.7→106.1)] → via V200 (106.10, 122.91)\n      │  └─ F.Cu 10.5 mm w0.25 [3.6 diagonal (97.7,120.6)→(100.2,123.2); 3.6 along y=123.15 (x 100.2→103.9); 2.0 along y=122.91 (x 104.1→106.1)] → U5.5 SCL (BQ24195RGER)   ⟨48.0 mm from root, 3 vias; B 36.0, F 12.1⟩\n      └─ F.Cu 3.3 mm w0.25 [1.9 along y=119.85 (x 110.9→112.9); 1.3 diagonal (112.9,119.8)→(113.8,120.8)] → U7.5 SCL (INA219AIDCNR)   ⟨32.2 mm from root, 2 vias; B 27.4, F 4.8⟩",
+   "chains": [
+    {
+     "id": "C0",
+     "a": "J:F.Cu:142.360:113.940",
+     "b": "U3.36",
+     "layer": "F.Cu",
+     "length_mm": 2.415,
+     "widths": [
+      0.25
+     ],
+     "segments": [
+      "S558"
+     ],
+     "in_tree": true,
+     "legs": [
+      {
+       "length_mm": 2.42,
+       "dir": "along y=113.94 (x 142.4→139.9)"
+      }
+     ]
+    },
+    {
+     "id": "C1",
+     "a": "J:F.Cu:142.360:113.940",
+     "b": "TPIO44.1",
+     "layer": "F.Cu",
+     "length_mm": 2.1423,
+     "widths": [
+      0.25
+     ],
+     "segments": [
+      "S559",
+      "S565"
+     ],
+     "in_tree": true,
+     "legs": [
+      {
+       "length_mm": 0.62,
+       "dir": "diagonal (142.4,113.9)→(142.8,114.4)"
+      },
+      {
+       "length_mm": 1.52,
+       "dir": "along x=142.80 (y 114.4→115.9)"
+      }
+     ]
+    },
+    {
+     "id": "C2",
+     "a": "J:F.Cu:142.360:113.940",
+     "b": "V201",
+     "layer": "F.Cu",
+     "length_mm": 2.3193,
+     "widths": [
+      0.25
+     ],
+     "segments": [
+      "S562"
+     ],
+     "in_tree": true,
+     "legs": [
+      {
+       "length_mm": 2.32,
+       "dir": "diagonal (142.4,113.9)→(144.0,112.3)"
+      }
+     ]
+    },
+    {
+     "id": "C3",
+     "a": "R29.1",
+     "b": "U4.22",
+     "layer": "F.Cu",
+     "length_mm": 9.4727,
+     "widths": [
+      0.25
+     ],
+     "segments": [
+      "S552",
+      "S553",
+      "S561",
+      "S567"
+     ],
+     "in_tree": true,
+     "legs": [
+      {
+       "length_mm": 1.35,
+       "dir": "diagonal (149.2,102.0)→(150.2,102.9)"
+      },
+      {
+       "length_mm": 6.03,
+       "dir": "along x=150.18 (y 102.9→109.0)"
+      },
+      {
+       "length_mm": 0.76,
+       "dir": "diagonal (150.2,109.0)→(149.6,109.5)"
+      },
+      {
+       "length_mm": 1.33,
+       "dir": "along y=109.50 (x 149.6→148.3)"
+      }
+     ]
+    },
+    {
+     "id": "C4",
+     "a": "U3.36",
+     "b": "V202",
+     "layer": "F.Cu",
+     "length_mm": 1.535,
+     "widths": [
+      0.25
+     ],
+     "segments": [
+      "S568"
+     ],
+     "in_tree": true,
+     "legs": [
+      {
+       "length_mm": 1.55,
+       "dir": "along y=113.94 (x 139.9→138.4)"
+      }
+     ]
+    },
+    {
+     "id": "C5",
+     "a": "U4.22",
+     "b": "V203",
+     "layer": "F.Cu",
+     "length_mm": 1.8453,
+     "widths": [
+      0.25
+     ],
+     "segments": [
+      "S548",
+      "S563"
+     ],
+     "in_tree": true,
+     "legs": [
+      {
+       "length_mm": 1.54,
+       "dir": "along y=109.50 (x 148.3→146.8)"
+      },
+      {
+       "length_mm": 0.33,
+       "dir": "diagonal (146.8,109.5)→(146.5,109.7)"
+      }
+     ]
+    },
+    {
+     "id": "C6",
+     "a": "U5.5",
+     "b": "V200",
+     "layer": "F.Cu",
+     "length_mm": 10.5182,
+     "widths": [
+      0.25
+     ],
+     "segments": [
+      "S545",
+      "S547",
+      "S550",
+      "S554",
+      "S556",
+      "S566"
+     ],
+     "in_tree": true,
+     "legs": [
+      {
+       "length_mm": 0.73,
+       "dir": "diagonal (97.6,119.6)→(97.7,120.3)"
+      },
+      {
+       "length_mm": 0.27,
+       "dir": "diagonal (97.7,120.3)→(97.7,120.6)"
+      },
+      {
+       "length_mm": 3.61,
+       "dir": "diagonal (97.7,120.6)→(100.2,123.2)"
+      },
+      {
+       "length_mm": 3.65,
+       "dir": "along y=123.15 (x 100.2→103.9)"
+      },
+      {
+       "length_mm": 0.34,
+       "dir": "diagonal (103.9,123.2)→(104.1,122.9)"
+      },
+      {
+       "length_mm": 1.97,
+       "dir": "along y=122.91 (x 104.1→106.1)"
+      }
+     ]
+    },
+    {
+     "id": "C7",
+     "a": "U7.5",
+     "b": "V199",
+     "layer": "F.Cu",
+     "length_mm": 3.2542,
+     "widths": [
+      0.25
+     ],
+     "segments": [
+      "S549",
+      "S560"
+     ],
+     "in_tree": true,
+     "legs": [
+      {
+       "length_mm": 1.95,
+       "dir": "along y=119.85 (x 110.9→112.9)"
+      },
+      {
+       "length_mm": 1.31,
+       "dir": "diagonal (112.9,119.8)→(113.8,120.8)"
+      }
+     ]
+    },
+    {
+     "id": "C8",
+     "a": "V199",
+     "b": "V202",
+     "layer": "B.Cu",
+     "length_mm": 27.4148,
+     "widths": [
+      0.25
+     ],
+     "segments": [
+      "S571",
+      "S572",
+      "S573"
+     ],
+     "in_tree": true,
+     "legs": [
+      {
+       "length_mm": 17.11,
+       "dir": "along y=120.77 (x 113.8→130.9)"
+      },
+      {
+       "length_mm": 9.65,
+       "dir": "diagonal (130.9,120.8)→(137.8,114.0)"
+      },
+      {
+       "length_mm": 0.65,
+       "dir": "along y=113.95 (x 137.8→138.4)"
+      }
+     ]
+    },
+    {
+     "id": "C9",
+     "a": "V199",
+     "b": "V200",
+     "layer": "B.Cu",
+     "length_mm": 8.5797,
+     "widths": [
+      0.25
+     ],
+     "segments": [
+      "S570",
+      "S574",
+      "S576"
+     ],
+     "in_tree": true,
+     "legs": [
+      {
+       "length_mm": 3.01,
+       "dir": "diagonal (113.8,120.8)→(111.7,122.9)"
+      },
+      {
+       "length_mm": 5.59,
+       "dir": "along y=122.90 (x 111.7→106.1)"
+      }
+     ]
+    },
+    {
+     "id": "C10",
+     "a": "V201",
+     "b": "V203",
+     "layer": "B.Cu",
+     "length_mm": 3.5956,
+     "widths": [
+      0.25
+     ],
+     "segments": [
+      "S575"
+     ],
+     "in_tree": true,
+     "legs": [
+      {
+       "length_mm": 3.62,
+       "dir": "diagonal (144.0,112.3)→(146.5,109.7)"
+      }
+     ]
+    }
+   ],
+   "connected": true,
+   "islands": [
+    {
+     "pads": [
+      "R29.1",
+      "TPIO44.1",
+      "U3.36",
+      "U4.22",
+      "U5.5",
+      "U7.5"
+     ],
+     "vias": 5,
+     "zones": []
+    }
+   ],
+   "stubs": [],
+   "reference_planes": {
+    "runs": [
+     {
+      "layer": "B.Cu",
+      "plane_layer": "In2.Cu",
+      "dielectric_mm": 0.1,
+      "track_mm": 39.64,
+      "over_raw": {
+       "+3.3V": 29.85
+      },
+      "none_raw_mm": 9.79,
+      "over_antipads_excl": {
+       "+3.3V": 32.86
+      },
+      "none_antipads_excl_mm": 6.78
+     },
+     {
+      "layer": "F.Cu",
+      "plane_layer": "In1.Cu",
+      "dielectric_mm": 0.1,
+      "track_mm": 33.66,
+      "over_raw": {
+       "GND": 29.13
+      },
+      "none_raw_mm": 4.53,
+      "over_antipads_excl": {
+       "GND": 33.66
+      },
+      "none_antipads_excl_mm": 0.0
+     }
+    ],
+    "unreferenced_stretches_antipads_excl": [
+     {
+      "segment": "S576",
+      "layer": "B.Cu",
+      "plane_layer": "In2.Cu",
+      "length_mm": 2.97,
+      "from": [
+       106.1,
+       122.91
+      ],
+      "to": [
+       109.07,
+       122.91
+      ]
+     },
+     {
+      "segment": "S570",
+      "layer": "B.Cu",
+      "plane_layer": "In2.Cu",
+      "length_mm": 2.6,
+      "from": [
+       109.08,
+       122.9
+      ],
+      "to": [
+       111.69,
+       122.9
+      ]
+     },
+     {
+      "segment": "S574",
+      "layer": "B.Cu",
+      "plane_layer": "In2.Cu",
+      "length_mm": 1.19,
+      "from": [
+       111.69,
+       122.9
+      ],
+      "to": [
+       112.53,
+       122.06
+      ]
+     },
+     {
+      "segment": "S569",
+      "layer": "B.Cu",
+      "plane_layer": "In2.Cu",
+      "length_mm": 0.02,
+      "from": [
+       109.07,
+       122.91
+      ],
+      "to": [
+       109.08,
+       122.9
+      ]
+     }
+    ],
+    "per_segment": [
+     {
+      "segment": "S545",
+      "layer": "F.Cu",
+      "plane_layer": "In1.Cu",
+      "length_mm": 3.61,
+      "over": {
+       "GND": 3.61
+      },
+      "none_raw_mm": 0.0,
+      "none_antipads_excl_mm": 0.0
+     },
+     {
+      "segment": "S546",
+      "layer": "F.Cu",
+      "plane_layer": "In1.Cu",
+      "length_mm": 0.03,
+      "over": {
+       "GND": 0.03
+      },
+      "none_raw_mm": 0.0,
+      "none_antipads_excl_mm": 0.0
+     },
+     {
+      "segment": "S547",
+      "layer": "F.Cu",
+      "plane_layer": "In1.Cu",
+      "length_mm": 1.97,
+      "over": {
+       "GND": 0.71
+      },
+      "none_raw_mm": 1.27,
+      "none_antipads_excl_mm": 0.0
+     },
+     {
+      "segment": "S548",
+      "layer": "F.Cu",
+      "plane_layer": "In1.Cu",
+      "length_mm": 1.54,
+      "over": {
+       "GND": 1.0
+      },
+      "none_raw_mm": 0.54,
+      "none_antipads_excl_mm": 0.0
+     },
+     {
+      "segment": "S549",
+      "layer": "F.Cu",
+      "plane_layer": "In1.Cu",
+      "length_mm": 1.31,
+      "over": {
+       "GND": 0.51
+      },
+      "none_raw_mm": 0.8,
+      "none_antipads_excl_mm": 0.0
+     },
+     {
+      "segment": "S550",
+      "layer": "F.Cu",
+      "plane_layer": "In1.Cu",
+      "length_mm": 3.65,
+      "over": {
+       "GND": 3.65
+      },
+      "none_raw_mm": 0.0,
+      "none_antipads_excl_mm": 0.0
+     },
+     {
+      "segment": "S551",
+      "layer": "F.Cu",
+      "plane_layer": "In1.Cu",
+      "length_mm": 0.01,
+      "over": {
+       "GND": 0.01
+      },
+      "none_raw_mm": 0.0,
+      "none_antipads_excl_mm": 0.0
+     },
+     {
+      "segment": "S552",
+      "layer": "F.Cu",
+      "plane_layer": "In1.Cu",
+      "length_mm": 0.76,
+      "over": {
+       "GND": 0.76
+      },
+      "none_raw_mm": 0.0,
+      "none_antipads_excl_mm": 0.0
+     },
+     {
+      "segment": "S553",
+      "layer": "F.Cu",
+      "plane_layer": "In1.Cu",
+      "length_mm": 1.33,
+      "over": {
+       "GND": 1.33
+      },
+      "none_raw_mm": 0.0,
+      "none_antipads_excl_mm": 0.0
+     },
+     {
+      "segment": "S554",
+      "layer": "F.Cu",
+      "plane_layer": "In1.Cu",
+      "length_mm": 0.68,
+      "over": {
+       "GND": 0.68
+      },
+      "none_raw_mm": 0.0,
+      "none_antipads_excl_mm": 0.0
+     },
+     {
+      "segment": "S555",
+      "layer": "F.Cu",
+      "plane_layer": "In1.Cu",
+      "length_mm": 0.03,
+      "over": {
+       "GND": 0.03
+      },
+      "none_raw_mm": 0.0,
+      "none_antipads_excl_mm": 0.0
+     },
+     {
+      "segment": "S556",
+      "layer": "F.Cu",
+      "plane_layer": "In1.Cu",
+      "length_mm": 0.34,
+      "over": {
+       "GND": 0.34
+      },
+      "none_raw_mm": 0.0,
+      "none_antipads_excl_mm": 0.0
+     },
+     {
+      "segment": "S557",
+      "layer": "F.Cu",
+      "plane_layer": "In1.Cu",
+      "length_mm": 0.04,
+      "over": {
+       "GND": 0.04
+      },
+      "none_raw_mm": 0.0,
+      "none_antipads_excl_mm": 0.0
+     },
+     {
+      "segment": "S558",
+      "layer": "F.Cu",
+      "plane_layer": "In1.Cu",
+      "length_mm": 2.42,
+      "over": {
+       "GND": 2.42
+      },
+      "none_raw_mm": 0.0,
+      "none_antipads_excl_mm": 0.0
+     },
+     {
+      "segment": "S559",
+      "layer": "F.Cu",
+      "plane_layer": "In1.Cu",
+      "length_mm": 0.62,
+      "over": {
+       "GND": 0.62
+      },
+      "none_raw_mm": 0.0,
+      "none_antipads_excl_mm": 0.0
+     },
+     {
+      "segment": "S560",
+      "layer": "F.Cu",
+      "plane_layer": "In1.Cu",
+      "length_mm": 1.95,
+      "over": {
+       "GND": 1.95
+      },
+      "none_raw_mm": 0.0,
+      "none_antipads_excl_mm": 0.0
+     },
+     {
+      "segment": "S561",
+      "layer": "F.Cu",
+      "plane_layer": "In1.Cu",
+      "length_mm": 1.35,
+      "over": {
+       "GND": 1.35
+      },
+      "none_raw_mm": 0.0,
+      "none_antipads_excl_mm": 0.0
+     },
+     {
+      "segment": "S562",
+      "layer": "F.Cu",
+      "plane_layer": "In1.Cu",
+      "length_mm": 2.32,
+      "over": {
+       "GND": 1.52
+      },
+      "none_raw_mm": 0.8,
+      "none_antipads_excl_mm": 0.0
+     },
+     {
+      "segment": "S563",
+      "layer": "F.Cu",
+      "plane_layer": "In1.Cu",
+      "length_mm": 0.33,
+      "over": {},
+      "none_raw_mm": 0.33,
+      "none_antipads_excl_mm": 0.0
+     },
+     {
+      "segment": "S564",
+      "layer": "F.Cu",
+      "plane_layer": "In1.Cu",
+      "length_mm": 0.02,
+      "over": {
+       "GND": 0.02
+      },
+      "none_raw_mm": 0.0,
+      "none_antipads_excl_mm": 0.0
+     },
+     {
+      "segment": "S565",
+      "layer": "F.Cu",
+      "plane_layer": "In1.Cu",
+      "length_mm": 1.52,
+      "over": {
+       "GND": 1.52
+      },
+      "none_raw_mm": 0.0,
+      "none_antipads_excl_mm": 0.0
+     },
+     {
+      "segment": "S566",
+      "layer": "F.Cu",
+      "plane_layer": "In1.Cu",
+      "length_mm": 0.27,
+      "over": {
+       "GND": 0.27
+      },
+      "none_raw_mm": 0.0,
+      "none_antipads_excl_mm": 0.0
+     },
+     {
+      "segment": "S567",
+      "layer": "F.Cu",
+      "plane_layer": "In1.Cu",
+      "length_mm": 6.03,
+      "over": {
+       "GND": 6.03
+      },
+      "none_raw_mm": 0.0,
+      "none_antipads_excl_mm": 0.0
+     },
+     {
+      "segment": "S568",
+      "layer": "F.Cu",
+      "plane_layer": "In1.Cu",
+      "length_mm": 1.53,
+      "over": {
+       "GND": 0.73
+      },
+      "none_raw_mm": 0.8,
+      "none_antipads_excl_mm": 0.0
+     },
+     {
+      "segment": "S569",
+      "layer": "B.Cu",
+      "plane_layer": "In2.Cu",
+      "length_mm": 0.02,
+      "over": {},
+      "none_raw_mm": 0.02,
+      "none_antipads_excl_mm": 0.02
+     },
+     {
+      "segment": "S570",
+      "layer": "B.Cu",
+      "plane_layer": "In2.Cu",
+      "length_mm": 2.6,
+      "over": {},
+      "none_raw_mm": 2.6,
+      "none_antipads_excl_mm": 2.6
+     },
+     {
+      "segment": "S571",
+      "layer": "B.Cu",
+      "plane_layer": "In2.Cu",
+      "length_mm": 17.11,
+      "over": {
+       "+3.3V": 16.51
+      },
+      "none_raw_mm": 0.6,
+      "none_antipads_excl_mm": 0.0
+     },
+     {
+      "segment": "S572",
+      "layer": "B.Cu",
+      "plane_layer": "In2.Cu",
+      "length_mm": 9.65,
+      "over": {
+       "+3.3V": 9.65
+      },
+      "none_raw_mm": 0.0,
+      "none_antipads_excl_mm": 0.0
+     },
+     {
+      "segment": "S573",
+      "layer": "B.Cu",
+      "plane_layer": "In2.Cu",
+      "length_mm": 0.65,
+      "over": {
+       "+3.3V": 0.05
+      },
+      "none_raw_mm": 0.6,
+      "none_antipads_excl_mm": 0.0
+     },
+     {
+      "segment": "S574",
+      "layer": "B.Cu",
+      "plane_layer": "In2.Cu",
+      "length_mm": 3.01,
+      "over": {
+       "+3.3V": 1.22
+      },
+      "none_raw_mm": 1.79,
+      "none_antipads_excl_mm": 1.19
+     },
+     {
+      "segment": "S575",
+      "layer": "B.Cu",
+      "plane_layer": "In2.Cu",
+      "length_mm": 3.6,
+      "over": {
+       "+3.3V": 2.42
+      },
+      "none_raw_mm": 1.18,
+      "none_antipads_excl_mm": 0.0
+     },
+     {
+      "segment": "S576",
+      "layer": "B.Cu",
+      "plane_layer": "In2.Cu",
+      "length_mm": 2.97,
+      "over": {},
+      "none_raw_mm": 2.97,
+      "none_antipads_excl_mm": 2.97
+     },
+     {
+      "segment": "S577",
+      "layer": "B.Cu",
+      "plane_layer": "In2.Cu",
+      "length_mm": 0.03,
+      "over": {},
+      "none_raw_mm": 0.03,
+      "none_antipads_excl_mm": 0.0
+     }
+    ]
+   },
+   "passes_under_or_over": [
+    {
+     "ref": "BT1",
+     "value": "Battery_Cell",
+     "side": "back",
+     "body_source": "courtyard",
+     "member": false,
+     "mm_by_layer": {
+      "B.Cu": 29.96,
+      "F.Cu": 13.86
+     },
+     "mm": 43.82
+    },
+    {
+     "ref": "U3",
+     "value": "ESP32-S3-WROOM-1-N16R8",
+     "side": "front",
+     "body_source": "courtyard",
+     "member": true,
+     "mm_by_layer": {
+      "B.Cu": 19.78,
+      "F.Cu": 2.55
+     },
+     "mm": 22.33
+    },
+    {
+     "ref": "U4",
+     "value": "TCA9548APWR",
+     "side": "front",
+     "body_source": "courtyard",
+     "member": true,
+     "mm_by_layer": {
+      "F.Cu": 9.04
+     },
+     "mm": 9.04
+    },
+    {
+     "ref": "C54",
+     "value": "100nF",
+     "side": "front",
+     "body_source": "courtyard",
+     "member": false,
+     "mm_by_layer": {
+      "B.Cu": 2.96
+     },
+     "mm": 2.96
+    },
+    {
+     "ref": "TPIO44",
+     "value": "TestPoint",
+     "side": "front",
+     "body_source": "courtyard",
+     "member": true,
+     "mm_by_layer": {
+      "F.Cu": 1.5
+     },
+     "mm": 1.5
+    },
+    {
+     "ref": "R29",
+     "value": "2.2kΩ",
+     "side": "front",
+     "body_source": "courtyard",
+     "member": true,
+     "mm_by_layer": {
+      "F.Cu": 0.93
+     },
+     "mm": 0.93
+    },
+    {
+     "ref": "U7",
+     "value": "INA219AIDCNR",
+     "side": "front",
+     "body_source": "pads",
+     "member": true,
+     "mm_by_layer": {
+      "F.Cu": 0.62
+     },
+     "mm": 0.62
+    },
+    {
+     "ref": "U5",
+     "value": "BQ24195RGER",
+     "side": "front",
+     "body_source": "pads",
+     "member": true,
+     "mm_by_layer": {
+      "F.Cu": 0.4
+     },
+     "mm": 0.4
+    }
+   ],
+   "neighbours": [
+    {
+     "net": "/I2C_SDA",
+     "classes": [
+      "signal"
+     ],
+     "radius_mm": 1.0,
+     "same_layer": {
+      "all_copper_mm": 0.2,
+      "layer": "F.Cu",
+      "closest": [
+       "S547",
+       "V197"
+      ],
+      "track_to_track_mm": 0.2,
+      "track_to_track_closest": [
+       "S545",
+       "S533"
+      ],
+      "track_to_copper_mm": 0.2,
+      "track_to_copper_closest": [
+       "S547",
+       "V197"
+      ],
+      "by_layer_all_copper_mm": {
+       "B.Cu": 0.21,
+       "F.Cu": 0.2,
+       "In1.Cu": 0.23,
+       "In2.Cu": 0.23
+      }
+     },
+     "coupled_mm": {
+      "F.Cu": 29.97,
+      "B.Cu": 19.16
+     },
+     "plan_view": {
+      "all_copper_mm": 0.0,
+      "target_layer": "F.Cu",
+      "neighbour_layer": "B.Cu",
+      "separation_mm": 1.44,
+      "closest": [
+       "S549",
+       "S542"
+      ],
+      "track_crossings": 2
+     }
+    },
+    {
+     "net": "/CHRG_INT",
+     "classes": [
+      "high_dvdt"
+     ],
+     "radius_mm": 5.0,
+     "same_layer": {
+      "all_copper_mm": 0.3,
+      "layer": "B.Cu",
+      "closest": [
+       "V200",
+       "S175"
+      ],
+      "track_to_track_mm": 0.58,
+      "track_to_track_closest": [
+       "S576",
+       "S173"
+      ],
+      "track_to_copper_mm": 0.58,
+      "track_to_copper_closest": [
+       "S576",
+       "S173"
+      ],
+      "by_layer_all_copper_mm": {
+       "B.Cu": 0.3,
+       "F.Cu": 0.65,
+       "In1.Cu": 2.32,
+       "In2.Cu": 2.32
+      }
+     },
+     "coupled_mm": {
+      "F.Cu": 13.86,
+      "B.Cu": 27.52
+     },
+     "plan_view": {
+      "all_copper_mm": 0.0,
+      "target_layer": "F.Cu",
+      "neighbour_layer": "B.Cu",
+      "separation_mm": 1.44,
+      "closest": [
+       "S547",
+       "S174"
+      ],
+      "track_crossings": 1
+     }
+    },
+    {
+     "net": "GND",
+     "classes": [
+      "high_current"
+     ],
+     "radius_mm": 3.0,
+     "same_layer": {
+      "all_copper_mm": 0.2,
+      "layer": "F.Cu",
+      "closest": [
+       "S567",
+       "V150"
+      ],
+      "track_to_track_mm": 0.28,
+      "track_to_track_closest": [
+       "S545",
+       "S333"
+      ],
+      "track_to_copper_mm": 0.2,
+      "track_to_copper_closest": [
+       "S567",
+       "V150"
+      ],
+      "by_layer_all_copper_mm": {
+       "B.Cu": 0.2,
+       "F.Cu": 0.2,
+       "In1.Cu": 0.5,
+       "In2.Cu": 2.59
+      }
+     },
+     "coupled_mm": {
+      "F.Cu": 23.54,
+      "B.Cu": 16.71
+     },
+     "plan_view": {
+      "all_copper_mm": 0.0,
+      "target_layer": "B.Cu",
+      "neighbour_layer": "F.Cu",
+      "separation_mm": 1.44,
+      "closest": [
+       "S571",
+       "C54.2"
+      ],
+      "track_crossings": 0
+     }
+    },
+    {
+     "net": "+3.3V",
+     "classes": [
+      "high_current"
+     ],
+     "radius_mm": 3.0,
+     "same_layer": {
+      "all_copper_mm": 0.2,
+      "layer": "B.Cu",
+      "closest": [
+       "S571",
+       "V188"
+      ],
+      "track_to_track_mm": null,
+      "track_to_track_closest": null,
+      "track_to_copper_mm": 0.2,
+      "track_to_copper_closest": [
+       "S571",
+       "V188"
+      ],
+      "by_layer_all_copper_mm": {
+       "B.Cu": 0.2,
+       "F.Cu": 0.43,
+       "In1.Cu": 0.92,
+       "In2.Cu": 0.3
+      }
+     },
+     "coupled_mm": {
+      "F.Cu": 18.32,
+      "B.Cu": 12.35
+     },
+     "plan_view": {
+      "all_copper_mm": 0.0,
+      "target_layer": "B.Cu",
+      "neighbour_layer": "F.Cu",
+      "separation_mm": 1.44,
+      "closest": [
+       "S571",
+       "S427"
+      ],
+      "track_crossings": 0
+     }
+    },
+    {
+     "net": "/Power Management/VSYS_SENSE",
+     "classes": [
+      "high_current"
+     ],
+     "radius_mm": 3.0,
+     "same_layer": {
+      "all_copper_mm": 1.22,
+      "layer": "F.Cu",
+      "closest": [
+       "V200",
+       "S702"
+      ],
+      "track_to_track_mm": 1.49,
+      "track_to_track_closest": [
+       "S547",
+       "S702"
+      ],
+      "track_to_copper_mm": 1.49,
+      "track_to_copper_closest": [
+       "S547",
+       "S702"
+      ],
+      "by_layer_all_copper_mm": {
+       "F.Cu": 1.22
+      }
+     },
+     "coupled_mm": {
+      "F.Cu": 6.08
+     },
+     "plan_view": {
+      "all_copper_mm": 0.0,
+      "target_layer": "B.Cu",
+      "neighbour_layer": "F.Cu",
+      "separation_mm": 1.44,
+      "closest": [
+       "S569",
+       "S702"
+      ],
+      "track_crossings": 1
+     }
+    },
+    {
+     "net": "/LED_DATA",
+     "classes": [
+      "high_dvdt"
+     ],
+     "radius_mm": 5.0,
+     "same_layer": {
+      "all_copper_mm": 4.16,
+      "layer": "B.Cu",
+      "closest": [
+       "S571",
+       "V1"
+      ],
+      "track_to_track_mm": 4.34,
+      "track_to_track_closest": [
+       "S571",
+       "S28"
+      ],
+      "track_to_copper_mm": 4.16,
+      "track_to_copper_closest": [
+       "S571",
+       "V1"
+      ],
+      "by_layer_all_copper_mm": {
+       "B.Cu": 4.16
+      }
+     },
+     "coupled_mm": {
+      "B.Cu": 5.73
+     },
+     "plan_view": {
+      "all_copper_mm": 0.0,
+      "target_layer": "B.Cu",
+      "neighbour_layer": "F.Cu",
+      "separation_mm": 1.44,
+      "closest": [
+       "S571",
+       "S21"
+      ],
+      "track_crossings": 1
+     }
+    },
+    {
+     "net": "/Power Management/BOOST_SW",
+     "classes": [
+      "high_current",
+      "high_dvdt"
+     ],
+     "radius_mm": 5.0,
+     "same_layer": {
+      "all_copper_mm": 0.66,
+      "layer": "F.Cu",
+      "closest": [
+       "V200",
+       "S723"
+      ],
+      "track_to_track_mm": 0.94,
+      "track_to_track_closest": [
+       "S547",
+       "S723"
+      ],
+      "track_to_copper_mm": 0.94,
+      "track_to_copper_closest": [
+       "S547",
+       "S723"
+      ],
+      "by_layer_all_copper_mm": {
+       "F.Cu": 0.66
+      }
+     },
+     "coupled_mm": {
+      "F.Cu": 5.65
+     },
+     "plan_view": {
+      "all_copper_mm": 0.66,
+      "target_layer": "In1.Cu",
+      "neighbour_layer": "F.Cu",
+      "separation_mm": 0.1,
+      "closest": [
+       "V200",
+       "S723"
+      ],
+      "track_crossings": 0
+     }
+    },
+    {
+     "net": "/USB_DN",
+     "classes": [
+      "high_dvdt"
+     ],
+     "radius_mm": 5.0,
+     "same_layer": {
+      "all_copper_mm": 4.37,
+      "layer": "B.Cu",
+      "closest": [
+       "S571",
+       "V4"
+      ],
+      "track_to_track_mm": 4.45,
+      "track_to_track_closest": [
+       "S571",
+       "S57"
+      ],
+      "track_to_copper_mm": 4.37,
+      "track_to_copper_closest": [
+       "S571",
+       "V4"
+      ],
+      "by_layer_all_copper_mm": {
+       "B.Cu": 4.37
+      }
+     },
+     "coupled_mm": {
+      "B.Cu": 5.01
+     },
+     "plan_view": {
+      "all_copper_mm": 2.79,
+      "target_layer": "B.Cu",
+      "neighbour_layer": "F.Cu",
+      "separation_mm": 1.44,
+      "closest": [
+       "S571",
+       "R52.1"
+      ],
+      "track_crossings": 0
+     }
+    },
+    {
+     "net": "/Power Management/Protected_VBUS",
+     "classes": [
+      "high_current"
+     ],
+     "radius_mm": 3.0,
+     "same_layer": {
+      "all_copper_mm": 1.18,
+      "layer": "F.Cu",
+      "closest": [
+       "S545",
+       "C21.1"
+      ],
+      "track_to_track_mm": 1.21,
+      "track_to_track_closest": [
+       "S545",
+       "S72"
+      ],
+      "track_to_copper_mm": 1.18,
+      "track_to_copper_closest": [
+       "S545",
+       "C21.1"
+      ],
+      "by_layer_all_copper_mm": {
+       "F.Cu": 1.18
+      }
+     },
+     "coupled_mm": {
+      "F.Cu": 3.56
+     }
+    },
+    {
+     "net": "unconnected-(U4-SC7-Pad20)",
+     "classes": [
+      "signal"
+     ],
+     "radius_mm": 1.0,
+     "same_layer": {
+      "all_copper_mm": 0.89,
+      "layer": "F.Cu",
+      "closest": [
+       "U4.22",
+       "U4.20"
+      ],
+      "track_to_track_mm": null,
+      "track_to_track_closest": null,
+      "track_to_copper_mm": 0.96,
+      "track_to_copper_closest": [
+       "S567",
+       "U4.20"
+      ],
+      "by_layer_all_copper_mm": {
+       "F.Cu": 0.89
+      }
+     },
+     "coupled_mm": {
+      "F.Cu": 2.92
+     }
+    },
+    {
+     "net": "unconnected-(U3-IO42-Pad35)",
+     "classes": [
+      "signal"
+     ],
+     "radius_mm": 1.0,
+     "same_layer": {
+      "all_copper_mm": 0.37,
+      "layer": "F.Cu",
+      "closest": [
+       "U3.36",
+       "U3.35"
+      ],
+      "track_to_track_mm": null,
+      "track_to_track_closest": null,
+      "track_to_copper_mm": 0.69,
+      "track_to_copper_closest": [
+       "S568",
+       "U3.35"
+      ],
+      "by_layer_all_copper_mm": {
+       "F.Cu": 0.37
+      }
+     },
+     "coupled_mm": {
+      "F.Cu": 2.76
+     },
+     "plan_view": {
+      "all_copper_mm": 0.93,
+      "target_layer": "In1.Cu",
+      "neighbour_layer": "F.Cu",
+      "separation_mm": 0.1,
+      "closest": [
+       "V202",
+       "U3.35"
+      ],
+      "track_crossings": 0
+     }
+    },
+    {
+     "net": "/Power Management/BQ_SW",
+     "classes": [
+      "high_current",
+      "high_dvdt"
+     ],
+     "radius_mm": 5.0,
+     "same_layer": {
+      "all_copper_mm": 3.17,
+      "layer": "F.Cu",
+      "closest": [
+       "U5.5",
+       "U5.20"
+      ],
+      "track_to_track_mm": 3.62,
+      "track_to_track_closest": [
+       "S554",
+       "S621"
+      ],
+      "track_to_copper_mm": 3.44,
+      "track_to_copper_closest": [
+       "S554",
+       "U5.20"
+      ],
+      "by_layer_all_copper_mm": {
+       "F.Cu": 3.17
+      }
+     },
+     "coupled_mm": {
+      "F.Cu": 1.77
+     }
+    },
+    {
+     "net": "unconnected-(U5-STAT-Pad4)",
+     "classes": [
+      "signal"
+     ],
+     "radius_mm": 1.0,
+     "same_layer": {
+      "all_copper_mm": 0.2,
+      "layer": "F.Cu",
+      "closest": [
+       "U5.5",
+       "U5.4"
+      ],
+      "track_to_track_mm": null,
+      "track_to_track_closest": null,
+      "track_to_copper_mm": 0.23,
+      "track_to_copper_closest": [
+       "S554",
+       "U5.4"
+      ],
+      "by_layer_all_copper_mm": {
+       "F.Cu": 0.2
+      }
+     },
+     "coupled_mm": {
+      "F.Cu": 1.44
+     }
+    },
+    {
+     "net": "unconnected-(U4-SC4-Pad14)",
+     "classes": [
+      "signal"
+     ],
+     "radius_mm": 1.0,
+     "same_layer": {
+      "all_copper_mm": 0.96,
+      "layer": "F.Cu",
+      "closest": [
+       "S567",
+       "U4.14"
+      ],
+      "track_to_track_mm": null,
+      "track_to_track_closest": null,
+      "track_to_copper_mm": 0.96,
+      "track_to_copper_closest": [
+       "S567",
+       "U4.14"
+      ],
+      "by_layer_all_copper_mm": {
+       "F.Cu": 0.96
+      }
+     },
+     "coupled_mm": {
+      "F.Cu": 0.91
+     }
+    },
+    {
+     "net": "unconnected-(U4-SC5-Pad16)",
+     "classes": [
+      "signal"
+     ],
+     "radius_mm": 1.0,
+     "same_layer": {
+      "all_copper_mm": 0.96,
+      "layer": "F.Cu",
+      "closest": [
+       "S567",
+       "U4.16"
+      ],
+      "track_to_track_mm": null,
+      "track_to_track_closest": null,
+      "track_to_copper_mm": 0.96,
+      "track_to_copper_closest": [
+       "S567",
+       "U4.16"
+      ],
+      "by_layer_all_copper_mm": {
+       "F.Cu": 0.96
+      }
+     },
+     "coupled_mm": {
+      "F.Cu": 0.91
+     }
+    },
+    {
+     "net": "unconnected-(U4-SC6-Pad18)",
+     "classes": [
+      "signal"
+     ],
+     "radius_mm": 1.0,
+     "same_layer": {
+      "all_copper_mm": 0.96,
+      "layer": "F.Cu",
+      "closest": [
+       "S567",
+       "U4.18"
+      ],
+      "track_to_track_mm": null,
+      "track_to_track_closest": null,
+      "track_to_copper_mm": 0.96,
+      "track_to_copper_closest": [
+       "S567",
+       "U4.18"
+      ],
+      "by_layer_all_copper_mm": {
+       "F.Cu": 0.96
+      }
+     },
+     "coupled_mm": {
+      "F.Cu": 0.91
+     }
+    },
+    {
+     "net": "unconnected-(U4-SD4-Pad13)",
+     "classes": [
+      "signal"
+     ],
+     "radius_mm": 1.0,
+     "same_layer": {
+      "all_copper_mm": 0.96,
+      "layer": "F.Cu",
+      "closest": [
+       "S567",
+       "U4.13"
+      ],
+      "track_to_track_mm": null,
+      "track_to_track_closest": null,
+      "track_to_copper_mm": 0.96,
+      "track_to_copper_closest": [
+       "S567",
+       "U4.13"
+      ],
+      "by_layer_all_copper_mm": {
+       "F.Cu": 0.96
+      }
+     },
+     "coupled_mm": {
+      "F.Cu": 0.91
+     }
+    },
+    {
+     "net": "unconnected-(U4-SD5-Pad15)",
+     "classes": [
+      "signal"
+     ],
+     "radius_mm": 1.0,
+     "same_layer": {
+      "all_copper_mm": 0.96,
+      "layer": "F.Cu",
+      "closest": [
+       "S567",
+       "U4.15"
+      ],
+      "track_to_track_mm": null,
+      "track_to_track_closest": null,
+      "track_to_copper_mm": 0.96,
+      "track_to_copper_closest": [
+       "S567",
+       "U4.15"
+      ],
+      "by_layer_all_copper_mm": {
+       "F.Cu": 0.96
+      }
+     },
+     "coupled_mm": {
+      "F.Cu": 0.91
+     }
+    },
+    {
+     "net": "unconnected-(U4-SD6-Pad17)",
+     "classes": [
+      "signal"
+     ],
+     "radius_mm": 1.0,
+     "same_layer": {
+      "all_copper_mm": 0.96,
+      "layer": "F.Cu",
+      "closest": [
+       "S567",
+       "U4.17"
+      ],
+      "track_to_track_mm": null,
+      "track_to_track_closest": null,
+      "track_to_copper_mm": 0.96,
+      "track_to_copper_closest": [
+       "S567",
+       "U4.17"
+      ],
+      "by_layer_all_copper_mm": {
+       "F.Cu": 0.96
+      }
+     },
+     "coupled_mm": {
+      "F.Cu": 0.91
+     }
+    },
+    {
+     "net": "unconnected-(U4-SD7-Pad19)",
+     "classes": [
+      "signal"
+     ],
+     "radius_mm": 1.0,
+     "same_layer": {
+      "all_copper_mm": 0.96,
+      "layer": "F.Cu",
+      "closest": [
+       "S567",
+       "U4.19"
+      ],
+      "track_to_track_mm": null,
+      "track_to_track_closest": null,
+      "track_to_copper_mm": 0.96,
+      "track_to_copper_closest": [
+       "S567",
+       "U4.19"
+      ],
+      "by_layer_all_copper_mm": {
+       "F.Cu": 0.96
+      }
+     },
+     "coupled_mm": {
+      "F.Cu": 0.91
+     }
+    },
+    {
+     "net": "/Power Management/BQ_PMID",
+     "classes": [
+      "high_current"
+     ],
+     "radius_mm": 3.0,
+     "same_layer": {
+      "all_copper_mm": 2.37,
+      "layer": "F.Cu",
+      "closest": [
+       "U5.5",
+       "U5.23"
+      ],
+      "track_to_track_mm": 2.83,
+      "track_to_track_closest": [
+       "S554",
+       "S637"
+      ],
+      "track_to_copper_mm": 2.53,
+      "track_to_copper_closest": [
+       "S554",
+       "U5.23"
+      ],
+      "by_layer_all_copper_mm": {
+       "F.Cu": 2.37
+      }
+     },
+     "coupled_mm": {
+      "F.Cu": 0.81
+     }
+    },
+    {
+     "net": "/Power Management/VSYS",
+     "classes": [
+      "high_current"
+     ],
+     "radius_mm": 3.0,
+     "same_layer": {
+      "all_copper_mm": 2.15,
+      "layer": "F.Cu",
+      "closest": [
+       "U7.5",
+       "U7.1"
+      ],
+      "track_to_track_mm": 2.9,
+      "track_to_track_closest": [
+       "S560",
+       "S659"
+      ],
+      "track_to_copper_mm": 2.51,
+      "track_to_copper_closest": [
+       "S560",
+       "U7.1"
+      ],
+      "by_layer_all_copper_mm": {
+       "F.Cu": 2.15
+      }
+     },
+     "coupled_mm": {
+      "F.Cu": 0.65
+     }
+    },
+    {
+     "net": "/ESP32_S3/EN",
+     "classes": [
+      "signal"
+     ],
+     "radius_mm": 1.0,
+     "plan_view": {
+      "all_copper_mm": 0.0,
+      "target_layer": "B.Cu",
+      "neighbour_layer": "F.Cu",
+      "separation_mm": 1.44,
+      "closest": [
+       "S571",
+       "S8"
+      ],
+      "track_crossings": 1
+     }
+    },
+    {
+     "net": "/Power Management/VBAT",
+     "classes": [
+      "high_current"
+     ],
+     "radius_mm": 3.0,
+     "plan_view": {
+      "all_copper_mm": 0.0,
+      "target_layer": "F.Cu",
+      "neighbour_layer": "B.Cu",
+      "separation_mm": 1.44,
+      "closest": [
+       "S545",
+       "S793"
+      ],
+      "track_crossings": 1
+     }
+    },
+    {
+     "net": "unconnected-(U3-IO17-Pad10)",
+     "classes": [
+      "signal"
+     ],
+     "radius_mm": 1.0,
+     "plan_view": {
+      "all_copper_mm": 0.0,
+      "target_layer": "B.Cu",
+      "neighbour_layer": "F.Cu",
+      "separation_mm": 1.44,
+      "closest": [
+       "S571",
+       "U3.10"
+      ],
+      "track_crossings": 0
+     }
+    },
+    {
+     "net": "unconnected-(U3-IO18-Pad11)",
+     "classes": [
+      "signal"
+     ],
+     "radius_mm": 1.0,
+     "plan_view": {
+      "all_copper_mm": 0.21,
+      "target_layer": "B.Cu",
+      "neighbour_layer": "F.Cu",
+      "separation_mm": 1.44,
+      "closest": [
+       "S571",
+       "U3.11"
+      ],
+      "track_crossings": 0
+     }
+    },
+    {
+     "net": "+5V",
+     "classes": [
+      "high_current"
+     ],
+     "radius_mm": 3.0,
+     "same_layer": {
+      "all_copper_mm": 0.3,
+      "layer": "In2.Cu",
+      "closest": [
+       "V200",
+       "Z6"
+      ],
+      "track_to_track_mm": null,
+      "track_to_track_closest": null,
+      "track_to_copper_mm": null,
+      "track_to_copper_closest": null,
+      "by_layer_all_copper_mm": {
+       "F.Cu": 2.15,
+       "In2.Cu": 0.3
+      }
+     },
+     "coupled_mm": {}
+    },
+    {
+     "net": "/TCA_RESET",
+     "classes": [
+      "signal"
+     ],
+     "radius_mm": 1.0,
+     "plan_view": {
+      "all_copper_mm": 0.58,
+      "target_layer": "F.Cu",
+      "neighbour_layer": "B.Cu",
+      "separation_mm": 1.44,
+      "closest": [
+       "TPIO44.1",
+       "S153"
+      ],
+      "track_crossings": 0
+     }
+    },
+    {
+     "net": "/ESP32_S3/USB_DN_MCU",
+     "classes": [
+      "high_dvdt"
+     ],
+     "radius_mm": 5.0,
+     "plan_view": {
+      "all_copper_mm": 2.75,
+      "target_layer": "B.Cu",
+      "neighbour_layer": "F.Cu",
+      "separation_mm": 1.44,
+      "closest": [
+       "S571",
+       "U3.13"
+      ],
+      "track_crossings": 0
+     }
+    },
+    {
+     "net": "/ESP32_S3/USB_DP_MCU",
+     "classes": [
+      "high_dvdt"
+     ],
+     "radius_mm": 5.0,
+     "plan_view": {
+      "all_copper_mm": 4.02,
+      "target_layer": "B.Cu",
+      "neighbour_layer": "F.Cu",
+      "separation_mm": 1.44,
+      "closest": [
+       "S571",
+       "U3.14"
+      ],
+      "track_crossings": 0
+     }
+    }
+   ],
+   "nearby_high_current": [
+    "GND",
+    "+3.3V",
+    "/Power Management/VSYS_SENSE",
+    "/Power Management/BOOST_SW",
+    "/Power Management/Protected_VBUS",
+    "/Power Management/BQ_SW",
+    "/Power Management/BQ_PMID",
+    "/Power Management/VSYS",
+    "/Power Management/VBAT",
+    "+5V"
+   ],
+   "nearby_high_dvdt": [
+    "/CHRG_INT",
+    "/LED_DATA",
+    "/Power Management/BOOST_SW",
+    "/USB_DN",
+    "/Power Management/BQ_SW",
+    "/ESP32_S3/USB_DN_MCU",
+    "/ESP32_S3/USB_DP_MCU"
+   ],
+   "high_dvdt_pads_nearby": [
+    {
+     "pad": "U5.19",
+     "net": "/Power Management/BQ_SW",
+     "gap_mm": 3.55,
+     "target_layer": "F.Cu",
+     "pad_layer": "F.Cu",
+     "method": "all copper"
+    },
+    {
+     "pad": "U5.20",
+     "net": "/Power Management/BQ_SW",
+     "gap_mm": 3.17,
+     "target_layer": "F.Cu",
+     "pad_layer": "F.Cu",
+     "method": "all copper"
+    }
+   ],
+   "via_details": [
+    {
+     "via": "V199",
+     "position": [
+      113.8118,
+      120.774
+     ],
+     "size_mm": 0.6,
+     "drill_mm": 0.3,
+     "connects_layers": [
+      "F.Cu",
+      "B.Cu"
+     ],
+     "reference_planes": {
+      "F.Cu": [
+       {
+        "plane_layer": "In1.Cu",
+        "nets_within_1mm": [
+         "GND"
+        ]
+       }
+      ],
+      "B.Cu": [
+       {
+        "plane_layer": "In2.Cu",
+        "nets_within_1mm": [
+         "+3.3V"
+        ]
+       }
+      ]
+     },
+     "nearest_plane_net_via": {
+      "+3.3V": {
+       "via": "V169",
+       "centre_to_centre_mm": 4.56
+      },
+      "GND": {
+       "via": "V105",
+       "centre_to_centre_mm": 3.42
+      }
+     }
+    },
+    {
+     "via": "V200",
+     "position": [
+      106.1,
+      122.9127
+     ],
+     "size_mm": 0.8,
+     "drill_mm": 0.4,
+     "connects_layers": [
+      "F.Cu",
+      "B.Cu"
+     ],
+     "reference_planes": {
+      "F.Cu": [
+       {
+        "plane_layer": "In1.Cu",
+        "nets_within_1mm": [
+         "GND"
+        ]
+       }
+      ],
+      "B.Cu": [
+       {
+        "plane_layer": "In2.Cu",
+        "nets_within_1mm": [
+         "+3.3V",
+         "+5V"
+        ]
+       }
+      ]
+     },
+     "nearest_plane_net_via": {
+      "+3.3V": {
+       "via": "V167",
+       "centre_to_centre_mm": 3.94
+      },
+      "+5V": {
+       "via": "V19",
+       "centre_to_centre_mm": 7.22
+      },
+      "GND": {
+       "via": "V84",
+       "centre_to_centre_mm": 3.42
+      }
+     }
+    },
+    {
+     "via": "V201",
+     "position": [
+      144.0,
+      112.3
+     ],
+     "size_mm": 0.6,
+     "drill_mm": 0.3,
+     "connects_layers": [
+      "F.Cu",
+      "B.Cu"
+     ],
+     "reference_planes": {
+      "F.Cu": [
+       {
+        "plane_layer": "In1.Cu",
+        "nets_within_1mm": [
+         "GND"
+        ]
+       }
+      ],
+      "B.Cu": [
+       {
+        "plane_layer": "In2.Cu",
+        "nets_within_1mm": [
+         "+3.3V"
+        ]
+       }
+      ]
+     },
+     "nearest_plane_net_via": {
+      "+3.3V": {
+       "via": "V165",
+       "centre_to_centre_mm": 4.15
+      },
+      "GND": {
+       "via": "V52",
+       "centre_to_centre_mm": 6.29
+      }
+     }
+    },
+    {
+     "via": "V202",
+     "position": [
+      138.4,
+      113.95
+     ],
+     "size_mm": 0.6,
+     "drill_mm": 0.3,
+     "connects_layers": [
+      "F.Cu",
+      "B.Cu"
+     ],
+     "reference_planes": {
+      "F.Cu": [
+       {
+        "plane_layer": "In1.Cu",
+        "nets_within_1mm": [
+         "GND"
+        ]
+       }
+      ],
+      "B.Cu": [
+       {
+        "plane_layer": "In2.Cu",
+        "nets_within_1mm": [
+         "+3.3V"
+        ]
+       }
+      ]
+     },
+     "nearest_plane_net_via": {
+      "+3.3V": {
+       "via": "V165",
+       "centre_to_centre_mm": 9.08
+      },
+      "GND": {
+       "via": "V104",
+       "centre_to_centre_mm": 5.26
+      }
+     }
+    },
+    {
+     "via": "V203",
+     "position": [
+      146.5425,
+      109.725
+     ],
+     "size_mm": 0.6,
+     "drill_mm": 0.3,
+     "connects_layers": [
+      "F.Cu",
+      "B.Cu"
+     ],
+     "reference_planes": {
+      "F.Cu": [
+       {
+        "plane_layer": "In1.Cu",
+        "nets_within_1mm": [
+         "GND"
+        ]
+       }
+      ],
+      "B.Cu": [
+       {
+        "plane_layer": "In2.Cu",
+        "nets_within_1mm": [
+         "+3.3V"
+        ]
+       }
+      ]
+     },
+     "nearest_plane_net_via": {
+      "+3.3V": {
+       "via": "V165",
+       "centre_to_centre_mm": 1.52
+      },
+      "GND": {
+       "via": "V150",
+       "centre_to_centre_mm": 3.19
+      }
+     }
+    }
+   ]
+  },
+  {
+   "net": "/TCA9548A_Subsystem/CH0_SDA",
+   "classes": [
+    "signal"
+   ],
+   "endpoints": [
+    {
+     "pad": "U4.4",
+     "ref": "U4",
+     "pin": "4",
+     "pin_function": "SD0",
+     "part": "TCA9548APWR",
+     "footprint": "motion-play-footprints:SOP65P640X120-24N",
+     "side": "front",
+     "role": "root",
+     "from_root_mm": null,
+     "vias_from_root": null,
+     "from_root_by_layer": null
+    },
+    {
+     "pad": "J4.3",
+     "ref": "J4",
+     "pin": "3",
+     "pin_function": "Pin_3",
+     "part": "Conn_01x04",
+     "footprint": "Connector_JST:JST_SH_SM04B-SRSS-TB_1x04-1MP_P1.00mm_Horizontal",
+     "side": "front",
+     "role": null,
+     "from_root_mm": 14.1693,
+     "vias_from_root": 0,
+     "from_root_by_layer": {
+      "F.Cu": 14.1693
+     }
+    }
+   ],
+   "length_mm": 14.6216,
+   "length_by_layer": {
+    "F.Cu": 14.6216
+   },
+   "widths_mm": [
+    0.25
+   ],
+   "vias": 0,
+   "root": "U4.4",
+   "root_source": "heuristic: pad on the largest footprint",
+   "longest_branch_from_root_mm": 14.1693,
+   "route_text": "U4.4 SD0 (TCA9548APWR)  — root (heuristic: pad on the largest footprint)\n└─ F.Cu 14.2 mm w0.25 [3.0 diagonal (159.2,120.6)→(156.9,118.7); 7.9 along x=156.89 (y 118.7→110.8); 2.8 diagonal (156.9,110.8)→(154.9,108.8)] → J4.3 Pin_3 (Conn_01x04)   ⟨14.2 mm from root, 0 vias; F 14.2⟩",
+   "chains": [
+    {
+     "id": "C0",
+     "a": "J4.3",
+     "b": "U4.4",
+     "layer": "F.Cu",
+     "length_mm": 14.1693,
+     "widths": [
+      0.25
+     ],
+     "segments": [
+      "S602",
+      "S604",
+      "S605",
+      "S606"
+     ],
+     "in_tree": true,
+     "legs": [
+      {
+       "length_mm": 2.99,
+       "dir": "diagonal (159.2,120.6)→(156.9,118.7)"
+      },
+      {
+       "length_mm": 7.86,
+       "dir": "along x=156.89 (y 118.7→110.8)"
+      },
+      {
+       "length_mm": 2.83,
+       "dir": "diagonal (156.9,110.8)→(154.9,108.8)"
+      },
+      {
+       "length_mm": 0.84,
+       "dir": "along y=108.84 (x 154.9→154.1)"
+      }
+     ]
+    }
+   ],
+   "connected": true,
+   "islands": [
+    {
+     "pads": [
+      "J4.3",
+      "U4.4"
+     ],
+     "vias": 0,
+     "zones": []
+    }
+   ],
+   "stubs": [],
+   "reference_planes": {
+    "runs": [
+     {
+      "layer": "F.Cu",
+      "plane_layer": "In1.Cu",
+      "dielectric_mm": 0.1,
+      "track_mm": 14.62,
+      "over_raw": {
+       "GND": 14.62
+      },
+      "none_raw_mm": 0.0,
+      "over_antipads_excl": {
+       "GND": 14.62
+      },
+      "none_antipads_excl_mm": 0.0
+     }
+    ],
+    "unreferenced_stretches_antipads_excl": [],
+    "per_segment": [
+     {
+      "segment": "S602",
+      "layer": "F.Cu",
+      "plane_layer": "In1.Cu",
+      "length_mm": 7.86,
+      "over": {
+       "GND": 7.86
+      },
+      "none_raw_mm": 0.0,
+      "none_antipads_excl_mm": 0.0
+     },
+     {
+      "segment": "S603",
+      "layer": "F.Cu",
+      "plane_layer": "In1.Cu",
+      "length_mm": 0.45,
+      "over": {
+       "GND": 0.45
+      },
+      "none_raw_mm": 0.0,
+      "none_antipads_excl_mm": 0.0
+     },
+     {
+      "segment": "S604",
+      "layer": "F.Cu",
+      "plane_layer": "In1.Cu",
+      "length_mm": 2.65,
+      "over": {
+       "GND": 2.65
+      },
+      "none_raw_mm": 0.0,
+      "none_antipads_excl_mm": 0.0
+     },
+     {
+      "segment": "S605",
+      "layer": "F.Cu",
+      "plane_layer": "In1.Cu",
+      "length_mm": 0.84,
+      "over": {
+       "GND": 0.84
+      },
+      "none_raw_mm": 0.0,
+      "none_antipads_excl_mm": 0.0
+     },
+     {
+      "segment": "S606",
+      "layer": "F.Cu",
+      "plane_layer": "In1.Cu",
+      "length_mm": 2.83,
+      "over": {
+       "GND": 2.83
+      },
+      "none_raw_mm": 0.0,
+      "none_antipads_excl_mm": 0.0
+     }
+    ]
+   },
+   "passes_under_or_over": [
+    {
+     "ref": "BT1",
+     "value": "Battery_Cell",
+     "side": "back",
+     "body_source": "courtyard",
+     "member": false,
+     "mm_by_layer": {
+      "F.Cu": 3.43
+     },
+     "mm": 3.43
+    },
+    {
+     "ref": "J4",
+     "value": "Conn_01x04",
+     "side": "front",
+     "body_source": "courtyard",
+     "member": true,
+     "mm_by_layer": {
+      "F.Cu": 1.62
+     },
+     "mm": 1.62
+    },
+    {
+     "ref": "U4",
+     "value": "TCA9548APWR",
+     "side": "front",
+     "body_source": "courtyard",
+     "member": true,
+     "mm_by_layer": {
+      "F.Cu": 1.12
+     },
+     "mm": 1.12
+    }
+   ],
+   "neighbours": [
+    {
+     "net": "/TCA9548A_Subsystem/CH0_SCL",
+     "classes": [
+      "signal"
+     ],
+     "radius_mm": 1.0,
+     "same_layer": {
+      "all_copper_mm": 0.2,
+      "layer": "F.Cu",
+      "closest": [
+       "S602",
+       "S589"
+      ],
+      "track_to_track_mm": 0.2,
+      "track_to_track_closest": [
+       "S602",
+       "S589"
+      ],
+      "track_to_copper_mm": 0.2,
+      "track_to_copper_closest": [
+       "S602",
+       "S589"
+      ],
+      "by_layer_all_copper_mm": {
+       "F.Cu": 0.2
+      }
+     },
+     "coupled_mm": {
+      "F.Cu": 14.62
+     }
+    },
+    {
+     "net": "GND",
+     "classes": [
+      "high_current"
+     ],
+     "radius_mm": 3.0,
+     "same_layer": {
+      "all_copper_mm": 0.2,
+      "layer": "F.Cu",
+      "closest": [
+       "S606",
+       "V154"
+      ],
+      "track_to_track_mm": 0.38,
+      "track_to_track_closest": [
+       "S606",
+       "S337"
+      ],
+      "track_to_copper_mm": 0.2,
+      "track_to_copper_closest": [
+       "S606",
+       "V154"
+      ],
+      "by_layer_all_copper_mm": {
+       "F.Cu": 0.2
+      }
+     },
+     "coupled_mm": {
+      "F.Cu": 14.62
+     },
+     "plan_view": {
+      "all_copper_mm": 0.2,
+      "target_layer": "F.Cu",
+      "neighbour_layer": "In1.Cu",
+      "separation_mm": 0.1,
+      "closest": [
+       "S606",
+       "V154"
+      ],
+      "track_crossings": 0
+     }
+    },
+    {
+     "net": "+3.3V",
+     "classes": [
+      "high_current"
+     ],
+     "radius_mm": 3.0,
+     "same_layer": {
+      "all_copper_mm": 1.4,
+      "layer": "F.Cu",
+      "closest": [
+       "J4.3",
+       "J4.1"
+      ],
+      "track_to_track_mm": 1.62,
+      "track_to_track_closest": [
+       "S603",
+       "S423"
+      ],
+      "track_to_copper_mm": 1.43,
+      "track_to_copper_closest": [
+       "S602",
+       "J5.1"
+      ],
+      "by_layer_all_copper_mm": {
+       "F.Cu": 1.4
+      }
+     },
+     "coupled_mm": {
+      "F.Cu": 11.2
+     },
+     "plan_view": {
+      "all_copper_mm": 1.72,
+      "target_layer": "F.Cu",
+      "neighbour_layer": "In1.Cu",
+      "separation_mm": 0.1,
+      "closest": [
+       "J4.3",
+       "V170"
+      ],
+      "track_crossings": 0
+     }
+    },
+    {
+     "net": "/TCA9548A_Subsystem/CH1_SDA",
+     "classes": [
+      "signal"
+     ],
+     "radius_mm": 1.0,
+     "same_layer": {
+      "all_copper_mm": 0.79,
+      "layer": "F.Cu",
+      "closest": [
+       "S602",
+       "S595"
+      ],
+      "track_to_track_mm": 0.79,
+      "track_to_track_closest": [
+       "S602",
+       "S595"
+      ],
+      "track_to_copper_mm": 0.79,
+      "track_to_copper_closest": [
+       "S602",
+       "S595"
+      ],
+      "by_layer_all_copper_mm": {
+       "F.Cu": 0.79
+      }
+     },
+     "coupled_mm": {
+      "F.Cu": 5.46
+     }
+    },
+    {
+     "net": "Net-(C7-Pad2)",
+     "classes": [
+      "high_current"
+     ],
+     "radius_mm": 3.0,
+     "same_layer": {
+      "all_copper_mm": 2.32,
+      "layer": "F.Cu",
+      "closest": [
+       "S602",
+       "S477"
+      ],
+      "track_to_track_mm": 2.32,
+      "track_to_track_closest": [
+       "S602",
+       "S477"
+      ],
+      "track_to_copper_mm": 2.32,
+      "track_to_copper_closest": [
+       "S602",
+       "S477"
+      ],
+      "by_layer_all_copper_mm": {
+       "F.Cu": 2.32
+      }
+     },
+     "coupled_mm": {
+      "F.Cu": 4.4
+     }
+    },
+    {
+     "net": "/TCA_RESET",
+     "classes": [
+      "signal"
+     ],
+     "radius_mm": 1.0,
+     "same_layer": {
+      "all_copper_mm": 0.24,
+      "layer": "F.Cu",
+      "closest": [
+       "U4.4",
+       "U4.3"
+      ],
+      "track_to_track_mm": 0.4,
+      "track_to_track_closest": [
+       "S605",
+       "S147"
+      ],
+      "track_to_copper_mm": 0.25,
+      "track_to_copper_closest": [
+       "S606",
+       "U4.3"
+      ],
+      "by_layer_all_copper_mm": {
+       "F.Cu": 0.24
+      }
+     },
+     "coupled_mm": {
+      "F.Cu": 2.32
+     },
+     "plan_view": {
+      "all_copper_mm": 0.69,
+      "target_layer": "F.Cu",
+      "neighbour_layer": "In1.Cu",
+      "separation_mm": 0.1,
+      "closest": [
+       "U4.4",
+       "V12"
+      ],
+      "track_crossings": 0
+     }
+    }
+   ],
+   "nearby_high_current": [
+    "GND",
+    "+3.3V",
+    "Net-(C7-Pad2)"
+   ],
+   "nearby_high_dvdt": [],
+   "high_dvdt_pads_nearby": [],
+   "via_details": []
+  },
+  {
+   "net": "/TCA9548A_Subsystem/CH0_SCL",
+   "classes": [
+    "signal"
+   ],
+   "endpoints": [
+    {
+     "pad": "U4.5",
+     "ref": "U4",
+     "pin": "5",
+     "pin_function": "SC0",
+     "part": "TCA9548APWR",
+     "footprint": "motion-play-footprints:SOP65P640X120-24N",
+     "side": "front",
+     "role": "root",
+     "from_root_mm": null,
+     "vias_from_root": null,
+     "from_root_by_layer": null
+    },
+    {
+     "pad": "J4.4",
+     "ref": "J4",
+     "pin": "4",
+     "pin_function": "Pin_4",
+     "part": "Conn_01x04",
+     "footprint": "Connector_JST:JST_SH_SM04B-SRSS-TB_1x04-1MP_P1.00mm_Horizontal",
+     "side": "front",
+     "role": null,
+     "from_root_mm": 14.081,
+     "vias_from_root": 0,
+     "from_root_by_layer": {
+      "F.Cu": 14.081
+     }
+    }
+   ],
+   "length_mm": 14.9041,
+   "length_by_layer": {
+    "F.Cu": 14.9041
+   },
+   "widths_mm": [
+    0.25
+   ],
+   "vias": 0,
+   "root": "U4.5",
+   "root_source": "heuristic: pad on the largest footprint",
+   "longest_branch_from_root_mm": 14.081,
+   "route_text": "U4.5 SC0 (TCA9548APWR)  — root (heuristic: pad on the largest footprint)\n└─ F.Cu 0.8 mm w0.25 → junction (154.88, 108.19)\n   └─ F.Cu 13.3 mm w0.25 [2.6 diagonal (159.2,119.6)→(157.3,117.7); 7.2 along x=157.34 (y 117.7→110.5); 3.3 diagonal (157.3,110.5)→(155.0,108.2)] → J4.4 Pin_4 (Conn_01x04)   ⟨14.1 mm from root, 0 vias; F 14.1⟩\n  (off-tree) junction (154.88, 108.19) ↔ U4.5 SC0 (TCA9548APWR): F.Cu 0.8 mm w0.25",
+   "chains": [
+    {
+     "id": "C0",
+     "a": "J4.4",
+     "b": "J:F.Cu:154.881:108.195",
+     "layer": "F.Cu",
+     "length_mm": 13.2579,
+     "widths": [
+      0.25
+     ],
+     "segments": [
+      "S586",
+      "S587",
+      "S589",
+      "S590"
+     ],
+     "in_tree": true,
+     "legs": [
+      {
+       "length_mm": 2.65,
+       "dir": "diagonal (159.2,119.6)→(157.3,117.7)"
+      },
+      {
+       "length_mm": 7.18,
+       "dir": "along x=157.34 (y 117.7→110.5)"
+      },
+      {
+       "length_mm": 3.28,
+       "dir": "diagonal (157.3,110.5)→(155.0,108.2)"
+      },
+      {
+       "length_mm": 0.14,
+       "dir": "along y=108.19 (x 155.0→154.9)"
+      }
+     ]
+    },
+    {
+     "id": "C1",
+     "a": "J:F.Cu:154.881:108.195",
+     "b": "U4.5",
+     "layer": "F.Cu",
+     "length_mm": 0.8231,
+     "widths": [
+      0.25
+     ],
+     "segments": [
+      "S588"
+     ],
+     "in_tree": true,
+     "legs": [
+      {
+       "length_mm": 0.82,
+       "dir": "along y=108.19 (x 154.9→154.1)"
+      }
+     ]
+    },
+    {
+     "id": "C2",
+     "a": "J:F.Cu:154.881:108.195",
+     "b": "U4.5",
+     "layer": "F.Cu",
+     "length_mm": 0.8231,
+     "widths": [
+      0.25
+     ],
+     "segments": [
+      "S590"
+     ],
+     "in_tree": false,
+     "legs": [
+      {
+       "length_mm": 0.82,
+       "dir": "along y=108.19 (x 154.9→154.1)"
+      }
+     ]
+    }
+   ],
+   "connected": true,
+   "islands": [
+    {
+     "pads": [
+      "J4.4",
+      "U4.5"
+     ],
+     "vias": 0,
+     "zones": []
+    }
+   ],
+   "stubs": [],
+   "reference_planes": {
+    "runs": [
+     {
+      "layer": "F.Cu",
+      "plane_layer": "In1.Cu",
+      "dielectric_mm": 0.1,
+      "track_mm": 14.9,
+      "over_raw": {
+       "GND": 14.9
+      },
+      "none_raw_mm": 0.0,
+      "over_antipads_excl": {
+       "GND": 14.9
+      },
+      "none_antipads_excl_mm": 0.0
+     }
+    ],
+    "unreferenced_stretches_antipads_excl": [],
+    "per_segment": [
+     {
+      "segment": "S586",
+      "layer": "F.Cu",
+      "plane_layer": "In1.Cu",
+      "length_mm": 2.65,
+      "over": {
+       "GND": 2.65
+      },
+      "none_raw_mm": 0.0,
+      "none_antipads_excl_mm": 0.0
+     },
+     {
+      "segment": "S587",
+      "layer": "F.Cu",
+      "plane_layer": "In1.Cu",
+      "length_mm": 3.28,
+      "over": {
+       "GND": 3.28
+      },
+      "none_raw_mm": 0.0,
+      "none_antipads_excl_mm": 0.0
+     },
+     {
+      "segment": "S588",
+      "layer": "F.Cu",
+      "plane_layer": "In1.Cu",
+      "length_mm": 0.82,
+      "over": {
+       "GND": 0.82
+      },
+      "none_raw_mm": 0.0,
+      "none_antipads_excl_mm": 0.0
+     },
+     {
+      "segment": "S589",
+      "layer": "F.Cu",
+      "plane_layer": "In1.Cu",
+      "length_mm": 7.18,
+      "over": {
+       "GND": 7.18
+      },
+      "none_raw_mm": 0.0,
+      "none_antipads_excl_mm": 0.0
+     },
+     {
+      "segment": "S590",
+      "layer": "F.Cu",
+      "plane_layer": "In1.Cu",
+      "length_mm": 0.96,
+      "over": {
+       "GND": 0.96
+      },
+      "none_raw_mm": 0.0,
+      "none_antipads_excl_mm": 0.0
+     }
+    ]
+   },
+   "passes_under_or_over": [
+    {
+     "ref": "U4",
+     "value": "TCA9548APWR",
+     "side": "front",
+     "body_source": "courtyard",
+     "member": true,
+     "mm_by_layer": {
+      "F.Cu": 1.89
+     },
+     "mm": 1.89
+    },
+    {
+     "ref": "BT1",
+     "value": "Battery_Cell",
+     "side": "back",
+     "body_source": "courtyard",
+     "member": false,
+     "mm_by_layer": {
+      "F.Cu": 1.76
+     },
+     "mm": 1.76
+    },
+    {
+     "ref": "J4",
+     "value": "Conn_01x04",
+     "side": "front",
+     "body_source": "courtyard",
+     "member": true,
+     "mm_by_layer": {
+      "F.Cu": 1.13
+     },
+     "mm": 1.13
+    }
+   ],
+   "neighbours": [
+    {
+     "net": "/TCA9548A_Subsystem/CH0_SDA",
+     "classes": [
+      "signal"
+     ],
+     "radius_mm": 1.0,
+     "same_layer": {
+      "all_copper_mm": 0.2,
+      "layer": "F.Cu",
+      "closest": [
+       "S589",
+       "S602"
+      ],
+      "track_to_track_mm": 0.2,
+      "track_to_track_closest": [
+       "S589",
+       "S602"
+      ],
+      "track_to_copper_mm": 0.2,
+      "track_to_copper_closest": [
+       "S589",
+       "S602"
+      ],
+      "by_layer_all_copper_mm": {
+       "F.Cu": 0.2
+      }
+     },
+     "coupled_mm": {
+      "F.Cu": 14.9
+     }
+    },
+    {
+     "net": "GND",
+     "classes": [
+      "high_current"
+     ],
+     "radius_mm": 3.0,
+     "same_layer": {
+      "all_copper_mm": 0.52,
+      "layer": "F.Cu",
+      "closest": [
+       "S589",
+       "V77"
+      ],
+      "track_to_track_mm": 0.7,
+      "track_to_track_closest": [
+       "S589",
+       "S361"
+      ],
+      "track_to_copper_mm": 0.52,
+      "track_to_copper_closest": [
+       "S589",
+       "V77"
+      ],
+      "by_layer_all_copper_mm": {
+       "F.Cu": 0.52
+      }
+     },
+     "coupled_mm": {
+      "F.Cu": 14.9
+     },
+     "plan_view": {
+      "all_copper_mm": 0.52,
+      "target_layer": "F.Cu",
+      "neighbour_layer": "In1.Cu",
+      "separation_mm": 0.1,
+      "closest": [
+       "S589",
+       "V77"
+      ],
+      "track_crossings": 0
+     }
+    },
+    {
+     "net": "/TCA9548A_Subsystem/CH1_SDA",
+     "classes": [
+      "signal"
+     ],
+     "radius_mm": 1.0,
+     "same_layer": {
+      "all_copper_mm": 0.24,
+      "layer": "F.Cu",
+      "closest": [
+       "S587",
+       "S595"
+      ],
+      "track_to_track_mm": 0.24,
+      "track_to_track_closest": [
+       "S587",
+       "S595"
+      ],
+      "track_to_copper_mm": 0.24,
+      "track_to_copper_closest": [
+       "S587",
+       "S595"
+      ],
+      "by_layer_all_copper_mm": {
+       "F.Cu": 0.24
+      }
+     },
+     "coupled_mm": {
+      "F.Cu": 7.95
+     }
+    },
+    {
+     "net": "+3.3V",
+     "classes": [
+      "high_current"
+     ],
+     "radius_mm": 3.0,
+     "same_layer": {
+      "all_copper_mm": 0.97,
+      "layer": "F.Cu",
+      "closest": [
+       "S589",
+       "J5.1"
+      ],
+      "track_to_track_mm": 1.5,
+      "track_to_track_closest": [
+       "S589",
+       "S426"
+      ],
+      "track_to_copper_mm": 0.97,
+      "track_to_copper_closest": [
+       "S589",
+       "J5.1"
+      ],
+      "by_layer_all_copper_mm": {
+       "F.Cu": 0.97
+      }
+     },
+     "coupled_mm": {
+      "F.Cu": 7.54
+     },
+     "plan_view": {
+      "all_copper_mm": 2.27,
+      "target_layer": "F.Cu",
+      "neighbour_layer": "In1.Cu",
+      "separation_mm": 0.1,
+      "closest": [
+       "S589",
+       "V171"
+      ],
+      "track_crossings": 0
+     }
+    },
+    {
+     "net": "/TCA9548A_Subsystem/CH1_SCL",
+     "classes": [
+      "signal"
+     ],
+     "radius_mm": 1.0,
+     "same_layer": {
+      "all_copper_mm": 0.69,
+      "layer": "F.Cu",
+      "closest": [
+       "S587",
+       "S585"
+      ],
+      "track_to_track_mm": 0.69,
+      "track_to_track_closest": [
+       "S587",
+       "S585"
+      ],
+      "track_to_copper_mm": 0.69,
+      "track_to_copper_closest": [
+       "S587",
+       "S585"
+      ],
+      "by_layer_all_copper_mm": {
+       "F.Cu": 0.69
+      }
+     },
+     "coupled_mm": {
+      "F.Cu": 6.28
+     }
+    },
+    {
+     "net": "/TCA_RESET",
+     "classes": [
+      "signal"
+     ],
+     "radius_mm": 1.0,
+     "same_layer": {
+      "all_copper_mm": 0.8,
+      "layer": "F.Cu",
+      "closest": [
+       "S587",
+       "U4.3"
+      ],
+      "track_to_track_mm": 1.05,
+      "track_to_track_closest": [
+       "S588",
+       "S147"
+      ],
+      "track_to_copper_mm": 0.8,
+      "track_to_copper_closest": [
+       "S587",
+       "U4.3"
+      ],
+      "by_layer_all_copper_mm": {
+       "F.Cu": 0.8
+      }
+     },
+     "coupled_mm": {
+      "F.Cu": 3.09
+     }
+    },
+    {
+     "net": "Net-(C7-Pad2)",
+     "classes": [
+      "high_current"
+     ],
+     "radius_mm": 3.0,
+     "same_layer": {
+      "all_copper_mm": 2.77,
+      "layer": "F.Cu",
+      "closest": [
+       "S589",
+       "S477"
+      ],
+      "track_to_track_mm": 2.77,
+      "track_to_track_closest": [
+       "S589",
+       "S477"
+      ],
+      "track_to_copper_mm": 2.77,
+      "track_to_copper_closest": [
+       "S589",
+       "S477"
+      ],
+      "by_layer_all_copper_mm": {
+       "F.Cu": 2.77
+      }
+     },
+     "coupled_mm": {
+      "F.Cu": 2.68
+     }
+    }
+   ],
+   "nearby_high_current": [
+    "GND",
+    "+3.3V",
+    "Net-(C7-Pad2)"
+   ],
+   "nearby_high_dvdt": [],
+   "high_dvdt_pads_nearby": [],
+   "via_details": []
+  },
+  {
+   "net": "/TCA9548A_Subsystem/CH1_SDA",
+   "classes": [
+    "signal"
+   ],
+   "endpoints": [
+    {
+     "pad": "U4.6",
+     "ref": "U4",
+     "pin": "6",
+     "pin_function": "SD1",
+     "part": "TCA9548APWR",
+     "footprint": "motion-play-footprints:SOP65P640X120-24N",
+     "side": "front",
+     "role": "root",
+     "from_root_mm": null,
+     "vias_from_root": null,
+     "from_root_by_layer": null
+    },
+    {
+     "pad": "J5.3",
+     "ref": "J5",
+     "pin": "3",
+     "pin_function": "Pin_3",
+     "part": "Conn_01x04",
+     "footprint": "Connector_JST:JST_SH_SM04B-SRSS-TB_1x04-1MP_P1.00mm_Horizontal",
+     "side": "front",
+     "role": null,
+     "from_root_mm": 7.585,
+     "vias_from_root": 0,
+     "from_root_by_layer": {
+      "F.Cu": 7.585
+     }
+    }
+   ],
+   "length_mm": 8.36,
+   "length_by_layer": {
+    "F.Cu": 8.36
+   },
+   "widths_mm": [
+    0.25
+   ],
+   "vias": 0,
+   "root": "U4.6",
+   "root_source": "heuristic: pad on the largest footprint",
+   "longest_branch_from_root_mm": 7.585,
+   "route_text": "U4.6 SD1 (TCA9548APWR)  — root (heuristic: pad on the largest footprint)\n└─ F.Cu 7.6 mm w0.25 [1.1 diagonal (159.2,112.7)→(158.1,112.4); 1.8 along x=158.12 (y 112.4→110.6); 4.3 diagonal (158.1,110.6)→(155.1,107.5); 1.0 along y=107.55 (x 155.1→154.1)] → J5.3 Pin_3 (Conn_01x04)   ⟨7.6 mm from root, 0 vias; F 7.6⟩",
+   "chains": [
+    {
+     "id": "C0",
+     "a": "J5.3",
+     "b": "U4.6",
+     "layer": "F.Cu",
+     "length_mm": 7.585,
+     "widths": [
+      0.25
+     ],
+     "segments": [
+      "S591",
+      "S592",
+      "S594",
+      "S595"
+     ],
+     "in_tree": true,
+     "legs": [
+      {
+       "length_mm": 1.15,
+       "dir": "diagonal (159.2,112.7)→(158.1,112.4)"
+      },
+      {
+       "length_mm": 1.8,
+       "dir": "along x=158.12 (y 112.4→110.6)"
+      },
+      {
+       "length_mm": 4.32,
+       "dir": "diagonal (158.1,110.6)→(155.1,107.5)"
+      },
+      {
+       "length_mm": 1.0,
+       "dir": "along y=107.55 (x 155.1→154.1)"
+      }
+     ]
+    }
+   ],
+   "connected": true,
+   "islands": [
+    {
+     "pads": [
+      "J5.3",
+      "U4.6"
+     ],
+     "vias": 0,
+     "zones": []
+    }
+   ],
+   "stubs": [],
+   "reference_planes": {
+    "runs": [
+     {
+      "layer": "F.Cu",
+      "plane_layer": "In1.Cu",
+      "dielectric_mm": 0.1,
+      "track_mm": 8.36,
+      "over_raw": {
+       "GND": 8.36
+      },
+      "none_raw_mm": 0.0,
+      "over_antipads_excl": {
+       "GND": 8.36
+      },
+      "none_antipads_excl_mm": 0.0
+     }
+    ],
+    "unreferenced_stretches_antipads_excl": [],
+    "per_segment": [
+     {
+      "segment": "S591",
+      "layer": "F.Cu",
+      "plane_layer": "In1.Cu",
+      "length_mm": 1.0,
+      "over": {
+       "GND": 1.0
+      },
+      "none_raw_mm": 0.0,
+      "none_antipads_excl_mm": 0.0
+     },
+     {
+      "segment": "S592",
+      "layer": "F.Cu",
+      "plane_layer": "In1.Cu",
+      "length_mm": 1.8,
+      "over": {
+       "GND": 1.8
+      },
+      "none_raw_mm": 0.0,
+      "none_antipads_excl_mm": 0.0
+     },
+     {
+      "segment": "S593",
+      "layer": "F.Cu",
+      "plane_layer": "In1.Cu",
+      "length_mm": 0.78,
+      "over": {
+       "GND": 0.78
+      },
+      "none_raw_mm": 0.0,
+      "none_antipads_excl_mm": 0.0
+     },
+     {
+      "segment": "S594",
+      "layer": "F.Cu",
+      "plane_layer": "In1.Cu",
+      "length_mm": 0.46,
+      "over": {
+       "GND": 0.46
+      },
+      "none_raw_mm": 0.0,
+      "none_antipads_excl_mm": 0.0
+     },
+     {
+      "segment": "S595",
+      "layer": "F.Cu",
+      "plane_layer": "In1.Cu",
+      "length_mm": 4.32,
+      "over": {
+       "GND": 4.32
+      },
+      "none_raw_mm": 0.0,
+      "none_antipads_excl_mm": 0.0
+     }
+    ]
+   },
+   "passes_under_or_over": [
+    {
+     "ref": "J5",
+     "value": "Conn_01x04",
+     "side": "front",
+     "body_source": "courtyard",
+     "member": true,
+     "mm_by_layer": {
+      "F.Cu": 2.71
+     },
+     "mm": 2.71
+    },
+    {
+     "ref": "U4",
+     "value": "TCA9548APWR",
+     "side": "front",
+     "body_source": "courtyard",
+     "member": true,
+     "mm_by_layer": {
+      "F.Cu": 1.05
+     },
+     "mm": 1.05
+    }
+   ],
+   "neighbours": [
+    {
+     "net": "/TCA9548A_Subsystem/CH1_SCL",
+     "classes": [
+      "signal"
+     ],
+     "radius_mm": 1.0,
+     "same_layer": {
+      "all_copper_mm": 0.2,
+      "layer": "F.Cu",
+      "closest": [
+       "S591",
+       "S585"
+      ],
+      "track_to_track_mm": 0.2,
+      "track_to_track_closest": [
+       "S591",
+       "S585"
+      ],
+      "track_to_copper_mm": 0.2,
+      "track_to_copper_closest": [
+       "S591",
+       "S585"
+      ],
+      "by_layer_all_copper_mm": {
+       "F.Cu": 0.2
+      }
+     },
+     "coupled_mm": {
+      "F.Cu": 8.36
+     }
+    },
+    {
+     "net": "GND",
+     "classes": [
+      "high_current"
+     ],
+     "radius_mm": 3.0,
+     "same_layer": {
+      "all_copper_mm": 0.4,
+      "layer": "F.Cu",
+      "closest": [
+       "J5.3",
+       "J5.2"
+      ],
+      "track_to_track_mm": 0.75,
+      "track_to_track_closest": [
+       "S593",
+       "S361"
+      ],
+      "track_to_copper_mm": 0.58,
+      "track_to_copper_closest": [
+       "S593",
+       "J5.2"
+      ],
+      "by_layer_all_copper_mm": {
+       "F.Cu": 0.4
+      }
+     },
+     "coupled_mm": {
+      "F.Cu": 8.36
+     },
+     "plan_view": {
+      "all_copper_mm": 0.45,
+      "target_layer": "F.Cu",
+      "neighbour_layer": "In1.Cu",
+      "separation_mm": 0.1,
+      "closest": [
+       "J5.3",
+       "V77"
+      ],
+      "track_crossings": 0
+     }
+    },
+    {
+     "net": "/TCA9548A_Subsystem/CH0_SCL",
+     "classes": [
+      "signal"
+     ],
+     "radius_mm": 1.0,
+     "same_layer": {
+      "all_copper_mm": 0.24,
+      "layer": "F.Cu",
+      "closest": [
+       "S595",
+       "S587"
+      ],
+      "track_to_track_mm": 0.24,
+      "track_to_track_closest": [
+       "S595",
+       "S587"
+      ],
+      "track_to_copper_mm": 0.24,
+      "track_to_copper_closest": [
+       "S595",
+       "S587"
+      ],
+      "by_layer_all_copper_mm": {
+       "F.Cu": 0.24
+      }
+     },
+     "coupled_mm": {
+      "F.Cu": 7.74
+     }
+    },
+    {
+     "net": "/TCA9548A_Subsystem/CH0_SDA",
+     "classes": [
+      "signal"
+     ],
+     "radius_mm": 1.0,
+     "same_layer": {
+      "all_copper_mm": 0.79,
+      "layer": "F.Cu",
+      "closest": [
+       "S595",
+       "S602"
+      ],
+      "track_to_track_mm": 0.79,
+      "track_to_track_closest": [
+       "S595",
+       "S602"
+      ],
+      "track_to_copper_mm": 0.79,
+      "track_to_copper_closest": [
+       "S595",
+       "S602"
+      ],
+      "by_layer_all_copper_mm": {
+       "F.Cu": 0.79
+      }
+     },
+     "coupled_mm": {
+      "F.Cu": 7.13
+     }
+    },
+    {
+     "net": "+3.3V",
+     "classes": [
+      "high_current"
+     ],
+     "radius_mm": 3.0,
+     "same_layer": {
+      "all_copper_mm": 1.4,
+      "layer": "F.Cu",
+      "closest": [
+       "J5.3",
+       "J5.1"
+      ],
+      "track_to_track_mm": 1.62,
+      "track_to_track_closest": [
+       "S593",
+       "S426"
+      ],
+      "track_to_copper_mm": 1.58,
+      "track_to_copper_closest": [
+       "S593",
+       "J5.1"
+      ],
+      "by_layer_all_copper_mm": {
+       "F.Cu": 1.4
+      }
+     },
+     "coupled_mm": {
+      "F.Cu": 5.19
+     },
+     "plan_view": {
+      "all_copper_mm": 1.84,
+      "target_layer": "F.Cu",
+      "neighbour_layer": "In1.Cu",
+      "separation_mm": 0.1,
+      "closest": [
+       "J5.3",
+       "V185"
+      ],
+      "track_crossings": 0
+     }
+    },
+    {
+     "net": "/TCA9548A_Subsystem/CH2_SDA",
+     "classes": [
+      "signal"
+     ],
+     "radius_mm": 1.0,
+     "same_layer": {
+      "all_copper_mm": 0.89,
+      "layer": "F.Cu",
+      "closest": [
+       "U4.6",
+       "U4.8"
+      ],
+      "track_to_track_mm": 1.05,
+      "track_to_track_closest": [
+       "S591",
+       "S599"
+      ],
+      "track_to_copper_mm": 0.97,
+      "track_to_copper_closest": [
+       "S591",
+       "U4.8"
+      ],
+      "by_layer_all_copper_mm": {
+       "F.Cu": 0.89
+      }
+     },
+     "coupled_mm": {
+      "F.Cu": 0.99
+     }
+    }
+   ],
+   "nearby_high_current": [
+    "GND",
+    "+3.3V"
+   ],
+   "nearby_high_dvdt": [],
+   "high_dvdt_pads_nearby": [],
+   "via_details": []
+  },
+  {
+   "net": "/TCA9548A_Subsystem/CH1_SCL",
+   "classes": [
+    "signal"
+   ],
+   "endpoints": [
+    {
+     "pad": "U4.7",
+     "ref": "U4",
+     "pin": "7",
+     "pin_function": "SC1",
+     "part": "TCA9548APWR",
+     "footprint": "motion-play-footprints:SOP65P640X120-24N",
+     "side": "front",
+     "role": "root",
+     "from_root_mm": null,
+     "vias_from_root": null,
+     "from_root_by_layer": null
+    },
+    {
+     "pad": "J5.4",
+     "ref": "J5",
+     "pin": "4",
+     "pin_function": "Pin_4",
+     "part": "Conn_01x04",
+     "footprint": "Connector_JST:JST_SH_SM04B-SRSS-TB_1x04-1MP_P1.00mm_Horizontal",
+     "side": "front",
+     "role": null,
+     "from_root_mm": 7.5489,
+     "vias_from_root": 0,
+     "from_root_by_layer": {
+      "F.Cu": 7.5489
+     }
+    }
+   ],
+   "length_mm": 7.5489,
+   "length_by_layer": {
+    "F.Cu": 7.5489
+   },
+   "widths_mm": [
+    0.25
+   ],
+   "vias": 0,
+   "root": "U4.7",
+   "root_source": "heuristic: pad on the largest footprint",
+   "longest_branch_from_root_mm": 7.5489,
+   "route_text": "U4.7 SC1 (TCA9548APWR)  — root (heuristic: pad on the largest footprint)\n└─ F.Cu 7.5 mm w0.25 [5.9 diagonal (159.2,111.1)→(155.1,106.9)] → J5.4 Pin_4 (Conn_01x04)   ⟨7.5 mm from root, 0 vias; F 7.5⟩",
+   "chains": [
+    {
+     "id": "C0",
+     "a": "J5.4",
+     "b": "U4.7",
+     "layer": "F.Cu",
+     "length_mm": 7.5489,
+     "widths": [
+      0.25
+     ],
+     "segments": [
+      "S583",
+      "S584",
+      "S585"
+     ],
+     "in_tree": true,
+     "legs": [
+      {
+       "length_mm": 0.66,
+       "dir": "along x=159.22 (y 111.7→111.1)"
+      },
+      {
+       "length_mm": 5.89,
+       "dir": "diagonal (159.2,111.1)→(155.1,106.9)"
+      },
+      {
+       "length_mm": 0.99,
+       "dir": "along y=106.89 (x 155.1→154.1)"
+      }
+     ]
+    }
+   ],
+   "connected": true,
+   "islands": [
+    {
+     "pads": [
+      "J5.4",
+      "U4.7"
+     ],
+     "vias": 0,
+     "zones": []
+    }
+   ],
+   "stubs": [],
+   "reference_planes": {
+    "runs": [
+     {
+      "layer": "F.Cu",
+      "plane_layer": "In1.Cu",
+      "dielectric_mm": 0.1,
+      "track_mm": 7.55,
+      "over_raw": {
+       "GND": 7.55
+      },
+      "none_raw_mm": 0.0,
+      "over_antipads_excl": {
+       "GND": 7.55
+      },
+      "none_antipads_excl_mm": 0.0
+     }
+    ],
+    "unreferenced_stretches_antipads_excl": [],
+    "per_segment": [
+     {
+      "segment": "S583",
+      "layer": "F.Cu",
+      "plane_layer": "In1.Cu",
+      "length_mm": 0.99,
+      "over": {
+       "GND": 0.99
+      },
+      "none_raw_mm": 0.0,
+      "none_antipads_excl_mm": 0.0
+     },
+     {
+      "segment": "S584",
+      "layer": "F.Cu",
+      "plane_layer": "In1.Cu",
+      "length_mm": 0.66,
+      "over": {
+       "GND": 0.66
+      },
+      "none_raw_mm": 0.0,
+      "none_antipads_excl_mm": 0.0
+     },
+     {
+      "segment": "S585",
+      "layer": "F.Cu",
+      "plane_layer": "In1.Cu",
+      "length_mm": 5.89,
+      "over": {
+       "GND": 5.89
+      },
+      "none_raw_mm": 0.0,
+      "none_antipads_excl_mm": 0.0
+     }
+    ]
+   },
+   "passes_under_or_over": [
+    {
+     "ref": "U4",
+     "value": "TCA9548APWR",
+     "side": "front",
+     "body_source": "courtyard",
+     "member": true,
+     "mm_by_layer": {
+      "F.Cu": 1.05
+     },
+     "mm": 1.05
+    },
+    {
+     "ref": "J5",
+     "value": "Conn_01x04",
+     "side": "front",
+     "body_source": "courtyard",
+     "member": true,
+     "mm_by_layer": {
+      "F.Cu": 0.92
+     },
+     "mm": 0.92
+    }
+   ],
+   "neighbours": [
+    {
+     "net": "/TCA9548A_Subsystem/CH1_SDA",
+     "classes": [
+      "signal"
+     ],
+     "radius_mm": 1.0,
+     "same_layer": {
+      "all_copper_mm": 0.2,
+      "layer": "F.Cu",
+      "closest": [
+       "S585",
+       "S591"
+      ],
+      "track_to_track_mm": 0.2,
+      "track_to_track_closest": [
+       "S585",
+       "S591"
+      ],
+      "track_to_copper_mm": 0.2,
+      "track_to_copper_closest": [
+       "S585",
+       "S591"
+      ],
+      "by_layer_all_copper_mm": {
+       "F.Cu": 0.2
+      }
+     },
+     "coupled_mm": {
+      "F.Cu": 7.55
+     }
+    },
+    {
+     "net": "GND",
+     "classes": [
+      "high_current"
+     ],
+     "radius_mm": 3.0,
+     "same_layer": {
+      "all_copper_mm": 1.4,
+      "layer": "F.Cu",
+      "closest": [
+       "J5.4",
+       "J5.2"
+      ],
+      "track_to_track_mm": 1.75,
+      "track_to_track_closest": [
+       "S584",
+       "S361"
+      ],
+      "track_to_copper_mm": 1.58,
+      "track_to_copper_closest": [
+       "S584",
+       "J5.2"
+      ],
+      "by_layer_all_copper_mm": {
+       "F.Cu": 1.4
+      }
+     },
+     "coupled_mm": {
+      "F.Cu": 7.55
+     },
+     "plan_view": {
+      "all_copper_mm": 1.43,
+      "target_layer": "F.Cu",
+      "neighbour_layer": "In1.Cu",
+      "separation_mm": 0.1,
+      "closest": [
+       "J5.4",
+       "V77"
+      ],
+      "track_crossings": 0
+     }
+    },
+    {
+     "net": "/TCA9548A_Subsystem/CH0_SCL",
+     "classes": [
+      "signal"
+     ],
+     "radius_mm": 1.0,
+     "same_layer": {
+      "all_copper_mm": 0.69,
+      "layer": "F.Cu",
+      "closest": [
+       "S585",
+       "S587"
+      ],
+      "track_to_track_mm": 0.69,
+      "track_to_track_closest": [
+       "S585",
+       "S587"
+      ],
+      "track_to_copper_mm": 0.69,
+      "track_to_copper_closest": [
+       "S585",
+       "S587"
+      ],
+      "by_layer_all_copper_mm": {
+       "F.Cu": 0.69
+      }
+     },
+     "coupled_mm": {
+      "F.Cu": 5.99
+     }
+    },
+    {
+     "net": "+3.3V",
+     "classes": [
+      "high_current"
+     ],
+     "radius_mm": 3.0,
+     "same_layer": {
+      "all_copper_mm": 2.19,
+      "layer": "F.Cu",
+      "closest": [
+       "S585",
+       "J6.1"
+      ],
+      "track_to_track_mm": 2.62,
+      "track_to_track_closest": [
+       "S584",
+       "S426"
+      ],
+      "track_to_copper_mm": 2.19,
+      "track_to_copper_closest": [
+       "S585",
+       "J6.1"
+      ],
+      "by_layer_all_copper_mm": {
+       "F.Cu": 2.19
+      }
+     },
+     "coupled_mm": {
+      "F.Cu": 4.68
+     },
+     "plan_view": {
+      "all_copper_mm": 2.82,
+      "target_layer": "F.Cu",
+      "neighbour_layer": "In1.Cu",
+      "separation_mm": 0.1,
+      "closest": [
+       "J5.4",
+       "V185"
+      ],
+      "track_crossings": 0
+     }
+    },
+    {
+     "net": "/TCA9548A_Subsystem/CH2_SDA",
+     "classes": [
+      "signal"
+     ],
+     "radius_mm": 1.0,
+     "same_layer": {
+      "all_copper_mm": 0.24,
+      "layer": "F.Cu",
+      "closest": [
+       "U4.7",
+       "U4.8"
+      ],
+      "track_to_track_mm": 0.4,
+      "track_to_track_closest": [
+       "S583",
+       "S599"
+      ],
+      "track_to_copper_mm": 0.32,
+      "track_to_copper_closest": [
+       "S583",
+       "U4.8"
+      ],
+      "by_layer_all_copper_mm": {
+       "F.Cu": 0.24
+      }
+     },
+     "coupled_mm": {
+      "F.Cu": 1.84
+     }
+    },
+    {
+     "net": "/TCA9548A_Subsystem/CH2_SCL",
+     "classes": [
+      "signal"
+     ],
+     "radius_mm": 1.0,
+     "same_layer": {
+      "all_copper_mm": 0.89,
+      "layer": "F.Cu",
+      "closest": [
+       "U4.7",
+       "U4.9"
+      ],
+      "track_to_track_mm": 1.05,
+      "track_to_track_closest": [
+       "S583",
+       "S597"
+      ],
+      "track_to_copper_mm": 0.97,
+      "track_to_copper_closest": [
+       "S583",
+       "U4.9"
+      ],
+      "by_layer_all_copper_mm": {
+       "F.Cu": 0.89
+      }
+     },
+     "coupled_mm": {
+      "F.Cu": 0.99
+     }
+    }
+   ],
+   "nearby_high_current": [
+    "GND",
+    "+3.3V"
+   ],
+   "nearby_high_dvdt": [],
+   "high_dvdt_pads_nearby": [],
+   "via_details": []
+  },
+  {
+   "net": "/TCA9548A_Subsystem/CH2_SDA",
+   "classes": [
+    "signal"
+   ],
+   "endpoints": [
+    {
+     "pad": "U4.8",
+     "ref": "U4",
+     "pin": "8",
+     "pin_function": "SD2",
+     "part": "TCA9548APWR",
+     "footprint": "motion-play-footprints:SOP65P640X120-24N",
+     "side": "front",
+     "role": "root",
+     "from_root_mm": null,
+     "vias_from_root": null,
+     "from_root_by_layer": null
+    },
+    {
+     "pad": "J6.3",
+     "ref": "J6",
+     "pin": "3",
+     "pin_function": "Pin_3",
+     "part": "Conn_01x04",
+     "footprint": "Connector_JST:JST_SH_SM04B-SRSS-TB_1x04-1MP_P1.00mm_Horizontal",
+     "side": "front",
+     "role": null,
+     "from_root_mm": 5.2958,
+     "vias_from_root": 0,
+     "from_root_by_layer": {
+      "F.Cu": 5.2958
+     }
+    }
+   ],
+   "length_mm": 5.7481,
+   "length_by_layer": {
+    "F.Cu": 5.7481
+   },
+   "widths_mm": [
+    0.25
+   ],
+   "vias": 0,
+   "root": "U4.8",
+   "root_source": "heuristic: pad on the largest footprint",
+   "longest_branch_from_root_mm": 5.2958,
+   "route_text": "U4.8 SD2 (TCA9548APWR)  — root (heuristic: pad on the largest footprint)\n└─ F.Cu 5.3 mm w0.25 [2.4 diagonal (159.2,104.8)→(157.3,106.2); 3.2 along y=106.25 (x 157.3→154.1)] → J6.3 Pin_3 (Conn_01x04)   ⟨5.3 mm from root, 0 vias; F 5.3⟩",
+   "chains": [
+    {
+     "id": "C0",
+     "a": "J6.3",
+     "b": "U4.8",
+     "layer": "F.Cu",
+     "length_mm": 5.2958,
+     "widths": [
+      0.25
+     ],
+     "segments": [
+      "S599",
+      "S600"
+     ],
+     "in_tree": true,
+     "legs": [
+      {
+       "length_mm": 2.42,
+       "dir": "diagonal (159.2,104.8)→(157.3,106.2)"
+      },
+      {
+       "length_mm": 3.22,
+       "dir": "along y=106.25 (x 157.3→154.1)"
+      }
+     ]
+    }
+   ],
+   "connected": true,
+   "islands": [
+    {
+     "pads": [
+      "J6.3",
+      "U4.8"
+     ],
+     "vias": 0,
+     "zones": []
+    }
+   ],
+   "stubs": [],
+   "reference_planes": {
+    "runs": [
+     {
+      "layer": "F.Cu",
+      "plane_layer": "In1.Cu",
+      "dielectric_mm": 0.1,
+      "track_mm": 5.75,
+      "over_raw": {
+       "GND": 5.75
+      },
+      "none_raw_mm": 0.0,
+      "over_antipads_excl": {
+       "GND": 5.75
+      },
+      "none_antipads_excl_mm": 0.0
+     }
+    ],
+    "unreferenced_stretches_antipads_excl": [],
+    "per_segment": [
+     {
+      "segment": "S599",
+      "layer": "F.Cu",
+      "plane_layer": "In1.Cu",
+      "length_mm": 3.22,
+      "over": {
+       "GND": 3.22
+      },
+      "none_raw_mm": 0.0,
+      "none_antipads_excl_mm": 0.0
+     },
+     {
+      "segment": "S600",
+      "layer": "F.Cu",
+      "plane_layer": "In1.Cu",
+      "length_mm": 2.08,
+      "over": {
+       "GND": 2.08
+      },
+      "none_raw_mm": 0.0,
+      "none_antipads_excl_mm": 0.0
+     },
+     {
+      "segment": "S601",
+      "layer": "F.Cu",
+      "plane_layer": "In1.Cu",
+      "length_mm": 0.45,
+      "over": {
+       "GND": 0.45
+      },
+      "none_raw_mm": 0.0,
+      "none_antipads_excl_mm": 0.0
+     }
+    ]
+   },
+   "passes_under_or_over": [
+    {
+     "ref": "J6",
+     "value": "Conn_01x04",
+     "side": "front",
+     "body_source": "courtyard",
+     "member": true,
+     "mm_by_layer": {
+      "F.Cu": 1.62
+     },
+     "mm": 1.62
+    },
+    {
+     "ref": "U4",
+     "value": "TCA9548APWR",
+     "side": "front",
+     "body_source": "courtyard",
+     "member": true,
+     "mm_by_layer": {
+      "F.Cu": 1.03
+     },
+     "mm": 1.03
+    }
+   ],
+   "neighbours": [
+    {
+     "net": "/TCA9548A_Subsystem/CH2_SCL",
+     "classes": [
+      "signal"
+     ],
+     "radius_mm": 1.0,
+     "same_layer": {
+      "all_copper_mm": 0.2,
+      "layer": "F.Cu",
+      "closest": [
+       "J6.3",
+       "S598"
+      ],
+      "track_to_track_mm": 0.4,
+      "track_to_track_closest": [
+       "S599",
+       "S597"
+      ],
+      "track_to_copper_mm": 0.32,
+      "track_to_copper_closest": [
+       "S599",
+       "U4.9"
+      ],
+      "by_layer_all_copper_mm": {
+       "F.Cu": 0.2
+      }
+     },
+     "coupled_mm": {
+      "F.Cu": 5.75
+     }
+    },
+    {
+     "net": "GND",
+     "classes": [
+      "high_current"
+     ],
+     "radius_mm": 3.0,
+     "same_layer": {
+      "all_copper_mm": 0.2,
+      "layer": "F.Cu",
+      "closest": [
+       "S600",
+       "J6.2"
+      ],
+      "track_to_track_mm": 0.44,
+      "track_to_track_closest": [
+       "S600",
+       "S324"
+      ],
+      "track_to_copper_mm": 0.2,
+      "track_to_copper_closest": [
+       "S600",
+       "J6.2"
+      ],
+      "by_layer_all_copper_mm": {
+       "F.Cu": 0.2
+      }
+     },
+     "coupled_mm": {
+      "F.Cu": 5.75
+     },
+     "plan_view": {
+      "all_copper_mm": 0.27,
+      "target_layer": "F.Cu",
+      "neighbour_layer": "In1.Cu",
+      "separation_mm": 0.1,
+      "closest": [
+       "S600",
+       "V130"
+      ],
+      "track_crossings": 0
+     }
+    },
+    {
+     "net": "+3.3V",
+     "classes": [
+      "high_current"
+     ],
+     "radius_mm": 3.0,
+     "same_layer": {
+      "all_copper_mm": 0.91,
+      "layer": "F.Cu",
+      "closest": [
+       "S600",
+       "J6.1"
+      ],
+      "track_to_track_mm": 1.36,
+      "track_to_track_closest": [
+       "S600",
+       "S473"
+      ],
+      "track_to_copper_mm": 0.91,
+      "track_to_copper_closest": [
+       "S600",
+       "J6.1"
+      ],
+      "by_layer_all_copper_mm": {
+       "F.Cu": 0.91
+      }
+     },
+     "coupled_mm": {
+      "F.Cu": 4.47
+     },
+     "plan_view": {
+      "all_copper_mm": 1.57,
+      "target_layer": "F.Cu",
+      "neighbour_layer": "In1.Cu",
+      "separation_mm": 0.1,
+      "closest": [
+       "J6.3",
+       "V176"
+      ],
+      "track_crossings": 0
+     }
+    },
+    {
+     "net": "/TCA9548A_Subsystem/CH1_SCL",
+     "classes": [
+      "signal"
+     ],
+     "radius_mm": 1.0,
+     "same_layer": {
+      "all_copper_mm": 0.24,
+      "layer": "F.Cu",
+      "closest": [
+       "U4.8",
+       "U4.7"
+      ],
+      "track_to_track_mm": 0.4,
+      "track_to_track_closest": [
+       "S599",
+       "S583"
+      ],
+      "track_to_copper_mm": 0.32,
+      "track_to_copper_closest": [
+       "S599",
+       "U4.7"
+      ],
+      "by_layer_all_copper_mm": {
+       "F.Cu": 0.24
+      }
+     },
+     "coupled_mm": {
+      "F.Cu": 2.11
+     }
+    },
+    {
+     "net": "/TCA9548A_Subsystem/CH1_SDA",
+     "classes": [
+      "signal"
+     ],
+     "radius_mm": 1.0,
+     "same_layer": {
+      "all_copper_mm": 0.89,
+      "layer": "F.Cu",
+      "closest": [
+       "U4.8",
+       "U4.6"
+      ],
+      "track_to_track_mm": 1.05,
+      "track_to_track_closest": [
+       "S599",
+       "S591"
+      ],
+      "track_to_copper_mm": 0.97,
+      "track_to_copper_closest": [
+       "S599",
+       "U4.6"
+      ],
+      "by_layer_all_copper_mm": {
+       "F.Cu": 0.89
+      }
+     },
+     "coupled_mm": {
+      "F.Cu": 0.99
+     }
+    },
+    {
+     "net": "unconnected-(U4-SD3-Pad10)",
+     "classes": [
+      "signal"
+     ],
+     "radius_mm": 1.0,
+     "same_layer": {
+      "all_copper_mm": 0.89,
+      "layer": "F.Cu",
+      "closest": [
+       "U4.8",
+       "U4.10"
+      ],
+      "track_to_track_mm": null,
+      "track_to_track_closest": null,
+      "track_to_copper_mm": 0.97,
+      "track_to_copper_closest": [
+       "S599",
+       "U4.10"
+      ],
+      "by_layer_all_copper_mm": {
+       "F.Cu": 0.89
+      }
+     },
+     "coupled_mm": {
+      "F.Cu": 0.99
+     }
+    }
+   ],
+   "nearby_high_current": [
+    "GND",
+    "+3.3V"
+   ],
+   "nearby_high_dvdt": [],
+   "high_dvdt_pads_nearby": [],
+   "via_details": []
+  },
+  {
+   "net": "/TCA9548A_Subsystem/CH2_SCL",
+   "classes": [
+    "signal"
+   ],
+   "endpoints": [
+    {
+     "pad": "U4.9",
+     "ref": "U4",
+     "pin": "9",
+     "pin_function": "SC2",
+     "part": "TCA9548APWR",
+     "footprint": "motion-play-footprints:SOP65P640X120-24N",
+     "side": "front",
+     "role": "root",
+     "from_root_mm": null,
+     "vias_from_root": null,
+     "from_root_by_layer": null
+    },
+    {
+     "pad": "J6.4",
+     "ref": "J6",
+     "pin": "4",
+     "pin_function": "Pin_4",
+     "part": "Conn_01x04",
+     "footprint": "Connector_JST:JST_SH_SM04B-SRSS-TB_1x04-1MP_P1.00mm_Horizontal",
+     "side": "front",
+     "role": null,
+     "from_root_mm": 5.4408,
+     "vias_from_root": 0,
+     "from_root_by_layer": {
+      "F.Cu": 5.4408
+     }
+    }
+   ],
+   "length_mm": 5.8931,
+   "length_by_layer": {
+    "F.Cu": 5.8931
+   },
+   "widths_mm": [
+    0.25
+   ],
+   "vias": 0,
+   "root": "U4.9",
+   "root_source": "heuristic: pad on the largest footprint",
+   "longest_branch_from_root_mm": 5.4408,
+   "route_text": "U4.9 SC2 (TCA9548APWR)  — root (heuristic: pad on the largest footprint)\n└─ F.Cu 5.4 mm w0.25 [2.9 diagonal (159.2,103.8)→(156.9,105.6); 2.9 along y=105.59 (x 156.9→154.1)] → J6.4 Pin_4 (Conn_01x04)   ⟨5.4 mm from root, 0 vias; F 5.4⟩",
+   "chains": [
+    {
+     "id": "C0",
+     "a": "J6.4",
+     "b": "U4.9",
+     "layer": "F.Cu",
+     "length_mm": 5.4408,
+     "widths": [
+      0.25
+     ],
+     "segments": [
+      "S597",
+      "S598"
+     ],
+     "in_tree": true,
+     "legs": [
+      {
+       "length_mm": 2.91,
+       "dir": "diagonal (159.2,103.8)→(156.9,105.6)"
+      },
+      {
+       "length_mm": 2.87,
+       "dir": "along y=105.59 (x 156.9→154.1)"
+      }
+     ]
+    }
+   ],
+   "connected": true,
+   "islands": [
+    {
+     "pads": [
+      "J6.4",
+      "U4.9"
+     ],
+     "vias": 0,
+     "zones": []
+    }
+   ],
+   "stubs": [],
+   "reference_planes": {
+    "runs": [
+     {
+      "layer": "F.Cu",
+      "plane_layer": "In1.Cu",
+      "dielectric_mm": 0.1,
+      "track_mm": 5.89,
+      "over_raw": {
+       "GND": 5.89
+      },
+      "none_raw_mm": 0.0,
+      "over_antipads_excl": {
+       "GND": 5.89
+      },
+      "none_antipads_excl_mm": 0.0
+     }
+    ],
+    "unreferenced_stretches_antipads_excl": [],
+    "per_segment": [
+     {
+      "segment": "S596",
+      "layer": "F.Cu",
+      "plane_layer": "In1.Cu",
+      "length_mm": 0.45,
+      "over": {
+       "GND": 0.45
+      },
+      "none_raw_mm": 0.0,
+      "none_antipads_excl_mm": 0.0
+     },
+     {
+      "segment": "S597",
+      "layer": "F.Cu",
+      "plane_layer": "In1.Cu",
+      "length_mm": 2.87,
+      "over": {
+       "GND": 2.87
+      },
+      "none_raw_mm": 0.0,
+      "none_antipads_excl_mm": 0.0
+     },
+     {
+      "segment": "S598",
+      "layer": "F.Cu",
+      "plane_layer": "In1.Cu",
+      "length_mm": 2.57,
+      "over": {
+       "GND": 2.57
+      },
+      "none_raw_mm": 0.0,
+      "none_antipads_excl_mm": 0.0
+     }
+    ]
+   },
+   "passes_under_or_over": [
+    {
+     "ref": "J6",
+     "value": "Conn_01x04",
+     "side": "front",
+     "body_source": "courtyard",
+     "member": true,
+     "mm_by_layer": {
+      "F.Cu": 1.62
+     },
+     "mm": 1.62
+    },
+    {
+     "ref": "U4",
+     "value": "TCA9548APWR",
+     "side": "front",
+     "body_source": "courtyard",
+     "member": true,
+     "mm_by_layer": {
+      "F.Cu": 1.03
+     },
+     "mm": 1.03
+    }
+   ],
+   "neighbours": [
+    {
+     "net": "/TCA9548A_Subsystem/CH2_SDA",
+     "classes": [
+      "signal"
+     ],
+     "radius_mm": 1.0,
+     "same_layer": {
+      "all_copper_mm": 0.2,
+      "layer": "F.Cu",
+      "closest": [
+       "S598",
+       "J6.3"
+      ],
+      "track_to_track_mm": 0.4,
+      "track_to_track_closest": [
+       "S597",
+       "S599"
+      ],
+      "track_to_copper_mm": 0.2,
+      "track_to_copper_closest": [
+       "S598",
+       "J6.3"
+      ],
+      "by_layer_all_copper_mm": {
+       "F.Cu": 0.2
+      }
+     },
+     "coupled_mm": {
+      "F.Cu": 5.89
+     }
+    },
+    {
+     "net": "GND",
+     "classes": [
+      "high_current"
+     ],
+     "radius_mm": 3.0,
+     "same_layer": {
+      "all_copper_mm": 0.91,
+      "layer": "F.Cu",
+      "closest": [
+       "S598",
+       "J6.2"
+      ],
+      "track_to_track_mm": 1.15,
+      "track_to_track_closest": [
+       "S598",
+       "S324"
+      ],
+      "track_to_copper_mm": 0.91,
+      "track_to_copper_closest": [
+       "S598",
+       "J6.2"
+      ],
+      "by_layer_all_copper_mm": {
+       "F.Cu": 0.91
+      }
+     },
+     "coupled_mm": {
+      "F.Cu": 5.89
+     },
+     "plan_view": {
+      "all_copper_mm": 0.97,
+      "target_layer": "F.Cu",
+      "neighbour_layer": "In1.Cu",
+      "separation_mm": 0.1,
+      "closest": [
+       "S598",
+       "V130"
+      ],
+      "track_crossings": 0
+     }
+    },
+    {
+     "net": "+3.3V",
+     "classes": [
+      "high_current"
+     ],
+     "radius_mm": 3.0,
+     "same_layer": {
+      "all_copper_mm": 1.62,
+      "layer": "F.Cu",
+      "closest": [
+       "S598",
+       "J6.1"
+      ],
+      "track_to_track_mm": 2.07,
+      "track_to_track_closest": [
+       "S598",
+       "S473"
+      ],
+      "track_to_copper_mm": 1.62,
+      "track_to_copper_closest": [
+       "S598",
+       "J6.1"
+      ],
+      "by_layer_all_copper_mm": {
+       "F.Cu": 1.62
+      }
+     },
+     "coupled_mm": {
+      "F.Cu": 4.47
+     },
+     "plan_view": {
+      "all_copper_mm": 2.53,
+      "target_layer": "F.Cu",
+      "neighbour_layer": "In1.Cu",
+      "separation_mm": 0.1,
+      "closest": [
+       "J6.4",
+       "V176"
+      ],
+      "track_crossings": 0
+     }
+    },
+    {
+     "net": "unconnected-(U4-SD3-Pad10)",
+     "classes": [
+      "signal"
+     ],
+     "radius_mm": 1.0,
+     "same_layer": {
+      "all_copper_mm": 0.24,
+      "layer": "F.Cu",
+      "closest": [
+       "U4.9",
+       "U4.10"
+      ],
+      "track_to_track_mm": null,
+      "track_to_track_closest": null,
+      "track_to_copper_mm": 0.32,
+      "track_to_copper_closest": [
+       "S597",
+       "U4.10"
+      ],
+      "by_layer_all_copper_mm": {
+       "F.Cu": 0.24
+      }
+     },
+     "coupled_mm": {
+      "F.Cu": 1.8
+     }
+    },
+    {
+     "net": "/TCA9548A_Subsystem/CH1_SCL",
+     "classes": [
+      "signal"
+     ],
+     "radius_mm": 1.0,
+     "same_layer": {
+      "all_copper_mm": 0.89,
+      "layer": "F.Cu",
+      "closest": [
+       "U4.9",
+       "U4.7"
+      ],
+      "track_to_track_mm": 1.05,
+      "track_to_track_closest": [
+       "S597",
+       "S583"
+      ],
+      "track_to_copper_mm": 0.97,
+      "track_to_copper_closest": [
+       "S597",
+       "U4.7"
+      ],
+      "by_layer_all_copper_mm": {
+       "F.Cu": 0.89
+      }
+     },
+     "coupled_mm": {
+      "F.Cu": 0.99
+     }
+    },
+    {
+     "net": "unconnected-(U4-SC3-Pad11)",
+     "classes": [
+      "signal"
+     ],
+     "radius_mm": 1.0,
+     "same_layer": {
+      "all_copper_mm": 0.89,
+      "layer": "F.Cu",
+      "closest": [
+       "U4.9",
+       "U4.11"
+      ],
+      "track_to_track_mm": null,
+      "track_to_track_closest": null,
+      "track_to_copper_mm": 0.97,
+      "track_to_copper_closest": [
+       "S597",
+       "U4.11"
+      ],
+      "by_layer_all_copper_mm": {
+       "F.Cu": 0.89
+      }
+     },
+     "coupled_mm": {
+      "F.Cu": 0.99
+     }
+    }
+   ],
+   "nearby_high_current": [
+    "GND",
+    "+3.3V"
+   ],
+   "nearby_high_dvdt": [],
+   "high_dvdt_pads_nearby": [],
+   "via_details": []
+  }
+ ],
+ "all_nets": [
+  {
+   "net": "+3.3V",
+   "classes": [
+    "high_current"
+   ],
+   "pads": 25,
+   "length_mm": 39.192,
+   "length_by_layer": {
+    "F.Cu": 39.192
+   },
+   "widths_mm": [
+    0.25,
+    0.5,
+    0.75
+   ],
+   "vias": 31,
+   "zones": [
+    "Z3",
+    "Z7"
+   ],
+   "root": "U3.2",
+   "connected": true,
+   "islands_with_pads": 1,
+   "stubs": 0
+  },
+  {
+   "net": "+5V",
+   "classes": [
+    "high_current"
+   ],
+   "pads": 11,
+   "length_mm": 15.9555,
+   "length_by_layer": {
+    "F.Cu": 15.9555
+   },
+   "widths_mm": [
+    0.5,
+    1.5
+   ],
+   "vias": 10,
+   "zones": [
+    "Z1",
+    "Z6"
+   ],
+   "root": "U6.14",
+   "connected": true,
+   "islands_with_pads": 1,
+   "stubs": 0
+  },
+  {
+   "net": "/CHRG_INT",
+   "classes": [
+    "high_dvdt"
+   ],
+   "pads": 4,
+   "length_mm": 42.7523,
+   "length_by_layer": {
+    "B.Cu": 31.7764,
+    "F.Cu": 10.9759
+   },
+   "widths_mm": [
+    0.25
+   ],
+   "vias": 3,
+   "zones": [],
+   "root": "U5.7",
+   "connected": true,
+   "islands_with_pads": 1,
+   "stubs": 0
+  },
+  {
+   "net": "/ESP32_S3/EN",
+   "classes": [
+    "signal"
+   ],
+   "pads": 4,
+   "length_mm": 24.2135,
+   "length_by_layer": {
+    "F.Cu": 24.2135
+   },
+   "widths_mm": [
+    0.2,
+    0.25
+   ],
+   "vias": 0,
+   "zones": [],
+   "root": "U3.3",
+   "connected": true,
+   "islands_with_pads": 1,
+   "stubs": 0
+  },
+  {
+   "net": "/ESP32_S3/GPIO0_BOOT",
+   "classes": [
+    "signal"
+   ],
+   "pads": 3,
+   "length_mm": 6.265,
+   "length_by_layer": {
+    "F.Cu": 6.265
+   },
+   "widths_mm": [
+    0.25
+   ],
+   "vias": 0,
+   "zones": [],
+   "root": "U3.27",
+   "connected": true,
+   "islands_with_pads": 1,
+   "stubs": 0
+  },
+  {
+   "net": "/ESP32_S3/INT1",
+   "classes": [
+    "signal"
+   ],
+   "pads": 1,
+   "length_mm": 0.0,
+   "length_by_layer": {},
+   "widths_mm": [],
+   "vias": 0,
+   "zones": [],
+   "root": null,
+   "connected": null,
+   "islands_with_pads": 0,
+   "stubs": 0
+  },
+  {
+   "net": "/ESP32_S3/INT2",
+   "classes": [
+    "signal"
+   ],
+   "pads": 1,
+   "length_mm": 0.0,
+   "length_by_layer": {},
+   "widths_mm": [],
+   "vias": 0,
+   "zones": [],
+   "root": null,
+   "connected": null,
+   "islands_with_pads": 0,
+   "stubs": 0
+  },
+  {
+   "net": "/ESP32_S3/INT3",
+   "classes": [
+    "signal"
+   ],
+   "pads": 1,
+   "length_mm": 0.0,
+   "length_by_layer": {},
+   "widths_mm": [],
+   "vias": 0,
+   "zones": [],
+   "root": null,
+   "connected": null,
+   "islands_with_pads": 0,
+   "stubs": 0
+  },
+  {
+   "net": "/ESP32_S3/USB_DN_MCU",
+   "classes": [
+    "high_dvdt"
+   ],
+   "pads": 2,
+   "length_mm": 1.8249,
+   "length_by_layer": {
+    "F.Cu": 1.8249
+   },
+   "widths_mm": [
+    0.3
+   ],
+   "vias": 0,
+   "zones": [],
+   "root": "U3.13",
+   "connected": true,
+   "islands_with_pads": 1,
+   "stubs": 0
+  },
+  {
+   "net": "/ESP32_S3/USB_DP_MCU",
+   "classes": [
+    "high_dvdt"
+   ],
+   "pads": 2,
+   "length_mm": 2.1756,
+   "length_by_layer": {
+    "F.Cu": 2.1756
+   },
+   "widths_mm": [
+    0.3
+   ],
+   "vias": 0,
+   "zones": [],
+   "root": "U3.14",
+   "connected": true,
+   "islands_with_pads": 1,
+   "stubs": 0
+  },
+  {
+   "net": "/I2C_SCL",
+   "classes": [
+    "signal"
+   ],
+   "pads": 6,
+   "length_mm": 73.3019,
+   "length_by_layer": {
+    "B.Cu": 39.6405,
+    "F.Cu": 33.6614
+   },
+   "widths_mm": [
+    0.25
+   ],
+   "vias": 5,
+   "zones": [],
+   "root": "U3.36",
+   "connected": true,
+   "islands_with_pads": 1,
+   "stubs": 0
+  },
+  {
+   "net": "/I2C_SDA",
+   "classes": [
+    "signal"
+   ],
+   "pads": 6,
+   "length_mm": 72.8982,
+   "length_by_layer": {
+    "B.Cu": 36.9805,
+    "F.Cu": 35.9177
+   },
+   "widths_mm": [
+    0.25
+   ],
+   "vias": 3,
+   "zones": [],
+   "root": "U3.37",
+   "connected": true,
+   "islands_with_pads": 1,
+   "stubs": 0
+  },
+  {
+   "net": "/LED Controller/+5V_TO_LEDS",
+   "classes": [
+    "high_current"
+   ],
+   "pads": 4,
+   "length_mm": 14.6549,
+   "length_by_layer": {
+    "F.Cu": 14.6549
+   },
+   "widths_mm": [
+    1.0
+   ],
+   "vias": 0,
+   "zones": [],
+   "root": "IC1.14",
+   "connected": true,
+   "islands_with_pads": 1,
+   "stubs": 0
+  },
+  {
+   "net": "/LED Controller/DATA_TO_LEDS",
+   "classes": [
+    "high_dvdt"
+   ],
+   "pads": 2,
+   "length_mm": 11.827,
+   "length_by_layer": {
+    "B.Cu": 7.7649,
+    "F.Cu": 4.0621
+   },
+   "widths_mm": [
+    0.25
+   ],
+   "vias": 2,
+   "zones": [],
+   "root": "IC1.3",
+   "connected": true,
+   "islands_with_pads": 1,
+   "stubs": 0
+  },
+  {
+   "net": "/LED_DATA",
+   "classes": [
+    "high_dvdt"
+   ],
+   "pads": 4,
+   "length_mm": 42.0743,
+   "length_by_layer": {
+    "B.Cu": 18.3407,
+    "F.Cu": 23.7336
+   },
+   "widths_mm": [
+    0.25
+   ],
+   "vias": 2,
+   "zones": [],
+   "root": "U3.9",
+   "connected": true,
+   "islands_with_pads": 1,
+   "stubs": 0
+  },
+  {
+   "net": "/Power Management/BAT_RAW",
+   "classes": [
+    "high_current"
+   ],
+   "pads": 3,
+   "length_mm": 14.709,
+   "length_by_layer": {
+    "B.Cu": 8.2665,
+    "F.Cu": 6.4425
+   },
+   "widths_mm": [
+    0.75,
+    2.0
+   ],
+   "vias": 1,
+   "zones": [],
+   "root": "BT1.1",
+   "connected": true,
+   "islands_with_pads": 1,
+   "stubs": 0
+  },
+  {
+   "net": "/Power Management/BOOST_BOOT",
+   "classes": [
+    "signal"
+   ],
+   "pads": 2,
+   "length_mm": 3.5659,
+   "length_by_layer": {
+    "F.Cu": 3.5659
+   },
+   "widths_mm": [
+    0.25
+   ],
+   "vias": 0,
+   "zones": [],
+   "root": "U6.8",
+   "connected": true,
+   "islands_with_pads": 1,
+   "stubs": 0
+  },
+  {
+   "net": "/Power Management/BOOST_COMP",
+   "classes": [
+    "signal"
+   ],
+   "pads": 3,
+   "length_mm": 5.8889,
+   "length_by_layer": {
+    "F.Cu": 5.8889
+   },
+   "widths_mm": [
+    0.2
+   ],
+   "vias": 0,
+   "zones": [],
+   "root": "U6.18",
+   "connected": true,
+   "islands_with_pads": 1,
+   "stubs": 0
+  },
+  {
+   "net": "/Power Management/BOOST_EN",
+   "classes": [
+    "high_current"
+   ],
+   "pads": 3,
+   "length_mm": 20.8916,
+   "length_by_layer": {
+    "F.Cu": 20.8916
+   },
+   "widths_mm": [
+    0.3,
+    0.5
+   ],
+   "vias": 0,
+   "zones": [],
+   "root": "U6.2",
+   "connected": true,
+   "islands_with_pads": 1,
+   "stubs": 0
+  },
+  {
+   "net": "/Power Management/BOOST_FB",
+   "classes": [
+    "signal"
+   ],
+   "pads": 3,
+   "length_mm": 5.6914,
+   "length_by_layer": {
+    "F.Cu": 5.6914
+   },
+   "widths_mm": [
+    0.2
+   ],
+   "vias": 0,
+   "zones": [],
+   "root": "U6.17",
+   "connected": true,
+   "islands_with_pads": 1,
+   "stubs": 0
+  },
+  {
+   "net": "/Power Management/BOOST_FSW",
+   "classes": [
+    "signal"
+   ],
+   "pads": 2,
+   "length_mm": 7.551,
+   "length_by_layer": {
+    "B.Cu": 6.2714,
+    "F.Cu": 1.2796
+   },
+   "widths_mm": [
+    0.15,
+    0.2
+   ],
+   "vias": 2,
+   "zones": [],
+   "root": "U6.3",
+   "connected": true,
+   "islands_with_pads": 1,
+   "stubs": 0
+  },
+  {
+   "net": "/Power Management/BOOST_ILIM",
+   "classes": [
+    "signal"
+   ],
+   "pads": 2,
+   "length_mm": 4.3753,
+   "length_by_layer": {
+    "F.Cu": 4.3753
+   },
+   "widths_mm": [
+    0.25
+   ],
+   "vias": 0,
+   "zones": [],
+   "root": "U6.19",
+   "connected": true,
+   "islands_with_pads": 1,
+   "stubs": 0
+  },
+  {
+   "net": "/Power Management/BOOST_SS",
+   "classes": [
+    "signal"
+   ],
+   "pads": 2,
+   "length_mm": 5.0728,
+   "length_by_layer": {
+    "F.Cu": 5.0728
+   },
+   "widths_mm": [
+    0.25
+   ],
+   "vias": 0,
+   "zones": [],
+   "root": "U6.10",
+   "connected": true,
+   "islands_with_pads": 1,
+   "stubs": 0
+  },
+  {
+   "net": "/Power Management/BOOST_SW",
+   "classes": [
+    "high_current",
+    "high_dvdt"
+   ],
+   "pads": 7,
+   "length_mm": 6.526,
+   "length_by_layer": {
+    "F.Cu": 6.526
+   },
+   "widths_mm": [
+    1.5
+   ],
+   "vias": 0,
+   "zones": [
+    "Z0"
+   ],
+   "root": "U6.4",
+   "connected": true,
+   "islands_with_pads": 1,
+   "stubs": 0
+  },
+  {
+   "net": "/Power Management/BOOST_VCC",
+   "classes": [
+    "signal"
+   ],
+   "pads": 2,
+   "length_mm": 3.7604,
+   "length_by_layer": {
+    "F.Cu": 3.7604
+   },
+   "widths_mm": [
+    0.25
+   ],
+   "vias": 0,
+   "zones": [],
+   "root": "U6.1",
+   "connected": true,
+   "islands_with_pads": 1,
+   "stubs": 0
+  },
+  {
+   "net": "/Power Management/BQ_BTST",
+   "classes": [
+    "signal"
+   ],
+   "pads": 2,
+   "length_mm": 4.714,
+   "length_by_layer": {
+    "B.Cu": 2.9756,
+    "F.Cu": 1.7384
+   },
+   "widths_mm": [
+    0.25
+   ],
+   "vias": 2,
+   "zones": [],
+   "root": "U5.21",
+   "connected": true,
+   "islands_with_pads": 1,
+   "stubs": 0
+  },
+  {
+   "net": "/Power Management/BQ_ILIM",
+   "classes": [
+    "signal"
+   ],
+   "pads": 2,
+   "length_mm": 1.9165,
+   "length_by_layer": {
+    "F.Cu": 1.9165
+   },
+   "widths_mm": [
+    0.25
+   ],
+   "vias": 0,
+   "zones": [],
+   "root": "U5.10",
+   "connected": true,
+   "islands_with_pads": 1,
+   "stubs": 0
+  },
+  {
+   "net": "/Power Management/BQ_PMID",
+   "classes": [
+    "high_current"
+   ],
+   "pads": 3,
+   "length_mm": 15.98,
+   "length_by_layer": {
+    "B.Cu": 9.6174,
+    "F.Cu": 6.3626
+   },
+   "widths_mm": [
+    0.25
+   ],
+   "vias": 2,
+   "zones": [],
+   "root": "U5.23",
+   "connected": true,
+   "islands_with_pads": 1,
+   "stubs": 0
+  },
+  {
+   "net": "/Power Management/BQ_REGN",
+   "classes": [
+    "signal"
+   ],
+   "pads": 3,
+   "length_mm": 14.6898,
+   "length_by_layer": {
+    "B.Cu": 6.8839,
+    "F.Cu": 7.8059
+   },
+   "widths_mm": [
+    0.25
+   ],
+   "vias": 2,
+   "zones": [],
+   "root": "U5.22",
+   "connected": true,
+   "islands_with_pads": 1,
+   "stubs": 0
+  },
+  {
+   "net": "/Power Management/BQ_SW",
+   "classes": [
+    "high_current",
+    "high_dvdt"
+   ],
+   "pads": 4,
+   "length_mm": 5.2719,
+   "length_by_layer": {
+    "F.Cu": 5.2719
+   },
+   "widths_mm": [
+    0.75
+   ],
+   "vias": 0,
+   "zones": [],
+   "root": "U5.19",
+   "connected": true,
+   "islands_with_pads": 1,
+   "stubs": 0
+  },
+  {
+   "net": "/Power Management/BQ_TS",
+   "classes": [
+    "signal"
+   ],
+   "pads": 5,
+   "length_mm": 26.7535,
+   "length_by_layer": {
+    "B.Cu": 11.3886,
+    "F.Cu": 15.3649
+   },
+   "widths_mm": [
+    0.25
+   ],
+   "vias": 2,
+   "zones": [],
+   "root": "U5.11",
+   "connected": true,
+   "islands_with_pads": 1,
+   "stubs": 0
+  },
+  {
+   "net": "/Power Management/CC1",
+   "classes": [
+    "signal"
+   ],
+   "pads": 2,
+   "length_mm": 5.6836,
+   "length_by_layer": {
+    "F.Cu": 5.6836
+   },
+   "widths_mm": [
+    0.2,
+    0.25
+   ],
+   "vias": 0,
+   "zones": [],
+   "root": "J7.A5",
+   "connected": true,
+   "islands_with_pads": 1,
+   "stubs": 0
+  },
+  {
+   "net": "/Power Management/CC2",
+   "classes": [
+    "signal"
+   ],
+   "pads": 2,
+   "length_mm": 6.3363,
+   "length_by_layer": {
+    "F.Cu": 6.3363
+   },
+   "widths_mm": [
+    0.15,
+    0.2,
+    0.25
+   ],
+   "vias": 0,
+   "zones": [],
+   "root": "J7.B5",
+   "connected": true,
+   "islands_with_pads": 1,
+   "stubs": 0
+  },
+  {
+   "net": "/Power Management/COMP_MID",
+   "classes": [
+    "signal"
+   ],
+   "pads": 2,
+   "length_mm": 1.5468,
+   "length_by_layer": {
+    "F.Cu": 1.5468
+   },
+   "widths_mm": [
+    0.2
+   ],
+   "vias": 0,
+   "zones": [],
+   "root": "C38.1",
+   "connected": true,
+   "islands_with_pads": 1,
+   "stubs": 0
+  },
+  {
+   "net": "/Power Management/OTG_BIAS",
+   "classes": [
+    "signal"
+   ],
+   "pads": 2,
+   "length_mm": 2.375,
+   "length_by_layer": {
+    "F.Cu": 2.375
+   },
+   "widths_mm": [
+    0.25
+   ],
+   "vias": 0,
+   "zones": [],
+   "root": "U5.8",
+   "connected": true,
+   "islands_with_pads": 1,
+   "stubs": 0
+  },
+  {
+   "net": "/Power Management/PMOS_GATE",
+   "classes": [
+    "signal"
+   ],
+   "pads": 3,
+   "length_mm": 7.1329,
+   "length_by_layer": {
+    "F.Cu": 7.1329
+   },
+   "widths_mm": [
+    0.2,
+    0.25
+   ],
+   "vias": 0,
+   "zones": [],
+   "root": "Q2.1",
+   "connected": true,
+   "islands_with_pads": 1,
+   "stubs": 0
+  },
+  {
+   "net": "/Power Management/Protected_VBUS",
+   "classes": [
+    "high_current"
+   ],
+   "pads": 8,
+   "length_mm": 57.6977,
+   "length_by_layer": {
+    "B.Cu": 9.5926,
+    "F.Cu": 48.1051
+   },
+   "widths_mm": [
+    0.25,
+    0.75,
+    1.0,
+    1.5
+   ],
+   "vias": 2,
+   "zones": [],
+   "root": "U5.1",
+   "connected": true,
+   "islands_with_pads": 1,
+   "stubs": 0
+  },
+  {
+   "net": "/Power Management/VBAT",
+   "classes": [
+    "high_current"
+   ],
+   "pads": 5,
+   "length_mm": 24.5618,
+   "length_by_layer": {
+    "B.Cu": 17.3222,
+    "F.Cu": 7.2396
+   },
+   "widths_mm": [
+    0.75
+   ],
+   "vias": 3,
+   "zones": [],
+   "root": "U5.13",
+   "connected": true,
+   "islands_with_pads": 1,
+   "stubs": 0
+  },
+  {
+   "net": "/Power Management/VBUS_RAW",
+   "classes": [
+    "high_current"
+   ],
+   "pads": 3,
+   "length_mm": 14.2846,
+   "length_by_layer": {
+    "F.Cu": 14.2846
+   },
+   "widths_mm": [
+    0.3,
+    0.5,
+    1.0
+   ],
+   "vias": 0,
+   "zones": [],
+   "root": "J7.A4B9",
+   "connected": true,
+   "islands_with_pads": 1,
+   "stubs": 0
+  },
+  {
+   "net": "/Power Management/VSYS",
+   "classes": [
+    "high_current"
+   ],
+   "pads": 9,
+   "length_mm": 52.8696,
+   "length_by_layer": {
+    "B.Cu": 3.9472,
+    "F.Cu": 48.9224
+   },
+   "widths_mm": [
+    0.25,
+    0.5,
+    1.0
+   ],
+   "vias": 4,
+   "zones": [],
+   "root": "U5.15",
+   "connected": true,
+   "islands_with_pads": 1,
+   "stubs": 0
+  },
+  {
+   "net": "/Power Management/VSYS_SENSE",
+   "classes": [
+    "high_current"
+   ],
+   "pads": 7,
+   "length_mm": 35.5971,
+   "length_by_layer": {
+    "B.Cu": 4.725,
+    "F.Cu": 30.8721
+   },
+   "widths_mm": [
+    0.2,
+    0.25,
+    0.5,
+    0.75,
+    1.0
+   ],
+   "vias": 2,
+   "zones": [],
+   "root": "U6.9",
+   "connected": true,
+   "islands_with_pads": 1,
+   "stubs": 0
+  },
+  {
+   "net": "/TCA9548A_Subsystem/CH0_SCL",
+   "classes": [
+    "signal"
+   ],
+   "pads": 2,
+   "length_mm": 14.9041,
+   "length_by_layer": {
+    "F.Cu": 14.9041
+   },
+   "widths_mm": [
+    0.25
+   ],
+   "vias": 0,
+   "zones": [],
+   "root": "U4.5",
+   "connected": true,
+   "islands_with_pads": 1,
+   "stubs": 0
+  },
+  {
+   "net": "/TCA9548A_Subsystem/CH0_SDA",
+   "classes": [
+    "signal"
+   ],
+   "pads": 2,
+   "length_mm": 14.6216,
+   "length_by_layer": {
+    "F.Cu": 14.6216
+   },
+   "widths_mm": [
+    0.25
+   ],
+   "vias": 0,
+   "zones": [],
+   "root": "U4.4",
+   "connected": true,
+   "islands_with_pads": 1,
+   "stubs": 0
+  },
+  {
+   "net": "/TCA9548A_Subsystem/CH1_SCL",
+   "classes": [
+    "signal"
+   ],
+   "pads": 2,
+   "length_mm": 7.5489,
+   "length_by_layer": {
+    "F.Cu": 7.5489
+   },
+   "widths_mm": [
+    0.25
+   ],
+   "vias": 0,
+   "zones": [],
+   "root": "U4.7",
+   "connected": true,
+   "islands_with_pads": 1,
+   "stubs": 0
+  },
+  {
+   "net": "/TCA9548A_Subsystem/CH1_SDA",
+   "classes": [
+    "signal"
+   ],
+   "pads": 2,
+   "length_mm": 8.36,
+   "length_by_layer": {
+    "F.Cu": 8.36
+   },
+   "widths_mm": [
+    0.25
+   ],
+   "vias": 0,
+   "zones": [],
+   "root": "U4.6",
+   "connected": true,
+   "islands_with_pads": 1,
+   "stubs": 0
+  },
+  {
+   "net": "/TCA9548A_Subsystem/CH2_SCL",
+   "classes": [
+    "signal"
+   ],
+   "pads": 2,
+   "length_mm": 5.8931,
+   "length_by_layer": {
+    "F.Cu": 5.8931
+   },
+   "widths_mm": [
+    0.25
+   ],
+   "vias": 0,
+   "zones": [],
+   "root": "U4.9",
+   "connected": true,
+   "islands_with_pads": 1,
+   "stubs": 0
+  },
+  {
+   "net": "/TCA9548A_Subsystem/CH2_SDA",
+   "classes": [
+    "signal"
+   ],
+   "pads": 2,
+   "length_mm": 5.7481,
+   "length_by_layer": {
+    "F.Cu": 5.7481
+   },
+   "widths_mm": [
+    0.25
+   ],
+   "vias": 0,
+   "zones": [],
+   "root": "U4.8",
+   "connected": true,
+   "islands_with_pads": 1,
+   "stubs": 0
+  },
+  {
+   "net": "/TCA_RESET",
+   "classes": [
+    "signal"
+   ],
+   "pads": 4,
+   "length_mm": 40.8206,
+   "length_by_layer": {
+    "B.Cu": 22.5235,
+    "F.Cu": 18.2971
+   },
+   "widths_mm": [
+    0.25
+   ],
+   "vias": 3,
+   "zones": [],
+   "root": "U3.18",
+   "connected": true,
+   "islands_with_pads": 1,
+   "stubs": 0
+  },
+  {
+   "net": "/USB_DN",
+   "classes": [
+    "high_dvdt"
+   ],
+   "pads": 5,
+   "length_mm": 69.6173,
+   "length_by_layer": {
+    "B.Cu": 51.591,
+    "F.Cu": 18.0263
+   },
+   "widths_mm": [
+    0.2,
+    0.25,
+    0.3
+   ],
+   "vias": 5,
+   "zones": [],
+   "root": "J7.A7",
+   "connected": true,
+   "islands_with_pads": 1,
+   "stubs": 0
+  },
+  {
+   "net": "/USB_DP",
+   "classes": [
+    "high_dvdt"
+   ],
+   "pads": 5,
+   "length_mm": 72.998,
+   "length_by_layer": {
+    "B.Cu": 43.9919,
+    "F.Cu": 29.0061
+   },
+   "widths_mm": [
+    0.2,
+    0.25,
+    0.3
+   ],
+   "vias": 2,
+   "zones": [],
+   "root": "J7.A6",
+   "connected": true,
+   "islands_with_pads": 1,
+   "stubs": 0
+  },
+  {
+   "net": "GND",
+   "classes": [
+    "high_current"
+   ],
+   "pads": 94,
+   "length_mm": 134.0403,
+   "length_by_layer": {
+    "B.Cu": 19.3452,
+    "F.Cu": 114.6951
+   },
+   "widths_mm": [
+    0.2,
+    0.25,
+    0.5,
+    0.75,
+    1.0,
+    1.5
+   ],
+   "vias": 136,
+   "zones": [
+    "Z2",
+    "Z5"
+   ],
+   "root": "U3.1",
+   "connected": true,
+   "islands_with_pads": 1,
+   "stubs": 0
+  },
+  {
+   "net": "Net-(C7-Pad2)",
+   "classes": [
+    "high_current"
+   ],
+   "pads": 3,
+   "length_mm": 7.871,
+   "length_by_layer": {
+    "F.Cu": 7.871
+   },
+   "widths_mm": [
+    1.0
+   ],
+   "vias": 0,
+   "zones": [],
+   "root": "C7.2",
+   "connected": true,
+   "islands_with_pads": 1,
+   "stubs": 0
+  },
+  {
+   "net": "Net-(D1-A)",
+   "classes": [
+    "signal"
+   ],
+   "pads": 2,
+   "length_mm": 1.7427,
+   "length_by_layer": {
+    "F.Cu": 1.7427
+   },
+   "widths_mm": [
+    0.25
+   ],
+   "vias": 0,
+   "zones": [],
+   "root": "D1.2",
+   "connected": true,
+   "islands_with_pads": 1,
+   "stubs": 0
+  },
+  {
+   "net": "unconnected-(D5-DOUT-Pad3)",
+   "classes": [
+    "signal"
+   ],
+   "pads": 1,
+   "length_mm": 0.0,
+   "length_by_layer": {},
+   "widths_mm": [],
+   "vias": 0,
+   "zones": [],
+   "root": null,
+   "connected": null,
+   "islands_with_pads": 0,
+   "stubs": 0
+  },
+  {
+   "net": "unconnected-(IC1-2A-Pad5)",
+   "classes": [
+    "signal"
+   ],
+   "pads": 1,
+   "length_mm": 0.0,
+   "length_by_layer": {},
+   "widths_mm": [],
+   "vias": 0,
+   "zones": [],
+   "root": null,
+   "connected": null,
+   "islands_with_pads": 0,
+   "stubs": 0
+  },
+  {
+   "net": "unconnected-(IC1-2Y-Pad6)",
+   "classes": [
+    "signal"
+   ],
+   "pads": 1,
+   "length_mm": 0.0,
+   "length_by_layer": {},
+   "widths_mm": [],
+   "vias": 0,
+   "zones": [],
+   "root": null,
+   "connected": null,
+   "islands_with_pads": 0,
+   "stubs": 0
+  },
+  {
+   "net": "unconnected-(IC1-2~{OE}-Pad4)",
+   "classes": [
+    "signal"
+   ],
+   "pads": 1,
+   "length_mm": 0.0,
+   "length_by_layer": {},
+   "widths_mm": [],
+   "vias": 0,
+   "zones": [],
+   "root": null,
+   "connected": null,
+   "islands_with_pads": 0,
+   "stubs": 0
+  },
+  {
+   "net": "unconnected-(IC1-3A-Pad9)",
+   "classes": [
+    "signal"
+   ],
+   "pads": 1,
+   "length_mm": 0.0,
+   "length_by_layer": {},
+   "widths_mm": [],
+   "vias": 0,
+   "zones": [],
+   "root": null,
+   "connected": null,
+   "islands_with_pads": 0,
+   "stubs": 0
+  },
+  {
+   "net": "unconnected-(IC1-3Y-Pad8)",
+   "classes": [
+    "signal"
+   ],
+   "pads": 1,
+   "length_mm": 0.0,
+   "length_by_layer": {},
+   "widths_mm": [],
+   "vias": 0,
+   "zones": [],
+   "root": null,
+   "connected": null,
+   "islands_with_pads": 0,
+   "stubs": 0
+  },
+  {
+   "net": "unconnected-(IC1-3~{OE}-Pad10)",
+   "classes": [
+    "signal"
+   ],
+   "pads": 1,
+   "length_mm": 0.0,
+   "length_by_layer": {},
+   "widths_mm": [],
+   "vias": 0,
+   "zones": [],
+   "root": null,
+   "connected": null,
+   "islands_with_pads": 0,
+   "stubs": 0
+  },
+  {
+   "net": "unconnected-(IC1-4A-Pad12)",
+   "classes": [
+    "signal"
+   ],
+   "pads": 1,
+   "length_mm": 0.0,
+   "length_by_layer": {},
+   "widths_mm": [],
+   "vias": 0,
+   "zones": [],
+   "root": null,
+   "connected": null,
+   "islands_with_pads": 0,
+   "stubs": 0
+  },
+  {
+   "net": "unconnected-(IC1-4Y-Pad11)",
+   "classes": [
+    "signal"
+   ],
+   "pads": 1,
+   "length_mm": 0.0,
+   "length_by_layer": {},
+   "widths_mm": [],
+   "vias": 0,
+   "zones": [],
+   "root": null,
+   "connected": null,
+   "islands_with_pads": 0,
+   "stubs": 0
+  },
+  {
+   "net": "unconnected-(IC1-4~{OE}-Pad13)",
+   "classes": [
+    "signal"
+   ],
+   "pads": 1,
+   "length_mm": 0.0,
+   "length_by_layer": {},
+   "widths_mm": [],
+   "vias": 0,
+   "zones": [],
+   "root": null,
+   "connected": null,
+   "islands_with_pads": 0,
+   "stubs": 0
+  },
+  {
+   "net": "unconnected-(J7-SBU1-PadA8)",
+   "classes": [
+    "signal"
+   ],
+   "pads": 1,
+   "length_mm": 0.0,
+   "length_by_layer": {},
+   "widths_mm": [],
+   "vias": 0,
+   "zones": [],
+   "root": null,
+   "connected": null,
+   "islands_with_pads": 0,
+   "stubs": 0
+  },
+  {
+   "net": "unconnected-(J7-SBU2-PadB8)",
+   "classes": [
+    "signal"
+   ],
+   "pads": 1,
+   "length_mm": 0.0,
+   "length_by_layer": {},
+   "widths_mm": [],
+   "vias": 0,
+   "zones": [],
+   "root": null,
+   "connected": null,
+   "islands_with_pads": 0,
+   "stubs": 0
+  },
+  {
+   "net": "unconnected-(U3-IO1-Pad39)",
+   "classes": [
+    "signal"
+   ],
+   "pads": 1,
+   "length_mm": 0.0,
+   "length_by_layer": {},
+   "widths_mm": [],
+   "vias": 0,
+   "zones": [],
+   "root": null,
+   "connected": null,
+   "islands_with_pads": 0,
+   "stubs": 0
+  },
+  {
+   "net": "unconnected-(U3-IO14-Pad22)",
+   "classes": [
+    "signal"
+   ],
+   "pads": 1,
+   "length_mm": 0.0,
+   "length_by_layer": {},
+   "widths_mm": [],
+   "vias": 0,
+   "zones": [],
+   "root": null,
+   "connected": null,
+   "islands_with_pads": 0,
+   "stubs": 0
+  },
+  {
+   "net": "unconnected-(U3-IO15-Pad8)",
+   "classes": [
+    "signal"
+   ],
+   "pads": 1,
+   "length_mm": 0.0,
+   "length_by_layer": {},
+   "widths_mm": [],
+   "vias": 0,
+   "zones": [],
+   "root": null,
+   "connected": null,
+   "islands_with_pads": 0,
+   "stubs": 0
+  },
+  {
+   "net": "unconnected-(U3-IO17-Pad10)",
+   "classes": [
+    "signal"
+   ],
+   "pads": 1,
+   "length_mm": 0.0,
+   "length_by_layer": {},
+   "widths_mm": [],
+   "vias": 0,
+   "zones": [],
+   "root": null,
+   "connected": null,
+   "islands_with_pads": 0,
+   "stubs": 0
+  },
+  {
+   "net": "unconnected-(U3-IO18-Pad11)",
+   "classes": [
+    "signal"
+   ],
+   "pads": 1,
+   "length_mm": 0.0,
+   "length_by_layer": {},
+   "widths_mm": [],
+   "vias": 0,
+   "zones": [],
+   "root": null,
+   "connected": null,
+   "islands_with_pads": 0,
+   "stubs": 0
+  },
+  {
+   "net": "unconnected-(U3-IO2-Pad38)",
+   "classes": [
+    "signal"
+   ],
+   "pads": 1,
+   "length_mm": 0.0,
+   "length_by_layer": {},
+   "widths_mm": [],
+   "vias": 0,
+   "zones": [],
+   "root": null,
+   "connected": null,
+   "islands_with_pads": 0,
+   "stubs": 0
+  },
+  {
+   "net": "unconnected-(U3-IO3-Pad15)",
+   "classes": [
+    "signal"
+   ],
+   "pads": 1,
+   "length_mm": 0.0,
+   "length_by_layer": {},
+   "widths_mm": [],
+   "vias": 0,
+   "zones": [],
+   "root": null,
+   "connected": null,
+   "islands_with_pads": 0,
+   "stubs": 0
+  },
+  {
+   "net": "unconnected-(U3-IO35-Pad28)",
+   "classes": [
+    "signal"
+   ],
+   "pads": 1,
+   "length_mm": 0.0,
+   "length_by_layer": {},
+   "widths_mm": [],
+   "vias": 0,
+   "zones": [],
+   "root": null,
+   "connected": null,
+   "islands_with_pads": 0,
+   "stubs": 0
+  },
+  {
+   "net": "unconnected-(U3-IO36-Pad29)",
+   "classes": [
+    "signal"
+   ],
+   "pads": 1,
+   "length_mm": 0.0,
+   "length_by_layer": {},
+   "widths_mm": [],
+   "vias": 0,
+   "zones": [],
+   "root": null,
+   "connected": null,
+   "islands_with_pads": 0,
+   "stubs": 0
+  },
+  {
+   "net": "unconnected-(U3-IO37-Pad30)",
+   "classes": [
+    "signal"
+   ],
+   "pads": 1,
+   "length_mm": 0.0,
+   "length_by_layer": {},
+   "widths_mm": [],
+   "vias": 0,
+   "zones": [],
+   "root": null,
+   "connected": null,
+   "islands_with_pads": 0,
+   "stubs": 0
+  },
+  {
+   "net": "unconnected-(U3-IO38-Pad31)",
+   "classes": [
+    "signal"
+   ],
+   "pads": 1,
+   "length_mm": 0.0,
+   "length_by_layer": {},
+   "widths_mm": [],
+   "vias": 0,
+   "zones": [],
+   "root": null,
+   "connected": null,
+   "islands_with_pads": 0,
+   "stubs": 0
+  },
+  {
+   "net": "unconnected-(U3-IO39-Pad32)",
+   "classes": [
+    "signal"
+   ],
+   "pads": 1,
+   "length_mm": 0.0,
+   "length_by_layer": {},
+   "widths_mm": [],
+   "vias": 0,
+   "zones": [],
+   "root": null,
+   "connected": null,
+   "islands_with_pads": 0,
+   "stubs": 0
+  },
+  {
+   "net": "unconnected-(U3-IO4-Pad4)",
+   "classes": [
+    "signal"
+   ],
+   "pads": 1,
+   "length_mm": 0.0,
+   "length_by_layer": {},
+   "widths_mm": [],
+   "vias": 0,
+   "zones": [],
+   "root": null,
+   "connected": null,
+   "islands_with_pads": 0,
+   "stubs": 0
+  },
+  {
+   "net": "unconnected-(U3-IO40-Pad33)",
+   "classes": [
+    "signal"
+   ],
+   "pads": 1,
+   "length_mm": 0.0,
+   "length_by_layer": {},
+   "widths_mm": [],
+   "vias": 0,
+   "zones": [],
+   "root": null,
+   "connected": null,
+   "islands_with_pads": 0,
+   "stubs": 0
+  },
+  {
+   "net": "unconnected-(U3-IO41-Pad34)",
+   "classes": [
+    "signal"
+   ],
+   "pads": 1,
+   "length_mm": 0.0,
+   "length_by_layer": {},
+   "widths_mm": [],
+   "vias": 0,
+   "zones": [],
+   "root": null,
+   "connected": null,
+   "islands_with_pads": 0,
+   "stubs": 0
+  },
+  {
+   "net": "unconnected-(U3-IO42-Pad35)",
+   "classes": [
+    "signal"
+   ],
+   "pads": 1,
+   "length_mm": 0.0,
+   "length_by_layer": {},
+   "widths_mm": [],
+   "vias": 0,
+   "zones": [],
+   "root": null,
+   "connected": null,
+   "islands_with_pads": 0,
+   "stubs": 0
+  },
+  {
+   "net": "unconnected-(U3-IO45-Pad26)",
+   "classes": [
+    "signal"
+   ],
+   "pads": 1,
+   "length_mm": 0.0,
+   "length_by_layer": {},
+   "widths_mm": [],
+   "vias": 0,
+   "zones": [],
+   "root": null,
+   "connected": null,
+   "islands_with_pads": 0,
+   "stubs": 0
+  },
+  {
+   "net": "unconnected-(U3-IO46-Pad16)",
+   "classes": [
+    "signal"
+   ],
+   "pads": 1,
+   "length_mm": 0.0,
+   "length_by_layer": {},
+   "widths_mm": [],
+   "vias": 0,
+   "zones": [],
+   "root": null,
+   "connected": null,
+   "islands_with_pads": 0,
+   "stubs": 0
+  },
+  {
+   "net": "unconnected-(U3-IO47-Pad24)",
+   "classes": [
+    "signal"
+   ],
+   "pads": 1,
+   "length_mm": 0.0,
+   "length_by_layer": {},
+   "widths_mm": [],
+   "vias": 0,
+   "zones": [],
+   "root": null,
+   "connected": null,
+   "islands_with_pads": 0,
+   "stubs": 0
+  },
+  {
+   "net": "unconnected-(U3-IO48-Pad25)",
+   "classes": [
+    "signal"
+   ],
+   "pads": 1,
+   "length_mm": 0.0,
+   "length_by_layer": {},
+   "widths_mm": [],
+   "vias": 0,
+   "zones": [],
+   "root": null,
+   "connected": null,
+   "islands_with_pads": 0,
+   "stubs": 0
+  },
+  {
+   "net": "unconnected-(U3-IO5-Pad5)",
+   "classes": [
+    "signal"
+   ],
+   "pads": 1,
+   "length_mm": 0.0,
+   "length_by_layer": {},
+   "widths_mm": [],
+   "vias": 0,
+   "zones": [],
+   "root": null,
+   "connected": null,
+   "islands_with_pads": 0,
+   "stubs": 0
+  },
+  {
+   "net": "unconnected-(U3-IO6-Pad6)",
+   "classes": [
+    "signal"
+   ],
+   "pads": 1,
+   "length_mm": 0.0,
+   "length_by_layer": {},
+   "widths_mm": [],
+   "vias": 0,
+   "zones": [],
+   "root": null,
+   "connected": null,
+   "islands_with_pads": 0,
+   "stubs": 0
+  },
+  {
+   "net": "unconnected-(U3-IO7-Pad7)",
+   "classes": [
+    "signal"
+   ],
+   "pads": 1,
+   "length_mm": 0.0,
+   "length_by_layer": {},
+   "widths_mm": [],
+   "vias": 0,
+   "zones": [],
+   "root": null,
+   "connected": null,
+   "islands_with_pads": 0,
+   "stubs": 0
+  },
+  {
+   "net": "unconnected-(U3-IO8-Pad12)",
+   "classes": [
+    "signal"
+   ],
+   "pads": 1,
+   "length_mm": 0.0,
+   "length_by_layer": {},
+   "widths_mm": [],
+   "vias": 0,
+   "zones": [],
+   "root": null,
+   "connected": null,
+   "islands_with_pads": 0,
+   "stubs": 0
+  },
+  {
+   "net": "unconnected-(U3-IO9-Pad17)",
+   "classes": [
+    "signal"
+   ],
+   "pads": 1,
+   "length_mm": 0.0,
+   "length_by_layer": {},
+   "widths_mm": [],
+   "vias": 0,
+   "zones": [],
+   "root": null,
+   "connected": null,
+   "islands_with_pads": 0,
+   "stubs": 0
+  },
+  {
+   "net": "unconnected-(U4-SC3-Pad11)",
+   "classes": [
+    "signal"
+   ],
+   "pads": 1,
+   "length_mm": 0.0,
+   "length_by_layer": {},
+   "widths_mm": [],
+   "vias": 0,
+   "zones": [],
+   "root": null,
+   "connected": null,
+   "islands_with_pads": 0,
+   "stubs": 0
+  },
+  {
+   "net": "unconnected-(U4-SC4-Pad14)",
+   "classes": [
+    "signal"
+   ],
+   "pads": 1,
+   "length_mm": 0.0,
+   "length_by_layer": {},
+   "widths_mm": [],
+   "vias": 0,
+   "zones": [],
+   "root": null,
+   "connected": null,
+   "islands_with_pads": 0,
+   "stubs": 0
+  },
+  {
+   "net": "unconnected-(U4-SC5-Pad16)",
+   "classes": [
+    "signal"
+   ],
+   "pads": 1,
+   "length_mm": 0.0,
+   "length_by_layer": {},
+   "widths_mm": [],
+   "vias": 0,
+   "zones": [],
+   "root": null,
+   "connected": null,
+   "islands_with_pads": 0,
+   "stubs": 0
+  },
+  {
+   "net": "unconnected-(U4-SC6-Pad18)",
+   "classes": [
+    "signal"
+   ],
+   "pads": 1,
+   "length_mm": 0.0,
+   "length_by_layer": {},
+   "widths_mm": [],
+   "vias": 0,
+   "zones": [],
+   "root": null,
+   "connected": null,
+   "islands_with_pads": 0,
+   "stubs": 0
+  },
+  {
+   "net": "unconnected-(U4-SC7-Pad20)",
+   "classes": [
+    "signal"
+   ],
+   "pads": 1,
+   "length_mm": 0.0,
+   "length_by_layer": {},
+   "widths_mm": [],
+   "vias": 0,
+   "zones": [],
+   "root": null,
+   "connected": null,
+   "islands_with_pads": 0,
+   "stubs": 0
+  },
+  {
+   "net": "unconnected-(U4-SD3-Pad10)",
+   "classes": [
+    "signal"
+   ],
+   "pads": 1,
+   "length_mm": 0.0,
+   "length_by_layer": {},
+   "widths_mm": [],
+   "vias": 0,
+   "zones": [],
+   "root": null,
+   "connected": null,
+   "islands_with_pads": 0,
+   "stubs": 0
+  },
+  {
+   "net": "unconnected-(U4-SD4-Pad13)",
+   "classes": [
+    "signal"
+   ],
+   "pads": 1,
+   "length_mm": 0.0,
+   "length_by_layer": {},
+   "widths_mm": [],
+   "vias": 0,
+   "zones": [],
+   "root": null,
+   "connected": null,
+   "islands_with_pads": 0,
+   "stubs": 0
+  },
+  {
+   "net": "unconnected-(U4-SD5-Pad15)",
+   "classes": [
+    "signal"
+   ],
+   "pads": 1,
+   "length_mm": 0.0,
+   "length_by_layer": {},
+   "widths_mm": [],
+   "vias": 0,
+   "zones": [],
+   "root": null,
+   "connected": null,
+   "islands_with_pads": 0,
+   "stubs": 0
+  },
+  {
+   "net": "unconnected-(U4-SD6-Pad17)",
+   "classes": [
+    "signal"
+   ],
+   "pads": 1,
+   "length_mm": 0.0,
+   "length_by_layer": {},
+   "widths_mm": [],
+   "vias": 0,
+   "zones": [],
+   "root": null,
+   "connected": null,
+   "islands_with_pads": 0,
+   "stubs": 0
+  },
+  {
+   "net": "unconnected-(U4-SD7-Pad19)",
+   "classes": [
+    "signal"
+   ],
+   "pads": 1,
+   "length_mm": 0.0,
+   "length_by_layer": {},
+   "widths_mm": [],
+   "vias": 0,
+   "zones": [],
+   "root": null,
+   "connected": null,
+   "islands_with_pads": 0,
+   "stubs": 0
+  },
+  {
+   "net": "unconnected-(U5-STAT-Pad4)",
+   "classes": [
+    "signal"
+   ],
+   "pads": 1,
+   "length_mm": 0.0,
+   "length_by_layer": {},
+   "widths_mm": [],
+   "vias": 0,
+   "zones": [],
+   "root": null,
+   "connected": null,
+   "islands_with_pads": 0,
+   "stubs": 0
+  },
+  {
+   "net": "unconnected-(U6-MODE-Pad13)",
+   "classes": [
+    "signal"
+   ],
+   "pads": 1,
+   "length_mm": 0.0,
+   "length_by_layer": {},
+   "widths_mm": [],
+   "vias": 0,
+   "zones": [],
+   "root": null,
+   "connected": null,
+   "islands_with_pads": 0,
+   "stubs": 0
+  }
+ ]
+}
