@@ -442,3 +442,23 @@ Also found unprompted (not in the audit): SDA's three vias are each 3.2–4.0 mm
 - tools/CONTEXT.md: pcb-context section rewritten around the board model; the Source-Hash scope line no longer refers to a "board-model initiative" (the `circuit-context.json` retrofit is unscheduled and outside the board model).
 
 **Handoff.** All six Phase 6 items done. PLAN: one Technical Notes clause (where outputs go) and one Rejected Approaches line (split-channel subtraction for voids). Deferred: one line (routing_audit). Nothing under `lab/` touched; no `.kicad_pcb`/`.kicad_sch` text read or edited. Commits: `f25d7fe` (task 1), `2611fdf` (task 2), `18d60a5` (task 3), `aa34a87` (per-layer track gaps), plus the handoff commit.
+
+#### Result
+| # | Phase | Result | Escalation evaluated? | Commit | Notes |
+|---|-------|--------|-----------------------|--------|-------|
+| 6 | Phase 6: Board model — reports and images | DONE | No — clean completion | 38ff6bb | 5 tasks + handoff; commits f25d7fe, 2611fdf, 18d60a5, aa34a87, 38ff6bb |
+
+#### Verification
+- TASKS.md Phase 6: all six items `[x]`. Working tree clean. PLAN.md: one Technical Notes clause (where outputs go) and one Rejected Approaches line; approach unchanged; no date-stamped headings. New Deferred line: `routing_audit.py` as a model consumer, or retired.
+- Outputs are committed under `hardware/pcb-main/kicad/board-model/` (27 new files). No existing v7 file was modified, so the debug track's `c2acffc` citations still hold. `board_model.py --check` on the committed model reports the source matches.
+- Looked at `img/net-I2C_SDA.png`: readable, the legend fits, pad/via leaders end on their pads, and the 6.2 mm unreferenced run is drawn dashed.
+- Carried to Phase 7 / layout: on v7, the SDA/SCL unreferenced runs lie in the In2 +3.3V/+5V split gap, which 16 signal tracks cross (USB pair included). This is an input for the v8 stackup/plane plan, not a v7 action.
+- Known variance: the DRC count differs by 5 `lib_footprint_issues` between the scratch and repo paths (library-table resolution). Clearance, hole and padstack counts are identical.
+
+---
+
+### Phase 7 — W1 check (no Worker dispatched)
+
+Phase 7 task 1 is the W1 gate. Before dispatching, the Orchestrator checked every local and remote branch for `lab/cards/PWR-*` and `lab/investigations/power/`. There are none; `lab/investigations/` holds only `v7-i2c`. W1 hasn't closed, so no Worker was dispatched (the relay says to stop at Phase 7, not skip ahead). Phase 7 task 1 stays `[ ]`.
+
+**Outcome:** Paused — awaiting user decision (W1: the Debugger's power bench findings, `debugger/RELAY-power.md`). Phases 1–6 are complete. Phases 8+ depend on Phase 7.
