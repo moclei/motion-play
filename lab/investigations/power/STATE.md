@@ -2,7 +2,7 @@
 as_of: PWR-000            # highest card ID with status recorded|abandoned that this file reflects (PWR-000 = sentinel, nothing recorded)
 updated: 2026-11-02       # date of the last edit
 last_checkpoint: PWR-000  # card ID at which the last step-back checkpoint ran (context-strategy §4.3)
-open_cards: []            # cards with status pre-registered|run; must match lab/cards/ (checked)
+open_cards: [PWR-001]            # cards with status pre-registered|run; must match lab/cards/ (checked)
 prefix: PWR               # card ID prefix of this investigation (lab/cards/PWR-NNN-<slug>.md); unique across lab/investigations/
 title: "v7 power path: battery damage and #0004 boost"
 status: open              # open | closed
@@ -75,7 +75,7 @@ Boards and bench: see `lab/BENCH.md` (boards, fixtures, flashed now, bench at la
 | User recollection of the #0001/#0002 event (2026-11-02) | unknown (months later; orientation "pretty sure") | B1, B3a, B4, B6, B8 | — (boards binned; can't be re-measured) |
 
 ## 8. Next                                      (≤ 6 lines)
-- Open cards: none.
+- Open cards: PWR-001 (passive survey #0004 vs #0005), pre-registered.
 - Proposed next: PWR-001 passive on #0004 and #0005 (SW1 as found, look-over, holder keying, rail ohms + diode mode to GND; no power). Then PWR-002: SW1 OFF/ON/OFF on USB (#0005, then #0004): cuts B8 and Ka–Ke.
 - Blocked on: #0001/#0002 binned (B1, B5 can only be tested as design questions on other boards); Phase 7 of v8-debug-board waits on these cards (W1).
 
