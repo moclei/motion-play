@@ -368,3 +368,18 @@ Task 5 and the Phase 4 Handoff are ticked. PLAN is unchanged: the approach still
 - The plan-view gap between SDA and SCL is 0 because they cross on opposite layers. Phase 6 must report plan-view proximity alongside the layer separation, not as a bare minimum.
 - DRC with `--severity-all` gives 25 (18 errors: 16 clearance, 2 hole_clearance; 7 warnings) and 0 unconnected. Topic 2's "6 minor" was presumably at default severity, excluding the warnings and footprint-library checks; it was not re-derived here.
 - The sensor-rigid and sensor-flex boards also parse (0 unconnected, no islands). They are not validated (still Deferred).
+
+**Handoff.**
+- All six Phase 5 items are done.
+- Commits: `40b7cdc` (task 1, environment), `04999e5` (task 2, `board_model.py`), `893876b` (task 3, config), `8a2bfc4` (task 4, validation), `812e49b` (task 5, README historical), plus this handoff commit.
+- PLAN: Technical Notes now name the config path and the connectivity rule. One line was appended to Rejected Approaches (endpoint-only pad joins). The approach is unchanged.
+- No Deferred items added: the sensor-board run is already Deferred. Both sensor boards parse; they are not validated.
+- Nothing under `lab/` was touched. No `.kicad_pcb` or `.kicad_sch` text was read or edited: kiutils and kicad-cli only, on a scratch `git archive` copy.
+
+**For Phase 6:**
+- `board_model.py` writes no v7 output into the repo (validation ran in scratch). Phase 6 decides where the generated model and reports for v7 and v8 get committed.
+- Two fixture rows depend on method:
+  - SCL–BOOST_SW: the fixture's 0.94 is track to track. The all-copper minimum is 0.66, through SCL via V200.
+  - SDA unreferenced: the fixture's "~6.8" is 6.46 measured exactly with own-via antipad crossings excluded, or 8.04 raw.
+- The Phase 6 acceptance test should state which method each number uses.
+- `routing_audit.py` still has the centreline-distance bug. Phase 6 makes it a thin consumer of the model, or retires it (audit §6.1).
