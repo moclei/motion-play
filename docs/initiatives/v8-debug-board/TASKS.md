@@ -61,9 +61,9 @@
 - [x] `net_report.py`: the net-centric Markdown + JSON (route narrative from the topology, neighbours within the radii across layers, coupled length, reference plane per segment), with provenance front matter
 - [x] `plane_report.py`: per-layer copper ownership, splits, voids, mm unreferenced per signal segment, GND stitching density
 - [x] `render.py`: one PNG per critical net and per plane layer (outline, faded footprints, net by layer, labelled pads/vias, neighbours highlighted) + `.meta.json`
-- [ ] Acceptance: answer the audit §3 SDA acid test from the outputs alone, and match the audit's numbers. Look at each PNG and check the labels sit on their pads
-- [ ] Update `tools/CONTEXT.md` (the pcb-context section; the board model replaces the "board-model initiative" wording) and `tools/pcb-context/README.md`
-- [ ] 🔄 Handoff
+- [x] Acceptance: answer the audit §3 SDA acid test from the outputs alone, and match the audit's numbers. Look at each PNG and check the labels sit on their pads
+- [x] Update `tools/CONTEXT.md` (the pcb-context section; the board model replaces the "board-model initiative" wording) and `tools/pcb-context/README.md`
+- [x] 🔄 Handoff
 
 # --- handoff point ---
 
@@ -187,5 +187,6 @@
 ## Deferred
 
 [from: v8-debug-board] Board-model diff mode (audit phase 3), v6 ↔ v7 ↔ v8 relational diff.
+[from: v8-debug-board] `routing_audit.py` as a thin consumer of the board model (audit §6.1), or retired: marked superseded in the README in Phase 6; the v7 debug track still cites its spec and outputs.
 [from: v8-debug-board] Board-model run on the sensor-rigid and sensor-flex boards (audit says it must run on all three; validation is main-only here).
 [from: lab-multi-investigation] Once PR #89 is merged, the Phase 2 power relay (`debugger/RELAY-power.md`) runs as `PWR` cards: the Debugger scaffolds at intake with `python3 tools/lab/new_investigation.py --name power --prefix PWR --title "<title>"` and decides whether board #0004 also belongs to `power` in `lab/BENCH.md`.

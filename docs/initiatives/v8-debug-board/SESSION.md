@@ -402,3 +402,43 @@ Task 5 and the Phase 4 Handoff are ticked. PLAN is unchanged: the approach still
 **Dispatch:** standard spawn prompt, plus:
 - Additional reading: SESSION.md Worker #5 `#### Notes` (validation table, method notes, Phase 6 carry-forward); `docs/research/v7-retry/kicad-extraction-audit.md` §3 (the SDA acid test), §5–§6.1; `tools/pcb-context/board_model.py` (`BoardModel` loader), `README.md`, `board-config/motion-play-main.json`; `tools/CONTEXT.md`.
 - The Worker decides where committed outputs go, consistent with the Source-Hash Rule, and records it in the README.
+
+#### Notes
+
+**Where outputs go.** `hardware/pcb-main/kicad/board-model/` (beside the PCB): `board-model.json`, `net-report.md/.json`, `plane-report.md/.json`, `img/net-*.png`, `img/plane-*.png`, each PNG with `.png.meta.json`. Generated from the repo path (`--source-ref c2acffc`), so `_provenance.source` is repo-relative and `check_state.py --fresh` re-hashes it: all 16 files FRESH. The repo file's sha256 `ff6857d0…` equals the `git archive c2acffc` copy (checked again in scratch). Regenerated after the last code commit, so `generator_commit` is clean (`aa34a87`). Recorded in `tools/pcb-context/README.md` ("Where committed outputs go") and PLAN Technical Notes.
+
+**What was built.** `report_lib.py` (shared geometry and the measuring methods), `net_report.py`, `plane_report.py`, `render.py`, all reading only `board-model.json`. Runtimes on v7: model 9 s, net report 8 s, plane report 3 s, render 23 s.
+
+**Acceptance: audit §3 acid test, from the outputs alone** (`net-report.json`/`.md` block `/I2C_SDA`, `plane-report.*`, `img/net-I2C_SDA.png`, `img/plane-In2_Cu.png`).
+
+*Where SDA routes* (net-report route tree): U3.37 → F 3.9 → junction (143.41, 111.60) → F 2.0 → TPIO43.1; junction → F 5.5 → U4.23 → F 9.9 → R28.1; U3.37 → F 1.5 → V196 (138.40, 112.65) → B 26.3 (9.2 diagonal, then 17.1 along y = 119.17) → V198 (114.77, 119.17), the branch point → F 3.8 → U7.6; V198 → B 10.6 (6.0 along y = 122.19, x 105.4 → 111.4) → V197 (105.37, 122.19) → F 9.2 → U5.6.
+
+| Check | Audit | Output | Method / where |
+|---|---|---|---|
+| SDA length | 72.9 (F 35.9 / B 37.0), 3 vias | 72.90 (F 35.92 / B 36.98), 3 vias | track centreline sum; net report header |
+| Branches from U3.37 | 19.4 / 5.9 / 31.7 / 47.7 | R28.1 19.4 / TPIO43.1 5.9 / U7.6 31.7 / U5.6 47.7 (+ U4.23 9.4) | along copper from the config driver; endpoints table |
+| SDA to SCL | 0.20 | F 0.20 / B 0.21 | track to track, per layer (`by_layer_track_to_track_mm`) |
+| SDA within 1 mm of SCL | F 27.8 / B 19.5 (not a fixture) | F 32.1 / B 20.3 | coupled: SDA centreline within 1 mm of all SCL copper incl. pads and vias (the audit used tracks) |
+| SDA to CHRG_INT | 0.23 F (sketch) / "0.84 B" | F 0.23 / B 0.59 track to track; all copper F 0.20, B 0.31 | the audit's B figure was approximate; B 0.59 is S539 (V197's 0.02 mm stub) to S174 |
+| SDA to R44.2 | 0.85 | 0.85 | track to copper (SDA tracks to the pad); all copper 0.57 (V197 to R44.2) |
+| SCL to BOOST_SW | 0.94 | 0.94 track to track; 0.66 all copper (V200 to S723) | SCL block, neighbours |
+| SDA B.Cu over In2 +3.3V / nothing | ~28.9 / ~6.8 | +3.3V 28.94 raw; nothing 8.04 raw / **6.19 antipads excl.** | reference planes table. Worker #5's 6.46 kept S542's 0.27 mm crossing of V198's antipad; the report's rule closes every fill hole that contains a drill. The 6.19 is S541 6.01 + S542 0.16 + S539 0.02 |
+| Where that void is | "mostly the 6.0 mm run from 105.4 to 111.4 along y = 122.17" | S541 6.01 mm (105.38, 122.17) → (111.40, 122.17) | unreferenced stretches; **plane report: S541 lies in the In2 +3.3V / +5V split gap (6.01 mm in the gap, min gap 0.90 mm)**, as do SCL S570/S576 |
+| SDA F.Cu over In1 GND | — | 30.71 raw, 5.21 raw void = V196/V197/V198 antipads; 0.00 antipads excl. | reference planes |
+| SCL unreferenced | ~7.4 | B 6.78 antipads excl. (9.79 raw) | SCL reference planes |
+| SDA B.Cu inside BT1 body | 29.7 | 29.74 (and F 13.04) | bodies, plan view |
+| Under C53 | "passes directly under" | C53 B 2.96 mm; plan-view 0.00 to C53.1/C53.2 | bodies; neighbours GND/+3.3V plan view |
+| U3 GND / LED_DATA within 0.75 mm plan view | yes | LED_DATA F.Cu track S12 crosses SDA B.Cu (plan view 0.00, 1.44 mm apart); GND 0.00 (C53.2) | plan view across layers |
+| Zones | 8 | 8 | model |
+
+Also found unprompted (not in the audit): SDA's three vias are each 3.2–4.0 mm (centre to centre) from the nearest GND via, and each sits where the reference changes from In1 GND (F side) to In2 +3.3V (B side), V197 also beside +5V. The plane report lists 16 signal tracks crossing the In2 split, including CHRG_INT, TCA_RESET, LED_DATA and both USB lines.
+
+*PNG check.* Looked at all 11 PNGs (8 nets, F.Cu/In1/In2). Every pad and via label's leader ends on a dot at the pad or via centre, and every dot sits on its pad (U3.37, U4.23, R28.1, TPIO43.1, U7.6, U5.6, V196–V198 on SDA; the same on SCL and the six channel nets). Fixed during the check: the legend was clipped; footnote collided with the x label; 12 `unconnected-(…)` labels cluttered SCL (now highlighted but not labelled, with a count in the footnote); the view now stops 1 mm outside the outline; the F.Cu image hatched the whole board as a void (voids are now drawn only on plane layers, ≥ 25 % fill, as in the plane report).
+
+**Other notes.**
+- DRC in the model differs with the PCB's location: 25 from the scratch archive, 20 from the repo path. The 5 extra are `lib_footprint_issues` (library tables resolve differently in scratch). Clearance 16, hole_clearance 2, padstack 2 in both.
+- No-connect pads (`unconnected-(…)` nets) are real neighbours and stay in the reports; only the PNG labels drop them.
+- `routing_audit.py` / `routing_extract.py` are marked superseded in the README, not changed or retired (the debug track cites their outputs). Added to Deferred.
+- tools/CONTEXT.md: pcb-context section rewritten around the board model; the Source-Hash scope line no longer refers to a "board-model initiative" (the `circuit-context.json` retrofit is unscheduled and outside the board model).
+
+**Handoff.** All six Phase 6 items done. PLAN: one Technical Notes clause (where outputs go) and one Rejected Approaches line (split-channel subtraction for voids). Deferred: one line (routing_audit). Nothing under `lab/` touched; no `.kicad_pcb`/`.kicad_sch` text read or edited. Commits: `f25d7fe` (task 1), `2611fdf` (task 2), `18d60a5` (task 3), `aa34a87` (per-layer track gaps), plus the handoff commit.

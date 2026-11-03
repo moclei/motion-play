@@ -3,11 +3,11 @@ source: "hardware/pcb-main/kicad/motion-play-main.kicad_pcb"
 source_sha256: "ff6857d0bf797fc745a59a91123e752c4233ac3682e1ce38f2e270348b26e5b3"
 source_ref: "c2acffc"
 generator: "tools/pcb-context/plane_report.py"
-generator_commit: "f25d7fe0ca8b81d117433daef8d74b011b9a399e-dirty"
-generated: "2026-11-03T00:16:01+00:00"
+generator_commit: "aa34a874c67e901d93401d7155581a1cd40dcbc8"
+generated: "2026-11-03T00:20:49+00:00"
 model: "hardware/pcb-main/kicad/board-model/board-model.json"
-model_sha256: "5f4f0c22b5ff43922e130f7662fd878bd4a0e93eca0f1d08611ae85f3df55252"
-model_generator_commit: "f93e72b92796da964e1071e3aba3c3fac3b362a8"
+model_sha256: "a20d1f83c165045be94d60a5a5ca88b88d6571620e245cdb9c91db96dde5ec40"
+model_generator_commit: "aa34a874c67e901d93401d7155581a1cd40dcbc8"
 ---
 
 # Plane report — hardware/pcb-main/kicad/motion-play-main.kicad_pcb @ c2acffc

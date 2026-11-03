@@ -4,11 +4,11 @@
   "source_sha256": "ff6857d0bf797fc745a59a91123e752c4233ac3682e1ce38f2e270348b26e5b3",
   "source_ref": "c2acffc",
   "generator": "tools/pcb-context/net_report.py",
-  "generator_commit": "f93e72b92796da964e1071e3aba3c3fac3b362a8-dirty",
-  "generated": "2026-11-03T00:13:24+00:00",
+  "generator_commit": "aa34a874c67e901d93401d7155581a1cd40dcbc8",
+  "generated": "2026-11-03T00:20:39+00:00",
   "model": "hardware/pcb-main/kicad/board-model/board-model.json",
-  "model_sha256": "5f4f0c22b5ff43922e130f7662fd878bd4a0e93eca0f1d08611ae85f3df55252",
-  "model_generator_commit": "f93e72b92796da964e1071e3aba3c3fac3b362a8"
+  "model_sha256": "a20d1f83c165045be94d60a5a5ca88b88d6571620e245cdb9c91db96dde5ec40",
+  "model_generator_commit": "aa34a874c67e901d93401d7155581a1cd40dcbc8"
  },
  "board": "hardware/pcb-main/kicad/motion-play-main.kicad_pcb @ c2acffc",
  "methods": {
@@ -867,6 +867,10 @@
        "F.Cu": 0.24,
        "In1.Cu": 0.5,
        "In2.Cu": 2.35
+      },
+      "by_layer_track_to_track_mm": {
+       "B.Cu": 23.31,
+       "F.Cu": 0.4
       }
      },
      "coupled_mm": {
@@ -913,6 +917,10 @@
        "F.Cu": 0.2,
        "In1.Cu": 0.23,
        "In2.Cu": 0.23
+      },
+      "by_layer_track_to_track_mm": {
+       "B.Cu": 0.21,
+       "F.Cu": 0.2
       }
      },
      "coupled_mm": {
@@ -956,6 +964,9 @@
        "F.Cu": 0.24,
        "In1.Cu": 2.29,
        "In2.Cu": 0.3
+      },
+      "by_layer_track_to_track_mm": {
+       "F.Cu": 0.4
       }
      },
      "coupled_mm": {
@@ -1002,6 +1013,10 @@
        "F.Cu": 0.2,
        "In1.Cu": 1.47,
        "In2.Cu": 1.47
+      },
+      "by_layer_track_to_track_mm": {
+       "B.Cu": 0.59,
+       "F.Cu": 0.23
       }
      },
      "coupled_mm": {
@@ -1045,6 +1060,9 @@
       ],
       "by_layer_all_copper_mm": {
        "F.Cu": 0.57
+      },
+      "by_layer_track_to_track_mm": {
+       "F.Cu": 0.96
       }
      },
      "coupled_mm": {
@@ -1088,6 +1106,9 @@
       ],
       "by_layer_all_copper_mm": {
        "F.Cu": 1.52
+      },
+      "by_layer_track_to_track_mm": {
+       "F.Cu": 1.79
       }
      },
      "coupled_mm": {
@@ -1130,6 +1151,9 @@
       ],
       "by_layer_all_copper_mm": {
        "F.Cu": 1.67
+      },
+      "by_layer_track_to_track_mm": {
+       "F.Cu": 1.69
       }
      },
      "coupled_mm": {
@@ -1158,7 +1182,8 @@
       ],
       "by_layer_all_copper_mm": {
        "F.Cu": 0.37
-      }
+      },
+      "by_layer_track_to_track_mm": {}
      },
      "coupled_mm": {
       "F.Cu": 2.77
@@ -1201,6 +1226,9 @@
       ],
       "by_layer_all_copper_mm": {
        "F.Cu": 3.55
+      },
+      "by_layer_track_to_track_mm": {
+       "F.Cu": 3.97
       }
      },
      "coupled_mm": {
@@ -1232,6 +1260,9 @@
       ],
       "by_layer_all_copper_mm": {
        "F.Cu": 1.68
+      },
+      "by_layer_track_to_track_mm": {
+       "F.Cu": 2.53
       }
      },
      "coupled_mm": {
@@ -1260,7 +1291,8 @@
       ],
       "by_layer_all_copper_mm": {
        "F.Cu": 0.7
-      }
+      },
+      "by_layer_track_to_track_mm": {}
      },
      "coupled_mm": {
       "F.Cu": 0.99
@@ -1291,6 +1323,9 @@
       ],
       "by_layer_all_copper_mm": {
        "F.Cu": 2.85
+      },
+      "by_layer_track_to_track_mm": {
+       "F.Cu": 3.29
       }
      },
      "coupled_mm": {
@@ -1388,7 +1423,8 @@
       "track_to_copper_closest": null,
       "by_layer_all_copper_mm": {
        "In2.Cu": 0.56
-      }
+      },
+      "by_layer_track_to_track_mm": {}
      },
      "coupled_mm": {}
     },
@@ -1417,6 +1453,9 @@
       ],
       "by_layer_all_copper_mm": {
        "F.Cu": 0.78
+      },
+      "by_layer_track_to_track_mm": {
+       "F.Cu": 1.27
       }
      },
      "coupled_mm": {}
@@ -2632,6 +2671,10 @@
        "F.Cu": 0.2,
        "In1.Cu": 0.23,
        "In2.Cu": 0.23
+      },
+      "by_layer_track_to_track_mm": {
+       "B.Cu": 0.21,
+       "F.Cu": 0.2
       }
      },
      "coupled_mm": {
@@ -2678,6 +2721,10 @@
        "F.Cu": 0.65,
        "In1.Cu": 2.32,
        "In2.Cu": 2.32
+      },
+      "by_layer_track_to_track_mm": {
+       "B.Cu": 0.58,
+       "F.Cu": 0.68
       }
      },
      "coupled_mm": {
@@ -2724,6 +2771,10 @@
        "F.Cu": 0.2,
        "In1.Cu": 0.5,
        "In2.Cu": 2.59
+      },
+      "by_layer_track_to_track_mm": {
+       "B.Cu": 19.27,
+       "F.Cu": 0.28
       }
      },
      "coupled_mm": {
@@ -2767,6 +2818,9 @@
        "F.Cu": 0.43,
        "In1.Cu": 0.92,
        "In2.Cu": 0.3
+      },
+      "by_layer_track_to_track_mm": {
+       "F.Cu": 0.8
       }
      },
      "coupled_mm": {
@@ -2810,6 +2864,9 @@
       ],
       "by_layer_all_copper_mm": {
        "F.Cu": 1.22
+      },
+      "by_layer_track_to_track_mm": {
+       "F.Cu": 1.49
       }
      },
      "coupled_mm": {
@@ -2852,6 +2909,9 @@
       ],
       "by_layer_all_copper_mm": {
        "B.Cu": 4.16
+      },
+      "by_layer_track_to_track_mm": {
+       "B.Cu": 4.34
       }
      },
      "coupled_mm": {
@@ -2895,6 +2955,9 @@
       ],
       "by_layer_all_copper_mm": {
        "F.Cu": 0.66
+      },
+      "by_layer_track_to_track_mm": {
+       "F.Cu": 0.94
       }
      },
      "coupled_mm": {
@@ -2937,6 +3000,9 @@
       ],
       "by_layer_all_copper_mm": {
        "B.Cu": 4.37
+      },
+      "by_layer_track_to_track_mm": {
+       "B.Cu": 4.45
       }
      },
      "coupled_mm": {
@@ -2979,6 +3045,9 @@
       ],
       "by_layer_all_copper_mm": {
        "F.Cu": 1.18
+      },
+      "by_layer_track_to_track_mm": {
+       "F.Cu": 1.21
       }
      },
      "coupled_mm": {
@@ -3007,7 +3076,8 @@
       ],
       "by_layer_all_copper_mm": {
        "F.Cu": 0.89
-      }
+      },
+      "by_layer_track_to_track_mm": {}
      },
      "coupled_mm": {
       "F.Cu": 2.92
@@ -3035,7 +3105,8 @@
       ],
       "by_layer_all_copper_mm": {
        "F.Cu": 0.37
-      }
+      },
+      "by_layer_track_to_track_mm": {}
      },
      "coupled_mm": {
       "F.Cu": 2.76
@@ -3078,6 +3149,9 @@
       ],
       "by_layer_all_copper_mm": {
        "F.Cu": 3.17
+      },
+      "by_layer_track_to_track_mm": {
+       "F.Cu": 3.62
       }
      },
      "coupled_mm": {
@@ -3106,7 +3180,8 @@
       ],
       "by_layer_all_copper_mm": {
        "F.Cu": 0.2
-      }
+      },
+      "by_layer_track_to_track_mm": {}
      },
      "coupled_mm": {
       "F.Cu": 1.44
@@ -3134,7 +3209,8 @@
       ],
       "by_layer_all_copper_mm": {
        "F.Cu": 0.96
-      }
+      },
+      "by_layer_track_to_track_mm": {}
      },
      "coupled_mm": {
       "F.Cu": 0.91
@@ -3162,7 +3238,8 @@
       ],
       "by_layer_all_copper_mm": {
        "F.Cu": 0.96
-      }
+      },
+      "by_layer_track_to_track_mm": {}
      },
      "coupled_mm": {
       "F.Cu": 0.91
@@ -3190,7 +3267,8 @@
       ],
       "by_layer_all_copper_mm": {
        "F.Cu": 0.96
-      }
+      },
+      "by_layer_track_to_track_mm": {}
      },
      "coupled_mm": {
       "F.Cu": 0.91
@@ -3218,7 +3296,8 @@
       ],
       "by_layer_all_copper_mm": {
        "F.Cu": 0.96
-      }
+      },
+      "by_layer_track_to_track_mm": {}
      },
      "coupled_mm": {
       "F.Cu": 0.91
@@ -3246,7 +3325,8 @@
       ],
       "by_layer_all_copper_mm": {
        "F.Cu": 0.96
-      }
+      },
+      "by_layer_track_to_track_mm": {}
      },
      "coupled_mm": {
       "F.Cu": 0.91
@@ -3274,7 +3354,8 @@
       ],
       "by_layer_all_copper_mm": {
        "F.Cu": 0.96
-      }
+      },
+      "by_layer_track_to_track_mm": {}
      },
      "coupled_mm": {
       "F.Cu": 0.91
@@ -3302,7 +3383,8 @@
       ],
       "by_layer_all_copper_mm": {
        "F.Cu": 0.96
-      }
+      },
+      "by_layer_track_to_track_mm": {}
      },
      "coupled_mm": {
       "F.Cu": 0.91
@@ -3333,6 +3415,9 @@
       ],
       "by_layer_all_copper_mm": {
        "F.Cu": 2.37
+      },
+      "by_layer_track_to_track_mm": {
+       "F.Cu": 2.83
       }
      },
      "coupled_mm": {
@@ -3364,6 +3449,9 @@
       ],
       "by_layer_all_copper_mm": {
        "F.Cu": 2.15
+      },
+      "by_layer_track_to_track_mm": {
+       "F.Cu": 2.9
       }
      },
      "coupled_mm": {
@@ -3462,6 +3550,9 @@
       "by_layer_all_copper_mm": {
        "F.Cu": 2.15,
        "In2.Cu": 0.3
+      },
+      "by_layer_track_to_track_mm": {
+       "F.Cu": 3.02
       }
      },
      "coupled_mm": {}
@@ -4006,6 +4097,9 @@
       ],
       "by_layer_all_copper_mm": {
        "F.Cu": 0.2
+      },
+      "by_layer_track_to_track_mm": {
+       "F.Cu": 0.2
       }
      },
      "coupled_mm": {
@@ -4037,6 +4131,9 @@
       ],
       "by_layer_all_copper_mm": {
        "F.Cu": 0.2
+      },
+      "by_layer_track_to_track_mm": {
+       "F.Cu": 0.38
       }
      },
      "coupled_mm": {
@@ -4079,6 +4176,9 @@
       ],
       "by_layer_all_copper_mm": {
        "F.Cu": 1.4
+      },
+      "by_layer_track_to_track_mm": {
+       "F.Cu": 1.62
       }
      },
      "coupled_mm": {
@@ -4121,6 +4221,9 @@
       ],
       "by_layer_all_copper_mm": {
        "F.Cu": 0.79
+      },
+      "by_layer_track_to_track_mm": {
+       "F.Cu": 0.79
       }
      },
      "coupled_mm": {
@@ -4151,6 +4254,9 @@
        "S477"
       ],
       "by_layer_all_copper_mm": {
+       "F.Cu": 2.32
+      },
+      "by_layer_track_to_track_mm": {
        "F.Cu": 2.32
       }
      },
@@ -4183,6 +4289,9 @@
       ],
       "by_layer_all_copper_mm": {
        "F.Cu": 0.24
+      },
+      "by_layer_track_to_track_mm": {
+       "F.Cu": 0.4
       }
      },
      "coupled_mm": {
@@ -4483,6 +4592,9 @@
       ],
       "by_layer_all_copper_mm": {
        "F.Cu": 0.2
+      },
+      "by_layer_track_to_track_mm": {
+       "F.Cu": 0.2
       }
      },
      "coupled_mm": {
@@ -4514,6 +4626,9 @@
       ],
       "by_layer_all_copper_mm": {
        "F.Cu": 0.52
+      },
+      "by_layer_track_to_track_mm": {
+       "F.Cu": 0.7
       }
      },
      "coupled_mm": {
@@ -4556,6 +4671,9 @@
       ],
       "by_layer_all_copper_mm": {
        "F.Cu": 0.24
+      },
+      "by_layer_track_to_track_mm": {
+       "F.Cu": 0.24
       }
      },
      "coupled_mm": {
@@ -4587,6 +4705,9 @@
       ],
       "by_layer_all_copper_mm": {
        "F.Cu": 0.97
+      },
+      "by_layer_track_to_track_mm": {
+       "F.Cu": 1.5
       }
      },
      "coupled_mm": {
@@ -4629,6 +4750,9 @@
       ],
       "by_layer_all_copper_mm": {
        "F.Cu": 0.69
+      },
+      "by_layer_track_to_track_mm": {
+       "F.Cu": 0.69
       }
      },
      "coupled_mm": {
@@ -4660,6 +4784,9 @@
       ],
       "by_layer_all_copper_mm": {
        "F.Cu": 0.8
+      },
+      "by_layer_track_to_track_mm": {
+       "F.Cu": 1.05
       }
      },
      "coupled_mm": {
@@ -4690,6 +4817,9 @@
        "S477"
       ],
       "by_layer_all_copper_mm": {
+       "F.Cu": 2.77
+      },
+      "by_layer_track_to_track_mm": {
        "F.Cu": 2.77
       }
      },
@@ -4929,6 +5059,9 @@
       ],
       "by_layer_all_copper_mm": {
        "F.Cu": 0.2
+      },
+      "by_layer_track_to_track_mm": {
+       "F.Cu": 0.2
       }
      },
      "coupled_mm": {
@@ -4960,6 +5093,9 @@
       ],
       "by_layer_all_copper_mm": {
        "F.Cu": 0.4
+      },
+      "by_layer_track_to_track_mm": {
+       "F.Cu": 0.75
       }
      },
      "coupled_mm": {
@@ -5002,6 +5138,9 @@
       ],
       "by_layer_all_copper_mm": {
        "F.Cu": 0.24
+      },
+      "by_layer_track_to_track_mm": {
+       "F.Cu": 0.24
       }
      },
      "coupled_mm": {
@@ -5032,6 +5171,9 @@
        "S602"
       ],
       "by_layer_all_copper_mm": {
+       "F.Cu": 0.79
+      },
+      "by_layer_track_to_track_mm": {
        "F.Cu": 0.79
       }
      },
@@ -5064,6 +5206,9 @@
       ],
       "by_layer_all_copper_mm": {
        "F.Cu": 1.4
+      },
+      "by_layer_track_to_track_mm": {
+       "F.Cu": 1.62
       }
      },
      "coupled_mm": {
@@ -5106,6 +5251,9 @@
       ],
       "by_layer_all_copper_mm": {
        "F.Cu": 0.89
+      },
+      "by_layer_track_to_track_mm": {
+       "F.Cu": 1.05
       }
      },
      "coupled_mm": {
@@ -5316,6 +5464,9 @@
       ],
       "by_layer_all_copper_mm": {
        "F.Cu": 0.2
+      },
+      "by_layer_track_to_track_mm": {
+       "F.Cu": 0.2
       }
      },
      "coupled_mm": {
@@ -5347,6 +5498,9 @@
       ],
       "by_layer_all_copper_mm": {
        "F.Cu": 1.4
+      },
+      "by_layer_track_to_track_mm": {
+       "F.Cu": 1.75
       }
      },
      "coupled_mm": {
@@ -5389,6 +5543,9 @@
       ],
       "by_layer_all_copper_mm": {
        "F.Cu": 0.69
+      },
+      "by_layer_track_to_track_mm": {
+       "F.Cu": 0.69
       }
      },
      "coupled_mm": {
@@ -5420,6 +5577,9 @@
       ],
       "by_layer_all_copper_mm": {
        "F.Cu": 2.19
+      },
+      "by_layer_track_to_track_mm": {
+       "F.Cu": 2.62
       }
      },
      "coupled_mm": {
@@ -5462,6 +5622,9 @@
       ],
       "by_layer_all_copper_mm": {
        "F.Cu": 0.24
+      },
+      "by_layer_track_to_track_mm": {
+       "F.Cu": 0.4
       }
      },
      "coupled_mm": {
@@ -5493,6 +5656,9 @@
       ],
       "by_layer_all_copper_mm": {
        "F.Cu": 0.89
+      },
+      "by_layer_track_to_track_mm": {
+       "F.Cu": 1.05
       }
      },
      "coupled_mm": {
@@ -5698,6 +5864,9 @@
       ],
       "by_layer_all_copper_mm": {
        "F.Cu": 0.2
+      },
+      "by_layer_track_to_track_mm": {
+       "F.Cu": 0.4
       }
      },
      "coupled_mm": {
@@ -5729,6 +5898,9 @@
       ],
       "by_layer_all_copper_mm": {
        "F.Cu": 0.2
+      },
+      "by_layer_track_to_track_mm": {
+       "F.Cu": 0.44
       }
      },
      "coupled_mm": {
@@ -5771,6 +5943,9 @@
       ],
       "by_layer_all_copper_mm": {
        "F.Cu": 0.91
+      },
+      "by_layer_track_to_track_mm": {
+       "F.Cu": 1.36
       }
      },
      "coupled_mm": {
@@ -5813,6 +5988,9 @@
       ],
       "by_layer_all_copper_mm": {
        "F.Cu": 0.24
+      },
+      "by_layer_track_to_track_mm": {
+       "F.Cu": 0.4
       }
      },
      "coupled_mm": {
@@ -5844,6 +6022,9 @@
       ],
       "by_layer_all_copper_mm": {
        "F.Cu": 0.89
+      },
+      "by_layer_track_to_track_mm": {
+       "F.Cu": 1.05
       }
      },
      "coupled_mm": {
@@ -5872,7 +6053,8 @@
       ],
       "by_layer_all_copper_mm": {
        "F.Cu": 0.89
-      }
+      },
+      "by_layer_track_to_track_mm": {}
      },
      "coupled_mm": {
       "F.Cu": 0.99
@@ -6077,6 +6259,9 @@
       ],
       "by_layer_all_copper_mm": {
        "F.Cu": 0.2
+      },
+      "by_layer_track_to_track_mm": {
+       "F.Cu": 0.4
       }
      },
      "coupled_mm": {
@@ -6108,6 +6293,9 @@
       ],
       "by_layer_all_copper_mm": {
        "F.Cu": 0.91
+      },
+      "by_layer_track_to_track_mm": {
+       "F.Cu": 1.15
       }
      },
      "coupled_mm": {
@@ -6150,6 +6338,9 @@
       ],
       "by_layer_all_copper_mm": {
        "F.Cu": 1.62
+      },
+      "by_layer_track_to_track_mm": {
+       "F.Cu": 2.07
       }
      },
      "coupled_mm": {
@@ -6189,7 +6380,8 @@
       ],
       "by_layer_all_copper_mm": {
        "F.Cu": 0.24
-      }
+      },
+      "by_layer_track_to_track_mm": {}
      },
      "coupled_mm": {
       "F.Cu": 1.8
@@ -6220,6 +6412,9 @@
       ],
       "by_layer_all_copper_mm": {
        "F.Cu": 0.89
+      },
+      "by_layer_track_to_track_mm": {
+       "F.Cu": 1.05
       }
      },
      "coupled_mm": {
@@ -6248,7 +6443,8 @@
       ],
       "by_layer_all_copper_mm": {
        "F.Cu": 0.89
-      }
+      },
+      "by_layer_track_to_track_mm": {}
      },
      "coupled_mm": {
       "F.Cu": 0.99

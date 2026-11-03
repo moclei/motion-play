@@ -12,7 +12,7 @@
 - **Markdown:** the same fields as a front-matter block.
 - **Images:** a sidecar `<name>.meta.json`, or the provenance block of the narrative that embeds them.
 - **Check:** `python3 tools/lab/check_state.py --fresh <file>` recomputes the source hash (exit 0 fresh, 1 stale, 2 no provenance). Run it before citing a generated file in a card or a design decision.
-- **Scope:** all generated context, including the existing `circuit-context.json` outputs. Those have no `_provenance` yet (the retrofit belongs to the board-model initiative), so `--fresh` reports them as having none (exit 2). Until the retrofit, judge their freshness from git.
+- **Scope:** all generated context, including the existing `circuit-context.json` outputs. Those have no `_provenance` yet (no retrofit is scheduled; the board model in `pcb-context/` covers `.kicad_pcb` outputs only), so `--fresh` reports them as having none (exit 2). Until a retrofit, judge their freshness from git.
 
 ## KiCad Schematic Tools
 
@@ -57,12 +57,19 @@ See `tools/schematic-modify/CONTEXT.md` for relationship details and typical wor
 
 ### pcb-context/
 
-Extracts structured layout data from `.kicad_pcb` files into `pcb-layout-context.json`, and automates component placement.
+The **board model** is the one source for PCB context: `board_model.py` parses a `.kicad_pcb` once (kiutils + kicad-cli) into `board-model.json` (true pad polygons, bodies, outline, tracks/vias, zones with de-fractured fills, stackup, per-net topology, kicad-cli DRC, `_provenance`). Every report is derived from that model, so placement, routing and planes can't drift apart. Validated on v7 `c2acffc` against the extraction audit's fixtures (`docs/research/v7-retry/kicad-extraction-audit.md` §6.1; results in `docs/initiatives/v8-debug-board/SESSION.md`, Workers #5 and #6).
 
 | Script | Purpose |
 |--------|---------|
-| `extract.py` | Parses board outline, component positions, bounding boxes, optional pad data → `pcb-layout-context.json`. |
-| `place_power.py` | Computes collision-free placements for power section components relative to anchor ICs. Supports `--dry-run`. |
+| `board_model.py` | `.kicad_pcb` → `board-model.json`; `--check` for freshness. Per-board definitions (net classes, neighbour radii, drivers, critical nets) in `board-config/<pcb stem>.json`. |
+| `net_report.py` | `net-report.md/.json`: per critical net the route narrative (tree from the driver), endpoints, reference plane per segment, bodies passed under/over, unprompted neighbours across layers (gaps, coupled length, crossings), per-via return-path notes; one summary row per other net. |
+| `plane_report.py` | `plane-report.md/.json`: per copper layer ownership, zones, splits (with tracks crossing the gap), voids, antipads; mm unreferenced per signal segment; GND stitching density. |
+| `render.py` | `img/net-<net>.png` per critical net and `img/plane-<layer>.png` per layer with fills, each with `.png.meta.json` (provenance, view in mm, label anchors in mm and px). |
+| `report_lib.py` | Shared geometry for the three reports (measuring methods are defined here). |
+| `extract.py`, `place_power.py` | Older placement tooling (`pcb-layout-context.json`); its v7 outputs are historical. To be generalised by the v8 placement work. |
+| `routing_extract.py`, `routing_audit.py` | Superseded by the board model and `net_report.py` (the auditor's distances are centreline, not edge to edge). Kept for the specs and outputs the v7 debug track cites. |
+
+**Every number names its measuring method** (track to track, track to copper, all copper, plan view; reference raw vs antipads excluded). They differ by up to 0.3 mm on v7, so cite the method with the number. Committed outputs live beside the PCB in `<kicad folder>/board-model/` (v7: `hardware/pcb-main/kicad/board-model/`); check them with `python3 tools/lab/check_state.py --fresh <file>` before citing. Look at a PNG rather than reading coordinate rows when the question is "where".
 
 See `tools/pcb-context/README.md` for full usage.
 
