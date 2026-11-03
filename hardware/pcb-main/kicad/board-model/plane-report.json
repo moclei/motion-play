@@ -1,0 +1,4951 @@
+{
+ "_provenance": {
+  "source": "hardware/pcb-main/kicad/motion-play-main.kicad_pcb",
+  "source_sha256": "ff6857d0bf797fc745a59a91123e752c4233ac3682e1ce38f2e270348b26e5b3",
+  "source_ref": "c2acffc",
+  "generator": "tools/pcb-context/plane_report.py",
+  "generator_commit": "f25d7fe0ca8b81d117433daef8d74b011b9a399e-dirty",
+  "generated": "2026-11-03T00:16:01+00:00",
+  "model": "hardware/pcb-main/kicad/board-model/board-model.json",
+  "model_sha256": "5f4f0c22b5ff43922e130f7662fd878bd4a0e93eca0f1d08611ae85f3df55252",
+  "model_generator_commit": "f93e72b92796da964e1071e3aba3c3fac3b362a8"
+ },
+ "board": "hardware/pcb-main/kicad/motion-play-main.kicad_pcb @ c2acffc",
+ "methods": {
+  "ownership": "area of the union of a net's copper on the layer (zone fills; and all copper = fills + tracks + pads + via annular rings)",
+  "split": "boundary of fill A lying within split_gap_max_mm of fill B (length), the min edge-to-edge gap, and tracks on an adjacent copper layer whose centreline crosses the gap between them",
+  "void_width": "mean width = 2 × area / perimeter (a long thin void along a split reads as its width)",
+  "void": "outline shrunk by edge_margin_mm, less all copper on the layer; pieces >= min_void_mm2. A piece touching fills of two or more nets is a split gap, otherwise a void. Holes in a fill that contain a drilled hole are antipads and are counted separately",
+  "unreferenced_raw": "track centreline over no fill on the adjacent copper layer (stackup); fill holes count as no copper",
+  "unreferenced_antipads_excl": "as raw, but fill holes that contain a drilled hole (via, PTH, NPTH) count as copper",
+  "stitching": "GND vias (centres) per grid cell; cells at least half inside the outline; nearest GND via to a signal via is centre to centre"
+ },
+ "parameters": {
+  "plane_fill_share": 0.25,
+  "split_gap_max_mm": 1.5,
+  "edge_margin_mm": 1.0,
+  "min_void_mm2": 1.0,
+  "antipad_cluster_mm2": 3.0,
+  "grid_mm": 10.0,
+  "ground_net": "GND"
+ },
+ "outline_mm2": 3395.7,
+ "stackup_pairs": [
+  [
+   "F.Cu",
+   "In1.Cu",
+   0.1
+  ],
+  [
+   "In1.Cu",
+   "In2.Cu",
+   1.24
+  ],
+  [
+   "In2.Cu",
+   "B.Cu",
+   0.1
+  ]
+ ],
+ "layers": [
+  {
+   "layer": "F.Cu",
+   "is_plane": false,
+   "fill_share_of_outline": 0.0484,
+   "adjacent_layers": [
+    [
+     "In1.Cu",
+     0.1
+    ]
+   ],
+   "owners": [
+    {
+     "net": "GND",
+     "fill_mm2": 94.38,
+     "all_copper_mm2": 243.98,
+     "share_of_outline": 0.0719
+    },
+    {
+     "net": "+3.3V",
+     "fill_mm2": 54.09,
+     "all_copper_mm2": 83.57,
+     "share_of_outline": 0.0246
+    },
+    {
+     "net": "/Power Management/VSYS",
+     "fill_mm2": 0.0,
+     "all_copper_mm2": 56.46,
+     "share_of_outline": 0.0166
+    },
+    {
+     "net": "/Power Management/Protected_VBUS",
+     "fill_mm2": 0.0,
+     "all_copper_mm2": 47.82,
+     "share_of_outline": 0.0141
+    },
+    {
+     "net": "+5V",
+     "fill_mm2": 10.48,
+     "all_copper_mm2": 39.23,
+     "share_of_outline": 0.0116
+    },
+    {
+     "net": "/Power Management/VSYS_SENSE",
+     "fill_mm2": 0.0,
+     "all_copper_mm2": 29.7,
+     "share_of_outline": 0.0087
+    },
+    {
+     "net": "/LED Controller/+5V_TO_LEDS",
+     "fill_mm2": 0.0,
+     "all_copper_mm2": 19.26,
+     "share_of_outline": 0.0057
+    },
+    {
+     "net": "/Power Management/BOOST_SW",
+     "fill_mm2": 5.27,
+     "all_copper_mm2": 17.82,
+     "share_of_outline": 0.0052
+    },
+    {
+     "net": "/I2C_SDA",
+     "fill_mm2": 0.0,
+     "all_copper_mm2": 14.84,
+     "share_of_outline": 0.0044
+    },
+    {
+     "net": "/I2C_SCL",
+     "fill_mm2": 0.0,
+     "all_copper_mm2": 14.68,
+     "share_of_outline": 0.0043
+    },
+    {
+     "net": "/Power Management/BQ_SW",
+     "fill_mm2": 0.0,
+     "all_copper_mm2": 13.02,
+     "share_of_outline": 0.0038
+    },
+    {
+     "net": "/Power Management/BOOST_EN",
+     "fill_mm2": 0.0,
+     "all_copper_mm2": 11.63,
+     "share_of_outline": 0.0034
+    },
+    {
+     "net": "Net-(C7-Pad2)",
+     "fill_mm2": 0.0,
+     "all_copper_mm2": 11.63,
+     "share_of_outline": 0.0034
+    },
+    {
+     "net": "/LED_DATA",
+     "fill_mm2": 0.0,
+     "all_copper_mm2": 11.54,
+     "share_of_outline": 0.0034
+    },
+    {
+     "net": "/TCA_RESET",
+     "fill_mm2": 0.0,
+     "all_copper_mm2": 10.19,
+     "share_of_outline": 0.003
+    },
+    {
+     "net": "/USB_DP",
+     "fill_mm2": 0.0,
+     "all_copper_mm2": 10.16,
+     "share_of_outline": 0.003
+    },
+    {
+     "net": "/ESP32_S3/EN",
+     "fill_mm2": 0.0,
+     "all_copper_mm2": 10.14,
+     "share_of_outline": 0.003
+    },
+    {
+     "net": "/Power Management/BAT_RAW",
+     "fill_mm2": 0.0,
+     "all_copper_mm2": 10.05,
+     "share_of_outline": 0.003
+    },
+    {
+     "net": "/Power Management/VBUS_RAW",
+     "fill_mm2": 0.0,
+     "all_copper_mm2": 8.59,
+     "share_of_outline": 0.0025
+    },
+    {
+     "net": "/Power Management/VBAT",
+     "fill_mm2": 0.0,
+     "all_copper_mm2": 8.4,
+     "share_of_outline": 0.0025
+    },
+    {
+     "net": "/CHRG_INT",
+     "fill_mm2": 0.0,
+     "all_copper_mm2": 8.21,
+     "share_of_outline": 0.0024
+    },
+    {
+     "net": "/USB_DN",
+     "fill_mm2": 0.0,
+     "all_copper_mm2": 8.19,
+     "share_of_outline": 0.0024
+    },
+    {
+     "net": "/Power Management/BQ_TS",
+     "fill_mm2": 0.0,
+     "all_copper_mm2": 5.89,
+     "share_of_outline": 0.0017
+    },
+    {
+     "net": "/ESP32_S3/GPIO0_BOOT",
+     "fill_mm2": 0.0,
+     "all_copper_mm2": 5.12,
+     "share_of_outline": 0.0015
+    },
+    {
+     "net": "/LED Controller/DATA_TO_LEDS",
+     "fill_mm2": 0.0,
+     "all_copper_mm2": 4.9,
+     "share_of_outline": 0.0014
+    },
+    {
+     "net": "/TCA9548A_Subsystem/CH0_SDA",
+     "fill_mm2": 0.0,
+     "all_copper_mm2": 4.81,
+     "share_of_outline": 0.0014
+    },
+    {
+     "net": "/TCA9548A_Subsystem/CH0_SCL",
+     "fill_mm2": 0.0,
+     "all_copper_mm2": 4.77,
+     "share_of_outline": 0.0014
+    },
+    {
+     "net": "/Power Management/BQ_PMID",
+     "fill_mm2": 0.0,
+     "all_copper_mm2": 3.8,
+     "share_of_outline": 0.0011
+    },
+    {
+     "net": "/Power Management/BQ_REGN",
+     "fill_mm2": 0.0,
+     "all_copper_mm2": 3.75,
+     "share_of_outline": 0.0011
+    },
+    {
+     "net": "/Power Management/PMOS_GATE",
+     "fill_mm2": 0.0,
+     "all_copper_mm2": 3.48,
+     "share_of_outline": 0.001
+    },
+    {
+     "net": "/TCA9548A_Subsystem/CH1_SDA",
+     "fill_mm2": 0.0,
+     "all_copper_mm2": 3.25,
+     "share_of_outline": 0.001
+    },
+    {
+     "net": "/TCA9548A_Subsystem/CH1_SCL",
+     "fill_mm2": 0.0,
+     "all_copper_mm2": 3.17,
+     "share_of_outline": 0.0009
+    },
+    {
+     "net": "/TCA9548A_Subsystem/CH2_SCL",
+     "fill_mm2": 0.0,
+     "all_copper_mm2": 2.62,
+     "share_of_outline": 0.0008
+    },
+    {
+     "net": "/TCA9548A_Subsystem/CH2_SDA",
+     "fill_mm2": 0.0,
+     "all_copper_mm2": 2.59,
+     "share_of_outline": 0.0008
+    },
+    {
+     "net": "/Power Management/BOOST_COMP",
+     "fill_mm2": 0.0,
+     "all_copper_mm2": 2.58,
+     "share_of_outline": 0.0008
+    },
+    {
+     "net": "/Power Management/BOOST_FB",
+     "fill_mm2": 0.0,
+     "all_copper_mm2": 2.47,
+     "share_of_outline": 0.0007
+    },
+    {
+     "net": "/Power Management/CC2",
+     "fill_mm2": 0.0,
+     "all_copper_mm2": 2.39,
+     "share_of_outline": 0.0007
+    },
+    {
+     "net": "/ESP32_S3/USB_DP_MCU",
+     "fill_mm2": 0.0,
+     "all_copper_mm2": 2.31,
+     "share_of_outline": 0.0007
+    },
+    {
+     "net": "/Power Management/CC1",
+     "fill_mm2": 0.0,
+     "all_copper_mm2": 2.25,
+     "share_of_outline": 0.0007
+    },
+    {
+     "net": "/ESP32_S3/USB_DN_MCU",
+     "fill_mm2": 0.0,
+     "all_copper_mm2": 2.22,
+     "share_of_outline": 0.0007
+    },
+    {
+     "net": "/Power Management/BOOST_SS",
+     "fill_mm2": 0.0,
+     "all_copper_mm2": 2.02,
+     "share_of_outline": 0.0006
+    },
+    {
+     "net": "unconnected-(D5-DOUT-Pad3)",
+     "fill_mm2": 0.0,
+     "all_copper_mm2": 1.85,
+     "share_of_outline": 0.0005
+    },
+    {
+     "net": "/Power Management/BOOST_ILIM",
+     "fill_mm2": 0.0,
+     "all_copper_mm2": 1.82,
+     "share_of_outline": 0.0005
+    },
+    {
+     "net": "/Power Management/BOOST_VCC",
+     "fill_mm2": 0.0,
+     "all_copper_mm2": 1.71,
+     "share_of_outline": 0.0005
+    },
+    {
+     "net": "Net-(D1-A)",
+     "fill_mm2": 0.0,
+     "all_copper_mm2": 1.71,
+     "share_of_outline": 0.0005
+    },
+    {
+     "net": "/Power Management/BOOST_BOOT",
+     "fill_mm2": 0.0,
+     "all_copper_mm2": 1.64,
+     "share_of_outline": 0.0005
+    },
+    {
+     "net": "/Power Management/COMP_MID",
+     "fill_mm2": 0.0,
+     "all_copper_mm2": 1.64,
+     "share_of_outline": 0.0005
+    },
+    {
+     "net": "/Power Management/BQ_BTST",
+     "fill_mm2": 0.0,
+     "all_copper_mm2": 1.46,
+     "share_of_outline": 0.0004
+    },
+    {
+     "net": "/Power Management/OTG_BIAS",
+     "fill_mm2": 0.0,
+     "all_copper_mm2": 1.33,
+     "share_of_outline": 0.0004
+    },
+    {
+     "net": "/ESP32_S3/INT1",
+     "fill_mm2": 0.0,
+     "all_copper_mm2": 1.3,
+     "share_of_outline": 0.0004
+    },
+    {
+     "net": "/ESP32_S3/INT2",
+     "fill_mm2": 0.0,
+     "all_copper_mm2": 1.3,
+     "share_of_outline": 0.0004
+    },
+    {
+     "net": "/ESP32_S3/INT3",
+     "fill_mm2": 0.0,
+     "all_copper_mm2": 1.3,
+     "share_of_outline": 0.0004
+    },
+    {
+     "net": "unconnected-(U3-IO1-Pad39)",
+     "fill_mm2": 0.0,
+     "all_copper_mm2": 1.3,
+     "share_of_outline": 0.0004
+    },
+    {
+     "net": "unconnected-(U3-IO14-Pad22)",
+     "fill_mm2": 0.0,
+     "all_copper_mm2": 1.3,
+     "share_of_outline": 0.0004
+    },
+    {
+     "net": "unconnected-(U3-IO15-Pad8)",
+     "fill_mm2": 0.0,
+     "all_copper_mm2": 1.3,
+     "share_of_outline": 0.0004
+    },
+    {
+     "net": "unconnected-(U3-IO17-Pad10)",
+     "fill_mm2": 0.0,
+     "all_copper_mm2": 1.3,
+     "share_of_outline": 0.0004
+    },
+    {
+     "net": "unconnected-(U3-IO18-Pad11)",
+     "fill_mm2": 0.0,
+     "all_copper_mm2": 1.3,
+     "share_of_outline": 0.0004
+    },
+    {
+     "net": "unconnected-(U3-IO2-Pad38)",
+     "fill_mm2": 0.0,
+     "all_copper_mm2": 1.3,
+     "share_of_outline": 0.0004
+    },
+    {
+     "net": "unconnected-(U3-IO3-Pad15)",
+     "fill_mm2": 0.0,
+     "all_copper_mm2": 1.3,
+     "share_of_outline": 0.0004
+    },
+    {
+     "net": "unconnected-(U3-IO35-Pad28)",
+     "fill_mm2": 0.0,
+     "all_copper_mm2": 1.3,
+     "share_of_outline": 0.0004
+    },
+    {
+     "net": "unconnected-(U3-IO36-Pad29)",
+     "fill_mm2": 0.0,
+     "all_copper_mm2": 1.3,
+     "share_of_outline": 0.0004
+    },
+    {
+     "net": "unconnected-(U3-IO37-Pad30)",
+     "fill_mm2": 0.0,
+     "all_copper_mm2": 1.3,
+     "share_of_outline": 0.0004
+    },
+    {
+     "net": "unconnected-(U3-IO38-Pad31)",
+     "fill_mm2": 0.0,
+     "all_copper_mm2": 1.3,
+     "share_of_outline": 0.0004
+    },
+    {
+     "net": "unconnected-(U3-IO39-Pad32)",
+     "fill_mm2": 0.0,
+     "all_copper_mm2": 1.3,
+     "share_of_outline": 0.0004
+    },
+    {
+     "net": "unconnected-(U3-IO4-Pad4)",
+     "fill_mm2": 0.0,
+     "all_copper_mm2": 1.3,
+     "share_of_outline": 0.0004
+    },
+    {
+     "net": "unconnected-(U3-IO40-Pad33)",
+     "fill_mm2": 0.0,
+     "all_copper_mm2": 1.3,
+     "share_of_outline": 0.0004
+    },
+    {
+     "net": "unconnected-(U3-IO41-Pad34)",
+     "fill_mm2": 0.0,
+     "all_copper_mm2": 1.3,
+     "share_of_outline": 0.0004
+    },
+    {
+     "net": "unconnected-(U3-IO42-Pad35)",
+     "fill_mm2": 0.0,
+     "all_copper_mm2": 1.3,
+     "share_of_outline": 0.0004
+    },
+    {
+     "net": "unconnected-(U3-IO45-Pad26)",
+     "fill_mm2": 0.0,
+     "all_copper_mm2": 1.3,
+     "share_of_outline": 0.0004
+    },
+    {
+     "net": "unconnected-(U3-IO46-Pad16)",
+     "fill_mm2": 0.0,
+     "all_copper_mm2": 1.3,
+     "share_of_outline": 0.0004
+    },
+    {
+     "net": "unconnected-(U3-IO47-Pad24)",
+     "fill_mm2": 0.0,
+     "all_copper_mm2": 1.3,
+     "share_of_outline": 0.0004
+    },
+    {
+     "net": "unconnected-(U3-IO48-Pad25)",
+     "fill_mm2": 0.0,
+     "all_copper_mm2": 1.3,
+     "share_of_outline": 0.0004
+    },
+    {
+     "net": "unconnected-(U3-IO5-Pad5)",
+     "fill_mm2": 0.0,
+     "all_copper_mm2": 1.3,
+     "share_of_outline": 0.0004
+    },
+    {
+     "net": "unconnected-(U3-IO6-Pad6)",
+     "fill_mm2": 0.0,
+     "all_copper_mm2": 1.3,
+     "share_of_outline": 0.0004
+    },
+    {
+     "net": "unconnected-(U3-IO7-Pad7)",
+     "fill_mm2": 0.0,
+     "all_copper_mm2": 1.3,
+     "share_of_outline": 0.0004
+    },
+    {
+     "net": "unconnected-(U3-IO8-Pad12)",
+     "fill_mm2": 0.0,
+     "all_copper_mm2": 1.3,
+     "share_of_outline": 0.0004
+    },
+    {
+     "net": "unconnected-(U3-IO9-Pad17)",
+     "fill_mm2": 0.0,
+     "all_copper_mm2": 1.3,
+     "share_of_outline": 0.0004
+    },
+    {
+     "net": "/Power Management/BQ_ILIM",
+     "fill_mm2": 0.0,
+     "all_copper_mm2": 1.21,
+     "share_of_outline": 0.0004
+    },
+    {
+     "net": "/Power Management/BOOST_FSW",
+     "fill_mm2": 0.0,
+     "all_copper_mm2": 1.2,
+     "share_of_outline": 0.0004
+    },
+    {
+     "net": "unconnected-(IC1-2A-Pad5)",
+     "fill_mm2": 0.0,
+     "all_copper_mm2": 0.66,
+     "share_of_outline": 0.0002
+    },
+    {
+     "net": "unconnected-(IC1-2Y-Pad6)",
+     "fill_mm2": 0.0,
+     "all_copper_mm2": 0.66,
+     "share_of_outline": 0.0002
+    },
+    {
+     "net": "unconnected-(IC1-2~{OE}-Pad4)",
+     "fill_mm2": 0.0,
+     "all_copper_mm2": 0.66,
+     "share_of_outline": 0.0002
+    },
+    {
+     "net": "unconnected-(IC1-3A-Pad9)",
+     "fill_mm2": 0.0,
+     "all_copper_mm2": 0.66,
+     "share_of_outline": 0.0002
+    },
+    {
+     "net": "unconnected-(IC1-3Y-Pad8)",
+     "fill_mm2": 0.0,
+     "all_copper_mm2": 0.66,
+     "share_of_outline": 0.0002
+    },
+    {
+     "net": "unconnected-(IC1-3~{OE}-Pad10)",
+     "fill_mm2": 0.0,
+     "all_copper_mm2": 0.66,
+     "share_of_outline": 0.0002
+    },
+    {
+     "net": "unconnected-(IC1-4A-Pad12)",
+     "fill_mm2": 0.0,
+     "all_copper_mm2": 0.66,
+     "share_of_outline": 0.0002
+    },
+    {
+     "net": "unconnected-(IC1-4Y-Pad11)",
+     "fill_mm2": 0.0,
+     "all_copper_mm2": 0.66,
+     "share_of_outline": 0.0002
+    },
+    {
+     "net": "unconnected-(IC1-4~{OE}-Pad13)",
+     "fill_mm2": 0.0,
+     "all_copper_mm2": 0.66,
+     "share_of_outline": 0.0002
+    },
+    {
+     "net": "unconnected-(U4-SC3-Pad11)",
+     "fill_mm2": 0.0,
+     "all_copper_mm2": 0.64,
+     "share_of_outline": 0.0002
+    },
+    {
+     "net": "unconnected-(U4-SC4-Pad14)",
+     "fill_mm2": 0.0,
+     "all_copper_mm2": 0.64,
+     "share_of_outline": 0.0002
+    },
+    {
+     "net": "unconnected-(U4-SC5-Pad16)",
+     "fill_mm2": 0.0,
+     "all_copper_mm2": 0.64,
+     "share_of_outline": 0.0002
+    },
+    {
+     "net": "unconnected-(U4-SC6-Pad18)",
+     "fill_mm2": 0.0,
+     "all_copper_mm2": 0.64,
+     "share_of_outline": 0.0002
+    },
+    {
+     "net": "unconnected-(U4-SC7-Pad20)",
+     "fill_mm2": 0.0,
+     "all_copper_mm2": 0.64,
+     "share_of_outline": 0.0002
+    },
+    {
+     "net": "unconnected-(U4-SD3-Pad10)",
+     "fill_mm2": 0.0,
+     "all_copper_mm2": 0.64,
+     "share_of_outline": 0.0002
+    },
+    {
+     "net": "unconnected-(U4-SD4-Pad13)",
+     "fill_mm2": 0.0,
+     "all_copper_mm2": 0.64,
+     "share_of_outline": 0.0002
+    },
+    {
+     "net": "unconnected-(U4-SD5-Pad15)",
+     "fill_mm2": 0.0,
+     "all_copper_mm2": 0.64,
+     "share_of_outline": 0.0002
+    },
+    {
+     "net": "unconnected-(U4-SD6-Pad17)",
+     "fill_mm2": 0.0,
+     "all_copper_mm2": 0.64,
+     "share_of_outline": 0.0002
+    },
+    {
+     "net": "unconnected-(U4-SD7-Pad19)",
+     "fill_mm2": 0.0,
+     "all_copper_mm2": 0.64,
+     "share_of_outline": 0.0002
+    },
+    {
+     "net": "unconnected-(J7-SBU1-PadA8)",
+     "fill_mm2": 0.0,
+     "all_copper_mm2": 0.39,
+     "share_of_outline": 0.0001
+    },
+    {
+     "net": "unconnected-(J7-SBU2-PadB8)",
+     "fill_mm2": 0.0,
+     "all_copper_mm2": 0.39,
+     "share_of_outline": 0.0001
+    },
+    {
+     "net": "unconnected-(U5-STAT-Pad4)",
+     "fill_mm2": 0.0,
+     "all_copper_mm2": 0.24,
+     "share_of_outline": 0.0001
+    },
+    {
+     "net": "unconnected-(U6-MODE-Pad13)",
+     "fill_mm2": 0.0,
+     "all_copper_mm2": 0.17,
+     "share_of_outline": 0.0
+    }
+   ],
+   "zones": [
+    {
+     "id": "Z0",
+     "net": "/Power Management/BOOST_SW",
+     "priority": 4,
+     "keepout": null,
+     "fill_mm2": 5.2714,
+     "holes": 0,
+     "bbox": [
+      104.31,
+      129.57,
+      107.47,
+      131.27
+     ]
+    },
+    {
+     "id": "Z1",
+     "net": "+5V",
+     "priority": 5,
+     "keepout": null,
+     "fill_mm2": 10.478,
+     "holes": 0,
+     "bbox": [
+      98.49,
+      126.37,
+      101.56,
+      131.87
+     ]
+    },
+    {
+     "id": "Z2",
+     "net": "GND",
+     "priority": 3,
+     "keepout": null,
+     "fill_mm2": 94.3785,
+     "holes": 0,
+     "bbox": [
+      146.07,
+      116.95,
+      156.25,
+      128.76
+     ]
+    },
+    {
+     "id": "Z3",
+     "net": "+3.3V",
+     "priority": 6,
+     "keepout": null,
+     "fill_mm2": 54.0876,
+     "holes": 0,
+     "bbox": [
+      109.96,
+      104.35,
+      117.56,
+      113.85
+     ]
+    },
+    {
+     "id": "Z4",
+     "net": null,
+     "priority": 0,
+     "keepout": {
+      "tracks": "not_allowed",
+      "vias": "not_allowed",
+      "pads": "not_allowed",
+      "copperpour": "not_allowed",
+      "footprints": "allowed"
+     },
+     "fill_mm2": 0.0,
+     "holes": 0,
+     "bbox": null
+    }
+   ],
+   "splits": [],
+   "voids": [],
+   "antipads": {}
+  },
+  {
+   "layer": "In1.Cu",
+   "is_plane": true,
+   "fill_share_of_outline": 0.8809,
+   "adjacent_layers": [
+    [
+     "F.Cu",
+     0.1
+    ],
+    [
+     "In2.Cu",
+     1.24
+    ]
+   ],
+   "owners": [
+    {
+     "net": "GND",
+     "fill_mm2": 2991.13,
+     "all_copper_mm2": 2992.0,
+     "share_of_outline": 0.8811
+    },
+    {
+     "net": "+3.3V",
+     "fill_mm2": 0.0,
+     "all_copper_mm2": 8.75,
+     "share_of_outline": 0.0026
+    },
+    {
+     "net": "+5V",
+     "fill_mm2": 0.0,
+     "all_copper_mm2": 3.26,
+     "share_of_outline": 0.001
+    },
+    {
+     "net": "/Power Management/VSYS",
+     "fill_mm2": 0.0,
+     "all_copper_mm2": 2.01,
+     "share_of_outline": 0.0006
+    },
+    {
+     "net": "/USB_DN",
+     "fill_mm2": 0.0,
+     "all_copper_mm2": 1.84,
+     "share_of_outline": 0.0005
+    },
+    {
+     "net": "/I2C_SCL",
+     "fill_mm2": 0.0,
+     "all_copper_mm2": 1.63,
+     "share_of_outline": 0.0005
+    },
+    {
+     "net": "/CHRG_INT",
+     "fill_mm2": 0.0,
+     "all_copper_mm2": 1.07,
+     "share_of_outline": 0.0003
+    },
+    {
+     "net": "/I2C_SDA",
+     "fill_mm2": 0.0,
+     "all_copper_mm2": 1.07,
+     "share_of_outline": 0.0003
+    },
+    {
+     "net": "/TCA_RESET",
+     "fill_mm2": 0.0,
+     "all_copper_mm2": 1.07,
+     "share_of_outline": 0.0003
+    },
+    {
+     "net": "/Power Management/BQ_PMID",
+     "fill_mm2": 0.0,
+     "all_copper_mm2": 1.0,
+     "share_of_outline": 0.0003
+    },
+    {
+     "net": "/Power Management/Protected_VBUS",
+     "fill_mm2": 0.0,
+     "all_copper_mm2": 1.0,
+     "share_of_outline": 0.0003
+    },
+    {
+     "net": "/Power Management/VBAT",
+     "fill_mm2": 0.0,
+     "all_copper_mm2": 0.85,
+     "share_of_outline": 0.0002
+    },
+    {
+     "net": "/Power Management/VSYS_SENSE",
+     "fill_mm2": 0.0,
+     "all_copper_mm2": 0.78,
+     "share_of_outline": 0.0002
+    },
+    {
+     "net": "/LED Controller/DATA_TO_LEDS",
+     "fill_mm2": 0.0,
+     "all_copper_mm2": 0.56,
+     "share_of_outline": 0.0002
+    },
+    {
+     "net": "/LED_DATA",
+     "fill_mm2": 0.0,
+     "all_copper_mm2": 0.56,
+     "share_of_outline": 0.0002
+    },
+    {
+     "net": "/Power Management/BQ_REGN",
+     "fill_mm2": 0.0,
+     "all_copper_mm2": 0.56,
+     "share_of_outline": 0.0002
+    },
+    {
+     "net": "/Power Management/BQ_TS",
+     "fill_mm2": 0.0,
+     "all_copper_mm2": 0.56,
+     "share_of_outline": 0.0002
+    },
+    {
+     "net": "/Power Management/BAT_RAW",
+     "fill_mm2": 0.0,
+     "all_copper_mm2": 0.5,
+     "share_of_outline": 0.0001
+    },
+    {
+     "net": "/Power Management/BOOST_FSW",
+     "fill_mm2": 0.0,
+     "all_copper_mm2": 0.33,
+     "share_of_outline": 0.0001
+    },
+    {
+     "net": "/Power Management/BQ_BTST",
+     "fill_mm2": 0.0,
+     "all_copper_mm2": 0.33,
+     "share_of_outline": 0.0001
+    },
+    {
+     "net": "/USB_DP",
+     "fill_mm2": 0.0,
+     "all_copper_mm2": 0.33,
+     "share_of_outline": 0.0001
+    }
+   ],
+   "zones": [
+    {
+     "id": "Z4",
+     "net": null,
+     "priority": 0,
+     "keepout": {
+      "tracks": "not_allowed",
+      "vias": "not_allowed",
+      "pads": "not_allowed",
+      "copperpour": "not_allowed",
+      "footprints": "allowed"
+     },
+     "fill_mm2": 0.0,
+     "holes": 0,
+     "bbox": null
+    },
+    {
+     "id": "Z5",
+     "net": "GND",
+     "priority": 0,
+     "keepout": null,
+     "fill_mm2": 2991.1254,
+     "holes": 81,
+     "bbox": [
+      76.05,
+      101.3,
+      163.6,
+      139.2
+     ]
+    }
+   ],
+   "splits": [],
+   "voids": [
+    {
+     "kind": "void",
+     "fills_touched": [
+      "GND"
+     ],
+     "area_mm2": 109.84,
+     "mean_width_mm": 4.05,
+     "bbox": [
+      119.6,
+      102.0,
+      140.5,
+      107.6
+     ],
+     "at": [
+      130.75,
+      103.72
+     ],
+     "in_keepout": true,
+     "nets_crossing_on_adjacent_layers": [
+      "+3.3V"
+     ]
+    },
+    {
+     "kind": "void",
+     "fills_touched": [
+      "GND"
+     ],
+     "area_mm2": 2.14,
+     "mean_width_mm": 0.49,
+     "bbox": [
+      110.76,
+      102.0,
+      112.46,
+      103.85
+     ],
+     "at": [
+      112.19,
+      102.92
+     ],
+     "in_keepout": false,
+     "nets_crossing_on_adjacent_layers": [
+      "+5V"
+     ]
+    }
+   ],
+   "antipads": {
+    "count": 70,
+    "area_mm2": 195.85,
+    "clusters": [
+     {
+      "net": "GND",
+      "area_mm2": 12.84,
+      "drills": 5,
+      "bbox": [
+       77.23,
+       121.15,
+       83.72,
+       125.47
+      ]
+     },
+     {
+      "net": "GND",
+      "area_mm2": 10.3,
+      "drills": 5,
+      "bbox": [
+       119.7,
+       114.0,
+       121.4,
+       122.2
+      ]
+     },
+     {
+      "net": "GND",
+      "area_mm2": 9.92,
+      "drills": 5,
+      "bbox": [
+       96.75,
+       112.4,
+       101.38,
+       116.38
+      ]
+     },
+     {
+      "net": "GND",
+      "area_mm2": 7.3,
+      "drills": 4,
+      "bbox": [
+       112.46,
+       104.02,
+       115.36,
+       107.7
+      ]
+     },
+     {
+      "net": "GND",
+      "area_mm2": 6.58,
+      "drills": 1,
+      "bbox": [
+       82.05,
+       135.15,
+       84.95,
+       138.05
+      ]
+     },
+     {
+      "net": "GND",
+      "area_mm2": 6.13,
+      "drills": 3,
+      "bbox": [
+       99.47,
+       126.37,
+       101.07,
+       131.17
+      ]
+     },
+     {
+      "net": "GND",
+      "area_mm2": 5.62,
+      "drills": 2,
+      "bbox": [
+       77.23,
+       112.66,
+       79.44,
+       116.11
+      ]
+     },
+     {
+      "net": "GND",
+      "area_mm2": 5.04,
+      "drills": 2,
+      "bbox": [
+       79.72,
+       118.0,
+       81.52,
+       121.43
+      ]
+     },
+     {
+      "net": "GND",
+      "area_mm2": 4.91,
+      "drills": 3,
+      "bbox": [
+       91.95,
+       116.41,
+       94.78,
+       119.4
+      ]
+     },
+     {
+      "net": "GND",
+      "area_mm2": 4.58,
+      "drills": 2,
+      "bbox": [
+       81.31,
+       114.51,
+       83.72,
+       117.37
+      ]
+     },
+     {
+      "net": "GND",
+      "area_mm2": 4.31,
+      "drills": 2,
+      "bbox": [
+       104.47,
+       121.29,
+       107.0,
+       123.81
+      ]
+     },
+     {
+      "net": "GND",
+      "area_mm2": 4.08,
+      "drills": 2,
+      "bbox": [
+       111.11,
+       110.2,
+       112.91,
+       113.6
+      ]
+     },
+     {
+      "net": "GND",
+      "area_mm2": 4.03,
+      "drills": 2,
+      "bbox": [
+       144.86,
+       107.69,
+       147.34,
+       110.53
+      ]
+     },
+     {
+      "net": "GND",
+      "area_mm2": 3.85,
+      "drills": 2,
+      "bbox": [
+       137.6,
+       111.85,
+       139.2,
+       114.75
+      ]
+     },
+     {
+      "net": "GND",
+      "area_mm2": 3.7,
+      "drills": 2,
+      "bbox": [
+       109.69,
+       103.93,
+       111.56,
+       106.65
+      ]
+     },
+     {
+      "net": "GND",
+      "area_mm2": 3.63,
+      "drills": 2,
+      "bbox": [
+       101.75,
+       120.4,
+       104.0,
+       122.88
+      ]
+     },
+     {
+      "net": "GND",
+      "area_mm2": 3.48,
+      "drills": 2,
+      "bbox": [
+       159.19,
+       121.87,
+       161.59,
+       124.03
+      ]
+     },
+     {
+      "net": "GND",
+      "area_mm2": 3.39,
+      "drills": 2,
+      "bbox": [
+       147.86,
+       110.89,
+       150.36,
+       112.5
+      ]
+     },
+     {
+      "net": "GND",
+      "area_mm2": 3.23,
+      "drills": 2,
+      "bbox": [
+       84.57,
+       129.04,
+       86.91,
+       131.33
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "layer": "In2.Cu",
+   "is_plane": true,
+   "fill_share_of_outline": 0.8128,
+   "adjacent_layers": [
+    [
+     "In1.Cu",
+     1.24
+    ],
+    [
+     "B.Cu",
+     0.1
+    ]
+   ],
+   "owners": [
+    {
+     "net": "+5V",
+     "fill_mm2": 1582.19,
+     "all_copper_mm2": 1582.2,
+     "share_of_outline": 0.4659
+    },
+    {
+     "net": "+3.3V",
+     "fill_mm2": 1177.91,
+     "all_copper_mm2": 1177.94,
+     "share_of_outline": 0.3469
+    },
+    {
+     "net": "GND",
+     "fill_mm2": 0.0,
+     "all_copper_mm2": 42.96,
+     "share_of_outline": 0.0126
+    },
+    {
+     "net": "/Power Management/VSYS",
+     "fill_mm2": 0.0,
+     "all_copper_mm2": 2.01,
+     "share_of_outline": 0.0006
+    },
+    {
+     "net": "/USB_DN",
+     "fill_mm2": 0.0,
+     "all_copper_mm2": 1.84,
+     "share_of_outline": 0.0005
+    },
+    {
+     "net": "/I2C_SCL",
+     "fill_mm2": 0.0,
+     "all_copper_mm2": 1.63,
+     "share_of_outline": 0.0005
+    },
+    {
+     "net": "/CHRG_INT",
+     "fill_mm2": 0.0,
+     "all_copper_mm2": 1.07,
+     "share_of_outline": 0.0003
+    },
+    {
+     "net": "/I2C_SDA",
+     "fill_mm2": 0.0,
+     "all_copper_mm2": 1.07,
+     "share_of_outline": 0.0003
+    },
+    {
+     "net": "/TCA_RESET",
+     "fill_mm2": 0.0,
+     "all_copper_mm2": 1.07,
+     "share_of_outline": 0.0003
+    },
+    {
+     "net": "/Power Management/BQ_PMID",
+     "fill_mm2": 0.0,
+     "all_copper_mm2": 1.0,
+     "share_of_outline": 0.0003
+    },
+    {
+     "net": "/Power Management/Protected_VBUS",
+     "fill_mm2": 0.0,
+     "all_copper_mm2": 1.0,
+     "share_of_outline": 0.0003
+    },
+    {
+     "net": "/Power Management/VBAT",
+     "fill_mm2": 0.0,
+     "all_copper_mm2": 0.85,
+     "share_of_outline": 0.0002
+    },
+    {
+     "net": "/Power Management/VSYS_SENSE",
+     "fill_mm2": 0.0,
+     "all_copper_mm2": 0.78,
+     "share_of_outline": 0.0002
+    },
+    {
+     "net": "/LED Controller/DATA_TO_LEDS",
+     "fill_mm2": 0.0,
+     "all_copper_mm2": 0.56,
+     "share_of_outline": 0.0002
+    },
+    {
+     "net": "/LED_DATA",
+     "fill_mm2": 0.0,
+     "all_copper_mm2": 0.56,
+     "share_of_outline": 0.0002
+    },
+    {
+     "net": "/Power Management/BQ_REGN",
+     "fill_mm2": 0.0,
+     "all_copper_mm2": 0.56,
+     "share_of_outline": 0.0002
+    },
+    {
+     "net": "/Power Management/BQ_TS",
+     "fill_mm2": 0.0,
+     "all_copper_mm2": 0.56,
+     "share_of_outline": 0.0002
+    },
+    {
+     "net": "/Power Management/BAT_RAW",
+     "fill_mm2": 0.0,
+     "all_copper_mm2": 0.5,
+     "share_of_outline": 0.0001
+    },
+    {
+     "net": "/Power Management/BOOST_FSW",
+     "fill_mm2": 0.0,
+     "all_copper_mm2": 0.33,
+     "share_of_outline": 0.0001
+    },
+    {
+     "net": "/Power Management/BQ_BTST",
+     "fill_mm2": 0.0,
+     "all_copper_mm2": 0.33,
+     "share_of_outline": 0.0001
+    },
+    {
+     "net": "/USB_DP",
+     "fill_mm2": 0.0,
+     "all_copper_mm2": 0.33,
+     "share_of_outline": 0.0001
+    }
+   ],
+   "zones": [
+    {
+     "id": "Z4",
+     "net": null,
+     "priority": 0,
+     "keepout": {
+      "tracks": "not_allowed",
+      "vias": "not_allowed",
+      "pads": "not_allowed",
+      "copperpour": "not_allowed",
+      "footprints": "allowed"
+     },
+     "fill_mm2": 0.0,
+     "holes": 0,
+     "bbox": null
+    },
+    {
+     "id": "Z6",
+     "net": "+5V",
+     "priority": 7,
+     "keepout": null,
+     "fill_mm2": 1582.186,
+     "holes": 70,
+     "bbox": [
+      76.0,
+      101.3,
+      163.6,
+      139.2
+     ]
+    },
+    {
+     "id": "Z7",
+     "net": "+3.3V",
+     "priority": 8,
+     "keepout": null,
+     "fill_mm2": 1177.9055,
+     "holes": 36,
+     "bbox": [
+      102.1,
+      101.3,
+      163.6,
+      130.5
+     ]
+    }
+   ],
+   "splits": [
+    {
+     "nets": [
+      "+3.3V",
+      "+5V"
+     ],
+     "min_gap_mm": 0.9,
+     "boundary_mm": 47.36,
+     "bbox": [
+      100.6,
+      100.03,
+      164.95,
+      132.0
+     ],
+     "adjacent_track_crossings": [
+      {
+       "net": "/CHRG_INT",
+       "segment": "S174",
+       "layer": "B.Cu",
+       "classes": [
+        "high_dvdt"
+       ],
+       "at": [
+        104.61,
+        122.61
+       ],
+       "mm_in_gap": 1.52
+      },
+      {
+       "net": "/CHRG_INT",
+       "segment": "S176",
+       "layer": "B.Cu",
+       "classes": [
+        "high_dvdt"
+       ],
+       "at": [
+        117.2,
+        124.73
+       ],
+       "mm_in_gap": 0.6
+      },
+      {
+       "net": "/CHRG_INT",
+       "segment": "S179",
+       "layer": "B.Cu",
+       "classes": [
+        "high_dvdt"
+       ],
+       "at": [
+        103.64,
+        122.08
+       ],
+       "mm_in_gap": 0.88
+      },
+      {
+       "net": "/I2C_SCL",
+       "segment": "S569",
+       "layer": "B.Cu",
+       "classes": [
+        "signal"
+       ],
+       "at": [
+        109.07,
+        122.91
+       ],
+       "mm_in_gap": 0.02
+      },
+      {
+       "net": "/I2C_SCL",
+       "segment": "S570",
+       "layer": "B.Cu",
+       "classes": [
+        "signal"
+       ],
+       "at": [
+        110.38,
+        122.9
+       ],
+       "mm_in_gap": 2.6
+      },
+      {
+       "net": "/I2C_SCL",
+       "segment": "S574",
+       "layer": "B.Cu",
+       "classes": [
+        "signal"
+       ],
+       "at": [
+        112.11,
+        122.48
+       ],
+       "mm_in_gap": 1.19
+      },
+      {
+       "net": "/I2C_SCL",
+       "segment": "S576",
+       "layer": "B.Cu",
+       "classes": [
+        "signal"
+       ],
+       "at": [
+        107.58,
+        122.91
+       ],
+       "mm_in_gap": 2.97
+      },
+      {
+       "net": "/I2C_SDA",
+       "segment": "S539",
+       "layer": "B.Cu",
+       "classes": [
+        "signal"
+       ],
+       "at": [
+        105.38,
+        122.18
+       ],
+       "mm_in_gap": 0.02
+      },
+      {
+       "net": "/I2C_SDA",
+       "segment": "S541",
+       "layer": "B.Cu",
+       "classes": [
+        "signal"
+       ],
+       "at": [
+        108.39,
+        122.17
+       ],
+       "mm_in_gap": 6.01
+      },
+      {
+       "net": "/I2C_SDA",
+       "segment": "S542",
+       "layer": "B.Cu",
+       "classes": [
+        "signal"
+       ],
+       "at": [
+        111.45,
+        122.12
+       ],
+       "mm_in_gap": 0.16
+      },
+      {
+       "net": "/LED_DATA",
+       "segment": "S25",
+       "layer": "B.Cu",
+       "classes": [
+        "high_dvdt"
+       ],
+       "at": [
+        130.4,
+        131.45
+       ],
+       "mm_in_gap": 1.1
+      },
+      {
+       "net": "/Power Management/BQ_TS",
+       "segment": "S833",
+       "layer": "B.Cu",
+       "classes": [
+        "signal"
+       ],
+       "at": [
+        100.95,
+        110.88
+       ],
+       "mm_in_gap": 1.0
+      },
+      {
+       "net": "/Power Management/BQ_TS",
+       "segment": "S834",
+       "layer": "B.Cu",
+       "classes": [
+        "signal"
+       ],
+       "at": [
+        101.3,
+        111.23
+       ],
+       "mm_in_gap": 0.01
+      },
+      {
+       "net": "/TCA_RESET",
+       "segment": "S151",
+       "layer": "B.Cu",
+       "classes": [
+        "signal"
+       ],
+       "at": [
+        141.92,
+        119.55
+       ],
+       "mm_in_gap": 0.7
+      },
+      {
+       "net": "/USB_DN",
+       "segment": "S55",
+       "layer": "B.Cu",
+       "classes": [
+        "high_dvdt"
+       ],
+       "at": [
+        117.54,
+        131.16
+       ],
+       "mm_in_gap": 0.73
+      },
+      {
+       "net": "/USB_DP",
+       "segment": "S140",
+       "layer": "B.Cu",
+       "classes": [
+        "high_dvdt"
+       ],
+       "at": [
+        118.09,
+        131.32
+       ],
+       "mm_in_gap": 1.2
+      },
+      {
+       "net": "GND",
+       "segment": "S396",
+       "layer": "B.Cu",
+       "classes": [
+        "high_current"
+       ],
+       "at": [
+        158.68,
+        127.38
+       ],
+       "mm_in_gap": 1.71
+      },
+      {
+       "net": "GND",
+       "segment": "S398",
+       "layer": "B.Cu",
+       "classes": [
+        "high_current"
+       ],
+       "at": [
+        159.32,
+        127.79
+       ],
+       "mm_in_gap": 1.43
+      },
+      {
+       "net": "GND",
+       "segment": "S400",
+       "layer": "B.Cu",
+       "classes": [
+        "high_current"
+       ],
+       "at": [
+        159.53,
+        126.87
+       ],
+       "mm_in_gap": 0.59
+      },
+      {
+       "net": "GND",
+       "segment": "S401",
+       "layer": "B.Cu",
+       "classes": [
+        "high_current"
+       ],
+       "at": [
+        159.75,
+        128.17
+       ],
+       "mm_in_gap": 0.9
+      },
+      {
+       "net": "GND",
+       "segment": "S407",
+       "layer": "B.Cu",
+       "classes": [
+        "high_current"
+       ],
+       "at": [
+        160.81,
+        127.85
+       ],
+       "mm_in_gap": 1.48
+      },
+      {
+       "net": "GND",
+       "segment": "S408",
+       "layer": "B.Cu",
+       "classes": [
+        "high_current"
+       ],
+       "at": [
+        159.32,
+        128.21
+       ],
+       "mm_in_gap": 0.57
+      },
+      {
+       "net": "GND",
+       "segment": "S409",
+       "layer": "B.Cu",
+       "classes": [
+        "high_current"
+       ],
+       "at": [
+        157.5,
+        128.05
+       ],
+       "mm_in_gap": 0.7
+      },
+      {
+       "net": "GND",
+       "segment": "S410",
+       "layer": "B.Cu",
+       "classes": [
+        "high_current"
+       ],
+       "at": [
+        159.36,
+        127.89
+       ],
+       "mm_in_gap": 0.11
+      },
+      {
+       "net": "GND",
+       "segment": "S412",
+       "layer": "B.Cu",
+       "classes": [
+        "high_current"
+       ],
+       "at": [
+        159.32,
+        128.26
+       ],
+       "mm_in_gap": 0.48
+      }
+     ]
+    }
+   ],
+   "voids": [
+    {
+     "kind": "split gap",
+     "fills_touched": [
+      "+3.3V",
+      "+5V"
+     ],
+     "area_mm2": 215.19,
+     "mean_width_mm": 1.19,
+     "bbox": [
+      96.95,
+      102.0,
+      162.9,
+      133.04
+     ],
+     "at": [
+      101.14,
+      117.53
+     ],
+     "in_keepout": false,
+     "nets_crossing_on_adjacent_layers": [
+      "/CHRG_INT",
+      "/I2C_SCL",
+      "/I2C_SDA",
+      "/LED_DATA",
+      "/Power Management/BQ_TS",
+      "/Power Management/VBAT",
+      "/Power Management/VSYS",
+      "/TCA_RESET",
+      "/USB_DN",
+      "/USB_DP",
+      "GND"
+     ]
+    },
+    {
+     "kind": "void",
+     "fills_touched": [
+      "+3.3V"
+     ],
+     "area_mm2": 108.22,
+     "mean_width_mm": 4.32,
+     "bbox": [
+      121.0,
+      102.0,
+      140.5,
+      107.6
+     ],
+     "at": [
+      130.75,
+      104.52
+     ],
+     "in_keepout": true,
+     "nets_crossing_on_adjacent_layers": []
+    },
+    {
+     "kind": "void",
+     "fills_touched": [
+      "+3.3V"
+     ],
+     "area_mm2": 1.18,
+     "mean_width_mm": 0.32,
+     "bbox": [
+      115.26,
+      102.0,
+      116.56,
+      103.55
+     ],
+     "at": [
+      116.37,
+      102.77
+     ],
+     "in_keepout": false,
+     "nets_crossing_on_adjacent_layers": []
+    }
+   ],
+   "antipads": {
+    "count": 106,
+    "area_mm2": 206.95,
+    "clusters": [
+     {
+      "net": "+3.3V",
+      "area_mm2": 13.67,
+      "drills": 9,
+      "bbox": [
+       127.69,
+       114.58,
+       131.7,
+       118.58
+      ]
+     },
+     {
+      "net": "+5V",
+      "area_mm2": 8.45,
+      "drills": 10,
+      "bbox": [
+       101.34,
+       128.61,
+       105.19,
+       133.2
+      ]
+     },
+     {
+      "net": "+5V",
+      "area_mm2": 6.58,
+      "drills": 1,
+      "bbox": [
+       82.05,
+       135.15,
+       84.95,
+       138.05
+      ]
+     },
+     {
+      "net": "+5V",
+      "area_mm2": 6.54,
+      "drills": 4,
+      "bbox": [
+       81.31,
+       114.51,
+       84.99,
+       117.37
+      ]
+     },
+     {
+      "net": "+3.3V",
+      "area_mm2": 5.68,
+      "drills": 5,
+      "bbox": [
+       114.96,
+       104.85,
+       118.2,
+       107.35
+      ]
+     },
+     {
+      "net": "+5V",
+      "area_mm2": 5.55,
+      "drills": 3,
+      "bbox": [
+       81.31,
+       121.92,
+       84.43,
+       124.77
+      ]
+     },
+     {
+      "net": "+5V",
+      "area_mm2": 5.4,
+      "drills": 3,
+      "bbox": [
+       77.23,
+       112.86,
+       79.65,
+       116.11
+      ]
+     },
+     {
+      "net": "+5V",
+      "area_mm2": 3.45,
+      "drills": 3,
+      "bbox": [
+       136.79,
+       135.75,
+       138.99,
+       138.75
+      ]
+     },
+     {
+      "net": "+5V",
+      "area_mm2": 3.29,
+      "drills": 3,
+      "bbox": [
+       153.49,
+       128.8,
+       155.88,
+       131.38
+      ]
+     },
+     {
+      "net": "+5V",
+      "area_mm2": 3.22,
+      "drills": 3,
+      "bbox": [
+       92.15,
+       116.61,
+       94.58,
+       119.2
+      ]
+     },
+     {
+      "net": "+3.3V",
+      "area_mm2": 3.18,
+      "drills": 3,
+      "bbox": [
+       154.66,
+       109.59,
+       155.96,
+       112.7
+      ]
+     },
+     {
+      "net": "+3.3V",
+      "area_mm2": 3.14,
+      "drills": 3,
+      "bbox": [
+       153.16,
+       102.39,
+       155.86,
+       104.3
+      ]
+     },
+     {
+      "net": "+5V",
+      "area_mm2": 3.12,
+      "drills": 3,
+      "bbox": [
+       143.99,
+       129.96,
+       146.09,
+       132.16
+      ]
+     },
+     {
+      "net": "+5V",
+      "area_mm2": 3.11,
+      "drills": 3,
+      "bbox": [
+       93.6,
+       113.67,
+       96.58,
+       115.66
+      ]
+     },
+     {
+      "net": "+5V",
+      "area_mm2": 3.11,
+      "drills": 2,
+      "bbox": [
+       79.92,
+       118.2,
+       81.32,
+       121.23
+      ]
+     },
+     {
+      "net": "+5V",
+      "area_mm2": 3.1,
+      "drills": 3,
+      "bbox": [
+       84.39,
+       129.05,
+       86.71,
+       131.13
+      ]
+     },
+     {
+      "net": "+5V",
+      "area_mm2": 3.02,
+      "drills": 2,
+      "bbox": [
+       122.16,
+       133.57,
+       124.56,
+       135.67
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "layer": "B.Cu",
+   "is_plane": false,
+   "fill_share_of_outline": 0.0,
+   "adjacent_layers": [
+    [
+     "In2.Cu",
+     0.1
+    ]
+   ],
+   "owners": [
+    {
+     "net": "GND",
+     "fill_mm2": 0.0,
+     "all_copper_mm2": 87.13,
+     "share_of_outline": 0.0257
+    },
+    {
+     "net": "/Power Management/BAT_RAW",
+     "fill_mm2": 0.0,
+     "all_copper_mm2": 58.8,
+     "share_of_outline": 0.0173
+    },
+    {
+     "net": "/USB_DN",
+     "fill_mm2": 0.0,
+     "all_copper_mm2": 16.7,
+     "share_of_outline": 0.0049
+    },
+    {
+     "net": "/Power Management/VBAT",
+     "fill_mm2": 0.0,
+     "all_copper_mm2": 13.42,
+     "share_of_outline": 0.004
+    },
+    {
+     "net": "/USB_DP",
+     "fill_mm2": 0.0,
+     "all_copper_mm2": 13.4,
+     "share_of_outline": 0.0039
+    },
+    {
+     "net": "/I2C_SCL",
+     "fill_mm2": 0.0,
+     "all_copper_mm2": 11.08,
+     "share_of_outline": 0.0033
+    },
+    {
+     "net": "/I2C_SDA",
+     "fill_mm2": 0.0,
+     "all_copper_mm2": 9.99,
+     "share_of_outline": 0.0029
+    },
+    {
+     "net": "+3.3V",
+     "fill_mm2": 0.0,
+     "all_copper_mm2": 8.75,
+     "share_of_outline": 0.0026
+    },
+    {
+     "net": "/CHRG_INT",
+     "fill_mm2": 0.0,
+     "all_copper_mm2": 8.66,
+     "share_of_outline": 0.0026
+    },
+    {
+     "net": "/TCA_RESET",
+     "fill_mm2": 0.0,
+     "all_copper_mm2": 6.42,
+     "share_of_outline": 0.0019
+    },
+    {
+     "net": "/Power Management/VSYS_SENSE",
+     "fill_mm2": 0.0,
+     "all_copper_mm2": 5.23,
+     "share_of_outline": 0.0015
+    },
+    {
+     "net": "/LED_DATA",
+     "fill_mm2": 0.0,
+     "all_copper_mm2": 5.0,
+     "share_of_outline": 0.0015
+    },
+    {
+     "net": "/Power Management/VSYS",
+     "fill_mm2": 0.0,
+     "all_copper_mm2": 4.96,
+     "share_of_outline": 0.0015
+    },
+    {
+     "net": "+5V",
+     "fill_mm2": 0.0,
+     "all_copper_mm2": 3.26,
+     "share_of_outline": 0.001
+    },
+    {
+     "net": "/Power Management/BQ_TS",
+     "fill_mm2": 0.0,
+     "all_copper_mm2": 3.26,
+     "share_of_outline": 0.001
+    },
+    {
+     "net": "/Power Management/BQ_PMID",
+     "fill_mm2": 0.0,
+     "all_copper_mm2": 3.21,
+     "share_of_outline": 0.0009
+    },
+    {
+     "net": "/Power Management/Protected_VBUS",
+     "fill_mm2": 0.0,
+     "all_copper_mm2": 3.2,
+     "share_of_outline": 0.0009
+    },
+    {
+     "net": "/LED Controller/DATA_TO_LEDS",
+     "fill_mm2": 0.0,
+     "all_copper_mm2": 2.36,
+     "share_of_outline": 0.0007
+    },
+    {
+     "net": "/Power Management/BQ_REGN",
+     "fill_mm2": 0.0,
+     "all_copper_mm2": 2.14,
+     "share_of_outline": 0.0006
+    },
+    {
+     "net": "/Power Management/BOOST_FSW",
+     "fill_mm2": 0.0,
+     "all_copper_mm2": 1.5,
+     "share_of_outline": 0.0004
+    },
+    {
+     "net": "/Power Management/BQ_BTST",
+     "fill_mm2": 0.0,
+     "all_copper_mm2": 0.96,
+     "share_of_outline": 0.0003
+    }
+   ],
+   "zones": [
+    {
+     "id": "Z4",
+     "net": null,
+     "priority": 0,
+     "keepout": {
+      "tracks": "not_allowed",
+      "vias": "not_allowed",
+      "pads": "not_allowed",
+      "copperpour": "not_allowed",
+      "footprints": "allowed"
+     },
+     "fill_mm2": 0.0,
+     "holes": 0,
+     "bbox": null
+    }
+   ],
+   "splits": [],
+   "voids": [],
+   "antipads": {}
+  }
+ ],
+ "unreferenced": {
+  "per_net": {
+   "/CHRG_INT": {
+    "classes": [
+     "high_dvdt"
+    ],
+    "track_mm": 42.75,
+    "over_raw": {
+     "+3.3V": 14.85,
+     "+5V": 10.1,
+     "GND": 8.36
+    },
+    "none_raw_mm": 9.44,
+    "none_antipads_excl_mm": 4.8
+   },
+   "/ESP32_S3/EN": {
+    "classes": [
+     "signal"
+    ],
+    "track_mm": 24.21,
+    "over_raw": {
+     "GND": 23.26
+    },
+    "none_raw_mm": 0.95,
+    "none_antipads_excl_mm": 0.0
+   },
+   "/ESP32_S3/GPIO0_BOOT": {
+    "classes": [
+     "signal"
+    ],
+    "track_mm": 6.26,
+    "over_raw": {
+     "GND": 6.26
+    },
+    "none_raw_mm": 0.0,
+    "none_antipads_excl_mm": 0.0
+   },
+   "/ESP32_S3/USB_DN_MCU": {
+    "classes": [
+     "high_dvdt"
+    ],
+    "track_mm": 1.82,
+    "over_raw": {
+     "GND": 1.82
+    },
+    "none_raw_mm": 0.0,
+    "none_antipads_excl_mm": 0.0
+   },
+   "/ESP32_S3/USB_DP_MCU": {
+    "classes": [
+     "high_dvdt"
+    ],
+    "track_mm": 2.18,
+    "over_raw": {
+     "GND": 2.18
+    },
+    "none_raw_mm": 0.0,
+    "none_antipads_excl_mm": 0.0
+   },
+   "/I2C_SCL": {
+    "classes": [
+     "signal"
+    ],
+    "track_mm": 73.3,
+    "over_raw": {
+     "+3.3V": 29.85,
+     "GND": 29.13
+    },
+    "none_raw_mm": 14.32,
+    "none_antipads_excl_mm": 6.78
+   },
+   "/I2C_SDA": {
+    "classes": [
+     "signal"
+    ],
+    "track_mm": 72.9,
+    "over_raw": {
+     "GND": 30.71,
+     "+3.3V": 28.94
+    },
+    "none_raw_mm": 13.25,
+    "none_antipads_excl_mm": 6.19
+   },
+   "/LED Controller/DATA_TO_LEDS": {
+    "classes": [
+     "high_dvdt"
+    ],
+    "track_mm": 11.83,
+    "over_raw": {
+     "+5V": 6.52,
+     "GND": 2.44
+    },
+    "none_raw_mm": 2.86,
+    "none_antipads_excl_mm": 0.0
+   },
+   "/LED_DATA": {
+    "classes": [
+     "high_dvdt"
+    ],
+    "track_mm": 42.07,
+    "over_raw": {
+     "GND": 20.5,
+     "+5V": 9.67,
+     "+3.3V": 5.47
+    },
+    "none_raw_mm": 6.44,
+    "none_antipads_excl_mm": 2.6
+   },
+   "/Power Management/BOOST_BOOT": {
+    "classes": [
+     "signal"
+    ],
+    "track_mm": 3.57,
+    "over_raw": {
+     "GND": 2.57
+    },
+    "none_raw_mm": 1.0,
+    "none_antipads_excl_mm": 0.0
+   },
+   "/Power Management/BOOST_COMP": {
+    "classes": [
+     "signal"
+    ],
+    "track_mm": 5.89,
+    "over_raw": {
+     "GND": 5.89
+    },
+    "none_raw_mm": 0.0,
+    "none_antipads_excl_mm": 0.0
+   },
+   "/Power Management/BOOST_FB": {
+    "classes": [
+     "signal"
+    ],
+    "track_mm": 5.69,
+    "over_raw": {
+     "GND": 5.69
+    },
+    "none_raw_mm": 0.0,
+    "none_antipads_excl_mm": 0.0
+   },
+   "/Power Management/BOOST_FSW": {
+    "classes": [
+     "signal"
+    ],
+    "track_mm": 7.55,
+    "over_raw": {
+     "+5V": 5.21,
+     "GND": 0.49
+    },
+    "none_raw_mm": 1.85,
+    "none_antipads_excl_mm": 0.0
+   },
+   "/Power Management/BOOST_ILIM": {
+    "classes": [
+     "signal"
+    ],
+    "track_mm": 4.38,
+    "over_raw": {
+     "GND": 4.38
+    },
+    "none_raw_mm": 0.0,
+    "none_antipads_excl_mm": 0.0
+   },
+   "/Power Management/BOOST_SS": {
+    "classes": [
+     "signal"
+    ],
+    "track_mm": 5.07,
+    "over_raw": {
+     "GND": 5.07
+    },
+    "none_raw_mm": 0.0,
+    "none_antipads_excl_mm": 0.0
+   },
+   "/Power Management/BOOST_VCC": {
+    "classes": [
+     "signal"
+    ],
+    "track_mm": 3.76,
+    "over_raw": {
+     "GND": 3.76
+    },
+    "none_raw_mm": 0.0,
+    "none_antipads_excl_mm": 0.0
+   },
+   "/Power Management/BQ_BTST": {
+    "classes": [
+     "signal"
+    ],
+    "track_mm": 4.71,
+    "over_raw": {
+     "+5V": 1.88,
+     "GND": 0.17
+    },
+    "none_raw_mm": 2.67,
+    "none_antipads_excl_mm": 0.0
+   },
+   "/Power Management/BQ_ILIM": {
+    "classes": [
+     "signal"
+    ],
+    "track_mm": 1.92,
+    "over_raw": {
+     "GND": 1.92
+    },
+    "none_raw_mm": 0.0,
+    "none_antipads_excl_mm": 0.0
+   },
+   "/Power Management/BQ_REGN": {
+    "classes": [
+     "signal"
+    ],
+    "track_mm": 14.69,
+    "over_raw": {
+     "+5V": 5.66,
+     "GND": 5.32
+    },
+    "none_raw_mm": 3.7,
+    "none_antipads_excl_mm": 0.0
+   },
+   "/Power Management/BQ_TS": {
+    "classes": [
+     "signal"
+    ],
+    "track_mm": 26.75,
+    "over_raw": {
+     "GND": 11.16,
+     "+5V": 9.08
+    },
+    "none_raw_mm": 6.52,
+    "none_antipads_excl_mm": 1.71
+   },
+   "/Power Management/CC1": {
+    "classes": [
+     "signal"
+    ],
+    "track_mm": 5.68,
+    "over_raw": {
+     "GND": 5.68
+    },
+    "none_raw_mm": 0.0,
+    "none_antipads_excl_mm": 0.0
+   },
+   "/Power Management/CC2": {
+    "classes": [
+     "signal"
+    ],
+    "track_mm": 6.34,
+    "over_raw": {
+     "GND": 5.28
+    },
+    "none_raw_mm": 1.05,
+    "none_antipads_excl_mm": 0.0
+   },
+   "/Power Management/COMP_MID": {
+    "classes": [
+     "signal"
+    ],
+    "track_mm": 1.55,
+    "over_raw": {
+     "GND": 1.55
+    },
+    "none_raw_mm": 0.0,
+    "none_antipads_excl_mm": 0.0
+   },
+   "/Power Management/OTG_BIAS": {
+    "classes": [
+     "signal"
+    ],
+    "track_mm": 2.38,
+    "over_raw": {
+     "GND": 2.38
+    },
+    "none_raw_mm": 0.0,
+    "none_antipads_excl_mm": 0.0
+   },
+   "/Power Management/PMOS_GATE": {
+    "classes": [
+     "signal"
+    ],
+    "track_mm": 7.13,
+    "over_raw": {
+     "GND": 7.13
+    },
+    "none_raw_mm": 0.0,
+    "none_antipads_excl_mm": 0.0
+   },
+   "/TCA9548A_Subsystem/CH0_SCL": {
+    "classes": [
+     "signal"
+    ],
+    "track_mm": 14.9,
+    "over_raw": {
+     "GND": 14.9
+    },
+    "none_raw_mm": 0.0,
+    "none_antipads_excl_mm": 0.0
+   },
+   "/TCA9548A_Subsystem/CH0_SDA": {
+    "classes": [
+     "signal"
+    ],
+    "track_mm": 14.62,
+    "over_raw": {
+     "GND": 14.62
+    },
+    "none_raw_mm": 0.0,
+    "none_antipads_excl_mm": 0.0
+   },
+   "/TCA9548A_Subsystem/CH1_SCL": {
+    "classes": [
+     "signal"
+    ],
+    "track_mm": 7.55,
+    "over_raw": {
+     "GND": 7.55
+    },
+    "none_raw_mm": 0.0,
+    "none_antipads_excl_mm": 0.0
+   },
+   "/TCA9548A_Subsystem/CH1_SDA": {
+    "classes": [
+     "signal"
+    ],
+    "track_mm": 8.36,
+    "over_raw": {
+     "GND": 8.36
+    },
+    "none_raw_mm": 0.0,
+    "none_antipads_excl_mm": 0.0
+   },
+   "/TCA9548A_Subsystem/CH2_SCL": {
+    "classes": [
+     "signal"
+    ],
+    "track_mm": 5.89,
+    "over_raw": {
+     "GND": 5.89
+    },
+    "none_raw_mm": 0.0,
+    "none_antipads_excl_mm": 0.0
+   },
+   "/TCA9548A_Subsystem/CH2_SDA": {
+    "classes": [
+     "signal"
+    ],
+    "track_mm": 5.75,
+    "over_raw": {
+     "GND": 5.75
+    },
+    "none_raw_mm": 0.0,
+    "none_antipads_excl_mm": 0.0
+   },
+   "/TCA_RESET": {
+    "classes": [
+     "signal"
+    ],
+    "track_mm": 40.82,
+    "over_raw": {
+     "+3.3V": 14.98,
+     "GND": 14.83,
+     "+5V": 1.06
+    },
+    "none_raw_mm": 9.95,
+    "none_antipads_excl_mm": 4.55
+   },
+   "/USB_DN": {
+    "classes": [
+     "high_dvdt"
+    ],
+    "track_mm": 69.62,
+    "over_raw": {
+     "+5V": 39.93,
+     "GND": 13.68,
+     "+3.3V": 4.5
+    },
+    "none_raw_mm": 11.5,
+    "none_antipads_excl_mm": 3.52
+   },
+   "/USB_DP": {
+    "classes": [
+     "high_dvdt"
+    ],
+    "track_mm": 73.0,
+    "over_raw": {
+     "+5V": 38.37,
+     "GND": 23.29,
+     "+3.3V": 1.88
+    },
+    "none_raw_mm": 9.46,
+    "none_antipads_excl_mm": 2.69
+   },
+   "Net-(D1-A)": {
+    "classes": [
+     "signal"
+    ],
+    "track_mm": 1.74,
+    "over_raw": {
+     "GND": 1.74
+    },
+    "none_raw_mm": 0.0,
+    "none_antipads_excl_mm": 0.0
+   }
+  },
+  "per_segment": [
+   {
+    "net": "/I2C_SDA",
+    "segment": "S541",
+    "layer": "B.Cu",
+    "plane_layer": "In2.Cu",
+    "length_mm": 6.01,
+    "none_raw_mm": 6.01,
+    "none_antipads_excl_mm": 6.01,
+    "over": {}
+   },
+   {
+    "net": "/I2C_SCL",
+    "segment": "S576",
+    "layer": "B.Cu",
+    "plane_layer": "In2.Cu",
+    "length_mm": 2.97,
+    "none_raw_mm": 2.97,
+    "none_antipads_excl_mm": 2.97,
+    "over": {}
+   },
+   {
+    "net": "/USB_DN",
+    "segment": "S55",
+    "layer": "B.Cu",
+    "plane_layer": "In2.Cu",
+    "length_mm": 11.24,
+    "none_raw_mm": 2.97,
+    "none_antipads_excl_mm": 2.97,
+    "over": {
+     "+3.3V": 0.78,
+     "+5V": 7.5
+    }
+   },
+   {
+    "net": "/USB_DP",
+    "segment": "S140",
+    "layer": "B.Cu",
+    "plane_layer": "In2.Cu",
+    "length_mm": 11.77,
+    "none_raw_mm": 2.69,
+    "none_antipads_excl_mm": 2.69,
+    "over": {
+     "+3.3V": 0.88,
+     "+5V": 8.21
+    }
+   },
+   {
+    "net": "/I2C_SCL",
+    "segment": "S570",
+    "layer": "B.Cu",
+    "plane_layer": "In2.Cu",
+    "length_mm": 2.6,
+    "none_raw_mm": 2.6,
+    "none_antipads_excl_mm": 2.6,
+    "over": {}
+   },
+   {
+    "net": "/CHRG_INT",
+    "segment": "S176",
+    "layer": "B.Cu",
+    "plane_layer": "In2.Cu",
+    "length_mm": 18.38,
+    "none_raw_mm": 3.1,
+    "none_antipads_excl_mm": 2.4,
+    "over": {
+     "+3.3V": 13.38,
+     "+5V": 1.9
+    }
+   },
+   {
+    "net": "/TCA_RESET",
+    "segment": "S155",
+    "layer": "B.Cu",
+    "plane_layer": "In2.Cu",
+    "length_mm": 3.82,
+    "none_raw_mm": 2.52,
+    "none_antipads_excl_mm": 1.92,
+    "over": {
+     "+3.3V": 1.3
+    }
+   },
+   {
+    "net": "/LED_DATA",
+    "segment": "S25",
+    "layer": "B.Cu",
+    "plane_layer": "In2.Cu",
+    "length_mm": 4.65,
+    "none_raw_mm": 1.75,
+    "none_antipads_excl_mm": 1.75,
+    "over": {
+     "+3.3V": 2.9
+    }
+   },
+   {
+    "net": "/Power Management/BQ_TS",
+    "segment": "S833",
+    "layer": "B.Cu",
+    "plane_layer": "In2.Cu",
+    "length_mm": 1.89,
+    "none_raw_mm": 1.7,
+    "none_antipads_excl_mm": 1.7,
+    "over": {
+     "+5V": 0.18
+    }
+   },
+   {
+    "net": "/CHRG_INT",
+    "segment": "S174",
+    "layer": "B.Cu",
+    "plane_layer": "In2.Cu",
+    "length_mm": 2.35,
+    "none_raw_mm": 1.52,
+    "none_antipads_excl_mm": 1.52,
+    "over": {
+     "+5V": 0.83
+    }
+   },
+   {
+    "net": "/TCA_RESET",
+    "segment": "S151",
+    "layer": "B.Cu",
+    "plane_layer": "In2.Cu",
+    "length_mm": 2.02,
+    "none_raw_mm": 1.5,
+    "none_antipads_excl_mm": 1.5,
+    "over": {
+     "+5V": 0.52
+    }
+   },
+   {
+    "net": "/I2C_SCL",
+    "segment": "S574",
+    "layer": "B.Cu",
+    "plane_layer": "In2.Cu",
+    "length_mm": 3.01,
+    "none_raw_mm": 1.79,
+    "none_antipads_excl_mm": 1.19,
+    "over": {
+     "+3.3V": 1.22
+    }
+   },
+   {
+    "net": "/TCA_RESET",
+    "segment": "S153",
+    "layer": "B.Cu",
+    "plane_layer": "In2.Cu",
+    "length_mm": 9.58,
+    "none_raw_mm": 1.13,
+    "none_antipads_excl_mm": 1.13,
+    "over": {
+     "+3.3V": 8.45
+    }
+   },
+   {
+    "net": "/CHRG_INT",
+    "segment": "S179",
+    "layer": "B.Cu",
+    "plane_layer": "In2.Cu",
+    "length_mm": 0.88,
+    "none_raw_mm": 0.88,
+    "none_antipads_excl_mm": 0.88,
+    "over": {}
+   },
+   {
+    "net": "/LED_DATA",
+    "segment": "S23",
+    "layer": "B.Cu",
+    "plane_layer": "In2.Cu",
+    "length_mm": 1.0,
+    "none_raw_mm": 0.64,
+    "none_antipads_excl_mm": 0.64,
+    "over": {
+     "+5V": 0.36
+    }
+   },
+   {
+    "net": "/USB_DN",
+    "segment": "S67",
+    "layer": "B.Cu",
+    "plane_layer": "In2.Cu",
+    "length_mm": 4.2,
+    "none_raw_mm": 0.48,
+    "none_antipads_excl_mm": 0.48,
+    "over": {
+     "+3.3V": 3.72
+    }
+   },
+   {
+    "net": "/LED_DATA",
+    "segment": "S27",
+    "layer": "B.Cu",
+    "plane_layer": "In2.Cu",
+    "length_mm": 0.92,
+    "none_raw_mm": 0.21,
+    "none_antipads_excl_mm": 0.21,
+    "over": {
+     "+5V": 0.71
+    }
+   },
+   {
+    "net": "/I2C_SDA",
+    "segment": "S542",
+    "layer": "B.Cu",
+    "plane_layer": "In2.Cu",
+    "length_mm": 4.24,
+    "none_raw_mm": 0.43,
+    "none_antipads_excl_mm": 0.16,
+    "over": {
+     "+3.3V": 3.81
+    }
+   },
+   {
+    "net": "/USB_DN",
+    "segment": "S57",
+    "layer": "B.Cu",
+    "plane_layer": "In2.Cu",
+    "length_mm": 0.07,
+    "none_raw_mm": 0.07,
+    "none_antipads_excl_mm": 0.07,
+    "over": {}
+   },
+   {
+    "net": "/I2C_SCL",
+    "segment": "S569",
+    "layer": "B.Cu",
+    "plane_layer": "In2.Cu",
+    "length_mm": 0.02,
+    "none_raw_mm": 0.02,
+    "none_antipads_excl_mm": 0.02,
+    "over": {}
+   },
+   {
+    "net": "/I2C_SDA",
+    "segment": "S539",
+    "layer": "B.Cu",
+    "plane_layer": "In2.Cu",
+    "length_mm": 0.02,
+    "none_raw_mm": 0.02,
+    "none_antipads_excl_mm": 0.02,
+    "over": {}
+   },
+   {
+    "net": "/Power Management/BQ_TS",
+    "segment": "S834",
+    "layer": "B.Cu",
+    "plane_layer": "In2.Cu",
+    "length_mm": 0.01,
+    "none_raw_mm": 0.01,
+    "none_antipads_excl_mm": 0.01,
+    "over": {}
+   },
+   {
+    "net": "/CHRG_INT",
+    "segment": "S162",
+    "layer": "F.Cu",
+    "plane_layer": "In1.Cu",
+    "length_mm": 0.42,
+    "none_raw_mm": 0.42,
+    "none_antipads_excl_mm": 0.0,
+    "over": {}
+   },
+   {
+    "net": "/CHRG_INT",
+    "segment": "S163",
+    "layer": "F.Cu",
+    "plane_layer": "In1.Cu",
+    "length_mm": 0.33,
+    "none_raw_mm": 0.33,
+    "none_antipads_excl_mm": 0.0,
+    "over": {}
+   },
+   {
+    "net": "/CHRG_INT",
+    "segment": "S164",
+    "layer": "F.Cu",
+    "plane_layer": "In1.Cu",
+    "length_mm": 1.71,
+    "none_raw_mm": 0.22,
+    "none_antipads_excl_mm": 0.0,
+    "over": {
+     "GND": 1.49
+    }
+   },
+   {
+    "net": "/CHRG_INT",
+    "segment": "S166",
+    "layer": "F.Cu",
+    "plane_layer": "In1.Cu",
+    "length_mm": 1.16,
+    "none_raw_mm": 0.8,
+    "none_antipads_excl_mm": 0.0,
+    "over": {
+     "GND": 0.36
+    }
+   },
+   {
+    "net": "/CHRG_INT",
+    "segment": "S169",
+    "layer": "F.Cu",
+    "plane_layer": "In1.Cu",
+    "length_mm": 2.51,
+    "none_raw_mm": 0.64,
+    "none_antipads_excl_mm": 0.0,
+    "over": {
+     "GND": 1.87
+    }
+   },
+   {
+    "net": "/CHRG_INT",
+    "segment": "S170",
+    "layer": "F.Cu",
+    "plane_layer": "In1.Cu",
+    "length_mm": 0.21,
+    "none_raw_mm": 0.21,
+    "none_antipads_excl_mm": 0.0,
+    "over": {}
+   },
+   {
+    "net": "/CHRG_INT",
+    "segment": "S171",
+    "layer": "B.Cu",
+    "plane_layer": "In2.Cu",
+    "length_mm": 5.37,
+    "none_raw_mm": 0.7,
+    "none_antipads_excl_mm": 0.0,
+    "over": {
+     "+5V": 4.67
+    }
+   },
+   {
+    "net": "/CHRG_INT",
+    "segment": "S172",
+    "layer": "B.Cu",
+    "plane_layer": "In2.Cu",
+    "length_mm": 0.1,
+    "none_raw_mm": 0.1,
+    "none_antipads_excl_mm": 0.0,
+    "over": {}
+   },
+   {
+    "net": "/CHRG_INT",
+    "segment": "S177",
+    "layer": "B.Cu",
+    "plane_layer": "In2.Cu",
+    "length_mm": 0.9,
+    "none_raw_mm": 0.53,
+    "none_antipads_excl_mm": 0.0,
+    "over": {
+     "+3.3V": 0.38
+    }
+   },
+   {
+    "net": "/ESP32_S3/EN",
+    "segment": "S2",
+    "layer": "F.Cu",
+    "plane_layer": "In1.Cu",
+    "length_mm": 3.73,
+    "none_raw_mm": 0.95,
+    "none_antipads_excl_mm": 0.0,
+    "over": {
+     "GND": 2.78
+    }
+   },
+   {
+    "net": "/I2C_SCL",
+    "segment": "S547",
+    "layer": "F.Cu",
+    "plane_layer": "In1.Cu",
+    "length_mm": 1.97,
+    "none_raw_mm": 1.27,
+    "none_antipads_excl_mm": 0.0,
+    "over": {
+     "GND": 0.71
+    }
+   },
+   {
+    "net": "/I2C_SCL",
+    "segment": "S548",
+    "layer": "F.Cu",
+    "plane_layer": "In1.Cu",
+    "length_mm": 1.54,
+    "none_raw_mm": 0.54,
+    "none_antipads_excl_mm": 0.0,
+    "over": {
+     "GND": 1.0
+    }
+   },
+   {
+    "net": "/I2C_SCL",
+    "segment": "S549",
+    "layer": "F.Cu",
+    "plane_layer": "In1.Cu",
+    "length_mm": 1.31,
+    "none_raw_mm": 0.8,
+    "none_antipads_excl_mm": 0.0,
+    "over": {
+     "GND": 0.51
+    }
+   },
+   {
+    "net": "/I2C_SCL",
+    "segment": "S562",
+    "layer": "F.Cu",
+    "plane_layer": "In1.Cu",
+    "length_mm": 2.32,
+    "none_raw_mm": 0.8,
+    "none_antipads_excl_mm": 0.0,
+    "over": {
+     "GND": 1.52
+    }
+   },
+   {
+    "net": "/I2C_SCL",
+    "segment": "S563",
+    "layer": "F.Cu",
+    "plane_layer": "In1.Cu",
+    "length_mm": 0.33,
+    "none_raw_mm": 0.33,
+    "none_antipads_excl_mm": 0.0,
+    "over": {}
+   },
+   {
+    "net": "/I2C_SCL",
+    "segment": "S568",
+    "layer": "F.Cu",
+    "plane_layer": "In1.Cu",
+    "length_mm": 1.53,
+    "none_raw_mm": 0.8,
+    "none_antipads_excl_mm": 0.0,
+    "over": {
+     "GND": 0.73
+    }
+   },
+   {
+    "net": "/I2C_SCL",
+    "segment": "S571",
+    "layer": "B.Cu",
+    "plane_layer": "In2.Cu",
+    "length_mm": 17.11,
+    "none_raw_mm": 0.6,
+    "none_antipads_excl_mm": 0.0,
+    "over": {
+     "+3.3V": 16.51
+    }
+   },
+   {
+    "net": "/I2C_SCL",
+    "segment": "S573",
+    "layer": "B.Cu",
+    "plane_layer": "In2.Cu",
+    "length_mm": 0.65,
+    "none_raw_mm": 0.6,
+    "none_antipads_excl_mm": 0.0,
+    "over": {
+     "+3.3V": 0.05
+    }
+   },
+   {
+    "net": "/I2C_SCL",
+    "segment": "S575",
+    "layer": "B.Cu",
+    "plane_layer": "In2.Cu",
+    "length_mm": 3.6,
+    "none_raw_mm": 1.18,
+    "none_antipads_excl_mm": 0.0,
+    "over": {
+     "+3.3V": 2.42
+    }
+   },
+   {
+    "net": "/I2C_SCL",
+    "segment": "S577",
+    "layer": "B.Cu",
+    "plane_layer": "In2.Cu",
+    "length_mm": 0.03,
+    "none_raw_mm": 0.03,
+    "none_antipads_excl_mm": 0.0,
+    "over": {}
+   },
+   {
+    "net": "/I2C_SDA",
+    "segment": "S520",
+    "layer": "F.Cu",
+    "plane_layer": "In1.Cu",
+    "length_mm": 0.02,
+    "none_raw_mm": 0.02,
+    "none_antipads_excl_mm": 0.0,
+    "over": {}
+   },
+   {
+    "net": "/I2C_SDA",
+    "segment": "S521",
+    "layer": "F.Cu",
+    "plane_layer": "In1.Cu",
+    "length_mm": 1.16,
+    "none_raw_mm": 0.9,
+    "none_antipads_excl_mm": 0.0,
+    "over": {
+     "GND": 0.26
+    }
+   },
+   {
+    "net": "/I2C_SDA",
+    "segment": "S522",
+    "layer": "F.Cu",
+    "plane_layer": "In1.Cu",
+    "length_mm": 1.28,
+    "none_raw_mm": 0.19,
+    "none_antipads_excl_mm": 0.0,
+    "over": {
+     "GND": 1.09
+    }
+   },
+   {
+    "net": "/I2C_SDA",
+    "segment": "S523",
+    "layer": "F.Cu",
+    "plane_layer": "In1.Cu",
+    "length_mm": 2.17,
+    "none_raw_mm": 0.79,
+    "none_antipads_excl_mm": 0.0,
+    "over": {
+     "GND": 1.38
+    }
+   },
+   {
+    "net": "/I2C_SDA",
+    "segment": "S525",
+    "layer": "F.Cu",
+    "plane_layer": "In1.Cu",
+    "length_mm": 2.06,
+    "none_raw_mm": 0.53,
+    "none_antipads_excl_mm": 0.0,
+    "over": {
+     "GND": 1.53
+    }
+   },
+   {
+    "net": "/I2C_SDA",
+    "segment": "S528",
+    "layer": "F.Cu",
+    "plane_layer": "In1.Cu",
+    "length_mm": 3.82,
+    "none_raw_mm": 0.78,
+    "none_antipads_excl_mm": 0.0,
+    "over": {
+     "GND": 3.03
+    }
+   },
+   {
+    "net": "/I2C_SDA",
+    "segment": "S531",
+    "layer": "F.Cu",
+    "plane_layer": "In1.Cu",
+    "length_mm": 0.72,
+    "none_raw_mm": 0.19,
+    "none_antipads_excl_mm": 0.0,
+    "over": {
+     "GND": 0.53
+    }
+   },
+   {
+    "net": "/I2C_SDA",
+    "segment": "S536",
+    "layer": "F.Cu",
+    "plane_layer": "In1.Cu",
+    "length_mm": 3.28,
+    "none_raw_mm": 1.01,
+    "none_antipads_excl_mm": 0.0,
+    "over": {
+     "GND": 2.27
+    }
+   },
+   {
+    "net": "/I2C_SDA",
+    "segment": "S538",
+    "layer": "F.Cu",
+    "plane_layer": "In1.Cu",
+    "length_mm": 1.53,
+    "none_raw_mm": 0.8,
+    "none_antipads_excl_mm": 0.0,
+    "over": {
+     "GND": 0.72
+    }
+   },
+   {
+    "net": "/I2C_SDA",
+    "segment": "S540",
+    "layer": "B.Cu",
+    "plane_layer": "In2.Cu",
+    "length_mm": 9.23,
+    "none_raw_mm": 0.6,
+    "none_antipads_excl_mm": 0.0,
+    "over": {
+     "+3.3V": 8.63
+    }
+   },
+   {
+    "net": "/I2C_SDA",
+    "segment": "S543",
+    "layer": "B.Cu",
+    "plane_layer": "In2.Cu",
+    "length_mm": 0.38,
+    "none_raw_mm": 0.38,
+    "none_antipads_excl_mm": 0.0,
+    "over": {}
+   },
+   {
+    "net": "/I2C_SDA",
+    "segment": "S544",
+    "layer": "B.Cu",
+    "plane_layer": "In2.Cu",
+    "length_mm": 17.1,
+    "none_raw_mm": 0.6,
+    "none_antipads_excl_mm": 0.0,
+    "over": {
+     "+3.3V": 16.5
+    }
+   },
+   {
+    "net": "/LED Controller/DATA_TO_LEDS",
+    "segment": "S509",
+    "layer": "F.Cu",
+    "plane_layer": "In1.Cu",
+    "length_mm": 2.35,
+    "none_raw_mm": 0.8,
+    "none_antipads_excl_mm": 0.0,
+    "over": {
+     "GND": 1.55
+    }
+   },
+   {
+    "net": "/LED Controller/DATA_TO_LEDS",
+    "segment": "S510",
+    "layer": "F.Cu",
+    "plane_layer": "In1.Cu",
+    "length_mm": 0.07,
+    "none_raw_mm": 0.07,
+    "none_antipads_excl_mm": 0.0,
+    "over": {}
+   },
+   {
+    "net": "/LED Controller/DATA_TO_LEDS",
+    "segment": "S511",
+    "layer": "F.Cu",
+    "plane_layer": "In1.Cu",
+    "length_mm": 1.5,
+    "none_raw_mm": 0.75,
+    "none_antipads_excl_mm": 0.0,
+    "over": {
+     "GND": 0.75
+    }
+   },
+   {
+    "net": "/LED Controller/DATA_TO_LEDS",
+    "segment": "S513",
+    "layer": "B.Cu",
+    "plane_layer": "In2.Cu",
+    "length_mm": 0.44,
+    "none_raw_mm": 0.44,
+    "none_antipads_excl_mm": 0.0,
+    "over": {}
+   },
+   {
+    "net": "/LED Controller/DATA_TO_LEDS",
+    "segment": "S514",
+    "layer": "B.Cu",
+    "plane_layer": "In2.Cu",
+    "length_mm": 3.79,
+    "none_raw_mm": 0.2,
+    "none_antipads_excl_mm": 0.0,
+    "over": {
+     "+5V": 3.59
+    }
+   },
+   {
+    "net": "/LED Controller/DATA_TO_LEDS",
+    "segment": "S515",
+    "layer": "B.Cu",
+    "plane_layer": "In2.Cu",
+    "length_mm": 3.54,
+    "none_raw_mm": 0.6,
+    "none_antipads_excl_mm": 0.0,
+    "over": {
+     "+5V": 2.94
+    }
+   },
+   {
+    "net": "/LED_DATA",
+    "segment": "S11",
+    "layer": "F.Cu",
+    "plane_layer": "In1.Cu",
+    "length_mm": 1.0,
+    "none_raw_mm": 0.8,
+    "none_antipads_excl_mm": 0.0,
+    "over": {
+     "GND": 0.2
+    }
+   },
+   {
+    "net": "/LED_DATA",
+    "segment": "S15",
+    "layer": "F.Cu",
+    "plane_layer": "In1.Cu",
+    "length_mm": 3.34,
+    "none_raw_mm": 0.8,
+    "none_antipads_excl_mm": 0.0,
+    "over": {
+     "GND": 2.54
+    }
+   },
+   {
+    "net": "/LED_DATA",
+    "segment": "S18",
+    "layer": "F.Cu",
+    "plane_layer": "In1.Cu",
+    "length_mm": 5.41,
+    "none_raw_mm": 0.73,
+    "none_antipads_excl_mm": 0.0,
+    "over": {
+     "GND": 4.68
+    }
+   },
+   {
+    "net": "/LED_DATA",
+    "segment": "S19",
+    "layer": "F.Cu",
+    "plane_layer": "In1.Cu",
+    "length_mm": 0.11,
+    "none_raw_mm": 0.11,
+    "none_antipads_excl_mm": 0.0,
+    "over": {}
+   },
+   {
+    "net": "/LED_DATA",
+    "segment": "S20",
+    "layer": "F.Cu",
+    "plane_layer": "In1.Cu",
+    "length_mm": 1.9,
+    "none_raw_mm": 0.8,
+    "none_antipads_excl_mm": 0.0,
+    "over": {
+     "GND": 1.1
+    }
+   },
+   {
+    "net": "/LED_DATA",
+    "segment": "S28",
+    "layer": "B.Cu",
+    "plane_layer": "In2.Cu",
+    "length_mm": 3.17,
+    "none_raw_mm": 0.6,
+    "none_antipads_excl_mm": 0.0,
+    "over": {
+     "+3.3V": 2.57
+    }
+   },
+   {
+    "net": "/Power Management/BOOST_BOOT",
+    "segment": "S725",
+    "layer": "F.Cu",
+    "plane_layer": "In1.Cu",
+    "length_mm": 2.4,
+    "none_raw_mm": 1.0,
+    "none_antipads_excl_mm": 0.0,
+    "over": {
+     "GND": 1.4
+    }
+   },
+   {
+    "net": "/Power Management/BOOST_FSW",
+    "segment": "S843",
+    "layer": "F.Cu",
+    "plane_layer": "In1.Cu",
+    "length_mm": 0.33,
+    "none_raw_mm": 0.33,
+    "none_antipads_excl_mm": 0.0,
+    "over": {}
+   },
+   {
+    "net": "/Power Management/BOOST_FSW",
+    "segment": "S844",
+    "layer": "F.Cu",
+    "plane_layer": "In1.Cu",
+    "length_mm": 0.95,
+    "none_raw_mm": 0.47,
+    "none_antipads_excl_mm": 0.0,
+    "over": {
+     "GND": 0.49
+    }
+   },
+   {
+    "net": "/Power Management/BOOST_FSW",
+    "segment": "S845",
+    "layer": "B.Cu",
+    "plane_layer": "In2.Cu",
+    "length_mm": 2.42,
+    "none_raw_mm": 0.53,
+    "none_antipads_excl_mm": 0.0,
+    "over": {
+     "+5V": 1.89
+    }
+   },
+   {
+    "net": "/Power Management/BOOST_FSW",
+    "segment": "S846",
+    "layer": "B.Cu",
+    "plane_layer": "In2.Cu",
+    "length_mm": 2.76,
+    "none_raw_mm": 0.53,
+    "none_antipads_excl_mm": 0.0,
+    "over": {
+     "+5V": 2.23
+    }
+   },
+   {
+    "net": "/Power Management/BQ_BTST",
+    "segment": "S607",
+    "layer": "F.Cu",
+    "plane_layer": "In1.Cu",
+    "length_mm": 0.48,
+    "none_raw_mm": 0.48,
+    "none_antipads_excl_mm": 0.0,
+    "over": {}
+   },
+   {
+    "net": "/Power Management/BQ_BTST",
+    "segment": "S608",
+    "layer": "F.Cu",
+    "plane_layer": "In1.Cu",
+    "length_mm": 0.61,
+    "none_raw_mm": 0.54,
+    "none_antipads_excl_mm": 0.0,
+    "over": {
+     "GND": 0.08
+    }
+   },
+   {
+    "net": "/Power Management/BQ_BTST",
+    "segment": "S609",
+    "layer": "F.Cu",
+    "plane_layer": "In1.Cu",
+    "length_mm": 0.25,
+    "none_raw_mm": 0.25,
+    "none_antipads_excl_mm": 0.0,
+    "over": {}
+   },
+   {
+    "net": "/Power Management/BQ_BTST",
+    "segment": "S610",
+    "layer": "F.Cu",
+    "plane_layer": "In1.Cu",
+    "length_mm": 0.4,
+    "none_raw_mm": 0.31,
+    "none_antipads_excl_mm": 0.0,
+    "over": {
+     "GND": 0.09
+    }
+   },
+   {
+    "net": "/Power Management/BQ_BTST",
+    "segment": "S611",
+    "layer": "B.Cu",
+    "plane_layer": "In2.Cu",
+    "length_mm": 0.12,
+    "none_raw_mm": 0.12,
+    "none_antipads_excl_mm": 0.0,
+    "over": {}
+   },
+   {
+    "net": "/Power Management/BQ_BTST",
+    "segment": "S612",
+    "layer": "B.Cu",
+    "plane_layer": "In2.Cu",
+    "length_mm": 2.85,
+    "none_raw_mm": 0.97,
+    "none_antipads_excl_mm": 0.0,
+    "over": {
+     "+5V": 1.88
+    }
+   },
+   {
+    "net": "/Power Management/BQ_REGN",
+    "segment": "S624",
+    "layer": "F.Cu",
+    "plane_layer": "In1.Cu",
+    "length_mm": 0.99,
+    "none_raw_mm": 0.49,
+    "none_antipads_excl_mm": 0.0,
+    "over": {
+     "GND": 0.51
+    }
+   },
+   {
+    "net": "/Power Management/BQ_REGN",
+    "segment": "S625",
+    "layer": "F.Cu",
+    "plane_layer": "In1.Cu",
+    "length_mm": 0.02,
+    "none_raw_mm": 0.02,
+    "none_antipads_excl_mm": 0.0,
+    "over": {}
+   },
+   {
+    "net": "/Power Management/BQ_REGN",
+    "segment": "S627",
+    "layer": "F.Cu",
+    "plane_layer": "In1.Cu",
+    "length_mm": 0.37,
+    "none_raw_mm": 0.37,
+    "none_antipads_excl_mm": 0.0,
+    "over": {}
+   },
+   {
+    "net": "/Power Management/BQ_REGN",
+    "segment": "S628",
+    "layer": "F.Cu",
+    "plane_layer": "In1.Cu",
+    "length_mm": 3.62,
+    "none_raw_mm": 0.8,
+    "none_antipads_excl_mm": 0.0,
+    "over": {
+     "GND": 2.82
+    }
+   },
+   {
+    "net": "/Power Management/BQ_REGN",
+    "segment": "S629",
+    "layer": "F.Cu",
+    "plane_layer": "In1.Cu",
+    "length_mm": 2.14,
+    "none_raw_mm": 0.8,
+    "none_antipads_excl_mm": 0.0,
+    "over": {
+     "GND": 1.34
+    }
+   },
+   {
+    "net": "/Power Management/BQ_REGN",
+    "segment": "S630",
+    "layer": "B.Cu",
+    "plane_layer": "In2.Cu",
+    "length_mm": 4.99,
+    "none_raw_mm": 0.62,
+    "none_antipads_excl_mm": 0.0,
+    "over": {
+     "+5V": 4.37
+    }
+   },
+   {
+    "net": "/Power Management/BQ_REGN",
+    "segment": "S631",
+    "layer": "B.Cu",
+    "plane_layer": "In2.Cu",
+    "length_mm": 1.89,
+    "none_raw_mm": 0.6,
+    "none_antipads_excl_mm": 0.0,
+    "over": {
+     "+5V": 1.29
+    }
+   },
+   {
+    "net": "/Power Management/BQ_TS",
+    "segment": "S811",
+    "layer": "F.Cu",
+    "plane_layer": "In1.Cu",
+    "length_mm": 0.2,
+    "none_raw_mm": 0.02,
+    "none_antipads_excl_mm": 0.0,
+    "over": {
+     "GND": 0.18
+    }
+   },
+   {
+    "net": "/Power Management/BQ_TS",
+    "segment": "S812",
+    "layer": "F.Cu",
+    "plane_layer": "In1.Cu",
+    "length_mm": 0.6,
+    "none_raw_mm": 0.29,
+    "none_antipads_excl_mm": 0.0,
+    "over": {
+     "GND": 0.32
+    }
+   },
+   {
+    "net": "/Power Management/BQ_TS",
+    "segment": "S813",
+    "layer": "F.Cu",
+    "plane_layer": "In1.Cu",
+    "length_mm": 0.6,
+    "none_raw_mm": 0.2,
+    "none_antipads_excl_mm": 0.0,
+    "over": {
+     "GND": 0.4
+    }
+   },
+   {
+    "net": "/Power Management/BQ_TS",
+    "segment": "S814",
+    "layer": "F.Cu",
+    "plane_layer": "In1.Cu",
+    "length_mm": 0.17,
+    "none_raw_mm": 0.17,
+    "none_antipads_excl_mm": 0.0,
+    "over": {}
+   },
+   {
+    "net": "/Power Management/BQ_TS",
+    "segment": "S816",
+    "layer": "F.Cu",
+    "plane_layer": "In1.Cu",
+    "length_mm": 0.18,
+    "none_raw_mm": 0.18,
+    "none_antipads_excl_mm": 0.0,
+    "over": {}
+   },
+   {
+    "net": "/Power Management/BQ_TS",
+    "segment": "S819",
+    "layer": "F.Cu",
+    "plane_layer": "In1.Cu",
+    "length_mm": 0.22,
+    "none_raw_mm": 0.22,
+    "none_antipads_excl_mm": 0.0,
+    "over": {}
+   },
+   {
+    "net": "/Power Management/BQ_TS",
+    "segment": "S820",
+    "layer": "F.Cu",
+    "plane_layer": "In1.Cu",
+    "length_mm": 0.05,
+    "none_raw_mm": 0.05,
+    "none_antipads_excl_mm": 0.0,
+    "over": {}
+   },
+   {
+    "net": "/Power Management/BQ_TS",
+    "segment": "S821",
+    "layer": "F.Cu",
+    "plane_layer": "In1.Cu",
+    "length_mm": 0.46,
+    "none_raw_mm": 0.29,
+    "none_antipads_excl_mm": 0.0,
+    "over": {
+     "GND": 0.18
+    }
+   },
+   {
+    "net": "/Power Management/BQ_TS",
+    "segment": "S823",
+    "layer": "F.Cu",
+    "plane_layer": "In1.Cu",
+    "length_mm": 0.24,
+    "none_raw_mm": 0.24,
+    "none_antipads_excl_mm": 0.0,
+    "over": {}
+   },
+   {
+    "net": "/Power Management/BQ_TS",
+    "segment": "S825",
+    "layer": "F.Cu",
+    "plane_layer": "In1.Cu",
+    "length_mm": 1.79,
+    "none_raw_mm": 0.62,
+    "none_antipads_excl_mm": 0.0,
+    "over": {
+     "GND": 1.17
+    }
+   },
+   {
+    "net": "/Power Management/BQ_TS",
+    "segment": "S826",
+    "layer": "F.Cu",
+    "plane_layer": "In1.Cu",
+    "length_mm": 4.49,
+    "none_raw_mm": 1.52,
+    "none_antipads_excl_mm": 0.0,
+    "over": {
+     "GND": 2.98
+    }
+   },
+   {
+    "net": "/Power Management/BQ_TS",
+    "segment": "S827",
+    "layer": "F.Cu",
+    "plane_layer": "In1.Cu",
+    "length_mm": 0.4,
+    "none_raw_mm": 0.4,
+    "none_antipads_excl_mm": 0.0,
+    "over": {}
+   },
+   {
+    "net": "/Power Management/BQ_TS",
+    "segment": "S832",
+    "layer": "B.Cu",
+    "plane_layer": "In2.Cu",
+    "length_mm": 1.67,
+    "none_raw_mm": 0.6,
+    "none_antipads_excl_mm": 0.0,
+    "over": {
+     "+5V": 1.07
+    }
+   },
+   {
+    "net": "/Power Management/CC2",
+    "segment": "S776",
+    "layer": "F.Cu",
+    "plane_layer": "In1.Cu",
+    "length_mm": 2.8,
+    "none_raw_mm": 1.05,
+    "none_antipads_excl_mm": 0.0,
+    "over": {
+     "GND": 1.75
+    }
+   },
+   {
+    "net": "/TCA_RESET",
+    "segment": "S143",
+    "layer": "F.Cu",
+    "plane_layer": "In1.Cu",
+    "length_mm": 2.9,
+    "none_raw_mm": 0.8,
+    "none_antipads_excl_mm": 0.0,
+    "over": {
+     "GND": 2.09
+    }
+   },
+   {
+    "net": "/TCA_RESET",
+    "segment": "S144",
+    "layer": "F.Cu",
+    "plane_layer": "In1.Cu",
+    "length_mm": 2.95,
+    "none_raw_mm": 0.62,
+    "none_antipads_excl_mm": 0.0,
+    "over": {
+     "GND": 2.33
+    }
+   },
+   {
+    "net": "/TCA_RESET",
+    "segment": "S145",
+    "layer": "F.Cu",
+    "plane_layer": "In1.Cu",
+    "length_mm": 10.16,
+    "none_raw_mm": 1.01,
+    "none_antipads_excl_mm": 0.0,
+    "over": {
+     "GND": 9.15
+    }
+   },
+   {
+    "net": "/TCA_RESET",
+    "segment": "S146",
+    "layer": "F.Cu",
+    "plane_layer": "In1.Cu",
+    "length_mm": 0.03,
+    "none_raw_mm": 0.03,
+    "none_antipads_excl_mm": 0.0,
+    "over": {}
+   },
+   {
+    "net": "/TCA_RESET",
+    "segment": "S147",
+    "layer": "F.Cu",
+    "plane_layer": "In1.Cu",
+    "length_mm": 1.65,
+    "none_raw_mm": 0.78,
+    "none_antipads_excl_mm": 0.0,
+    "over": {
+     "GND": 0.86
+    }
+   },
+   {
+    "net": "/TCA_RESET",
+    "segment": "S148",
+    "layer": "F.Cu",
+    "plane_layer": "In1.Cu",
+    "length_mm": 0.23,
+    "none_raw_mm": 0.23,
+    "none_antipads_excl_mm": 0.0,
+    "over": {}
+   },
+   {
+    "net": "/TCA_RESET",
+    "segment": "S150",
+    "layer": "B.Cu",
+    "plane_layer": "In2.Cu",
+    "length_mm": 0.1,
+    "none_raw_mm": 0.1,
+    "none_antipads_excl_mm": 0.0,
+    "over": {}
+   },
+   {
+    "net": "/TCA_RESET",
+    "segment": "S156",
+    "layer": "B.Cu",
+    "plane_layer": "In2.Cu",
+    "length_mm": 1.25,
+    "none_raw_mm": 0.7,
+    "none_antipads_excl_mm": 0.0,
+    "over": {
+     "+5V": 0.55
+    }
+   },
+   {
+    "net": "/TCA_RESET",
+    "segment": "S158",
+    "layer": "B.Cu",
+    "plane_layer": "In2.Cu",
+    "length_mm": 0.78,
+    "none_raw_mm": 0.53,
+    "none_antipads_excl_mm": 0.0,
+    "over": {
+     "+3.3V": 0.25
+    }
+   },
+   {
+    "net": "/USB_DN",
+    "segment": "S32",
+    "layer": "F.Cu",
+    "plane_layer": "In1.Cu",
+    "length_mm": 0.55,
+    "none_raw_mm": 0.55,
+    "none_antipads_excl_mm": 0.0,
+    "over": {}
+   },
+   {
+    "net": "/USB_DN",
+    "segment": "S33",
+    "layer": "F.Cu",
+    "plane_layer": "In1.Cu",
+    "length_mm": 0.89,
+    "none_raw_mm": 0.42,
+    "none_antipads_excl_mm": 0.0,
+    "over": {
+     "GND": 0.47
+    }
+   },
+   {
+    "net": "/USB_DN",
+    "segment": "S37",
+    "layer": "F.Cu",
+    "plane_layer": "In1.Cu",
+    "length_mm": 0.7,
+    "none_raw_mm": 0.7,
+    "none_antipads_excl_mm": 0.0,
+    "over": {}
+   },
+   {
+    "net": "/USB_DN",
+    "segment": "S38",
+    "layer": "F.Cu",
+    "plane_layer": "In1.Cu",
+    "length_mm": 1.1,
+    "none_raw_mm": 0.73,
+    "none_antipads_excl_mm": 0.0,
+    "over": {
+     "GND": 0.37
+    }
+   },
+   {
+    "net": "/USB_DN",
+    "segment": "S45",
+    "layer": "F.Cu",
+    "plane_layer": "In1.Cu",
+    "length_mm": 0.2,
+    "none_raw_mm": 0.2,
+    "none_antipads_excl_mm": 0.0,
+    "over": {}
+   },
+   {
+    "net": "/USB_DN",
+    "segment": "S46",
+    "layer": "F.Cu",
+    "plane_layer": "In1.Cu",
+    "length_mm": 0.89,
+    "none_raw_mm": 0.26,
+    "none_antipads_excl_mm": 0.0,
+    "over": {
+     "GND": 0.63
+    }
+   },
+   {
+    "net": "/USB_DN",
+    "segment": "S47",
+    "layer": "F.Cu",
+    "plane_layer": "In1.Cu",
+    "length_mm": 1.33,
+    "none_raw_mm": 0.73,
+    "none_antipads_excl_mm": 0.0,
+    "over": {
+     "GND": 0.6
+    }
+   },
+   {
+    "net": "/USB_DN",
+    "segment": "S52",
+    "layer": "F.Cu",
+    "plane_layer": "In1.Cu",
+    "length_mm": 1.15,
+    "none_raw_mm": 0.75,
+    "none_antipads_excl_mm": 0.0,
+    "over": {
+     "GND": 0.4
+    }
+   },
+   {
+    "net": "/USB_DN",
+    "segment": "S56",
+    "layer": "B.Cu",
+    "plane_layer": "In2.Cu",
+    "length_mm": 2.92,
+    "none_raw_mm": 0.37,
+    "none_antipads_excl_mm": 0.0,
+    "over": {
+     "+5V": 2.55
+    }
+   },
+   {
+    "net": "/USB_DN",
+    "segment": "S58",
+    "layer": "B.Cu",
+    "plane_layer": "In2.Cu",
+    "length_mm": 0.18,
+    "none_raw_mm": 0.18,
+    "none_antipads_excl_mm": 0.0,
+    "over": {}
+   },
+   {
+    "net": "/USB_DN",
+    "segment": "S59",
+    "layer": "B.Cu",
+    "plane_layer": "In2.Cu",
+    "length_mm": 3.79,
+    "none_raw_mm": 0.39,
+    "none_antipads_excl_mm": 0.0,
+    "over": {
+     "+5V": 3.4
+    }
+   },
+   {
+    "net": "/USB_DN",
+    "segment": "S60",
+    "layer": "B.Cu",
+    "plane_layer": "In2.Cu",
+    "length_mm": 0.17,
+    "none_raw_mm": 0.17,
+    "none_antipads_excl_mm": 0.0,
+    "over": {}
+   },
+   {
+    "net": "/USB_DN",
+    "segment": "S61",
+    "layer": "B.Cu",
+    "plane_layer": "In2.Cu",
+    "length_mm": 2.36,
+    "none_raw_mm": 2.33,
+    "none_antipads_excl_mm": 0.0,
+    "over": {
+     "+5V": 0.03
+    }
+   },
+   {
+    "net": "/USB_DN",
+    "segment": "S63",
+    "layer": "B.Cu",
+    "plane_layer": "In2.Cu",
+    "length_mm": 0.2,
+    "none_raw_mm": 0.2,
+    "none_antipads_excl_mm": 0.0,
+    "over": {}
+   },
+   {
+    "net": "/USB_DP",
+    "segment": "S100",
+    "layer": "F.Cu",
+    "plane_layer": "In1.Cu",
+    "length_mm": 0.03,
+    "none_raw_mm": 0.03,
+    "none_antipads_excl_mm": 0.0,
+    "over": {}
+   },
+   {
+    "net": "/USB_DP",
+    "segment": "S102",
+    "layer": "F.Cu",
+    "plane_layer": "In1.Cu",
+    "length_mm": 0.98,
+    "none_raw_mm": 0.72,
+    "none_antipads_excl_mm": 0.0,
+    "over": {
+     "GND": 0.27
+    }
+   },
+   {
+    "net": "/USB_DP",
+    "segment": "S104",
+    "layer": "F.Cu",
+    "plane_layer": "In1.Cu",
+    "length_mm": 0.06,
+    "none_raw_mm": 0.06,
+    "none_antipads_excl_mm": 0.0,
+    "over": {}
+   },
+   {
+    "net": "/USB_DP",
+    "segment": "S105",
+    "layer": "F.Cu",
+    "plane_layer": "In1.Cu",
+    "length_mm": 1.29,
+    "none_raw_mm": 0.71,
+    "none_antipads_excl_mm": 0.0,
+    "over": {
+     "GND": 0.58
+    }
+   },
+   {
+    "net": "/USB_DP",
+    "segment": "S107",
+    "layer": "F.Cu",
+    "plane_layer": "In1.Cu",
+    "length_mm": 1.03,
+    "none_raw_mm": 0.21,
+    "none_antipads_excl_mm": 0.0,
+    "over": {
+     "GND": 0.82
+    }
+   },
+   {
+    "net": "/USB_DP",
+    "segment": "S109",
+    "layer": "F.Cu",
+    "plane_layer": "In1.Cu",
+    "length_mm": 2.96,
+    "none_raw_mm": 1.8,
+    "none_antipads_excl_mm": 0.0,
+    "over": {
+     "GND": 1.16
+    }
+   },
+   {
+    "net": "/USB_DP",
+    "segment": "S111",
+    "layer": "F.Cu",
+    "plane_layer": "In1.Cu",
+    "length_mm": 0.15,
+    "none_raw_mm": 0.15,
+    "none_antipads_excl_mm": 0.0,
+    "over": {}
+   },
+   {
+    "net": "/USB_DP",
+    "segment": "S117",
+    "layer": "F.Cu",
+    "plane_layer": "In1.Cu",
+    "length_mm": 5.53,
+    "none_raw_mm": 0.62,
+    "none_antipads_excl_mm": 0.0,
+    "over": {
+     "GND": 4.91
+    }
+   },
+   {
+    "net": "/USB_DP",
+    "segment": "S121",
+    "layer": "F.Cu",
+    "plane_layer": "In1.Cu",
+    "length_mm": 0.93,
+    "none_raw_mm": 0.18,
+    "none_antipads_excl_mm": 0.0,
+    "over": {
+     "GND": 0.75
+    }
+   },
+   {
+    "net": "/USB_DP",
+    "segment": "S123",
+    "layer": "F.Cu",
+    "plane_layer": "In1.Cu",
+    "length_mm": 1.61,
+    "none_raw_mm": 0.7,
+    "none_antipads_excl_mm": 0.0,
+    "over": {
+     "GND": 0.91
+    }
+   },
+   {
+    "net": "/USB_DP",
+    "segment": "S126",
+    "layer": "F.Cu",
+    "plane_layer": "In1.Cu",
+    "length_mm": 0.54,
+    "none_raw_mm": 0.54,
+    "none_antipads_excl_mm": 0.0,
+    "over": {}
+   },
+   {
+    "net": "/USB_DP",
+    "segment": "S139",
+    "layer": "B.Cu",
+    "plane_layer": "In2.Cu",
+    "length_mm": 0.71,
+    "none_raw_mm": 0.53,
+    "none_antipads_excl_mm": 0.0,
+    "over": {
+     "+5V": 0.18
+    }
+   },
+   {
+    "net": "/USB_DP",
+    "segment": "S141",
+    "layer": "B.Cu",
+    "plane_layer": "In2.Cu",
+    "length_mm": 1.53,
+    "none_raw_mm": 0.53,
+    "none_antipads_excl_mm": 0.0,
+    "over": {
+     "+3.3V": 1.0
+    }
+   }
+  ]
+ },
+ "stitching": {
+  "ground_net": "GND",
+  "gnd_vias": 136,
+  "outline_mm2": 3395.7,
+  "per_cm2_board": 4.01,
+  "grid_mm": 10.0,
+  "cells": [
+   {
+    "cell": [
+     0,
+     0
+    ],
+    "bbox": [
+     75.7,
+     101.0,
+     85.7,
+     111.0
+    ],
+    "gnd_vias": 2,
+    "per_cm2": 2.0
+   },
+   {
+    "cell": [
+     1,
+     0
+    ],
+    "bbox": [
+     85.7,
+     101.0,
+     95.7,
+     111.0
+    ],
+    "gnd_vias": 5,
+    "per_cm2": 5.0
+   },
+   {
+    "cell": [
+     2,
+     0
+    ],
+    "bbox": [
+     95.7,
+     101.0,
+     105.7,
+     111.0
+    ],
+    "gnd_vias": 3,
+    "per_cm2": 3.0
+   },
+   {
+    "cell": [
+     3,
+     0
+    ],
+    "bbox": [
+     105.7,
+     101.0,
+     115.7,
+     111.0
+    ],
+    "gnd_vias": 2,
+    "per_cm2": 2.0
+   },
+   {
+    "cell": [
+     4,
+     0
+    ],
+    "bbox": [
+     115.7,
+     101.0,
+     125.7,
+     111.0
+    ],
+    "gnd_vias": 8,
+    "per_cm2": 8.0
+   },
+   {
+    "cell": [
+     5,
+     0
+    ],
+    "bbox": [
+     125.7,
+     101.0,
+     135.7,
+     111.0
+    ],
+    "gnd_vias": 0,
+    "per_cm2": 0.0
+   },
+   {
+    "cell": [
+     6,
+     0
+    ],
+    "bbox": [
+     135.7,
+     101.0,
+     145.7,
+     111.0
+    ],
+    "gnd_vias": 1,
+    "per_cm2": 1.0
+   },
+   {
+    "cell": [
+     7,
+     0
+    ],
+    "bbox": [
+     145.7,
+     101.0,
+     155.7,
+     111.0
+    ],
+    "gnd_vias": 8,
+    "per_cm2": 8.0
+   },
+   {
+    "cell": [
+     8,
+     0
+    ],
+    "bbox": [
+     155.7,
+     101.0,
+     163.9,
+     111.0
+    ],
+    "gnd_vias": 1,
+    "per_cm2": 1.22
+   },
+   {
+    "cell": [
+     0,
+     1
+    ],
+    "bbox": [
+     75.7,
+     111.0,
+     85.7,
+     121.0
+    ],
+    "gnd_vias": 3,
+    "per_cm2": 3.0
+   },
+   {
+    "cell": [
+     1,
+     1
+    ],
+    "bbox": [
+     85.7,
+     111.0,
+     95.7,
+     121.0
+    ],
+    "gnd_vias": 2,
+    "per_cm2": 2.0
+   },
+   {
+    "cell": [
+     2,
+     1
+    ],
+    "bbox": [
+     95.7,
+     111.0,
+     105.7,
+     121.0
+    ],
+    "gnd_vias": 11,
+    "per_cm2": 11.0
+   },
+   {
+    "cell": [
+     3,
+     1
+    ],
+    "bbox": [
+     105.7,
+     111.0,
+     115.7,
+     121.0
+    ],
+    "gnd_vias": 4,
+    "per_cm2": 4.0
+   },
+   {
+    "cell": [
+     4,
+     1
+    ],
+    "bbox": [
+     115.7,
+     111.0,
+     125.7,
+     121.0
+    ],
+    "gnd_vias": 5,
+    "per_cm2": 5.0
+   },
+   {
+    "cell": [
+     5,
+     1
+    ],
+    "bbox": [
+     125.7,
+     111.0,
+     135.7,
+     121.0
+    ],
+    "gnd_vias": 9,
+    "per_cm2": 9.0
+   },
+   {
+    "cell": [
+     6,
+     1
+    ],
+    "bbox": [
+     135.7,
+     111.0,
+     145.7,
+     121.0
+    ],
+    "gnd_vias": 0,
+    "per_cm2": 0.0
+   },
+   {
+    "cell": [
+     7,
+     1
+    ],
+    "bbox": [
+     145.7,
+     111.0,
+     155.7,
+     121.0
+    ],
+    "gnd_vias": 7,
+    "per_cm2": 7.0
+   },
+   {
+    "cell": [
+     8,
+     1
+    ],
+    "bbox": [
+     155.7,
+     111.0,
+     163.9,
+     121.0
+    ],
+    "gnd_vias": 1,
+    "per_cm2": 1.22
+   },
+   {
+    "cell": [
+     0,
+     2
+    ],
+    "bbox": [
+     75.7,
+     121.0,
+     85.7,
+     131.0
+    ],
+    "gnd_vias": 3,
+    "per_cm2": 3.0
+   },
+   {
+    "cell": [
+     1,
+     2
+    ],
+    "bbox": [
+     85.7,
+     121.0,
+     95.7,
+     131.0
+    ],
+    "gnd_vias": 2,
+    "per_cm2": 2.0
+   },
+   {
+    "cell": [
+     2,
+     2
+    ],
+    "bbox": [
+     95.7,
+     121.0,
+     105.7,
+     131.0
+    ],
+    "gnd_vias": 8,
+    "per_cm2": 8.0
+   },
+   {
+    "cell": [
+     3,
+     2
+    ],
+    "bbox": [
+     105.7,
+     121.0,
+     115.7,
+     131.0
+    ],
+    "gnd_vias": 2,
+    "per_cm2": 2.0
+   },
+   {
+    "cell": [
+     4,
+     2
+    ],
+    "bbox": [
+     115.7,
+     121.0,
+     125.7,
+     131.0
+    ],
+    "gnd_vias": 1,
+    "per_cm2": 1.0
+   },
+   {
+    "cell": [
+     5,
+     2
+    ],
+    "bbox": [
+     125.7,
+     121.0,
+     135.7,
+     131.0
+    ],
+    "gnd_vias": 2,
+    "per_cm2": 2.0
+   },
+   {
+    "cell": [
+     6,
+     2
+    ],
+    "bbox": [
+     135.7,
+     121.0,
+     145.7,
+     131.0
+    ],
+    "gnd_vias": 1,
+    "per_cm2": 1.0
+   },
+   {
+    "cell": [
+     7,
+     2
+    ],
+    "bbox": [
+     145.7,
+     121.0,
+     155.7,
+     131.0
+    ],
+    "gnd_vias": 12,
+    "per_cm2": 12.0
+   },
+   {
+    "cell": [
+     8,
+     2
+    ],
+    "bbox": [
+     155.7,
+     121.0,
+     163.9,
+     131.0
+    ],
+    "gnd_vias": 10,
+    "per_cm2": 12.2
+   },
+   {
+    "cell": [
+     0,
+     3
+    ],
+    "bbox": [
+     75.7,
+     131.0,
+     85.7,
+     139.5
+    ],
+    "gnd_vias": 0,
+    "per_cm2": 0.0
+   },
+   {
+    "cell": [
+     1,
+     3
+    ],
+    "bbox": [
+     85.7,
+     131.0,
+     95.7,
+     139.5
+    ],
+    "gnd_vias": 2,
+    "per_cm2": 2.35
+   },
+   {
+    "cell": [
+     2,
+     3
+    ],
+    "bbox": [
+     95.7,
+     131.0,
+     105.7,
+     139.5
+    ],
+    "gnd_vias": 6,
+    "per_cm2": 7.06
+   },
+   {
+    "cell": [
+     3,
+     3
+    ],
+    "bbox": [
+     105.7,
+     131.0,
+     115.7,
+     139.5
+    ],
+    "gnd_vias": 2,
+    "per_cm2": 2.35
+   },
+   {
+    "cell": [
+     4,
+     3
+    ],
+    "bbox": [
+     115.7,
+     131.0,
+     125.7,
+     139.5
+    ],
+    "gnd_vias": 2,
+    "per_cm2": 2.35
+   },
+   {
+    "cell": [
+     5,
+     3
+    ],
+    "bbox": [
+     125.7,
+     131.0,
+     135.7,
+     139.5
+    ],
+    "gnd_vias": 2,
+    "per_cm2": 2.35
+   },
+   {
+    "cell": [
+     6,
+     3
+    ],
+    "bbox": [
+     135.7,
+     131.0,
+     145.7,
+     139.5
+    ],
+    "gnd_vias": 6,
+    "per_cm2": 7.06
+   },
+   {
+    "cell": [
+     7,
+     3
+    ],
+    "bbox": [
+     145.7,
+     131.0,
+     155.7,
+     139.5
+    ],
+    "gnd_vias": 2,
+    "per_cm2": 2.35
+   },
+   {
+    "cell": [
+     8,
+     3
+    ],
+    "bbox": [
+     155.7,
+     131.0,
+     163.9,
+     139.5
+    ],
+    "gnd_vias": 1,
+    "per_cm2": 1.43
+   }
+  ],
+  "histogram_vias_per_cell": {
+   "0": 3,
+   "1": 6,
+   "2": 11,
+   "3": 3,
+   "4": 1,
+   "5+": 12
+  },
+  "empty_cells": [
+   [
+    125.7,
+    101.0,
+    135.7,
+    111.0
+   ],
+   [
+    135.7,
+    111.0,
+    145.7,
+    121.0
+   ],
+   [
+    75.7,
+    131.0,
+    85.7,
+    139.5
+   ]
+  ],
+  "signal_vias_nearest_gnd": [
+   {
+    "via": "V11",
+    "net": "/TCA_RESET",
+    "position": [
+     138.1,
+     119.2
+    ],
+    "nearest_gnd_via": "V101",
+    "centre_to_centre_mm": 7.11
+   },
+   {
+    "via": "V10",
+    "net": "/USB_DP",
+    "position": [
+     119.53,
+     128.35
+    ],
+    "nearest_gnd_via": "V72",
+    "centre_to_centre_mm": 6.79
+   },
+   {
+    "via": "V201",
+    "net": "/I2C_SCL",
+    "position": [
+     144.0,
+     112.3
+    ],
+    "nearest_gnd_via": "V52",
+    "centre_to_centre_mm": 6.29
+   },
+   {
+    "via": "V14",
+    "net": "/CHRG_INT",
+    "position": [
+     113.4,
+     124.726
+    ],
+    "nearest_gnd_via": "V120",
+    "centre_to_centre_mm": 5.82
+   },
+   {
+    "via": "V13",
+    "net": "/TCA_RESET",
+    "position": [
+     142.8,
+     122.1
+    ],
+    "nearest_gnd_via": "V136",
+    "centre_to_centre_mm": 5.8
+   },
+   {
+    "via": "V202",
+    "net": "/I2C_SCL",
+    "position": [
+     138.4,
+     113.95
+    ],
+    "nearest_gnd_via": "V104",
+    "centre_to_centre_mm": 5.26
+   },
+   {
+    "via": "V6",
+    "net": "/USB_DN",
+    "position": [
+     80.62,
+     118.9
+    ],
+    "nearest_gnd_via": "V112",
+    "centre_to_centre_mm": 4.47
+   },
+   {
+    "via": "V207",
+    "net": "/Power Management/BQ_REGN",
+    "position": [
+     92.1164,
+     111.5
+    ],
+    "nearest_gnd_via": "V116",
+    "centre_to_centre_mm": 4.43
+   },
+   {
+    "via": "V1",
+    "net": "/LED_DATA",
+    "position": [
+     128.1603,
+     125.3603
+    ],
+    "nearest_gnd_via": "V46",
+    "centre_to_centre_mm": 4.33
+   },
+   {
+    "via": "V15",
+    "net": "/CHRG_INT",
+    "position": [
+     133.5272,
+     125.4263
+    ],
+    "nearest_gnd_via": "V88",
+    "centre_to_centre_mm": 4.33
+   },
+   {
+    "via": "V0",
+    "net": "/LED_DATA",
+    "position": [
+     140.4625,
+     132.4375
+    ],
+    "nearest_gnd_via": "V48",
+    "centre_to_centre_mm": 4.29
+   },
+   {
+    "via": "V2",
+    "net": "/USB_DN",
+    "position": [
+     80.62,
+     120.53
+    ],
+    "nearest_gnd_via": "V63",
+    "centre_to_centre_mm": 4.29
+   },
+   {
+    "via": "V4",
+    "net": "/USB_DN",
+    "position": [
+     119.0,
+     125.5
+    ],
+    "nearest_gnd_via": "V43",
+    "centre_to_centre_mm": 4.1
+   },
+   {
+    "via": "V196",
+    "net": "/I2C_SDA",
+    "position": [
+     138.4,
+     112.65
+    ],
+    "nearest_gnd_via": "V104",
+    "centre_to_centre_mm": 3.97
+   },
+   {
+    "via": "V5",
+    "net": "/USB_DN",
+    "position": [
+     80.43,
+     124.57
+    ],
+    "nearest_gnd_via": "V63",
+    "centre_to_centre_mm": 3.61
+   },
+   {
+    "via": "V220",
+    "net": "/Power Management/BQ_TS",
+    "position": [
+     91.6,
+     107.248
+    ],
+    "nearest_gnd_via": "V118",
+    "centre_to_centre_mm": 3.49
+   },
+   {
+    "via": "V198",
+    "net": "/I2C_SDA",
+    "position": [
+     114.774,
+     119.174
+    ],
+    "nearest_gnd_via": "V105",
+    "centre_to_centre_mm": 3.43
+   },
+   {
+    "via": "V199",
+    "net": "/I2C_SCL",
+    "position": [
+     113.8118,
+     120.774
+    ],
+    "nearest_gnd_via": "V105",
+    "centre_to_centre_mm": 3.42
+   },
+   {
+    "via": "V200",
+    "net": "/I2C_SCL",
+    "position": [
+     106.1,
+     122.9127
+    ],
+    "nearest_gnd_via": "V84",
+    "centre_to_centre_mm": 3.42
+   },
+   {
+    "via": "V203",
+    "net": "/I2C_SCL",
+    "position": [
+     146.5425,
+     109.725
+    ],
+    "nearest_gnd_via": "V150",
+    "centre_to_centre_mm": 3.19
+   },
+   {
+    "via": "V197",
+    "net": "/I2C_SDA",
+    "position": [
+     105.37,
+     122.1877
+    ],
+    "nearest_gnd_via": "V84",
+    "centre_to_centre_mm": 3.15
+   },
+   {
+    "via": "V222",
+    "net": "/Power Management/BOOST_FSW",
+    "position": [
+     104.66,
+     131.67
+    ],
+    "nearest_gnd_via": "V78",
+    "centre_to_centre_mm": 2.87
+   },
+   {
+    "via": "V206",
+    "net": "/Power Management/BQ_REGN",
+    "position": [
+     93.455,
+     117.8295
+    ],
+    "nearest_gnd_via": "V34",
+    "centre_to_centre_mm": 2.77
+   },
+   {
+    "via": "V195",
+    "net": "/LED Controller/DATA_TO_LEDS",
+    "position": [
+     147.4925,
+     132.9625
+    ],
+    "nearest_gnd_via": "V68",
+    "centre_to_centre_mm": 2.52
+   },
+   {
+    "via": "V205",
+    "net": "/Power Management/BQ_BTST",
+    "position": [
+     94.0479,
+     117.1395
+    ],
+    "nearest_gnd_via": "V122",
+    "centre_to_centre_mm": 2.21
+   },
+   {
+    "via": "V16",
+    "net": "/CHRG_INT",
+    "position": [
+     103.2,
+     122.075
+    ],
+    "nearest_gnd_via": "V84",
+    "centre_to_centre_mm": 2.1
+   },
+   {
+    "via": "V223",
+    "net": "/Power Management/BOOST_FSW",
+    "position": [
+     103.884,
+     125.72
+    ],
+    "nearest_gnd_via": "V84",
+    "centre_to_centre_mm": 1.83
+   },
+   {
+    "via": "V221",
+    "net": "/Power Management/BQ_TS",
+    "position": [
+     101.304,
+     111.237
+    ],
+    "nearest_gnd_via": "V106",
+    "centre_to_centre_mm": 1.51
+   },
+   {
+    "via": "V194",
+    "net": "/LED Controller/DATA_TO_LEDS",
+    "position": [
+     154.0925,
+     130.775
+    ],
+    "nearest_gnd_via": "V108",
+    "centre_to_centre_mm": 1.41
+   },
+   {
+    "via": "V3",
+    "net": "/USB_DN",
+    "position": [
+     86.175,
+     129.775
+    ],
+    "nearest_gnd_via": "V132",
+    "centre_to_centre_mm": 1.09
+   },
+   {
+    "via": "V204",
+    "net": "/Power Management/BQ_BTST",
+    "position": [
+     94.135,
+     114.2
+    ],
+    "nearest_gnd_via": "V116",
+    "centre_to_centre_mm": 1.08
+   },
+   {
+    "via": "V9",
+    "net": "/USB_DP",
+    "position": [
+     85.2957,
+     130.6043
+    ],
+    "nearest_gnd_via": "V132",
+    "centre_to_centre_mm": 0.88
+   },
+   {
+    "via": "V12",
+    "net": "/TCA_RESET",
+    "position": [
+     152.3925,
+     109.475
+    ],
+    "nearest_gnd_via": "V160",
+    "centre_to_centre_mm": 0.86
+   }
+  ]
+ }
+}
