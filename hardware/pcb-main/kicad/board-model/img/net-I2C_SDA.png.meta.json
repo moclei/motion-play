@@ -1,0 +1,460 @@
+{
+ "_provenance": {
+  "source": "hardware/pcb-main/kicad/motion-play-main.kicad_pcb",
+  "source_sha256": "ff6857d0bf797fc745a59a91123e752c4233ac3682e1ce38f2e270348b26e5b3",
+  "source_ref": "c2acffc",
+  "generator": "tools/pcb-context/render.py",
+  "generator_commit": "2611fdf74a3a102efc898430502b20bb6ad716bb-dirty",
+  "generated": "2026-11-03T00:19:10+00:00",
+  "model": "hardware/pcb-main/kicad/board-model/board-model.json",
+  "model_sha256": "5f4f0c22b5ff43922e130f7662fd878bd4a0e93eca0f1d08611ae85f3df55252",
+  "model_generator_commit": "f93e72b92796da964e1071e3aba3c3fac3b362a8"
+ },
+ "kind": "net",
+ "net": "/I2C_SDA",
+ "neighbours": [
+  "GND",
+  "/I2C_SCL",
+  "+3.3V",
+  "/CHRG_INT",
+  "/Power Management/VSYS_SENSE",
+  "/Power Management/BOOST_SW",
+  "/Power Management/Protected_VBUS",
+  "unconnected-(U3-IO2-Pad38)",
+  "/Power Management/BQ_SW",
+  "/Power Management/VSYS",
+  "unconnected-(U5-STAT-Pad4)",
+  "/Power Management/BQ_PMID",
+  "/ESP32_S3/EN",
+  "/LED_DATA",
+  "/Power Management/VBAT",
+  "unconnected-(U3-IO17-Pad10)",
+  "+5V",
+  "/Power Management/OTG_BIAS",
+  "unconnected-(U3-IO15-Pad8)",
+  "/ESP32_S3/USB_DN_MCU",
+  "/USB_DN"
+ ],
+ "unreferenced_antipads_excl_mm": 6.193,
+ "image": {
+  "file": "net-I2C_SDA.png",
+  "width_px": 1920,
+  "height_px": 995,
+  "dpi": 160
+ },
+ "view_mm": [
+  91.485,
+  100.0,
+  157.629,
+  129.325
+ ],
+ "y_axis": "down (KiCad)",
+ "axes_px": {
+  "left": 96.0,
+  "top": 175.4,
+  "right": 1593.6,
+  "bottom": 839.3
+ },
+ "labels": [
+  {
+   "label": "R28.1",
+   "kind": "pad",
+   "anchor_mm": [
+    150.7293,
+    101.9668
+   ],
+   "text_mm": [
+    152.241,
+    103.478
+   ],
+   "anchor_px": [
+    1437.4,
+    219.9
+   ]
+  },
+  {
+   "label": "TPIO43.1",
+   "kind": "pad",
+   "anchor_mm": [
+    142.8,
+    109.9
+   ],
+   "text_mm": [
+    144.311,
+    108.389
+   ],
+   "anchor_px": [
+    1257.8,
+    399.5
+   ]
+  },
+  {
+   "label": "U3.37",
+   "kind": "pad",
+   "anchor_mm": [
+    139.945,
+    112.67
+   ],
+   "text_mm": [
+    141.456,
+    114.181
+   ],
+   "anchor_px": [
+    1193.2,
+    462.2
+   ]
+  },
+  {
+   "label": "U4.23",
+   "kind": "pad",
+   "anchor_mm": [
+    148.3175,
+    110.145
+   ],
+   "text_mm": [
+    149.829,
+    111.656
+   ],
+   "anchor_px": [
+    1382.8,
+    405.1
+   ]
+  },
+  {
+   "label": "U5.6",
+   "kind": "pad",
+   "anchor_mm": [
+    98.135,
+    119.604
+   ],
+   "text_mm": [
+    99.646,
+    118.093
+   ],
+   "anchor_px": [
+    246.6,
+    619.2
+   ]
+  },
+  {
+   "label": "U7.6",
+   "kind": "pad",
+   "anchor_mm": [
+    110.9403,
+    119.19
+   ],
+   "text_mm": [
+    112.452,
+    117.679
+   ],
+   "anchor_px": [
+    536.5,
+    609.8
+   ]
+  },
+  {
+   "label": "V196",
+   "kind": "via",
+   "anchor_mm": [
+    138.4,
+    112.65
+   ],
+   "text_mm": [
+    139.911,
+    111.139
+   ],
+   "anchor_px": [
+    1158.2,
+    461.8
+   ]
+  },
+  {
+   "label": "V197",
+   "kind": "via",
+   "anchor_mm": [
+    105.37,
+    122.1877
+   ],
+   "text_mm": [
+    106.881,
+    120.676
+   ],
+   "anchor_px": [
+    410.4,
+    677.7
+   ]
+  },
+  {
+   "label": "V198",
+   "kind": "via",
+   "anchor_mm": [
+    114.774,
+    119.174
+   ],
+   "text_mm": [
+    116.285,
+    117.663
+   ],
+   "anchor_px": [
+    623.3,
+    609.5
+   ]
+  },
+  {
+   "label": "GND",
+   "kind": "neighbour",
+   "anchor_mm": [
+    118.6257,
+    119.049
+   ],
+   "text_mm": [
+    120.137,
+    117.538
+   ],
+   "anchor_px": [
+    710.5,
+    606.7
+   ]
+  },
+  {
+   "label": "I2C_SCL",
+   "kind": "neighbour",
+   "anchor_mm": [
+    113.1271,
+    120.2661
+   ],
+   "text_mm": [
+    114.639,
+    118.755
+   ],
+   "anchor_px": [
+    586.0,
+    634.2
+   ]
+  },
+  {
+   "label": "+3.3V",
+   "kind": "neighbour",
+   "anchor_mm": [
+    120.1757,
+    119.049
+   ],
+   "text_mm": [
+    121.687,
+    117.538
+   ],
+   "anchor_px": [
+    745.6,
+    606.7
+   ]
+  },
+  {
+   "label": "CHRG_INT",
+   "kind": "neighbour",
+   "anchor_mm": [
+    104.0232,
+    122.2
+   ],
+   "text_mm": [
+    105.535,
+    123.711
+   ],
+   "anchor_px": [
+    379.9,
+    678.0
+   ]
+  },
+  {
+   "label": "VSYS_SENSE",
+   "kind": "neighbour",
+   "anchor_mm": [
+    107.5222,
+    122.049
+   ],
+   "text_mm": [
+    109.034,
+    123.56
+   ],
+   "anchor_px": [
+    459.1,
+    674.6
+   ]
+  },
+  {
+   "label": "BOOST_SW",
+   "kind": "neighbour",
+   "anchor_mm": [
+    105.9913,
+    124.0023
+   ],
+   "text_mm": [
+    107.503,
+    125.514
+   ],
+   "anchor_px": [
+    424.4,
+    718.8
+   ]
+  },
+  {
+   "label": "Protected_VBUS",
+   "kind": "neighbour",
+   "anchor_mm": [
+    96.4489,
+    121.0259
+   ],
+   "text_mm": [
+    96.449,
+    119.061
+   ],
+   "anchor_px": [
+    208.4,
+    651.4
+   ]
+  },
+  {
+   "label": "BQ_SW",
+   "kind": "neighbour",
+   "anchor_mm": [
+    95.235,
+    116.964
+   ],
+   "text_mm": [
+    96.746,
+    115.453
+   ],
+   "anchor_px": [
+    180.9,
+    559.4
+   ]
+  },
+  {
+   "label": "VSYS",
+   "kind": "neighbour",
+   "anchor_mm": [
+    109.0644,
+    118.0042
+   ],
+   "text_mm": [
+    110.576,
+    116.493
+   ],
+   "anchor_px": [
+    494.0,
+    583.0
+   ]
+  },
+  {
+   "label": "BQ_PMID",
+   "kind": "neighbour",
+   "anchor_mm": [
+    95.235,
+    118.464
+   ],
+   "text_mm": [
+    96.746,
+    116.953
+   ],
+   "anchor_px": [
+    180.9,
+    593.4
+   ]
+  },
+  {
+   "label": "EN",
+   "kind": "neighbour",
+   "anchor_mm": [
+    118.299,
+    119.049
+   ],
+   "text_mm": [
+    119.81,
+    120.56
+   ],
+   "anchor_px": [
+    703.1,
+    606.7
+   ]
+  },
+  {
+   "label": "LED_DATA",
+   "kind": "neighbour",
+   "anchor_mm": [
+    121.695,
+    119.049
+   ],
+   "text_mm": [
+    123.206,
+    120.56
+   ],
+   "anchor_px": [
+    780.0,
+    606.7
+   ]
+  },
+  {
+   "label": "VBAT",
+   "kind": "neighbour",
+   "anchor_mm": [
+    99.1009,
+    121.2038
+   ],
+   "text_mm": [
+    100.612,
+    119.692
+   ],
+   "anchor_px": [
+    268.4,
+    655.4
+   ]
+  },
+  {
+   "label": "OTG_BIAS",
+   "kind": "neighbour",
+   "anchor_mm": [
+    98.535,
+    118.464
+   ],
+   "text_mm": [
+    100.046,
+    116.953
+   ],
+   "anchor_px": [
+    255.6,
+    593.4
+   ]
+  },
+  {
+   "label": "USB_DN_MCU",
+   "kind": "neighbour",
+   "anchor_mm": [
+    122.97,
+    123.65
+   ],
+   "text_mm": [
+    124.481,
+    125.161
+   ],
+   "anchor_px": [
+    808.9,
+    710.8
+   ]
+  },
+  {
+   "label": "USB_DN",
+   "kind": "neighbour",
+   "anchor_mm": [
+    119.195,
+    123.685
+   ],
+   "text_mm": [
+    120.706,
+    122.174
+   ],
+   "anchor_px": [
+    723.4,
+    711.6
+   ]
+  }
+ ]
+}

@@ -1,0 +1,173 @@
+{
+ "_provenance": {
+  "source": "hardware/pcb-main/kicad/motion-play-main.kicad_pcb",
+  "source_sha256": "ff6857d0bf797fc745a59a91123e752c4233ac3682e1ce38f2e270348b26e5b3",
+  "source_ref": "c2acffc",
+  "generator": "tools/pcb-context/render.py",
+  "generator_commit": "2611fdf74a3a102efc898430502b20bb6ad716bb-dirty",
+  "generated": "2026-11-03T00:19:10+00:00",
+  "model": "hardware/pcb-main/kicad/board-model/board-model.json",
+  "model_sha256": "5f4f0c22b5ff43922e130f7662fd878bd4a0e93eca0f1d08611ae85f3df55252",
+  "model_generator_commit": "f93e72b92796da964e1071e3aba3c3fac3b362a8"
+ },
+ "kind": "net",
+ "net": "/TCA9548A_Subsystem/CH1_SDA",
+ "neighbours": [
+  "/TCA9548A_Subsystem/CH1_SCL",
+  "GND",
+  "/TCA9548A_Subsystem/CH0_SCL",
+  "/TCA9548A_Subsystem/CH0_SDA",
+  "+3.3V",
+  "/TCA9548A_Subsystem/CH2_SDA"
+ ],
+ "unreferenced_antipads_excl_mm": 0.0,
+ "image": {
+  "file": "net-TCA9548A_Subsystem__CH1_SDA.png",
+  "width_px": 1920,
+  "height_px": 1937,
+  "dpi": 160
+ },
+ "view_mm": [
+  148.773,
+  102.84,
+  164.493,
+  117.525
+ ],
+ "y_axis": "down (KiCad)",
+ "axes_px": {
+  "left": 96.0,
+  "top": 288.1,
+  "right": 1593.6,
+  "bottom": 1687.1
+ },
+ "labels": [
+  {
+   "label": "J5.3",
+   "kind": "pad",
+   "anchor_mm": [
+    159.2175,
+    112.725
+   ],
+   "text_mm": [
+    159.577,
+    112.366
+   ],
+   "anchor_px": [
+    1091.1,
+    1229.8
+   ]
+  },
+  {
+   "label": "U4.6",
+   "kind": "pad",
+   "anchor_mm": [
+    154.0575,
+    107.545
+   ],
+   "text_mm": [
+    154.417,
+    107.186
+   ],
+   "anchor_px": [
+    599.5,
+    736.3
+   ]
+  },
+  {
+   "label": "CH1_SCL",
+   "kind": "neighbour",
+   "anchor_mm": [
+    158.347,
+    110.3685
+   ],
+   "text_mm": [
+    158.706,
+    110.009
+   ],
+   "anchor_px": [
+    1008.1,
+    1005.3
+   ]
+  },
+  {
+   "label": "GND",
+   "kind": "neighbour",
+   "anchor_mm": [
+    159.8425,
+    113.425
+   ],
+   "text_mm": [
+    160.202,
+    113.066
+   ],
+   "anchor_px": [
+    1150.6,
+    1296.5
+   ]
+  },
+  {
+   "label": "CH0_SCL",
+   "kind": "neighbour",
+   "anchor_mm": [
+    157.4309,
+    110.4294
+   ],
+   "text_mm": [
+    157.79,
+    110.07
+   ],
+   "anchor_px": [
+    920.9,
+    1011.1
+   ]
+  },
+  {
+   "label": "CH0_SDA",
+   "kind": "neighbour",
+   "anchor_mm": [
+    156.9799,
+    110.7553
+   ],
+   "text_mm": [
+    156.621,
+    110.396
+   ],
+   "anchor_px": [
+    877.9,
+    1042.2
+   ]
+  },
+  {
+   "label": "+3.3V",
+   "kind": "neighbour",
+   "anchor_mm": [
+    159.8425,
+    114.425
+   ],
+   "text_mm": [
+    160.202,
+    114.066
+   ],
+   "anchor_px": [
+    1150.6,
+    1391.8
+   ]
+  },
+  {
+   "label": "CH2_SDA",
+   "kind": "neighbour",
+   "anchor_mm": [
+    153.3238,
+    106.45
+   ],
+   "text_mm": [
+    153.683,
+    106.091
+   ],
+   "anchor_px": [
+    529.6,
+    632.0
+   ]
+  }
+ ]
+}

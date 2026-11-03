@@ -1,0 +1,160 @@
+{
+ "_provenance": {
+  "source": "hardware/pcb-main/kicad/motion-play-main.kicad_pcb",
+  "source_sha256": "ff6857d0bf797fc745a59a91123e752c4233ac3682e1ce38f2e270348b26e5b3",
+  "source_ref": "c2acffc",
+  "generator": "tools/pcb-context/render.py",
+  "generator_commit": "2611fdf74a3a102efc898430502b20bb6ad716bb-dirty",
+  "generated": "2026-11-03T00:19:10+00:00",
+  "model": "hardware/pcb-main/kicad/board-model/board-model.json",
+  "model_sha256": "5f4f0c22b5ff43922e130f7662fd878bd4a0e93eca0f1d08611ae85f3df55252",
+  "model_generator_commit": "f93e72b92796da964e1071e3aba3c3fac3b362a8"
+ },
+ "kind": "plane",
+ "layer": "In2.Cu",
+ "fill_nets": [
+  "+3.3V",
+  "+5V"
+ ],
+ "adjacent_layers": [
+  "In1.Cu",
+  "B.Cu"
+ ],
+ "critical_nets_overlaid": [
+  "/I2C_SDA",
+  "/I2C_SCL"
+ ],
+ "image": {
+  "file": "plane-In2_Cu.png",
+  "width_px": 1920,
+  "height_px": 1029,
+  "dpi": 160
+ },
+ "view_mm": [
+  73.7,
+  99.0,
+  165.9,
+  141.5
+ ],
+ "y_axis": "down (KiCad)",
+ "axes_px": {
+  "left": 96.0,
+  "top": 179.6,
+  "right": 1593.6,
+  "bottom": 869.9
+ },
+ "labels": [
+  {
+   "label": "I2C_SDA",
+   "kind": "track",
+   "anchor_mm": [
+    123.325,
+    119.174
+   ],
+   "text_mm": [
+    125.131,
+    117.368
+   ],
+   "anchor_px": [
+    902.1,
+    507.3
+   ]
+  },
+  {
+   "label": "I2C_SCL",
+   "kind": "track",
+   "anchor_mm": [
+    122.3689,
+    120.774
+   ],
+   "text_mm": [
+    124.175,
+    118.968
+   ],
+   "anchor_px": [
+    886.5,
+    533.3
+   ]
+  },
+  {
+   "label": "+3.3V",
+   "kind": "zone",
+   "anchor_mm": [
+    142.0052,
+    115.8876
+   ],
+   "text_mm": [
+    143.811,
+    114.082
+   ],
+   "anchor_px": [
+    1205.5,
+    453.9
+   ]
+  },
+  {
+   "label": "+5V",
+   "kind": "zone",
+   "anchor_mm": [
+    88.5522,
+    120.2414
+   ],
+   "text_mm": [
+    90.358,
+    118.435
+   ],
+   "anchor_px": [
+    337.2,
+    524.6
+   ]
+  },
+  {
+   "label": "no Cu 215 mm²",
+   "kind": "void",
+   "anchor_mm": [
+    101.1439,
+    117.5309
+   ],
+   "text_mm": [
+    102.95,
+    115.725
+   ],
+   "anchor_px": [
+    541.8,
+    480.6
+   ]
+  },
+  {
+   "label": "no Cu 108 mm²",
+   "kind": "void",
+   "anchor_mm": [
+    130.75,
+    104.5159
+   ],
+   "text_mm": [
+    132.556,
+    102.71
+   ],
+   "anchor_px": [
+    1022.7,
+    269.2
+   ]
+  },
+  {
+   "label": "no Cu 1 mm²",
+   "kind": "void",
+   "anchor_mm": [
+    116.3673,
+    102.7715
+   ],
+   "text_mm": [
+    118.173,
+    100.966
+   ],
+   "anchor_px": [
+    789.0,
+    240.9
+   ]
+  }
+ ]
+}

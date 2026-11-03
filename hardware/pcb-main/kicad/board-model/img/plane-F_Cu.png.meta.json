@@ -1,0 +1,112 @@
+{
+ "_provenance": {
+  "source": "hardware/pcb-main/kicad/motion-play-main.kicad_pcb",
+  "source_sha256": "ff6857d0bf797fc745a59a91123e752c4233ac3682e1ce38f2e270348b26e5b3",
+  "source_ref": "c2acffc",
+  "generator": "tools/pcb-context/render.py",
+  "generator_commit": "2611fdf74a3a102efc898430502b20bb6ad716bb-dirty",
+  "generated": "2026-11-03T00:19:44+00:00",
+  "model": "hardware/pcb-main/kicad/board-model/board-model.json",
+  "model_sha256": "5f4f0c22b5ff43922e130f7662fd878bd4a0e93eca0f1d08611ae85f3df55252",
+  "model_generator_commit": "f93e72b92796da964e1071e3aba3c3fac3b362a8"
+ },
+ "kind": "plane",
+ "layer": "F.Cu",
+ "fill_nets": [
+  "+3.3V",
+  "+5V",
+  "/Power Management/BOOST_SW",
+  "GND"
+ ],
+ "adjacent_layers": [
+  "In1.Cu"
+ ],
+ "critical_nets_overlaid": [],
+ "is_plane_layer": false,
+ "fill_share_of_outline": 0.0484,
+ "image": {
+  "file": "plane-F_Cu.png",
+  "width_px": 1920,
+  "height_px": 1029,
+  "dpi": 160
+ },
+ "view_mm": [
+  73.7,
+  99.0,
+  165.9,
+  141.5
+ ],
+ "y_axis": "down (KiCad)",
+ "axes_px": {
+  "left": 96.0,
+  "top": 179.6,
+  "right": 1593.6,
+  "bottom": 869.9
+ },
+ "labels": [
+  {
+   "label": "+3.3V",
+   "kind": "zone",
+   "anchor_mm": [
+    113.76,
+    110.6
+   ],
+   "text_mm": [
+    115.566,
+    108.794
+   ],
+   "anchor_px": [
+    746.7,
+    368.0
+   ]
+  },
+  {
+   "label": "+5V",
+   "kind": "zone",
+   "anchor_mm": [
+    99.563,
+    128.6407
+   ],
+   "text_mm": [
+    101.369,
+    126.835
+   ],
+   "anchor_px": [
+    516.1,
+    661.1
+   ]
+  },
+  {
+   "label": "/Power Management/BOOST_SW",
+   "kind": "zone",
+   "anchor_mm": [
+    105.8923,
+    130.3886
+   ],
+   "text_mm": [
+    107.698,
+    128.583
+   ],
+   "anchor_px": [
+    618.9,
+    689.5
+   ]
+  },
+  {
+   "label": "GND",
+   "kind": "zone",
+   "anchor_mm": [
+    151.1549,
+    123.3593
+   ],
+   "text_mm": [
+    152.961,
+    121.553
+   ],
+   "anchor_px": [
+    1354.1,
+    575.3
+   ]
+  }
+ ]
+}

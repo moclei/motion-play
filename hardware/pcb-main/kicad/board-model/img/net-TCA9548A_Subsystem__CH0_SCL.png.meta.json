@@ -1,0 +1,190 @@
+{
+ "_provenance": {
+  "source": "hardware/pcb-main/kicad/motion-play-main.kicad_pcb",
+  "source_sha256": "ff6857d0bf797fc745a59a91123e752c4233ac3682e1ce38f2e270348b26e5b3",
+  "source_ref": "c2acffc",
+  "generator": "tools/pcb-context/render.py",
+  "generator_commit": "2611fdf74a3a102efc898430502b20bb6ad716bb-dirty",
+  "generated": "2026-11-03T00:19:10+00:00",
+  "model": "hardware/pcb-main/kicad/board-model/board-model.json",
+  "model_sha256": "5f4f0c22b5ff43922e130f7662fd878bd4a0e93eca0f1d08611ae85f3df55252",
+  "model_generator_commit": "f93e72b92796da964e1071e3aba3c3fac3b362a8"
+ },
+ "kind": "net",
+ "net": "/TCA9548A_Subsystem/CH0_SCL",
+ "neighbours": [
+  "/TCA9548A_Subsystem/CH0_SDA",
+  "GND",
+  "/TCA9548A_Subsystem/CH1_SDA",
+  "+3.3V",
+  "/TCA9548A_Subsystem/CH1_SCL",
+  "/TCA_RESET",
+  "Net-(C7-Pad2)"
+ ],
+ "unreferenced_antipads_excl_mm": 0.0,
+ "image": {
+  "file": "net-TCA9548A_Subsystem__CH0_SCL.png",
+  "width_px": 1920,
+  "height_px": 2240,
+  "dpi": 160
+ },
+ "view_mm": [
+  148.773,
+  103.49,
+  164.493,
+  124.375
+ ],
+ "y_axis": "down (KiCad)",
+ "axes_px": {
+  "left": 119.8,
+  "top": 179.2,
+  "right": 1569.8,
+  "bottom": 2105.6
+ },
+ "labels": [
+  {
+   "label": "J4.4",
+   "kind": "pad",
+   "anchor_mm": [
+    159.2175,
+    119.575
+   ],
+   "text_mm": [
+    159.589,
+    119.204
+   ],
+   "anchor_px": [
+    1083.2,
+    1662.9
+   ]
+  },
+  {
+   "label": "U4.5",
+   "kind": "pad",
+   "anchor_mm": [
+    154.0575,
+    108.195
+   ],
+   "text_mm": [
+    154.429,
+    107.824
+   ],
+   "anchor_px": [
+    607.3,
+    613.2
+   ]
+  },
+  {
+   "label": "CH0_SDA",
+   "kind": "neighbour",
+   "anchor_mm": [
+    157.0165,
+    117.7
+   ],
+   "text_mm": [
+    156.645,
+    117.329
+   ],
+   "anchor_px": [
+    880.2,
+    1489.9
+   ]
+  },
+  {
+   "label": "GND",
+   "kind": "neighbour",
+   "anchor_mm": [
+    157.9925,
+    113.725
+   ],
+   "text_mm": [
+    158.364,
+    113.354
+   ],
+   "anchor_px": [
+    970.2,
+    1123.3
+   ]
+  },
+  {
+   "label": "CH1_SDA",
+   "kind": "neighbour",
+   "anchor_mm": [
+    157.6005,
+    110.2598
+   ],
+   "text_mm": [
+    157.972,
+    109.889
+   ],
+   "anchor_px": [
+    934.1,
+    803.6
+   ]
+  },
+  {
+   "label": "+3.3V",
+   "kind": "neighbour",
+   "anchor_mm": [
+    158.4425,
+    114.575
+   ],
+   "text_mm": [
+    158.814,
+    114.204
+   ],
+   "anchor_px": [
+    1011.8,
+    1201.7
+   ]
+  },
+  {
+   "label": "CH1_SCL",
+   "kind": "neighbour",
+   "anchor_mm": [
+    157.9194,
+    109.9409
+   ],
+   "text_mm": [
+    158.29,
+    109.57
+   ],
+   "anchor_px": [
+    963.5,
+    774.2
+   ]
+  },
+  {
+   "label": "TCA_RESET",
+   "kind": "neighbour",
+   "anchor_mm": [
+    154.8275,
+    109.305
+   ],
+   "text_mm": [
+    155.199,
+    109.676
+   ],
+   "anchor_px": [
+    678.3,
+    715.6
+   ]
+  },
+  {
+   "label": "Net-(C7-Pad2)",
+   "kind": "neighbour",
+   "anchor_mm": [
+    154.4475,
+    114.375
+   ],
+   "text_mm": [
+    154.819,
+    114.004
+   ],
+   "anchor_px": [
+    643.3,
+    1183.2
+   ]
+  }
+ ]
+}

@@ -1,0 +1,229 @@
+{
+ "_provenance": {
+  "source": "hardware/pcb-main/kicad/motion-play-main.kicad_pcb",
+  "source_sha256": "ff6857d0bf797fc745a59a91123e752c4233ac3682e1ce38f2e270348b26e5b3",
+  "source_ref": "c2acffc",
+  "generator": "tools/pcb-context/render.py",
+  "generator_commit": "2611fdf74a3a102efc898430502b20bb6ad716bb-dirty",
+  "generated": "2026-11-03T00:19:10+00:00",
+  "model": "hardware/pcb-main/kicad/board-model/board-model.json",
+  "model_sha256": "5f4f0c22b5ff43922e130f7662fd878bd4a0e93eca0f1d08611ae85f3df55252",
+  "model_generator_commit": "f93e72b92796da964e1071e3aba3c3fac3b362a8"
+ },
+ "kind": "plane",
+ "layer": "In1.Cu",
+ "fill_nets": [
+  "GND"
+ ],
+ "adjacent_layers": [
+  "F.Cu",
+  "In2.Cu"
+ ],
+ "critical_nets_overlaid": [
+  "/I2C_SDA",
+  "/I2C_SCL",
+  "/TCA9548A_Subsystem/CH0_SDA",
+  "/TCA9548A_Subsystem/CH0_SCL",
+  "/TCA9548A_Subsystem/CH1_SDA",
+  "/TCA9548A_Subsystem/CH1_SCL",
+  "/TCA9548A_Subsystem/CH2_SDA",
+  "/TCA9548A_Subsystem/CH2_SCL"
+ ],
+ "image": {
+  "file": "plane-In1_Cu.png",
+  "width_px": 1920,
+  "height_px": 1029,
+  "dpi": 160
+ },
+ "view_mm": [
+  73.7,
+  99.0,
+  165.9,
+  141.5
+ ],
+ "y_axis": "down (KiCad)",
+ "axes_px": {
+  "left": 96.0,
+  "top": 179.6,
+  "right": 1593.6,
+  "bottom": 869.9
+ },
+ "labels": [
+  {
+   "label": "I2C_SDA",
+   "kind": "track",
+   "anchor_mm": [
+    150.7293,
+    105.5066
+   ],
+   "text_mm": [
+    152.535,
+    103.701
+   ],
+   "anchor_px": [
+    1347.2,
+    285.3
+   ]
+  },
+  {
+   "label": "I2C_SCL",
+   "kind": "track",
+   "anchor_mm": [
+    150.1835,
+    105.9377
+   ],
+   "text_mm": [
+    151.989,
+    107.744
+   ],
+   "anchor_px": [
+    1338.3,
+    292.3
+   ]
+  },
+  {
+   "label": "CH0_SDA",
+   "kind": "track",
+   "anchor_mm": [
+    156.8915,
+    114.7725
+   ],
+   "text_mm": [
+    158.697,
+    112.967
+   ],
+   "anchor_px": [
+    1447.3,
+    435.8
+   ]
+  },
+  {
+   "label": "CH0_SCL",
+   "kind": "track",
+   "anchor_mm": [
+    157.3425,
+    114.1089
+   ],
+   "text_mm": [
+    159.148,
+    115.915
+   ],
+   "anchor_px": [
+    1454.6,
+    425.0
+   ]
+  },
+  {
+   "label": "CH1_SDA",
+   "kind": "track",
+   "anchor_mm": [
+    156.5895,
+    109.072
+   ],
+   "text_mm": [
+    158.395,
+    107.266
+   ],
+   "anchor_px": [
+    1442.4,
+    343.2
+   ]
+  },
+  {
+   "label": "CH1_SCL",
+   "kind": "track",
+   "anchor_mm": [
+    157.1339,
+    108.9786
+   ],
+   "text_mm": [
+    158.94,
+    110.785
+   ],
+   "anchor_px": [
+    1451.2,
+    341.7
+   ]
+  },
+  {
+   "label": "CH2_SDA",
+   "kind": "track",
+   "anchor_mm": [
+    155.666,
+    106.245
+   ],
+   "text_mm": [
+    157.472,
+    104.439
+   ],
+   "anchor_px": [
+    1427.4,
+    297.3
+   ]
+  },
+  {
+   "label": "CH2_SCL",
+   "kind": "track",
+   "anchor_mm": [
+    155.4909,
+    105.595
+   ],
+   "text_mm": [
+    157.297,
+    107.401
+   ],
+   "anchor_px": [
+    1424.5,
+    286.7
+   ]
+  },
+  {
+   "label": "GND",
+   "kind": "zone",
+   "anchor_mm": [
+    142.4403,
+    120.2215
+   ],
+   "text_mm": [
+    144.246,
+    118.416
+   ],
+   "anchor_px": [
+    1212.5,
+    524.3
+   ]
+  },
+  {
+   "label": "no Cu 110 mm²",
+   "kind": "void",
+   "anchor_mm": [
+    130.75,
+    103.7187
+   ],
+   "text_mm": [
+    132.556,
+    101.913
+   ],
+   "anchor_px": [
+    1022.7,
+    256.3
+   ]
+  },
+  {
+   "label": "no Cu 2 mm²",
+   "kind": "void",
+   "anchor_mm": [
+    112.1908,
+    102.9219
+   ],
+   "text_mm": [
+    113.997,
+    101.116
+   ],
+   "anchor_px": [
+    721.2,
+    243.3
+   ]
+  }
+ ]
+}

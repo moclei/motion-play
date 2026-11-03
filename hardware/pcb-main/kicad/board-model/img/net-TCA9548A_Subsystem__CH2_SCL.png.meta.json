@@ -1,0 +1,141 @@
+{
+ "_provenance": {
+  "source": "hardware/pcb-main/kicad/motion-play-main.kicad_pcb",
+  "source_sha256": "ff6857d0bf797fc745a59a91123e752c4233ac3682e1ce38f2e270348b26e5b3",
+  "source_ref": "c2acffc",
+  "generator": "tools/pcb-context/render.py",
+  "generator_commit": "2611fdf74a3a102efc898430502b20bb6ad716bb-dirty",
+  "generated": "2026-11-03T00:19:10+00:00",
+  "model": "hardware/pcb-main/kicad/board-model/board-model.json",
+  "model_sha256": "5f4f0c22b5ff43922e130f7662fd878bd4a0e93eca0f1d08611ae85f3df55252",
+  "model_generator_commit": "f93e72b92796da964e1071e3aba3c3fac3b362a8"
+ },
+ "kind": "net",
+ "net": "/TCA9548A_Subsystem/CH2_SCL",
+ "neighbours": [
+  "/TCA9548A_Subsystem/CH2_SDA",
+  "GND",
+  "+3.3V",
+  "unconnected-(U4-SD3-Pad10)",
+  "/TCA9548A_Subsystem/CH1_SCL",
+  "unconnected-(U4-SC3-Pad11)"
+ ],
+ "unreferenced_antipads_excl_mm": 0.0,
+ "image": {
+  "file": "net-TCA9548A_Subsystem__CH2_SCL.png",
+  "width_px": 1920,
+  "height_px": 1403,
+  "dpi": 160
+ },
+ "view_mm": [
+  148.773,
+  100.0,
+  164.472,
+  110.3
+ ],
+ "y_axis": "down (KiCad)",
+ "axes_px": {
+  "left": 96.0,
+  "top": 223.9,
+  "right": 1593.6,
+  "bottom": 1206.5
+ },
+ "labels": [
+  {
+   "label": "J6.4",
+   "kind": "pad",
+   "anchor_mm": [
+    159.1967,
+    103.775
+   ],
+   "text_mm": [
+    159.555,
+    103.416
+   ],
+   "anchor_px": [
+    1090.4,
+    584.0
+   ]
+  },
+  {
+   "label": "U4.9",
+   "kind": "pad",
+   "anchor_mm": [
+    154.0575,
+    105.595
+   ],
+   "text_mm": [
+    154.416,
+    105.236
+   ],
+   "anchor_px": [
+    600.2,
+    757.6
+   ]
+  },
+  {
+   "label": "CH2_SDA",
+   "kind": "neighbour",
+   "anchor_mm": [
+    158.4656,
+    104.5189
+   ],
+   "text_mm": [
+    158.824,
+    104.878
+   ],
+   "anchor_px": [
+    1020.7,
+    655.0
+   ]
+  },
+  {
+   "label": "GND",
+   "kind": "neighbour",
+   "anchor_mm": [
+    158.4656,
+    105.5189
+   ],
+   "text_mm": [
+    158.824,
+    105.878
+   ],
+   "anchor_px": [
+    1020.7,
+    750.4
+   ]
+  },
+  {
+   "label": "+3.3V",
+   "kind": "neighbour",
+   "anchor_mm": [
+    158.4656,
+    106.5189
+   ],
+   "text_mm": [
+    158.824,
+    106.878
+   ],
+   "anchor_px": [
+    1020.7,
+    845.8
+   ]
+  },
+  {
+   "label": "CH1_SCL",
+   "kind": "neighbour",
+   "anchor_mm": [
+    154.7912,
+    106.69
+   ],
+   "text_mm": [
+    155.15,
+    106.331
+   ],
+   "anchor_px": [
+    670.1,
+    862.1
+   ]
+  }
+ ]
+}

@@ -1,0 +1,173 @@
+{
+ "_provenance": {
+  "source": "hardware/pcb-main/kicad/motion-play-main.kicad_pcb",
+  "source_sha256": "ff6857d0bf797fc745a59a91123e752c4233ac3682e1ce38f2e270348b26e5b3",
+  "source_ref": "c2acffc",
+  "generator": "tools/pcb-context/render.py",
+  "generator_commit": "2611fdf74a3a102efc898430502b20bb6ad716bb-dirty",
+  "generated": "2026-11-03T00:19:10+00:00",
+  "model": "hardware/pcb-main/kicad/board-model/board-model.json",
+  "model_sha256": "5f4f0c22b5ff43922e130f7662fd878bd4a0e93eca0f1d08611ae85f3df55252",
+  "model_generator_commit": "f93e72b92796da964e1071e3aba3c3fac3b362a8"
+ },
+ "kind": "net",
+ "net": "/TCA9548A_Subsystem/CH0_SDA",
+ "neighbours": [
+  "/TCA9548A_Subsystem/CH0_SCL",
+  "GND",
+  "+3.3V",
+  "/TCA9548A_Subsystem/CH1_SDA",
+  "Net-(C7-Pad2)",
+  "/TCA_RESET"
+ ],
+ "unreferenced_antipads_excl_mm": 0.0,
+ "image": {
+  "file": "net-TCA9548A_Subsystem__CH0_SDA.png",
+  "width_px": 1920,
+  "height_px": 2240,
+  "dpi": 160
+ },
+ "view_mm": [
+  148.773,
+  104.14,
+  164.493,
+  125.375
+ ],
+ "y_axis": "down (KiCad)",
+ "axes_px": {
+  "left": 131.8,
+  "top": 179.2,
+  "right": 1557.8,
+  "bottom": 2105.6
+ },
+ "labels": [
+  {
+   "label": "J4.3",
+   "kind": "pad",
+   "anchor_mm": [
+    159.2175,
+    120.575
+   ],
+   "text_mm": [
+    159.595,
+    120.198
+   ],
+   "anchor_px": [
+    1079.3,
+    1670.2
+   ]
+  },
+  {
+   "label": "U4.4",
+   "kind": "pad",
+   "anchor_mm": [
+    154.0575,
+    108.845
+   ],
+   "text_mm": [
+    154.435,
+    108.468
+   ],
+   "anchor_px": [
+    611.2,
+    606.0
+   ]
+  },
+  {
+   "label": "CH0_SCL",
+   "kind": "neighbour",
+   "anchor_mm": [
+    157.2175,
+    110.8437
+   ],
+   "text_mm": [
+    157.595,
+    110.466
+   ],
+   "anchor_px": [
+    897.9,
+    787.3
+   ]
+  },
+  {
+   "label": "GND",
+   "kind": "neighbour",
+   "anchor_mm": [
+    155.5696,
+    109.9829
+   ],
+   "text_mm": [
+    155.947,
+    109.606
+   ],
+   "anchor_px": [
+    748.4,
+    709.3
+   ]
+  },
+  {
+   "label": "+3.3V",
+   "kind": "neighbour",
+   "anchor_mm": [
+    159.8425,
+    122.275
+   ],
+   "text_mm": [
+    160.22,
+    121.898
+   ],
+   "anchor_px": [
+    1136.0,
+    1824.4
+   ]
+  },
+  {
+   "label": "CH1_SDA",
+   "kind": "neighbour",
+   "anchor_mm": [
+    157.538,
+    110.1972
+   ],
+   "text_mm": [
+    157.915,
+    109.82
+   ],
+   "anchor_px": [
+    926.9,
+    728.7
+   ]
+  },
+  {
+   "label": "Net-(C7-Pad2)",
+   "kind": "neighbour",
+   "anchor_mm": [
+    154.4475,
+    114.375
+   ],
+   "text_mm": [
+    154.825,
+    113.998
+   ],
+   "anchor_px": [
+    646.6,
+    1107.7
+   ]
+  },
+  {
+   "label": "TCA_RESET",
+   "kind": "neighbour",
+   "anchor_mm": [
+    154.7912,
+    109.29
+   ],
+   "text_mm": [
+    155.168,
+    108.913
+   ],
+   "anchor_px": [
+    677.8,
+    646.4
+   ]
+  }
+ ]
+}
