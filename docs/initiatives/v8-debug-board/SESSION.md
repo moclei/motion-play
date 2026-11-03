@@ -331,3 +331,40 @@ Task 5 and the Phase 4 Handoff are ticked. PLAN is unchanged: the approach still
 **Dispatch:** standard spawn prompt, plus:
 - Additional reading: `docs/research/v7-retry/kicad-extraction-audit.md` §3–§6.1 (the spec and fixture table); `tools/CONTEXT.md` (Critical Rule, Source-Hash Rule, pcb-context section); `tools/pcb-context/README.md` and the existing scripts there (`extract.py`, `routing_extract.py`, `routing_audit.py`, `place_power.py`, `audit-specs/`) to reuse rather than duplicate.
 - This phase is independent of the hardware design phases; it validates on v7 `c2acffc` only.
+
+#### Notes
+
+**Validation on v7 `c2acffc` (task 4).** The source was `git archive c2acffc hardware/pcb-main/kicad` into scratch. Its sha256 `ff6857d0…` is the same as the working-tree file, so `c2acffc` = HEAD for this PCB. Run: `python3 tools/pcb-context/board_model.py <scratch>/motion-play-main.kicad_pcb -o <scratch>/v7-model.json --source-ref c2acffc` (9 s with DRC; the config was auto-picked from `board-config/motion-play-main.json`). Fixture values were computed from the model through the `BoardModel` API (scratch scripts, not committed).
+
+| Audit §6.1 check | Expected | Model | Δ | Note |
+|---|---|---|---|---|
+| SDA length | 72.9 (F 35.9 / B 37.0), 3 vias | 72.90 (F 35.92 / B 36.98), 3 vias | 0.0 / +0.02 / −0.02 | |
+| SDA branches from U3.37 | 19.4 / 5.9 / 31.7 / 47.7 | R28.1 19.36 / TPIO43.1 5.87 / U7.6 31.67 / U5.6 47.69 | −0.04 / −0.03 / −0.03 / −0.01 | Also U4.23 9.42 (the audit's 19.4 is the end of that branch, R28.1). Vias on path: 0/0/2/3. Driver from config. |
+| SCL to BOOST_SW gap | 0.94 edge to edge | track to track **0.937** (S547 0.25 mm ↔ S723 1.5 mm, F.Cu) | −0.003 | All copper: **0.662**, from SCL via V200 to the 1.5 mm BOOST_SW track. The audit's method left vias out, so the real minimum is 0.28 mm smaller than the fixture. Next: SCL track to R41.2 (BOOST_SW pad) 1.21. |
+| SDA to R44 pad 2 | 0.85 | SDA tracks to R44.2 **0.845** | −0.005 | All SDA copper (pads and vias too): 0.570 (an SDA pad or via is closer than any SDA track). |
+| SDA to SCL gap | 0.20 | F.Cu 0.200 / B.Cu 0.210 | 0.0 | Centreline 0.451 / 0.460 (audit 0.45). Within 1 mm of SCL copper: F 30.7 / B 20.0 (audit, not a fixture: 27.8 / 19.5; the model counts SCL pads and vias as well). |
+| SDA over In2 +3.3V / over nothing | ~28.9 / ~6.8 | +3.3V **28.94**; nothing: raw **8.04**, **6.46** without the 0.6 / 0.6 / 0.38 mm crossings of SDA's own via antipads at V196/V198 | +0.04 / −0.34 | The void run is S541 6.01 + S542 0.43 + S539 0.02 (V197 → x 111.8, y 122.17). With every own-via antipad disc removed it is 5.49. The audit's "~6.8" was approximate. The 6.46 figure is the same quantity measured exactly. +5V under SDA: 0. |
+| SDA B.Cu inside BT1 body | 29.7 | **29.74** (body from B.CrtYd: x 75.69–163.57, y 117.77–139.43) | +0.04 | 0.0 inside BT1's pad bbox (audit: "outside its pad bbox"). |
+| Zones | 8 per audit §4 | 8: In1 GND (81 holes); In2 +5V p7 (70 holes) / +3.3V p8 (36 holes); F.Cu BOOST_SW p4, +5V p5, GND p3, +3.3V p6; keepout on all four layers (tracks, vias, pads, pour not allowed) | 0 | All 7 copper zones filled, no unfilled warning. De-fracture kept the area exactly. |
+
+**KiCad spot checks** (the audit asks for these. kicad-cli stands in for the GUI, because the Worker can't open KiCad):
+- **Pads:** `kicad-cli pcb export ipcd356` gives KiCad's own pad centre, size and rotation. All 359 copper pads match: worst centre Δ 0.0017 mm and worst rotated-extent Δ 0.0013 mm, both under the format's 0.0001 in (0.00254 mm) grid. That covers rotated R44 (−90°) and the (0, 180) / (90, 270) pads that are rotated relative to their footprint.
+- **Zones:** `kicad-cli pcb export gerbers --layers In1.Cu,In2.Cu`, region area per `TO.N` net: In1 GND 2991.13, In2 +5V 1582.19, In2 +3.3V 1177.91 mm². The model gives 2991.13 / 1582.19 / 1177.91.
+- **Connectivity:** DRC reports 0 unconnected items, and the model has no net split into islands.
+
+**What changed while building (task 2).**
+- **Connectivity rule.** The first version joined a track to a pad only if the track's endpoint lay inside the pad. That split 6 nets that KiCad treats as connected (e.g. U5.20: the 0.75 mm track ends 0.076 mm outside the pad, but the pad centre is under the track). Now: an anchor of one item inside the copper of the other connects them, as in KiCad's connectivity (track anchors are its endpoints; pad and via anchors are their centres). Track endpoints inside another track's copper merge. Overlapping same-net pads join (U6's custom exposed pad holds 8 more pads numbered 21). Result: 0 islands, matching DRC.
+- **Pad angle** in the file is absolute (it already includes the footprint's rotation). Confirmed by the IPC-D-356 check.
+- **De-fracture:** `Polygon(fill).buffer(0)` gives back the holes (81/70/36). `make_valid(method="structure")` doesn't exist in shapely 2.0.7.
+- One zero-length GND track (S297) is ignored for splitting.
+
+**Environment (task 1).** pip 20.0.2 builds only `macosx_26_*` wheel tags on this macOS 26 (x86_64 Python), so it saw no wheels for any version of matplotlib. Fix: `python3 -m pip install --upgrade "pip<24.1"` (24.0 is the last pip for 3.7), then `pip install matplotlib`. Result: matplotlib 3.5.3 (Agg render tested), numpy 1.21.6. shapely 2.0.7, kiutils 1.4.8 and kicad-cli 9.0.4 at the app path were all confirmed. `tools/pcb-context/requirements.txt` now lists matplotlib. This is a hazard (old pip on macOS ≥ 11 says "no matching distribution"). `.context/HAZARDS.md` doesn't exist and creating it is outside a Worker's remit, so it is noted here for the Orchestrator or Gardener.
+
+**Model facts for Phase 6.**
+- Output is about 950 KB of JSON (In1 fill 5.8k points).
+- `BoardModel` gives shapely geometry: `net_copper(net, layers, include_zones)`, `pad_geom`, `segment_geom` / `segment_line`, `via_geom`, `body`, `zone_fill`, `layer_fill(layer, net)`, `outline`.
+- Topology per net: `root` (config `drivers`, else a heuristic: a pad on the largest footprint), `chains` (key node to key node, with layer, length and segment ids), `branches` (Dijkstra from the root: length, by layer, via count, node path), `stubs` (dangling tracks, one-sided vias), `islands`.
+- Through vias carry annular rings on In1/In2 in `net_copper` (KiCad's via `removeUnusedLayers` is False on v7). So same-layer gaps on inner layers are via-to-via.
+- The plan-view gap between SDA and SCL is 0 because they cross on opposite layers. Phase 6 must report plan-view proximity alongside the layer separation, not as a bare minimum.
+- DRC with `--severity-all` gives 25 (18 errors: 16 clearance, 2 hole_clearance; 7 warnings) and 0 unconnected. Topic 2's "6 minor" was presumably at default severity, excluding the warnings and footprint-library checks; it was not re-derived here.
+- The sensor-rigid and sensor-flex boards also parse (0 unconnected, no islands). They are not validated (still Deferred).
