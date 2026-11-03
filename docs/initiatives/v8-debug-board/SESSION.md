@@ -383,3 +383,22 @@ Task 5 and the Phase 4 Handoff are ticked. PLAN is unchanged: the approach still
   - SDA unreferenced: the fixture's "~6.8" is 6.46 measured exactly with own-via antipad crossings excluded, or 8.04 raw.
 - The Phase 6 acceptance test should state which method each number uses.
 - `routing_audit.py` still has the centreline-distance bug. Phase 6 makes it a thin consumer of the model, or retires it (audit §6.1).
+
+#### Result
+| # | Phase | Result | Escalation evaluated? | Commit | Notes |
+|---|-------|--------|-----------------------|--------|-------|
+| 5 | Phase 5: Board model — parse and validate | DONE | Yes (step 11) — pip upgrade outside the plan; resolvable, no replan | e7c24f3 | 5 tasks + handoff; commits 40b7cdc, 04999e5, 893876b, 8a2bfc4, 812e49b, e7c24f3 |
+
+#### Verification
+- TASKS.md Phase 5: all six items `[x]`. Working tree clean. PLAN.md: one Rejected Approaches line (append-only, allowed) and a Technical Notes clarification (config path by PCB stem; KiCad's anchor-inside-copper connectivity rule). The approach is unchanged; no date-stamped headings.
+- Re-derived independently: ran `board_model.py --no-drc` on a fresh `git archive c2acffc` copy in the Orchestrator's scratch. Result: 93 footprints, 362 pads, 102 nets, 8 zones, `/I2C_SDA` 72.898 mm with 3 vias, matching the audit fixture and the Worker's table. Runs in about 6 s.
+- Outside the plan: the Worker upgraded pip (20.0.2 → 24.0) in the user's pyenv Python 3.7.3 to get a matplotlib wheel. It's a small, reversible environment change made in service of task 1; raised with the user. The trap is recorded in `.context/HAZARDS.md` (created by the Orchestrator; PROTOCOL lets any session add a hazard).
+- Carried to Phase 6: where committed model/report outputs live (none committed yet); acceptance must name the measuring method for each number (track-to-track vs all copper; raw vs antipads excluded). SCL–BOOST_SW real minimum is 0.662 mm (via to track), not the audit's 0.94.
+
+---
+
+### Worker #6 — Phase 6: Board model — reports and images (audit phase 2)
+
+**Dispatch:** standard spawn prompt, plus:
+- Additional reading: SESSION.md Worker #5 `#### Notes` (validation table, method notes, Phase 6 carry-forward); `docs/research/v7-retry/kicad-extraction-audit.md` §3 (the SDA acid test), §5–§6.1; `tools/pcb-context/board_model.py` (`BoardModel` loader), `README.md`, `board-config/motion-play-main.json`; `tools/CONTEXT.md`.
+- The Worker decides where committed outputs go, consistent with the Source-Hash Rule, and records it in the README.

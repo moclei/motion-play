@@ -58,7 +58,7 @@
 
 ## Phase 6: Board model — reports and images (audit phase 2)
 
-- [ ] `net_report.py`: the net-centric Markdown + JSON (route narrative from the topology, neighbours within the radii across layers, coupled length, reference plane per segment), with provenance front matter
+- [~] `net_report.py`: the net-centric Markdown + JSON (route narrative from the topology, neighbours within the radii across layers, coupled length, reference plane per segment), with provenance front matter
 - [ ] `plane_report.py`: per-layer copper ownership, splits, voids, mm unreferenced per signal segment, GND stitching density
 - [ ] `render.py`: one PNG per critical net and per plane layer (outline, faded footprints, net by layer, labelled pads/vias, neighbours highlighted) + `.meta.json`
 - [ ] Acceptance: answer the audit §3 SDA acid test from the outputs alone, and match the audit's numbers. Look at each PNG and check the labels sit on their pads
