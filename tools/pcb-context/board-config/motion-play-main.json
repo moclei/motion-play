@@ -1,0 +1,68 @@
+{
+  "_comment": "Board-model config for the v7 main board (hardware/pcb-main/kicad/motion-play-main.kicad_pcb). Definitions from docs/research/v7-retry/kicad-extraction-audit.md §6.1. board_model.py picks this file up by the PCB's stem; net names are the full hierarchical names (routing_extract.py --list-nets).",
+  "board": "motion-play-main (v7, c2acffc)",
+  "definitions": {
+    "high_current": {
+      "_rule": "A net is high-current if it has a zone, any track >= min_track_width_mm, or is listed here (schematic role power/ground; circuit-context.json carries no net roles yet, so the list is explicit).",
+      "zone_nets": true,
+      "min_track_width_mm": 0.5,
+      "power_ground_nets": [
+        "GND",
+        "+5V",
+        "+3.3V",
+        "/LED Controller/+5V_TO_LEDS",
+        "/Power Management/VBUS_RAW",
+        "/Power Management/Protected_VBUS",
+        "/Power Management/BQ_PMID",
+        "/Power Management/BQ_SW",
+        "/Power Management/VSYS",
+        "/Power Management/VSYS_SENSE",
+        "/Power Management/VBAT",
+        "/Power Management/BAT_RAW",
+        "/Power Management/BOOST_SW"
+      ]
+    },
+    "high_dvdt": {
+      "_rule": "Explicit seed list per board (audit §6.1): BQ_SW, BOOST_SW, the U5 SW pads 19/20, LED_DATA, USB_DP/USB_DN, CHRG_INT. LED data after the level shifter and the MCU-side USB pair are included as the same signals.",
+      "nets": [
+        "/Power Management/BQ_SW",
+        "/Power Management/BOOST_SW",
+        "/LED_DATA",
+        "/LED Controller/DATA_TO_LEDS",
+        "/USB_DP",
+        "/USB_DN",
+        "/ESP32_S3/USB_DP_MCU",
+        "/ESP32_S3/USB_DN_MCU",
+        "/CHRG_INT"
+      ],
+      "pads": [
+        {"ref": "U5", "pad": "19"},
+        {"ref": "U5", "pad": "20"}
+      ]
+    },
+    "neighbour_radii_mm": {
+      "signal": 1.0,
+      "high_current": 3.0,
+      "high_dvdt": 5.0
+    },
+    "neighbour_measure": "plan view, across all copper layers; the layer separation is reported with each neighbour",
+    "clearance": "copper edge to copper edge (tracks buffered by width/2, true pad polygons, via annular rings, zone fills)"
+  },
+  "drivers": {
+    "/I2C_SDA": "U3.37",
+    "/I2C_SCL": "U3.36",
+    "/LED_DATA": "U3.9",
+    "/CHRG_INT": "U5.7",
+    "/TCA_RESET": "U3.18"
+  },
+  "critical_nets": [
+    "/I2C_SDA",
+    "/I2C_SCL",
+    "/TCA9548A_Subsystem/CH0_SDA",
+    "/TCA9548A_Subsystem/CH0_SCL",
+    "/TCA9548A_Subsystem/CH1_SDA",
+    "/TCA9548A_Subsystem/CH1_SCL",
+    "/TCA9548A_Subsystem/CH2_SDA",
+    "/TCA9548A_Subsystem/CH2_SCL"
+  ]
+}

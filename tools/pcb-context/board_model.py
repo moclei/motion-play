@@ -1015,7 +1015,11 @@ def check(model_path: Path) -> int:
 def load_config(pcb: Path, explicit: Optional[str]) -> Tuple[Dict[str, Any], Optional[str]]:
     path = Path(explicit) if explicit else CONFIG_DIR / (pcb.stem + ".json")
     if path.exists():
-        return json.loads(path.read_text(encoding="utf-8")), str(path)
+        try:
+            shown = str(path.resolve().relative_to(repo_root().resolve()))
+        except ValueError:
+            shown = str(path.resolve())
+        return json.loads(path.read_text(encoding="utf-8")), shown
     if explicit:
         raise SystemExit("config not found: %s" % explicit)
     return {}, None
@@ -1061,6 +1065,8 @@ def build_model(pcb: Path, cfg: Dict[str, Any], cfg_path: Optional[str], drc: bo
         },
         "warnings": warnings,
         "definitions": cfg.get("definitions", {}),
+        "critical_nets": cfg.get("critical_nets", []),
+        "drivers": cfg.get("drivers", {}),
         "stackup": stackup,
         "outline": outline,
         "footprints": footprints,
