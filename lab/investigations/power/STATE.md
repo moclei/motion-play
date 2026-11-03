@@ -36,7 +36,7 @@ Mechanism numbers as in the intake relay. All desk analysis: SESSION Worker #2 N
 | B3a BATFET latch | hot-plug inrush > 9 A trips BQ BATFET OCP; board dead on battery until VBUS, not damaged | untested | argued; against as the whole story (USB was plugged in afterwards, which clears the latch; user) | relay; user 2026-11-02 | intake |
 | B3b overshoot | LC ringing at plug-in takes BAT/SYS > 6 V | untested | argued (unlikely: electrolytic ESR) | relay | intake |
 | B4 boost into load | SW1 ON with heavy +5V load (LED strip) → U6 at ILIM through Q2 | untested | argued against for the event (SW1 OFF, no strip; user); live as a design risk | relay; user 2026-11-02 | intake |
-| B5 BT1 + pad bridge | solder/tab bridges BT1 + (BAT_RAW) to J7 rear shell legs (0.78 mm) or USB_DN via (0.38 mm) | untested | argued | relay (kiutils + B.Mask @ c2acffc) | intake |
+| B5 BT1 + pad bridge | solder/tab bridges BT1 + (BAT_RAW) to J7 rear shell legs (0.78 mm) or USB_DN via (0.38 mm) | untested | argued; untestable (only #0001/#0002 had a holder soldered; both binned) | relay (kiutils + B.Mask @ c2acffc) | intake |
 | B6 wrong source | source > 6 V (not one Li-ion cell) | untested | argued against (one 30Q cell, ≤ 4.2 V; user) | relay; user 2026-11-02 | intake |
 | B7 TS network | cannot cook a board | untested | argued | relay | intake |
 | B8 not damaged | #0001/#0002 not damaged: on USB with SW1 OFF, U6 doesn't switch, U8 in dropout, U3 below 3.0 V → no USB device (as #0004 Ka) | untested | argued (fits SW1 OFF at insertion; SW1 position at the USB plug-in not recalled) | user 2026-11-02; V7R-020 S4c | intake |
@@ -56,6 +56,7 @@ Mechanism numbers as in the intake relay. All desk analysis: SESSION Worker #2 N
 | #0004 powered on USB: +5V 3.754 V (3.7x), +3.3V 2.680–2.701 V | measured (one DMM pass) | V7R-020 S4c |
 | #0003 powered: +5V 5.096–5.098 V, +3.3V 3.276 V | measured | V7R-020 E3 |
 | #0005: boots on USB; VSYS 4.30 V (old image, INA219); BQ absent at 0x6B; brownout loop on the old image | measured (firmware-reported) | V7R-020 S5 |
+| BT1 is not fitted by JLC: bare pads on every v7; the user hand-soldered separately bought holders on #0001 and #0002 only | measured (user) | user 2026-11-02 (PWR-001 raw) |
 | No battery-side fuse; VBAT has no capacitor; BQ BATFET OCP 9 A latches until VBUS | argued (schematic + SLUSB97A) | SESSION Worker #2 |
 
 ## 5. Tombstones                                (one line each, never deleted)
