@@ -328,6 +328,10 @@ def neighbours(geo: Geo, target: str, radii: Dict[str, float]) -> List[Dict[str,
                 "track_to_copper_mm": r1(tc[0]) if tc[1] else None,
                 "track_to_copper_closest": [tc[1], tc[2]] if tc[1] else None,
                 "by_layer_all_copper_mm": {k: r1(v) for k, v in sorted(per_layer.items())},
+                "by_layer_track_to_track_mm": {
+                    l: r1(d2) for l in sorted(per_layer) for (d2, a2, _) in [_closest(
+                        [i for i in geo.items[target][l] if i[1] == "track"],
+                        [i for i in geo.items.get(net, {}).get(l, []) if i[1] == "track"])] if a2},
             }
             # Coupled length: target centreline within r (edge to edge) of the
             # neighbour's same-layer copper.
