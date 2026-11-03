@@ -51,7 +51,7 @@
 - [x] `tools/pcb-context/board_model.py`: one parse into one model, covering footprints (true pad polygons, rotated; `*.Cu` expanded), bodies (courtyard/fab fallback), outline polygon, segments/arcs/vias, zones (outline + de-fractured fills with holes, keepouts, priority, a warning on unfilled zones), stackup from `setup`, net topology graph (pads, vias, junctions; branches and stubs), `_provenance` + `--check`, kicad-cli DRC in the run
 - [x] Per-board config file with the audit §6.1 definitions (high-current, high dv/dt seed list, neighbour radii, edge-to-edge clearance)
 - [x] Validate on v7 `c2acffc`: every audit §6.1 fixture row (SDA 72.9 mm F 35.9 / B 37.0, 3 vias; branch lengths; gaps; the In2 reference split; BT1 body length; 8 zones). Record each value and its delta in SESSION.md
-- [ ] Mark v7's stale `pcb-layout-context.json`, `drc-report.json` and `placement-report.json` as historical in `tools/pcb-context/README.md` (don't delete them)
+- [x] Mark v7's stale `pcb-layout-context.json`, `drc-report.json` and `placement-report.json` as historical in `tools/pcb-context/README.md` (don't delete them)
 - [ ] 🔄 Handoff
 
 # --- handoff point ---

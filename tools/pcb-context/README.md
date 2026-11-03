@@ -2,6 +2,29 @@
 
 Scripts for extracting structured data from KiCad PCB files and automating component placement. Both tools use [kiutils](https://pypi.org/project/kiutils/) (v1.4.8+) to parse and write `.kicad_pcb` files.
 
+## Historical outputs (v7 main board) — do not cite
+
+These committed files in `hardware/pcb-main/kicad/` are kept because the v7 debug track cites `c2acffc` paths, but they do **not** describe the v7 board as built. Use `board_model.py` output instead (regenerate it; it carries `_provenance`).
+
+| File | Why it is historical |
+|---|---|
+| `pcb-layout-context.json` | Extracted 2026-04-07, before the final layout (2026-04-13): 7 parts are at the wrong position, including U7 (INA219, on the I²C bus) by ~4.9 mm. Bounding boxes only; no pads, nets or copper. No source hash. |
+| `drc-report.json` | Hand-run 2026-03-12, before routing: 137 unconnected, 84 violations. The routed board has 0 unconnected (kicad-cli 9.0.4, `board_model.py` DRC, 2026-11-02). |
+| `placement-report.json` | Output of a `place_power.py` run (2026-03-16) whose placement was later redone by hand. |
+
+Source: `docs/research/v7-retry/kicad-extraction-audit.md` §2.
+
+## board_model.py
+
+One parse of a `.kicad_pcb` into one model (`board-model.json`): true rotated pad polygons, footprint bodies, outline, tracks/vias, zones with de-fractured fills, stackup, per-net topology (branches, stubs, islands), kicad-cli DRC, and `_provenance`. Reports are derived from it. Spec: the extraction audit §5.2 / §6.1. Validated on v7 `c2acffc` (`docs/initiatives/v8-debug-board/SESSION.md`, Worker #5).
+
+```bash
+python board_model.py hardware/pcb-main/kicad/motion-play-main.kicad_pcb [-o out.json] [--config cfg.json] [--no-drc] [--source-ref REF]
+python board_model.py --check out.json     # 0 fresh, 1 stale, 2 no provenance
+```
+
+Per-board definitions (high-current, high dv/dt, neighbour radii, clearance metric, driver pads, critical nets) live in `board-config/<pcb stem>.json`, picked up automatically. Python use: `from board_model import BoardModel; m = BoardModel.load(path); m.net_copper("/I2C_SDA")`.
+
 ## Workflow
 
 ```
@@ -184,4 +207,5 @@ Two practical notes when authoring a spec:
 
 - Python 3.7+
 - kiutils ≥ 1.4.8 (`pip install kiutils`)
-- shapely ≥ 2.0 (`pip install shapely`) — required by `routing_extract.py` and `routing_audit.py` for 2D geometry math
+- shapely ≥ 2.0 (`pip install shapely`) — required by `routing_extract.py`, `routing_audit.py` and `board_model.py` for 2D geometry math
+- matplotlib ≥ 3.5 for rendering. On Python 3.7 under macOS ≥ 11, upgrade pip first (`pip install "pip<24.1"`): pip 20 finds no wheels there
