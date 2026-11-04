@@ -20,7 +20,7 @@ from typing import Dict, List, Optional, Tuple
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import kiutils_k9  # noqa: E402  (KiCad 8/9 '(hide yes)' shim; must precede any load)
 
-from kiutils.items.common import Effects, Font, Position, Property, Stroke  # noqa: E402
+from kiutils.items.common import Effects, Font, Justify, Position, Property, Stroke  # noqa: E402
 from kiutils.items.schitems import (
     Connection,
     HierarchicalLabel,
@@ -38,7 +38,9 @@ from kiutils.schematic import Schematic
 from kiutils.symbol import SymbolLib
 
 FONT_SIZE = 1.27
-WIRE_STUB_LEN = 2.54
+# Pin -> label stub. 5.08 mm (Phase 11b; was 2.54) leaves room for a label beside the part's own
+# fields. Per call: add_component(stub_len=...), set_pin_net(stub_len=...).
+WIRE_STUB_LEN = 5.08
 
 
 def new_uuid() -> str:
@@ -213,22 +215,31 @@ def _compute_stub_endpoint(
     pin_sch_y: float,
     pin_lib_angle: float,
     sym_angle: float,
+    stub_len: Optional[float] = None,
 ) -> Tuple[float, float]:
     import math
 
+    length = WIRE_STUB_LEN if stub_len is None else float(stub_len)
     away_angle = (pin_lib_angle + sym_angle + 180) % 360
     angle_rad = math.radians(away_angle)
-    dx = round(WIRE_STUB_LEN * math.cos(angle_rad), 2)
-    dy = round(-WIRE_STUB_LEN * math.sin(angle_rad), 2)
+    dx = round(length * math.cos(angle_rad), 2)
+    dy = round(-length * math.sin(angle_rad), 2)
     return round(pin_sch_x + dx, 2), round(pin_sch_y + dy, 2)
 
 
-def _label_angle(pin_sch: Tuple[float, float], stub_end: Tuple[float, float]) -> float:
+def _label_angle(pin_sch: Tuple[float, float], stub_end: Tuple[float, float],
+                 sym_xy: Optional[Tuple[float, float]] = None) -> float:
+    """Label angle at a stub end: always horizontal (Phase 11b; vertical labels in rows of test
+    points were most of the power sheet's overlaps). A horizontal stub reads outward along the
+    stub. On a vertical stub the text runs away from the part: right of the wire unless the pin
+    is left of the symbol's origin (sym_xy)."""
     dx = stub_end[0] - pin_sch[0]
     dy = stub_end[1] - pin_sch[1]
     if abs(dx) > abs(dy):
         return 0 if dx > 0 else 180
-    return 90 if dy > 0 else 270
+    if sym_xy is not None and pin_sch[0] < sym_xy[0] - 0.01:
+        return 180
+    return 0
 
 
 def _make_wire(start: Tuple[float, float], end: Tuple[float, float]) -> Connection:
@@ -241,12 +252,38 @@ def _make_wire(start: Tuple[float, float], end: Tuple[float, float]) -> Connecti
 
 
 def _make_local_label(text: str, x: float, y: float, angle: float = 0) -> LocalLabel:
+    """A local label with KiCad's own justification (0/90: left bottom, 180/270: right bottom).
+    Without a justify KiCad draws the text centred on the anchor, across the wire end (checked
+    on kicad-cli 9.0.4 SVG plots, Phase 11b), so every label written here carries one."""
     label = LocalLabel()
     label.text = text
     label.position = Position(X=x, Y=y, angle=angle)
-    label.effects = Effects(font=Font(height=FONT_SIZE, width=FONT_SIZE))
+    horiz = "right" if int(round(angle)) % 360 in (180, 270) else "left"
+    label.effects = Effects(font=Font(height=FONT_SIZE, width=FONT_SIZE),
+                            justify=Justify(horizontally=horiz, vertically="bottom"))
     label.uuid = new_uuid()
     return label
+
+
+def _lib_field(key: str, value: str, lib_symbol: object, x: float, y: float, angle: float,
+               prop_id: int) -> Property:
+    """A visible Reference/Value at the library symbol's own offset for that field, turned with
+    the symbol. The field keeps the library's angle and justification: KiCad stores a symbol
+    field's angle in the symbol's frame and turns it with the symbol when drawing. Falls back to
+    the symbol origin if the library symbol has no such field."""
+    lib_prop = next((p for p in getattr(lib_symbol, "properties", []) if p.key == key), None)
+    if lib_prop is None or lib_prop.position is None:
+        return make_property(key, value, Position(X=x, Y=y, angle=0), False, prop_id)
+    fx, fy = _compute_pin_position(x, y, angle, float(lib_prop.position.X), float(lib_prop.position.Y))
+    prop = make_property(key, value, Position(X=fx, Y=fy, angle=float(lib_prop.position.angle or 0)),
+                         False, prop_id)
+    lib_eff = lib_prop.effects
+    if lib_eff is not None:
+        if lib_eff.font is not None and lib_eff.font.height:
+            prop.effects.font = copy.deepcopy(lib_eff.font)
+        if lib_eff.justify is not None:
+            prop.effects.justify = copy.deepcopy(lib_eff.justify)
+    return prop
 
 
 def add_component(
@@ -262,7 +299,15 @@ def add_component(
     angle: float = 0,
     pin_nets: Optional[Dict[str, str]] = None,
     project_name: str = "motion-play-main",
+    stub_len: Optional[float] = None,
 ) -> None:
+    """Place a symbol and give each pin in pin_nets a wire stub (stub_len, default
+    WIRE_STUB_LEN) and a horizontal local label (see _label_angle).
+
+    Reference and Value go where the library symbol puts them (its own field offsets, angle and
+    justification, turned with the symbol), as KiCad does on placement, and the symbol is marked
+    (fields_autoplaced yes) so KiCad re-autoplaces them when the part moves. Footprint, Datasheet
+    and LCSC Part are hidden at the symbol's origin."""
     if _symbol_has_ref(sheet_doc.schematic, ref):
         raise ValueError("Reference already exists on sheet {}: {}".format(sheet_doc.path.name, ref))
 
@@ -278,9 +323,10 @@ def add_component(
     symbol.onBoard = True
     symbol.dnp = False
     symbol.uuid = new_uuid()
+    symbol.fieldsAutoplaced = True
     symbol.properties = [
-        make_property("Reference", ref, Position(X=round(x + 2.54, 2), Y=round(y - 1.27, 2), angle=angle), False, 0),
-        make_property("Value", value, Position(X=x, Y=round(y + 2.54, 2), angle=angle), False, 1),
+        _lib_field("Reference", ref, lib_symbol, x, y, angle, 0),
+        _lib_field("Value", value, lib_symbol, x, y, angle, 1),
         make_property("Footprint", footprint, Position(X=x, Y=y, angle=0), True, 2),
         make_property("Datasheet", "~", Position(X=x, Y=y, angle=0), True, 3),
     ]
@@ -311,10 +357,11 @@ def add_component(
         if pin_num not in pin_nets:
             continue
         pin_sch = _compute_pin_position(x, y, angle, pin_x, pin_y)
-        stub_end = _compute_stub_endpoint(pin_sch[0], pin_sch[1], pin_angle, angle)
+        stub_end = _compute_stub_endpoint(pin_sch[0], pin_sch[1], pin_angle, angle, stub_len)
         sheet_doc.schematic.graphicalItems.append(_make_wire(pin_sch, stub_end))
         sheet_doc.schematic.labels.append(
-            _make_local_label(pin_nets[pin_num], stub_end[0], stub_end[1], _label_angle(pin_sch, stub_end))
+            _make_local_label(pin_nets[pin_num], stub_end[0], stub_end[1],
+                              _label_angle(pin_sch, stub_end, (x, y)))
         )
 
 
@@ -739,7 +786,8 @@ def _same_point(a: Tuple[float, float], b: Tuple[float, float], tol: float = 0.0
     return abs(a[0] - b[0]) < tol and abs(a[1] - b[1]) < tol
 
 
-def set_pin_net(sheet_doc: SheetDoc, ref: str, pin_number: str, net: str) -> str:
+def set_pin_net(sheet_doc: SheetDoc, ref: str, pin_number: str, net: str,
+                stub_len: Optional[float] = None) -> str:
     """Put a symbol pin on a named local-label net, for pins wired label-style.
 
     Handles the three shapes a label-wired sheet uses:
@@ -776,15 +824,19 @@ def set_pin_net(sheet_doc: SheetDoc, ref: str, pin_number: str, net: str) -> str
                 l.text = net
             return "{}.{}: label {} -> {}".format(ref, pin_number, "/".join(old), net)
         if remove_no_connect_at(sheet_doc, end):
-            sch.labels.append(_make_local_label(net, end[0], end[1], _label_angle(pin_xy, end)))
+            sym = find_component(sheet_doc, ref)
+            sch.labels.append(_make_local_label(net, end[0], end[1],
+                                                _label_angle(pin_xy, end, (sym.position.X, sym.position.Y))))
             return "{}.{}: no-connect at stub end -> label {}".format(ref, pin_number, net)
         raise ValueError("{}.{}: stub end {} has neither label nor no-connect".format(ref, pin_number, end))
     if any(_same_point((l.position.X, l.position.Y), pin_xy) for l in sch.labels):
         raise ValueError("{}.{}: label directly on the pin; rename it by hand".format(ref, pin_number))
     had_nc = remove_no_connect_at(sheet_doc, pin_xy)
-    end = _compute_stub_endpoint(pin_xy[0], pin_xy[1], pin_angle, sym_angle)
+    end = _compute_stub_endpoint(pin_xy[0], pin_xy[1], pin_angle, sym_angle, stub_len)
+    sym = find_component(sheet_doc, ref)
     sch.graphicalItems.append(_make_wire(pin_xy, end))
-    sch.labels.append(_make_local_label(net, end[0], end[1], _label_angle(pin_xy, end)))
+    sch.labels.append(_make_local_label(net, end[0], end[1],
+                                        _label_angle(pin_xy, end, (sym.position.X, sym.position.Y))))
     return "{}.{}: {}stub + label {}".format(ref, pin_number, "no-connect removed, " if had_nc else "", net)
 
 
