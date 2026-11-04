@@ -11,6 +11,14 @@ Programmatic helpers for editing existing KiCad schematics in place.
 
 Use `schematic-modify` when you need to append/remove components or sheet links in an existing `.kicad_sch` without rewriting the whole file.
 
+## Rule: kiutils loads go through the shim; no write while KiCad is open
+
+kiutils 1.4.8 (the last release, written for KiCad 7) does not read KiCad 8/9's `(hide yes)`. A bare kiutils load + save of a KiCad-saved sheet unhides every hidden field and drops `pin_numbers`/`pin_names` hiding (v8 lost 536 fields this way; `docs/research/kicad-ai-tooling-2026-11/schematic-readability.md` §1).
+
+- **Every kiutils load of a `.kicad_sch` or `.kicad_sym` goes through `kiutils_k9.py`.** Importing it patches kiutils once per process (effects, properties, `pin_numbers`/`pin_names`, pins). `modify.py` imports it, so anything that imports `modify` is covered. A script outside this folder adds `tools/schematic-modify` to `sys.path` and does `import kiutils_k9` before its first `from_file` (see `tools/schematic-context/*.py`, `tools/schematic-gen/*.py`). A v7 `c2acffc` round trip through the shim keeps every hidden flag (496/99/49/77/194 per sheet); `(fields_autoplaced yes)` survives; `(exclude_from_sim no)` is dropped (harmless).
+- **No schematic write while KiCad has the project open.** Save with `kiutils_k9.save_schematic(sch, path)` (or call `kiutils_k9.assert_not_open(path)` first); `ProjectDocs.save_all` and `annotate.py` already do. It raises `KiCadOpenError` while a `~*.kicad_sch.lck` exists in the project folder, because KiCad would overwrite the script's changes on its next save.
+- The shim covers schematics only. A kiutils `Board` round trip of a KiCad 9 board is worse (footprint fields lose position/layer/hide, locks dropped, and kicad-cli can't load the result): see `docs/initiatives/v8-debug-board/PLAN.md` OQ-11.
+
 ## Relationship to Other Tools
 
 - **`schematic-gen`** is source-of-truth for generated sheets.
@@ -21,6 +29,8 @@ Design rule: this toolkit sets electrical properties (nets, footprint, LCSC fiel
 
 ## Current Files
 
+- `kiutils_k9.py`: the KiCad 8/9 `(hide yes)` shim and the lock-file save guard (`save_schematic`, `assert_not_open`, `lock_files`). See the rule above
+- `tidy_fields.py`: `--check | --apply`. Netlist-neutral field tidy for a whole project (default v8): hides every placed-symbol field except Reference and Value, restores `pin_numbers`/`pin_names` hiding on embedded library symbols (from v7 `c2acffc` for the same `lib_id`, else from the source library), and moves every `ai_*` field to its symbol's position. `--check` prints per-sheet counts (including visible text left off the paper) and writes nothing
 - `modify.py`: reusable helpers (`add_component` (with `project_name`), `remove_component`, `add_hierarchical_label`, `add_sheet_reference`, `annotate_components`, `pin_position`, `set_pin_net`, `remove_no_connect_at`, `remove_junction_at`, `add_local_label`, `add_wire`, `rename_hlabel`, `rename_sheet_pin`, and from Phase 10 `remove_component_with_stubs`, `set_property`, `add_power_symbol`). A power symbol's Value names its global net in KiCad 9 (checked on the v8 project), so `add_power_symbol` and a Value edit retarget a rail. `pin_position` handles 0/90/180/270-degree symbols (fixed 2026-11-03: 90/270 used to put pins at the wrong end; mirrored symbols still raise). `set_pin_net` moves a label-wired pin to another net (renames the stub's label, or replaces a no-connect with a label); it refuses pins wired into a network
 - `esp32_integration.py`: initiative-specific modifications for ESP32-S3 direct integration
 - `v8_project_setup.py`: v8-debug-board initiative. Copies the v7 project (`c2acffc`) to `hardware/pcb-main-v8/kicad/` as `motion-play-main-v8`, renames instance project names via kiutils, writes an empty stackup-only `.kicad_pcb`, and verifies (ERC, netlist vs v7, DRC load). `--verify --no-v7-compare` re-runs the checks after edits

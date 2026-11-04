@@ -4,6 +4,10 @@
 
 **Never read `.kicad_sch` or `.kicad_pcb` text into context, and never edit them directly.** Use the tools below. Exception: targeted read-only kiutils or `kicad-cli` probes are allowed when no tool output answers the question (e.g. zones, stackup). Run them from a scratch script, print only the numbers you need, and cite the probe and file commit.
 
+## kiutils Rule
+
+**Every kiutils schematic load goes through the KiCad 8/9 shim, and no script writes a schematic while KiCad has the project open.** kiutils 1.4.8 doesn't read `(hide yes)`, so a bare load + save unhides every hidden field. Import `tools/schematic-modify/kiutils_k9.py` before the first `from_file`, and save with `kiutils_k9.save_schematic` (it refuses while a `~*.kicad_sch.lck` exists). Details: `tools/schematic-modify/CONTEXT.md`. Boards: a bare kiutils round trip of a KiCad 9 `.kicad_pcb` is lossy and unloadable (v8-debug-board PLAN OQ-11); don't write a KiCad-saved board with kiutils until Phase 13 settles a write path.
+
 ## Source-Hash Rule
 
 **Every generated context file carries provenance, and every reader checks it.**
@@ -51,6 +55,8 @@ Surgical in-place edits on existing `.kicad_sch` files — adding/removing compo
 |------|---------|
 | `modify.py` | Reusable helpers: `add_component`, `remove_component`, `add_hierarchical_label`, `add_sheet_reference`, `annotate_components`, `set_pin_net` (move a label-wired pin to another net), `pin_position`, `remove_no_connect_at`, `remove_junction_at`, `add_local_label`, `add_wire`, `rename_hlabel`, `rename_sheet_pin`, `remove_component_with_stubs`, `set_property`, `add_power_symbol`. |
 | `esp32_integration.py` | Initiative-specific script that used `modify.py` to integrate the ESP32-S3 into the main schematic. |
+| `kiutils_k9.py` | KiCad 8/9 `(hide yes)` shim for kiutils 1.4.8 plus the lock-file save guard. Imported by every schematic load path (kiutils Rule above). |
+| `tidy_fields.py` | `--check / --apply`: netlist-neutral field tidy (hide all but Reference/Value, restore pin-number/name hiding, re-home `ai_*` to the symbol). |
 | `v8_project_setup.py` | v8-debug-board: creates `hardware/pcb-main-v8/kicad/` from the v7 project at `c2acffc` (renamed `motion-play-main-v8`, empty stackup-only board) and verifies it with kicad-cli. |
 | `v8_mcu_sheet.py` | v8-debug-board: MCU sheet edits for jumper rows a, e, g and the IC1 swap; `--check` verifies pin -> net and the all-v7 positions against v7. |
 | `v8_bus_sheet.py` | v8-debug-board: TCA sheet edits for jumper rows b, d, f (channel protection, pull-up options, BQ isolate) and channel test points; `--check` runs the MCU check plus each jumper's positions. |
@@ -140,4 +146,4 @@ Tooling for the bench-debug `lab/` tree at the repo root (STATE, cards, log, evi
 
 ## Dependencies
 
-All KiCad Python tools in this folder use **kiutils ≥ 1.4.8** for KiCad file parsing. Install via `pip install kiutils`. Shell scripts require AWS CLI + jq.
+All KiCad Python tools in this folder use **kiutils ≥ 1.4.8** for KiCad file parsing, through the KiCad 8/9 shim for schematics (kiutils Rule). Install via `pip install kiutils`. Shell scripts require AWS CLI + jq.

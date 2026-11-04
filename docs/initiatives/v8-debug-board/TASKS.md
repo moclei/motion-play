@@ -121,7 +121,7 @@
 - [x] `tools/schematic-modify/tidy_fields.py --check | --apply` (readability §3.1 steps 2–4; prototype `prototypes/hide_fields.py`): hide every placed-symbol field except Reference and Value; restore `pin_numbers`/`pin_names` hiding on embedded library symbols (from v7 `c2acffc` for the same `lib_id`, else from the source library); move every `ai_*` field to its symbol's position. `--check` prints per-sheet counts and writes nothing
 - [x] Apply to v8. Gate, before vs after: `kicad-cli sch export netlist` identical (apart from library `uri` paths); `v8_debug_sheet.py --check` ends PHASE 11 CHECK PASSED; ERC 0 errors. Log per-sheet counts (fields hidden, pin flags restored, `ai_*` moved, off-sheet text left) in SESSION.md. Re-extract `circuit-context.json` (`extract.py --previous`) and confirm `check_state.py --fresh`
 - [x] Check, don't fix: does a kiutils `Board` round trip of a KiCad 9 `.kicad_pcb` (scratch copies of v7 and v8) drop `(hide yes)` or other flags the same way? Record the answer under OQ-11 in PLAN (Phase 13's `place.py` writes boards with kiutils)
-- [ ] Write the rule in `tools/schematic-modify/CONTEXT.md` and `tools/CONTEXT.md`: every kiutils schematic load goes through the shim, and no write while KiCad has the project open. Point the `.context/HAZARDS.md` kiutils entry at the shim
+- [x] Write the rule in `tools/schematic-modify/CONTEXT.md` and `tools/CONTEXT.md`: every kiutils schematic load goes through the shim, and no write while KiCad has the project open. Point the `.context/HAZARDS.md` kiutils entry at the shim
 - [ ] 🔄 Handoff
 
 # --- handoff point ---
