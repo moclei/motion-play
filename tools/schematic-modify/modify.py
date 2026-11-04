@@ -254,6 +254,7 @@ def add_component(
     position: Tuple[float, float],
     angle: float = 0,
     pin_nets: Optional[Dict[str, str]] = None,
+    project_name: str = "motion-play-main",
 ) -> None:
     if _symbol_has_ref(sheet_doc.schematic, ref):
         raise ValueError("Reference already exists on sheet {}: {}".format(sheet_doc.path.name, ref))
@@ -287,7 +288,7 @@ def add_component(
 
     symbol.instances = [
         SymbolProjectInstance(
-            name="motion-play-main",
+            name=project_name,
             paths=[
                 SymbolProjectPath(
                     sheetInstancePath=sheet_doc.instance_path,
@@ -638,3 +639,96 @@ def add_no_connect(sheet_doc: SheetDoc, position: Tuple[float, float]) -> None:
     nc.position = Position(X=float(position[0]), Y=float(position[1]))
     nc.uuid = new_uuid()
     sheet_doc.schematic.noConnects.append(nc)
+
+
+def remove_no_connect_at(
+    sheet_doc: SheetDoc,
+    position: Tuple[float, float],
+    tolerance: float = 0.05,
+) -> bool:
+    x, y = position
+    keep = []
+    removed = False
+    for nc in sheet_doc.schematic.noConnects:
+        if abs(nc.position.X - x) < tolerance and abs(nc.position.Y - y) < tolerance:
+            removed = True
+            continue
+        keep.append(nc)
+    sheet_doc.schematic.noConnects = keep
+    return removed
+
+
+# ---------------------------------------------------------------------------
+# Pin-level net surgery
+# ---------------------------------------------------------------------------
+
+def pin_position(sheet_doc: SheetDoc, ref: str, pin_number: str) -> Tuple[Tuple[float, float], float, float]:
+    """Return ((x, y), pin_lib_angle, symbol_angle) of a placed symbol's pin.
+
+    Mirrored symbols are not supported (raises)."""
+    sym = find_component(sheet_doc, ref)
+    if sym is None:
+        raise ValueError("{} not found on {}".format(ref, sheet_doc.path.name))
+    if getattr(sym, "mirror", None):
+        raise ValueError("{} is mirrored; pin_position does not handle mirroring".format(ref))
+    lib = get_lib_symbol_for(sheet_doc, sym.libId)
+    if lib is None:
+        raise ValueError("lib symbol {} not cached on {}".format(sym.libId, sheet_doc.path.name))
+    angle = float(sym.position.angle or 0)
+    for num, px, py, pa in _pin_records(lib):
+        if num == str(pin_number):
+            return _compute_pin_position(sym.position.X, sym.position.Y, angle, px, py), pa, angle
+    raise ValueError("{} has no pin {}".format(ref, pin_number))
+
+
+def _same_point(a: Tuple[float, float], b: Tuple[float, float], tol: float = 0.05) -> bool:
+    return abs(a[0] - b[0]) < tol and abs(a[1] - b[1]) < tol
+
+
+def set_pin_net(sheet_doc: SheetDoc, ref: str, pin_number: str, net: str) -> str:
+    """Put a symbol pin on a named local-label net, for pins wired label-style.
+
+    Handles the three shapes a label-wired sheet uses:
+      - pin -> one wire stub -> local label(s) at the stub end: the label is renamed;
+      - pin -> one wire stub -> no-connect at the stub end: the flag is replaced by a label;
+      - no-connect (or nothing) on the pin itself: the flag is removed, a stub + label added.
+    Anything else (pin wired into a network, labels on the pin) raises, because a
+    rename there would move other members too. Returns a short description of the change.
+    """
+    pin_xy, pin_angle, sym_angle = pin_position(sheet_doc, ref, pin_number)
+    sch = sheet_doc.schematic
+    stubs = []
+    for item in sch.graphicalItems:
+        if getattr(item, "type", None) == "wire" and len(item.points) == 2:
+            p0 = (item.points[0].X, item.points[0].Y)
+            p1 = (item.points[1].X, item.points[1].Y)
+            if _same_point(p0, pin_xy):
+                stubs.append(p1)
+            elif _same_point(p1, pin_xy):
+                stubs.append(p0)
+    if len(stubs) > 1:
+        raise ValueError("{}.{}: {} wires on the pin; not a label stub".format(ref, pin_number, len(stubs)))
+    if stubs:
+        end = stubs[0]
+        others = [w for w in sch.graphicalItems
+                  if getattr(w, "type", None) == "wire" and len(w.points) == 2
+                  and any(_same_point((q.X, q.Y), end) for q in w.points)]
+        if len(others) != 1:
+            raise ValueError("{}.{}: stub end {} joins other wires".format(ref, pin_number, end))
+        labels = [l for l in sch.labels if _same_point((l.position.X, l.position.Y), end)]
+        if labels:
+            old = sorted({l.text for l in labels})
+            for l in labels:
+                l.text = net
+            return "{}.{}: label {} -> {}".format(ref, pin_number, "/".join(old), net)
+        if remove_no_connect_at(sheet_doc, end):
+            sch.labels.append(_make_local_label(net, end[0], end[1], _label_angle(pin_xy, end)))
+            return "{}.{}: no-connect at stub end -> label {}".format(ref, pin_number, net)
+        raise ValueError("{}.{}: stub end {} has neither label nor no-connect".format(ref, pin_number, end))
+    if any(_same_point((l.position.X, l.position.Y), pin_xy) for l in sch.labels):
+        raise ValueError("{}.{}: label directly on the pin; rename it by hand".format(ref, pin_number))
+    had_nc = remove_no_connect_at(sheet_doc, pin_xy)
+    end = _compute_stub_endpoint(pin_xy[0], pin_xy[1], pin_angle, sym_angle)
+    sch.graphicalItems.append(_make_wire(pin_xy, end))
+    sch.labels.append(_make_local_label(net, end[0], end[1], _label_angle(pin_xy, end)))
+    return "{}.{}: {}stub + label {}".format(ref, pin_number, "no-connect removed, " if had_nc else "", net)

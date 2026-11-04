@@ -1609,6 +1609,10 @@
     (stroke (width 0) (type default))
     (uuid ff80d850-71c6-443f-b1fe-b3cd35b91911)
   )
+  (wire (pts (xy 146.05 55.88) (xy 143.51 55.88))
+    (stroke (width 0) (type default))
+    (uuid 563eacbf-ceeb-4c66-b79a-1af6c595d6c4)
+  )
 
   (label "USB_DP" (at 124.46 72.39 0)
     (effects (font (size 1.27 1.27)) (justify left bottom))
@@ -1681,6 +1685,10 @@
   (label "I2C_SDA" (at 180.34 52.07 0)
     (effects (font (size 1.27 1.27)) (justify left bottom))
     (uuid f1367283-5e33-4d9e-b7c3-c0db89ea47cb)
+  )
+  (label "+3.3V_BUS" (at 143.51 55.88 180)
+    (effects (font (size 1.27 1.27)))
+    (uuid 9c44f81f-866f-4325-9386-5db29981718f)
   )
 
   (symbol (lib_id "power:PWR_FLAG") (at 238.76 110.49 270) (unit 1)
@@ -2718,6 +2726,10 @@
     (pin "+5V" input (at 175.26 97.79 0)
       (effects (font (size 1.27 1.27)) (justify right))
       (uuid 9f35beab-d43d-4611-843a-6a4d7a6d0ccd)
+    )
+    (pin "+3.3V_BUS" input (at 146.05 55.88 180)
+      (effects (font (size 1.27 1.27)))
+      (uuid e336083b-0e54-404d-ac06-68ce0be5b496)
     )
     (instances
       (project "motion-play-main-v8"

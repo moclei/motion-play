@@ -81,7 +81,7 @@
 ## Phase 8: Schematic — project setup and MCU sheet
 
 - [x] Copy the v7 KiCad project (`c2acffc`) to `hardware/pcb-main-v8/kicad/`, renamed to `motion-play-main-v8`. Start with a fresh, empty `.kicad_pcb` that has the stackup only. Check it opens and runs ERC with kicad-cli
-- [ ] MCU sheet edits per GPIO allocation and jumpers (a), (e), (g): an initiative script under `tools/schematic-modify/` (v8-named) using `modify.py` helpers
+- [x] MCU sheet edits per GPIO allocation and jumpers (a), (e), (g): an initiative script under `tools/schematic-modify/` (v8-named) using `modify.py` helpers
 - [ ] List any wiring the tools can't do as numbered **(user)** steps. User does them; Worker re-extracts and checks pin → net against the GPIO allocation table
 - [ ] 🔄 Handoff
 
