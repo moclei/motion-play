@@ -709,3 +709,83 @@ Task 5 and the Phase 7 Handoff are ticked. PLAN is unchanged beyond the Rejected
 **Dispatch:** standard spawn prompt, plus:
 - Additional reading: SESSION.md Worker #8, #9 and #10 Notes (Phase 11 carry-forwards: UART0 header; rail LEDs and their SJ2s; TPIO43/44/16 naming; test points on U3_IO43/44/16/15; `annotate.py`; `circuit-context.json` with `_provenance`; the label tidy); `hardware/pcb-main-v8/CONTEXT.md` (Test points, Debug LEDs, Parts, Jumper matrix); `tools/CONTEXT.md` (Source-Hash Rule; schematic-context `extract.py`/`annotate.py`).
 - W3 (task 4) is a user gate. The Worker prepares the review guide (what to look at in KiCad, open choices including R66 vs R27, the optional cosmetic tidy), commits, and returns PARTIAL. The Orchestrator relays it. The freeze tag comes after the user's fixes.
+
+#### Notes
+
+**Task 1: debug features** (`tools/schematic-modify/v8_debug_sheet.py`, `80036ff`). Every edit is label-style, so there was no GUI wiring.
+- **Test-point naming (carry-forward from Worker #8): renamed.** On v8, `TPIO<n>` always means GPIO n's own pad. v7's root TPIO43/44/16 sat on I2C_SDA, I2C_SCL and LED_DATA, which on v8 are no longer those pins' nets. They are now **TP110 (I2C_SDA), TP111 (I2C_SCL) and TP112 (LED_DATA)**, with the value set to the net name.
+  - The new TPIO43/44/16/15 sit on U3_IO43/44/16/15, the U3 side of row a. In row a's v7 position (shunt 2–3), TPIO43 and TP110 are on one net, as v7's TPIO43 was.
+  - The v7 comparison maps v7 TPIO43/44/16 to TP110/111/112 (`v8_debug_sheet.V7_REF_RENAME`, applied in `v8_mcu_sheet.check`).
+  - TPIO10 and TPIO21 keep their names: they are still on GPIO10 and GPIO21's nets.
+- **New signal points:** TPIO0 (GPIO0_BOOT), TP113 (EN), TPIO13/12/11 (INT1–3), TPIO3/45/46 (strap pads, D1.0 mm, value "STRAP …"), and TP114/TP115 (BQ_SDA/BQ_SCL, on the TCA sheet). Each has its own GND point, TP130–TP148. TP144–TP148 are on the root sheet and serve TP110–112, TPIO10 and TPIO21.
+- I2C_PU_RAIL is +3.3V_BUS, so TP28 covers it (as Worker #10 noted). No separate point.
+- **Headers:**
+  - J11 is the UART0 header: GND, UART0_TX, UART0_RX, and NC (no-connect flag). It clears the last 2 ERC errors.
+  - J12 is the 2 × 15 spare-GPIO header (C22465939). Odd pins = GPIO1, 2, 4–9, 14, 17, 38–42 (U3 pins checked against the symbol's pin names); even pins = GND.
+- **LEDs:**
+  - D11 green BUS on +3.3V_BUS (R100 1 k C21190), D12 yellow on +5V (R101 3.3 k C22978) and D13 red on Protected_VBUS (R102 3.3 k). Each chain is rail → factory-bridged SJ2 (JP41–43) → R → LED → GND.
+  - D1 kept: R1 pin 2 now goes through JP40 (bridged SJ2) to +3.3V_MCU.
+  - D14 blue DBG1 on GPIO47 and D15 white DBG2 on GPIO48, each with a 470 Ω resistor (C23179).
+  - The LED part numbers follow CONTEXT Parts.
+- **Jumper positions:** JP40–43 are closed by default. In the v7 position JP40 stays closed (v7 had D1) and JP41–43 are cut (v7 had none of those LEDs).
+- **Placement:** the ESP32 sheet paper is now A3. The new parts sit in a grid below the v7 drawing (y 172–255). On the power sheet the LEDs are at x 289–356, y 233–270. On the TCA sheet, TP114/115 are at y 259; on the root sheet the GND points are at y 145.
+- **Check-chain changes:**
+  - `v8_mcu_sheet.later_phases()` now imports `v8_debug_sheet`.
+  - A new `later_extras()` gives the U3 pins used by later phases (its unused-pin list skips them) and the ref renames.
+  - `v8_power_sheet.expected()` no longer expects R1.2 on +3.3V_MCU. Phase 11 checks R1.2 = LED_D1_SJ, and that closing JP40 joins it to +3.3V_MCU.
+- `hardware/pcb-main-v8/CONTEXT.md` has a new paragraph, Test points → "As built (Phase 11)".
+
+**Task 2: ERC, annotation, context** (`ccc726c`, `dbad731`).
+- **ERC: 0 errors, 87 warnings.** Waivers, each with its reason:
+  - 81 `pin_to_pin`: every one is "Pins of type **Unspecified** and …". The JLC-MCP library symbols (U3, U5, U6, U8 …) declare their pins Unspecified, so every connection to them warns. v7 had the same class (58). Phase 11 adds 23, from the new J12, test point and LED connections to U3 pins. No electrical meaning.
+  - 3 `lib_symbol_mismatch` (Q20, Q21, U10): the cached symbol differs from the library copy. "Update symbols from library" at W3 clears them.
+  - 2 `lib_symbol_issues` (J7, U5): v7 project symbol libraries aren't in the lib table. Carried from v7, and the symbols are cached.
+  - 1 `unconnected_wire_endpoint`: a 0.1 mm wire on SW1 pin 1 at (222.25, 24.13), carried from the v7 sheet. Cosmetic; it can be deleted at W3.
+- **BOM audit (in `--check`):** all 293 parts have a footprint. Every part has an LCSC number except the copper-only ones (test points, solder jumpers). The headers carry LCSC numbers but are hand-fit (CONTEXT Parts → Headers).
+- **Annotation:** `v8_debug_sheet.py --annotate` writes `ai_function/block/role/critical_specs` on 225 parts through `annotate.write_ai_properties`. That covers every part Phases 8–11 added, plus the v7 parts Phase 10 changed (C22, C25, C26, C29, C30, R44, C34–36, C42, SW1, J7, R28/R29); their stale v7 text is replaced.
+  - Coverage is 274/293. The 19 unannotated parts are v7 parts that were never annotated on v7 either (U3, U8, U9, MCU passives, SW2/3, D1, D5, R1, C43).
+  - Block names follow `power_v8_spec.json` (charger, battery, boost, regulators, links, test_points …) and new ones (i2c_channels, i2c_pullups, i2c_bus, i2c_master_select, led_data_select, debug_leds, debug_headers). The 48 older v7 annotations still use v7's vocabulary (battery_mgmt, boost_5v, usb_c_input), so Phase 13's group rules should map the two vocabularies.
+- **`circuit-context.json`** is committed at `hardware/pcb-main-v8/kicad/` with `_provenance`. `extract.py` now writes `source` (the root sheet) plus `sources` (each child sheet → sha256). `tools/lab/check_state.py --fresh` now also checks `sources`, so an edit to any sheet marks the file stale. It reports FRESH and the generator commit is clean. Re-extract after the W3 edits. The `tools/CONTEXT.md` Source-Hash scope line is updated.
+
+**Task 3: audit against `hardware/pcb-main-v8/CONTEXT.md`.** Source: the committed `circuit-context.json` and `v8_debug_sheet.py --check` (which chains the Phase 8–10 checks).
+- **Jumper rows a–l:** all present.
+  - a: JP1, JP2. b: JP10–18, R80–85, U11–13. c: JP30, U10. d: JP19/20, R28/29/86–89, JP21–26, R90–95. e: J10, JP3/4. f: JP27/28. g: JP5. h: R63–R66 with J30–J33. i: JP31. j: JP32/33. k: JP34. l: JP35, J9.
+- **Test points:** every net in CONTEXT Test points has one.
+  - I²C master side: TP110/111, TPIO43/44/16/15, TP114/115, +3.3V_BUS (TP28).
+  - Channels: all 12 (TP80–91).
+  - Rails: VBUS_RAW, Protected_VBUS, PMID, REGN, VSYS, VSYS_SENSE, VBAT, BAT_FUSED, BAT_COMMON, +5V, +5V_CORE, +5V_LED_F/H4, +5V_TO_LEDS, +3.3V_MCU(_REG), +3.3V_BUS_REG/HDR. Each row h link has a point on both sides.
+  - Control nodes: BOOST_EN/VCC/FB, BAT_GATE, OTG_BIAS, BQ_TS, BQ_ILIM, BQ_STAT.
+  - MCU: EN, GPIO0, TCA_RESET, CHRG_INT, LED_DATA, INT1–3, straps 3/45/46.
+  - **58 signal points, 58 GND points**: one each, with TP4 being v7's own GND pad. The headers have a GND pin beside their signal pins.
+  - BAT_RAW is now split into BAT_CONN / BAT_FUSED / BAT_COMMON. BAT_CONN (at J8, before F3) has no point, per the Phase 10 spec. W3 can add one if wanted.
+- **LEDs:** all 8 in the CONTEXT table are present: D1, BUS (D11), +5V (D12), VBUS (D13), STAT (D10), DBG1 (D14), DBG2 (D15), D5. The 4 rail LEDs have their default-closed SJ2s (JP40–43).
+- **v7 positions:** with every jumper in its v7 position, the netlist matches v7 @ `c2acffc`: **0 nets differ**. The battery-protection exception is modelled as before: BT1/Q2/R33/R34 are dropped with Q2 conducting, and F3/Q20/Q21 are shorted. The row checks pass for each row's v8 and v7 positions (Phase 9: b, d, f; Phase 10: c, h, i, j, k, l; Phase 11: LED SJs, row a with J11).
+- **Not checked here:** physical spacing between each test point and its GND point is a layout item (Phase 13 rules).
+
+**W3 review guide (task 4, user gate).** Open `hardware/pcb-main-v8/kicad/motion-play-main-v8.kicad_pro` in KiCad 9. KiCad must be closed whenever a script runs.
+1. **Root sheet:** check that TP110/TP111/TP112 (renamed from TPIO43/44/16) read as you want. The alternative is to keep the v7 names, with the cost that "TPIO43" would then not be GPIO43's pad. The GND points TP144–148 sit below the drawing.
+2. **ESP32_S3 sheet (now A3):**
+   - Row a headers JP1/JP2 and the UART0 header J11 (pin order GND/TX/RX/NC; TX = ESP output, so it goes to an adapter's RX).
+   - J12 spare-GPIO pin order.
+   - DBG LEDs D14/D15.
+   - The test-point grid below the drawing, including the strap pads TPIO3/45/46 with GND points. These are strap pins: confirm a GND pad beside them is wanted; it is harmless.
+3. **TCA9548A sheet:** row b/d/f grid (Worker #9), TP114/115 at the bottom.
+4. **Power sheet:** the battery block, rows c/h/i/j/k/l, and the rail LEDs D11–D13 with JP41–43, plus JP40 for D1 (lower right).
+5. **LED controller sheet:** IC1 (SOT-23-5), and link h4 with R66/J33 and R27.
+
+Open choices:
+- **R66 vs R27 (Worker #10):** keep R66 (10 mΩ, link h4, reads 10 mV/A across J33), or drop R66 and put J33 across v7's existing R27 (0.1 Ω, reads 100 mV/A, already in v7's path). Dropping R66 removes a part, and the v7 rail stays exactly v7 (no added 10 mΩ). The cost: J33 then can't be lifted to insert an ammeter without lifting R27.
+- Optional: a test point on BAT_CONN (before F3).
+- Optional: the LED currents (≈ 1 mA targets, resistors swappable).
+
+**Required, not optional:** run "Tools → Update Symbols from Library" for Q20, Q21 and U10. It clears the 3 lib_symbol_mismatch warnings.
+
+Cosmetic tidy (optional, not a gate):
+- Text overlaps in the new grids on all sheets (labels against reference/value text; the CHn_x labels by U4).
+- The +3.3V_BUS hierarchical label past the ESP32 sheet's left frame.
+- The old IC1-position labels on the LED sheet.
+- The 0.1 mm stray wire on SW1 pin 1 (power sheet).
+
+After any edit, close KiCad and run `python3 tools/schematic-modify/v8_debug_sheet.py --check`. It runs the Phase 8–11 checks, the BOM audit and ERC, and must end PHASE 11 CHECK PASSED. Then re-extract: `python3 tools/schematic-context/extract.py hardware/pcb-main-v8/kicad/motion-play-main-v8.kicad_sch` and `python3 tools/lab/check_state.py --fresh hardware/pcb-main-v8/kicad/circuit-context.json`. After that comes the freeze tag (the Orchestrator's next Worker).
+
+**PLAN:** unchanged, no rejected approaches. No Deferred items. Tasks 1–3 are `[x]`; task 4 (W3) and the Handoff are left open. Commits: `80036ff`, `ccc726c`, `dbad731`, plus this notes commit.
