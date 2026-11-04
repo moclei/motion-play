@@ -1,16 +1,16 @@
 {
   "_provenance": {
     "source": "hardware/pcb-main-v8/kicad/motion-play-main-v8.kicad_sch",
-    "source_sha256": "5c4b42434489cbdd8068bd80e6dd3c89981a8790a9400be1b3ce10892a90a922",
+    "source_sha256": "59eaacb4c9de2f5dfba94049fd133081c1f1959250a01a5d575181ce88b951ce",
     "sources": {
-      "hardware/pcb-main-v8/kicad/esp32_s3.kicad_sch": "0d0febb5c78e3f4e4c493c36a7c1565d8ee3bf0463e85d7ee58edaeb6cee6399",
-      "hardware/pcb-main-v8/kicad/led_controller.kicad_sch": "5f1e7ab88bbdcddac9d85658930ce61c37ac1089de4db69e74bbdca54ffcfef9",
-      "hardware/pcb-main-v8/kicad/power_management.kicad_sch": "6a209b9027253cf9a92df27d2d3ab4bd9b3e67c4bcfca2c4181c12e89d25caba",
-      "hardware/pcb-main-v8/kicad/tca9548A_subsystem.kicad_sch": "e0e652402abdb540a2b08c687a6273e96deee181d668a55e74b4f0d726920ad6"
+      "hardware/pcb-main-v8/kicad/esp32_s3.kicad_sch": "625fa52c7ddb86725a14f36a95abe416a985508c7ddd9fd61d2629218e6d873e",
+      "hardware/pcb-main-v8/kicad/led_controller.kicad_sch": "e8682604cf090480982ade6ff1276a50a9273a591ad78da54daaaffdacc893f6",
+      "hardware/pcb-main-v8/kicad/power_management.kicad_sch": "ccb4c0112daeac771b57601d1050ae71a20e5d402967f3d1eddc2facb81d9c3b",
+      "hardware/pcb-main-v8/kicad/tca9548A_subsystem.kicad_sch": "fc8ce65bab08b8d05b6097398c4051a9fe4356958690b1dca4a2b7fbd8bc2170"
     },
     "generator": "tools/schematic-context/extract.py",
-    "generator_commit": "ccc726c189514035c9ddc54ef74f685a2bdd755d",
-    "generated": "2026-11-04T04:34:37+00:00"
+    "generator_commit": "8001cc844089749183017d1e8dfaaa9254bd7a29",
+    "generated": "2026-11-04T23:25:01+00:00"
   },
   "schema_version": "1.0",
   "project": "motion-play-main-v8",
@@ -23,7 +23,7 @@
       "esp32_s3.kicad_sch": "ESP32_S3"
     },
     "source_hash": "00e481126018",
-    "extracted_at": "2026-11-04T04:34:37.281284+00:00"
+    "extracted_at": "2026-11-04T23:25:01.315502+00:00"
   },
   "description": "",
   "blocks": {},

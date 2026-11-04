@@ -838,3 +838,23 @@ Phase-specific notes: KiCad is closed (no ~*.lck when checked). Check again befo
 You are not the Orchestrator. Do not create documents, work across phases, or replan.
 Return DONE, PARTIAL, or BLOCKED with specifics.
 ```
+
+#### Notes
+
+**Task 4: tidy applied to v8** (`tidy_fields.py --apply`; KiCad closed, no `~*.lck`, no KiCad process). Per-sheet counts:
+
+| Sheet | Fields hidden | pin_numbers restored | pin_names restored | `ai_*` moved to symbol | Off-sheet text left | Overlap pairs (probe) before → after | Plotted strings before → after |
+|---|---|---|---|---|---|---|---|
+| Root `motion-play-main-v8` | 125 | 16 | 18 | 56 | 0 | 170 → 4 | 568 → 270 |
+| MCU `esp32_s3` | 84 | 3 | 11 | 172 | 0 | 109 → 3 | 923 → 496 |
+| LED `led_controller` | 51 | 5 | 9 | 52 | 0 | 158 → 4 | 256 → 133 |
+| Power `power_management` | 429 | 8 | 19 | 562 | 0 | 724 → 60 | 2448 → 1117 |
+| TCA `tca9548A_subsystem` | 74 | 2 | 5 | 288 | 0 | 455 → 40 | 814 → 510 |
+| **Total** | **763** | **34** | **62** | **1130** | **0** | **1,616 → 111** | |
+
+- "Fields hidden" includes empty and `~` fields, so it is above readability's 536 "extra visible" count. After the tidy the probe finds no visible field other than Reference/Value on any sheet, and no field at the origin.
+- Pin flags came from v7 `c2acffc` for the same `lib_id` where v7 had it, else from the source library (`Jumper:SolderJumper_*`, `Connector_Generic:Conn_01x02`/`Conn_02x03`/`Conn_02x15`, `Transistor_FET:CSD25402Q3A`). Every embedded symbol found a source. `tidy_fields.py --check -v` lists each one.
+- "Moved" counts every `ai_*` not already at its symbol's origin, hidden or not.
+- A second `--check` after the apply reports 0 everywhere (idempotent).
+- **Gate:** `kicad-cli sch export netlist` before vs after differs only in the `(date …)` line (not even `uri`, since it is the same folder). `v8_debug_sheet.py --check`: PHASE 11 CHECK PASSED. ERC 0 errors (warnings unchanged: 81 pin_to_pin, 3 lib_symbol_mismatch, 2 lib_symbol_issues, 1 unconnected_wire_endpoint).
+- `circuit-context.json` re-extracted with `--previous` ("No structural changes"; only the sheet hashes, generator commit and timestamps changed). `check_state.py --fresh`: FRESH.
