@@ -815,4 +815,26 @@ The user opened the schematic for W3 and found it unreadable. The Orchestrator s
 
 **Dispatch:**
 ```
+Initiative: v8-debug-board
+Phase: 11a — Schematic tooling — kiutils KiCad 9 shim and field tidy
+Initiative path: docs/initiatives/v8-debug-board/
+Additional reading: docs/research/kicad-ai-tooling-2026-11/schematic-readability.md (and its prototypes/ folder); PLAN.md Technical Notes "Schematic readability"; SESSION.md "Replan — schematic readability (2026-11-04)" and Worker #11 Notes; .context/HAZARDS.md kiutils entry.
+
+Tasks assigned (from TASKS.md Phase 11a):
+## Phase 11a: Schematic tooling — kiutils KiCad 9 shim and field tidy
+
+- [~] KiCad 8/9 shim for kiutils 1.4.8 (readability §3.1 step 1; prototype `prototypes/kiutils_k9_shim.py`): a module in `tools/schematic-modify/` that reads `(hide yes)` on effects and properties, and on `pin_numbers`/`pin_names`. Import it on every schematic load path: `modify.load_project`/`SheetDoc`, `tools/schematic-context/{annotate,extract,show}.py`, `v8_project_setup.py`, `v8_mcu_sheet.py`, and the `tools/schematic-gen/` generators (grep for `from_file`). `SheetDoc.save_all` (and any other schematic save, including annotate's) refuses while a `~*.kicad_sch.lck` exists in the project folder. Test in scratch: a load/save round trip of v7's three `c2acffc` sheets keeps every field's visibility and every pin_numbers/pin_names hide (readability §1.2: 496/99/49 flags). Report whether `fields_autoplaced` and `exclude_from_sim` are still dropped (readability §1.2, "Other things"); preserve `fields_autoplaced` if it is cheap. **Nothing else touches the v8 schematic before this lands.**
+- [ ] `annotate.write_ai_properties` (`annotate.py:134`): a new `ai_*` property takes its symbol's position and is hidden. Updating an existing `ai_*` also hides it and moves it to the symbol (readability §3.4)
+- [ ] `tools/schematic-modify/tidy_fields.py --check | --apply` (readability §3.1 steps 2–4; prototype `prototypes/hide_fields.py`): hide every placed-symbol field except Reference and Value; restore `pin_numbers`/`pin_names` hiding on embedded library symbols (from v7 `c2acffc` for the same `lib_id`, else from the source library); move every `ai_*` field to its symbol's position. `--check` prints per-sheet counts and writes nothing
+- [ ] Apply to v8. Gate, before vs after: `kicad-cli sch export netlist` identical (apart from library `uri` paths); `v8_debug_sheet.py --check` ends PHASE 11 CHECK PASSED; ERC 0 errors. Log per-sheet counts (fields hidden, pin flags restored, `ai_*` moved, off-sheet text left) in SESSION.md. Re-extract `circuit-context.json` (`extract.py --previous`) and confirm `check_state.py --fresh`
+- [ ] Check, don't fix: does a kiutils `Board` round trip of a KiCad 9 `.kicad_pcb` (scratch copies of v7 and v8) drop `(hide yes)` or other flags the same way? Record the answer under OQ-11 in PLAN (Phase 13's `place.py` writes boards with kiutils)
+- [ ] Write the rule in `tools/schematic-modify/CONTEXT.md` and `tools/CONTEXT.md`: every kiutils schematic load goes through the shim, and no write while KiCad has the project open. Point the `.context/HAZARDS.md` kiutils entry at the shim
+- [ ] 🔄 Handoff
+
+The first task is marked `[~]` because it was dispatched to you — it is not someone else's work in progress.
+
+Phase-specific notes: KiCad is closed (no ~*.lck when checked). Check again before any schematic write. The shim must land before any script writes a v8 sheet.
+
+You are not the Orchestrator. Do not create documents, work across phases, or replan.
+Return DONE, PARTIAL, or BLOCKED with specifics.
 ```
