@@ -83,6 +83,7 @@ Order: #0005 A1 (ON), B (GND), A2 (ON); then #0004 A1 (GND), B (ON), A2 (GND).
 - Before S8 (user): "if absolutely necessary I'll take these readings, but are they really necessary? I've taken these readings so many times I feel like I'm going crazy. How valuable is this?" Deviation (session): #0005 A2 reads N and P only (the rails the outcome rows use), and A2's download-mode check is dropped (A2 enumerated on the normal plug-in, S7). #0004 arms read M, N, P + the Mac check; Q and R only if the ON arm isn't "boost on".
 - S8 #0005 A2 DC V, black G: N "5.100V", P "3.300V".
 - S9 #0004 A1: SW1 slider "right"; LEDs "power led only"; warm "no". Session (normal plug-in): no /dev/cu.usbmodem*, no idVendor 12346.
+- S10 #0004 A1 DC V, black G: M "0.000V"; N "3.780V with some slight variance up and down"; P "2.700V with small variance up and down". Deviation (session): no download-mode check at #0004 A1 (V7R-020 S4b found none in download mode in this same state); download mode is used at #0004 only if a normal plug-in doesn't enumerate in the ON arm.
  | "USB Product Name" = "USB JTAG_serial debug unit"  | "idVendor" = 12346.
 ### Measured values (from log; cite `lab/evidence/PWR-002/...`)
 ### Interpretation (session; labelled as such)
