@@ -246,7 +246,7 @@ def later_phases():
     user decision 2026-11-03): they are dropped from the v7 netlist with their conducting
     state applied as shorts, and the v8 replacement parts likewise."""
     refs, v7, v8, v7_drop, v7_side = [], [], [], [], []
-    for name in ("v8_bus_sheet", "v8_power_sheet"):
+    for name in ("v8_bus_sheet", "v8_power_sheet", "v8_debug_sheet"):
         try:
             mod = __import__(name)
         except ImportError:
@@ -257,6 +257,17 @@ def later_phases():
         v7_drop += list(getattr(mod, "V7_SIDE_DROP", ()))
         v7_side += list(getattr(mod, "V7_SIDE_SHORTS", ()))
     return refs, v7, v8, v7_drop, v7_side
+
+
+def later_extras():
+    """Later phases' U3 pins that are now connected (Phase 11: spare/strap/DBG) and v7 -> v8
+    reference renames (Phase 11: TPIO43/44/16 -> TP110/111/112)."""
+    used, rename = set(), {}
+    try:
+        mod = __import__("v8_debug_sheet")
+    except ImportError:
+        return used, rename
+    return set(mod.U3_PINS_USED), dict(mod.V7_REF_RENAME)
 
 
 def merged(nets, pin_net, shorts, drop_refs=NEW_REFS):
@@ -294,13 +305,14 @@ def check() -> int:
             fails += not ok
             print("  {} {:7s} {:32s}{}".format("ok " if ok else "BAD", key, str(got),
                                                 "" if ok else "  (want {})".format(want)))
-        for p in U3_UNUSED:
+        used_later, ref_rename = later_extras()
+        for p in [p for p in U3_UNUSED if p not in used_later]:
             got = pin_net.get("U3." + p)
             ok = got is None or got.startswith("unconnected-")
             fails += not ok
             if not ok:
                 print("  BAD U3.{} should be unconnected, is {}".format(p, got))
-        print("  U3 unused pins ({}) unconnected: {}".format(len(U3_UNUSED), "ok" if fails == 0 else "see above"))
+        print("  U3 unused pins ({}, less {} used by later phases) unconnected: {}".format(len(U3_UNUSED), len(used_later), "ok" if fails == 0 else "see above"))
         ic1 = comps.get("IC1")
         print("  IC1: {}".format(ic1))
 
@@ -332,6 +344,8 @@ def check() -> int:
             mapped = set()
             for m in members:
                 ref, pin = m.split(".")
+                if ref in ref_rename:
+                    m = "{}.{}".format(ref_rename[ref], pin)
                 if ref == "IC1":
                     if pin not in IC1_PIN_MAP_V7_TO_V8:
                         continue

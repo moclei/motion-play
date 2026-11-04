@@ -359,6 +359,12 @@ Rows considered and not added: D5 on-board pixel isolation (CL-06; row g already
 | new | GPIO48 | white, "DBG2" | Firmware-driven |
 | D5 (kept) | LED_DATA | RGB (WS2812B-MINI) | As v7, on the (g) centre |
 
+**As built (Phase 11, `tools/schematic-modify/v8_debug_sheet.py`).**
+- **Test-point names.** On v8, `TPIO<n>` always means GPIO n's own pad. v7's TPIO43/44/16 sat on I2C_SDA/I2C_SCL/LED_DATA, which on v8 are no longer those pins' nets, so they are renamed **TP110 (I2C_SDA), TP111 (I2C_SCL), TP112 (LED_DATA, the row g centre)**. The new TPIO43/44/16/15 sit on U3_IO43/44/16/15 (the U3 side of row a). In the v7 position of row a (shunt 2–3), TPIO43 and TP110 are on the same net, as v7's TPIO43 was. TPIO10 (TCA_RESET) and TPIO21 (CHRG_INT) keep their v7 names.
+- New signal points: TPIO0 (GPIO0_BOOT), TP113 (EN), TPIO13/12/11 (INT1–3), TPIO3/45/46 (strap pads, D1.0 mm, value "STRAP"), TP114/TP115 (BQ_SDA/BQ_SCL). Ground points TP130–TP148, one per signal point (TP144–TP148 on the root sheet serve TP110–TP112, TPIO10, TPIO21). I2C_PU_RAIL is +3.3V_BUS (TP28).
+- UART0 header J11 (GND, UART0_TX, UART0_RX, NC). Spare GPIO header J12 (2 × 15, odd pins = GPIO1, 2, 4–9, 14, 17, 38–42, even pins = GND).
+- Debug LEDs: D11 green BUS (R100 1 k, JP41), D12 yellow +5V (R101 3.3 k, JP42), D13 red VBUS (R102 3.3 k, JP43), D14 blue DBG1 (GPIO47, R103 470 Ω), D15 white DBG2 (GPIO48, R104 470 Ω). D1 keeps R1; JP40 sits between R1 and +3.3V_MCU. JP40–JP43 are factory-bridged SJ2s. In the v7 position, JP40 is closed (v7 had D1) and JP41–JP43 are cut (v7 had none of those LEDs).
+
 ## Parts
 
 Phase 4 filled the non-power parts below. Phase 7 adds the power parts (charger, boost, LDOs, battery connector, fuses, shunt).

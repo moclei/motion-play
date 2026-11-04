@@ -291,7 +291,7 @@ def expected():
         for pin, net in c["pins"].items():
             exp["{}.{}".format(c["ref"], pin)] = net
     exp.update({
-        "U3.2": "+3.3V_MCU", "R1.2": "+3.3V_MCU", "R50.1": "+3.3V_MCU", "R51.1": "+3.3V_MCU",
+        "U3.2": "+3.3V_MCU", "R50.1": "+3.3V_MCU", "R51.1": "+3.3V_MCU",
         "U4.24": "+3.3V_BUS", "C9.2": "+3.3V_BUS", "C10.2": "+3.3V_BUS", "R6.2": "+3.3V_BUS",
         "J4.1": "+3.3V_BUS", "J5.1": "+3.3V_BUS", "J6.1": "+3.3V_BUS", "J10.4": "+3.3V_BUS",
         "R28.2": "+3.3V_BUS", "R29.2": "+3.3V_BUS", "R86.2": "+3.3V_BUS", "R90.2": "+3.3V_BUS",
@@ -299,6 +299,8 @@ def expected():
         "TP1.1": "VSYS", "TP2.1": "VBAT", "TP3.1": "Protected_VBUS", "TP4.1": "GND",
         "U9.5": "Protected_VBUS", "U9.1": "USB_DP", "U9.3": "USB_DN",
     })
+    # R1.2 (D1's resistor) was on +3.3V_MCU here; Phase 11 puts it behind the D1 load jumper JP40
+    # (v8_debug_sheet.py checks R1.2 = LED_D1_SJ and that JP40 closed joins it to +3.3V_MCU).
     return exp
 
 

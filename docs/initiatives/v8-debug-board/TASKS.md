@@ -105,7 +105,7 @@
 
 ## Phase 11: Schematic — debug features, ERC, freeze
 
-- [~] Remaining test points, ground points, debug LEDs, UART0 header. Every part has an LCSC number and footprint (or is marked hand-fit)
+- [x] Remaining test points, ground points, debug LEDs, UART0 header. Every part has an LCSC number and footprint (or is marked hand-fit)
 - [ ] ERC clean (or each waived item listed with a reason). `circuit-context.json` extracted with `_provenance`; `annotate.py` for new parts
 - [ ] Audit against `hardware/pcb-main-v8/CONTEXT.md`: every jumper, test point and LED is present; every v7 position reproduces v7 membership. Write the result in SESSION.md
 - [ ] **W3:** user reviews the schematic in KiCad. Apply the fixes, re-run ERC, and tag the commit as the schematic freeze
