@@ -72,6 +72,8 @@ Order: #0005 A1 (ON), B (GND), A2 (ON); then #0004 A1 (GND), B (ON), A2 (GND).
 
 ## Actual result
 ### Raw observations (operator, verbatim; symptoms not interpretations)
+- Pre-run (session, 2026-11-03): Mac shows no /dev/cu.usbmodem* and no VID 12346 (0x303A) device; only Apple internal devices and the AX88179B adapter.
+- S1 #0005 A1: SW1 slider "to the left"; LEDs "power led only"; warm "no". Session (normal plug-in, no BOOT): /dev/cu.usbmodem14101; ioreg "USB JTAG_serial debug unit", idVendor 12346.
 ### Measured values (from log; cite `lab/evidence/PWR-002/...`)
 ### Interpretation (session; labelled as such)
 
