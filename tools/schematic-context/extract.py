@@ -717,6 +717,48 @@ def build_context(
     return context
 
 
+def _git(*args: str) -> str:
+    try:
+        return subprocess.run(["git"] + list(args), capture_output=True, text=True,
+                              cwd=str(Path(__file__).resolve().parent)).stdout.strip()
+    except OSError:
+        return ""
+
+
+def build_provenance(schematic: Path, sheet_files: List[str]) -> dict:
+    """`_provenance` per tools/CONTEXT.md Source-Hash Rule. `source` is the root sheet; a
+    hierarchical schematic's child sheets are hashed in `sources` (path -> sha256), which
+    tools/lab/check_state.py --fresh also checks, so an edit to any sheet marks the file stale."""
+    top = _git("rev-parse", "--show-toplevel")
+    root = Path(top) if top else None
+
+    def rel(p: Path) -> str:
+        try:
+            return str(p.resolve().relative_to(root.resolve())) if root else str(p.resolve())
+        except ValueError:
+            return str(p.resolve())
+
+    def sha(p: Path) -> str:
+        return hashlib.sha256(p.read_bytes()).hexdigest()
+
+    sources = {}
+    for name in sorted(set(sheet_files)):
+        child = (schematic.parent / name)
+        if child.is_file() and child.resolve() != schematic.resolve():
+            sources[rel(child)] = sha(child)
+    commit = _git("rev-parse", "HEAD") or "unknown"
+    if _git("status", "--porcelain", "--", str(Path(__file__).resolve())):
+        commit += "-dirty"
+    return {
+        "source": rel(schematic),
+        "source_sha256": sha(schematic),
+        "sources": sources,
+        "generator": "tools/schematic-context/extract.py",
+        "generator_commit": commit,
+        "generated": datetime.now(timezone.utc).replace(microsecond=0).isoformat(),
+    }
+
+
 def write_context_json(context: dict, output_path: Path) -> None:
     """Write the context dictionary to a JSON file."""
     with open(str(output_path), "w") as f:
@@ -796,6 +838,9 @@ def main() -> None:
 
         if args.previous:
             context = merge_previous_context(args.previous, context)
+
+        context = dict([("_provenance", build_provenance(
+            schematic, [i.filename for i in sheet_infos] if sheet_infos else []))] + list(context.items()))
 
         # --- Step 5: Write circuit-context.json ---
         write_context_json(context, output_path)

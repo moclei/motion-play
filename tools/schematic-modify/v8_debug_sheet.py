@@ -431,7 +431,20 @@ def annotations():
         ann[r] = {"function": "Row d upstream 2.2k pull-up (v7 value) via JP19/JP20 1-2", "block": "i2c_pullups",
                   "role": "pull_up", "critical_specs": "2.2k 0603 1%, rail +3.3V_BUS"}
     # Phase 10 (power spec parts; changed v7 parts)
-    for c in pwr.load_spec():
+    spec = pwr.load_spec()
+    rail_pair = {c["pair_of"]: c["ref"] for c in spec if c.get("pair_of")}
+
+    def role(c):
+        lib = c["lib_id"]
+        name = lib.split(":")[1]
+        if lib.startswith("Jumper:"):
+            return "solder_jumper"
+        if name.startswith("Conn_0"):
+            return "jumper_header" if c["value"].startswith(("row", "h")) else "connector"
+        return {"C": "capacitor", "C_Polarized": "capacitor", "R": "resistor", "L": "inductor", "LED": "indicator",
+                "Fuse": "fuse", "CSD25402Q3A": "battery_protection_fet",
+                "TYPE-C-31-M-12": "connector"}.get(name, name.lower())
+    for c in spec:
         ref = c["ref"]
         if c.get("v7_ref") and not c.get("_phase10") and ref not in dict(pwr.PROPS):
             continue
@@ -439,10 +452,10 @@ def annotations():
             if c["value"] == "GND":
                 gp(ref, c.get("pair_of", "its rail test point"), c["block"])
             else:
-                tp(ref, c["pins"]["1"], c["block"], None)
+                tp(ref, c["pins"]["1"], c["block"], rail_pair.get(ref))
             continue
         ann[ref] = {"function": "{} ({})".format(c.get("note") or c["value"], c["value"]), "block": c["block"],
-                    "role": c["lib_id"].split(":")[1].lower(),
+                    "role": role(c),
                     "critical_specs": "{}, LCSC {}".format(c["value"], c.get("lcsc") or "-")}
     # Phase 11
     pair_of = {v: k for k, v in GND_PAIR.items()}

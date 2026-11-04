@@ -197,6 +197,18 @@ def check_fresh(path, base):
     if actual != str(prov["source_sha256"]).strip().lower():
         return "STALE", "%s: source %s hash %s.. != recorded %s.." % (
             path, prov["source"], actual[:12], str(prov["source_sha256"])[:12])
+    # Optional: further source files (e.g. a hierarchical schematic's child sheets), path -> sha256.
+    extra = prov.get("sources") if isinstance(prov.get("sources"), dict) else {}
+    for name, digest in sorted(extra.items()):
+        f = Path(name)
+        f = f if f.is_absolute() else base / f
+        if not f.is_file():
+            return "STALE", "%s: source %s is missing" % (path, name)
+        got = hashlib.sha256(f.read_bytes()).hexdigest()
+        if got != str(digest).strip().lower():
+            return "STALE", "%s: source %s hash %s.. != recorded %s.." % (path, name, got[:12], str(digest)[:12])
+    if extra:
+        return "FRESH", "%s: source %s and %d more match" % (path, prov["source"], len(extra))
     return "FRESH", "%s: source %s matches" % (path, prov["source"])
 
 
