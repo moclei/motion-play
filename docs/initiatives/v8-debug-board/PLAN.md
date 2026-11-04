@@ -52,6 +52,7 @@ Review before ordering = the user's review + an AI partner review answered from 
 - Board-model topology joining a track to a pad only when the track endpoint lies inside the pad: split 6 v7 nets that KiCad (DRC: 0 unconnected) treats as connected; replaced by the anchor-inside-copper rule.
 - Plane voids computed by subtracting a buffered split channel between fills: left thin slivers reported as voids; replaced by classing an empty region that touches fills of two nets as a split gap.
 - Swapping the BQ24195 for a standalone (no-I²C) charger (Phase 1 option 4): rejected in Phase 7, because it takes the BQ off the bus and no jumper position could then rebuild v7's bus membership (row f).
+- Regenerating the v8 power sheet with `generate_power_sheet.py` from `power_v8_spec.json` (Phase 10): it would drop the v7 parts the spec leaves out (U9, D1/R1, TP1–TP4, C7/R27 on the LED rail) and every v7 symbol/footprint choice; replaced by an in-place edit (`v8_power_sheet.py`).
 
 ## Open Questions
 - OQ-1 (by Phase 16): which nets AI may route. Default: the user routes switching power (BQ_SW, BOOST_SW loops), the USB pair and battery/high-current paths. AI routes test-point stubs, LEDs, jumpers and the I²C channels, and the user reviews them.
