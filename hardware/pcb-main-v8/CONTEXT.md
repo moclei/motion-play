@@ -181,6 +181,53 @@ Per link: the part below, plus an unfitted 1 × 2 2.54 mm header beside it (Part
 
 On v7, In2 is split between +3.3V and +5V, and 16 signal tracks cross the split gap, the USB pair and SDA/SCL included (board model, Phase 6; SESSION Worker #5/#6). v8 has more power nets on that layer's candidates (+3.3V_MCU, +3.3V_BUS, +5V_CORE, +5V_TO_LEDS, VSYS). The layout phases should plan the inner-layer split so that no I²C, USB or test-point signal crosses a gap (or route those over solid GND), and keep the battery high-current path (J8 → F3 → Q20/Q21 → VBAT → U5) and the two switching loops on the outer layers with GND under them.
 
+### Power parts and stock
+
+Stock from the JLCPCB parts API (`selectSmtComponentList`), checked 2026-11-03; the JLC MCP was not available to the Worker. Five boards; Phase 19 preflight re-checks every number. "v7" = carried over with v7's value and net membership. Schematic-gen spec: `tools/schematic-gen/power_v8_spec.json` (refs ≥ 10/20/30/60 are new and provisional).
+| Ref | Part | LCSC | Type | Stock | Note |
+|---|---|---|---|---|---|
+| U5 | BQ24195RGER | C90862 | extended | **14** | v7. Fallback **BQ24195LRGER C417486 (3 196)**, same footprint/pins (charger subsection) |
+| U6 | TPS61088RHLR | C87357 | extended | 6 106 | v7 |
+| L1 | SMNR6028-2R2MT 2.2 µH 5.1 A | C266426 | extended | 1 999 | v7 |
+| L2 | FXL0630-2R2-M 2.2 µH 10 A | C167218 | extended | 65 362 | v7 |
+| U8 | AMS1117-3.3 | C6186 | basic | 1 712 607 | v7 (MCU rail; row c v7 position) |
+| U10 | AP2112K-3.3TRG1 (SOT-25) | C51118 | extended | 5 959 | new (bus rail, v6 part). Also C23380830 (SOT-23-5 variant, 26 369): check its pinout before swapping |
+| U7 | INA219AIDCNR | C87469 | extended | 8 920 (Phase 4) | v7 |
+| R44, R66 | HoJLR2512-3W-10mR-1 % | C2903468 | extended | 86 331 | R44 replaces C1322424 (**2** in stock); R66 = link h4 |
+| Q20, Q21 | CSD25402Q3A | C111356 | extended | 15 135 | new |
+| F3 | Littelfuse 0451007.MRL 7 A 2410 | C99548 | extended | 7 306 | new. Alternates: 1206FA-7A C2838900 (2 970), JFC1206-1700FS C136352 (14 190) |
+| F1 | 1206T3A63V 3 A | C354897 | extended | 69 395 | v7 (moves to the power sheet with h4) |
+| F2 | SMD1206-300C-12V PTC 3 A hold | C2897466 | extended | 1 245 | v7 |
+| J8 | XT30UPB-M (male, PCB, vertical) | C428721 | extended | 33 570 | new, hand-fit or JLC THT. Cable side XT30U-F C99102 (24 518) |
+| J9 | S2B-PH-K-S (JST-PH 2-pin, right angle) | C173752 | extended | 196 137 | new (cell NTC) |
+| SW1, SW4 | MSK12C02 | C431540 | extended | 186 275 | SW1 v7; SW4 new |
+| C25, C26, C63, C64 | 22 µF 25 V X5R 1206 | C12891 | basic | 1 661 293 | PMID |
+| C62, C41, C65, C68 | 10 µF 25 V X5R 0805 | C15850 | basic | 7 752 929 | |
+| C34–C36, C42 | 22 µF 25 V 0805 | C45783 | basic | 3 527 241 | v7 as built (CL-14) |
+| C22, C30 | 47 µF 35 V electrolytic 6.3 × 5.4 | C72522 | extended | 208 577 | v7 as built (CL-14); C30 moves to VBAT |
+| C29 | 220 µF 16 V electrolytic 6.3 × 7.7 | C3342 | extended | 172 239 | v7 (the schematic said 10 V) |
+| C43 | 22 µF 6.3 V tantalum A | C129288 | extended | 3 476 | v7 |
+| TH1 | NCP18XH103F03RB 10 k NTC | C13564 | extended | 88 808 | v7 (row l v7 position) |
+| R65 (h3) | 0 Ω 2512 1 W | C25469 | extended | 226 173 | new |
+| R63, R64 (h1, h2) | 0 Ω 1206 250 mW | C17888 | basic | 1 682 594 | Phase 4 part |
+| R60, R61 | 1 MΩ, 47 kΩ 0603 | C22935, C25819 | basic | 4.66 M, 2.91 M | gate network |
+| C60, C61 | 220 nF 25 V, 22 nF 50 V X7R 0603 | C21120, C21122 | basic | 927 917, 872 144 | gate network |
+| Boost/charger small parts | R32 C23138, R35/R38 C25804, R36 C23189, R37 C22984, R39 C22827, R40 C23206, R41/R42/R2 C14675, R43 C31850, C23/C37 C107093, C24 C19666, C27/C28 C96446, C31/C32/C40 C14663, C33 C23630, C38 C1621, C39 C14858, C20/C66/C67 C15849 | — | mixed | each ≥ 164 759 | v7 values |
+| D10, R62 | KT-0603O orange, 2.2 kΩ | C111340, C4190 | ext., basic | 18 869, 5.31 M | STAT LED (Phase 4 parts) |
+| JP30 | 1 × 3 header + shunt | C2937625, C5305 | extended | Phase 4 | row c |
+| J30–J33 | 1 × 2 header, not fitted | C492401 | extended | Phase 4 | row h |
+
+**Watch items for Phase 19:** C90862 (14; fallback C417486), L1 C266426 (1 999), F2 C2897466 (1 245), AP2112K C51118 (5 959). Everything else ≥ 3 000.
+
+### Changes to approved sections (for the user's approval, task 5)
+
+- **Jumper matrix row i:** default changes from SW1 (v8 = v7) to EN tied to VSYS_SENSE (v6). v7 position unchanged. Reason: PWR-002.
+- **Jumper matrix new row l:** TS from the cell NTC (J9, v8 default) or board TH1 (v7).
+- **Rows j, k:** now unconditional (the BQ24195 is kept); k's v8 position = REGN.
+- **Row h:** rails fixed (h1–h4 above); h4 is a 10 mΩ shunt, not 0 Ω.
+- **Test points:** the battery nets are renamed: BAT_RAW → BAT_FUSED (after F3) plus BAT_COMMON; PMOS_GATE → BAT_GATE. New: +5V_CORE, +5V_LED_F, +3.3V_MCU_REG, +3.3V_BUS_REG, +3.3V_BUS_HDR, BQ_STAT. VBUS_RAW keeps its point. The full list is in the spec's test-point block.
+- **Parts:** row i's SJ3 pad 1 (default) is now VSYS_SENSE; the STAT LED rail is confirmed as VSYS.
+
 ## GPIO allocation
 
 **Status: approved by the user 2026-11-02 (W2 part 1).** Sources: Espressif *ESP32-S3-WROOM-1 & WROOM-1U Datasheet* v1.8, Table 3-1 (pin definitions) and Chapter 4 (boot configurations); v7 `hardware/pcb-main/kicad/circuit-context.json` @ `c2acffc` (U3 pin → net); `firmware/include/pin_config.h`; changelist CL-02, CL-04, CL-05, CL-07; card V7R-019; NOTEBOOK desk (e) (2026-10-27).
@@ -232,13 +279,14 @@ On v7, In2 is split between +3.3V and +5V, and 16 signal tracks cross the split 
 | f | BQ on the I²C bus | Connected | Connected (**v8 = v7**; firmware still talks to it) | — | symptom identity: causal; STATE §3; L-Ph8 | 1 × 2 header on U5 SDA and on U5 SCL (shunt fitted). Applies only if Phase 7 keeps the BQ24195 or another I²C charger |
 | g | LED_DATA source | GPIO16 drives D5 + IC1 | GPIO18 drives D5 + IC1; GPIO16 free for the bus | — | desk (e); CL-06 | SJ3: centre = LED_DATA (D5 DIN, IC1 1A, test point), side 1 = GPIO16, side 2 = GPIO18. Interlock: (a) SDA = v8 with (g) = v7 puts the LED loads on SDA, which is V7R-019's fixture state (allowed, a deliberate third state) |
 | h | Rail current-measure links | Closed | Closed (**v8 = v7**) | — | debug goal | Per rail: 0 Ω (1206) with an unpopulated 2-pin 2.54 mm header beside it; lift the 0 Ω to insert an ammeter. Rails chosen in Phase 7 (candidates: +3.3V_MCU, +3.3V_BUS, +5V core loads, +5V_TO_LEDS, VSYS) |
-| i | Boost enable | SW1 → BOOST_EN (R2 pull-down) | SW1 (**v8 = v7**) | EN tied to VIN (VSYS_SENSE): always on | CL-11; #0004 boost not running (Phase 2, V7R-020) | SJ3: centre = BOOST_EN (or its Phase 7 equivalent), side 1 = SW1 common, side 2 = boost VIN. Lets the bench take SW1 out of the path |
-| j | BQ D+/D− (input source detection) | Both to GND: SDP, IINLIM 100 mA without I²C | D+ shorted to D−: DCP, 1.5 A without I²C | as v7 | BQ fault (Phase 1, SLUSB97A §8.3.1.3); "verified unchanged" BQ support | SJ3: centre = D−; side 1 = GND, side 2 = D+, with D+ also to GND through an SJ2 (closed in v7, open in v8). Conditional: only if Phase 7 keeps the BQ24195 (fix option 1) |
-| k | BQ OTG pull-up source | R35 10 k to +3.3V | Phase 7 decides (option 2: REGN through a resistor) | as v7 | BQ fault (Phase 1, option 2) | SJ3: centre = OTG pull-up resistor, side 1 = +3.3V, side 2 = REGN. Conditional on Phase 7 keeping the BQ24195 |
+| i | Boost enable | SW1 → BOOST_EN (R2 pull-down) | **Proposed (Phase 7, pending user approval): EN tied to VSYS_SENSE** (always on; was SW1, v8 = v7). Reason: PWR-002, see Power path | EN tied to VIN (VSYS_SENSE): always on | CL-11; PWR-001, PWR-002 | SJ3: centre = BOOST_EN, pad 1 (default) = VSYS_SENSE, pad 3 = SW1 common. SW1 stays wired as v7 |
+| j | BQ D+/D− (input source detection) | Both to GND: SDP, IINLIM 100 mA without I²C | D+ shorted to D−: DCP, 1.5 A without I²C | as v7 | BQ fault (Phase 1, SLUSB97A §8.3.1.3); "verified unchanged" BQ support | SJ3: centre = D−; side 1 = GND, side 2 = D+, with D+ also to GND through an SJ2 (closed in v7, open in v8). Phase 7 keeps the BQ24195, so the row stays (pad 1 default = D+, pad 3 = GND) |
+| k | BQ OTG pull-up source | R35 10 k to +3.3V | REGN (Phase 7, pending user approval) | as v7 | BQ fault (Phase 1, option 2) | SJ3: centre = OTG pull-up resistor, pad 1 (default) = REGN, pad 3 = +3.3V_MCU. Phase 7 keeps the BQ24195, so the row stays |
+| l | BQ TS thermistor (**new, Phase 7, pending user approval**) | TH1 on the PCB | 10 k NTC on the cell via J9 (no NTC fitted → charging suspended, STAT blinks) | as v7 | Phase 2 mechanism 7 side finding | SJ3: centre = BQ_TS NTC leg, pad 1 (default) = J9, pad 3 = TH1. See Power path |
 
 Rows considered and not added: D5 on-board pixel isolation (CL-06; row g already takes the LED loads off GPIO16); USBLC6 fitted vs bypassed (CL-12; jumpers on the USB pair cost more than they test); LDO type alone (CL-08; folded into c); B.Cu GND pour and I²C route (CL-20, CL-21; copper, not jumperable: the board model and partner review cover them); J7 shell net, battery holder, reverse protection (power path, Phase 7).
 
-**All-v7 configuration** (for A/B/A): a = v7 both lines, b = bypassed, c = shared, d = 2.2 k upstream only, e = open, f = closed, g = GPIO16, h = closed, i = SW1, j = GND, k = +3.3V. The bring-up relay (Phase 19) carries this list.
+**All-v7 configuration** (for A/B/A): a = v7 both lines, b = bypassed, c = shared, d = 2.2 k upstream only, e = open, f = closed, g = GPIO16, h = closed, i = SW1, j = GND, k = +3.3V, l = TH1 (rows i and l per Phase 7, pending approval). SW4 ON (v7 had no battery switch). The bring-up relay (Phase 19) carries this list.
 
 ### Decisions (user, 2026-11-02)
 
@@ -392,7 +440,7 @@ The jumpers that get switched often are 2.54 mm pin headers with push-on shunts 
 | DBG2 | GPIO48 (high = on) | White, KT-0603W | C2290 (basic) | 1 220 705 | 470 Ω | C23179 (basic) | ≈ 1.3 mA |
 | D5 (kept) | LED_DATA | WS2812B-MINI (v7) | C4154873 | see v7 review below | — | — | — |
 
-- STAT anode on VSYS: VSYS exists whenever the charger runs, whether or not SW1 has the boost on, so the LED shows charging with the board "off". Conditional, like the STAT LED itself, on Phase 7 keeping the BQ24195 (the BQ's STAT is open drain, SLUSB97A; `docs/references/bq24195/DATASHEET_REFERENCE.md` pin table). Phase 7 confirms the rail.
+- STAT anode on VSYS: VSYS exists whenever the charger runs, whether or not SW1 has the boost on, so the LED shows charging with the board "off". Conditional, like the STAT LED itself, on Phase 7 keeping the BQ24195 (the BQ's STAT is open drain, SLUSB97A; `docs/references/bq24195/DATASHEET_REFERENCE.md` pin table). Phase 7 confirmed VSYS (the BQ24195 is kept; Power path).
 - Rail LEDs (BUS, +5V, VBUS, and D1) each have a default-closed SJ2 in series (Test points), so their ≈ 1 mA can be removed for a v7-load A/B.
 - The extended LEDs could be swapped for basic ones only by changing colour (JLC basic 0603 LEDs found: red C2286, white C2290). Not worth a colour change for a few cents of fee.
 

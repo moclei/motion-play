@@ -1,0 +1,2997 @@
+{
+ "_note": "v8 power sheet spec (Phase 7, v8-debug-board). Design intent: hardware/pcb-main-v8/CONTEXT.md 'Power path' (pending user approval at the time of writing). Same shape as spec.json; Phase 10 generates or modifies the v8 power sheet from it. Refs >= 10/20/30/60 are new in v8 and provisional (Phase 10 annotates). Positions are a coarse grid per block, not a layout. v7_ref marks parts carried over with v7 membership; 'dnp' marks unfitted parts.",
+ "meta": {
+  "title": "Power (v8)",
+  "description": "USB-C input, battery (XT30, F3, back-to-back PMOS, SW4, cell NTC), BQ24195 with rows j/k/l, INA219 shunt, TPS61088 with row i, AMS1117 + AP2112K with row c, row h links, rail test points",
+  "filename": "power_v8.kicad_sch",
+  "project": "motion-play-main-v8",
+  "kicad_version": "20250114",
+  "source_doc": "hardware/pcb-main-v8/CONTEXT.md#power-path",
+  "v7_source": "hardware/pcb-main/kicad/circuit-context.json @ c2acffc",
+  "total_components": 135,
+  "units": {
+   "position": "mm, KiCad schematic coordinates",
+   "angle": "degrees"
+  }
+ },
+ "interface_pins": [
+  {
+   "name": "GND",
+   "type": "bidirectional",
+   "net": "GND"
+  },
+  {
+   "name": "+5V_CORE",
+   "type": "output",
+   "net": "+5V_CORE"
+  },
+  {
+   "name": "+5V_TO_LEDS",
+   "type": "output",
+   "net": "+5V_TO_LEDS"
+  },
+  {
+   "name": "+3.3V_MCU",
+   "type": "output",
+   "net": "+3.3V_MCU"
+  },
+  {
+   "name": "+3.3V_BUS",
+   "type": "output",
+   "net": "+3.3V_BUS"
+  },
+  {
+   "name": "Protected_VBUS",
+   "type": "output",
+   "net": "Protected_VBUS"
+  },
+  {
+   "name": "USB_DP",
+   "type": "bidirectional",
+   "net": "USB_DP"
+  },
+  {
+   "name": "USB_DN",
+   "type": "bidirectional",
+   "net": "USB_DN"
+  },
+  {
+   "name": "I2C_SDA",
+   "type": "bidirectional",
+   "net": "I2C_SDA"
+  },
+  {
+   "name": "I2C_SCL",
+   "type": "bidirectional",
+   "net": "I2C_SCL"
+  },
+  {
+   "name": "BQ_SDA",
+   "type": "bidirectional",
+   "net": "BQ_SDA"
+  },
+  {
+   "name": "BQ_SCL",
+   "type": "bidirectional",
+   "net": "BQ_SCL"
+  },
+  {
+   "name": "CHRG_INT",
+   "type": "output",
+   "net": "CHRG_INT"
+  }
+ ],
+ "symbol_sources": {
+  "_note": "Stock KiCad 9 libraries where the lib_id names one (Device, Transistor_FET, Regulator_Linear, Sensor_Energy, Connector, Connector_Generic, Jumper, Switch). Project-library symbols (BQ24195RGET, TPS61088RHLR, USB-C TYPE-C-31-M-12) and footprints (MK-12C02-G020_GSW, IND-SMD_L7.0-W6.6, L_Changjiang_FNR6028S, SOT-223 LCSC, BQ/TPS QFNs) are copied from the v7 project at c2acffc. Never Simulation_SPICE symbols.",
+  "v7_project": "hardware/pcb-main/kicad/ @ c2acffc"
+ },
+ "blocks": {
+  "usb_input": {
+   "name": "USB-C input",
+   "origin": [
+    25.4,
+    25.4
+   ]
+  },
+  "battery": {
+   "name": "Battery: XT30, fuse, back-to-back PMOS, SW4, cell NTC",
+   "origin": [
+    25.4,
+    101.6
+   ]
+  },
+  "charger": {
+   "name": "Charger BQ24195 + rows j, k, l",
+   "origin": [
+    127.0,
+    25.4
+   ]
+  },
+  "monitor": {
+   "name": "VSYS shunt + INA219",
+   "origin": [
+    127.0,
+    127.0
+   ]
+  },
+  "boost": {
+   "name": "TPS61088 boost + row i",
+   "origin": [
+    228.6,
+    25.4
+   ]
+  },
+  "regulators": {
+   "name": "3.3 V regulators + row c",
+   "origin": [
+    228.6,
+    127.0
+   ]
+  },
+  "links": {
+   "name": "Row h current-measure links + LED fuse",
+   "origin": [
+    304.8,
+    127.0
+   ]
+  },
+  "test_points": {
+   "name": "Rail and control test points (each with its own GND pad)",
+   "origin": [
+    25.4,
+    190.5
+   ]
+  }
+ },
+ "components": [
+  {
+   "_comment": "=== USB-C input (v7 parts; J7 shell pads all on SH -> GND, Phase 8 checks the footprint) ==="
+  },
+  {
+   "ref": "J7",
+   "lib_id": "USB-C_SMD-TYPE-C-31-M-12:TYPE-C-31-M-12",
+   "value": "TYPE-C-31-M-12",
+   "footprint": "TYPE-C-31-M-12:USB-C_SMD-TYPE-C-31-M-12_1",
+   "lcsc": "C165948",
+   "block": "usb_input",
+   "position": [
+    25.4,
+    25.4
+   ],
+   "pins": {
+    "0": "GND",
+    "A1B12": "GND",
+    "B1A12": "GND",
+    "A4B9": "VBUS_RAW",
+    "B4A9": "VBUS_RAW",
+    "A5": "CC1",
+    "B5": "CC2",
+    "A6": "USB_DP",
+    "B6": "USB_DP",
+    "A7": "USB_DN",
+    "B7": "USB_DN"
+   },
+   "v7_ref": "J7",
+   "note": "v7 symbol pin numbers (circuit-context @ c2acffc). SH pin '0' on GND as v7's schematic; v7's PCB rear legs had no net"
+  },
+  {
+   "ref": "F2",
+   "lib_id": "Device:Fuse",
+   "value": "3A PTC",
+   "footprint": "Fuse:Fuse_1206_3216Metric",
+   "lcsc": "C2897466",
+   "block": "usb_input",
+   "position": [
+    38.1,
+    25.4
+   ],
+   "pins": {
+    "1": "VBUS_RAW",
+    "2": "Protected_VBUS"
+   },
+   "v7_ref": "F2"
+  },
+  {
+   "ref": "R30",
+   "lib_id": "Device:R",
+   "value": "5.1k",
+   "footprint": "Resistor_SMD:R_0603_1608Metric",
+   "lcsc": "C23186",
+   "block": "usb_input",
+   "position": [
+    50.8,
+    25.4
+   ],
+   "pins": {
+    "1": "CC1",
+    "2": "GND"
+   },
+   "v7_ref": "R30"
+  },
+  {
+   "ref": "R31",
+   "lib_id": "Device:R",
+   "value": "5.1k",
+   "footprint": "Resistor_SMD:R_0603_1608Metric",
+   "lcsc": "C23186",
+   "block": "usb_input",
+   "position": [
+    63.5,
+    25.4
+   ],
+   "pins": {
+    "1": "CC2",
+    "2": "GND"
+   },
+   "v7_ref": "R31"
+  },
+  {
+   "ref": "C20",
+   "lib_id": "Device:C",
+   "value": "1uF",
+   "footprint": "Capacitor_SMD:C_0603_1608Metric",
+   "lcsc": "C15849",
+   "block": "usb_input",
+   "position": [
+    76.2,
+    25.4
+   ],
+   "pins": {
+    "1": "Protected_VBUS",
+    "2": "GND"
+   },
+   "v7_ref": "C20"
+  },
+  {
+   "ref": "C21",
+   "lib_id": "Device:C",
+   "value": "4.7uF",
+   "footprint": "Capacitor_SMD:C_0603_1608Metric",
+   "lcsc": "C19666",
+   "block": "usb_input",
+   "position": [
+    88.9,
+    25.4
+   ],
+   "pins": {
+    "1": "Protected_VBUS",
+    "2": "GND"
+   },
+   "v7_ref": "C21"
+  },
+  {
+   "ref": "C22",
+   "lib_id": "Device:C_Polarized",
+   "value": "47uF 35V",
+   "footprint": "Capacitor_SMD:CP_Elec_6.3x5.4",
+   "lcsc": "C72522",
+   "block": "usb_input",
+   "position": [
+    25.4,
+    40.64
+   ],
+   "pins": {
+    "1": "Protected_VBUS",
+    "2": "GND"
+   },
+   "v7_ref": "C22",
+   "note": "v7 as built (CL-14)"
+  },
+  {
+   "_comment": "=== Battery: replaces v7 BT1, Q2, R33, R34 (no v7 position, by design) ==="
+  },
+  {
+   "ref": "J8",
+   "lib_id": "Connector_Generic:Conn_01x02",
+   "value": "XT30UPB-M",
+   "footprint": "Connector_AMASS:AMASS_XT30UPB-M_1x02_P5.0mm_Vertical",
+   "lcsc": "C428721",
+   "block": "battery",
+   "position": [
+    25.4,
+    101.6
+   ],
+   "pins": {
+    "1": "BAT_CONN",
+    "2": "GND"
+   },
+   "note": "Hand-fit or JLC THT. Phase 8 checks which pad is + against the housing's chamfer (keyed). Cell lead: XT30U-F C99102, female on the cell side"
+  },
+  {
+   "ref": "F3",
+   "lib_id": "Device:Fuse",
+   "value": "7A",
+   "footprint": "Fuse:Fuse_Littelfuse-NANO2-451_453",
+   "lcsc": "C99548",
+   "block": "battery",
+   "position": [
+    38.1,
+    101.6
+   ],
+   "pins": {
+    "1": "BAT_CONN",
+    "2": "BAT_FUSED"
+   },
+   "note": "Littelfuse 0451007.MRL, 2410"
+  },
+  {
+   "ref": "Q20",
+   "lib_id": "Transistor_FET:CSD25402Q3A",
+   "value": "CSD25402Q3A",
+   "footprint": "Package_SON:VSON-8_3.3x3.3mm_P0.65mm_NexFET",
+   "lcsc": "C111356",
+   "block": "battery",
+   "position": [
+    50.8,
+    101.6
+   ],
+   "pins": {
+    "1": "BAT_FUSED",
+    "2": "BAT_FUSED",
+    "3": "BAT_FUSED",
+    "4": "BAT_GATE",
+    "5": "BAT_COMMON"
+   },
+   "note": "Pins 1-3 D, 4 G, 5 (pad + pins 5-8) S: KiCad symbol and TI SLPS454B top view agree. Drain on the cell side"
+  },
+  {
+   "ref": "Q21",
+   "lib_id": "Transistor_FET:CSD25402Q3A",
+   "value": "CSD25402Q3A",
+   "footprint": "Package_SON:VSON-8_3.3x3.3mm_P0.65mm_NexFET",
+   "lcsc": "C111356",
+   "block": "battery",
+   "position": [
+    63.5,
+    101.6
+   ],
+   "pins": {
+    "1": "VBAT",
+    "2": "VBAT",
+    "3": "VBAT",
+    "4": "BAT_GATE",
+    "5": "BAT_COMMON"
+   },
+   "note": "Drain on VBAT; sources joined with Q20"
+  },
+  {
+   "ref": "R60",
+   "lib_id": "Device:R",
+   "value": "1M",
+   "footprint": "Resistor_SMD:R_0603_1608Metric",
+   "lcsc": "C22935",
+   "block": "battery",
+   "position": [
+    76.2,
+    101.6
+   ],
+   "pins": {
+    "1": "BAT_GATE",
+    "2": "BAT_COMMON"
+   },
+   "note": "holds the pair off"
+  },
+  {
+   "ref": "C60",
+   "lib_id": "Device:C",
+   "value": "220nF",
+   "footprint": "Capacitor_SMD:C_0603_1608Metric",
+   "lcsc": "C21120",
+   "block": "battery",
+   "position": [
+    88.9,
+    101.6
+   ],
+   "pins": {
+    "1": "BAT_GATE",
+    "2": "BAT_COMMON"
+   },
+   "note": "gate follows source at plug-in (10x C61)"
+  },
+  {
+   "ref": "C61",
+   "lib_id": "Device:C",
+   "value": "22nF",
+   "footprint": "Capacitor_SMD:C_0603_1608Metric",
+   "lcsc": "C21122",
+   "block": "battery",
+   "position": [
+    25.4,
+    116.84
+   ],
+   "pins": {
+    "1": "BAT_GATE",
+    "2": "VBAT"
+   },
+   "note": "Miller cap: VBAT ramp ~2.6 V/ms (argued)"
+  },
+  {
+   "ref": "R61",
+   "lib_id": "Device:R",
+   "value": "47k",
+   "footprint": "Resistor_SMD:R_0603_1608Metric",
+   "lcsc": "C25819",
+   "block": "battery",
+   "position": [
+    38.1,
+    116.84
+   ],
+   "pins": {
+    "1": "BAT_GATE",
+    "2": "BATT_SW_COM"
+   }
+  },
+  {
+   "ref": "SW4",
+   "lib_id": "Switch:SW_SPDT",
+   "value": "BATT",
+   "footprint": "MK-12C02-G020_GSW",
+   "lcsc": "C431540",
+   "block": "battery",
+   "position": [
+    50.8,
+    116.84
+   ],
+   "pins": {
+    "1": "GND",
+    "2": "BATT_SW_COM"
+   },
+   "no_connect": [
+    "3"
+   ],
+   "note": "Same switch and footprint as v7 SW1 (copy SW1's lib_id/footprint from the v7 project). Throw 1 = ON (GND), throw 3 = OFF"
+  },
+  {
+   "ref": "J9",
+   "lib_id": "Connector_Generic:Conn_01x02",
+   "value": "Cell NTC",
+   "footprint": "Connector_JST:JST_PH_S2B-PH-K_1x02_P2.00mm_Horizontal",
+   "lcsc": "C173752",
+   "block": "battery",
+   "position": [
+    63.5,
+    116.84
+   ],
+   "pins": {
+    "1": "TS_CELL",
+    "2": "GND"
+   },
+   "note": "10k 103AT NTC taped to the cell (user-supplied)"
+  },
+  {
+   "_comment": "=== Charger U5 (v7 part; pins 2,3,4,5,6 change) ==="
+  },
+  {
+   "ref": "U5",
+   "lib_id": "BQ24195RGET:BQ24195RGET",
+   "value": "BQ24195RGER",
+   "footprint": "BQ24195RGET:VQFN-24_L4.0-W4.0-P0.50-TL-EP2.8",
+   "lcsc": "C90862",
+   "block": "charger",
+   "position": [
+    127.0,
+    25.4
+   ],
+   "pins": {
+    "1": "Protected_VBUS",
+    "24": "Protected_VBUS",
+    "2": "BQ_DP",
+    "3": "BQ_DM",
+    "4": "BQ_STAT",
+    "5": "BQ_SCL",
+    "6": "BQ_SDA",
+    "7": "CHRG_INT",
+    "8": "OTG_BIAS",
+    "9": "GND",
+    "10": "BQ_ILIM",
+    "11": "BQ_TS",
+    "12": "BQ_TS",
+    "13": "VBAT",
+    "14": "VBAT",
+    "15": "VSYS",
+    "16": "VSYS",
+    "17": "GND",
+    "18": "GND",
+    "19": "BQ_SW",
+    "20": "BQ_SW",
+    "21": "BQ_BTST",
+    "22": "BQ_REGN",
+    "23": "BQ_PMID",
+    "25": "GND"
+   },
+   "v7_ref": "U5",
+   "note": "Fallback BQ24195LRGER C417486 (same footprint/pins); Phase 19 decides on stock. BQ_SDA/BQ_SCL go to row f headers (bus sheet)"
+  },
+  {
+   "ref": "JP32",
+   "lib_id": "Jumper:SolderJumper_3_Bridged12",
+   "value": "row j",
+   "footprint": "Jumper:SolderJumper-3_P1.3mm_Bridged12_RoundedPad1.0x1.5mm_NumberLabels",
+   "lcsc": "",
+   "block": "charger",
+   "position": [
+    139.7,
+    25.4
+   ],
+   "pins": {
+    "1": "BQ_DP",
+    "2": "BQ_DM",
+    "3": "GND"
+   },
+   "note": "row j: pad1 (default, v8) D- to D+; pad3 (v7) D- to GND"
+  },
+  {
+   "ref": "JP33",
+   "lib_id": "Jumper:SolderJumper_2_Open",
+   "value": "row j D+ GND",
+   "footprint": "Jumper:SolderJumper-2_P1.3mm_Open_RoundedPad1.0x1.5mm",
+   "lcsc": "",
+   "block": "charger",
+   "position": [
+    152.4,
+    25.4
+   ],
+   "pins": {
+    "1": "BQ_DP",
+    "2": "GND"
+   },
+   "note": "row j: open in v8, closed in v7"
+  },
+  {
+   "ref": "R35",
+   "lib_id": "Device:R",
+   "value": "10k",
+   "footprint": "Resistor_SMD:R_0603_1608Metric",
+   "lcsc": "C25804",
+   "block": "charger",
+   "position": [
+    165.1,
+    25.4
+   ],
+   "pins": {
+    "1": "OTG_BIAS",
+    "2": "OTG_PU"
+   },
+   "v7_ref": "R35"
+  },
+  {
+   "ref": "JP34",
+   "lib_id": "Jumper:SolderJumper_3_Bridged12",
+   "value": "row k",
+   "footprint": "Jumper:SolderJumper-3_P1.3mm_Bridged12_RoundedPad1.0x1.5mm_NumberLabels",
+   "lcsc": "",
+   "block": "charger",
+   "position": [
+    177.8,
+    25.4
+   ],
+   "pins": {
+    "1": "BQ_REGN",
+    "2": "OTG_PU",
+    "3": "+3.3V_MCU"
+   },
+   "note": "row k: pad1 (default, v8) REGN; pad3 (v7) MCU 3.3 V"
+  },
+  {
+   "ref": "R32",
+   "lib_id": "Device:R",
+   "value": "330",
+   "footprint": "Resistor_SMD:R_0603_1608Metric",
+   "lcsc": "C23138",
+   "block": "charger",
+   "position": [
+    190.5,
+    25.4
+   ],
+   "pins": {
+    "1": "BQ_ILIM",
+    "2": "GND"
+   },
+   "v7_ref": "R32"
+  },
+  {
+   "ref": "R36",
+   "lib_id": "Device:R",
+   "value": "5.6k",
+   "footprint": "Resistor_SMD:R_0603_1608Metric",
+   "lcsc": "C23189",
+   "block": "charger",
+   "position": [
+    127.0,
+    40.64
+   ],
+   "pins": {
+    "1": "BQ_REGN",
+    "2": "BQ_TS"
+   },
+   "v7_ref": "R36"
+  },
+  {
+   "ref": "R37",
+   "lib_id": "Device:R",
+   "value": "30k",
+   "footprint": "Resistor_SMD:R_0603_1608Metric",
+   "lcsc": "C22984",
+   "block": "charger",
+   "position": [
+    139.7,
+    40.64
+   ],
+   "pins": {
+    "1": "BQ_TS",
+    "2": "GND"
+   },
+   "v7_ref": "R37"
+  },
+  {
+   "ref": "JP35",
+   "lib_id": "Jumper:SolderJumper_3_Bridged12",
+   "value": "row l",
+   "footprint": "Jumper:SolderJumper-3_P1.3mm_Bridged12_RoundedPad1.0x1.5mm_NumberLabels",
+   "lcsc": "",
+   "block": "charger",
+   "position": [
+    152.4,
+    40.64
+   ],
+   "pins": {
+    "1": "TS_CELL",
+    "2": "BQ_TS",
+    "3": "TS_BOARD"
+   },
+   "note": "row l: pad1 (default, v8) cell NTC on J9; pad3 (v7) TH1 on the board"
+  },
+  {
+   "ref": "TH1",
+   "lib_id": "Device:Thermistor_NTC",
+   "value": "10k NTC",
+   "footprint": "Resistor_SMD:R_0603_1608Metric",
+   "lcsc": "C13564",
+   "block": "charger",
+   "position": [
+    165.1,
+    40.64
+   ],
+   "pins": {
+    "1": "TS_BOARD",
+    "2": "GND"
+   },
+   "v7_ref": "TH1",
+   "note": "v7: TH1 pin 1 on BQ_TS directly"
+  },
+  {
+   "ref": "R38",
+   "lib_id": "Device:R",
+   "value": "10k",
+   "footprint": "Resistor_SMD:R_0603_1608Metric",
+   "lcsc": "C25804",
+   "block": "charger",
+   "position": [
+    177.8,
+    40.64
+   ],
+   "pins": {
+    "1": "CHRG_INT",
+    "2": "+3.3V_MCU"
+   },
+   "v7_ref": "R38"
+  },
+  {
+   "ref": "C24",
+   "lib_id": "Device:C",
+   "value": "4.7uF",
+   "footprint": "Capacitor_SMD:C_0603_1608Metric",
+   "lcsc": "C19666",
+   "block": "charger",
+   "position": [
+    190.5,
+    40.64
+   ],
+   "pins": {
+    "1": "BQ_REGN",
+    "2": "GND"
+   },
+   "v7_ref": "C24"
+  },
+  {
+   "ref": "C25",
+   "lib_id": "Device:C",
+   "value": "22uF 25V",
+   "footprint": "Capacitor_SMD:C_1206_3216Metric",
+   "lcsc": "C12891",
+   "block": "charger",
+   "position": [
+    127.0,
+    55.88
+   ],
+   "pins": {
+    "1": "BQ_PMID",
+    "2": "GND"
+   },
+   "v7_ref": "C25",
+   "note": "PMID >= 60 uF (v7: 2 x 10 uF)"
+  },
+  {
+   "ref": "C26",
+   "lib_id": "Device:C",
+   "value": "22uF 25V",
+   "footprint": "Capacitor_SMD:C_1206_3216Metric",
+   "lcsc": "C12891",
+   "block": "charger",
+   "position": [
+    139.7,
+    55.88
+   ],
+   "pins": {
+    "1": "BQ_PMID",
+    "2": "GND"
+   },
+   "v7_ref": "C26",
+   "note": "PMID >= 60 uF (v7: 2 x 10 uF)"
+  },
+  {
+   "ref": "C63",
+   "lib_id": "Device:C",
+   "value": "22uF 25V",
+   "footprint": "Capacitor_SMD:C_1206_3216Metric",
+   "lcsc": "C12891",
+   "block": "charger",
+   "position": [
+    152.4,
+    55.88
+   ],
+   "pins": {
+    "1": "BQ_PMID",
+    "2": "GND"
+   },
+   "note": "PMID >= 60 uF (v7: 2 x 10 uF)"
+  },
+  {
+   "ref": "C64",
+   "lib_id": "Device:C",
+   "value": "22uF 25V",
+   "footprint": "Capacitor_SMD:C_1206_3216Metric",
+   "lcsc": "C12891",
+   "block": "charger",
+   "position": [
+    165.1,
+    55.88
+   ],
+   "pins": {
+    "1": "BQ_PMID",
+    "2": "GND"
+   },
+   "note": "PMID >= 60 uF (v7: 2 x 10 uF)"
+  },
+  {
+   "ref": "C23",
+   "lib_id": "Device:C",
+   "value": "47nF",
+   "footprint": "Capacitor_SMD:C_0603_1608Metric",
+   "lcsc": "C107093",
+   "block": "charger",
+   "position": [
+    177.8,
+    55.88
+   ],
+   "pins": {
+    "1": "BQ_BTST",
+    "2": "BQ_SW"
+   },
+   "v7_ref": "C23"
+  },
+  {
+   "ref": "L1",
+   "lib_id": "Device:L",
+   "value": "2.2uH",
+   "footprint": "L_Changjiang_FNR6028S",
+   "lcsc": "C266426",
+   "block": "charger",
+   "position": [
+    190.5,
+    55.88
+   ],
+   "pins": {
+    "1": "BQ_SW",
+    "2": "VSYS"
+   },
+   "v7_ref": "L1",
+   "note": "v7 footprint name (project library)"
+  },
+  {
+   "ref": "C27",
+   "lib_id": "Device:C",
+   "value": "10uF",
+   "footprint": "Capacitor_SMD:C_0603_1608Metric",
+   "lcsc": "C96446",
+   "block": "charger",
+   "position": [
+    127.0,
+    71.12
+   ],
+   "pins": {
+    "1": "VSYS",
+    "2": "GND"
+   },
+   "v7_ref": "C27"
+  },
+  {
+   "ref": "C28",
+   "lib_id": "Device:C",
+   "value": "10uF",
+   "footprint": "Capacitor_SMD:C_0603_1608Metric",
+   "lcsc": "C96446",
+   "block": "charger",
+   "position": [
+    139.7,
+    71.12
+   ],
+   "pins": {
+    "1": "VSYS",
+    "2": "GND"
+   },
+   "v7_ref": "C28"
+  },
+  {
+   "ref": "C29",
+   "lib_id": "Device:C_Polarized",
+   "value": "220uF 16V",
+   "footprint": "Capacitor_SMD:CP_Elec_6.3x7.7",
+   "lcsc": "C3342",
+   "block": "charger",
+   "position": [
+    152.4,
+    71.12
+   ],
+   "pins": {
+    "1": "VSYS",
+    "2": "GND"
+   },
+   "v7_ref": "C29"
+  },
+  {
+   "ref": "C62",
+   "lib_id": "Device:C",
+   "value": "10uF 25V",
+   "footprint": "Capacitor_SMD:C_0805_2012Metric",
+   "lcsc": "C15850",
+   "block": "charger",
+   "position": [
+    165.1,
+    71.12
+   ],
+   "pins": {
+    "1": "VBAT",
+    "2": "GND"
+   },
+   "note": "new: BAT decoupling at U5 pins 13/14"
+  },
+  {
+   "ref": "C30",
+   "lib_id": "Device:C_Polarized",
+   "value": "47uF 35V",
+   "footprint": "Capacitor_SMD:CP_Elec_6.3x5.4",
+   "lcsc": "C72522",
+   "block": "charger",
+   "position": [
+    177.8,
+    71.12
+   ],
+   "pins": {
+    "1": "VBAT",
+    "2": "GND"
+   },
+   "v7_ref": "C30",
+   "note": "moved from BAT_RAW to VBAT (behind the reverse blocking)"
+  },
+  {
+   "ref": "R62",
+   "lib_id": "Device:R",
+   "value": "2.2k",
+   "footprint": "Resistor_SMD:R_0603_1608Metric",
+   "lcsc": "C4190",
+   "block": "charger",
+   "position": [
+    190.5,
+    71.12
+   ],
+   "pins": {
+    "1": "VSYS",
+    "2": "STAT_LED_A"
+   },
+   "note": "STAT LED from VSYS (Parts)"
+  },
+  {
+   "ref": "D10",
+   "lib_id": "Device:LED",
+   "value": "orange STAT",
+   "footprint": "LED_SMD:LED_0603_1608Metric",
+   "lcsc": "C111340",
+   "block": "charger",
+   "position": [
+    127.0,
+    86.36
+   ],
+   "pins": {
+    "1": "BQ_STAT",
+    "2": "STAT_LED_A"
+   },
+   "note": "pin 1 K, pin 2 A (Device:LED); Phase 8 checks the cathode mark"
+  },
+  {
+   "_comment": "=== VSYS shunt and INA219 (v7 topology; INA219 VS on the bus rail) ==="
+  },
+  {
+   "ref": "R44",
+   "lib_id": "Device:R",
+   "value": "10mR 1% 3W",
+   "footprint": "Resistor_SMD:R_2512_6332Metric",
+   "lcsc": "C2903468",
+   "block": "monitor",
+   "position": [
+    127.0,
+    127.0
+   ],
+   "pins": {
+    "1": "VSYS",
+    "2": "VSYS_SENSE"
+   },
+   "v7_ref": "R44",
+   "note": "HoJLR2512-3W-10mR-1%; v7 C1322424 has 2 in stock"
+  },
+  {
+   "ref": "U7",
+   "lib_id": "Sensor_Energy:INA219AxDCN",
+   "value": "INA219AIDCNR",
+   "footprint": "Package_TO_SOT_SMD:SOT-23-8",
+   "lcsc": "C87469",
+   "block": "monitor",
+   "position": [
+    139.7,
+    127.0
+   ],
+   "pins": {
+    "1": "VSYS",
+    "2": "VSYS_SENSE",
+    "3": "GND",
+    "4": "+3.3V_BUS",
+    "5": "I2C_SCL",
+    "6": "I2C_SDA",
+    "7": "GND",
+    "8": "GND"
+   },
+   "v7_ref": "U7",
+   "note": "v7 pin->net order (IN+,IN-,GND,VS,SCL,SDA,A0,A1); Phase 10 checks the KiCad symbol's numbering against it"
+  },
+  {
+   "ref": "C31",
+   "lib_id": "Device:C",
+   "value": "0.1uF",
+   "footprint": "Capacitor_SMD:C_0603_1608Metric",
+   "lcsc": "C14663",
+   "block": "monitor",
+   "position": [
+    152.4,
+    127.0
+   ],
+   "pins": {
+    "1": "VSYS_SENSE",
+    "2": "GND"
+   },
+   "v7_ref": "C31"
+  },
+  {
+   "ref": "C41",
+   "lib_id": "Device:C",
+   "value": "10uF",
+   "footprint": "Capacitor_SMD:C_0805_2012Metric",
+   "lcsc": "C15850",
+   "block": "monitor",
+   "position": [
+    165.1,
+    127.0
+   ],
+   "pins": {
+    "1": "VSYS_SENSE",
+    "2": "GND"
+   },
+   "v7_ref": "C41"
+  },
+  {
+   "_comment": "=== Boost U6 (v7 values) and row i ==="
+  },
+  {
+   "ref": "U6",
+   "lib_id": "TPS61088RHLR:TPS61088RHLR",
+   "value": "TPS61088RHLR",
+   "footprint": "TPS61088RHLR:VQFN-20_L4.6-W3.6-P0.50-BL",
+   "lcsc": "C87357",
+   "block": "boost",
+   "position": [
+    228.6,
+    25.4
+   ],
+   "pins": {
+    "1": "BOOST_VCC",
+    "2": "BOOST_EN",
+    "3": "BOOST_FSW",
+    "4": "BOOST_SW",
+    "5": "BOOST_SW",
+    "6": "BOOST_SW",
+    "7": "BOOST_SW",
+    "8": "BOOST_BOOT",
+    "9": "VSYS_SENSE",
+    "10": "BOOST_SS",
+    "11": "GND",
+    "12": "GND",
+    "14": "+5V",
+    "15": "+5V",
+    "16": "+5V",
+    "17": "BOOST_FB",
+    "18": "BOOST_COMP",
+    "19": "BOOST_ILIM",
+    "20": "GND",
+    "21": "GND"
+   },
+   "no_connect": [
+    "13"
+   ],
+   "v7_ref": "U6",
+   "note": "MODE floating = PFM (v7)"
+  },
+  {
+   "ref": "L2",
+   "lib_id": "Device:L",
+   "value": "2.2uH 10A",
+   "footprint": "IND-SMD_L7.0-W6.6",
+   "lcsc": "C167218",
+   "block": "boost",
+   "position": [
+    241.3,
+    25.4
+   ],
+   "pins": {
+    "1": "BOOST_SW",
+    "2": "VSYS_SENSE"
+   },
+   "v7_ref": "L2"
+  },
+  {
+   "ref": "R39",
+   "lib_id": "Device:R",
+   "value": "180k",
+   "footprint": "Resistor_SMD:R_0603_1608Metric",
+   "lcsc": "C22827",
+   "block": "boost",
+   "position": [
+    254.0,
+    25.4
+   ],
+   "pins": {
+    "1": "+5V",
+    "2": "BOOST_FB"
+   },
+   "v7_ref": "R39"
+  },
+  {
+   "ref": "R40",
+   "lib_id": "Device:R",
+   "value": "56k",
+   "footprint": "Resistor_SMD:R_0603_1608Metric",
+   "lcsc": "C23206",
+   "block": "boost",
+   "position": [
+    266.7,
+    25.4
+   ],
+   "pins": {
+    "1": "BOOST_FB",
+    "2": "GND"
+   },
+   "v7_ref": "R40"
+  },
+  {
+   "ref": "R41",
+   "lib_id": "Device:R",
+   "value": "100k",
+   "footprint": "Resistor_SMD:R_0603_1608Metric",
+   "lcsc": "C14675",
+   "block": "boost",
+   "position": [
+    279.4,
+    25.4
+   ],
+   "pins": {
+    "1": "BOOST_FSW",
+    "2": "BOOST_SW"
+   },
+   "v7_ref": "R41"
+  },
+  {
+   "ref": "R42",
+   "lib_id": "Device:R",
+   "value": "100k",
+   "footprint": "Resistor_SMD:R_0603_1608Metric",
+   "lcsc": "C14675",
+   "block": "boost",
+   "position": [
+    292.1,
+    25.4
+   ],
+   "pins": {
+    "1": "BOOST_ILIM",
+    "2": "GND"
+   },
+   "v7_ref": "R42"
+  },
+  {
+   "ref": "R43",
+   "lib_id": "Device:R",
+   "value": "22k",
+   "footprint": "Resistor_SMD:R_0603_1608Metric",
+   "lcsc": "C31850",
+   "block": "boost",
+   "position": [
+    228.6,
+    40.64
+   ],
+   "pins": {
+    "1": "BOOST_COMP",
+    "2": "COMP_MID"
+   },
+   "v7_ref": "R43"
+  },
+  {
+   "ref": "R2",
+   "lib_id": "Device:R",
+   "value": "100k",
+   "footprint": "Resistor_SMD:R_0603_1608Metric",
+   "lcsc": "C14675",
+   "block": "boost",
+   "position": [
+    241.3,
+    40.64
+   ],
+   "pins": {
+    "1": "BOOST_EN",
+    "2": "GND"
+   },
+   "v7_ref": "R2"
+  },
+  {
+   "ref": "C38",
+   "lib_id": "Device:C",
+   "value": "4.7nF",
+   "footprint": "Capacitor_SMD:C_0603_1608Metric",
+   "lcsc": "C1621",
+   "block": "boost",
+   "position": [
+    254.0,
+    40.64
+   ],
+   "pins": {
+    "1": "COMP_MID",
+    "2": "GND"
+   },
+   "v7_ref": "C38"
+  },
+  {
+   "ref": "C39",
+   "lib_id": "Device:C",
+   "value": "100pF",
+   "footprint": "Capacitor_SMD:C_0603_1608Metric",
+   "lcsc": "C14858",
+   "block": "boost",
+   "position": [
+    266.7,
+    40.64
+   ],
+   "pins": {
+    "1": "BOOST_COMP",
+    "2": "GND"
+   },
+   "v7_ref": "C39"
+  },
+  {
+   "ref": "C37",
+   "lib_id": "Device:C",
+   "value": "47nF",
+   "footprint": "Capacitor_SMD:C_0603_1608Metric",
+   "lcsc": "C107093",
+   "block": "boost",
+   "position": [
+    279.4,
+    40.64
+   ],
+   "pins": {
+    "1": "BOOST_SS",
+    "2": "GND"
+   },
+   "v7_ref": "C37"
+  },
+  {
+   "ref": "C32",
+   "lib_id": "Device:C",
+   "value": "0.1uF",
+   "footprint": "Capacitor_SMD:C_0603_1608Metric",
+   "lcsc": "C14663",
+   "block": "boost",
+   "position": [
+    292.1,
+    40.64
+   ],
+   "pins": {
+    "1": "BOOST_BOOT",
+    "2": "BOOST_SW"
+   },
+   "v7_ref": "C32"
+  },
+  {
+   "ref": "C33",
+   "lib_id": "Device:C",
+   "value": "2.2uF",
+   "footprint": "Capacitor_SMD:C_0603_1608Metric",
+   "lcsc": "C23630",
+   "block": "boost",
+   "position": [
+    228.6,
+    55.88
+   ],
+   "pins": {
+    "1": "BOOST_VCC",
+    "2": "GND"
+   },
+   "v7_ref": "C33"
+  },
+  {
+   "ref": "C34",
+   "lib_id": "Device:C",
+   "value": "22uF 25V",
+   "footprint": "Capacitor_SMD:C_0805_2012Metric",
+   "lcsc": "C45783",
+   "block": "boost",
+   "position": [
+    241.3,
+    55.88
+   ],
+   "pins": {
+    "1": "+5V",
+    "2": "GND"
+   },
+   "v7_ref": "C34",
+   "note": "v7 as built (CL-14)"
+  },
+  {
+   "ref": "C35",
+   "lib_id": "Device:C",
+   "value": "22uF 25V",
+   "footprint": "Capacitor_SMD:C_0805_2012Metric",
+   "lcsc": "C45783",
+   "block": "boost",
+   "position": [
+    254.0,
+    55.88
+   ],
+   "pins": {
+    "1": "+5V",
+    "2": "GND"
+   },
+   "v7_ref": "C35",
+   "note": "v7 as built (CL-14)"
+  },
+  {
+   "ref": "C36",
+   "lib_id": "Device:C",
+   "value": "22uF 25V",
+   "footprint": "Capacitor_SMD:C_0805_2012Metric",
+   "lcsc": "C45783",
+   "block": "boost",
+   "position": [
+    266.7,
+    55.88
+   ],
+   "pins": {
+    "1": "+5V",
+    "2": "GND"
+   },
+   "v7_ref": "C36",
+   "note": "v7 as built (CL-14)"
+  },
+  {
+   "ref": "C42",
+   "lib_id": "Device:C",
+   "value": "22uF 25V",
+   "footprint": "Capacitor_SMD:C_0805_2012Metric",
+   "lcsc": "C45783",
+   "block": "boost",
+   "position": [
+    279.4,
+    55.88
+   ],
+   "pins": {
+    "1": "+5V",
+    "2": "GND"
+   },
+   "v7_ref": "C42",
+   "note": "v7 as built (CL-14)"
+  },
+  {
+   "ref": "SW1",
+   "lib_id": "Switch:SW_SPDT",
+   "value": "BOOST (row i v7)",
+   "footprint": "MK-12C02-G020_GSW",
+   "lcsc": "C431540",
+   "block": "boost",
+   "position": [
+    292.1,
+    55.88
+   ],
+   "pins": {
+    "1": "VSYS_SENSE",
+    "2": "SW1_COM",
+    "3": "GND"
+   },
+   "v7_ref": "SW1",
+   "note": "wired as v7; v7 pin 2 net BOOST_EN now reaches BOOST_EN through row i pad 3"
+  },
+  {
+   "ref": "JP31",
+   "lib_id": "Jumper:SolderJumper_3_Bridged12",
+   "value": "row i",
+   "footprint": "Jumper:SolderJumper-3_P1.3mm_Bridged12_RoundedPad1.0x1.5mm_NumberLabels",
+   "lcsc": "",
+   "block": "boost",
+   "position": [
+    228.6,
+    71.12
+   ],
+   "pins": {
+    "1": "VSYS_SENSE",
+    "2": "BOOST_EN",
+    "3": "SW1_COM"
+   },
+   "note": "row i: pad1 (default, v8) EN tied to VSYS_SENSE; pad3 (v7) SW1"
+  },
+  {
+   "_comment": "=== Regulators and row c ==="
+  },
+  {
+   "ref": "U8",
+   "lib_id": "Regulator_Linear:AMS1117-3.3",
+   "value": "AMS1117-3.3",
+   "footprint": "SOT-223-3_L6.5-W3.4-P2.30-LS7.0-BR",
+   "lcsc": "C6186",
+   "block": "regulators",
+   "position": [
+    228.6,
+    127.0
+   ],
+   "pins": {
+    "1": "GND",
+    "2": "+3.3V_MCU_REG",
+    "3": "+5V_CORE",
+    "4": "+3.3V_MCU_REG"
+   },
+   "v7_ref": "U8",
+   "note": "v7 symbol/footprint (tab = pin 4)"
+  },
+  {
+   "ref": "C65",
+   "lib_id": "Device:C",
+   "value": "10uF 25V",
+   "footprint": "Capacitor_SMD:C_0805_2012Metric",
+   "lcsc": "C15850",
+   "block": "regulators",
+   "position": [
+    241.3,
+    127.0
+   ],
+   "pins": {
+    "1": "+5V_CORE",
+    "2": "GND"
+   },
+   "note": "new: input cap, keeps U8/U10 decoupled when link h3 is lifted"
+  },
+  {
+   "ref": "C40",
+   "lib_id": "Device:C",
+   "value": "0.1uF",
+   "footprint": "Capacitor_SMD:C_0603_1608Metric",
+   "lcsc": "C14663",
+   "block": "regulators",
+   "position": [
+    254.0,
+    127.0
+   ],
+   "pins": {
+    "1": "+3.3V_MCU_REG",
+    "2": "GND"
+   },
+   "v7_ref": "C40"
+  },
+  {
+   "ref": "C43",
+   "lib_id": "Device:C_Polarized",
+   "value": "22uF 6.3V tant",
+   "footprint": "Capacitor_Tantalum_SMD:CP_EIA-3216-18_Kemet-A",
+   "lcsc": "C129288",
+   "block": "regulators",
+   "position": [
+    266.7,
+    127.0
+   ],
+   "pins": {
+    "1": "+3.3V_MCU_REG",
+    "2": "GND"
+   },
+   "v7_ref": "C43"
+  },
+  {
+   "ref": "U10",
+   "lib_id": "Regulator_Linear:AP2112K-3.3",
+   "value": "AP2112K-3.3TRG1",
+   "footprint": "Package_TO_SOT_SMD:SOT-23-5",
+   "lcsc": "C51118",
+   "block": "regulators",
+   "position": [
+    279.4,
+    127.0
+   ],
+   "pins": {
+    "1": "+5V_CORE",
+    "2": "GND",
+    "3": "+3.3V_MCU",
+    "5": "+3.3V_BUS_REG"
+   },
+   "no_connect": [
+    "4"
+   ],
+   "note": "EN on +3.3V_MCU (after h1): bus rail only up while U3 is powered"
+  },
+  {
+   "ref": "C66",
+   "lib_id": "Device:C",
+   "value": "1uF",
+   "footprint": "Capacitor_SMD:C_0603_1608Metric",
+   "lcsc": "C15849",
+   "block": "regulators",
+   "position": [
+    292.1,
+    127.0
+   ],
+   "pins": {
+    "1": "+5V_CORE",
+    "2": "GND"
+   }
+  },
+  {
+   "ref": "C67",
+   "lib_id": "Device:C",
+   "value": "1uF",
+   "footprint": "Capacitor_SMD:C_0603_1608Metric",
+   "lcsc": "C15849",
+   "block": "regulators",
+   "position": [
+    228.6,
+    142.24
+   ],
+   "pins": {
+    "1": "+3.3V_BUS_REG",
+    "2": "GND"
+   }
+  },
+  {
+   "ref": "C68",
+   "lib_id": "Device:C",
+   "value": "10uF",
+   "footprint": "Capacitor_SMD:C_0805_2012Metric",
+   "lcsc": "C15850",
+   "block": "regulators",
+   "position": [
+    241.3,
+    142.24
+   ],
+   "pins": {
+    "1": "+3.3V_BUS",
+    "2": "GND"
+   },
+   "note": "bulk at the bus loads"
+  },
+  {
+   "ref": "JP30",
+   "lib_id": "Connector_Generic:Conn_01x03",
+   "value": "row c",
+   "footprint": "Connector_PinHeader_2.54mm:PinHeader_1x03_P2.54mm_Vertical",
+   "lcsc": "C2937625",
+   "block": "regulators",
+   "position": [
+    254.0,
+    142.24
+   ],
+   "pins": {
+    "1": "+3.3V_BUS_REG",
+    "2": "+3.3V_BUS_HDR",
+    "3": "+3.3V_MCU_REG"
+   },
+   "note": "row c: shunt 1-2 (default, v8) separate; 2-3 (v7) shared from U8"
+  },
+  {
+   "_comment": "=== Row h links; F1 moves here from the LED sheet ==="
+  },
+  {
+   "ref": "R63",
+   "lib_id": "Device:R",
+   "value": "0R",
+   "footprint": "Resistor_SMD:R_1206_3216Metric",
+   "lcsc": "C17888",
+   "block": "links",
+   "position": [
+    304.8,
+    127.0
+   ],
+   "pins": {
+    "1": "+3.3V_MCU_REG",
+    "2": "+3.3V_MCU"
+   },
+   "note": "h1"
+  },
+  {
+   "ref": "J30",
+   "lib_id": "Connector_Generic:Conn_01x02",
+   "value": "h1 (DNP)",
+   "footprint": "Connector_PinHeader_2.54mm:PinHeader_1x02_P2.54mm_Vertical",
+   "lcsc": "C492401",
+   "block": "links",
+   "position": [
+    317.5,
+    127.0
+   ],
+   "pins": {
+    "1": "+3.3V_MCU_REG",
+    "2": "+3.3V_MCU"
+   },
+   "dnp": true
+  },
+  {
+   "ref": "R64",
+   "lib_id": "Device:R",
+   "value": "0R",
+   "footprint": "Resistor_SMD:R_1206_3216Metric",
+   "lcsc": "C17888",
+   "block": "links",
+   "position": [
+    330.2,
+    127.0
+   ],
+   "pins": {
+    "1": "+3.3V_BUS_HDR",
+    "2": "+3.3V_BUS"
+   },
+   "note": "h2"
+  },
+  {
+   "ref": "J31",
+   "lib_id": "Connector_Generic:Conn_01x02",
+   "value": "h2 (DNP)",
+   "footprint": "Connector_PinHeader_2.54mm:PinHeader_1x02_P2.54mm_Vertical",
+   "lcsc": "C492401",
+   "block": "links",
+   "position": [
+    342.9,
+    127.0
+   ],
+   "pins": {
+    "1": "+3.3V_BUS_HDR",
+    "2": "+3.3V_BUS"
+   },
+   "dnp": true
+  },
+  {
+   "ref": "R65",
+   "lib_id": "Device:R",
+   "value": "0R 1W",
+   "footprint": "Resistor_SMD:R_2512_6332Metric",
+   "lcsc": "C25469",
+   "block": "links",
+   "position": [
+    355.6,
+    127.0
+   ],
+   "pins": {
+    "1": "+5V",
+    "2": "+5V_CORE"
+   },
+   "note": "h3"
+  },
+  {
+   "ref": "J32",
+   "lib_id": "Connector_Generic:Conn_01x02",
+   "value": "h3 (DNP)",
+   "footprint": "Connector_PinHeader_2.54mm:PinHeader_1x02_P2.54mm_Vertical",
+   "lcsc": "C492401",
+   "block": "links",
+   "position": [
+    368.3,
+    127.0
+   ],
+   "pins": {
+    "1": "+5V",
+    "2": "+5V_CORE"
+   },
+   "dnp": true
+  },
+  {
+   "ref": "F1",
+   "lib_id": "Device:Fuse",
+   "value": "3A",
+   "footprint": "Fuse:Fuse_1206_3216Metric",
+   "lcsc": "C354897",
+   "block": "links",
+   "position": [
+    304.8,
+    142.24
+   ],
+   "pins": {
+    "1": "+5V",
+    "2": "+5V_LED_F"
+   },
+   "v7_ref": "F1",
+   "note": "v7 F1 (LED sheet): +5V -> LED feed"
+  },
+  {
+   "ref": "R66",
+   "lib_id": "Device:R",
+   "value": "10mR 1% 3W",
+   "footprint": "Resistor_SMD:R_2512_6332Metric",
+   "lcsc": "C2903468",
+   "block": "links",
+   "position": [
+    317.5,
+    142.24
+   ],
+   "pins": {
+    "1": "+5V_LED_F",
+    "2": "+5V_TO_LEDS"
+   },
+   "note": "h4: shunt, reads 10 mV/A across J33"
+  },
+  {
+   "ref": "J33",
+   "lib_id": "Connector_Generic:Conn_01x02",
+   "value": "h4 (DNP)",
+   "footprint": "Connector_PinHeader_2.54mm:PinHeader_1x02_P2.54mm_Vertical",
+   "lcsc": "C492401",
+   "block": "links",
+   "position": [
+    330.2,
+    142.24
+   ],
+   "pins": {
+    "1": "+5V_LED_F",
+    "2": "+5V_TO_LEDS"
+   },
+   "dnp": true
+  },
+  {
+   "_comment": "=== Test points: one signal pad + its own GND pad per net (Test points rule: 1.0-3.0 mm gap) ==="
+  },
+  {
+   "ref": "TP10",
+   "lib_id": "Connector:TestPoint",
+   "value": "VBUS_RAW",
+   "footprint": "TestPoint:TestPoint_Pad_D1.5mm",
+   "lcsc": "",
+   "block": "test_points",
+   "position": [
+    25.4,
+    190.5
+   ],
+   "pins": {
+    "1": "VBUS_RAW"
+   }
+  },
+  {
+   "ref": "TP50",
+   "lib_id": "Connector:TestPoint",
+   "value": "GND",
+   "footprint": "TestPoint:TestPoint_Pad_2.5x2.5mm",
+   "lcsc": "",
+   "block": "test_points",
+   "position": [
+    38.1,
+    190.5
+   ],
+   "pins": {
+    "1": "GND"
+   },
+   "pair_of": "TP10"
+  },
+  {
+   "ref": "TP11",
+   "lib_id": "Connector:TestPoint",
+   "value": "Protected_VBUS",
+   "footprint": "TestPoint:TestPoint_Pad_D1.5mm",
+   "lcsc": "",
+   "block": "test_points",
+   "position": [
+    50.8,
+    190.5
+   ],
+   "pins": {
+    "1": "Protected_VBUS"
+   }
+  },
+  {
+   "ref": "TP51",
+   "lib_id": "Connector:TestPoint",
+   "value": "GND",
+   "footprint": "TestPoint:TestPoint_Pad_2.5x2.5mm",
+   "lcsc": "",
+   "block": "test_points",
+   "position": [
+    63.5,
+    190.5
+   ],
+   "pins": {
+    "1": "GND"
+   },
+   "pair_of": "TP11"
+  },
+  {
+   "ref": "TP12",
+   "lib_id": "Connector:TestPoint",
+   "value": "BQ_PMID",
+   "footprint": "TestPoint:TestPoint_Pad_D1.5mm",
+   "lcsc": "",
+   "block": "test_points",
+   "position": [
+    76.2,
+    190.5
+   ],
+   "pins": {
+    "1": "BQ_PMID"
+   }
+  },
+  {
+   "ref": "TP52",
+   "lib_id": "Connector:TestPoint",
+   "value": "GND",
+   "footprint": "TestPoint:TestPoint_Pad_2.5x2.5mm",
+   "lcsc": "",
+   "block": "test_points",
+   "position": [
+    88.9,
+    190.5
+   ],
+   "pins": {
+    "1": "GND"
+   },
+   "pair_of": "TP12"
+  },
+  {
+   "ref": "TP13",
+   "lib_id": "Connector:TestPoint",
+   "value": "BQ_REGN",
+   "footprint": "TestPoint:TestPoint_Pad_D1.5mm",
+   "lcsc": "",
+   "block": "test_points",
+   "position": [
+    25.4,
+    205.74
+   ],
+   "pins": {
+    "1": "BQ_REGN"
+   }
+  },
+  {
+   "ref": "TP53",
+   "lib_id": "Connector:TestPoint",
+   "value": "GND",
+   "footprint": "TestPoint:TestPoint_Pad_2.5x2.5mm",
+   "lcsc": "",
+   "block": "test_points",
+   "position": [
+    38.1,
+    205.74
+   ],
+   "pins": {
+    "1": "GND"
+   },
+   "pair_of": "TP13"
+  },
+  {
+   "ref": "TP14",
+   "lib_id": "Connector:TestPoint",
+   "value": "VSYS",
+   "footprint": "TestPoint:TestPoint_Pad_D1.5mm",
+   "lcsc": "",
+   "block": "test_points",
+   "position": [
+    50.8,
+    205.74
+   ],
+   "pins": {
+    "1": "VSYS"
+   }
+  },
+  {
+   "ref": "TP54",
+   "lib_id": "Connector:TestPoint",
+   "value": "GND",
+   "footprint": "TestPoint:TestPoint_Pad_2.5x2.5mm",
+   "lcsc": "",
+   "block": "test_points",
+   "position": [
+    63.5,
+    205.74
+   ],
+   "pins": {
+    "1": "GND"
+   },
+   "pair_of": "TP14"
+  },
+  {
+   "ref": "TP15",
+   "lib_id": "Connector:TestPoint",
+   "value": "VSYS_SENSE",
+   "footprint": "TestPoint:TestPoint_Pad_D1.5mm",
+   "lcsc": "",
+   "block": "test_points",
+   "position": [
+    76.2,
+    205.74
+   ],
+   "pins": {
+    "1": "VSYS_SENSE"
+   }
+  },
+  {
+   "ref": "TP55",
+   "lib_id": "Connector:TestPoint",
+   "value": "GND",
+   "footprint": "TestPoint:TestPoint_Pad_2.5x2.5mm",
+   "lcsc": "",
+   "block": "test_points",
+   "position": [
+    88.9,
+    205.74
+   ],
+   "pins": {
+    "1": "GND"
+   },
+   "pair_of": "TP15"
+  },
+  {
+   "ref": "TP16",
+   "lib_id": "Connector:TestPoint",
+   "value": "VBAT",
+   "footprint": "TestPoint:TestPoint_Pad_D1.5mm",
+   "lcsc": "",
+   "block": "test_points",
+   "position": [
+    25.4,
+    220.98
+   ],
+   "pins": {
+    "1": "VBAT"
+   }
+  },
+  {
+   "ref": "TP56",
+   "lib_id": "Connector:TestPoint",
+   "value": "GND",
+   "footprint": "TestPoint:TestPoint_Pad_2.5x2.5mm",
+   "lcsc": "",
+   "block": "test_points",
+   "position": [
+    38.1,
+    220.98
+   ],
+   "pins": {
+    "1": "GND"
+   },
+   "pair_of": "TP16"
+  },
+  {
+   "ref": "TP17",
+   "lib_id": "Connector:TestPoint",
+   "value": "BAT_FUSED",
+   "footprint": "TestPoint:TestPoint_Pad_D1.5mm",
+   "lcsc": "",
+   "block": "test_points",
+   "position": [
+    50.8,
+    220.98
+   ],
+   "pins": {
+    "1": "BAT_FUSED"
+   }
+  },
+  {
+   "ref": "TP57",
+   "lib_id": "Connector:TestPoint",
+   "value": "GND",
+   "footprint": "TestPoint:TestPoint_Pad_2.5x2.5mm",
+   "lcsc": "",
+   "block": "test_points",
+   "position": [
+    63.5,
+    220.98
+   ],
+   "pins": {
+    "1": "GND"
+   },
+   "pair_of": "TP17"
+  },
+  {
+   "ref": "TP18",
+   "lib_id": "Connector:TestPoint",
+   "value": "BAT_COMMON",
+   "footprint": "TestPoint:TestPoint_Pad_D1.5mm",
+   "lcsc": "",
+   "block": "test_points",
+   "position": [
+    76.2,
+    220.98
+   ],
+   "pins": {
+    "1": "BAT_COMMON"
+   }
+  },
+  {
+   "ref": "TP58",
+   "lib_id": "Connector:TestPoint",
+   "value": "GND",
+   "footprint": "TestPoint:TestPoint_Pad_2.5x2.5mm",
+   "lcsc": "",
+   "block": "test_points",
+   "position": [
+    88.9,
+    220.98
+   ],
+   "pins": {
+    "1": "GND"
+   },
+   "pair_of": "TP18"
+  },
+  {
+   "ref": "TP19",
+   "lib_id": "Connector:TestPoint",
+   "value": "BAT_GATE",
+   "footprint": "TestPoint:TestPoint_Pad_D1.5mm",
+   "lcsc": "",
+   "block": "test_points",
+   "position": [
+    25.4,
+    236.22
+   ],
+   "pins": {
+    "1": "BAT_GATE"
+   }
+  },
+  {
+   "ref": "TP59",
+   "lib_id": "Connector:TestPoint",
+   "value": "GND",
+   "footprint": "TestPoint:TestPoint_Pad_2.5x2.5mm",
+   "lcsc": "",
+   "block": "test_points",
+   "position": [
+    38.1,
+    236.22
+   ],
+   "pins": {
+    "1": "GND"
+   },
+   "pair_of": "TP19"
+  },
+  {
+   "ref": "TP20",
+   "lib_id": "Connector:TestPoint",
+   "value": "+5V",
+   "footprint": "TestPoint:TestPoint_Pad_D1.5mm",
+   "lcsc": "",
+   "block": "test_points",
+   "position": [
+    50.8,
+    236.22
+   ],
+   "pins": {
+    "1": "+5V"
+   }
+  },
+  {
+   "ref": "TP60",
+   "lib_id": "Connector:TestPoint",
+   "value": "GND",
+   "footprint": "TestPoint:TestPoint_Pad_2.5x2.5mm",
+   "lcsc": "",
+   "block": "test_points",
+   "position": [
+    63.5,
+    236.22
+   ],
+   "pins": {
+    "1": "GND"
+   },
+   "pair_of": "TP20"
+  },
+  {
+   "ref": "TP21",
+   "lib_id": "Connector:TestPoint",
+   "value": "+5V_CORE",
+   "footprint": "TestPoint:TestPoint_Pad_D1.5mm",
+   "lcsc": "",
+   "block": "test_points",
+   "position": [
+    76.2,
+    236.22
+   ],
+   "pins": {
+    "1": "+5V_CORE"
+   }
+  },
+  {
+   "ref": "TP61",
+   "lib_id": "Connector:TestPoint",
+   "value": "GND",
+   "footprint": "TestPoint:TestPoint_Pad_2.5x2.5mm",
+   "lcsc": "",
+   "block": "test_points",
+   "position": [
+    88.9,
+    236.22
+   ],
+   "pins": {
+    "1": "GND"
+   },
+   "pair_of": "TP21"
+  },
+  {
+   "ref": "TP22",
+   "lib_id": "Connector:TestPoint",
+   "value": "+5V_LED_F",
+   "footprint": "TestPoint:TestPoint_Pad_D1.5mm",
+   "lcsc": "",
+   "block": "test_points",
+   "position": [
+    25.4,
+    251.46
+   ],
+   "pins": {
+    "1": "+5V_LED_F"
+   }
+  },
+  {
+   "ref": "TP62",
+   "lib_id": "Connector:TestPoint",
+   "value": "GND",
+   "footprint": "TestPoint:TestPoint_Pad_2.5x2.5mm",
+   "lcsc": "",
+   "block": "test_points",
+   "position": [
+    38.1,
+    251.46
+   ],
+   "pins": {
+    "1": "GND"
+   },
+   "pair_of": "TP22"
+  },
+  {
+   "ref": "TP23",
+   "lib_id": "Connector:TestPoint",
+   "value": "+5V_TO_LEDS",
+   "footprint": "TestPoint:TestPoint_Pad_D1.5mm",
+   "lcsc": "",
+   "block": "test_points",
+   "position": [
+    50.8,
+    251.46
+   ],
+   "pins": {
+    "1": "+5V_TO_LEDS"
+   }
+  },
+  {
+   "ref": "TP63",
+   "lib_id": "Connector:TestPoint",
+   "value": "GND",
+   "footprint": "TestPoint:TestPoint_Pad_2.5x2.5mm",
+   "lcsc": "",
+   "block": "test_points",
+   "position": [
+    63.5,
+    251.46
+   ],
+   "pins": {
+    "1": "GND"
+   },
+   "pair_of": "TP23"
+  },
+  {
+   "ref": "TP24",
+   "lib_id": "Connector:TestPoint",
+   "value": "+3.3V_MCU_REG",
+   "footprint": "TestPoint:TestPoint_Pad_D1.5mm",
+   "lcsc": "",
+   "block": "test_points",
+   "position": [
+    76.2,
+    251.46
+   ],
+   "pins": {
+    "1": "+3.3V_MCU_REG"
+   }
+  },
+  {
+   "ref": "TP64",
+   "lib_id": "Connector:TestPoint",
+   "value": "GND",
+   "footprint": "TestPoint:TestPoint_Pad_2.5x2.5mm",
+   "lcsc": "",
+   "block": "test_points",
+   "position": [
+    88.9,
+    251.46
+   ],
+   "pins": {
+    "1": "GND"
+   },
+   "pair_of": "TP24"
+  },
+  {
+   "ref": "TP25",
+   "lib_id": "Connector:TestPoint",
+   "value": "+3.3V_MCU",
+   "footprint": "TestPoint:TestPoint_Pad_D1.5mm",
+   "lcsc": "",
+   "block": "test_points",
+   "position": [
+    25.4,
+    266.7
+   ],
+   "pins": {
+    "1": "+3.3V_MCU"
+   }
+  },
+  {
+   "ref": "TP65",
+   "lib_id": "Connector:TestPoint",
+   "value": "GND",
+   "footprint": "TestPoint:TestPoint_Pad_2.5x2.5mm",
+   "lcsc": "",
+   "block": "test_points",
+   "position": [
+    38.1,
+    266.7
+   ],
+   "pins": {
+    "1": "GND"
+   },
+   "pair_of": "TP25"
+  },
+  {
+   "ref": "TP26",
+   "lib_id": "Connector:TestPoint",
+   "value": "+3.3V_BUS_REG",
+   "footprint": "TestPoint:TestPoint_Pad_D1.5mm",
+   "lcsc": "",
+   "block": "test_points",
+   "position": [
+    50.8,
+    266.7
+   ],
+   "pins": {
+    "1": "+3.3V_BUS_REG"
+   }
+  },
+  {
+   "ref": "TP66",
+   "lib_id": "Connector:TestPoint",
+   "value": "GND",
+   "footprint": "TestPoint:TestPoint_Pad_2.5x2.5mm",
+   "lcsc": "",
+   "block": "test_points",
+   "position": [
+    63.5,
+    266.7
+   ],
+   "pins": {
+    "1": "GND"
+   },
+   "pair_of": "TP26"
+  },
+  {
+   "ref": "TP27",
+   "lib_id": "Connector:TestPoint",
+   "value": "+3.3V_BUS_HDR",
+   "footprint": "TestPoint:TestPoint_Pad_D1.5mm",
+   "lcsc": "",
+   "block": "test_points",
+   "position": [
+    76.2,
+    266.7
+   ],
+   "pins": {
+    "1": "+3.3V_BUS_HDR"
+   }
+  },
+  {
+   "ref": "TP67",
+   "lib_id": "Connector:TestPoint",
+   "value": "GND",
+   "footprint": "TestPoint:TestPoint_Pad_2.5x2.5mm",
+   "lcsc": "",
+   "block": "test_points",
+   "position": [
+    88.9,
+    266.7
+   ],
+   "pins": {
+    "1": "GND"
+   },
+   "pair_of": "TP27"
+  },
+  {
+   "ref": "TP28",
+   "lib_id": "Connector:TestPoint",
+   "value": "+3.3V_BUS",
+   "footprint": "TestPoint:TestPoint_Pad_D1.5mm",
+   "lcsc": "",
+   "block": "test_points",
+   "position": [
+    25.4,
+    281.94
+   ],
+   "pins": {
+    "1": "+3.3V_BUS"
+   }
+  },
+  {
+   "ref": "TP68",
+   "lib_id": "Connector:TestPoint",
+   "value": "GND",
+   "footprint": "TestPoint:TestPoint_Pad_2.5x2.5mm",
+   "lcsc": "",
+   "block": "test_points",
+   "position": [
+    38.1,
+    281.94
+   ],
+   "pins": {
+    "1": "GND"
+   },
+   "pair_of": "TP28"
+  },
+  {
+   "ref": "TP29",
+   "lib_id": "Connector:TestPoint",
+   "value": "BOOST_EN",
+   "footprint": "TestPoint:TestPoint_Pad_D1.5mm",
+   "lcsc": "",
+   "block": "test_points",
+   "position": [
+    50.8,
+    281.94
+   ],
+   "pins": {
+    "1": "BOOST_EN"
+   }
+  },
+  {
+   "ref": "TP69",
+   "lib_id": "Connector:TestPoint",
+   "value": "GND",
+   "footprint": "TestPoint:TestPoint_Pad_2.5x2.5mm",
+   "lcsc": "",
+   "block": "test_points",
+   "position": [
+    63.5,
+    281.94
+   ],
+   "pins": {
+    "1": "GND"
+   },
+   "pair_of": "TP29"
+  },
+  {
+   "ref": "TP30",
+   "lib_id": "Connector:TestPoint",
+   "value": "BOOST_VCC",
+   "footprint": "TestPoint:TestPoint_Pad_D1.5mm",
+   "lcsc": "",
+   "block": "test_points",
+   "position": [
+    76.2,
+    281.94
+   ],
+   "pins": {
+    "1": "BOOST_VCC"
+   }
+  },
+  {
+   "ref": "TP70",
+   "lib_id": "Connector:TestPoint",
+   "value": "GND",
+   "footprint": "TestPoint:TestPoint_Pad_2.5x2.5mm",
+   "lcsc": "",
+   "block": "test_points",
+   "position": [
+    88.9,
+    281.94
+   ],
+   "pins": {
+    "1": "GND"
+   },
+   "pair_of": "TP30"
+  },
+  {
+   "ref": "TP31",
+   "lib_id": "Connector:TestPoint",
+   "value": "BOOST_FB",
+   "footprint": "TestPoint:TestPoint_Pad_D1.5mm",
+   "lcsc": "",
+   "block": "test_points",
+   "position": [
+    25.4,
+    297.18
+   ],
+   "pins": {
+    "1": "BOOST_FB"
+   }
+  },
+  {
+   "ref": "TP71",
+   "lib_id": "Connector:TestPoint",
+   "value": "GND",
+   "footprint": "TestPoint:TestPoint_Pad_2.5x2.5mm",
+   "lcsc": "",
+   "block": "test_points",
+   "position": [
+    38.1,
+    297.18
+   ],
+   "pins": {
+    "1": "GND"
+   },
+   "pair_of": "TP31"
+  },
+  {
+   "ref": "TP32",
+   "lib_id": "Connector:TestPoint",
+   "value": "OTG_BIAS",
+   "footprint": "TestPoint:TestPoint_Pad_D1.5mm",
+   "lcsc": "",
+   "block": "test_points",
+   "position": [
+    50.8,
+    297.18
+   ],
+   "pins": {
+    "1": "OTG_BIAS"
+   }
+  },
+  {
+   "ref": "TP72",
+   "lib_id": "Connector:TestPoint",
+   "value": "GND",
+   "footprint": "TestPoint:TestPoint_Pad_2.5x2.5mm",
+   "lcsc": "",
+   "block": "test_points",
+   "position": [
+    63.5,
+    297.18
+   ],
+   "pins": {
+    "1": "GND"
+   },
+   "pair_of": "TP32"
+  },
+  {
+   "ref": "TP33",
+   "lib_id": "Connector:TestPoint",
+   "value": "BQ_TS",
+   "footprint": "TestPoint:TestPoint_Pad_D1.5mm",
+   "lcsc": "",
+   "block": "test_points",
+   "position": [
+    76.2,
+    297.18
+   ],
+   "pins": {
+    "1": "BQ_TS"
+   }
+  },
+  {
+   "ref": "TP73",
+   "lib_id": "Connector:TestPoint",
+   "value": "GND",
+   "footprint": "TestPoint:TestPoint_Pad_2.5x2.5mm",
+   "lcsc": "",
+   "block": "test_points",
+   "position": [
+    88.9,
+    297.18
+   ],
+   "pins": {
+    "1": "GND"
+   },
+   "pair_of": "TP33"
+  },
+  {
+   "ref": "TP34",
+   "lib_id": "Connector:TestPoint",
+   "value": "BQ_ILIM",
+   "footprint": "TestPoint:TestPoint_Pad_D1.5mm",
+   "lcsc": "",
+   "block": "test_points",
+   "position": [
+    25.4,
+    312.42
+   ],
+   "pins": {
+    "1": "BQ_ILIM"
+   }
+  },
+  {
+   "ref": "TP74",
+   "lib_id": "Connector:TestPoint",
+   "value": "GND",
+   "footprint": "TestPoint:TestPoint_Pad_2.5x2.5mm",
+   "lcsc": "",
+   "block": "test_points",
+   "position": [
+    38.1,
+    312.42
+   ],
+   "pins": {
+    "1": "GND"
+   },
+   "pair_of": "TP34"
+  },
+  {
+   "ref": "TP35",
+   "lib_id": "Connector:TestPoint",
+   "value": "BQ_STAT",
+   "footprint": "TestPoint:TestPoint_Pad_D1.5mm",
+   "lcsc": "",
+   "block": "test_points",
+   "position": [
+    50.8,
+    312.42
+   ],
+   "pins": {
+    "1": "BQ_STAT"
+   }
+  },
+  {
+   "ref": "TP75",
+   "lib_id": "Connector:TestPoint",
+   "value": "GND",
+   "footprint": "TestPoint:TestPoint_Pad_2.5x2.5mm",
+   "lcsc": "",
+   "block": "test_points",
+   "position": [
+    63.5,
+    312.42
+   ],
+   "pins": {
+    "1": "GND"
+   },
+   "pair_of": "TP35"
+  }
+ ],
+ "nets": {
+  "_note": "Generated from the component pins. members = ref.pin. Nets on one pin here reach the rest of the board through an interface pin.",
+  "GND": {
+   "members": [
+    "J7.0",
+    "J7.A1B12",
+    "J7.B1A12",
+    "R30.2",
+    "R31.2",
+    "C20.2",
+    "C21.2",
+    "C22.2",
+    "J8.2",
+    "SW4.1",
+    "J9.2",
+    "U5.9",
+    "U5.17",
+    "U5.18",
+    "U5.25",
+    "JP32.3",
+    "JP33.2",
+    "R32.2",
+    "R37.2",
+    "TH1.2",
+    "C24.2",
+    "C25.2",
+    "C26.2",
+    "C63.2",
+    "C64.2",
+    "C27.2",
+    "C28.2",
+    "C29.2",
+    "C62.2",
+    "C30.2",
+    "U7.3",
+    "U7.7",
+    "U7.8",
+    "C31.2",
+    "C41.2",
+    "U6.11",
+    "U6.12",
+    "U6.20",
+    "U6.21",
+    "R40.2",
+    "R42.2",
+    "R2.2",
+    "C38.2",
+    "C39.2",
+    "C37.2",
+    "C33.2",
+    "C34.2",
+    "C35.2",
+    "C36.2",
+    "C42.2",
+    "SW1.3",
+    "U8.1",
+    "C65.2",
+    "C40.2",
+    "C43.2",
+    "U10.2",
+    "C66.2",
+    "C67.2",
+    "C68.2",
+    "TP50.1",
+    "TP51.1",
+    "TP52.1",
+    "TP53.1",
+    "TP54.1",
+    "TP55.1",
+    "TP56.1",
+    "TP57.1",
+    "TP58.1",
+    "TP59.1",
+    "TP60.1",
+    "TP61.1",
+    "TP62.1",
+    "TP63.1",
+    "TP64.1",
+    "TP65.1",
+    "TP66.1",
+    "TP67.1",
+    "TP68.1",
+    "TP69.1",
+    "TP70.1",
+    "TP71.1",
+    "TP72.1",
+    "TP73.1",
+    "TP74.1",
+    "TP75.1"
+   ]
+  },
+  "VBUS_RAW": {
+   "members": [
+    "J7.A4B9",
+    "J7.B4A9",
+    "F2.1",
+    "TP10.1"
+   ]
+  },
+  "CC1": {
+   "members": [
+    "J7.A5",
+    "R30.1"
+   ]
+  },
+  "CC2": {
+   "members": [
+    "J7.B5",
+    "R31.1"
+   ]
+  },
+  "USB_DP": {
+   "members": [
+    "J7.A6",
+    "J7.B6"
+   ]
+  },
+  "USB_DN": {
+   "members": [
+    "J7.A7",
+    "J7.B7"
+   ]
+  },
+  "Protected_VBUS": {
+   "members": [
+    "F2.2",
+    "C20.1",
+    "C21.1",
+    "C22.1",
+    "U5.1",
+    "U5.24",
+    "TP11.1"
+   ]
+  },
+  "BAT_CONN": {
+   "members": [
+    "J8.1",
+    "F3.1"
+   ]
+  },
+  "BAT_FUSED": {
+   "members": [
+    "F3.2",
+    "Q20.1",
+    "Q20.2",
+    "Q20.3",
+    "TP17.1"
+   ]
+  },
+  "BAT_GATE": {
+   "members": [
+    "Q20.4",
+    "Q21.4",
+    "R60.1",
+    "C60.1",
+    "C61.1",
+    "R61.1",
+    "TP19.1"
+   ]
+  },
+  "BAT_COMMON": {
+   "members": [
+    "Q20.5",
+    "Q21.5",
+    "R60.2",
+    "C60.2",
+    "TP18.1"
+   ]
+  },
+  "VBAT": {
+   "members": [
+    "Q21.1",
+    "Q21.2",
+    "Q21.3",
+    "C61.2",
+    "U5.13",
+    "U5.14",
+    "C62.1",
+    "C30.1",
+    "TP16.1"
+   ]
+  },
+  "BATT_SW_COM": {
+   "members": [
+    "R61.2",
+    "SW4.2"
+   ]
+  },
+  "TS_CELL": {
+   "members": [
+    "J9.1",
+    "JP35.1"
+   ]
+  },
+  "BQ_DP": {
+   "members": [
+    "U5.2",
+    "JP32.1",
+    "JP33.1"
+   ]
+  },
+  "BQ_DM": {
+   "members": [
+    "U5.3",
+    "JP32.2"
+   ]
+  },
+  "BQ_STAT": {
+   "members": [
+    "U5.4",
+    "D10.1",
+    "TP35.1"
+   ]
+  },
+  "BQ_SCL": {
+   "members": [
+    "U5.5"
+   ]
+  },
+  "BQ_SDA": {
+   "members": [
+    "U5.6"
+   ]
+  },
+  "CHRG_INT": {
+   "members": [
+    "U5.7",
+    "R38.1"
+   ]
+  },
+  "OTG_BIAS": {
+   "members": [
+    "U5.8",
+    "R35.1",
+    "TP32.1"
+   ]
+  },
+  "BQ_ILIM": {
+   "members": [
+    "U5.10",
+    "R32.1",
+    "TP34.1"
+   ]
+  },
+  "BQ_TS": {
+   "members": [
+    "U5.11",
+    "U5.12",
+    "R36.2",
+    "R37.1",
+    "JP35.2",
+    "TP33.1"
+   ]
+  },
+  "VSYS": {
+   "members": [
+    "U5.15",
+    "U5.16",
+    "L1.2",
+    "C27.1",
+    "C28.1",
+    "C29.1",
+    "R62.1",
+    "R44.1",
+    "U7.1",
+    "TP14.1"
+   ]
+  },
+  "BQ_SW": {
+   "members": [
+    "U5.19",
+    "U5.20",
+    "C23.2",
+    "L1.1"
+   ]
+  },
+  "BQ_BTST": {
+   "members": [
+    "U5.21",
+    "C23.1"
+   ]
+  },
+  "BQ_REGN": {
+   "members": [
+    "U5.22",
+    "JP34.1",
+    "R36.1",
+    "C24.1",
+    "TP13.1"
+   ]
+  },
+  "BQ_PMID": {
+   "members": [
+    "U5.23",
+    "C25.1",
+    "C26.1",
+    "C63.1",
+    "C64.1",
+    "TP12.1"
+   ]
+  },
+  "OTG_PU": {
+   "members": [
+    "R35.2",
+    "JP34.2"
+   ]
+  },
+  "+3.3V_MCU": {
+   "members": [
+    "JP34.3",
+    "R38.2",
+    "U10.3",
+    "R63.2",
+    "J30.2",
+    "TP25.1"
+   ]
+  },
+  "TS_BOARD": {
+   "members": [
+    "JP35.3",
+    "TH1.1"
+   ]
+  },
+  "STAT_LED_A": {
+   "members": [
+    "R62.2",
+    "D10.2"
+   ]
+  },
+  "VSYS_SENSE": {
+   "members": [
+    "R44.2",
+    "U7.2",
+    "C31.1",
+    "C41.1",
+    "U6.9",
+    "L2.2",
+    "SW1.1",
+    "JP31.1",
+    "TP15.1"
+   ]
+  },
+  "+3.3V_BUS": {
+   "members": [
+    "U7.4",
+    "C68.1",
+    "R64.2",
+    "J31.2",
+    "TP28.1"
+   ]
+  },
+  "I2C_SCL": {
+   "members": [
+    "U7.5"
+   ]
+  },
+  "I2C_SDA": {
+   "members": [
+    "U7.6"
+   ]
+  },
+  "BOOST_VCC": {
+   "members": [
+    "U6.1",
+    "C33.1",
+    "TP30.1"
+   ]
+  },
+  "BOOST_EN": {
+   "members": [
+    "U6.2",
+    "R2.1",
+    "JP31.2",
+    "TP29.1"
+   ]
+  },
+  "BOOST_FSW": {
+   "members": [
+    "U6.3",
+    "R41.1"
+   ]
+  },
+  "BOOST_SW": {
+   "members": [
+    "U6.4",
+    "U6.5",
+    "U6.6",
+    "U6.7",
+    "L2.1",
+    "R41.2",
+    "C32.2"
+   ]
+  },
+  "BOOST_BOOT": {
+   "members": [
+    "U6.8",
+    "C32.1"
+   ]
+  },
+  "BOOST_SS": {
+   "members": [
+    "U6.10",
+    "C37.1"
+   ]
+  },
+  "+5V": {
+   "members": [
+    "U6.14",
+    "U6.15",
+    "U6.16",
+    "R39.1",
+    "C34.1",
+    "C35.1",
+    "C36.1",
+    "C42.1",
+    "R65.1",
+    "J32.1",
+    "F1.1",
+    "TP20.1"
+   ]
+  },
+  "BOOST_FB": {
+   "members": [
+    "U6.17",
+    "R39.2",
+    "R40.1",
+    "TP31.1"
+   ]
+  },
+  "BOOST_COMP": {
+   "members": [
+    "U6.18",
+    "R43.1",
+    "C39.1"
+   ]
+  },
+  "BOOST_ILIM": {
+   "members": [
+    "U6.19",
+    "R42.1"
+   ]
+  },
+  "COMP_MID": {
+   "members": [
+    "R43.2",
+    "C38.1"
+   ]
+  },
+  "SW1_COM": {
+   "members": [
+    "SW1.2",
+    "JP31.3"
+   ]
+  },
+  "+3.3V_MCU_REG": {
+   "members": [
+    "U8.2",
+    "U8.4",
+    "C40.1",
+    "C43.1",
+    "JP30.3",
+    "R63.1",
+    "J30.1",
+    "TP24.1"
+   ]
+  },
+  "+5V_CORE": {
+   "members": [
+    "U8.3",
+    "C65.1",
+    "U10.1",
+    "C66.1",
+    "R65.2",
+    "J32.2",
+    "TP21.1"
+   ]
+  },
+  "+3.3V_BUS_REG": {
+   "members": [
+    "U10.5",
+    "C67.1",
+    "JP30.1",
+    "TP26.1"
+   ]
+  },
+  "+3.3V_BUS_HDR": {
+   "members": [
+    "JP30.2",
+    "R64.1",
+    "J31.1",
+    "TP27.1"
+   ]
+  },
+  "+5V_LED_F": {
+   "members": [
+    "F1.2",
+    "R66.1",
+    "J33.1",
+    "TP22.1"
+   ]
+  },
+  "+5V_TO_LEDS": {
+   "members": [
+    "R66.2",
+    "J33.2",
+    "TP23.1"
+   ]
+  }
+ },
+ "_checks": {
+  "nets_with_one_member_not_interface": []
+ }
+}

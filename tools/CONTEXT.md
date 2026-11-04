@@ -38,6 +38,7 @@ Generates complete `.kicad_sch` sheet files from structured JSON specs. Componen
 |------|---------|
 | `spec.json` | Structured spec for the power management sheet (components, nets, blocks). |
 | `esp32_spec.json` | Structured spec for the ESP32-S3 sheet. |
+| `power_v8_spec.json` | v8 debug board power sheet spec (same shape as `spec.json`, plus `v7_ref`/`dnp` per part and generated net members). Design intent: `hardware/pcb-main-v8/CONTEXT.md` Power path. |
 | `generate_power_sheet.py` | Generates `power_management.kicad_sch` from `spec.json`. |
 | `generate_esp32_sheet.py` | Generates `esp32_s3.kicad_sch` from `esp32_spec.json`. |
 | `poc_generate.py` | Proof-of-concept: generates a minimal schematic with one resistor. |
