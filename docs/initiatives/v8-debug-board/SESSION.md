@@ -507,3 +507,14 @@ Entry conditions: the Debugger's `power` investigation merged to `main` (PR #90,
 7. **Current links on four rails** (MCU 3.3 V, bus 3.3 V, 5 V core, LED 5 V). The LED one is a 10 mΩ shunt rather than 0 Ω (rated well past 3 A, and it reads 10 mV/A without lifting anything).
 8. Datasheet fixes: PMID 88 µF, 10 µF + 47 µF on VBAT, USB shell on GND, a new R44 part (same 10 mΩ). The STAT LED runs from VSYS.
 After approval: change the Power path status to "approved by the user <date> (W2)" and drop the "pending" notes on rows i, k and l and in the Footprints SJ3 row. Then tick task 5 and the Handoff.
+
+#### Result
+| # | Phase | Result | Escalation evaluated? | Commit | Notes |
+|---|-------|--------|-----------------------|--------|-------|
+| 7 | Phase 7: Power path design | PARTIAL | Yes — resolvable without replanning: the stop is the planned user gate (task 5, closes W2) | 349c7cd | Tasks 1–4 done; task 5 and Handoff await the user |
+
+#### Verification
+- TASKS.md Phase 7: tasks 1–4 `[x]`; task 5 and Handoff `[ ]`. Working tree clean. PLAN.md: one Rejected Approaches line (charger swap); no date-stamped headings. `lab/` untouched.
+- Two items touch earlier approvals or the BRIEF, so they go to the user explicitly rather than being accepted by the Orchestrator: (1) row i's default reverses a W2-part-1 decision; (2) the battery protection has no v7 position, while BRIEF Constraints say "every suspected v7 → v8 difference has a v7 position". The Orchestrator's reading is that the constraint concerns differences suspected in the v7 I²C fault, and the battery path isn't one, but that's the user's call.
+- Stock: BQ24195RGER has 14 in stock (5 needed). The pin-identical BQ24195L fallback is recorded. Phase 19 preflight re-checks.
+- Loop paused for the user: task 5 (power path approval: row i default, no v7 battery-protection position, row l default, SW4 trade-off).
