@@ -1,0 +1,12 @@
+PWR-002 session terminal checks of the Mac's USB devices (2026-11-03), copied from the session's tool output.
+Commands: ls /dev/cu.usbmodem* ; ioreg -p IOUSB -l -w0 | grep -E '"idVendor"|"USB Product Name"' (filtered to idVendor 12346 = 0x303A)
+
+pre-run (nothing plugged):        ls: no matches; ioreg: Apple (1452) + AX88179B (2965) only
+S1  #0005 A1 SW1 left, normal:    /dev/cu.usbmodem14101 ; "USB JTAG_serial debug unit" idVendor 12346
+S3  #0005 A1 SW1 left, BOOT held: /dev/cu.usbmodem14101 ; "USB JTAG_serial debug unit" idVendor 12346
+S4  #0005 B  SW1 right, normal:   ls: no matches ; no idVendor 12346
+S6  #0005 B  SW1 right, BOOT held: ls: no matches ; no idVendor 12346
+S7  #0005 A2 SW1 left, normal:    /dev/cu.usbmodem14101 ; "USB JTAG_serial debug unit" idVendor 12346
+S9  #0004 A1 SW1 right, normal:   ls: no matches ; no idVendor 12346
+S11 #0004 B  SW1 left, normal:    /dev/cu.usbmodem14101 ; "USB JTAG_serial debug unit" idVendor 12346
+S13 #0004 A2 SW1 right, normal:   ls: no matches ; no idVendor 12346

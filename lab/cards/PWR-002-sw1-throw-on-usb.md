@@ -1,7 +1,7 @@
 ---
 test_id: PWR-002
 title: "SW1 throw on USB power (A/B/A per board): rails, boost pins and USB enumeration in download mode, #0005 (reference) then #0004"
-status: run
+status: recorded
 created: 2026-11-03
 prereg_commit: self
 baseline:
@@ -91,11 +91,27 @@ Order: #0005 A1 (ON), B (GND), A2 (ON); then #0004 A1 (GND), B (ON), A2 (GND).
  | "USB Product Name" = "USB JTAG_serial debug unit"  | "idVendor" = 12346.
  | "USB Product Name" = "USB JTAG_serial debug unit"  | "idVendor" = 12346.
 ### Measured values (from log; cite `lab/evidence/PWR-002/...`)
+DMM DC V, black G; Mac checks in `lab/evidence/PWR-002/usb-checks.txt`.
+
+| Board, arm | SW1 slider | K VSYS | L | M EN | Q VCC | R FB | N +5V | P +3.3V | Mac sees ESP32 |
+|---|---|---|---|---|---|---|---|---|---|
+| #0005 A1 | left | 4.283 | 4.280 | 4.280 | 5.078 | 1.238 | 5.100 | 3.300 | yes (normal + download) |
+| #0005 B | right | 4.300 | 4.300 | 0 | 3.931 | 0.900 | 3.799 | 2.710 | no (normal + download) |
+| #0005 A2 | left | — | — | — | — | — | 5.100 | 3.300 | yes (normal) |
+| #0004 A1 | right | — | — | 0.000 | — | — | 3.780 | 2.700 | no (normal; download: V7R-020 S4b) |
+| #0004 B | left | — | 4.300 | 4.290 (S12b) | — | — | 5.118 | 3.270 | yes (normal) |
+| #0004 A2 | right | — | — | — | — | — | 3.775 | 2.700 | no (normal) |
+
+A2 − A1: #0005 N 0, P 0; #0004 N −5 mV, P 0; enumeration A2 = A1 on both. No part warm at any reported arm (S13 items not answered).
+
 ### Interpretation (session; labelled as such)
+Interpretation: SW1 alone moves both boards between the two states: right = boost off, 3.3 V rail ≈ 2.70 V, no ESP32 on the Mac; left = boost on, 3.3 V rail 3.27–3.30 V, ESP32 on the Mac. #0004 has no power-path fault in these readings; it was found with SW1 at the right (GND) throw. On a v7, "on USB with SW1 right" gives the same operator symptom as "burnt out" (no ESP32 on the Mac). Whether that is what happened to #0001/#0002 is not testable (boards binned).
 
 ## Conclusion
-- Outcome row matched: ...
-- Hypotheses excluded: ...
-- **Strength:** measured-refuted | measured-supported | argued | not tested
-- Revert-on-null done: yes/no (commit)
+- Outcome row matched: method anchor passes (#0005 A1 "boost on", enumerates in download mode); no drift void (A2 = A1 within 5 mV, same enumeration). **#0005 GND arm: "boost off" (N 3.799 < K 4.300, < 4.50), P 2.710 < 3.00, no enumeration in download mode** → B8 row. **#0004 ON arm: "boost on" (N 5.118, P 3.270) and enumerates; GND arms "boost off" (N 3.780 / 3.775 < 4.50)** → Ka row.
+- Hypotheses excluded: Kb, Kc, Kd, Ke as #0004's fault (EN 4.290 V ≈ L at the ON arm; boost regulates). B8 "against" row not met.
+- **Strength:** measured-supported for Ka (SW1 at the GND throw is why #0004's boost doesn't run; one board, A/B/A). measured-refuted for Kb, Kc, Kd, Ke on #0004. measured-supported for B8's mechanism on a healthy board (#0005 and #0004 both lose the ESP32 on the Mac at the GND throw; A/B/A); B8 as what happened to #0001/#0002: argued (boards binned; SW1 position at their USB plug-in not recalled).
+- Deviations: (1) readings trimmed after user feedback (raw block, before S8); #0005 A2 N/P only, no A2 download check; #0004 arms M/N/P only. (2) #0004 enumeration judged on normal plug-in (download mode not run at #0004; card said download mode; normal-mode enumeration at the ON arm is the stronger outcome, and the GND arm's download-mode result is V7R-020 S4b). (3) S12 M 0.000 V was a tip on the wrong pin; S12b re-read used. (4) S13 items 1–3 not answered.
+- Evidence: `lab/evidence/PWR-002/usb-checks.txt` (Mac USB checks per arm); DMM values verbatim in the raw block.
+- Revert-on-null done: yes: #0005 SW1 back to left (S7), #0004 SW1 back to right (S13), both as found; no firmware change.
 - Result commit: self

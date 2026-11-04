@@ -1,8 +1,8 @@
 ---
-as_of: PWR-001            # highest card ID with status recorded|abandoned that this file reflects (PWR-000 = sentinel, nothing recorded)
+as_of: PWR-002            # highest card ID with status recorded|abandoned that this file reflects (PWR-000 = sentinel, nothing recorded)
 updated: 2026-11-03       # date of the last edit
 last_checkpoint: PWR-000  # card ID at which the last step-back checkpoint ran (context-strategy §4.3)
-open_cards: [PWR-002]            # cards with status pre-registered|run; must match lab/cards/ (checked)
+open_cards: []            # cards with status pre-registered|run; must match lab/cards/ (checked)
 prefix: PWR               # card ID prefix of this investigation (lab/cards/PWR-NNN-<slug>.md); unique across lab/investigations/
 title: "v7 power path: battery damage and #0004 boost"
 status: open              # open | closed
@@ -39,12 +39,12 @@ Mechanism numbers as in the intake relay. All desk analysis: SESSION Worker #2 N
 | B5 BT1 + pad bridge | solder/tab bridges BT1 + (BAT_RAW) to J7 rear shell legs (0.78 mm) or USB_DN via (0.38 mm) | untested | argued; untestable (only #0001/#0002 had a holder soldered; both binned) | relay (kiutils + B.Mask @ c2acffc) | intake |
 | B6 wrong source | source > 6 V (not one Li-ion cell) | untested | argued against (one 30Q cell, ≤ 4.2 V; user) | relay; user 2026-11-02 | intake |
 | B7 TS network | cannot cook a board | untested | argued | relay | intake |
-| B8 not damaged | #0001/#0002 not damaged: on USB with SW1 OFF, U6 doesn't switch, U8 in dropout, U3 below 3.0 V → no USB device (as #0004 Ka) | untested | argued (fits SW1 OFF at insertion; SW1 position at the USB plug-in not recalled) | user 2026-11-02; V7R-020 S4c | intake |
-| Ka SW1 OFF | #0004 boost off because SW1 OFF (BOOST_EN held low) | tested | measured-supported that SW1 is at the GND throw; that it's the cause: not tested | PWR-001 | PWR-001 |
-| Kb SW1 contact | SW1 ON but BOOST_EN < 1.2 V | untested | not tested (SW1 was at the GND throw as found; the ON throw not yet measured) | PWR-001 | PWR-001 |
-| Kc U6 not alive | BOOST_EN high, U6 VCC ≈ 0 (joint or die) | tested (passive only) | passive: measured-refuted (VCC net matches #0005); powered: not tested | PWR-001 | PWR-001 |
-| Kd FB divider | R39/R40 fault holds FB > 1.204 V | tested (passive only) | passive: measured-refuted (FB 53 k vs 50.5 k, diode equal); powered: not tested | PWR-001 | PWR-001 |
-| Ke input starved | BQ 100 mA default limit can't start the boost | untested | argued (against: #0005 runs on the same limit) | relay | intake |
+| B8 not damaged | #0001/#0002 not damaged: on USB with SW1 at the GND throw, U6 doesn't switch, U8 in dropout, U3 below 3.0 V → no ESP32 on the Mac | tested | measured-supported that a healthy v7 shows this symptom (#0005, #0004, A/B/A); for #0001/#0002 themselves: argued (binned) | PWR-002 | PWR-002 |
+| Ka SW1 OFF | #0004 boost off because SW1 at the GND throw | tested | measured-supported (A/B/A on USB) | PWR-001, PWR-002 | PWR-002 |
+| Kb SW1 contact | SW1 ON but BOOST_EN < 1.2 V | tested | measured-refuted on #0004 (EN 4.290 V at ON) | PWR-002 | PWR-002 |
+| Kc U6 not alive | BOOST_EN high, U6 VCC ≈ 0 | tested | measured-refuted on #0004 (boost regulates at ON) | PWR-001, PWR-002 | PWR-002 |
+| Kd FB divider | R39/R40 fault holds FB high | tested | measured-refuted on #0004 (+5V 5.118 V at ON) | PWR-001, PWR-002 | PWR-002 |
+| Ke input starved | BQ 100 mA default limit can't start the boost | tested | measured-refuted on #0004 and #0005 on Mac USB (+5V 5.10–5.12 V, ESP32 up) | PWR-002 | PWR-002 |
 | M | measurement artefact (DMM lead/pad, settle time, in-circuit parallel paths, PSU limit) | untested | not tested | — | intake |
 
 ## 4. Facts in use                              (≤ 15 rows)
@@ -59,6 +59,7 @@ Mechanism numbers as in the intake relay. All desk analysis: SESSION Worker #2 N
 | BT1 is not fitted by JLC: bare pads on every v7; the user hand-soldered separately bought holders on #0001 and #0002 only | measured (user) | user 2026-11-02 (PWR-001 raw) |
 | #0004 SW1 at the GND throw (BOOST_EN 0.4 Ω to GND), #0005 at the VSYS_SENSE throw; all other surveyed power nets alike unpowered | measured | PWR-001 |
 | Holder bought for #0001/#0002: Keystone 1042 (DigiKey 36-1042-ND), not 1042P | measured (receipt) | PWR-001 raw S1 |
+| On USB, SW1 at the GND throw: +5V 3.78–3.80 V, +3.3V 2.70–2.71 V, no ESP32 on the Mac; at the VSYS_SENSE throw: +5V 5.10–5.12 V, +3.3V 3.27–3.30 V, ESP32 on the Mac (#0004, #0005) | measured | PWR-002 |
 | No battery-side fuse; VBAT has no capacitor; BQ BATFET OCP 9 A latches until VBUS | argued (schematic + SLUSB97A) | SESSION Worker #2 |
 
 ## 5. Tombstones                                (one line each, never deleted)
@@ -72,15 +73,13 @@ Boards and bench: see `lab/BENCH.md` (boards, fixtures, flashed now, bench at la
 ## 7. Measurement trust                         (≤ 10 rows; rows leave when re-measured)
 | Earlier result | Verdict | Load-bearing for | Pending |
 |---|---|---|---|
-| V7R-020 S4c #0004 +5V / +3.3V (DMM, one pass) | unknown | Ka–Ke | re-read at 4a |
-| V7R-020 S5 #0005 VSYS 4.30 V (old image's INA219 print) | suspect (firmware-reported, uncalibrated) | ref-0005, Ke | DMM at TP1 at 4a |
 | Legacy Phase 18 (3.7 V PSU on BAT_RAW, no damage) | unknown (legacy, board identity uncertain) | B2, B6 | 4b |
 | User recollection of the #0001/#0002 event (2026-11-02) | unknown (months later; orientation "pretty sure") | B1, B3a, B4, B6, B8 | — (boards binned; can't be re-measured) |
 
 ## 8. Next                                      (≤ 6 lines)
-- Open cards: PWR-002 (SW1 throw on USB), pre-registered.
-- Proposed next: PWR-002, on USB, SW1 GND throw / ON / GND throw (A/B/A) on #0004, then #0005: rails (VSYS, +5V, +3.3V, BOOST_EN) and whether the Mac sees the ESP32. Cuts Ka (cause), B8, and powered Kc–Ke.
-- Blocked on: #0001/#0002 binned (B1, B5 only as design questions); spare 1042 holder for the keying question (user may find one); v8-debug-board Phase 7 waits on these cards (W1).
+- Open cards: none. #0004's boost question is answered (PWR-002); #0001/#0002 are gone.
+- Proposed next (user's choice): Q2 under a set battery-side load from the PSU (relay 4b/4c, B2 as a design risk) on #0004 or #0005; holder keying from a spare 1042 if the user finds one (B1 as a design question). Untested regions: B1, B2, B3a/b, B4 (design), B7.
+- Blocked on: v8-debug-board Phase 7 (W1) cites PWR-001 and PWR-002; the user decides whether that's enough for W1.
 
 ## 9. Lookups (L1 routing)                      (≤ 15 rows)
 | When you need… | Load | Section/query |
