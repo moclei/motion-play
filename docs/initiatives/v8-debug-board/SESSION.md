@@ -536,3 +536,20 @@ Re-dispatch: Worker #7 resumed with its context to apply the row l default, clos
 - Row k: "pending" dropped. No "pending user approval" text is left in CONTEXT; the only "pending" left is OQ-5's card (j).
 - `tools/schematic-gen/power_v8_spec.json`: JP35 pins swapped (pad 1 TS_BOARD, pad 3 TS_CELL), so the factory bridge (pads 1–2) gives the TH1 default. Regenerated: 135 parts, 54 nets.
 Task 5 and the Phase 7 Handoff are ticked. PLAN is unchanged beyond the Rejected Approaches line already committed. Phase 8 carry-forward: the Phase 10 checks listed in the Notes above.
+
+#### Result (re-dispatch)
+| # | Phase | Result | Escalation evaluated? | Commit | Notes |
+|---|-------|--------|-----------------------|--------|-------|
+| 7 | Phase 7: Power path design | DONE | Yes (earlier PARTIAL) — resolved by the user's power-path answers | e773838 | Row l flipped to TH1; task 5 + Handoff closed |
+
+#### Verification (re-dispatch)
+- TASKS.md Phase 7: all six items `[x]`. Working tree clean. CONTEXT.md: the only "pending" wording left is OQ-5 (card (j)), which is correct. `power_v8_spec.json` parses, and JP35 pad 1 = TS_BOARD, so the factory bridge gives the TH1 default the user chose.
+- W1 and W2 are closed. Carried to Phase 10: the "argued" values in Worker #7's Notes (gate network, AMS1117 dropout, AP2112K EN threshold, 0 Ω ratings, PMID derating, fuse breaking capacity), over-discharge protection, J8 XT30 polarity and J7 shell pad numbering.
+
+---
+
+### Worker #8 — Phase 8: Schematic — project setup and MCU sheet
+
+**Dispatch:** standard spawn prompt, plus:
+- Additional reading: `tools/CONTEXT.md` (Critical Rule; schematic-modify, schematic-context sections) and `tools/schematic-modify/CONTEXT.md` + `modify.py`; `hardware/pcb-main-v8/CONTEXT.md` GPIO allocation, Jumper matrix rows a, e, g (with the W2 header implementations), Parts (header footprints, Kept v7 parts, IC1 swap, D5 note); SESSION.md Worker #3 and #4 Notes.
+- The **(user)** steps (task 3) are a user gate: the Worker writes numbered KiCad instructions, commits, and returns PARTIAL; the Orchestrator relays them.
