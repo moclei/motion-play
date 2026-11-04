@@ -1065,3 +1065,13 @@ Before you start: the working tree is clean at `5ec6302`. If anything goes wrong
 Tell the Orchestrator when you're done, and mention anything you undid in step 4 or skipped in 5–6.
 
 **Status at the user step (PARTIAL by design).** Tasks 1–4 done; stopped at "(user) Do the GUI pass". For the resumed verify task: compare against `5ec6302` / `scratchpad/pregui/pregui.net`; check pin → net for Q20, Q21, U10 and SW1 pin 1 (still VSYS_SENSE after step 3); expect ERC warnings 81 pin_to_pin + 2 lib_symbol_issues only; then `layout_check.py --update-baseline` (current baseline: root 4, MCU 19, LED 5, power 39, TCA 30), PNG renders via `kicad-cli sch export pdf` + PyMuPDF, re-extract `circuit-context.json`. `tidy_labels.py --check` should still report 0; GUI autoplace doesn't touch labels, but step 5's rotation keeps a justify, so rule 5 holds. PLAN unchanged; no Rejected Approaches or Deferred items this phase so far.
+
+#### Result
+| # | Phase | Result | Escalation evaluated? | Commit | Notes |
+|---|-------|--------|-----------------------|--------|-------|
+| 14 | Phase 11c: BAT_CONN TP, label justify, GUI pass | PARTIAL | Yes — planned user gate (GUI pass) | ef81cf8 | Tasks 1–4 done; overlap pairs 141 → 97; stopped at the user's GUI pass |
+
+#### Verification
+- Re-derived: tasks 1–4 checked; working tree clean. `v8_debug_sheet.py --check` (Phases 8–11, ERC 0 errors, LAYOUT CHECK PASSED): PHASE 11 CHECK PASSED. `--fresh`: FRESH.
+- Worker caught an error in the plan: the "0.1 mm stray wire on SW1" is a 10.16 mm wire that carries SW1 pin 1 to VSYS_SENSE. ERC's position scale misled Worker #11's guide and the Orchestrator's relay of it. Deleting it would have opened the net. The user step now shortens it instead, and the verify task must confirm SW1 pin 1 is still on VSYS_SENSE.
+- GUI steps relayed to the user. On resume, the verify task compares the result against `5ec6302` / the pre-GUI netlist in the scratchpad.
