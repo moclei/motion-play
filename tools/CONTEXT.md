@@ -51,6 +51,7 @@ Surgical in-place edits on existing `.kicad_sch` files — adding/removing compo
 |------|---------|
 | `modify.py` | Reusable helpers: `add_component`, `remove_component`, `add_hierarchical_label`, `add_sheet_reference`, `annotate_components`. |
 | `esp32_integration.py` | Initiative-specific script that used `modify.py` to integrate the ESP32-S3 into the main schematic. |
+| `v8_project_setup.py` | v8-debug-board: creates `hardware/pcb-main-v8/kicad/` from the v7 project at `c2acffc` (renamed `motion-play-main-v8`, empty stackup-only board) and verifies it with kicad-cli. |
 
 See `tools/schematic-modify/CONTEXT.md` for relationship details and typical workflow.
 
