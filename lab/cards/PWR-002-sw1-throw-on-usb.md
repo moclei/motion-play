@@ -85,6 +85,7 @@ Order: #0005 A1 (ON), B (GND), A2 (ON); then #0004 A1 (GND), B (ON), A2 (GND).
 - S9 #0004 A1: SW1 slider "right"; LEDs "power led only"; warm "no". Session (normal plug-in): no /dev/cu.usbmodem*, no idVendor 12346.
 - S10 #0004 A1 DC V, black G: M "0.000V"; N "3.780V with some slight variance up and down"; P "2.700V with small variance up and down". Deviation (session): no download-mode check at #0004 A1 (V7R-020 S4b found none in download mode in this same state); download mode is used at #0004 only if a normal plug-in doesn't enumerate in the ON arm.
 - S11 #0004 B: SW1 slider "left"; LEDs "power led only"; warm "no". Session (normal plug-in): /dev/cu.usbmodem14101
+- S12 #0004 B DC V, black G: M "0.000V", N "5.118V", P "3.270V". Session: M 0 V with N at 5.118 V is not self-consistent (U6 runs only with EN high); SW1 pin 2 sits ~1.5 mm from pin 3 (GND). M re-read with L as a cross-check (S12b, extra).
  | "USB Product Name" = "USB JTAG_serial debug unit"  | "idVendor" = 12346.
  | "USB Product Name" = "USB JTAG_serial debug unit"  | "idVendor" = 12346.
 ### Measured values (from log; cite `lab/evidence/PWR-002/...`)
