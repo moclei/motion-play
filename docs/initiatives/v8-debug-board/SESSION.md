@@ -789,3 +789,16 @@ Cosmetic tidy (optional, not a gate):
 After any edit, close KiCad and run `python3 tools/schematic-modify/v8_debug_sheet.py --check`. It runs the Phase 8–11 checks, the BOM audit and ERC, and must end PHASE 11 CHECK PASSED. Then re-extract: `python3 tools/schematic-context/extract.py hardware/pcb-main-v8/kicad/motion-play-main-v8.kicad_sch` and `python3 tools/lab/check_state.py --fresh hardware/pcb-main-v8/kicad/circuit-context.json`. After that comes the freeze tag (the Orchestrator's next Worker).
 
 **PLAN:** unchanged, no rejected approaches. No Deferred items. Tasks 1–3 are `[x]`; task 4 (W3) and the Handoff are left open. Commits: `80036ff`, `ccc726c`, `dbad731`, plus this notes commit.
+
+#### Result
+| # | Phase | Result | Escalation evaluated? | Commit | Notes |
+|---|-------|--------|-----------------------|--------|-------|
+| 11 | Phase 11: Schematic — debug features, ERC, freeze | PARTIAL | Yes — resolvable without replanning: the stop is the planned user gate (W3) | 2fb7e21 | Tasks 1–3 done; task 4 (W3, freeze tag) and Handoff await the user |
+
+#### Verification
+- TASKS.md Phase 11: tasks 1–3 `[x]`; task 4 and Handoff `[ ]`. Working tree clean. Nothing in `lab/` or v7 `hardware/pcb-main/` changed.
+- Re-ran `v8_debug_sheet.py --check` (it chains Phases 8–10): PHASE 11 CHECK PASSED. With every jumper in its v7 position, 0 nets differ against v7.
+- ERC at error severity: 0. `check_state.py --fresh` on the v8 `circuit-context.json`: FRESH (root plus 4 child sheets).
+- Tooling changed outside the schematic scripts, both needed for task 2's provenance: `extract.py` now writes per-sheet hashes; `tools/lab/check_state.py --fresh` checks them (this is the tool, not `lab/`). Accepted.
+- The worker ran about 2 h 50 min, against the usual 10–20 min. It ended normally and committed throughout. The Orchestrator's check-in arrived after it had finished.
+- Loop paused for the user: W3 schematic review in KiCad (guide in Worker #11 Notes).
