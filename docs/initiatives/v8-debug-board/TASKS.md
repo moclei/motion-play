@@ -90,8 +90,8 @@
 ## Phase 9: Schematic — TCA, bus and channels
 
 - [x] Jumpers (b), (d), (f) and the cable-facing protection on CH0–CH2, the upstream/downstream pull-up options, BQ I²C isolate, and channel test points
-- [ ] **(user)** steps for wiring the tools can't do. Worker re-extracts and checks each jumper's two positions give the expected net membership (v7 position = v7 netlist membership for that net)
-- [ ] 🔄 Handoff
+- [x] **(user)** steps for wiring the tools can't do. Worker re-extracts and checks each jumper's two positions give the expected net membership (v7 position = v7 netlist membership for that net)
+- [x] 🔄 Handoff
 
 # --- handoff point ---
 
@@ -190,3 +190,4 @@
 [from: v8-debug-board] `routing_audit.py` as a thin consumer of the board model (audit §6.1), or retired: marked superseded in the README in Phase 6; the v7 debug track still cites its spec and outputs.
 [from: v8-debug-board] Board-model run on the sensor-rigid and sensor-flex boards (audit says it must run on all three; validation is main-only here).
 [from: lab-multi-investigation] Once PR #89 is merged, the Phase 2 power relay (`debugger/RELAY-power.md`) runs as `PWR` cards: the Debugger scaffolds at intake with `python3 tools/lab/new_investigation.py --name power --prefix PWR --title "<title>"` and decides whether board #0004 also belongs to `power` in `lab/BENCH.md`.
+[from: v8-debug-board Phase 9] `tools/schematic-gen/generate_power_sheet.py`, `generate_esp32_sheet.py` and `poc_generate.py` carry the pin-rotation bug fixed in `modify._compute_pin_position` (X term `+ py * sin_a` should be `- py * sin_a`): pins of 90/270-degree symbols land at the wrong end. Phase 10 must fix it before generating the power sheet with any rotated symbol.

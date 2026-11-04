@@ -611,3 +611,31 @@ Task 5 and the Phase 7 Handoff are ticked. PLAN is unchanged beyond the Rejected
 **Dispatch:** standard spawn prompt, plus:
 - Additional reading: SESSION.md Worker #8 Notes (the new `modify.py` helpers, `v8_mcu_sheet.py` as the pattern, references JP1–JP5/J10 taken, power spec references JP30–35/J30–33/TP10–75 reserved); `hardware/pcb-main-v8/CONTEXT.md` Jumper matrix rows b, d, f (W2 header implementations), Test points (channel), Parts (cable-facing protection, pull-up options, jumper headers); `tools/CONTEXT.md`; `tools/schematic-modify/CONTEXT.md`.
 - Same rule as Phase 8: do whatever the tools can; if any user steps remain, write them as numbered KiCad instructions and return PARTIAL.
+
+#### Notes
+
+**Task 1: rows b, d, f and channel test points** (`tools/schematic-modify/v8_bus_sheet.py`, commit `c5241b9`). Everything is label-style; no GUI wiring was needed. The TCA sheet was wire-wired, so the script frees a pin by removing its wire (and junction) first, then labels it. New `modify.py` helpers: `remove_junction_at`, `add_local_label`, `add_wire`, `rename_hlabel`, `rename_sheet_pin`.
+- **Bug fixed in `modify._compute_pin_position`:** symbols at 90/270 degrees had their pins computed at the wrong end. The X term had the wrong sign on `py*sin`. Found on J4–J6, which sit at 270. Symbols at 0/180 are unaffected, so Phase 8's output is unchanged and its check still passes. **The same bug is in `tools/schematic-gen/generate_power_sheet.py`, `generate_esp32_sheet.py` and `poc_generate.py`.** I added a Deferred item: Phase 10 must fix it before it generates the power sheet.
+- **TCA sheet paper is now A3.** The v7 drawing is unchanged in place. The new parts sit in a grid below it (y 157–234) and the channel test points sit to the right (x 241–366, y 45–107).
+- **Channel split (row b):** U4 SD0–SC2 now carry local labels CHn_SDA/CHn_SCL (the TCA side). The six channel hierarchical labels and the root sheet pins were renamed CHn_x_CONN and moved to x 215.9. J4–J6 stay wired to those sheet pins, so J4–J6 pins 3/4 are now on CHn_x_CONN.
+- **Row b parts:** 47 Ω R80–R85 (C23182), one per line. Bypass headers JP10–JP15 sit across them (1×2, C492401). TVS U11–U13 are `Power_Protection:TPD2E2U06DRL` (the stock symbol pin map matches CONTEXT: IO1 = 3, IO2 = 5, GND = 4), with no-connects on pins 1/2; footprint SOT-553, C1972959. TVS GND-leg headers JP16–JP18 run from CHn_TVS_GND to GND.
+- **Row d upstream:** R28/R29 are kept. Their bus stub and junction were removed, and pin 1 now goes to PU_SDA_2K2/PU_SCL_2K2. Their LCSC was changed C114662 → C4190 (Parts: same value, basic). JP19/JP20 are 2×3 selectors (C56153599): odd pins = bus, 2/4/6 = 2.2 k/4.7 k/10 k. The new 4.7 k R86/R88 (C23162) and 10 k R87/R89 (C25804) go to I2C_PU_RAIL. Labels I2C_SDA_IN/I2C_SCL_IN sit on the old junction points, which are on the bus wires.
+- **Row d downstream:** each line has an open SJ2 (JP21–JP26, CHn_x → CHn_x_PU) and a 4.7 k (R90–R95) to I2C_PU_RAIL.
+- **I2C_PU_RAIL is temporarily +3.3V.** It is a local label at R28 pin 2's +3.3V power-symbol point (139.7, 60.96). That makes the one new ERC warning: `multiple_net_names` (#PWR014 vs I2C_PU_RAIL). **Phase 10:** when the bus loads move to +3.3V_BUS (CONTEXT Power path: "+3.3V_BUS (I2C_PU_RAIL, TCA, INA219, J4–J6, BUS LED)"), retarget this one point and #PWR029/#PWR030 (R29.2/R28.2). U4.24, C9, C10 (VCC_3V3 hlabel), R6 and J4–J6 pin 1 are still on +3.3V too.
+- **Row f:** JP27/JP28 (1×2) join the bus to BQ_SDA/BQ_SCL; the shunt is on in both v8 and v7. U5 pins 6/5 on the power sheet were relabelled BQ_SDA/BQ_SCL. New hierarchical labels BQ_SDA/BQ_SCL are on the TCA sheet (119.38, 83.82/88.9) and the power sheet (195.58/208.28, 189.23). Root sheet pins on both sheet symbols are joined by root labels. This matches `power_v8_spec.json`, which already has BQ_SDA/BQ_SCL as power-sheet interface pins whose row f headers are "on the bus sheet".
+- **Channel test points:** TP80–TP91 (D1.5) on CHn_x and CHn_x_CONN. Each has its own ground point, TP92–TP103 (2.5×2.5, GND). Refs used: R80–R95, U11–U13, JP10–JP28, TP80–TP103. They don't collide with the power spec's reserved refs.
+
+**Task 2: (user) steps.** None were needed. Re-extracted with `extract.py` to scratch (not committed; Phase 11 commits it with provenance). It agrees with the netlist: U5.5/6 on /BQ_SCL and /BQ_SDA, J4.3 on CH0_SDA_CONN, U4.4 on CH0_SDA, R28.1 on PU_SDA_2K2. `v8_bus_sheet.py --check` passes. It runs:
+- `v8_mcu_sheet.py --check`, which now imports `v8_bus_sheet` and applies its jumper positions too. **All-v7 positions (rows a, e, g + b bypass on / TVS leg off, d 1–2, f on) vs v7 @ c2acffc: 0 nets differ.**
+- 133 pin → net checks.
+- Each row in both positions, with the others at the v8 default:
+  - Row b v8: CH0_SDA = {U4.4, R80.1, JP10.1, JP21.1, TP80}, CH0_SDA_CONN = {J4.3, R80.2, JP10.2, U11.3, TP82}, and U11.4 on GND.
+  - Row b v7: the two nets merge, and U11.4 floats with only JP16.1.
+  - Row d and row f: v8 = v7 by design. The check also confirms the 4.7 k (JP19 3–4) and 10 k (JP20 5–6) selections, no shunt = no pull-up, downstream JP21 closed puts R90 on CH0_SDA, and row f open takes U5 off the bus.
+- v8 default I2C_SDA: U3.9, U4.23, U5.6, U7.6, R28.1, TPIO43 plus jumper pins.
+
+**ERC:** 69 violations vs Phase 8's 68. The I2C_PU_RAIL `multiple_net_names` warning above is the only new item. Two pin_to_pin warnings changed partners: U7 now pairs with U4 instead of U5, because U5 left the net.
+
+**Cosmetic, for the user at W3 (not a gate):** in the new grid, label text overlaps some part reference/value text, and the CHn_x and CHn_x_CONN labels by U4 crowd each other. After any GUI move, re-run `python3 tools/schematic-modify/v8_bus_sheet.py --check`.
+
+**Left for later:** test points for I2C_SDA/SCL, BQ_SDA/SCL and I2C_PU_RAIL, plus `annotate.py` for the new parts (Phase 11). +3.3V_BUS moves and row c (Phase 10). PLAN is unchanged, with no rejected approaches.
