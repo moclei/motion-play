@@ -32,7 +32,7 @@ import kiutils_k9  # noqa: E402  (KiCad 8/9 '(hide yes)' shim; must precede any 
 
 try:
     from kiutils.schematic import Schematic
-    from kiutils.items.common import Effects, Font, Property
+    from kiutils.items.common import Effects, Font, Position, Property
 except ImportError:
     print(
         "Error: kiutils is required. Install with: pip install kiutils>=1.4.8",
@@ -104,14 +104,37 @@ def _find_symbol_in_schematic(
     return None
 
 
+def _home_hidden(prop: object, symbol: object) -> bool:
+    """Hide an ai_* property and put it at its symbol's origin.
+
+    A hidden field still has a position: KiCad uses it for the sheet's
+    bounding box and "zoom to fit", so a field left at (0, 0) drags the view
+    off the sheet (readability section 1.2). Returns True if anything changed.
+    """
+    changed = False
+    if prop.effects is None:
+        prop.effects = Effects(font=Font(height=FONT_SIZE, width=FONT_SIZE))
+        changed = True
+    if not prop.effects.hide:
+        prop.effects.hide = True
+        changed = True
+    sx, sy = symbol.position.X, symbol.position.Y
+    pos = prop.position
+    if pos is None or pos.X != sx or pos.Y != sy:
+        prop.position = Position(X=sx, Y=sy, angle=0)
+        changed = True
+    return changed
+
+
 def write_ai_properties(
     symbol: object,
     props: Dict[str, str],
 ) -> List[str]:
     """Write ai_-prefixed properties to a symbol.
 
-    Updates existing properties or creates new ones as needed.
-    Returns a list of actions taken (for logging).
+    Updates existing properties or creates new ones as needed. Every ai_*
+    property written (new or existing) is hidden and placed at the symbol's
+    position. Returns a list of actions taken (for logging).
     """
     actions = []  # type: List[str]
 
@@ -125,6 +148,8 @@ def write_ai_properties(
                 break
 
         if existing is not None:
+            if _home_hidden(existing, symbol):
+                actions.append("  re-homed {} (hidden, at symbol)".format(full_key))
             if existing.value != value:
                 old = existing.value
                 existing.value = value
@@ -137,6 +162,7 @@ def write_ai_properties(
             new_prop = Property(
                 key=full_key,
                 value=value,
+                position=Position(X=symbol.position.X, Y=symbol.position.Y, angle=0),
                 effects=Effects(
                     font=Font(height=FONT_SIZE, width=FONT_SIZE),
                     hide=True,
