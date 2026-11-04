@@ -937,3 +937,13 @@ Return DONE, PARTIAL, or BLOCKED with specifics.
 - Scratch tools (not committed): `scratchpad/tests/svgcmp.py` (model vs plotted box per text), `svgpairs.py` (pair count from the plotted boxes), `place_test.py`.
 
 **PLAN:** one Rejected Approaches line (the prototype's geometry). Approach unchanged; no open questions. Commits: `ebca71c`, `4cd4a66`, `ac45077`, `64f0d3b`, plus this handoff commit.
+
+#### Result
+| # | Phase | Result | Escalation evaluated? | Commit | Notes |
+|---|-------|--------|-----------------------|--------|-------|
+| 13 | Phase 11b: layout check and placement rules | DONE | No — clean completion; one Deferred item routed to the Planner | b667390 | 4 tasks + handoff; baseline 141 overlap pairs (calibrated against the plotted SVG) |
+
+#### Verification
+- Re-derived: 5/5 Phase 11b boxes checked; working tree clean. `v8_debug_sheet.py --check` runs Phases 8–10, ERC 0 errors, LAYOUT CHECK PASSED, PHASE 11 CHECK PASSED. `check_state.py --fresh`: FRESH. PLAN has no date-stamped headings.
+- The 141 versus 111 baseline is a measurement correction (the geometry was calibrated against the kicad-cli plot), not a regression.
+- Out of plan: about 660 local and 26 hierarchical labels with no justify are drawn across their wire ends, and GUI autoplace won't fix them. The user approved "tidy, then look", so a netlist-neutral justify pass belongs before W3a. That adds a task, so it goes to the Planner before 11c is dispatched.
