@@ -64,7 +64,9 @@ def compute_pin_position(symbol_pos: Position, pin_lib_x: float, pin_lib_y: floa
     cos_a = math.cos(angle_rad)
     sin_a = math.sin(angle_rad)
 
-    sx = symbol_pos.X + pin_lib_x * cos_a + pin_lib_y * sin_a
+    # Library Y is up, sheet Y is down; KiCad rotates counter-clockwise on screen.
+    # (Before 2026-11-03 the X term used +pin_lib_y*sin_a: wrong end for 90/270-degree symbols.)
+    sx = symbol_pos.X + pin_lib_x * cos_a - pin_lib_y * sin_a
     sy = symbol_pos.Y - pin_lib_x * sin_a + pin_lib_y * (-cos_a)
 
     return (round(sx, 2), round(sy, 2))
