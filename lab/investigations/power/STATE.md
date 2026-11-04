@@ -2,7 +2,7 @@
 as_of: PWR-001            # highest card ID with status recorded|abandoned that this file reflects (PWR-000 = sentinel, nothing recorded)
 updated: 2026-11-03       # date of the last edit
 last_checkpoint: PWR-000  # card ID at which the last step-back checkpoint ran (context-strategy §4.3)
-open_cards: []            # cards with status pre-registered|run; must match lab/cards/ (checked)
+open_cards: [PWR-002]            # cards with status pre-registered|run; must match lab/cards/ (checked)
 prefix: PWR               # card ID prefix of this investigation (lab/cards/PWR-NNN-<slug>.md); unique across lab/investigations/
 title: "v7 power path: battery damage and #0004 boost"
 status: open              # open | closed
@@ -78,7 +78,7 @@ Boards and bench: see `lab/BENCH.md` (boards, fixtures, flashed now, bench at la
 | User recollection of the #0001/#0002 event (2026-11-02) | unknown (months later; orientation "pretty sure") | B1, B3a, B4, B6, B8 | — (boards binned; can't be re-measured) |
 
 ## 8. Next                                      (≤ 6 lines)
-- Open cards: none.
+- Open cards: PWR-002 (SW1 throw on USB), pre-registered.
 - Proposed next: PWR-002, on USB, SW1 GND throw / ON / GND throw (A/B/A) on #0004, then #0005: rails (VSYS, +5V, +3.3V, BOOST_EN) and whether the Mac sees the ESP32. Cuts Ka (cause), B8, and powered Kc–Ke.
 - Blocked on: #0001/#0002 binned (B1, B5 only as design questions); spare 1042 holder for the keying question (user may find one); v8-debug-board Phase 7 waits on these cards (W1).
 
