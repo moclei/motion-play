@@ -58,6 +58,7 @@ Review before ordering = the user's review + an AI partner review answered from 
 - Regenerating the v8 power sheet with `generate_power_sheet.py` from `power_v8_spec.json` (Phase 10): it would drop the v7 parts the spec leaves out (U9, D1/R1, TP1–TP4, C7/R27 on the LED rail) and every v7 symbol/footprint choice; replaced by an in-place edit (`v8_power_sheet.py`).
 - Switching from kiutils to kicad-sch-api to escape the `(hide yes)` bug (Phase 11 replan): needs Python 3.10+ and a port of every tool; a 40-line shim fixes it.
 - KiCAD-MCP-Server (Avinash1286) autoplace/declutter tools for the tidy: unvetted, source not visible, writes files directly; our own tidy plus a netlist gate instead.
+- `layout_check.py` on the prototype probe's geometry (field angle taken as on screen, every label anchored at its start, 0.72 × height per character): differs from KiCad's plot for rotated fields, sheet pins and labels with no justify (drawn centred); replaced by geometry calibrated on kicad-cli SVG plots (Phase 11b).
 
 ## Open Questions
 - OQ-1 (by Phase 16): which nets AI may route. Default: the user routes switching power (BQ_SW, BOOST_SW loops), the USB pair and battery/high-current paths. AI routes test-point stubs, LEDs, jumpers and the I²C channels, and the user reviews them.

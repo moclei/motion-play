@@ -132,7 +132,7 @@
 - [x] Wire it into the end of `v8_debug_sheet.py --check`, so the whole v8 check chain (Phases 8–11) runs it. The chain passes
 - [x] Placement rules in `modify.py` (readability §3.4 rows 2–3). `add_component` places Reference/Value at the library symbol's own field offsets, rotated with the symbol, and writes `(fields_autoplaced yes)`. `_make_local_label`/`_label_angle`: on a vertical stub, prefer a horizontal label justified away from the part. `WIRE_STUB_LEN` default 5.08 mm, with a per-call `stub_len`. Existing parts are not moved. Test on a scratch copy: a vertical two-pin part and a test point, each with labels, add 0 overlaps by `layout_check.py`
 - [x] Record in `tools/schematic-modify/CONTEXT.md`: the placement rules, `layout_check.py` as part of every `--check`, and the grid rule for future generator scripts (row pitch from the longest label or value, about 0.75 × 1.27 mm per character + 2.54 mm; 1.27 mm grid snap; inside the frame with a margin from the title block). The already-run v8 phase scripts are not re-run
-- [ ] 🔄 Handoff
+- [x] 🔄 Handoff
 
 # --- handoff point ---
 
@@ -247,5 +247,6 @@
 
 [from: v8-debug-board] Board-model diff mode (audit phase 3), v6 ↔ v7 ↔ v8 relational diff.
 [from: v8-debug-board] `routing_audit.py` as a thin consumer of the board model (audit §6.1), or retired: marked superseded in the README in Phase 6; the v7 debug track still cites its spec and outputs.
+[from: v8-debug-board] About 660 local labels and 26 hierarchical labels on v8 were written without a `justify` (older kiutils scripts), so KiCad draws them centred across their wire ends (Phase 11b, checked on kicad-cli SVG). GUI autoplace moves fields, not labels. A netlist-neutral pass that writes KiCad's justify (0/90 left bottom, 180/270 right bottom) would fix them; the 11b baseline counts them as they are drawn now.
 [from: v8-debug-board] Board-model run on the sensor-rigid and sensor-flex boards (audit says it must run on all three; validation is main-only here).
 [from: lab-multi-investigation] Once PR #89 is merged, the Phase 2 power relay (`debugger/RELAY-power.md`) runs as `PWR` cards: the Debugger scaffolds at intake with `python3 tools/lab/new_investigation.py --name power --prefix PWR --title "<title>"` and decides whether board #0004 also belongs to `power` in `lab/BENCH.md`.
