@@ -591,3 +591,23 @@ Task 5 and the Phase 7 Handoff are ticked. PLAN is unchanged beyond the Rejected
 **Cosmetic, optional, not a gate.** The new parts sit to the right of U3 (x 205–260 mm) on the ESP32 sheet. Header Reference/Value text overlaps the pin names. The +3.3V_BUS hierarchical label text runs past the sheet's left frame (at 15.24, 104.14). On the LED sheet, the labels at the old IC1 pin spot overlap the old footprint text. The user can tidy these in the GUI at W3 (Phase 11). After any move, re-run `python3 tools/schematic-modify/v8_mcu_sheet.py --check`; it confirms the wiring is unchanged.
 
 **PLAN:** unchanged; the approach held and nothing was rejected. No Deferred items. Commits: `1213d24` (task 1), `282259b` (task 2), plus this notes/handoff commit.
+
+#### Result
+| # | Phase | Result | Escalation evaluated? | Commit | Notes |
+|---|-------|--------|-----------------------|--------|-------|
+| 8 | Phase 8: Schematic — project setup and MCU sheet | DONE | Yes (step 11) — the IC1 swap was done here although no phase named it; accepted, no replan | 25ab020 | No user steps needed (all wiring by net label); commits 1213d24, 282259b, 25ab020 |
+
+#### Verification
+- TASKS.md Phase 8: all four items `[x]`. Working tree clean. Nothing under `hardware/pcb-main/` (v7) changed. PLAN.md unchanged.
+- Re-ran `v8_mcu_sheet.py --check`: passes. The all-v7 jumper positions give 0 net differences against v7 `c2acffc`. In the v8 default, `/I2C_SDA` is on U3.9 (IO16), `/I2C_SCL` on U3.8 (IO15) and `/LED_DATA` on U3.11 (IO18), matching the GPIO allocation.
+- Re-ran ERC at error severity: v8 has 7 errors, v7 has 0. All are the expected kinds: 6 dangling labels (+3.3V_BUS ×4, UART0_TX/RX), which Phases 10 and 11 connect, and 1 undriven power pin (IC1 VCC on +5V_TO_LEDS), which Phase 10 resolves. The Worker counted +3.3V_BUS as two labels; there are four, all the same cause.
+- The IC1 swap (approved in W2 part 2) was applied in Phase 8 because it sits on row g's LED_DATA path and no later phase names it. Accepted as in-scope.
+- Carried to Phase 11: rename or keep the root test points TPIO43/44/16 (they now sit on bus/LED nets); test points on U3_IO43/44/16/15; `annotate.py`. Optional label tidy at W3.
+
+---
+
+### Worker #9 — Phase 9: Schematic — TCA, bus and channels
+
+**Dispatch:** standard spawn prompt, plus:
+- Additional reading: SESSION.md Worker #8 Notes (the new `modify.py` helpers, `v8_mcu_sheet.py` as the pattern, references JP1–JP5/J10 taken, power spec references JP30–35/J30–33/TP10–75 reserved); `hardware/pcb-main-v8/CONTEXT.md` Jumper matrix rows b, d, f (W2 header implementations), Test points (channel), Parts (cable-facing protection, pull-up options, jumper headers); `tools/CONTEXT.md`; `tools/schematic-modify/CONTEXT.md`.
+- Same rule as Phase 8: do whatever the tools can; if any user steps remain, write them as numbered KiCad instructions and return PARTIAL.
