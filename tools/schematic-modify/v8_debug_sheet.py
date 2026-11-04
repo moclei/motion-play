@@ -26,13 +26,17 @@ Edits (all label-style, through modify.py helpers; KiCad must be closed during -
     - D1 (+3.3V_MCU LED, kept): R1 pin 2 -> LED_D1_SJ, with JP40 (SJ2, factory-bridged) to +3.3V_MCU.
     - Rail LEDs, each rail -> SJ2 (bridged) -> R -> LED -> GND: D11 green "BUS" on +3.3V_BUS
       (JP41, R100 1k), D12 yellow on +5V (JP42, R101 3.3k), D13 red on Protected_VBUS (JP43, R102 3.3k).
+    - Phase 11c: TP37 on BAT_CONN (J8 pin 2, before F3) and its ground point TP77, in the rail
+      test-point rows (power-sheet numbering: rail point TPn, its ground point TP(n+40)).
 
 Jumper positions: the LED SJ2s are closed by default (v8). v7 position: JP40 closed (v7 had D1),
 JP41-JP43 cut (v7 had no such LEDs).
 
 Usage:
   python3 tools/schematic-modify/v8_debug_sheet.py            # dry run: print the plan
-  python3 tools/schematic-modify/v8_debug_sheet.py --apply    # edit (refuses if J11 exists)
+  python3 tools/schematic-modify/v8_debug_sheet.py --apply    # edit; if J11 exists (Phase 11 already
+                                                              # applied), adds only the missing
+                                                              # Phase 11c parts (idempotent)
   python3 tools/schematic-modify/v8_debug_sheet.py --check    # Phase 8-10 checks + Phase 11 pins,
                                                               # BOM audit, ERC summary,
                                                               # layout_check.py (Phase 11b)
@@ -108,6 +112,15 @@ RAIL_LEDS = [
 ]
 D1_SJ = ("JP40", "+3.3V_MCU", "LED_D1_SJ")   # R1 pin 2 moves to LED_D1_SJ
 
+# Phase 11c (user decision 2026-11-04): BAT_CONN test point (J8 pin 2, before F3) and its ground
+# point. Next free pair in the power sheet's rail numbering (TP10-TP36, ground points +40), placed
+# in the rail test-point rows after TP35/TP75.
+PARTS_11C = [
+    (PWR, "TP37", L_TP, "BAT_CONN", TP_SIG, "", (88.9, 261.62), {"1": "BAT_CONN"}, ()),
+    (PWR, "TP77", L_TP, "GND", TP_GND, "", (101.6, 261.62), {"1": "GND"}, ()),
+]
+PAIR_11C = {"TP77": "TP37"}
+
 
 def build_parts():
     """(sheet, ref, lib_id, value, footprint, lcsc, position, pin_nets, no_connect_pins)."""
@@ -161,6 +174,8 @@ def build_parts():
         parts.append((PWR, d, L_LED, dval, LED0603, dlcsc, (330.2, y), {"2": tag + "_A", "1": "GND"}, ()))
     sj, rail, mid = D1_SJ
     parts.append((PWR, sj, L_SJ2B, "LED load D1", SJ2_BRIDGED, "", (355.6, 233.68), {"1": rail, "2": mid}, ()))
+    parts += PARTS_11C
+    pair.update(PAIR_11C)
     return parts, pair
 
 
@@ -185,13 +200,45 @@ def rename_ref(doc, old, new, value):
                 path.reference = new
 
 
-def apply() -> int:
+def _place(docs, cache, part):
     import v8_bus_sheet as bus
+    sheet, ref, lib_id, value, fp, lcsc, pos, nets, nc = part
+    doc = docs.sheet(sheet)
+    bus._check_free(doc, pos, (7.0, 7.0) if lib_id != L_2X15 else (10.0, 21.0), ref, symbols=False)
+    bus._check_free(doc, pos, (2.0, 2.0) if lib_id != L_2X15 else (5.0, 18.0), ref)
+    if lib_id not in cache:
+        cache[lib_id] = mcu.stock_symbol(lib_id)
+    modify.add_component(doc, lib_symbol=cache[lib_id], lib_id=lib_id, ref=ref, value=value, footprint=fp,
+                         lcsc_part=lcsc, position=pos, pin_nets=nets, project_name=PROJECT)
+    for p in nc:
+        modify.add_no_connect(doc, modify.pin_position(doc, ref, p)[0])
+    print("  {:6s} {:6s} {:16s} {}: {}".format(sheet[:6], ref, value, pos, nets if len(nets) < 5 else
+                                               "{} pins".format(len(nets))))
+
+
+def apply_11c(docs) -> int:
+    """Phase 11c parts only, on a schematic where Phase 11 is already applied. Idempotent."""
+    all_refs = set()
+    for d in docs.by_key.values():
+        all_refs |= modify._all_ref_set(d.schematic)
+    todo = [p for p in PARTS_11C if p[1] not in all_refs]
+    if not todo:
+        print("Phase 11 and 11c already applied: nothing to do")
+        return check()
+    print("Phase 11 already applied (J11 present); adding the Phase 11c parts")
+    cache = {}
+    for part in todo:
+        _place(docs, cache, part)
+    docs.save_all()
+    print("Saved.")
+    return check()
+
+
+def apply() -> int:
     docs = modify.load_project(ROOT)
     mcu_doc, root = docs.sheet(MCU), docs.sheet("root")
     if modify.find_component(mcu_doc, "J11") is not None:
-        print("Refusing: J11 already on {} (already applied)".format(MCU))
-        return 1
+        return apply_11c(docs)
     all_refs = set()
     for d in docs.by_key.values():
         all_refs |= modify._all_ref_set(d.schematic)
@@ -215,18 +262,8 @@ def apply() -> int:
 
     print("New parts")
     cache = {}
-    for sheet, ref, lib_id, value, fp, lcsc, pos, nets, nc in PARTS:
-        doc = docs.sheet(sheet)
-        bus._check_free(doc, pos, (7.0, 7.0) if lib_id != L_2X15 else (10.0, 21.0), ref, symbols=False)
-        bus._check_free(doc, pos, (2.0, 2.0) if lib_id != L_2X15 else (5.0, 18.0), ref)
-        if lib_id not in cache:
-            cache[lib_id] = mcu.stock_symbol(lib_id)
-        modify.add_component(doc, lib_symbol=cache[lib_id], lib_id=lib_id, ref=ref, value=value, footprint=fp,
-                             lcsc_part=lcsc, position=pos, pin_nets=nets, project_name=PROJECT)
-        for p in nc:
-            modify.add_no_connect(doc, modify.pin_position(doc, ref, p)[0])
-        print("  {:6s} {:6s} {:16s} {}: {}".format(sheet[:6], ref, value, pos, nets if len(nets) < 5 else
-                                                   "{} pins".format(len(nets))))
+    for part in PARTS:
+        _place(docs, cache, part)
     docs.save_all()
     print("Saved.")
     return check()
@@ -332,6 +369,8 @@ def check() -> int:
         ("TPIO43 on U3 pad 37 net; TP110 on the bus", "TPIO43.1" in of(v8, "U3.37") and "TP110.1" in of(v8, "U4.23")),
         ("DBG1 LED on U3 pin 24 (GPIO47), DBG2 on pin 25 (GPIO48)",
          "R103.1" in of(v8, "U3.24") and "R104.1" in of(v8, "U3.25")),
+        ("TP37 on BAT_CONN: J8 pin 2, the cell side of F3",
+         pin_net.get("TP37.1") == pin_net.get("J8.2") == pin_net.get("F3.1") != pin_net.get("F3.2")),
     ]
     gnd = of(v8, "U3.1")
     missing_gnd = [p for p in GND_PAIR if "{}.1".format(p) not in gnd]
