@@ -880,3 +880,40 @@ Return DONE, PARTIAL, or BLOCKED with specifics.
 - Readability's `fields_autoplaced` "dropped" finding was wrong for symbols (see Task 1), so 11b's `(fields_autoplaced yes)` from `add_component` will survive later loads.
 
 **PLAN:** OQ-11 answered. Approach unchanged; no rejected approaches. No Deferred items. Commits: `6a5325b`, `c53d152`, `8001cc8`, `dec1e37`, `96843bf`, `efcb6ca`, plus this handoff commit.
+
+#### Result
+| # | Phase | Result | Escalation evaluated? | Commit | Notes |
+|---|-------|--------|-----------------------|--------|-------|
+| 12 | Phase 11a: kiutils KiCad 9 shim and field tidy | DONE | No — clean completion | 79af3de | 6 tasks + handoff; overlap pairs 1,616 → 111 |
+
+#### Verification
+- Re-derived: 7/7 Phase 11a boxes checked; working tree clean; no `~*.lck`. `v8_debug_sheet.py --check`: PHASE 11 CHECK PASSED. `tidy_fields.py --check`: all zeros, so the tidy is idempotent. ERC at error severity: 0 violations. `check_state.py --fresh`: FRESH (root plus 4 sheets). PLAN has no date-stamped headings.
+- Carry forward to Phase 13: OQ-11 is answered "yes, and worse". A kiutils save of a KiCad 9 board drops footprint field state and kicad-cli 9.0.4 can't load the result. `place.py` (Phase 13, task 2) can't write boards via kiutils as planned. Send a Planner request (with OQ-3) before dispatching Phase 13.
+
+---
+
+### Worker #13 — Phase 11b: Schematic tooling — layout check and placement rules
+
+**Dispatch:**
+```
+Initiative: v8-debug-board
+Phase: 11b — Schematic tooling — layout check and placement rules
+Initiative path: docs/initiatives/v8-debug-board/
+Additional reading: docs/research/kicad-ai-tooling-2026-11/schematic-readability.md (§1.1 method, §3.4) and prototypes/probe.py; SESSION.md Worker #12 Notes (probe.py argument quirk; per-sheet counts after the tidy).
+
+Tasks assigned (from TASKS.md Phase 11b):
+## Phase 11b: Schematic tooling — layout check and placement rules
+
+- [~] `tools/schematic-modify/layout_check.py` (readability §1.1 method and §3.4; prototype `prototypes/probe.py`). Per sheet, it fails on: (1) a visible field other than Reference/Value on a non-power symbol; (2) any text or symbol outside the paper; (3) text-overlap pairs above a committed per-sheet baseline; (4) identical labels stacked on one point, above the baseline. The baseline only ratchets down: a lower count is reported, and `--update-baseline` records it. It prints the worst spots by sheet grid zone (e.g. "C3"). Record the baseline from the tidied v8 (readability expects about 111 overlap pairs by the prototype's count, 6 stacked labels on power)
+- [ ] Wire it into the end of `v8_debug_sheet.py --check`, so the whole v8 check chain (Phases 8–11) runs it. The chain passes
+- [ ] Placement rules in `modify.py` (readability §3.4 rows 2–3). `add_component` places Reference/Value at the library symbol's own field offsets, rotated with the symbol, and writes `(fields_autoplaced yes)`. `_make_local_label`/`_label_angle`: on a vertical stub, prefer a horizontal label justified away from the part. `WIRE_STUB_LEN` default 5.08 mm, with a per-call `stub_len`. Existing parts are not moved. Test on a scratch copy: a vertical two-pin part and a test point, each with labels, add 0 overlaps by `layout_check.py`
+- [ ] Record in `tools/schematic-modify/CONTEXT.md`: the placement rules, `layout_check.py` as part of every `--check`, and the grid rule for future generator scripts (row pitch from the longest label or value, about 0.75 × 1.27 mm per character + 2.54 mm; 1.27 mm grid snap; inside the frame with a margin from the title block). The already-run v8 phase scripts are not re-run
+- [ ] 🔄 Handoff
+
+The first task is marked `[~]` because it was dispatched to you — it is not someone else's work in progress.
+
+Phase-specific notes: every schematic load/save goes through tools/schematic-modify/kiutils_k9.py (Phase 11a). KiCad must be closed during any write.
+
+You are not the Orchestrator. Do not create documents, work across phases, or replan.
+Return DONE, PARTIAL, or BLOCKED with specifics.
+```
