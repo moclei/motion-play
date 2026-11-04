@@ -1010,3 +1010,58 @@ Return DONE, PARTIAL, or BLOCKED with specifics.
 - Renders: PNGs via `kicad-cli sch export pdf` and PyMuPDF (`fitz`, installed). No SVG-to-PNG converter is on the machine (no rsvg-convert, ImageMagick or cairosvg).
 
 **Task 3: design-intent CONTEXT** (`hardware/pcb-main-v8/CONTEXT.md`). BAT_CONN added to the Rails test-point list; a Phase 11c bullet in "As built (Phase 11)" (TP37/TP77 and the numbering); the Power path "Question for W3" now reads "Decided by the user 2026-11-04: keep R66"; Debug LEDs: currents kept as designed (user, 2026-11-04). `circuit-context.json` re-extracted with `--previous` (new components TP37, TP77; 295 components, 131 nets); `check_state.py --fresh`: FRESH.
+
+**Task 4: the user's GUI steps.** Pre-GUI reference: commit `5ec6302` (all five sheets), plus the netlist exported to scratch (`scratchpad/pregui/pregui.net` and `pregui.xml`, with copies of the sheets). The verify task can regenerate it from `5ec6302` if the scratch folder is gone.
+- **Correction to the task wording: the "0.1 mm stray wire on SW1 pin 1" isn't a stray to delete.** ERC's "length 0.1016 mm" uses the same ×100 scale as its positions: it is the 10.16 mm wire from SW1 pin 1 (222.25, 24.13) to (232.41, 24.13). That wire carries SW1 pin 1's net: the `VSYS_SENSE` label sits on it at 231.14. Only the last 1.27 mm past the label dangles. Deleting the wire would take SW1 pin 1 (row i, v7 position) off VSYS_SENSE. Step 3 shortens it instead.
+
+##### GUI steps for the user (Phase 11c)
+
+In short: the scripts have done everything that can be scripted (fields hidden, labels justified, duplicates removed). What's left needs KiCad's own autoplace, which only the GUI has. About 15 minutes. Nothing here should change a connection; the verify step checks the netlist afterwards.
+
+Before you start: the working tree is clean at `5ec6302`. If anything goes wrong, quit KiCad without saving, or run `git checkout -- hardware/pcb-main-v8/kicad/` to get back to this point.
+
+1. **Open the project.**
+   DO: open `hardware/pcb-main-v8/kicad/motion-play-main-v8.kicad_pro` in KiCad 9, then open the Schematic Editor.
+   CHECK: the title bar says `motion-play-main-v8`, and the Schematic Hierarchy panel on the left lists the root and four sheets (ESP32_S3, LED Controller, Power Management, TCA9548A_Subsystem).
+
+2. **Update three symbols from the library** (clears the 3 `lib_symbol_mismatch` warnings). Run it once per reference: Q20, then Q21, then U10 (all on Power Management).
+   DO:
+   a. Tools → Update Symbols from Library…
+   b. Choose "Update symbols matching reference designator" and type `Q20`.
+   c. **Untick every box under the update/reset options** (remove fields, reset empty fields, field text, visibility, sizes and styles, positions, alternate pin functions, attributes). The fields, including the hidden `ai_*` and `LCSC Part` fields, must stay as they are. The symbol body and pins are updated anyway.
+   d. Click Update. Read the message panel at the bottom of the dialog, then close it.
+   e. Repeat b–d for `Q21`, then for `U10`.
+   CHECK: each run's message panel names the one symbol you typed and reports it updated, with no error. On Power Management, Q20/Q21 (battery FETs, top right) and U10 (AP2112K) still have every pin on a wire; nothing is left dangling at a pin end.
+
+3. **Shorten the wire past the VSYS_SENSE label at SW1** (Power Management, top centre, zone A5; clears the `unconnected_wire_endpoint` warning).
+   DO:
+   a. Go to Power Management. Find SW1 (the slide switch at about x 217, y 27 mm). From its pin 1 (right side, upper pin), a wire runs right to a `VSYS_SENSE` label and goes one grid step (1.27 mm) past it.
+   b. Click that wire to select it. Drag the small square handle at its right end left, one grid step, onto the `VSYS_SENSE` label's anchor (the point where the label meets the wire). **Don't delete the wire**: it is what connects SW1 pin 1 to VSYS_SENSE.
+   CHECK: the wire now ends exactly at the label: no stub sticks out to the right of the label's anchor, and the wire end shows no small open square (KiCad's mark for an unconnected end). The wire still reaches SW1 pin 1.
+
+4. **Autoplace the fields, one sheet at a time** (root, ESP32_S3, LED Controller, Power Management, TCA9548A_Subsystem).
+   DO, on each sheet:
+   a. Click an empty spot on the sheet, then Cmd+A (select all).
+   b. Press `O` (Autoplace Fields). Then Esc to deselect.
+   c. Look over the sheet before you move on, especially the hand-placed v7 areas: on Power Management the BQ24195 (U5) and boost (U6) blocks, on TCA the TCA9548A (U4), on ESP32_S3 the module (U3). If one of those areas got worse, press Cmd+Z (this undoes the whole sheet's autoplace), then drag-select only the regions you want autoplaced (leave the hand-tuned area out) and press `O` again.
+   CHECK: on each sheet, Reference and Value text no longer sits on top of labels or other text in the rows of test points (power sheet rows at the bottom left: TP10–TP77, including the new TP37 `BAT_CONN` / TP77; MCU sheet rows: TPIO*/TP13x), and no part's Reference/Value sits on its own pin's wire.
+
+5. **(Optional) LED Controller: move `+5V_LED_F` off `+5V_LED_H4`** (zone B3, between F1 and R27).
+   DO: on LED Controller, find F1 (3 A fuse) and R27 (0.1 Ω) at the top. The `+5V_LED_F` label at F1's right pin reads right, into the `+5V_LED_H4` label at the C7 junction. Select the `+5V_LED_F` label and press `R` until its text hangs down below the wire (3 presses, from reading right to reading down). Don't move it.
+   CHECK: `+5V_LED_F` reads downward from F1's right-hand wire end, clear of `+5V_LED_H4`, and its anchor is still on that wire end (it hasn't moved).
+
+6. **(Optional) Turn on field autoplace for future edits.**
+   DO: Preferences → Preferences… → Schematic Editor → Editing Options → tick the option to automatically place symbol fields. OK.
+   CHECK: the box stays ticked when you reopen the dialog.
+
+7. **ERC.**
+   DO: Inspect → Electrical Rules Checker → Run ERC.
+   CHECK: 0 errors. Warnings: no `lib_symbol_mismatch` and no `unconnected_wire_endpoint` left. What remains is 81 `pin_to_pin` and 2 `lib_symbol_issues` (J7 and U5 library names, expected). If there's an error, or the warning counts are different, don't save: note what ERC says and tell the Orchestrator.
+
+8. **Save and quit.**
+   DO: File → Save (Cmd+S). Quit KiCad completely (Cmd+Q; close the project manager too). Then in Terminal, from the repo: `ls -a hardware/pcb-main-v8/kicad | grep lck`
+   CHECK: the `ls` command prints nothing (no `~*.lck` lock file left). Don't commit. The verify task checks the netlist and commits.
+
+Tell the Orchestrator when you're done, and mention anything you undid in step 4 or skipped in 5–6.
+
+**Status at the user step (PARTIAL by design).** Tasks 1–4 done; stopped at "(user) Do the GUI pass". For the resumed verify task: compare against `5ec6302` / `scratchpad/pregui/pregui.net`; check pin → net for Q20, Q21, U10 and SW1 pin 1 (still VSYS_SENSE after step 3); expect ERC warnings 81 pin_to_pin + 2 lib_symbol_issues only; then `layout_check.py --update-baseline` (current baseline: root 4, MCU 19, LED 5, power 39, TCA 30), PNG renders via `kicad-cli sch export pdf` + PyMuPDF, re-extract `circuit-context.json`. `tidy_labels.py --check` should still report 0; GUI autoplace doesn't touch labels, but step 5's rotation keeps a justify, so rule 5 holds. PLAN unchanged; no Rejected Approaches or Deferred items this phase so far.
