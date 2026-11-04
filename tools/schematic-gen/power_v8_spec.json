@@ -1,5 +1,5 @@
 {
- "_note": "v8 power sheet spec (Phase 7, v8-debug-board). Design intent: hardware/pcb-main-v8/CONTEXT.md 'Power path' (pending user approval at the time of writing). Same shape as spec.json; Phase 10 generates or modifies the v8 power sheet from it. Refs >= 10/20/30/60 are new in v8 and provisional (Phase 10 annotates). Positions are a coarse grid per block, not a layout. v7_ref marks parts carried over with v7 membership; 'dnp' marks unfitted parts.",
+ "_note": "v8 power sheet spec (Phase 7, v8-debug-board). Design intent: hardware/pcb-main-v8/CONTEXT.md 'Power path' (approved by the user 2026-11-03, W2). Same shape as spec.json; Phase 10 generates or modifies the v8 power sheet from it. Refs >= 10/20/30/60 are new in v8 and provisional (Phase 10 annotates). Positions are a coarse grid per block, not a layout. v7_ref marks parts carried over with v7 membership; 'dnp' marks unfitted parts.",
  "meta": {
   "title": "Power (v8)",
   "description": "USB-C input, battery (XT30, F3, back-to-back PMOS, SW4, cell NTC), BQ24195 with rows j/k/l, INA219 shunt, TPS61088 with row i, AMS1117 + AP2112K with row c, row h links, rail test points",
@@ -635,11 +635,11 @@
     40.64
    ],
    "pins": {
-    "1": "TS_CELL",
+    "1": "TS_BOARD",
     "2": "BQ_TS",
-    "3": "TS_BOARD"
+    "3": "TS_CELL"
    },
-   "note": "row l: pad1 (default, v8) cell NTC on J9; pad3 (v7) TH1 on the board"
+   "note": "row l: pad1 (default, = v7, user 2026-11-03) TH1 on the board; pad3 (alternate) cell NTC on J9"
   },
   {
    "ref": "TH1",
@@ -2673,7 +2673,7 @@
   "TS_CELL": {
    "members": [
     "J9.1",
-    "JP35.1"
+    "JP35.3"
    ]
   },
   "BQ_DP": {
@@ -2801,7 +2801,7 @@
   },
   "TS_BOARD": {
    "members": [
-    "JP35.3",
+    "JP35.1",
     "TH1.1"
    ]
   },

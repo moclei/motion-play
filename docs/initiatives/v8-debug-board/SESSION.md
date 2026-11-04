@@ -527,3 +527,12 @@ After approval: change the Power path status to "approved by the user <date> (W2
 - Points 1, 6, 7, 8 (keep the BQ24195 with rows j/k, two regulators, four current links, datasheet fixes) accepted as written.
 
 Re-dispatch: Worker #7 resumed with its context to apply the row l default, close task 5 and do the Handoff.
+
+**Addendum (Worker #7, after the user's W2 decision).** Applied to `hardware/pcb-main-v8/CONTEXT.md`:
+- Power path status: "approved by the user 2026-11-03 (W2), with row l defaulting to the board thermistor".
+- Battery protection: the "no v7 position" bullet now records the user's acceptance as an exception to the BRIEF's v7-position rule (the battery path isn't an I²C-fault suspect).
+- Row i (matrix, Power path, SJ3 footprint row): approved; says it supersedes the 2026-11-02 default.
+- Row l: pad 1 (default) = TH1 (v8 = v7), pad 3 = J9 cell NTC (alternate). The "charging suspended / STAT blinks with no NTC" text, the STAT LED row and the Changes list now describe the alternate position. The all-v7 line notes the v8 default differs in rows a, b, c, g, i, j, k only.
+- Row k: "pending" dropped. No "pending user approval" text is left in CONTEXT; the only "pending" left is OQ-5's card (j).
+- `tools/schematic-gen/power_v8_spec.json`: JP35 pins swapped (pad 1 TS_BOARD, pad 3 TS_CELL), so the factory bridge (pads 1–2) gives the TH1 default. Regenerated: 135 parts, 54 nets.
+Task 5 and the Phase 7 Handoff are ticked. PLAN is unchanged beyond the Rejected Approaches line already committed. Phase 8 carry-forward: the Phase 10 checks listed in the Notes above.
