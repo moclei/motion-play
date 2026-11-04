@@ -1,16 +1,16 @@
 {
   "_provenance": {
     "source": "hardware/pcb-main-v8/kicad/motion-play-main-v8.kicad_sch",
-    "source_sha256": "59eaacb4c9de2f5dfba94049fd133081c1f1959250a01a5d575181ce88b951ce",
+    "source_sha256": "5df0b67ee36add8fcd2e76a4bc0249657e6b9efc694f42cdf3bcdaedcf84fea1",
     "sources": {
-      "hardware/pcb-main-v8/kicad/esp32_s3.kicad_sch": "625fa52c7ddb86725a14f36a95abe416a985508c7ddd9fd61d2629218e6d873e",
-      "hardware/pcb-main-v8/kicad/led_controller.kicad_sch": "e8682604cf090480982ade6ff1276a50a9273a591ad78da54daaaffdacc893f6",
-      "hardware/pcb-main-v8/kicad/power_management.kicad_sch": "ccb4c0112daeac771b57601d1050ae71a20e5d402967f3d1eddc2facb81d9c3b",
-      "hardware/pcb-main-v8/kicad/tca9548A_subsystem.kicad_sch": "fc8ce65bab08b8d05b6097398c4051a9fe4356958690b1dca4a2b7fbd8bc2170"
+      "hardware/pcb-main-v8/kicad/esp32_s3.kicad_sch": "cdd176d17a1d701ea392f53ec26cc3969ab90839236c458187b6ddb6568b25c5",
+      "hardware/pcb-main-v8/kicad/led_controller.kicad_sch": "2fa277fdb1faa290cb4d082d402d906cc8200192b0f34ddbea6d559591e288a0",
+      "hardware/pcb-main-v8/kicad/power_management.kicad_sch": "1850b4afcd17f7c60be707779b5694ad61f1ee7517d303d104168d346c9fec05",
+      "hardware/pcb-main-v8/kicad/tca9548A_subsystem.kicad_sch": "316caf0274933ff1e9196cddaf9a425fbd8160b56ee0dac14adba4077ff6b30f"
     },
     "generator": "tools/schematic-context/extract.py",
-    "generator_commit": "8001cc844089749183017d1e8dfaaa9254bd7a29",
-    "generated": "2026-11-04T23:25:01+00:00"
+    "generator_commit": "e81ab69d368cc4d69a0d67df0905767ddd775ef0",
+    "generated": "2026-11-04T23:51:37+00:00"
   },
   "schema_version": "1.0",
   "project": "motion-play-main-v8",
@@ -22,8 +22,8 @@
       "tca9548A_subsystem.kicad_sch": "TCA9548A_Subsystem",
       "esp32_s3.kicad_sch": "ESP32_S3"
     },
-    "source_hash": "00e481126018",
-    "extracted_at": "2026-11-04T23:25:01.315502+00:00"
+    "source_hash": "8e01fef3593a",
+    "extracted_at": "2026-11-04T23:51:37.757695+00:00"
   },
   "description": "",
   "blocks": {},
@@ -5673,6 +5673,25 @@
         }
       ]
     },
+    "TP37": {
+      "part": "TestPoint",
+      "value": "BAT_CONN",
+      "footprint": "TestPoint:TestPoint_Pad_D1.5mm",
+      "lcsc": "",
+      "sheet": "power_management.kicad_sch",
+      "block": "test_points",
+      "function": "Test point on BAT_CONN",
+      "role": "test_point",
+      "critical_specs": "own GND point TP77; gap 1.0-3.0 mm copper edge to edge",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "/Power Management/BAT_CONN"
+        }
+      ]
+    },
     "TP4": {
       "part": "TestPoint_2",
       "value": "PGND",
@@ -6196,6 +6215,25 @@
       "function": "Ground point for TP36",
       "role": "ground_point",
       "critical_specs": "2.5x2.5 mm pad, 1.0-3.0 mm edge to edge from TP36",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "GND"
+        }
+      ]
+    },
+    "TP77": {
+      "part": "TestPoint",
+      "value": "GND",
+      "footprint": "TestPoint:TestPoint_Pad_2.5x2.5mm",
+      "lcsc": "",
+      "sheet": "power_management.kicad_sch",
+      "block": "test_points",
+      "function": "Ground point for TP37",
+      "role": "ground_point",
+      "critical_specs": "2.5x2.5 mm pad, 1.0-3.0 mm edge to edge from TP37",
       "pins": [
         {
           "number": "1",

@@ -194,7 +194,7 @@ The Phase 7 items marked argued, checked against datasheets on 2026-11-03. None 
 | INA219 pin order | v7 symbol kept (in-place edit), only VS (pin 4) moved to +3.3V_BUS | Not applicable: no symbol swap |
 
 **As built (Phase 10, `tools/schematic-modify/v8_power_sheet.py`).** The v7 power sheet was modified in place, not regenerated, so U9, D1/R1, TP1–TP4 and every v7 symbol/footprint stay. Rails: the global net +3.3V is renamed **+3.3V_MCU** on every sheet; the bus loads (TCA U4/C9/C10, R6 TCA_RESET pull-up, R28/R29 and the pull-up option resistors, J4–J6 pin 1, J10 pin 4, INA219 VS) are on the global **+3.3V_BUS** (the I2C_PU_RAIL labels are now +3.3V_BUS labels); D5 is on **+5V_CORE**. R6 on +3.3V_BUS is a Phase 10 choice (argued: the reset pull-up belongs to the TCA's own rail). Differences from the Phase 7 spec, all recorded in its `_note_phase10`:
-- **v7's R27 (0.1 Ω 2512, LED-strip current sense) and C7 were not in the Phase 7 spec.** They are kept as v7. Link h4 (R66, 10 mΩ) sits between F1 and the C7/R27 node (+5V_LED_H4), so with h4 closed the LED rail matches v7. **Question for W3:** R27 already reads 100 mV/A on that rail; keep R66 as specified, or drop R66 and put J33 across R27 instead?
+- **v7's R27 (0.1 Ω 2512, LED-strip current sense) and C7 were not in the Phase 7 spec.** They are kept as v7. Link h4 (R66, 10 mΩ) sits between F1 and the C7/R27 node (+5V_LED_H4), so with h4 closed the LED rail matches v7. **Decided by the user 2026-11-04 (W3 question): keep R66** (10 mΩ, link h4, J33 beside it) as specified. R27 stays as v7's LED-strip current sense.
 - F1, R66, J33 and the LED-rail test points are on the LED sheet (where F1 already was).
 - TP11/TP14/TP16 are not added: v7's TP3/TP1/TP2 already sit on Protected_VBUS/VSYS/VBAT; TP51/TP54/TP56 are their own ground points. New TP36/TP76 on +5V_LED_H4.
 - PWR_FLAGs on +5V, +3.3V_MCU and +5V_TO_LEDS (the latter clears Phase 8's IC1 power_pin_not_driven).
@@ -336,7 +336,7 @@ Rows considered and not added: D5 on-board pixel isolation (CL-06; row g already
 | CHn_SDA, CHn_SCL (TCA side), n = 0..2 | 6 |
 | CHn_SDA_CONN, CHn_SCL_CONN (connector side, at J4–J6 pins 3/4) | 6 |
 
-**Rails** (v7 names; Phase 7 may rename). VBUS_RAW (before F2), Protected_VBUS (TP3), BQ_PMID, BQ_REGN, VSYS (TP1), VSYS_SENSE, VBAT (TP2), BAT_RAW, +5V, +5V_TO_LEDS, +3.3V_MCU, +3.3V_BUS (one point per 3.3 V regulator output; two if row c is separate). Each 0 Ω current link (row h) also gets a point on each side.
+**Rails** (v7 names; Phase 7 may rename). BAT_CONN (J8 +, the cell side of F3; added by the user 2026-11-04), VBUS_RAW (before F2), Protected_VBUS (TP3), BQ_PMID, BQ_REGN, VSYS (TP1), VSYS_SENSE, VBAT (TP2), BAT_RAW, +5V, +5V_TO_LEDS, +3.3V_MCU, +3.3V_BUS (one point per 3.3 V regulator output; two if row c is separate). Each 0 Ω current link (row h) also gets a point on each side.
 
 **Power control nodes** (Phase 2 hand-off: hard to reach on v7): BOOST_EN, BOOST_VCC (U6 pin 1), BOOST_FB (U6 pin 17), PMOS_GATE (or Phase 7's equivalent series-FET gate), OTG_BIAS, BQ_TS, BQ_ILIM. Switch nodes (BQ_SW, BOOST_SW) get no pad (dv/dt; scope at the inductor pad instead).
 
@@ -347,7 +347,7 @@ Rows considered and not added: D5 on-board pixel isolation (CL-06; row g already
 - External master (row e): 1 × 4, 2.54 mm: GND, SDA, SCL, +3.3V_BUS (sense/reference only).
 - Spare GPIO: 2 × 15, 2.54 mm, signal row + GND row: GPIO1, 2, 4, 5, 6, 7, 8, 9, 14, 17, 38, 39, 40, 41, 42.
 
-**Debug LEDs.** Each rail LED draws ≈ 1 mA and has an SJ2 in series (closed), so its load can be removed for an A/B against v7 (v7 had only D1 on +3.3V).
+**Debug LEDs.** Each rail LED draws ≈ 1 mA and has an SJ2 in series (closed), so its load can be removed for an A/B against v7 (v7 had only D1 on +3.3V). The user kept the LED currents as designed (2026-11-04, W3 question).
 | LED | Signal | Colour | Notes |
 |---|---|---|---|
 | D1 (kept) | +3.3V_MCU | green | As v7 (R1 1 k) |
@@ -363,6 +363,7 @@ Rows considered and not added: D5 on-board pixel isolation (CL-06; row g already
 - **Test-point names.** On v8, `TPIO<n>` always means GPIO n's own pad. v7's TPIO43/44/16 sat on I2C_SDA/I2C_SCL/LED_DATA, which on v8 are no longer those pins' nets, so they are renamed **TP110 (I2C_SDA), TP111 (I2C_SCL), TP112 (LED_DATA, the row g centre)**. The new TPIO43/44/16/15 sit on U3_IO43/44/16/15 (the U3 side of row a). In the v7 position of row a (shunt 2–3), TPIO43 and TP110 are on the same net, as v7's TPIO43 was. TPIO10 (TCA_RESET) and TPIO21 (CHRG_INT) keep their v7 names.
 - New signal points: TPIO0 (GPIO0_BOOT), TP113 (EN), TPIO13/12/11 (INT1–3), TPIO3/45/46 (strap pads, D1.0 mm, value "STRAP"), TP114/TP115 (BQ_SDA/BQ_SCL). Ground points TP130–TP148, one per signal point (TP144–TP148 on the root sheet serve TP110–TP112, TPIO10, TPIO21). I2C_PU_RAIL is +3.3V_BUS (TP28).
 - UART0 header J11 (GND, UART0_TX, UART0_RX, NC). Spare GPIO header J12 (2 × 15, odd pins = GPIO1, 2, 4–9, 14, 17, 38–42, even pins = GND).
+- **Phase 11c:** TP37 on BAT_CONN (J8 pin 2, before F3) with its ground point TP77, power sheet (`v8_debug_sheet.py`, user decision 2026-11-04). Numbered in the power sheet's rail series (rail point TPn, ground point TP(n+40)).
 - Debug LEDs: D11 green BUS (R100 1 k, JP41), D12 yellow +5V (R101 3.3 k, JP42), D13 red VBUS (R102 3.3 k, JP43), D14 blue DBG1 (GPIO47, R103 470 Ω), D15 white DBG2 (GPIO48, R104 470 Ω). D1 keeps R1; JP40 sits between R1 and +3.3V_MCU. JP40–JP43 are factory-bridged SJ2s. In the v7 position, JP40 is closed (v7 had D1) and JP41–JP43 are cut (v7 had none of those LEDs).
 
 ## Parts
