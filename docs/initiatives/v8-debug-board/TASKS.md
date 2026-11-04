@@ -70,7 +70,7 @@
 ## Phase 7: Power path design
 
 - [x] **W1:** confirm with the user that the power bench findings have landed, and list the Debugger card IDs. If they haven't, stop and report `BLOCKED: W1`
-- [ ] Choose the charger/power-path IC (BQ24195 with a hardware fix, or a swap), using the Phase 1 options and the bench findings. Battery connection: holder vs connector (OQ-4), reverse-polarity and inrush protection, where the fuse sits. Each decision cites the mechanism it addresses
+- [x] Choose the charger/power-path IC (BQ24195 with a hardware fix, or a swap), using the Phase 1 options and the bench findings. Battery connection: holder vs connector (OQ-4), reverse-polarity and inrush protection, where the fuse sits. Each decision cites the mechanism it addresses
 - [ ] Boost and enable, LDO(s): jumper (c) needs a separate bus/pull-up regulator option. Choose parts with dropout margin from the actual +5 V. Add a current-measure link per rail (jumper h)
 - [ ] Stock check every power part. Fill `hardware/pcb-main-v8/CONTEXT.md` Power path. Write the schematic-gen spec JSON for the power sheet under `tools/schematic-gen/` (v8-named)
 - [ ] User approves the power path (closes W2)

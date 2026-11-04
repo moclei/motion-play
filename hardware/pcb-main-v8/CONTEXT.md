@@ -73,7 +73,48 @@ With options 1–3, U5 stays on the I²C bus (jumper (f) still applies). `config
 
 ## Power path
 
-Phase 7 fills this in.
+**Status: pending user approval (Phase 7 task 5; closes W2).** Inputs: the Phase 1 BQ root cause and fix options and the Phase 2 mechanisms (Inherited v7 faults, above); cards PWR-001 and PWR-002 (W1, closed 2026-11-03); the user's direction that B1 (reversed cell) and B2 (Q2 under load) are designed out, not waited on; OQ-4 (battery on a keyed, polarised cable connector). Datasheets: TI SLUSB97A and `docs/references/bq24195/DATASHEET_REFERENCE.md` (BQ24195), `docs/references/tps61088/DATASHEET_REFERENCE.md` (TPS61088, SLVSCM8D), TI SLPS454B (CSD25402Q3A, rev. Jan 2016). Stock: JLCPCB parts API, 2026-11-03 (Power parts table, below). "Argued" marks anything not taken from a datasheet or a measurement.
+
+**v8 power tree.**
+```
+XT30 (J8, cell) ─ F3 7 A ─ BAT_FUSED ─ Q20 ┐ BAT_COMMON ┌ Q21 ─ VBAT ─ U5 BAT        (SW4 "BATT" drives the Q20/Q21 gate)
+USB-C J7 ─ F2 ─ Protected_VBUS ─ U5 VBUS        U5 SYS ─ VSYS ─ R44 ─ VSYS_SENSE ─ U6 boost (EN: row i) ─ +5V
++5V ─ link h3 ─ +5V_CORE ─┬ U8 AMS1117 ─ +3.3V_MCU_REG ─ link h1 ─ +3.3V_MCU (U3, pull-ups of INT/OTG)
+                          ├ U10 AP2112K ─ +3.3V_BUS_REG ─ row c header ─ +3.3V_BUS ─ link h2 ─ +3.3V_BUS_LOAD (pull-ups, TCA, INA219, J4–J6)
+                          └ D5, IC1, +5V LED
++5V ─ F1 3 A ─ link h4 (10 mΩ) ─ +5V_TO_LEDS (J3)
+```
+Row c's header also offers +3.3V_MCU_REG on its pin 3 (v7 position: one regulator for everything).
+
+### Charger: keep the BQ24195, fix it with pins (rows j, k)
+
+**Decision.** U5 stays a BQ24195 (BQ24195RGER, C90862, the v7 part). The "needs I²C" fault is fixed by Phase 1 options 1 and 2 together, both on solder jumpers with a v7 position:
+- **Row j, v8 = D+ shorted to D−.** Detection reads a charging port: IINLIM 1.5 A from the first plug-in, no HIZ, no 45-minute SDP timer, no I²C needed (SLUSB97A §8.3.1.3, Table 2; argued from the thresholds, Phase 1). R32 (330 Ω) stays, so the real ceiling is the ILIM pin's 1.32–1.61 A (KILIM 435–530). v7 = both pins on GND.
+- **Row k, v8 = OTG pull-up (R35 10 kΩ) from REGN.** REGN exists at detection time (it comes from VBUS), so if detection ever reads an SDP (row j at v7, or a source that defeats the D+/D− short) the limit is 500 mA, not 100 mA, and the HIZ rule doesn't fire. OTG abs-max 7 V; REGN ≈ 4.8 V at 5 V VBUS, up to ≈ 6 V from a higher source (SLUSB97A). The boost (OTG) mode still needs CHG_CONFIG = 10 over I²C, so OTG high in default mode is safe (Phase 1). v7 = R35 to the MCU 3.3 V rail.
+- **Addresses:** the BQ root cause (Inherited v7 faults → BQ24195, items 1–4). Boot no longer depends on `configureBQ24195()`; Phase 12 keeps it as an optional raise above 1.5 A (watchdog note stays).
+
+**Why not a swap (Phase 1 option 4).** A standalone charger takes the BQ off the I²C bus. The BQ is one of the devices on v7's bus: it ACKs in V7R-019, its pins are probed (test points BQ_SDA/BQ_SCL), and row f's v7 position is "BQ on the bus". With a swap, no jumper position could rebuild v7's bus membership, which breaks the brief's A/B/A constraint. It would also lose charge telemetry. Option 3 (D+/D− on the USB pair) stays rejected (Phase 1).
+
+**Stock and the fallback.** C90862 has **14** in stock (chronically low, `hardware/CONTEXT.md`); five boards need 5 plus attrition. Fallback with the same footprint, pinout, address and register map: **BQ24195LRGER (C417486, 3 196)**. Differences that matter here (from `docs/references/bq24195/DATASHEET_REFERENCE.md`): system current 2.5 A instead of 4.5 A, and a lower PMID minimum (20 µF, which the v8 PMID bank exceeds anyway). The schematic carries the v7 part; Phase 19 preflight switches the LCSC number if C90862 is short, and records it as built (CL-14 lesson). If the L part is fitted, the battery-side budget below drops to 2.5 A.
+
+**Rows j and k as built.** Row j: SJ3 centre = D−, pad 1 (default) = D+, pad 3 = GND; plus an SJ2 from D+ to GND (open in v8, closed in v7). Row k: SJ3 centre = R35's top end, pad 1 (default) = BQ_REGN, pad 3 = +3.3V_MCU (v7's +3.3V). Footprints as Parts → Footprints (SJ3 pad rule: pad 2 common, pad 1 default).
+
+### Battery connection and protection
+
+**Connector (OQ-4): XT30, board side male (J8, XT30UPB-M, C428721, through-hole), cell lead female (XT30U-F, C99102, user-supplied cable).** Keyed and polarised by its housing shape, so a cell can't go in backwards through the connector (B1). 15 A rated (listing), well above the 7 A fuse. The source side carries the female so its live contacts are shrouded (common practice, argued). Why not JST-PH (v6, CL-10): 2 A per contact (listing for C173752), below the battery-side current (budget below). Mechanism 5 (holder body over B.Cu copper) disappears: no holder on the board.
+
+**Reverse polarity, gate drive and inrush: back-to-back P-MOSFETs with a slow gate (Q20, Q21, CSD25402Q3A, C111356).** Replaces v7's Q2/R33/R34.
+- Wiring: Q20 drain on BAT_FUSED (cell side), Q20 source and Q21 source joined (BAT_COMMON), Q21 drain on VBAT. Gates joined (BAT_GATE). R60 1 MΩ BAT_GATE–BAT_COMMON (holds off). C60 220 nF BAT_GATE–BAT_COMMON. C61 22 nF BAT_GATE–VBAT (Miller cap, sets the ramp). R61 47 kΩ from BAT_GATE to SW4's common; SW4's ON throw to GND, OFF throw unconnected.
+- **B1, reversed cell (mechanism 1): blocked.** With the cell side negative, Q20's body diode (anode at its drain) is reverse-biased, and the gate sits at about BAT_COMMON (≈ 0 V), so Vgs ≈ 0 and both FETs are off. Nothing on the board sees the negative voltage except F3, J8 and Q20's drain (VDS −20 V rating, SLPS454B). There is no polarised capacitor on the cell side (v7's C30 moves to VBAT).
+- **B2, under-driven series FET (mechanism 2): fixed.** On, Vgs = −Vcell × 1 M / (1 M + 47 k) = −0.955 × Vcell: −2.87 V at a 3.0 V cell, −4.0 V at 4.2 V. SLPS454B specifies RDS(on) at −2.5 V: 13.3 mΩ typ / 15.9 mΩ max (−4.5 V: 7.7 / 8.9 mΩ). Two in series ≤ 32 mΩ. At the 4.5 A budget that is ≤ 0.65 W total, ≈ 0.32 W per FET, ≈ +18 °C at RθJA 55 °C/W (1 in² 2 oz, SLPS454B; argued for our copper). v7's AO3401A at −1.5 to −2.1 V had no specified RDS(on) at all. VGS abs-max ±12 V vs at most −4.35 V here.
+- **B3a/B3b, hot-plug inrush (mechanism 3): slew-limited.** At plug-in (SW4 already ON), BAT_COMMON jumps to Vcell − VSD through Q20's body diode; C60 (10 × C61) drags the gate up with it, so Vgs ≈ −Vcell × 22/242 ≈ −0.3 V, below VGS(th) −0.65 V min: Q21 stays off. The gate then falls through R61 and Q21 turns on along the Miller plateau with dV/dt ≈ I_R61 / C61 ≈ (2.7 V / 47 kΩ) / 22 nF ≈ 2.6 V/ms. Into the ≈ 400 µF downstream (VBAT 10 µF + 47 µF, SYS 2 × 10 µF + 220 µF through the BATFET, VSYS_SENSE, and +5V via L2 and U6's body path) that is ≈ 1 A, against the BATFET's 9 A latching OCP and F3's 7 A. Switching SW4 ON gives the same ramp. All values **argued** (first-order hand calculation; no simulation); Phase 10 sanity-checks them and the bring-up relay measures VBAT's ramp.
+- **Charging.** The pair conducts both ways when on, so the BQ charges the cell through it (ICHG default 2048 mA: ≈ 0.13 W in the pair). With SW4 OFF both body diodes face each other: the cell is isolated in both directions, so **no charging with SW4 OFF** (trade-off, below).
+- **Fuse: F3, Littelfuse 0451007.MRL (C99548, 7 A, 2410), between J8 + and Q20.** First part after the connector, so a short anywhere on the board (including a failed FET) opens it. Rating: the battery-side continuous current is bounded by the BQ's 4.5 A system rating (budget below); 7 A × 0.75 derating (argued, usual fuse practice) = 5.25 A ≥ 4.5 A. Its breaking capacity is listed as 50 A at 125 V; at 4.2 V against a 30Q's short-circuit current that is argued adequate, not datasheet-confirmed at low voltage. v7 had no battery-side fuse (Phase 2 deviation).
+- **No v7 position for the battery protection.** v7's arrangement is itself the damage risk (B1/B2), the cell is on a connector instead of a holder, and the v7 boards still exist for that comparison. Not a suspected I²C variable, so the brief's A/B/A rule doesn't call for one (argued; the approval summary asks the user).
+
+**SW4 "BATT" (new, MSK12C02, C431540, same switch as SW1).** ON connects the cell (through the slow gate), OFF isolates it. Why: with row i at v8 the boost runs whenever VSYS exists (next subsection), so the battery needs its own off switch; the 30Q is an unprotected cell, and SW4 OFF stops the BQ's quiescent drain (32 µA BATFET on, SLUSB97A) in storage. Gate current only (µA), well inside the switch's 50 mA. Cost: the board can't charge with SW4 OFF; charge with SW4 ON (the board then runs too).
+
+**Cell temperature (new row l).** v7's TH1 is on the PCB and senses the board, not the cell (Phase 2 mechanism 7), while the default charge current is 2048 mA. v8 adds J9 (JST-PH 2-pin, S2B-PH-K-S, C173752) for a 10 kΩ 103AT NTC taped to the cell, and **row l**, an SJ3: centre = the TS network's NTC leg (R37 ∥ NTC to GND), pad 1 (default) = J9, pad 3 = TH1 (v7). R36/R37 stay (5.6 k / 30 k, the TI divider for a 103AT). With the default and nothing on J9, TS sits at R37's share of REGN ≈ 84 %, above the 73 % cold threshold, so the BQ **suspends charging and the STAT LED blinks** (fault) until an NTC is fitted: a safe-fail default (argued from the Phase 1 TS percentages). Alternative if the user prefers: default pad 1 = TH1 (v7 behaviour, charges without a cell sensor).
 
 ## GPIO allocation
 
