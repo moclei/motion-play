@@ -802,3 +802,17 @@ After any edit, close KiCad and run `python3 tools/schematic-modify/v8_debug_she
 - Tooling changed outside the schematic scripts, both needed for task 2's provenance: `extract.py` now writes per-sheet hashes; `tools/lab/check_state.py --fresh` checks them (this is the tool, not `lab/`). Accepted.
 - The worker ran about 2 h 50 min, against the usual 10–20 min. It ended normally and committed throughout. The Orchestrator's check-in arrived after it had finished.
 - Loop paused for the user: W3 schematic review in KiCad (guide in Worker #11 Notes).
+
+---
+
+### Replan — schematic readability (2026-11-04)
+
+The user opened the schematic for W3 and found it unreadable. The Orchestrator sent two read-only researchers (reports: `docs/research/kicad-ai-tooling-2026-11/`). Cause: kiutils 1.4.8 drops KiCad 9 `(hide yes)` on any load/save, which left 536 extra visible fields and 1,616 overlapping text pairs. User decisions: fix the tooling and tidy, then look before any re-layout (OQ-10 at W3a); keep R66; add the BAT_CONN test point (Orchestrator's call); LED currents unchanged. Planner inserted Phases 11a–11f (`d041e70`); W3 moved to 11f. Planner flag for the user: the 11e tour goes in `hardware/pcb-main-v8/REVIEW-GUIDE.md` (a new file, outside the prescribed documents).
+
+---
+
+### Worker #12 — Phase 11a: Schematic tooling — kiutils KiCad 9 shim and field tidy
+
+**Dispatch:**
+```
+```
