@@ -841,6 +841,16 @@ Return DONE, PARTIAL, or BLOCKED with specifics.
 
 #### Notes
 
+**Task 1: shim and save guard** (`6a5325b`). `tools/schematic-modify/kiutils_k9.py` patches kiutils on import: `Effects`, `Property` (property-level `(hide yes)`), `Symbol` (`pin_numbers`/`pin_names`) and `SymbolPin`. It also gives `save_schematic` / `assert_not_open`, which raise `KiCadOpenError` while a `~*.kicad_sch.lck` is in the project folder.
+- Imported on every load path: `modify.py` (so every `v8_*.py` and `esp32_integration*.py`), explicitly in `v8_mcu_sheet.py` and `v8_project_setup.py`, `tools/schematic-context/{annotate,extract,show}.py`, and `tools/schematic-gen/{generate_esp32_sheet,generate_power_sheet,poc_generate}.py`. Every schematic `to_file` in those now goes through `save_schematic`; `ProjectDocs.save_all` checks the lock once up front. Board saves in `v8_project_setup.py` are untouched.
+- **Round trip, v7 `c2acffc`, all five sheets** (scratch): hidden items kept item by item (power 496, MCU 99, TCA 49, LED 77, root 194; 0 lost, 0 gained); a second round trip is stable. Without the shim, all are lost. Netlist identical (only the scratch path differs); plotted strings per sheet identical (389/102/624/248/165).
+- **`fields_autoplaced`: preserved** (9 → 9 across v7; kiutils reads `(fields_autoplaced yes)` and writes the bare form). Readability §1.2's "3 → 0" counted the `yes` form only. **`exclude_from_sim`: still dropped** (211 → 0), harmless: every one in v7 is `(exclude_from_sim no)`, the default. Not shimmed.
+- Lock guard tested on a scratch copy: refuses with a lock file, saves without one. v8 shim load + save in scratch left the flags unchanged.
+
+**Task 2: annotate** (`c53d152`). `write_ai_properties` creates new `ai_*` at the symbol's position, hidden. When it touches an existing `ai_*` it also hides it and moves it to the symbol (logged as "re-homed"). It only touches the keys it writes; `tidy_fields.py` handles the rest.
+
+**Task 3: `tidy_fields.py`** (`8001cc8`). `--check` / `--apply` (mutually exclusive, one required), `--root` (default v8), `--ref-commit c2acffc`, `--ref-dir`, `-v` lists each pin-flag restore. Library fallback: project `sym-lib-table`, then KiCad's stock symbol folder. It only sets hide flags and moves fields, so it can't change a net.
+
 **Task 4: tidy applied to v8** (`tidy_fields.py --apply`; KiCad closed, no `~*.lck`, no KiCad process). Per-sheet counts:
 
 | Sheet | Fields hidden | pin_numbers restored | pin_names restored | `ai_*` moved to symbol | Off-sheet text left | Overlap pairs (probe) before → after | Plotted strings before → after |
@@ -858,3 +868,15 @@ Return DONE, PARTIAL, or BLOCKED with specifics.
 - A second `--check` after the apply reports 0 everywhere (idempotent).
 - **Gate:** `kicad-cli sch export netlist` before vs after differs only in the `(date …)` line (not even `uri`, since it is the same folder). `v8_debug_sheet.py --check`: PHASE 11 CHECK PASSED. ERC 0 errors (warnings unchanged: 81 pin_to_pin, 3 lib_symbol_mismatch, 2 lib_symbol_issues, 1 unconnected_wire_endpoint).
 - `circuit-context.json` re-extracted with `--previous` ("No structural changes"; only the sheet hashes, generator commit and timestamps changed). `check_state.py --fresh`: FRESH.
+- Overlap and plotted-string counts are from `prototypes/probe.py` (pass a mode word first: `probe.py x <sheets>`; its first argument is a mode, not a file) and `kicad-cli sch export svg`. They match readability's 111 after-hide estimate, which is the starting point for 11b's baseline.
+
+**Task 5: kiutils `Board` round trip (OQ-11, check only)** (`96843bf`). Scratch copies of v7 (`c2acffc`) and v8. v7: footprint properties come back in KiCad 7 form (key + value only), so 793 `(hide yes)` and every footprint field's position/layer/effects are lost; also `(locked yes)` on 18 footprints, `(free yes)` on 19 vias, all `uuid`s (as `tstamp`), `sheetname`/`sheetfile`, plot settings. **kicad-cli 9.0.4 can't load the result** ("Failed to load board"; DRC exit 3). v8's board (outline only) is unchanged by a round trip. Recorded under OQ-11 in PLAN (struck as answered; the write-path choice for `place.py` stays with Phase 13 / OQ-3).
+
+**Task 6: rules** (`efcb6ca`). `tools/schematic-modify/CONTEXT.md` has a new "Rule" section and lists `kiutils_k9.py` and `tidy_fields.py`. `tools/CONTEXT.md` has a "kiutils Rule" section after the Critical Rule, two table rows, and the Dependencies line. The `.context/HAZARDS.md` kiutils entry names `kiutils_k9` and `save_schematic`, and warns that boards have no shim.
+
+**For 11b onwards:**
+- New scripts: import `modify` (or `kiutils_k9`) before any kiutils load, and save through `save_all` / `save_schematic`.
+- Scratch test scripts (not committed): `scratchpad/tests/roundtrip.py` (per-item hide comparison) and `scratchpad/tests/board_rt.py`.
+- Readability's `fields_autoplaced` "dropped" finding was wrong for symbols (see Task 1), so 11b's `(fields_autoplaced yes)` from `add_component` will survive later loads.
+
+**PLAN:** OQ-11 answered. Approach unchanged; no rejected approaches. No Deferred items. Commits: `6a5325b`, `c53d152`, `8001cc8`, `dec1e37`, `96843bf`, `efcb6ca`, plus this handoff commit.
