@@ -76,6 +76,7 @@ Order: #0005 A1 (ON), B (GND), A2 (ON); then #0004 A1 (GND), B (ON), A2 (GND).
 - S1 #0005 A1: SW1 slider "to the left"; LEDs "power led only"; warm "no". Session (normal plug-in, no BOOT): /dev/cu.usbmodem14101; ioreg "USB JTAG_serial debug unit", idVendor 12346.
 - S2 #0005 A1 DC V, black G: K "4.283V, going up and down a little, like from 4.260 to 4.300 approximately"; L "4.280V, varying a little just like K"; M "4.280V, same story as the previous two"; Q "5.078V"; R "1.238V"; N "5.100V"; P "3.300V".
 - S3 #0005 A1 download mode: "done". Session: /dev/cu.usbmodem14101; ioreg "USB JTAG_serial debug unit", idVendor 12346.
+- S4 #0005 B: SW1 slider "right"; LEDs "power led only"; warm "no". Session (normal plug-in): no /dev/cu.usbmodem*, no idVendor 12346.
 ### Measured values (from log; cite `lab/evidence/PWR-002/...`)
 ### Interpretation (session; labelled as such)
 
