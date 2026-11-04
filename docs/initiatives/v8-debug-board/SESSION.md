@@ -553,3 +553,41 @@ Task 5 and the Phase 7 Handoff are ticked. PLAN is unchanged beyond the Rejected
 **Dispatch:** standard spawn prompt, plus:
 - Additional reading: `tools/CONTEXT.md` (Critical Rule; schematic-modify, schematic-context sections) and `tools/schematic-modify/CONTEXT.md` + `modify.py`; `hardware/pcb-main-v8/CONTEXT.md` GPIO allocation, Jumper matrix rows a, e, g (with the W2 header implementations), Parts (header footprints, Kept v7 parts, IC1 swap, D5 note); SESSION.md Worker #3 and #4 Notes.
 - The **(user)** steps (task 3) are a user gate: the Worker writes numbered KiCad instructions, commits, and returns PARTIAL; the Orchestrator relays them.
+
+#### Notes
+
+**Task 1: project setup** (`tools/schematic-modify/v8_project_setup.py`). It copied the v7 project from git `c2acffc` into `hardware/pcb-main-v8/kicad/` as `motion-play-main-v8`. Copied: `.kicad_pro`, the 5 sheets, `.kicad_dru`, the lib tables and `libraries/`. Not copied: the v7 board, reports, production, netlists, context JSON, STEP. The lib tables now point `${KIPRJMOD}/../../pcb-main/resources/`, so v7's resources stay the only copy. Pinned libs `../../libraries/...` resolve unchanged. kiutils renamed each instance's project and set the title blocks to v8 / rev 8.0. The board is a fresh `.kicad_pcb` with v7's setup only: 4-layer stackup F/In1/In2/B, 0.1/1.24/0.1 mm, 1.6 mm. It has no footprints, nets, tracks, zones, graphics or outline. Checks:
+- ERC: 59 warnings and 0 errors, the same as v7 at `c2acffc` (the before/after diff is empty once the lib paths are fixed).
+- Netlist: identical to v7 (93 components, 102 nets, same membership).
+- kicad-cli DRC loads the board. Its only violation is "no Edge.Cuts outline", which is expected; Phase 14 adds the outline.
+- kiutils round-trip on these KiCad 9 sheets: no netlist change.
+
+**Task 2: MCU sheet** (`tools/schematic-modify/v8_mcu_sheet.py`, with new helpers in `modify.py`: `set_pin_net`, `pin_position`, `remove_no_connect_at`, and `add_component(project_name=)`). Every edit is label-style, so nothing needs wiring in the GUI.
+- U3 pins: 37 → U3_IO43, 36 → U3_IO44, 9 → U3_IO16 (the stub labels were renamed). 8 → U3_IO15 and 11 → U3_IO18 (each no-connect replaced by a label).
+- Row a: JP1 and JP2 are `Conn_01x04` headers (C2691448). Pins: 1 U3_IO16/15, 2 I2C_SDA/SCL, 3 U3_IO43/44, 4 UART0_TX/RX.
+- Row e: J10 is a 1×4 header (GND, EXT_SDA, EXT_SCL, +3.3V_BUS). JP3 and JP4 are open SJ2s from EXT_x to I2C_x. +3.3V_BUS comes in as a new hierarchical label. At the root it has a sheet pin on the left edge of the ESP32_S3 sheet with a `+3.3V_BUS` label (net `/+3.3V_BUS`). The Phase 10 power sheet joins it by the same label.
+- Row g: JP5 is an SJ3 Bridged12. Pad 1 = U3_IO18 (default), pad 2 = LED_DATA, pad 3 = U3_IO16 (v7).
+- IC1 swap (Parts): on `led_controller.kicad_sch`, SN74AHCT125PWR becomes SN74AHCT1G125DBVR (`74xGxx:74AHCT1G125`, flattened from 74LVC1G125; SOT-23-5; C7484). Labels were put at the old pin positions so the existing wires stay on their nets. Pin map v7 → v8: 1→1 (OE, GND), 2→2 (A), 3→4 (Y), 7→3 (GND), 14→5 (VCC).
+- D5 is unchanged (CONTEXT: kept as v7). The fallback pinout check only applies if the part is substituted.
+- New refs: JP1–JP5 and J10. They don't collide with the power spec's provisional JP30–35, J30–33 or TP10–75.
+
+**Task 3: no (user) wiring steps.** The tools did all the wiring. Re-extracted with `tools/schematic-context/extract.py` (to scratch; not committed, since Phase 11 commits the context with provenance). U3 pin → net matches the GPIO allocation table for every connected pin: 37, 36, 9, 8, 11, 18, 23, 21/20/19, 27, 3, 13, 14, plus power pins 1/2/40/41. The 23 unused pins have no net. `v8_mcu_sheet.py --check` passes:
+- Every JP/J10/JP5/D5/IC1 pin is on its expected net.
+- With the all-v7 positions applied to the netlist (JP1/JP2 on 2–3, JP5 pads 2–3, JP3/JP4 open), every net's membership equals v7 at `c2acffc`, with 0 differences, once the jumper pins are removed and IC1's pins are mapped.
+- v8 default: I2C_SDA = {R28, TPIO43, U3.9, U4.23, U5.6, U7.6}, I2C_SCL = {R29, TPIO44, U3.8, U4.22, U5.5, U7.5}, LED_DATA = {D5.1, IC1.2, TPIO16, U3.11}.
+
+**ERC after task 2:** 68 violations against v7's 59. The new items are all expected until a later phase:
+- 4 `label_dangling` errors: UART0_TX and UART0_RX until Phase 11's UART0 header; +3.3V_BUS (the hierarchical label and the root label) until Phase 10's power sheet drives it.
+- 1 `power_pin_not_driven` error: the new IC1 VCC is power_in on +5V_TO_LEDS, which only F1 (passive) feeds. The v7 symbol didn't flag this. Phase 10 should drive or flag the rail when F1/+5V_TO_LEDS move to the power sheet.
+- Some `pin_to_pin` warnings moved: they follow U3 pins onto the jumper headers.
+
+**Left for later phases (not done here):**
+- UART0 header (Phase 11).
+- Test points on U3_IO43/44/16/15 and on LED_DATA (Phase 11). Root TPIO43/44 now sit on the bus side, and TPIO16 sits on LED_DATA (the row g centre), so their names are now misleading. Phase 11 should rename or keep them deliberately.
+- `annotate.py` for the new parts (Phase 11).
+- Renaming +3.3V to +3.3V_MCU (Phase 10).
+- OQ-5 (card (j)) is still open, so the U3 pad 37 footprint was not reviewed.
+
+**Cosmetic, optional, not a gate.** The new parts sit to the right of U3 (x 205–260 mm) on the ESP32 sheet. Header Reference/Value text overlaps the pin names. The +3.3V_BUS hierarchical label text runs past the sheet's left frame (at 15.24, 104.14). On the LED sheet, the labels at the old IC1 pin spot overlap the old footprint text. The user can tidy these in the GUI at W3 (Phase 11). After any move, re-run `python3 tools/schematic-modify/v8_mcu_sheet.py --check`; it confirms the wiring is unchanged.
+
+**PLAN:** unchanged; the approach held and nothing was rejected. No Deferred items. Commits: `1213d24` (task 1), `282259b` (task 2), plus this notes/handoff commit.
