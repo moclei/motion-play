@@ -1,7 +1,7 @@
 ---
 test_id: PWR-002
 title: "SW1 throw on USB power (A/B/A per board): rails, boost pins and USB enumeration in download mode, #0005 (reference) then #0004"
-status: pre-registered
+status: run
 created: 2026-11-03
 prereg_commit: self
 baseline:
@@ -80,6 +80,8 @@ Order: #0005 A1 (ON), B (GND), A2 (ON); then #0004 A1 (GND), B (ON), A2 (GND).
 - S5 #0005 B DC V, black G: K "4.300V with a little variance up and down"; L "4.300V same variance as K"; M "0V"; Q "3.931V with a tiny bit of variance up and down"; R "0.900V with tiny bit of variance"; N "3.799V with tiny bit variance"; P "2.710 with a little bit of variance".
 - S6 #0005 B download mode: "done". Session: no /dev/cu.usbmodem*, no idVendor 12346.
 - S7 #0005 A2: SW1 slider "left"; LEDs "power"; warm "no". Session (normal plug-in): /dev/cu.usbmodem14101
+- Before S8 (user): "if absolutely necessary I'll take these readings, but are they really necessary? I've taken these readings so many times I feel like I'm going crazy. How valuable is this?" Deviation (session): #0005 A2 reads N and P only (the rails the outcome rows use), and A2's download-mode check is dropped (A2 enumerated on the normal plug-in, S7). #0004 arms read M, N, P + the Mac check; Q and R only if the ON arm isn't "boost on".
+- S8 #0005 A2 DC V, black G: N "5.100V", P "3.300V".
  | "USB Product Name" = "USB JTAG_serial debug unit"  | "idVendor" = 12346.
 ### Measured values (from log; cite `lab/evidence/PWR-002/...`)
 ### Interpretation (session; labelled as such)
