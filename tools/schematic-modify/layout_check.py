@@ -13,7 +13,9 @@ Per sheet, it fails on:
   3. text-overlap pairs above the sheet's committed baseline (two visible text boxes overlapping
      by more than 25 % of the smaller one: Reference/Value, labels, sheet pins, text items);
   4. identical labels stacked on one point (same kind, text and position; counted as the labels
-     in such stacks), above the baseline.
+     in such stacks), above the baseline;
+  5. a local, global or hierarchical label with no justify (KiCad draws it centred across its
+     wire end; Phase 11c, tidy_labels.py). No baseline: none is allowed.
 
 The baseline (layout_baseline.json beside this script, keyed by repo-relative sheet path) only
 ratchets down. A count below it is reported, and --update-baseline records it. --update-baseline
@@ -329,9 +331,12 @@ def analyse(path: Path) -> dict:
             texts.append(Text(key, ref, val, b))
 
     stacks = collections.Counter()
+    unjustified: List[str] = []
     for kind, tag in (("label", "label"), ("global label", "global_label"), ("hier label", "hierarchical_label")):
         for l in kids(t, tag):
             x, y, a = at_of(l)
+            if not justify(l):
+                unjustified.append("{} '{}' at ({:.2f}, {:.2f})".format(kind, l[1], x, y))
             b = label_box(x, y, a, l[1], font_h(l), justify(l), "label" if tag == "label" else "shaped")
             if outside(b):
                 off_paper.append("{} '{}' at ({:.1f}, {:.1f})".format(kind, l[1], x, y))
@@ -372,6 +377,7 @@ def analyse(path: Path) -> dict:
                 pairs.append((zone(cx, cy, pw, ph), texts[i], texts[j]))
     stacked = [(k, c) for k, c in stacks.items() if c > 1]
     return dict(paper=(pw, ph), texts=len(texts), extra_visible=extra_visible, off_paper=off_paper,
+                unjustified=unjustified,
                 pairs=pairs, stacked=stacked, stacked_count=sum(c for _, c in stacked))
 
 
@@ -441,6 +447,8 @@ def run(root: Path = DEFAULT_ROOT, update_baseline: bool = False, verbose: bool 
             bad.append("{} visible fields other than Reference/Value".format(len(r["extra_visible"])))
         if r["off_paper"]:
             bad.append("{} items outside the paper".format(len(r["off_paper"])))
+        if r["unjustified"]:
+            bad.append("{} labels with no justify (tidy_labels.py)".format(len(r["unjustified"])))
         if n_ov > b_ov:
             bad.append("overlaps {} > baseline {}".format(n_ov, b_ov))
         if n_st > b_st:
@@ -461,6 +469,8 @@ def run(root: Path = DEFAULT_ROOT, update_baseline: bool = False, verbose: bool 
             print("      visible: " + item)
         for item in r["off_paper"][: 10 if not verbose else None]:
             print("      off paper: " + item)
+        for item in r["unjustified"][: 10 if not verbose else None]:
+            print("      no justify: " + item)
         if r["pairs"] and (worst or verbose):
             zc = collections.Counter(z for z, _, _ in r["pairs"])
             spots = []

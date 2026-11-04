@@ -984,3 +984,27 @@ Phase-specific notes: this phase has a user step. Do tasks 1–4, then return PA
 You are not the Orchestrator. Do not create documents, work across phases, or replan.
 Return DONE, PARTIAL, or BLOCKED with specifics.
 ```
+
+#### Notes
+
+**Task 1: BAT_CONN test point** (`8047357`). **TP37** (BAT_CONN, D1.5 mm) and its ground point **TP77** (2.5 × 2.5 mm), power sheet, at the end of the rail test-point rows (88.9 / 101.6, 261.62). Numbers: the power sheet's rail convention, rail point TPn and its ground point TP(n+40) (TP10–TP36 / TP50–TP76), so TP37/TP77 are the next free pair. `v8_debug_sheet.py --apply` now adds the missing Phase 11c parts when Phase 11 is already applied (J11 present), and does nothing on a second run. `--check` expects both pins and a new fact (TP37 on J8 pin 2's net, the cell side of F3, not F3 pin 2). The v7-position comparison: 0 nets differ (the new refs are dropped as Phase 11 new parts). Annotated (`--annotate`: `ai_*` hidden at the symbol). Power overlaps 51 = baseline.
+
+**Task 2: label justify pass** (`tools/schematic-modify/tidy_labels.py`, a sibling of `tidy_fields.py`). Per sheet:
+
+| Sheet | Labels justified | Turned horizontal | Flipped 0↔180 | Kept angle (wires on > 1 side) | No wire | Deduped | Gate flips | Overlap pairs before → after |
+|---|---|---|---|---|---|---|---|---|
+| Root | 10 | 5 | 0 | 0 | 0 | 0 | 0 | 13 → 4 |
+| LED | 22 | 11 | 0 | 1 | 0 | 0 | 0 | 5 → 5 |
+| MCU | 177 | 39 | 24 | 0 | 0 | 0 | 0 | 22 → 19 |
+| Power | 333 | 101 | 43 | 1 | 0 | 4 | 0 | 51 → 39 |
+| TCA | 137 | 65 | 0 | 3 | 0 | 0 | 0 | 50 → 30 |
+| **Total** | **679** (653 local, 26 hierarchical) | **221** | **67** | **5** | **0** | **4** | **0** | **141 → 97** |
+
+- "Flipped" = a horizontal label whose text ran back over its own wire, now reading away from it. Every label with no justify had a wire end at its anchor, so none were "no wire".
+- **Dedupe:** both power stacks were identical in kind, text, position and angle (`BAT_FUSED` ×3 and `VBAT` ×3 at x 307.34, 270°), so 2 extra copies of each were deleted. Stacked labels on power 6 → 0. Nothing left for W3a.
+- No sheet's overlap count went up, so the gate flipped nothing.
+- **Gate:** `kicad-cli sch export netlist` before vs after differs only in the `(date …)` line. `v8_debug_sheet.py --check`: CHECK PASSED (Phase 8, 0 nets differ), PHASE 9/10 CHECK PASSED, ERC 0 errors, LAYOUT CHECK PASSED, PHASE 11 CHECK PASSED. A second `tidy_labels.py --check` reports 0 everywhere.
+- `layout_check.py` rule 5: a local, global or hierarchical label with no justify fails (no baseline; none allowed). Tested on the pre-pass copy: it flags all 683 (10/22/177/337/137).
+- `--update-baseline`: root 13 → 4, MCU 22 → 19, power 51 → 39 (stacked 6 → 0), TCA 50 → 30, LED 5 unchanged.
+- **LED sheet render** (kicad-cli PDF, cropped): `+5V_LED_H4` no longer sits over F1's pin. It now reads right from the C7 junction (147.32, 102.87), above the R27 wire. **Still crowded:** `+5V_LED_F` at F1 pin 2's stub end (143.51) reads right across the 3.8 mm gap and into `+5V_LED_H4` (the one LED-sheet pair in zone B3). Either side overlaps something (flipped, it would sit over F1), so the fix is a wire move, not a justify. Left for the user's GUI pass / W3a (GUI steps, LED sheet).
+- Renders: PNGs via `kicad-cli sch export pdf` and PyMuPDF (`fitz`, installed). No SVG-to-PNG converter is on the machine (no rsvg-convert, ImageMagick or cairosvg).
