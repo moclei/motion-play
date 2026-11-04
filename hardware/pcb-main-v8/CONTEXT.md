@@ -79,12 +79,13 @@ With options 1–3, U5 stays on the I²C bus (jumper (f) still applies). `config
 ```
 XT30 (J8, cell) ─ F3 7 A ─ BAT_FUSED ─ Q20 ┐ BAT_COMMON ┌ Q21 ─ VBAT ─ U5 BAT        (SW4 "BATT" drives the Q20/Q21 gate)
 USB-C J7 ─ F2 ─ Protected_VBUS ─ U5 VBUS        U5 SYS ─ VSYS ─ R44 ─ VSYS_SENSE ─ U6 boost (EN: row i) ─ +5V
-+5V ─ link h3 ─ +5V_CORE ─┬ U8 AMS1117 ─ +3.3V_MCU_REG ─ link h1 ─ +3.3V_MCU (U3, pull-ups of INT/OTG)
-                          ├ U10 AP2112K ─ +3.3V_BUS_REG ─ row c header ─ +3.3V_BUS ─ link h2 ─ +3.3V_BUS_LOAD (pull-ups, TCA, INA219, J4–J6)
++5V ─ link h3 ─ +5V_CORE ─┬ U8 AMS1117 ─ +3.3V_MCU_REG ─ link h1 ─ +3.3V_MCU (U3, R38, row k pad 3, D1)
+                          ├ U10 AP2112K ─ +3.3V_BUS_REG ─ row c pin 1
                           └ D5, IC1, +5V LED
+row c pin 2 = +3.3V_BUS_HDR ─ link h2 ─ +3.3V_BUS (I2C_PU_RAIL, TCA, INA219, J4–J6, BUS LED)
 +5V ─ F1 3 A ─ link h4 (10 mΩ) ─ +5V_TO_LEDS (J3)
 ```
-Row c's header also offers +3.3V_MCU_REG on its pin 3 (v7 position: one regulator for everything).
+Row c's pin 3 is +3.3V_MCU_REG (before h1): in the v7 position U8 feeds everything, and h1 and h2 still split U3's current from the bus current (their sum is v7's U8 load).
 
 ### Charger: keep the BQ24195, fix it with pins (rows j, k)
 
@@ -115,6 +116,70 @@ Row c's header also offers +3.3V_MCU_REG on its pin 3 (v7 position: one regulato
 **SW4 "BATT" (new, MSK12C02, C431540, same switch as SW1).** ON connects the cell (through the slow gate), OFF isolates it. Why: with row i at v8 the boost runs whenever VSYS exists (next subsection), so the battery needs its own off switch; the 30Q is an unprotected cell, and SW4 OFF stops the BQ's quiescent drain (32 µA BATFET on, SLUSB97A) in storage. Gate current only (µA), well inside the switch's 50 mA. Cost: the board can't charge with SW4 OFF; charge with SW4 ON (the board then runs too).
 
 **Cell temperature (new row l).** v7's TH1 is on the PCB and senses the board, not the cell (Phase 2 mechanism 7), while the default charge current is 2048 mA. v8 adds J9 (JST-PH 2-pin, S2B-PH-K-S, C173752) for a 10 kΩ 103AT NTC taped to the cell, and **row l**, an SJ3: centre = the TS network's NTC leg (R37 ∥ NTC to GND), pad 1 (default) = J9, pad 3 = TH1 (v7). R36/R37 stay (5.6 k / 30 k, the TI divider for a 103AT). With the default and nothing on J9, TS sits at R37's share of REGN ≈ 84 %, above the 73 % cold threshold, so the BQ **suspends charging and the STAT LED blinks** (fault) until an NTC is fitted: a safe-fail default (argued from the Phase 1 TS percentages). Alternative if the user prefers: default pad 1 = TH1 (v7 behaviour, charges without a cell sensor).
+
+### Boost and enable (row i): the boost runs whenever VSYS exists
+
+**What PWR-002 showed.** On v7, SW1 is the boost's only enable (CL-11). At its GND throw the boost doesn't run even on USB: +5V sits at ≈ 3.78–3.80 V (VSYS through U6's body path), U8 drops out (+3.3V 2.70–2.71 V), and the Mac finds no ESP32 (#0004, #0005, A/B/A). At the other throw the same boards regulate (+5V 5.10–5.12 V) and enumerate. So on v7 "SW1 off + USB" looks exactly like a dead board, and #0001/#0002's "burnt out" may have been just that (B8, argued for those two boards).
+
+**Decision: row i default changes to v8 = BOOST_EN tied to VSYS_SENSE (always on; v6's arrangement).** The board runs on USB whatever any switch says, and on battery whenever SW4 is ON. The off switch for the battery is SW4 (above), which is where an off switch is needed. SW1 stays fitted and wired exactly as v7 (A → VSYS_SENSE, common → its own net, C → GND, R2 100 k pull-down on BOOST_EN), so the **v7 position (row i pad 3 = SW1's common on BOOST_EN) rebuilds v7's net membership**, including the "SW1 off = dead on USB" behaviour for A/B. Silk: SW1 "BOOST (row i v7)", SW4 "BATT".
+- **This changes an approved default.** Phase 3 (W2 part 1) approved row i with v8 = v7 (SW1). The new default comes from PWR-002, which landed after that approval; it goes to the user in the Phase 7 approval (task 5). The SJ3 pad rule from Parts still holds, with pad 1 (default) now = VSYS_SENSE and pad 3 = SW1 common.
+- EN abs-max 7 V vs VSYS_SENSE ≤ 4.35 V; EN high threshold 1.2 V; R2 then draws ≈ 40 µA from VSYS_SENSE (TPS61088 reference).
+- B4 (boost enabled into a load at plug-in): with EN always on, the boost starts as soon as VIN passes its 2.7 V UVLO, with the 11.3 ms soft-start (SS 47 nF), after the battery pair's ≈ 1.5 ms ramp. A heavy +5V load at start-up draws from the cell through the fully driven pair and F3, not an under-driven SOT-23 (argued).
+
+**Boost parts unchanged from v7.** U6 TPS61088RHLR; L2 2.2 µH 10 A; FB 180 k / 56 k (5.07 V nominal; measured 5.096–5.12 V on #0003/#0004/#0005, V7R-020, PWR-002); FSW 100 k; ILIM R42 100 k (10.6–13.0 A peak, PFM); SS 47 nF; MODE floating (PFM); output 4 × 22 µF 25 V (C45783, the v7 as-built part, CL-14). The boost isn't suspected of anything, so keeping it keeps v7's +5V behaviour for A/B.
+
+### Regulators (row c): AMS1117 for the MCU, AP2112K for the bus
+
+**Decision.**
+- **U8 AMS1117-3.3 (C6186, basic) feeds +3.3V_MCU**, as on v7. In row c's v7 position it feeds everything, so the v7 position uses v7's regulator type (CL-08), not a substitute.
+- **U10 AP2112K-3.3TRG1 (C51118, SOT-25) feeds +3.3V_BUS** in the v8 position. It is v6's bus regulator (CL-03), so v8's split repeats v6. 600 mA rating vs the bus rail's load (pull-ups, TCA, INA219, three sensor modules: tens of mA average; the VCNL IR pulses come from the flex boards' anode capacitors, Parts → row c note).
+- **U10 EN tied to +3.3V_MCU** (after link h1). The bus rail can then only be up while U3 is powered: it comes up after +3.3V_MCU and drops with it.
+
+**Dropout margin from the actual +5V.** Measured +5V: 5.096–5.098 V (#0003, V7R-020), 5.10–5.12 V (#0004/#0005, PWR-002). Less link h3 (≤ 50 mΩ × ≈ 1.7 A ≈ 0.09 V, argued) → ≈ 5.0 V at the regulators.
+- AMS1117: 1.1 V at 800 mA (JLC listing). 5.0 − 3.3 − 1.1 = **0.6 V margin** at 800 mA. The maker's maximum dropout is higher than the listing's figure (argued; Phase 10 reads the AMS1117 datasheet). Dissipation ≈ 1.7 V × 0.5 A ≈ 0.85 W at a WiFi peak, SOT-223 (as v7).
+- AP2112K: 250 mV at 600 mA (listing). **≈ 1.45 V margin.** Dissipation at a 50 mA bus load ≈ 0.09 W; at its full 600 mA it would be ≈ 1 W, too much for SOT-25 (argued), but the bus load is nowhere near that.
+- Neither regulator is fed from VSYS, so neither depends on the cell voltage; both depend on the boost running, which row i now guarantees in v8.
+
+**Back-powering U3 through the pull-ups (Phase 3 check).**
+- *Bus rail up, MCU rail down:* the 2.2 k upstream pull-ups would push ≈ (3.3 − 0.6) / 2.2 k ≈ 1.2 mA per line into U3's GPIO16/15 (or 43/44) clamp diodes, ≈ 2.5 mA into an unpowered VDD3P3 (argued from the S3's ESD structure, not a datasheet value). U10's EN on +3.3V_MCU prevents that state in the v8 position. Residual: in row i's v7 position with SW1 off, +5V ≈ 3.8 V puts U8 in dropout (+3.3V_MCU ≈ 2.7 V) while U10 may still regulate (EN is high above ≈ 1.5 V, argued from the AP2112 class): bus rail 3.3 V vs U3 at 2.7 V, ≈ 0.6 V across a clamp diode, so microamps (argued). Phase 10 confirms U10's EN threshold.
+- *MCU rail up, bus rail down* (row c shunt off): the pull-ups hang from a dead rail; U3's pins are open drain, so nothing is driven into the bus rail (argued). The bus devices are unpowered and the bus reads low.
+- *v7 position (shared):* one rail, no back-power path (as v7).
+
+### Current-measure links (row h): four rails
+
+Per link: the part below, plus an unfitted 1 × 2 2.54 mm header beside it (Parts → Headers) and a test point on each side (Test points). Lift the part to insert an ammeter. Rated current for a 0 Ω part is not in the JLC listing; it is derived as I = √(P / R_max) with R_max = 50 mΩ, the usual jumper-resistance limit for thick-film 0 Ω parts (**argued**; Phase 10 confirms from each maker's sheet).
+| Link | Rail | Max current (source of the bound) | Part | LCSC | Rating | Margin |
+|---|---|---|---|---|---|---|
+| h1 | +3.3V_MCU_REG → +3.3V_MCU | 1 A (AMS1117 rating) | 0 Ω 1206, 250 mW | C17888 (basic) | ≈ 2.2 A (argued) | 2.2× |
+| h2 | +3.3V_BUS_HDR → +3.3V_BUS | 1 A in v7 position (AMS1117); 0.6 A in v8 (AP2112K) | 0 Ω 1206, 250 mW | C17888 (basic) | ≈ 2.2 A (argued) | 2.2× |
+| h3 | +5V → +5V_CORE | ≈ 1.7 A (U8 1 A + U10 0.6 A + D5/IC1/LED; argued sum of ratings) | 0 Ω 2512, 1 W | C25469 | ≈ 4.5 A (argued) | 2.6× |
+| h4 | F1 out → +5V_TO_LEDS | 3 A (F1) | **10 mΩ 1 % 2512, 3 W** shunt | C2903468 | 17 A by power (listing: 3 W at 10 mΩ) | 5.7× |
+
+- **h4 is a 10 mΩ shunt, not 0 Ω.** The 3 A LED rail is the one where a 0 Ω part's derived rating (≈ 2.2 A for 1206, ≈ 4.5 A for 2512) is either too low or argued. A 3 W shunt's rating follows from its listed power. It also reads 10 mV/A across the unfitted header pins without lifting anything. Cost: up to 30 mV less on the LED strip at 3 A, which is not a v7 variable anyone suspects (v7 position "closed" is then 10 mΩ, not 0 Ω).
+- **No link on VSYS.** R44 (10 mΩ) with the INA219 already measures VSYS → VSYS_SENSE, which carries up to 4.5 A.
+- **No link on the battery path.** It carries up to 4.5 A, and an ammeter there is better put in the battery cable.
+
+### Other v7 deviations fixed
+
+| Item (Phase 2 deviation) | v7 | v8 | Reason / source |
+|---|---|---|---|
+| PMID capacitance | C25, C26: 2 × 10 µF 0603 = 20 µF nominal | **4 × 22 µF 25 V X5R 1206** (C12891, basic) = 88 µF nominal | bq24195 asks ≥ 60 µF on PMID (20 µF for the L part; reference, PMID row). 22 µF 25 V in 1206 at 5 V bias is argued to keep ≈ 60–70 % (≈ 55–60 µF effective); Phase 10 checks the Samsung DC-bias curve and adds a fifth if needed |
+| VBAT capacitor | none | **10 µF 25 V 0805** (C15850, basic) at U5 pins 13/14, plus v7's C30 47 µF 35 V electrolytic (C72522, as built) moved from BAT_RAW onto VBAT | BQ pin table: BAT decoupled with 10 µF. C30 on VBAT is behind the reverse blocking, so it can never see a reversed cell, and it damps BAT ringing (B3b) |
+| Battery-side fuse | none | F3 7 A (above) | Phase 2 deviation; B2/B4 worst cases |
+| J7 shell | Schematic: J7 pin "SH" on GND (v7 `circuit-context.json`). PCB: the rear shell legs have no net (Phase 2 probe) | Shell on **GND**, as v7's schematic intended. Phase 8 checks that every shell pad of the J7 footprint carries the SH pin number, so the PCB matches | Argued: the v7 footprint's rear-leg pads don't carry the SH number. With the battery on a cable, the BAT_RAW-to-shell bridge (B5) is gone anyway |
+| Cell temperature | TH1 on the PCB | Row l, J9 cell NTC (above) | Phase 2 mechanism 7 side finding |
+| R44 shunt | MFJ12HR010FT 10 mΩ 1 W (C1322424, **2 in stock**) | **HoJLR2512-3W-10mR-1 %** (C2903468, 86 331): same 10 mΩ 1 %, 2512 | Same value, so INA219 calibration in firmware is unchanged |
+| STAT LED rail | STAT unconnected | Orange LED + 2.2 k from **VSYS** to U5 STAT (confirmed: the BQ is kept) | VSYS exists whenever USB is in or SW4 is ON, so it shows charging and faults (including row l's "no NTC" blink); off with SW4 OFF and no USB, so no storage drain |
+
+### Power budget (argued, from ratings)
+
+- **Battery side:** ≤ 4.5 A, the BQ24195's system-current rating (2.5 A with the L part). At a 3.0 V cell and 90 % boost efficiency that is ≈ 12 W, so +5V can deliver ≈ 2.4 A in total; after the core load (≈ 0.6 A at a WiFi peak, through U8), the LED strip on battery should stay under ≈ 1.8 A at a low cell. F1 (3 A) allows more than the BQ is rated for, as it did on v7. Phase 12 note: cap LED brightness in firmware for battery use.
+- **USB side:** 1.5 A at 5 V (row j) less the buck's loss ≈ 7 W, so +5V ≈ 1.3 A without a cell (argued); the BQ supplements from the cell when one is connected.
+- **Over-discharge:** not designed here. The boost stops at its 2.4–2.5 V UVLO; whether the BQ's BATFET disconnects a deeply discharged cell in battery-only mode isn't in `docs/references/bq24195/` (Phase 10 reads SLUSB97A). SW4 OFF is the storage answer.
+
+### Plane-planning input (layout, not designed here)
+
+On v7, In2 is split between +3.3V and +5V, and 16 signal tracks cross the split gap, the USB pair and SDA/SCL included (board model, Phase 6; SESSION Worker #5/#6). v8 has more power nets on that layer's candidates (+3.3V_MCU, +3.3V_BUS, +5V_CORE, +5V_TO_LEDS, VSYS). The layout phases should plan the inner-layer split so that no I²C, USB or test-point signal crosses a gap (or route those over solid GND), and keep the battery high-current path (J8 → F3 → Q20/Q21 → VBAT → U5) and the two switching loops on the outer layers with GND under them.
 
 ## GPIO allocation
 
