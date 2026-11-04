@@ -687,3 +687,25 @@ Task 5 and the Phase 7 Handoff are ticked. PLAN is unchanged beyond the Rejected
 **Cosmetic, for W3 (not a gate):** the new parts sit in grids; labels on TP stubs run downward. After any GUI move, re-run `python3 tools/schematic-modify/v8_power_sheet.py --check`.
 
 **Left for later:** I2C_PU_RAIL has no separate test point any more (it is +3.3V_BUS; TP28 covers it) — Phase 11's I²C test-point list should read it that way. Rail LEDs for +3.3V_BUS, +5V, Protected_VBUS and their SJ2s; `annotate.py`; committed `circuit-context.json` (Phase 11). Phase 12: LED brightness cap on battery (unchanged). PLAN: one Rejected Approaches line (regenerating the power sheet). No Deferred items.
+
+#### Result
+| # | Phase | Result | Escalation evaluated? | Commit | Notes |
+|---|-------|--------|-----------------------|--------|-------|
+| 10 | Phase 10: Schematic — power sheet | DONE | No — clean completion; the argued checks changed values only, no approved decision | 7170088 | No user steps; commits 7c0c1ad, dae1935, 7170088 |
+
+#### Verification
+- TASKS.md Phase 10: all three items `[x]`; the rotation-bug Deferred line is removed (fixed in `7c0c1ad`). Working tree clean. v7 untouched.
+- Re-ran `v8_power_sheet.py --check`: PHASE 10 CHECK PASSED (it chains the Phase 8 and 9 checks). With every jumper in its v7 position, 0 nets differ against v7; the battery-protection exception is modelled explicitly (dropped parts printed).
+- ERC at error severity: 2 (UART0_TX/RX dangling, for Phase 11), down from 7.
+- PLAN: one Rejected Approaches line (regenerating the power sheet from the spec, which would drop v7 parts); approach unchanged.
+- The J7 shell-to-GND footprint is a v8-local library copy. The v7 library and footprint are untouched. This implements the approved "USB shell on GND" (Phase 7 point 8).
+- Changed values (AMS1117 margin 0.4 V, 0 Ω links rated 2 A, PMID 6 × 22 µF, J8 pin 2 = +) are recorded in CONTEXT "Phase 10 checks". Each is a value inside an approved decision.
+- For the user at W3 (end of Phase 11): keep R66 (10 mΩ, link h4) or drop it and read the LED-rail current across v7's existing R27 (0.1 Ω). The SW4-off-under-load linear-region risk goes into the Phase 19 bring-up relay.
+
+---
+
+### Worker #11 — Phase 11: Schematic — debug features, ERC, freeze
+
+**Dispatch:** standard spawn prompt, plus:
+- Additional reading: SESSION.md Worker #8, #9 and #10 Notes (Phase 11 carry-forwards: UART0 header; rail LEDs and their SJ2s; TPIO43/44/16 naming; test points on U3_IO43/44/16/15; `annotate.py`; `circuit-context.json` with `_provenance`; the label tidy); `hardware/pcb-main-v8/CONTEXT.md` (Test points, Debug LEDs, Parts, Jumper matrix); `tools/CONTEXT.md` (Source-Hash Rule; schematic-context `extract.py`/`annotate.py`).
+- W3 (task 4) is a user gate. The Worker prepares the review guide (what to look at in KiCad, open choices including R66 vs R27, the optional cosmetic tidy), commits, and returns PARTIAL. The Orchestrator relays it. The freeze tag comes after the user's fixes.
