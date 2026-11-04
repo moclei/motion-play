@@ -87,6 +87,7 @@ Order: #0005 A1 (ON), B (GND), A2 (ON); then #0004 A1 (GND), B (ON), A2 (GND).
 - S11 #0004 B: SW1 slider "left"; LEDs "power led only"; warm "no". Session (normal plug-in): /dev/cu.usbmodem14101
 - S12 #0004 B DC V, black G: M "0.000V", N "5.118V", P "3.270V". Session: M 0 V with N at 5.118 V is not self-consistent (U6 runs only with EN high); SW1 pin 2 sits ~1.5 mm from pin 3 (GND). M re-read with L as a cross-check (S12b, extra).
 - S12b #0004 B re-read: M "4.290V with variance up and down a bit"; L "4.300V with variance up and down a bit". (Item 2, which pin at S12: not answered.) Session: S12 M 0.000 V taken as a tip on the wrong pin (M); S12b M is the reading used.
+- S13 #0004 A2 (SW1 back to the right): N "3.775V with some variance"; P "2.700V with some variance". Items 1–3 (slider, LEDs, warm) not answered. Session (normal plug-in): no /dev/cu.usbmodem*, no idVendor 12346.
  | "USB Product Name" = "USB JTAG_serial debug unit"  | "idVendor" = 12346.
  | "USB Product Name" = "USB JTAG_serial debug unit"  | "idVendor" = 12346.
 ### Measured values (from log; cite `lab/evidence/PWR-002/...`)
