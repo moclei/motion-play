@@ -8,7 +8,7 @@
   "kicad_version": "20250114",
   "source_doc": "hardware/pcb-main-v8/CONTEXT.md#power-path",
   "v7_source": "hardware/pcb-main/kicad/circuit-context.json @ c2acffc",
-  "total_components": 135,
+  "total_components": 138,
   "units": {
    "position": "mm, KiCad schematic coordinates",
    "angle": "degrees"
@@ -151,7 +151,7 @@
    "ref": "J7",
    "lib_id": "USB-C_SMD-TYPE-C-31-M-12:TYPE-C-31-M-12",
    "value": "TYPE-C-31-M-12",
-   "footprint": "TYPE-C-31-M-12:USB-C_SMD-TYPE-C-31-M-12_1",
+   "footprint": "motion-play-v8:USB-C_SMD-TYPE-C-31-M-12_ShellGND",
    "lcsc": "C165948",
    "block": "usb_input",
    "position": [
@@ -172,7 +172,8 @@
     "B7": "USB_DN"
    },
    "v7_ref": "J7",
-   "note": "v7 symbol pin numbers (circuit-context @ c2acffc). SH pin '0' on GND as v7's schematic; v7's PCB rear legs had no net"
+   "note": "v7 symbol pin numbers (circuit-context @ c2acffc). SH pin '0' on GND as v7's schematic; v7's PCB rear legs had no net",
+   "_phase10": "v8 copy of the v7 footprint with the four shell legs numbered \"0\" (the symbol SH pin), so the shell is on GND on the PCB"
   },
   {
    "ref": "F2",
@@ -292,10 +293,11 @@
     101.6
    ],
    "pins": {
-    "1": "BAT_CONN",
-    "2": "GND"
+    "1": "GND",
+    "2": "BAT_CONN"
    },
-   "note": "Hand-fit or JLC THT. Phase 8 checks which pad is + against the housing's chamfer (keyed). Cell lead: XT30U-F C99102, female on the cell side"
+   "note": "Hand-fit or JLC THT. Phase 8 checks which pad is + against the housing's chamfer (keyed). Cell lead: XT30U-F C99102, female on the cell side",
+   "_phase10": "pins swapped: the stock AMASS_XT30UPB-M footprint marks pad 2 \"+\" and pad 1 \"-\" (silk)"
   },
   {
    "ref": "F3",
@@ -425,7 +427,7 @@
    "ref": "SW4",
    "lib_id": "Switch:SW_SPDT",
    "value": "BATT",
-   "footprint": "MK-12C02-G020_GSW",
+   "footprint": "JLC-MCP:MK-12C02-G020_GSW",
    "lcsc": "C431540",
    "block": "battery",
    "position": [
@@ -762,6 +764,42 @@
     "2": "GND"
    },
    "note": "PMID >= 60 uF (v7: 2 x 10 uF)"
+  },
+  {
+   "ref": "C69",
+   "lib_id": "Device:C",
+   "value": "22uF 25V",
+   "footprint": "Capacitor_SMD:C_1206_3216Metric",
+   "lcsc": "C12891",
+   "block": "charger",
+   "position": [
+    170.18,
+    55.88
+   ],
+   "pins": {
+    "1": "BQ_PMID",
+    "2": "GND"
+   },
+   "note": "PMID >= 60 uF (v7: 2 x 10 uF)",
+   "_phase10": "PMID 6 x 22 uF: DC-bias derating argued at ~50 % at 5 V (curve not readable numerically), so 4 would be ~44 uF effective vs the 60 uF minimum"
+  },
+  {
+   "ref": "C70",
+   "lib_id": "Device:C",
+   "value": "22uF 25V",
+   "footprint": "Capacitor_SMD:C_1206_3216Metric",
+   "lcsc": "C12891",
+   "block": "charger",
+   "position": [
+    175.26,
+    55.88
+   ],
+   "pins": {
+    "1": "BQ_PMID",
+    "2": "GND"
+   },
+   "note": "PMID >= 60 uF (v7: 2 x 10 uF)",
+   "_phase10": "PMID 6 x 22 uF: DC-bias derating argued at ~50 % at 5 V (curve not readable numerically), so 4 would be ~44 uF effective vs the 60 uF minimum"
   },
   {
    "ref": "C23",
@@ -1636,7 +1674,8 @@
     "2": "+5V_LED_F"
    },
    "v7_ref": "F1",
-   "note": "v7 F1 (LED sheet): +5V -> LED feed"
+   "note": "v7 F1 (LED sheet): +5V -> LED feed",
+   "sheet": "led_controller.kicad_sch"
   },
   {
    "ref": "R66",
@@ -1651,9 +1690,10 @@
    ],
    "pins": {
     "1": "+5V_LED_F",
-    "2": "+5V_TO_LEDS"
+    "2": "+5V_LED_H4"
    },
-   "note": "h4: shunt, reads 10 mV/A across J33"
+   "note": "h4: shunt, reads 10 mV/A across J33",
+   "sheet": "led_controller.kicad_sch"
   },
   {
    "ref": "J33",
@@ -1668,9 +1708,45 @@
    ],
    "pins": {
     "1": "+5V_LED_F",
+    "2": "+5V_LED_H4"
+   },
+   "dnp": true,
+   "sheet": "led_controller.kicad_sch"
+  },
+  {
+   "ref": "C7",
+   "lib_id": "Device:C",
+   "value": "100nF",
+   "footprint": "Capacitor_SMD:C_0603_1608Metric",
+   "block": "links",
+   "position": [
+    0,
+    0
+   ],
+   "pins": {
+    "1": "GND",
+    "2": "+5V_LED_H4"
+   },
+   "v7_ref": "C7",
+   "sheet": "led_controller.kicad_sch"
+  },
+  {
+   "ref": "R27",
+   "lib_id": "Device:R",
+   "value": "0.1R",
+   "footprint": "Resistor_SMD:R_2512_6332Metric",
+   "block": "links",
+   "position": [
+    0,
+    0
+   ],
+   "pins": {
+    "1": "+5V_LED_H4",
     "2": "+5V_TO_LEDS"
    },
-   "dnp": true
+   "v7_ref": "R27",
+   "sheet": "led_controller.kicad_sch",
+   "_phase10": "v7 0.1 ohm LED-strip current-sense resistor, missed by the Phase 7 spec; kept as v7, after link h4 (question for the user at W3: use R27 as h4 and drop R66?)"
   },
   {
    "_comment": "=== Test points: one signal pad + its own GND pad per net (Test points rule: 1.0-3.0 mm gap) ==="
@@ -1707,21 +1783,6 @@
    "pair_of": "TP10"
   },
   {
-   "ref": "TP11",
-   "lib_id": "Connector:TestPoint",
-   "value": "Protected_VBUS",
-   "footprint": "TestPoint:TestPoint_Pad_D1.5mm",
-   "lcsc": "",
-   "block": "test_points",
-   "position": [
-    50.8,
-    190.5
-   ],
-   "pins": {
-    "1": "Protected_VBUS"
-   }
-  },
-  {
    "ref": "TP51",
    "lib_id": "Connector:TestPoint",
    "value": "GND",
@@ -1735,7 +1796,7 @@
    "pins": {
     "1": "GND"
    },
-   "pair_of": "TP11"
+   "pair_of": "TP3"
   },
   {
    "ref": "TP12",
@@ -1800,21 +1861,6 @@
    "pair_of": "TP13"
   },
   {
-   "ref": "TP14",
-   "lib_id": "Connector:TestPoint",
-   "value": "VSYS",
-   "footprint": "TestPoint:TestPoint_Pad_D1.5mm",
-   "lcsc": "",
-   "block": "test_points",
-   "position": [
-    50.8,
-    205.74
-   ],
-   "pins": {
-    "1": "VSYS"
-   }
-  },
-  {
    "ref": "TP54",
    "lib_id": "Connector:TestPoint",
    "value": "GND",
@@ -1828,7 +1874,7 @@
    "pins": {
     "1": "GND"
    },
-   "pair_of": "TP14"
+   "pair_of": "TP1"
   },
   {
    "ref": "TP15",
@@ -1862,21 +1908,6 @@
    "pair_of": "TP15"
   },
   {
-   "ref": "TP16",
-   "lib_id": "Connector:TestPoint",
-   "value": "VBAT",
-   "footprint": "TestPoint:TestPoint_Pad_D1.5mm",
-   "lcsc": "",
-   "block": "test_points",
-   "position": [
-    25.4,
-    220.98
-   ],
-   "pins": {
-    "1": "VBAT"
-   }
-  },
-  {
    "ref": "TP56",
    "lib_id": "Connector:TestPoint",
    "value": "GND",
@@ -1890,7 +1921,7 @@
    "pins": {
     "1": "GND"
    },
-   "pair_of": "TP16"
+   "pair_of": "TP2"
   },
   {
    "ref": "TP17",
@@ -2060,7 +2091,8 @@
    ],
    "pins": {
     "1": "+5V_LED_F"
-   }
+   },
+   "sheet": "led_controller.kicad_sch"
   },
   {
    "ref": "TP62",
@@ -2076,7 +2108,8 @@
    "pins": {
     "1": "GND"
    },
-   "pair_of": "TP22"
+   "pair_of": "TP22",
+   "sheet": "led_controller.kicad_sch"
   },
   {
    "ref": "TP23",
@@ -2091,7 +2124,8 @@
    ],
    "pins": {
     "1": "+5V_TO_LEDS"
-   }
+   },
+   "sheet": "led_controller.kicad_sch"
   },
   {
    "ref": "TP63",
@@ -2107,7 +2141,41 @@
    "pins": {
     "1": "GND"
    },
-   "pair_of": "TP23"
+   "pair_of": "TP23",
+   "sheet": "led_controller.kicad_sch"
+  },
+  {
+   "ref": "TP36",
+   "lib_id": "Connector:TestPoint",
+   "value": "+5V_LED_H4",
+   "footprint": "TestPoint:TestPoint_Pad_D1.5mm",
+   "lcsc": "",
+   "block": "test_points",
+   "position": [
+    50.8,
+    251.46
+   ],
+   "pins": {
+    "1": "+5V_LED_H4"
+   },
+   "sheet": "led_controller.kicad_sch"
+  },
+  {
+   "ref": "TP76",
+   "lib_id": "Connector:TestPoint",
+   "value": "GND",
+   "footprint": "TestPoint:TestPoint_Pad_2.5x2.5mm",
+   "lcsc": "",
+   "block": "test_points",
+   "position": [
+    50.8,
+    251.46
+   ],
+   "pins": {
+    "1": "GND"
+   },
+   "sheet": "led_controller.kicad_sch",
+   "pair_of": "TP36"
   },
   {
    "ref": "TP24",
@@ -2483,7 +2551,6 @@
   }
  ],
  "nets": {
-  "_note": "Generated from the component pins. members = ref.pin. Nets on one pin here reach the rest of the board through an interface pin.",
   "GND": {
    "members": [
     "J7.0",
@@ -2494,7 +2561,7 @@
     "C20.2",
     "C21.2",
     "C22.2",
-    "J8.2",
+    "J8.1",
     "SW4.1",
     "J9.2",
     "U5.9",
@@ -2511,6 +2578,8 @@
     "C26.2",
     "C63.2",
     "C64.2",
+    "C69.2",
+    "C70.2",
     "C27.2",
     "C28.2",
     "C29.2",
@@ -2545,6 +2614,7 @@
     "C66.2",
     "C67.2",
     "C68.2",
+    "C7.1",
     "TP50.1",
     "TP51.1",
     "TP52.1",
@@ -2559,6 +2629,7 @@
     "TP61.1",
     "TP62.1",
     "TP63.1",
+    "TP76.1",
     "TP64.1",
     "TP65.1",
     "TP66.1",
@@ -2612,13 +2683,12 @@
     "C21.1",
     "C22.1",
     "U5.1",
-    "U5.24",
-    "TP11.1"
+    "U5.24"
    ]
   },
   "BAT_CONN": {
    "members": [
-    "J8.1",
+    "J8.2",
     "F3.1"
    ]
   },
@@ -2660,8 +2730,7 @@
     "U5.13",
     "U5.14",
     "C62.1",
-    "C30.1",
-    "TP16.1"
+    "C30.1"
    ]
   },
   "BATT_SW_COM": {
@@ -2746,8 +2815,7 @@
     "C29.1",
     "R62.1",
     "R44.1",
-    "U7.1",
-    "TP14.1"
+    "U7.1"
    ]
   },
   "BQ_SW": {
@@ -2780,6 +2848,8 @@
     "C26.1",
     "C63.1",
     "C64.1",
+    "C69.1",
+    "C70.1",
     "TP12.1"
    ]
   },
@@ -2983,15 +3053,24 @@
     "TP22.1"
    ]
   },
-  "+5V_TO_LEDS": {
+  "+5V_LED_H4": {
    "members": [
     "R66.2",
     "J33.2",
+    "C7.2",
+    "R27.1",
+    "TP36.1"
+   ]
+  },
+  "+5V_TO_LEDS": {
+   "members": [
+    "R27.2",
     "TP23.1"
    ]
   }
  },
  "_checks": {
   "nets_with_one_member_not_interface": []
- }
+ },
+ "_note_phase10": "Phase 10 (2026-11-03) corrections, applied by tools/schematic-modify/v8_power_sheet.py: J8 pins swapped (XT30 footprint +/-), SW4 footprint library prefix, J7 v8 shell-GND footprint, PMID 6 x 22 uF (C69, C70), TP11/14/16 dropped (v7 TP3/TP1/TP2 cover them; TP51/54/56 are their ground points), LED rail parts on the LED sheet with v7 C7/R27 kept after link h4 (+5V_LED_H4, TP36/TP76). Positions here are not used; the script grids the parts."
 }

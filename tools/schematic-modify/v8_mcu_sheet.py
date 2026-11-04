@@ -219,7 +219,7 @@ EXPECTED = {
     "JP1.1": "/ESP32_S3/U3_IO16", "JP1.2": "/I2C_SDA", "JP1.3": "/ESP32_S3/U3_IO43", "JP1.4": "/ESP32_S3/UART0_TX",
     "JP2.1": "/ESP32_S3/U3_IO15", "JP2.2": "/I2C_SCL", "JP2.3": "/ESP32_S3/U3_IO44", "JP2.4": "/ESP32_S3/UART0_RX",
     # Row e
-    "J10.1": "GND", "J10.2": "/ESP32_S3/EXT_SDA", "J10.3": "/ESP32_S3/EXT_SCL", "J10.4": "/+3.3V_BUS",
+    "J10.1": "GND", "J10.2": "/ESP32_S3/EXT_SDA", "J10.3": "/ESP32_S3/EXT_SCL", "J10.4": "+3.3V_BUS",
     "JP3.1": "/ESP32_S3/EXT_SDA", "JP3.2": "/I2C_SDA", "JP4.1": "/ESP32_S3/EXT_SCL", "JP4.2": "/I2C_SCL",
     # Row g
     "JP5.1": "/ESP32_S3/U3_IO18", "JP5.2": "/LED_DATA", "JP5.3": "/ESP32_S3/U3_IO16", "D5.1": "/LED_DATA",
@@ -239,19 +239,24 @@ NEW_REFS = ("JP1", "JP2", "JP3", "JP4", "JP5", "J10")
 
 
 def later_phases():
-    """Refs and jumper positions added by later phases' scripts (Phase 9: v8_bus_sheet.py), so
-    this check stays valid on the whole v8 schematic. Returns (new refs, v7 shorts, v8 shorts)."""
-    refs, v7, v8 = [], [], []
-    try:
-        import v8_bus_sheet as bus
-    except ImportError:
-        return refs, v7, v8
-    sch = Path(bus.__file__)
-    if sch.exists():
-        refs += list(bus.NEW_REFS)
-        v7 += list(bus.V7_SHORTS)
-        v8 += list(bus.V8_SHORTS)
-    return refs, v7, v8
+    """Refs and jumper positions added by later phases' scripts (Phase 9: v8_bus_sheet.py,
+    Phase 10: v8_power_sheet.py), so this check stays valid on the whole v8 schematic.
+    Returns (new refs, v7 shorts, v8 shorts, v7-side drop refs, v7-side shorts). The v7-side
+    pair models v7 parts that have no v7 position on v8 (Phase 10: the battery protection,
+    user decision 2026-11-03): they are dropped from the v7 netlist with their conducting
+    state applied as shorts, and the v8 replacement parts likewise."""
+    refs, v7, v8, v7_drop, v7_side = [], [], [], [], []
+    for name in ("v8_bus_sheet", "v8_power_sheet"):
+        try:
+            mod = __import__(name)
+        except ImportError:
+            continue
+        refs += list(mod.NEW_REFS)
+        v7 += list(mod.V7_SHORTS)
+        v8 += list(mod.V8_SHORTS)
+        v7_drop += list(getattr(mod, "V7_SIDE_DROP", ()))
+        v7_side += list(getattr(mod, "V7_SIDE_SHORTS", ()))
+    return refs, v7, v8, v7_drop, v7_side
 
 
 def merged(nets, pin_net, shorts, drop_refs=NEW_REFS):
@@ -320,9 +325,10 @@ def check() -> int:
             p.write_text(p.read_text().replace("${KIPRJMOD}/../resources/",
                                                str(REPO / "hardware/pcb-main/resources") + "/"))
         v7_pin_net, v7_nets, _ = netlist(v7dir / "motion-play-main.kicad_sch", td / "v7.xml")
+        later_refs, later_v7, later_v8, v7_drop, v7_side = later_phases()
         # Map v7 IC1 pin numbers onto the single-gate part; drop the quad's unused pins.
-        v7_sets = set()
-        for members in v7_nets.values():
+        mapped_nets = {}
+        for name, members in v7_nets.items():
             mapped = set()
             for m in members:
                 ref, pin = m.split(".")
@@ -331,9 +337,11 @@ def check() -> int:
                         continue
                     m = "IC1." + IC1_PIN_MAP_V7_TO_V8[pin]
                 mapped.add(m)
-            if mapped:
-                v7_sets.add(frozenset(mapped))
-        later_refs, later_v7, later_v8 = later_phases()
+            mapped_nets[name] = mapped
+        v7_sets = merged(mapped_nets, v7_pin_net, v7_side, tuple(v7_drop))
+        if v7_drop:
+            print("v7 parts with no v7 position on v8, dropped from the v7 netlist (conducting): {}".format(
+                ", ".join(v7_drop)))
         all_new = tuple(NEW_REFS) + tuple(later_refs)
         present = {k.split(".")[0] for k in pin_net}
         later_v7 = [s for s in later_v7 if s[0].split(".")[0] in present]

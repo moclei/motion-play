@@ -782,3 +782,74 @@ def set_pin_net(sheet_doc: SheetDoc, ref: str, pin_number: str, net: str) -> str
     sch.graphicalItems.append(_make_wire(pin_xy, end))
     sch.labels.append(_make_local_label(net, end[0], end[1], _label_angle(pin_xy, end)))
     return "{}.{}: {}stub + label {}".format(ref, pin_number, "no-connect removed, " if had_nc else "", net)
+
+
+# ---------------------------------------------------------------------------
+# Added 2026-11-03 (v8-debug-board Phase 10)
+# ---------------------------------------------------------------------------
+
+def remove_component_with_stubs(sheet_doc: SheetDoc, ref: str) -> List[str]:
+    """Remove a label-wired symbol together with each pin's wire stub and the labels or
+    no-connects at the stub end (only when nothing else joins that end). Pins wired into a
+    network raise, as set_pin_net does. Returns the removed labels' texts."""
+    sym = find_component(sheet_doc, ref)
+    if sym is None:
+        raise ValueError("{} not found on {}".format(ref, sheet_doc.path.name))
+    lib = get_lib_symbol_for(sheet_doc, sym.libId)
+    sch = sheet_doc.schematic
+    removed = []
+    for num, _, _, _ in _pin_records(lib):
+        pin_xy, _, _ = pin_position(sheet_doc, ref, num)
+        stubs = [w for w in sch.graphicalItems
+                 if getattr(w, "type", None) == "wire" and len(w.points) == 2
+                 and any(_same_point((q.X, q.Y), pin_xy) for q in w.points)]
+        remove_no_connect_at(sheet_doc, pin_xy)
+        if not stubs:
+            continue
+        if len(stubs) > 1:
+            raise ValueError("{}.{}: {} wires on the pin".format(ref, num, len(stubs)))
+        w = stubs[0]
+        end = [(q.X, q.Y) for q in w.points if not _same_point((q.X, q.Y), pin_xy)][0]
+        others = [x for x in sch.graphicalItems
+                  if x is not w and getattr(x, "type", None) == "wire"
+                  and any(_same_point((q.X, q.Y), end) for q in x.points)]
+        if others:
+            raise ValueError("{}.{}: stub end {} joins other wires".format(ref, num, end))
+        sch.graphicalItems = [x for x in sch.graphicalItems if x is not w]
+        for l in [l for l in sch.labels if _same_point((l.position.X, l.position.Y), end)]:
+            removed.append(l.text)
+            sch.labels.remove(l)
+        remove_no_connect_at(sheet_doc, end)
+    remove_component(sheet_doc, ref)
+    if not any(s.libId == sym.libId for s in sch.schematicSymbols):
+        sch.libSymbols = [l for l in sch.libSymbols if l.libId != sym.libId]
+    return removed
+
+
+def set_property(sheet_doc: SheetDoc, ref: str, key: str, value: str) -> str:
+    """Set (or add, hidden) a property on a placed symbol. Returns 'old -> new'."""
+    sym = find_component(sheet_doc, ref)
+    if sym is None:
+        raise ValueError("{} not found on {}".format(ref, sheet_doc.path.name))
+    for p in sym.properties:
+        if p.key == key:
+            old, p.value = p.value, value
+            return "{} {}: {} -> {}".format(ref, key, old, value)
+    sym.properties.append(make_property(key, value, Position(X=sym.position.X, Y=sym.position.Y, angle=0),
+                                        True, len(sym.properties)))
+    return "{} {}: (new) {}".format(ref, key, value)
+
+
+def add_power_symbol(sheet_doc: SheetDoc, lib_symbol: object, lib_id: str, ref: str, value: str,
+                     position: Tuple[float, float], project_name: str) -> None:
+    """Place a power symbol (or PWR_FLAG) with its pin exactly on `position` (no stub), so it
+    joins whatever label, wire end or pin sits there. For power symbols the Value names the
+    global net (KiCad 9: checked on this project, Phase 10)."""
+    add_component(sheet_doc, lib_symbol=lib_symbol, lib_id=lib_id, ref=ref, value=value, footprint="",
+                  lcsc_part="", position=position, pin_nets={}, project_name=project_name)
+    sym = find_component(sheet_doc, ref)
+    sym.inBom = False
+    sym.onBoard = False
+    for p in sym.properties:
+        if p.key == "Reference":
+            p.effects.hide = True

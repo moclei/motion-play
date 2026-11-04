@@ -288,7 +288,7 @@ def _short(net):
 
 def expected_short_names():
     """Pin -> last path component of the netlist net name."""
-    alias = {"I2C_SDA_IN": "I2C_SDA", "I2C_SCL_IN": "I2C_SCL", RAIL: "+3.3V"}
+    alias = {"I2C_SDA_IN": "I2C_SDA", "I2C_SCL_IN": "I2C_SCL", RAIL: "+3.3V_BUS"}
     exp = {}
     for _, ref, _, _, _, _, _, nets, _ in PARTS:
         for pin, net in nets.items():
@@ -298,7 +298,7 @@ def expected_short_names():
     for n, j in CH:
         exp["{}.3".format(j)] = ch(n, "SDA", "_CONN")
         exp["{}.4".format(j)] = ch(n, "SCL", "_CONN")
-    exp.update({"R28.1": "PU_SDA_2K2", "R29.1": "PU_SCL_2K2", "R28.2": "+3.3V", "R29.2": "+3.3V",
+    exp.update({"R28.1": "PU_SDA_2K2", "R29.1": "PU_SCL_2K2", "R28.2": "+3.3V_BUS", "R29.2": "+3.3V_BUS",
                 "U4.23": "I2C_SDA", "U4.22": "I2C_SCL", "U5.6": "BQ_SDA", "U5.5": "BQ_SCL",
                 "U7.6": "I2C_SDA", "U7.5": "I2C_SCL"})
     return exp
@@ -421,8 +421,8 @@ def check() -> int:
     facts.append(("row d SCL shunt 5-6: R89 (10 k) on I2C_SCL, R29/R88 off",
                   "R89.1" in bus10 and not ({"R29.1", "R88.1"} & bus10)))
     g_dn = _groups(nets, pin_net, base_v8 + [("JP21.1", "JP21.2")])
-    facts.append(("row d downstream JP21 closed: R90 (4.7 k) on CH0_SDA, rail end on +3.3V",
-                  "R90.1" in _group_of(g_dn, "U4.4") and _short(pin_net["R90.2"]) == "+3.3V"))
+    facts.append(("row d downstream JP21 closed: R90 (4.7 k) on CH0_SDA, rail end on +3.3V_BUS",
+                  "R90.1" in _group_of(g_dn, "U4.4") and _short(pin_net["R90.2"]) == "+3.3V_BUS"))
     for text, ok in facts:
         fails += not ok
         print("  {} {}".format("ok " if ok else "BAD", text))
