@@ -34,7 +34,8 @@ Usage:
   python3 tools/schematic-modify/v8_debug_sheet.py            # dry run: print the plan
   python3 tools/schematic-modify/v8_debug_sheet.py --apply    # edit (refuses if J11 exists)
   python3 tools/schematic-modify/v8_debug_sheet.py --check    # Phase 8-10 checks + Phase 11 pins,
-                                                              # BOM audit, ERC summary
+                                                              # BOM audit, ERC summary,
+                                                              # layout_check.py (Phase 11b)
   python3 tools/schematic-modify/v8_debug_sheet.py --annotate # ai_* properties on the v8 parts
                                                               # (Phases 8-11), via annotate.py
 """
@@ -353,6 +354,10 @@ def check() -> int:
     errors = sum(n for (sev, _), n in counts.items() if sev == "error")
     print("  errors: {}".format(errors))
     fails += errors
+
+    # Readability (Phase 11b): visible fields, off-paper items, overlap / stacked-label ratchet.
+    import layout_check
+    fails += layout_check.run(ROOT)
     print("PHASE 11 CHECK {}".format("PASSED" if fails == 0 else "FAILED ({} problems)".format(fails)))
     return 1 if fails else 0
 
