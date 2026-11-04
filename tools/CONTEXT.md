@@ -12,7 +12,7 @@
 - **Markdown:** the same fields as a front-matter block.
 - **Images:** a sidecar `<name>.meta.json`, or the provenance block of the narrative that embeds them.
 - **Check:** `python3 tools/lab/check_state.py --fresh <file>` recomputes the source hash (exit 0 fresh, 1 stale, 2 no provenance). Run it before citing a generated file in a card or a design decision.
-- **Scope:** all generated context, including the existing `circuit-context.json` outputs. Those have no `_provenance` yet (no retrofit is scheduled; the board model in `pcb-context/` covers `.kicad_pcb` outputs only), so `--fresh` reports them as having none (exit 2). Until a retrofit, judge their freshness from git.
+- **Scope:** all generated context, including `circuit-context.json`. `extract.py` writes `_provenance` since 2026-11-03 (v8-debug-board Phase 11): `source` is the root sheet and `sources` maps each child sheet to its sha256; `--fresh` checks both, so an edit to any sheet marks the file stale. Older `circuit-context.json` outputs (v7, sensor boards) have none, so `--fresh` reports them as having none (exit 2); judge those from git.
 
 ## KiCad Schematic Tools
 
