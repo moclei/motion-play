@@ -196,8 +196,11 @@ def _compute_pin_position(
     cos_a = math.cos(angle_rad)
     sin_a = math.sin(angle_rad)
 
-    sch_x = sym_x + pin_lib_x * cos_a + pin_lib_y * sin_a
-    sch_y = sym_y - pin_lib_x * sin_a + pin_lib_y * (-cos_a)
+    # Library Y is up, sheet Y is down; KiCad rotates counter-clockwise on screen.
+    # (Before 2026-11-03 the X term used +pin_lib_y*sin_a, which put pins of 90/270-degree
+    # symbols at the wrong end; 0/180-degree symbols were unaffected.)
+    sch_x = sym_x + pin_lib_x * cos_a - pin_lib_y * sin_a
+    sch_y = sym_y - pin_lib_x * sin_a - pin_lib_y * cos_a
     return round(sch_x, 2), round(sch_y, 2)
 
 
@@ -632,6 +635,53 @@ def remove_wire_between(
         keep.append(item)
     sheet_doc.schematic.graphicalItems = keep
     return removed
+
+
+def remove_junction_at(
+    sheet_doc: SheetDoc,
+    position: Tuple[float, float],
+    tolerance: float = 0.05,
+) -> bool:
+    x, y = position
+    keep = []
+    removed = False
+    for j in sheet_doc.schematic.junctions:
+        if abs(j.position.X - x) < tolerance and abs(j.position.Y - y) < tolerance:
+            removed = True
+            continue
+        keep.append(j)
+    sheet_doc.schematic.junctions = keep
+    return removed
+
+
+def add_local_label(sheet_doc: SheetDoc, text: str, position: Tuple[float, float], angle: float = 0) -> None:
+    """Place a local label at a point. The caller makes sure the point is on a wire end,
+    a wire or a pin of the net it should join (a label touching nothing is dangling)."""
+    sheet_doc.schematic.labels.append(_make_local_label(text, float(position[0]), float(position[1]), angle))
+
+
+def add_wire(sheet_doc: SheetDoc, start: Tuple[float, float], end: Tuple[float, float]) -> None:
+    sheet_doc.schematic.graphicalItems.append(_make_wire(start, end))
+
+
+def rename_hlabel(sheet_doc: SheetDoc, old: str, new: str) -> int:
+    """Rename every hierarchical label `old` on a sheet; returns how many were renamed.
+    The parent's sheet pin must be renamed to match (rename_sheet_pin)."""
+    n = 0
+    for hl in sheet_doc.schematic.hierarchicalLabels:
+        if hl.text == old:
+            hl.text = new
+            n += 1
+    return n
+
+
+def rename_sheet_pin(root_doc: SheetDoc, file_name: str, old: str, new: str) -> bool:
+    sheet = find_sheet_ref(root_doc, file_name)
+    for pin in sheet.pins:
+        if pin.name == old:
+            pin.name = new
+            return True
+    return False
 
 
 def add_no_connect(sheet_doc: SheetDoc, position: Tuple[float, float]) -> None:

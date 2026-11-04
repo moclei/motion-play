@@ -238,8 +238,24 @@ V8_SHORTS = [("JP1.1", "JP1.2"), ("JP1.3", "JP1.4"), ("JP2.1", "JP2.2"), ("JP2.3
 NEW_REFS = ("JP1", "JP2", "JP3", "JP4", "JP5", "J10")
 
 
-def merged(nets, pin_net, shorts):
-    """Net membership with jumper shorts applied, jumper/new-header pins dropped."""
+def later_phases():
+    """Refs and jumper positions added by later phases' scripts (Phase 9: v8_bus_sheet.py), so
+    this check stays valid on the whole v8 schematic. Returns (new refs, v7 shorts, v8 shorts)."""
+    refs, v7, v8 = [], [], []
+    try:
+        import v8_bus_sheet as bus
+    except ImportError:
+        return refs, v7, v8
+    sch = Path(bus.__file__)
+    if sch.exists():
+        refs += list(bus.NEW_REFS)
+        v7 += list(bus.V7_SHORTS)
+        v8 += list(bus.V8_SHORTS)
+    return refs, v7, v8
+
+
+def merged(nets, pin_net, shorts, drop_refs=NEW_REFS):
+    """Net membership with jumper shorts applied, jumper/new-part pins dropped."""
     parent = {n: n for n in nets}
 
     def find(a):
@@ -254,7 +270,7 @@ def merged(nets, pin_net, shorts):
         groups.setdefault(find(n), set()).update(members)
     out = []
     for members in groups.values():
-        kept = frozenset(m for m in members if m.split(".")[0] not in NEW_REFS)
+        kept = frozenset(m for m in members if m.split(".")[0] not in drop_refs)
         if kept:
             out.append(kept)
     return set(out)
@@ -317,23 +333,30 @@ def check() -> int:
                 mapped.add(m)
             if mapped:
                 v7_sets.add(frozenset(mapped))
-        v8_sets = merged(nets, pin_net, V7_SHORTS)
+        later_refs, later_v7, later_v8 = later_phases()
+        all_new = tuple(NEW_REFS) + tuple(later_refs)
+        present = {k.split(".")[0] for k in pin_net}
+        later_v7 = [s for s in later_v7 if s[0].split(".")[0] in present]
+        later_v8 = [s for s in later_v8 if s[0].split(".")[0] in present]
+        v8_sets = merged(nets, pin_net, V7_SHORTS + later_v7, all_new)
         # Single-pin unconnected nets are not interesting.
         v7_sets = {s for s in v7_sets if len(s) > 1}
         v8_sets = {s for s in v8_sets if len(s) > 1}
         only7 = v7_sets - v8_sets
         only8 = v8_sets - v7_sets
-        print("All-v7 positions (JP1 2-3, JP2 2-3, JP5 pads 2-3, JP3/JP4 open) vs v7 @ {}: "
-              "{} nets differ in v7, {} in v8".format(V7_COMMIT, len(only7), len(only8)))
+        print("All-v7 positions (JP1 2-3, JP2 2-3, JP5 pads 2-3, JP3/JP4 open{}) vs v7 @ {}: "
+              "{} nets differ in v7, {} in v8".format(
+                  "; later phases' v7 shorts: {}".format(len(later_v7)) if later_v7 else "",
+                  V7_COMMIT, len(only7), len(only8)))
         for s in sorted(only7, key=sorted):
             print("  v7 only:", sorted(s))
         for s in sorted(only8, key=sorted):
             print("  v8 only:", sorted(s))
         fails += bool(only7 or only8)
 
-        v8_default = merged(nets, pin_net, V8_SHORTS)
+        v8_default = merged(nets, pin_net, V8_SHORTS + later_v8, all_new)
         for bus in ("/I2C_SDA", "/I2C_SCL", "/LED_DATA"):
-            seed = {m for m in nets[bus] if m.split(".")[0] not in NEW_REFS}
+            seed = {m for m in nets[bus] if m.split(".")[0] not in all_new}
             for s in v8_default:
                 if s & seed:
                     print("v8 default positions: {} members: {}".format(bus, sorted(s)))

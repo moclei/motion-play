@@ -49,10 +49,11 @@ Surgical in-place edits on existing `.kicad_sch` files — adding/removing compo
 
 | File | Purpose |
 |------|---------|
-| `modify.py` | Reusable helpers: `add_component`, `remove_component`, `add_hierarchical_label`, `add_sheet_reference`, `annotate_components`, `set_pin_net` (move a label-wired pin to another net), `pin_position`, `remove_no_connect_at`. |
+| `modify.py` | Reusable helpers: `add_component`, `remove_component`, `add_hierarchical_label`, `add_sheet_reference`, `annotate_components`, `set_pin_net` (move a label-wired pin to another net), `pin_position`, `remove_no_connect_at`, `remove_junction_at`, `add_local_label`, `add_wire`, `rename_hlabel`, `rename_sheet_pin`. |
 | `esp32_integration.py` | Initiative-specific script that used `modify.py` to integrate the ESP32-S3 into the main schematic. |
 | `v8_project_setup.py` | v8-debug-board: creates `hardware/pcb-main-v8/kicad/` from the v7 project at `c2acffc` (renamed `motion-play-main-v8`, empty stackup-only board) and verifies it with kicad-cli. |
 | `v8_mcu_sheet.py` | v8-debug-board: MCU sheet edits for jumper rows a, e, g and the IC1 swap; `--check` verifies pin -> net and the all-v7 positions against v7. |
+| `v8_bus_sheet.py` | v8-debug-board: TCA sheet edits for jumper rows b, d, f (channel protection, pull-up options, BQ isolate) and channel test points; `--check` runs the MCU check plus each jumper's positions. |
 
 See `tools/schematic-modify/CONTEXT.md` for relationship details and typical workflow.
 

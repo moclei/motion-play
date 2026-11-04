@@ -89,7 +89,7 @@
 
 ## Phase 9: Schematic — TCA, bus and channels
 
-- [~] Jumpers (b), (d), (f) and the cable-facing protection on CH0–CH2, the upstream/downstream pull-up options, BQ I²C isolate, and channel test points
+- [x] Jumpers (b), (d), (f) and the cable-facing protection on CH0–CH2, the upstream/downstream pull-up options, BQ I²C isolate, and channel test points
 - [ ] **(user)** steps for wiring the tools can't do. Worker re-extracts and checks each jumper's two positions give the expected net membership (v7 position = v7 netlist membership for that net)
 - [ ] 🔄 Handoff
 
