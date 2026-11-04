@@ -462,3 +462,21 @@ Also found unprompted (not in the audit): SDA's three vias are each 3.2–4.0 mm
 Phase 7 task 1 is the W1 gate. Before dispatching, the Orchestrator checked every local and remote branch for `lab/cards/PWR-*` and `lab/investigations/power/`. There are none; `lab/investigations/` holds only `v7-i2c`. W1 hasn't closed, so no Worker was dispatched (the relay says to stop at Phase 7, not skip ahead). Phase 7 task 1 stays `[ ]`.
 
 **Outcome:** Paused — awaiting user decision (W1: the Debugger's power bench findings, `debugger/RELAY-power.md`). Phases 1–6 are complete. Phases 8+ depend on Phase 7.
+
+---
+
+## 2026-11-03 — orchestration run 1, resumed
+
+Entry conditions: the Debugger's `power` investigation merged to `main` (PR #90, `76ba42b`), with cards PWR-001 and PWR-002. `main` was merged into `feat/v8-debug-board` (`b55eafb`); no conflicts, and only `lab/` files came in. `lab/investigations/power/STATE.md` §8 leaves the W1 call to the user.
+
+**User decision (2026-11-03), relayed by the Orchestrator:** W1 is closed on PWR-001 and PWR-002. B1 (reversed cell) and B2 (Q2 under load) are untested; they are to be treated as design risks that v8 designs out, not as open bench questions.
+
+---
+
+### Worker #7 — Phase 7: Power path design
+
+**Dispatch:** standard spawn prompt, plus:
+- W1 answer (task 1): closed by the user 2026-11-03 on PWR-001, PWR-002. The Worker records it and ticks task 1.
+- Additional reading: `lab/investigations/power/STATE.md` §1–§4 and §8; `lab/cards/PWR-001-passive-0004-0005.md` and `lab/cards/PWR-002-sw1-throw-on-usb.md` Conclusions (read-only); SESSION.md Worker #1, #2 and #4 Notes (BQ fix options, ranked mechanisms, design deviations, Phase 7 carry-forwards); `hardware/pcb-main-v8/CONTEXT.md` (all sections; OQ-4 decision = ≤ 100 × 100 mm with a keyed, polarised battery cable connector); `docs/references/{bq24195,tps61088,ina219}/DATASHEET_REFERENCE.md`; `tools/schematic-gen/` (spec format).
+- Design input from PWR-002: with SW1 at its OFF (GND) throw, v7 doesn't run on USB at all. Jumper row (i)'s default needs reconsidering.
+- The user's power-path approval (task 5) is a user gate: the Worker prepares the summary and returns PARTIAL.
