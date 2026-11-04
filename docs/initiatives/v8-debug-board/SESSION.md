@@ -518,3 +518,12 @@ After approval: change the Power path status to "approved by the user <date> (W2
 - Two items touch earlier approvals or the BRIEF, so they go to the user explicitly rather than being accepted by the Orchestrator: (1) row i's default reverses a W2-part-1 decision; (2) the battery protection has no v7 position, while BRIEF Constraints say "every suspected v7 → v8 difference has a v7 position". The Orchestrator's reading is that the constraint concerns differences suspected in the v7 I²C fault, and the battery path isn't one, but that's the user's call.
 - Stock: BQ24195RGER has 14 in stock (5 needed). The pin-identical BQ24195L fallback is recorded. Phase 19 preflight re-checks.
 - Loop paused for the user: task 5 (power path approval: row i default, no v7 battery-protection position, row l default, SW4 trade-off).
+
+**User decisions (2026-11-03), relayed by the Orchestrator:** power path approved (task 5, closes W2), with these answers:
+- Battery protection (XT30 → 7 A fuse → back-to-back P-MOSFETs) has **no v7 position**. The user accepts this as an exception to the BRIEF's v7-position rule, because the battery path isn't an I²C-fault suspect.
+- Row i default = **boost always on**; SW1 as v7 is the v7 position. This supersedes the 2026-11-02 W2-part-1 default for row i.
+- Row l default = **board thermistor (v7 behaviour)**; the cell NTC socket is the alternate position. This is the opposite of the Worker's proposed default.
+- **SW4 "BATT" kept**, with its trade-off (no charging with SW4 off) accepted.
+- Points 1, 6, 7, 8 (keep the BQ24195 with rows j/k, two regulators, four current links, datasheet fixes) accepted as written.
+
+Re-dispatch: Worker #7 resumed with its context to apply the row l default, close task 5 and do the Handoff.
