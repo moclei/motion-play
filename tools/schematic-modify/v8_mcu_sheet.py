@@ -49,6 +49,7 @@ import xml.etree.ElementTree as ET
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
+import kiutils_k9  # noqa: E402,F401  (KiCad 8/9 '(hide yes)' shim; must precede any load)
 import modify  # noqa: E402
 from kiutils.items.common import Effects, Font, Position  # noqa: E402
 from kiutils.items.schitems import HierarchicalPin  # noqa: E402

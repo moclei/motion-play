@@ -38,7 +38,10 @@ import tempfile
 import xml.etree.ElementTree as ET
 from pathlib import Path
 
-from kiutils.board import Board
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+import kiutils_k9  # noqa: E402  (KiCad 8/9 '(hide yes)' shim; must precede any load)
+
+from kiutils.board import Board  # noqa: E402
 from kiutils.items.common import Net
 from kiutils.schematic import Schematic
 
@@ -121,7 +124,7 @@ def rename_instances() -> None:
             sch.titleBlock.title = TITLE
             sch.titleBlock.revision = REVISION
             sch.titleBlock.date = today
-        sch.to_file(str(f))
+        kiutils_k9.save_schematic(sch, f)
         print("  {}: {} instances renamed".format(f.name, n))
 
 

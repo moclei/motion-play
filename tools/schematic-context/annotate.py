@@ -27,6 +27,9 @@ import sys
 from pathlib import Path
 from typing import Dict, List, Optional, Tuple
 
+sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "schematic-modify"))
+import kiutils_k9  # noqa: E402  (KiCad 8/9 '(hide yes)' shim; must precede any load)
+
 try:
     from kiutils.schematic import Schematic
     from kiutils.items.common import Effects, Font, Property
@@ -298,7 +301,7 @@ def main() -> None:
 
     for file_key in sorted(modified_keys):
         sch_path, sch = schematics[file_key]
-        sch.to_file(str(sch_path))
+        kiutils_k9.save_schematic(sch, sch_path)
         print("\nSaved {}".format(sch_path.name))
 
     if errors:

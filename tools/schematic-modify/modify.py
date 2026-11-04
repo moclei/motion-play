@@ -17,7 +17,10 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Dict, List, Optional, Tuple
 
-from kiutils.items.common import Effects, Font, Position, Property, Stroke
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+import kiutils_k9  # noqa: E402  (KiCad 8/9 '(hide yes)' shim; must precede any load)
+
+from kiutils.items.common import Effects, Font, Position, Property, Stroke  # noqa: E402
 from kiutils.items.schitems import (
     Connection,
     HierarchicalLabel,
@@ -62,11 +65,12 @@ class ProjectDocs:
         raise KeyError("Unknown sheet key: {}".format(key))
 
     def save_all(self) -> None:
+        kiutils_k9.assert_not_open(self.root_path)
         saved = set()
         for doc in self.by_key.values():
             if str(doc.path) in saved:
                 continue
-            doc.schematic.to_file(str(doc.path))
+            kiutils_k9.save_schematic(doc.schematic, doc.path)
             saved.add(str(doc.path))
 
 

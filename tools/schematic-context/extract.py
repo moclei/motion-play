@@ -31,6 +31,12 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Dict, List, Optional, Set, Tuple
 
+sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "schematic-modify"))
+try:
+    import kiutils_k9  # noqa: E402,F401  (KiCad 8/9 '(hide yes)' shim; must precede any load)
+except ImportError:
+    pass  # no kiutils: the netlist-only path below still works
+
 try:
     from kiutils.schematic import Schematic
 except ImportError:

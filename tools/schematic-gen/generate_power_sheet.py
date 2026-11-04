@@ -25,6 +25,10 @@ import sys
 import uuid
 from pathlib import Path
 
+import sys as _sys
+_sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "schematic-modify"))
+import kiutils_k9  # noqa: E402  (KiCad 8/9 '(hide yes)' shim; must precede any load)
+
 from kiutils.schematic import Schematic
 from kiutils.symbol import SymbolLib
 from kiutils.items.schitems import (
@@ -424,7 +428,7 @@ def generate(output_path: Path) -> None:
         sch.labels.append(make_net_label(iface["net"], stub_end_x, y, angle=0))
         label_count += 1
 
-    sch.to_file(str(output_path))
+    kiutils_k9.save_schematic(sch, output_path)
 
     real_comps = [c for c in spec["components"] if isinstance(c, dict) and "ref" in c]
     print(f"Generated: {output_path}")

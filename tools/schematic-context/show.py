@@ -22,6 +22,9 @@ import sys
 from pathlib import Path
 from typing import Dict, List, Optional, Tuple
 
+sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "schematic-modify"))
+import kiutils_k9  # noqa: E402  (KiCad 8/9 '(hide yes)' shim; must precede any load)
+
 try:
     from kiutils.schematic import Schematic
 except ImportError:

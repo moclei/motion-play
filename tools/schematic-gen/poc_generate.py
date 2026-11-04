@@ -20,6 +20,10 @@ import sys
 import uuid
 from pathlib import Path
 
+import sys as _sys
+_sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "schematic-modify"))
+import kiutils_k9  # noqa: E402  (KiCad 8/9 '(hide yes)' shim; must precede any load)
+
 from kiutils.schematic import Schematic
 from kiutils.items.schitems import (
     Connection,
@@ -229,7 +233,7 @@ def generate(output_path: Path) -> None:
     sch.labels.append(make_net_label("GND", Position(X=w2_end[0], Y=w2_end[1], angle=0)))
     sch.labels.append(make_net_label("GND", Position(X=w4_end[0], Y=w4_end[1], angle=0)))
 
-    sch.to_file(str(output_path))
+    kiutils_k9.save_schematic(sch, output_path)
     print(f"Generated: {output_path}")
     print(f"  2 resistors (R99 10kΩ, R100 4.7kΩ)")
     print(f"  4 wire stubs + 4 net labels (TEST_NET × 2, GND × 2)")
