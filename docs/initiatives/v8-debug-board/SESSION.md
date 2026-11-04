@@ -639,3 +639,24 @@ Task 5 and the Phase 7 Handoff are ticked. PLAN is unchanged beyond the Rejected
 **Cosmetic, for the user at W3 (not a gate):** in the new grid, label text overlaps some part reference/value text, and the CHn_x and CHn_x_CONN labels by U4 crowd each other. After any GUI move, re-run `python3 tools/schematic-modify/v8_bus_sheet.py --check`.
 
 **Left for later:** test points for I2C_SDA/SCL, BQ_SDA/SCL and I2C_PU_RAIL, plus `annotate.py` for the new parts (Phase 11). +3.3V_BUS moves and row c (Phase 10). PLAN is unchanged, with no rejected approaches.
+
+#### Result
+| # | Phase | Result | Escalation evaluated? | Commit | Notes |
+|---|-------|--------|-----------------------|--------|-------|
+| 9 | Phase 9: Schematic — TCA, bus and channels | DONE | Yes (step 11) — `modify.py` rotation fix and a Deferred line outside the plan; accepted, no replan | 8bebde5 | No user steps; commits c5241b9, 8bebde5 |
+
+#### Verification
+- TASKS.md Phase 9: all three items `[x]`. Working tree clean. v7 (`hardware/pcb-main/`) untouched.
+- Re-ran `v8_bus_sheet.py --check`: PHASE 9 CHECK PASSED. The all-v7 jumper set (a, b, d, e, f, g) gives 0 net differences against v7 `c2acffc`, and the alternate row b/d/f settings give the expected memberships.
+- ERC at error severity: still 7, the same set as Phase 8. The new I2C_PU_RAIL `multiple_net_names` item is a warning.
+- The rotation fix in `modify._compute_pin_position` is a tool bug fix. Phase 8's output is unchanged: its check still passes, and it now also runs inside Phase 9's check. The same bug in the `schematic-gen` generators was logged in Deferred, but Phase 10 needs `generate_power_sheet.py`, so Phase 10 fixes it before generating. That brings it into scope, and the Deferred line is removed once it's fixed.
+- Carried to Phase 10: retarget I2C_PU_RAIL and R28.2/R29.2 to +3.3V_BUS; drive +5V_TO_LEDS (IC1 VCC); connect +3.3V_BUS labels; Worker #7's "argued" checks list.
+
+---
+
+### Worker #10 — Phase 10: Schematic — power sheet
+
+**Dispatch:** standard spawn prompt, plus:
+- Additional reading: SESSION.md Worker #7 Notes (the power spec and the "for Phase 10" checks list), Worker #8 and #9 Notes (helpers, reserved references, BQ_SDA/BQ_SCL interface, I2C_PU_RAIL, +5V_TO_LEDS, the generator rotation bug); `hardware/pcb-main-v8/CONTEXT.md` Power path and Jumper matrix rows c, h, i, j, k, l; `tools/schematic-gen/power_v8_spec.json`, `generate_power_sheet.py`; `tools/CONTEXT.md`; `docs/references/{bq24195,tps61088,ina219}/DATASHEET_REFERENCE.md`.
+- Fix the rotation bug in the `schematic-gen` generators first, and remove its TASKS Deferred line once fixed.
+- Same rule as Phases 8–9 for user steps.

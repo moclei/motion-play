@@ -97,7 +97,7 @@
 
 ## Phase 10: Schematic — power sheet
 
-- [ ] Generate or modify the power sheet from the Phase 7 spec. Jumpers (c), (h). Rail test points
+- [~] Generate or modify the power sheet from the Phase 7 spec. Jumpers (c), (h). Rail test points
 - [ ] **(user)** steps where needed. Worker re-extracts and checks every power net's membership against `hardware/pcb-main-v8/CONTEXT.md` Power path
 - [ ] 🔄 Handoff
 
