@@ -108,7 +108,66 @@
 - [x] Remaining test points, ground points, debug LEDs, UART0 header. Every part has an LCSC number and footprint (or is marked hand-fit)
 - [x] ERC clean (or each waived item listed with a reason). `circuit-context.json` extracted with `_provenance`; `annotate.py` for new parts
 - [x] Audit against `hardware/pcb-main-v8/CONTEXT.md`: every jumper, test point and LED is present; every v7 position reproduces v7 membership. Write the result in SESSION.md
-- [ ] **W3:** user reviews the schematic in KiCad. Apply the fixes, re-run ERC, and tag the commit as the schematic freeze
+- [x] 🔄 Handoff (closed by the 2026-11-04 replan: Worker #11's notes and W3 guide are in SESSION.md, `2fb7e21`; W3 moved to Phase 11f)
+
+> **Phases 11a–11f** were inserted by the 2026-11-04 replan, after the user opened the schematic for W3 and found it unreadable. Sources: `docs/research/kicad-ai-tooling-2026-11/schematic-readability.md` ("readability") and `landscape.md`, with prototypes in `prototypes/`. The user's decisions of 2026-11-04 are in PLAN Technical Notes → Schematic readability. KiCad must be closed (no `~*.lck` in `hardware/pcb-main-v8/kicad/`) whenever a script writes a schematic. The power/TCA re-layout is **not** a task: the user decides it at W3a (OQ-10).
+
+# --- handoff point ---
+
+## Phase 11a: Schematic tooling — kiutils KiCad 9 shim and field tidy
+
+- [ ] KiCad 8/9 shim for kiutils 1.4.8 (readability §3.1 step 1; prototype `prototypes/kiutils_k9_shim.py`): a module in `tools/schematic-modify/` that reads `(hide yes)` on effects and properties, and on `pin_numbers`/`pin_names`. Import it on every schematic load path: `modify.load_project`/`SheetDoc`, `tools/schematic-context/{annotate,extract,show}.py`, `v8_project_setup.py`, `v8_mcu_sheet.py`, and the `tools/schematic-gen/` generators (grep for `from_file`). `SheetDoc.save_all` (and any other schematic save, including annotate's) refuses while a `~*.kicad_sch.lck` exists in the project folder. Test in scratch: a load/save round trip of v7's three `c2acffc` sheets keeps every field's visibility and every pin_numbers/pin_names hide (readability §1.2: 496/99/49 flags). Report whether `fields_autoplaced` and `exclude_from_sim` are still dropped (readability §1.2, "Other things"); preserve `fields_autoplaced` if it is cheap. **Nothing else touches the v8 schematic before this lands.**
+- [ ] `annotate.write_ai_properties` (`annotate.py:134`): a new `ai_*` property takes its symbol's position and is hidden. Updating an existing `ai_*` also hides it and moves it to the symbol (readability §3.4)
+- [ ] `tools/schematic-modify/tidy_fields.py --check | --apply` (readability §3.1 steps 2–4; prototype `prototypes/hide_fields.py`): hide every placed-symbol field except Reference and Value; restore `pin_numbers`/`pin_names` hiding on embedded library symbols (from v7 `c2acffc` for the same `lib_id`, else from the source library); move every `ai_*` field to its symbol's position. `--check` prints per-sheet counts and writes nothing
+- [ ] Apply to v8. Gate, before vs after: `kicad-cli sch export netlist` identical (apart from library `uri` paths); `v8_debug_sheet.py --check` ends PHASE 11 CHECK PASSED; ERC 0 errors. Log per-sheet counts (fields hidden, pin flags restored, `ai_*` moved, off-sheet text left) in SESSION.md. Re-extract `circuit-context.json` (`extract.py --previous`) and confirm `check_state.py --fresh`
+- [ ] Check, don't fix: does a kiutils `Board` round trip of a KiCad 9 `.kicad_pcb` (scratch copies of v7 and v8) drop `(hide yes)` or other flags the same way? Record the answer under OQ-11 in PLAN (Phase 13's `place.py` writes boards with kiutils)
+- [ ] Write the rule in `tools/schematic-modify/CONTEXT.md` and `tools/CONTEXT.md`: every kiutils schematic load goes through the shim, and no write while KiCad has the project open. Point the `.context/HAZARDS.md` kiutils entry at the shim
+- [ ] 🔄 Handoff
+
+# --- handoff point ---
+
+## Phase 11b: Schematic tooling — layout check and placement rules
+
+- [ ] `tools/schematic-modify/layout_check.py` (readability §1.1 method and §3.4; prototype `prototypes/probe.py`). Per sheet, it fails on: (1) a visible field other than Reference/Value on a non-power symbol; (2) any text or symbol outside the paper; (3) text-overlap pairs above a committed per-sheet baseline; (4) identical labels stacked on one point, above the baseline. The baseline only ratchets down: a lower count is reported, and `--update-baseline` records it. It prints the worst spots by sheet grid zone (e.g. "C3"). Record the baseline from the tidied v8 (readability expects about 111 overlap pairs by the prototype's count, 6 stacked labels on power)
+- [ ] Wire it into the end of `v8_debug_sheet.py --check`, so the whole v8 check chain (Phases 8–11) runs it. The chain passes
+- [ ] Placement rules in `modify.py` (readability §3.4 rows 2–3). `add_component` places Reference/Value at the library symbol's own field offsets, rotated with the symbol, and writes `(fields_autoplaced yes)`. `_make_local_label`/`_label_angle`: on a vertical stub, prefer a horizontal label justified away from the part. `WIRE_STUB_LEN` default 5.08 mm, with a per-call `stub_len`. Existing parts are not moved. Test on a scratch copy: a vertical two-pin part and a test point, each with labels, add 0 overlaps by `layout_check.py`
+- [ ] Record in `tools/schematic-modify/CONTEXT.md`: the placement rules, `layout_check.py` as part of every `--check`, and the grid rule for future generator scripts (row pitch from the longest label or value, about 0.75 × 1.27 mm per character + 2.54 mm; 1.27 mm grid snap; inside the frame with a margin from the title block). The already-run v8 phase scripts are not re-run
+- [ ] 🔄 Handoff
+
+# --- handoff point ---
+
+## Phase 11c: BAT_CONN test point, GUI autoplace, readability look
+
+- [ ] Add a test point on BAT_CONN (J8 pin 2, before F3) and its own GND point, per `hardware/pcb-main-v8/CONTEXT.md` Test points → Ground points and Parts → Footprints. Next free TP numbers. Placed with the 11b rules, in `v8_debug_sheet.py` (idempotent; its `--check` expects both; the v7-position comparison still gives 0 nets differ). `annotate` both parts. `layout_check.py` at or below baseline
+- [ ] Update `hardware/pcb-main-v8/CONTEXT.md`: Test points (BAT_CONN added to the list and the "As built" paragraph), and the user's 2026-11-04 W3 decisions: keep R66 (10 mΩ, link h4), which answers the "Question for W3" under Power path; LED currents stay as designed. Re-extract `circuit-context.json`; `--fresh`
+- [ ] Write the GUI steps for the user in SESSION.md, with checks inline in each step. Per sheet: Cmd+A, then `O` (Autoplace Fields); look before saving, and Undo on any hand-tuned v7 area that got worse. Then: Tools → Update Symbols from Library for Q20, Q21 and U10 only (clears the 3 `lib_symbol_mismatch` waivers); delete the 0.1 mm stray wire on SW1 pin 1 (power sheet, (222.25, 24.13)); optionally Preferences → Schematic Editor → Editing Options → automatically place fields; save; quit KiCad and confirm no `~*.lck` remains. Export the pre-GUI netlist to scratch first. Stop and report
+- [ ] **(user)** Do the GUI pass (about 2 minutes per sheet)
+- [ ] Verify the GUI pass: netlist identical to the pre-GUI export (pin → net checked for Q20, Q21, U10); `v8_debug_sheet.py --check` passes; ERC 0 errors with the 3 `lib_symbol_mismatch` gone; `layout_check.py` counts lowered and recorded with `--update-baseline`. Render each sheet to PNG (`kicad-cli sch export svg`, then convert) for the look, and list each sheet's remaining overlap spots by grid zone. Re-extract `circuit-context.json`; commit
+- [ ] **W3a (user):** the readability look. The user reads each sheet (PNGs, then KiCad) and decides on the power/TCA re-layout (OQ-10), with the options in readability §3.3: none; hand layout in the GUI; scripted regroup; the battery block on its own sheet. Record the decision in SESSION.md. If any re-layout is chosen, stop: the Orchestrator sends a replan request to the Planner before Phase 11d
+- [ ] 🔄 Handoff
+
+# --- handoff point ---
+
+## Phase 11d: Second-opinion review — kicad-happy (read-only)
+
+- [ ] Clone kicad-happy at tag v3.0.0 (github.com/aklofas/kicad-happy, MIT; landscape §2 and §5 item 1) into its own scratchpad directory. Run its schematic analyzers on a scratch copy of `hardware/pcb-main-v8/kicad/` at HEAD, with output to the scratchpad. Run any of its Python with `-I` from outside its folder. Don't install it as a Claude Code plugin (that is a config change): if its analyzers can't run standalone, or need a Python we don't have, write the install as a **(user)** step and stop. Nothing it produces is written into the repo
+- [ ] Classify each finding against the Phase 11 audit (SESSION.md, Worker #11) and `hardware/pcb-main-v8/CONTEXT.md`: new true issue; known or by design (cite the CONTEXT decision); or false positive. Spot-check its datasheet extraction for TCA9548A, BQ24195 and TPS61088 against `docs/references/*/DATASHEET_REFERENCE.md`
+- [ ] Log the findings in SESSION.md as a table: finding, sheet/ref, class, evidence, proposed fix. **Nothing is applied**; each true issue goes to the user at W3 as a proposal. Give a recommendation for OQ-9 with the score (true new issues, false positives)
+- [ ] 🔄 Handoff
+
+# --- handoff point ---
+
+## Phase 11e: Plain-language schematic tour
+
+- [ ] Write `hardware/pcb-main-v8/REVIEW-GUIDE.md` for the user, who is not an EE. Start with a short primer: symbols, wires vs net labels, power symbols, hierarchical sheets, and how this board's jumpers, links and test points are drawn. Then go sheet by sheet, block by block: where it is (sheet, refs), what it does, why it is there (cite the CONTEXT decision, jumper row or CL-ID), and what an obvious mistake would look like on screen (e.g. a label spelt differently from its partner, an LED or diode backwards, a jumper's default position wrong, a test point without its GND point). End with the review checklist for W3: the open kicad-happy findings (11d) and Worker #11's W3 points that are still open. Ground it in `circuit-context.json` and CONTEXT.md, not memory: check with a script that every ref and net it names exists in the current `circuit-context.json`
+- [ ] Add a one-line pointer to it in `hardware/pcb-main-v8/CONTEXT.md`
+- [ ] 🔄 Handoff
+
+# --- handoff point ---
+
+## Phase 11f: Schematic review (W3) and freeze
+
+- [ ] **W3:** the user reviews the schematic in KiCad against `hardware/pcb-main-v8/REVIEW-GUIDE.md` and the 11d findings. Apply the agreed fixes through the tools; re-run `v8_debug_sheet.py --check` (including `layout_check.py`) and ERC; re-extract `circuit-context.json` (`--fresh`); tag the commit as the schematic freeze
 - [ ] 🔄 Handoff
 
 # --- handoff point ---

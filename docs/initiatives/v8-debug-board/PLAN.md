@@ -37,9 +37,12 @@ Review before ordering = the user's review + an AI partner review answered from 
 
 **Firmware.** A `motion-play-v8` env with the pin set chosen at build time to match jumper (a), plus a v8 diag image. No v7 env changes.
 
+**Schematic readability (Phases 11a–11f, replan 2026-11-04).** kiutils 1.4.8 doesn't parse KiCad 8/9's `(hide yes)`, so every script load/save of a KiCad-saved sheet unhid its fields (536 on v8), and `annotate.py` put new `ai_*` fields at (0, 0): 1,616 overlapping text pairs (`docs/research/kicad-ai-tooling-2026-11/schematic-readability.md` §1). The fix order: a kiutils shim on every schematic load path plus a lock-file guard on every save (11a, first); a netlist-neutral `tidy_fields.py` pass (11a); `layout_check.py` in the v8 `--check` chain with a per-sheet baseline that only ratchets down (11b); field/label placement rules in `modify.py` for new parts (11b); the user's GUI autoplace (11c). KiCad 9/10 has no scripted schematic API (KiCad 11) and kicad-cli has no autoplace, so autoplace stays a GUI step. A second-opinion review uses kicad-happy, read-only, from a scratch clone (landscape §5 item 1). User decisions 2026-11-04: keep R66 (10 mΩ, link h4); add a test point (with its GND point) on BAT_CONN; keep the LED currents as designed; a plain-language tour (`hardware/pcb-main-v8/REVIEW-GUIDE.md`) for W3; the power/TCA re-layout is decided at W3a (OQ-10), not planned now.
+
 **User waits.**
 - **W1:** the power bench findings have landed (Debugger card IDs cited).
 - **W2:** the design intent is approved.
+- **W3a:** readability look after the tidy and autoplace; decides OQ-10.
 - **W3:** schematic review.
 - **W4–W6:** placement and routing reviews.
 - **W7:** pre-order review.
@@ -53,6 +56,8 @@ Review before ordering = the user's review + an AI partner review answered from 
 - Plane voids computed by subtracting a buffered split channel between fills: left thin slivers reported as voids; replaced by classing an empty region that touches fills of two nets as a split gap.
 - Swapping the BQ24195 for a standalone (no-I²C) charger (Phase 1 option 4): rejected in Phase 7, because it takes the BQ off the bus and no jumper position could then rebuild v7's bus membership (row f).
 - Regenerating the v8 power sheet with `generate_power_sheet.py` from `power_v8_spec.json` (Phase 10): it would drop the v7 parts the spec leaves out (U9, D1/R1, TP1–TP4, C7/R27 on the LED rail) and every v7 symbol/footprint choice; replaced by an in-place edit (`v8_power_sheet.py`).
+- Switching from kiutils to kicad-sch-api to escape the `(hide yes)` bug (Phase 11 replan): needs Python 3.10+ and a port of every tool; a 40-line shim fixes it.
+- KiCAD-MCP-Server (Avinash1286) autoplace/declutter tools for the tidy: unvetted, source not visible, writes files directly; our own tidy plus a netlist gate instead.
 
 ## Open Questions
 - OQ-1 (by Phase 16): which nets AI may route. Default: the user routes switching power (BQ_SW, BOOST_SW loops), the USB pair and battery/high-current paths. AI routes test-point stubs, LEDs, jumpers and the I²C channels, and the user reviews them.
@@ -63,3 +68,6 @@ Review before ordering = the user's review + an AI partner review answered from 
 - ~~OQ-6 (protocol): no initiative → Debugger relay row~~ Resolved 2026-11-02: row added to PROTOCOL.md; relays go in `debugger/`.
 - ~~OQ-8 (by Phase 2 end): Debugger home for non-v7 investigations~~ Resolved 2026-11-02: built by `lab-multi-investigation` (PR #89, merged). One folder per investigation, `lab/investigations/<name>/{STATE.md,NOTEBOOK.md}`, prefix in STATE front matter; shared boards/bench state in `lab/BENCH.md`; scaffold with `tools/lab/new_investigation.py`. The power relay runs as `PWR` cards.
 - ~~OQ-7 (housekeeping): retire/archive `routing-verification`~~ Resolved 2026-11-02: moved to `docs/initiatives/archive/` (with `pcb-layout-context`, `esp32-integration`, `integrated-power`). The `tools/CONTEXT.md` wording about "the board-model initiative" is fixed in Phase 6.
+- OQ-9 (by Phase 18): adopt kicad-happy as a step in the pre-order partner review? Decided by the user from the Phase 11d score (true new issues vs false positives).
+- OQ-10 (at W3a, Phase 11c): re-lay out the power and TCA sheets? Options (readability §3.3): none; hand layout in the GUI; scripted regroup; the battery block on its own sheet. A yes comes back to the Planner as a replan before Phase 11d.
+- OQ-11 (by Phase 13): does a kiutils `Board` round trip of a KiCad 9 board drop `(hide yes)` or other flags, as the schematic one does? Checked in Phase 11a.
