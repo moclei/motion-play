@@ -1075,3 +1075,9 @@ Tell the Orchestrator when you're done, and mention anything you undid in step 4
 - Re-derived: tasks 1–4 checked; working tree clean. `v8_debug_sheet.py --check` (Phases 8–11, ERC 0 errors, LAYOUT CHECK PASSED): PHASE 11 CHECK PASSED. `--fresh`: FRESH.
 - Worker caught an error in the plan: the "0.1 mm stray wire on SW1" is a 10.16 mm wire that carries SW1 pin 1 to VSYS_SENSE. ERC's position scale misled Worker #11's guide and the Orchestrator's relay of it. Deleting it would have opened the net. The user step now shortens it instead, and the verify task must confirm SW1 pin 1 is still on VSYS_SENSE.
 - GUI steps relayed to the user. On resume, the verify task compares the result against `5ec6302` / the pre-GUI netlist in the scratchpad.
+
+#### User GUI pass (2026-11-04): aborted, not saved
+- The user shortened the SW1 wire (its `unconnected_wire_endpoint` cleared) and updated Q20/Q21; U10's update didn't take. Cmd+A then `O` appeared to do nothing.
+- The user's GUI ERC (85 warnings) had a **new `multiple_net_names` on TCA: `I2C_SCL_IN` + `PU_SCL_2K2`**. That warning isn't in kicad-cli ERC of the committed files. Cause, from the file: the vertical wire (128.27, 69.85)–(128.27, 72.39) passes through the shared end (128.27, 71.12) of the two `I2C_SCL_IN` wires, with no junction. kicad-cli reads them as separate; the editor joins them. Saving would have baked in an SCL ↔ pull-up short. Latent scripted geometry; the v8 checks missed it.
+- The user quit without saving. The tree is clean at f583fbb. The user's ERC report was moved to the scratchpad (`user_gui_ERC.rpt`).
+- Evaluated: resolvable without replanning. Worker #14 was resumed to fix the geometry, add a check, trim the SW1 wire by script and confirm the KiCad 9 autoplace command.
