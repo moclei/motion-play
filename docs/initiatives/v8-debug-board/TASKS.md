@@ -144,8 +144,8 @@
 - [x] Write the GUI steps for the user in SESSION.md, with checks inline in each step. Per sheet: Cmd+A, then `O` (Autoplace Fields); look before saving, and Undo on any hand-tuned v7 area that got worse. Then: Tools → Update Symbols from Library for Q20, Q21 and U10 only (clears the 3 `lib_symbol_mismatch` waivers); delete the 0.1 mm stray wire on SW1 pin 1 (power sheet, (222.25, 24.13)); optionally Preferences → Schematic Editor → Editing Options → automatically place fields; save; quit KiCad and confirm no `~*.lck` remains. Export the pre-GUI netlist to scratch first. Stop and report
 - [x] **(user)** Do the GUI pass (about 2 minutes per sheet)
 - [x] Verify the GUI pass: netlist identical to the pre-GUI export (pin → net checked for Q20, Q21, U10); `v8_debug_sheet.py --check` passes; ERC 0 errors with the 3 `lib_symbol_mismatch` gone; `layout_check.py` counts lowered and recorded with `--update-baseline`. Render each sheet to PNG (`kicad-cli sch export svg`, then convert) for the look, and list each sheet's remaining overlap spots by grid zone. Re-extract `circuit-context.json`; commit
-- [ ] **W3a (user):** the readability look. The user reads each sheet (PNGs, then KiCad) and decides on the power/TCA re-layout (OQ-10), with the options in readability §3.3: none; hand layout in the GUI; scripted regroup; the battery block on its own sheet. Record the decision in SESSION.md. If any re-layout is chosen, stop: the Orchestrator sends a replan request to the Planner before Phase 11d
-- [ ] 🔄 Handoff
+- [x] **W3a (user):** the readability look. The user reads each sheet (PNGs, then KiCad) and decides on the power/TCA re-layout (OQ-10), with the options in readability §3.3: none; hand layout in the GUI; scripted regroup; the battery block on its own sheet. Record the decision in SESSION.md. If any re-layout is chosen, stop: the Orchestrator sends a replan request to the Planner before Phase 11d
+- [x] 🔄 Handoff
 
 # --- handoff point ---
 

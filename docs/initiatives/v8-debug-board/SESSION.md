@@ -1224,3 +1224,22 @@ Record the decision here as "W3a decision: â€¦". If you choose any re-layout (2â
 #### Verification (GUI-pass verify)
 - Re-derived: tree clean; `--check` chain passes (ERC 0 errors, LAYOUT CHECK PASSED, PHASE 11 CHECK PASSED); `--fresh` FRESH; W3a PNGs/PDF exist in the scratchpad.
 - Accepted: rule 6 narrowed to wire and pin ends (labels partway along a wire connect in both tools). The worker reports the narrowed rule still catches the original SCL case at `5ec6302`. tidy_fields now ignores empty fields, after KiCad added empty Description fields on save.
+
+#### Notes (close-out, 2026-11-05)
+
+**W3a decision: none (option 1), both sheets.** The user's words: "Leave them as they are, no need to relay." The power and TCA sheets stay as they are; no replan before Phase 11d. OQ-10 is struck as resolved in PLAN.md. W3a and the Handoff are ticked in TASKS.md.
+
+**Phase 11c summary for the next phases.**
+- TP37/TP77 on BAT_CONN.
+- `tidy_labels.py` justify pass.
+- `layout_check.py` rules 5 (labels with no justify) and 6 (wire/pin-end T-touches).
+- Two fixes, `v8_debug_sheet.py --fix-11c`:
+  - the TCA SCL T-touch, which only the editor joined;
+  - the SW1 wire tail.
+- Q20/Q21/U10 embedded symbols re-copied from the library.
+- The user's GUI autoplace.
+- Overlaps: 45 pairs (baseline). ERC: 81 `pin_to_pin` and 2 `lib_symbol_issues`, 0 errors.
+- The schematic is as of `cf61cb2`.
+- For 11d onwards:
+  - KiCad's own save merges collinear wires and adds empty `Description` fields. Both tools allow for it now.
+  - Any future GUI save should be followed by the netlist and `--check` gate.
