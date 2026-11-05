@@ -1156,3 +1156,12 @@ Before you start: the working tree is clean at the commit that logs these steps.
 Tell the Orchestrator when you're done, and mention anything you undid in step 4 or skipped in 5–6.
 
 **Status: PARTIAL again, at "(user) Do the GUI pass".** Verify-task reference: `e365da3` (netlist = the pre-GUI export apart from the date line). Expect pin → net R29.1 = PU_SCL_2K2, R28.1 = PU_SDA_2K2, SW1.1 = VSYS_SENSE, Q20/Q21/U10 unchanged; ERC = the expected list; `layout_check.py` including rule 6 (T-touch) passes.
+
+#### Result (resume)
+| # | Phase | Result | Escalation evaluated? | Commit | Notes |
+|---|-------|--------|-----------------------|--------|-------|
+| 14 | Phase 11c (resume) | PARTIAL | Yes — planned user gate (GUI pass, reworked steps) | d86fa78 | SCL T-touch fixed (R29.1 on PU_SCL_2K2 only); T-touch rule in layout_check; SW1 trimmed; Q20/Q21/U10 library copies refreshed |
+
+#### Verification (resume)
+- Re-derived: tree clean. `--check` chain passes (ERC 0 errors, LAYOUT CHECK PASSED, PHASE 11 CHECK PASSED). kicad-cli ERC = 81 `pin_to_pin` + 2 `lib_symbol_issues`, matching the expected list in the new steps. `--fresh`: FRESH.
+- The new steps run ERC in the editor before any change, so editor/cli disagreement shows up before a save. Relayed to the user.
