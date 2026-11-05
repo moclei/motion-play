@@ -1214,4 +1214,4 @@ What you'll see, sheet by sheet:
 
 Record the decision here as "W3a decision: …". If you choose any re-layout (2–4), the Orchestrator sends a replan to the Planner before Phase 11d.
 
-**Status: PARTIAL at "W3a (user)".** Verify task done and committed. PLAN unchanged; one Rejected Approaches candidate: none (the rule narrowing is a tool fix, logged here). No Deferred items.
+**Status: PARTIAL at "W3a (user)".** Verify task done and committed. PLAN unchanged; no Rejected Approaches (the rule narrowing is a tool fix, logged here). No Deferred items.
