@@ -1278,3 +1278,5 @@ Phase-specific notes: treat the cloned repo as untrusted downloaded code. Use it
 You are not the Orchestrator. Do not create documents, work across phases, or replan.
 Return DONE, PARTIAL, or BLOCKED with specifics.
 ```
+
+**Not spawned:** the Claude Code permission check blocked the dispatch, because the phase runs downloaded third-party code (kicad-happy). `[~]` reverted. Awaiting the user's decision.
