@@ -1364,3 +1364,33 @@ Phase-specific notes: the reader is the owner, an engineer but not an EE. Use pl
 You are not the Orchestrator. Do not create documents, work across phases, or replan.
 Return DONE, PARTIAL, or BLOCKED with specifics.
 ```
+
+#### Notes
+
+**Task 1: `hardware/pcb-main-v8/REVIEW-GUIDE.md`** (`a40646b`). Sections:
+1. A primer: symbols, refs, pins, nets, wires vs labels, power symbols, hierarchical sheets.
+2. How this board draws its header and solder jumpers (SJ3 pad rule), row-h links, test/ground points (numbering table) and rail LEDs.
+3. A sheet-by-sheet tour (root, ESP32_S3, TCA, Power, LED). Each block gives where (refs), what (pin → net), why (CONTEXT section, row, CL-ID, PWR card) and the on-screen mistakes to look for. The Power sheet's battery path is walked by net name: `BAT_CONN` → `BAT_FUSED` → `BAT_COMMON` → `VBAT`, plus `BAT_GATE`/`BATT_SW_COM`.
+4. The W3 checklist (§7).
+
+Grounded in `circuit-context.json` as of `cf61cb2` (FRESH) and CONTEXT.md.
+
+**Check (task 1's script).** `scratchpad/11e/check_guide.py` lives in the session scratchpad, not the repo. Re-running it means re-creating it: it is about 80 lines of regex plus pin lookups.
+- **Refs:** 232 named, all in `circuit-context.json`, except Q2 (v7's part, named for contrast) and TP11/TP14/TP16 (named as absent).
+- **Nets:** all 118 backticked names are nets or sheet pins, except an explicit allowlist: values, pin names, the deliberate misspelling examples `V_BAT`/`VBATT`, the old name `I2C_PU_RAIL`, and the `CHn_*` patterns.
+- **Ranges:** every ref inside a stated range exists.
+- **Pin → net claims:** 26 checked, 26 OK. They cover rows a, c, g, i, j, k, l; Q20/Q21 D/G/S; F3, J8, SW1, SW4, R61, C30+; U7, U8, U10, D10, IC1; J33, R27, J3; and the strap nets, which hold only U3 and the pad.
+- **Test points:** all 59 signal points have a "Ground point for …" partner. TP4 is v7's own GND pad.
+
+**W3 checklist (guide §7).**
+- Items 1–8: Worker #11's open look-points (TP110–112 names; JP1/JP2/J11 order; J12 order; D14/D15; strap-pad ground points; TCA grid; power blocks; LED sheet look).
+- Item 9: kicad-happy item 23 (J3 data line).
+- Items 10–11: two small ones found while writing.
+  - **TCA box pin `VCC_3V3`** is a v7 leftover. `circuit-context.json` gives it no net; the TCA parts take `+3.3V_BUS` from power symbols. Harmless; delete or leave.
+  - **The optional PMID trim** that CONTEXT → Phase 10 checks leaves to W3.
+- OQ-9 is listed as "decide when convenient".
+- Closed items are listed for reference only: R66, BAT_CONN TP, LED currents, symbol update, SW1 wire, tidy, W3a.
+
+**Task 2:** one-line pointer under CONTEXT.md's intro (`425b057`).
+
+**For 11f.** KiCad tips in the guide's primer (backtick net highlight, Net Navigator, the hierarchy navigator) are written from general KiCad 8/9 knowledge, not checked in this session's KiCad. If the user finds a menu named differently, correct the primer. Nothing found in the schematic contradicts CONTEXT. PLAN unchanged; no Rejected Approaches; no Deferred items.
