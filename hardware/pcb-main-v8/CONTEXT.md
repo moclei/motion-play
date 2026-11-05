@@ -2,6 +2,8 @@
 
 This file records every v8 design decision. The schematic and layout are built from it. Initiative: `docs/initiatives/v8-debug-board/` (BRIEF, PLAN, TASKS). The v7 design it starts from is at `hardware/pcb-main/kicad/`, commit `c2acffc`, and stays untouched.
 
+Plain-language schematic tour and W3 review checklist: `hardware/pcb-main-v8/REVIEW-GUIDE.md`.
+
 ## Purpose
 
 v8 is a large, probe-friendly main board. It is built for debugging, not for the product form factor. It:
