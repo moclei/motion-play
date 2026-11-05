@@ -5,12 +5,12 @@
     "sources": {
       "hardware/pcb-main-v8/kicad/esp32_s3.kicad_sch": "cdd176d17a1d701ea392f53ec26cc3969ab90839236c458187b6ddb6568b25c5",
       "hardware/pcb-main-v8/kicad/led_controller.kicad_sch": "2fa277fdb1faa290cb4d082d402d906cc8200192b0f34ddbea6d559591e288a0",
-      "hardware/pcb-main-v8/kicad/power_management.kicad_sch": "1850b4afcd17f7c60be707779b5694ad61f1ee7517d303d104168d346c9fec05",
-      "hardware/pcb-main-v8/kicad/tca9548A_subsystem.kicad_sch": "316caf0274933ff1e9196cddaf9a425fbd8160b56ee0dac14adba4077ff6b30f"
+      "hardware/pcb-main-v8/kicad/power_management.kicad_sch": "24636d9c7476f3692693e927a68233455503aaef6c46b1627473025f17d88497",
+      "hardware/pcb-main-v8/kicad/tca9548A_subsystem.kicad_sch": "66dc76070ce71893001ad569a30fa5bdbe07f3e7bf9e5b0e31e582d760f5b8bc"
     },
     "generator": "tools/schematic-context/extract.py",
-    "generator_commit": "e81ab69d368cc4d69a0d67df0905767ddd775ef0",
-    "generated": "2026-11-04T23:51:37+00:00"
+    "generator_commit": "3319e4b70815578b010daf7d6227cd79e84ea575",
+    "generated": "2026-11-05T00:18:01+00:00"
   },
   "schema_version": "1.0",
   "project": "motion-play-main-v8",
@@ -23,7 +23,7 @@
       "esp32_s3.kicad_sch": "ESP32_S3"
     },
     "source_hash": "8e01fef3593a",
-    "extracted_at": "2026-11-04T23:51:37.757695+00:00"
+    "extracted_at": "2026-11-05T00:18:00.925305+00:00"
   },
   "description": "",
   "blocks": {},

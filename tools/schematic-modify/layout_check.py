@@ -15,7 +15,11 @@ Per sheet, it fails on:
   4. identical labels stacked on one point (same kind, text and position; counted as the labels
      in such stacks), above the baseline;
   5. a local, global or hierarchical label with no justify (KiCad draws it centred across its
-     wire end; Phase 11c, tidy_labels.py). No baseline: none is allowed.
+     wire end; Phase 11c, tidy_labels.py). No baseline: none is allowed;
+  6. a T-touch: a wire end, pin end or label anchor on the interior of a wire, with no junction
+     there. kicad-cli and the KiCad editor can disagree on whether it connects (Phase 11c: the
+     editor joined a TCA SCL wire end to a pull-up stub that kicad-cli kept separate). No
+     baseline: none is allowed. End a wire at the point, or move the item off the wire.
 
 The baseline (layout_baseline.json beside this script, keyed by repo-relative sheet path) only
 ratchets down. A count below it is reported, and --update-baseline records it. --update-baseline
@@ -262,6 +266,78 @@ def lib_points(lib, unit: int, convert: int) -> List[Tuple[float, float]]:
     return pts
 
 
+def lib_pins(lib, unit: int, convert: int) -> List[Tuple[float, float]]:
+    """Pin connection points of one unit (lib coords, y up); unit 0 is shared by all units."""
+    pts = []
+
+    def walk(e, ok):
+        for x in e:
+            if not isinstance(x, list) or not x:
+                continue
+            if x[0] == "symbol":
+                parts = str(x[1]).rsplit("_", 2)
+                sub_ok = ok
+                if len(parts) == 3 and parts[1].isdigit() and parts[2].isdigit():
+                    u, c = int(parts[1]), int(parts[2])
+                    sub_ok = (u in (0, unit)) and (c in (0, convert))
+                if sub_ok:
+                    walk(x, True)
+            elif ok and x[0] == "pin":
+                px, py, _ = at_of(x)
+                pts.append((px, py))
+
+    walk(lib, True)
+    return pts
+
+
+def _on_interior(p, a, b, tol: float = 0.01) -> bool:
+    if (abs(p[0] - a[0]) < tol and abs(p[1] - a[1]) < tol) or (abs(p[0] - b[0]) < tol and abs(p[1] - b[1]) < tol):
+        return False
+    if not (min(a[0], b[0]) - tol <= p[0] <= max(a[0], b[0]) + tol and
+            min(a[1], b[1]) - tol <= p[1] <= max(a[1], b[1]) + tol):
+        return False
+    return abs((b[0] - a[0]) * (p[1] - a[1]) - (b[1] - a[1]) * (p[0] - a[0])) < tol
+
+
+def t_touches(t, libs) -> List[str]:
+    """Wire ends, pin ends and label anchors on the interior of a wire, with no junction there."""
+    wires = []
+    for w in kids(t, "wire"):
+        xy = kids(kid(w, "pts") or [], "xy")
+        if len(xy) == 2:
+            wires.append(((float(xy[0][1]), float(xy[0][2])), (float(xy[1][1]), float(xy[1][2]))))
+    junctions = [at_of(j)[:2] for j in kids(t, "junction")]
+    points = []
+    for a, b in wires:
+        points += [("wire end", a), ("wire end", b)]
+    for s in kids(t, "symbol"):
+        lid = kid(s, "lib_id")[1]
+        if lid not in libs:
+            continue
+        sx, sy, sa = at_of(s)
+        mir = kid(s, "mirror")
+        m = sym_matrix(sa, mir[1] if mir else None)
+        unit = int(kid(s, "unit")[1]) if kid(s, "unit") else 1
+        conv = int(kid(s, "convert")[1]) if kid(s, "convert") else 1
+        ref = next((p[2] for p in kids(s, "property") if p[1] == "Reference"), "?")
+        for px, py in lib_pins(libs[lid], unit, conv):
+            dx, dy = apply(m, (px, -py))
+            points.append(("pin of " + ref, (round(sx + dx, 4), round(sy + dy, 4))))
+    for kind, tag in (("label", "label"), ("global label", "global_label"), ("hier label", "hierarchical_label")):
+        for l in kids(t, tag):
+            x, y, _ = at_of(l)
+            points.append(("{} '{}'".format(kind, l[1]), (x, y)))
+    out = []
+    for what, p in points:
+        if any(abs(p[0] - j[0]) < 0.01 and abs(p[1] - j[1]) < 0.01 for j in junctions):
+            continue
+        for a, b in wires:
+            if _on_interior(p, a, b):
+                out.append("{} at ({:.2f}, {:.2f}) on wire ({:.2f}, {:.2f})-({:.2f}, {:.2f})".format(
+                    what, p[0], p[1], a[0], a[1], b[0], b[1]))
+    return out
+
+
 def zone(x: float, y: float, pw: float, ph: float) -> str:
     cols = max(1, int((pw - 2 * MARGIN) // ZONE))
     rows = max(1, int((ph - 2 * MARGIN) // ZONE))
@@ -377,7 +453,7 @@ def analyse(path: Path) -> dict:
                 pairs.append((zone(cx, cy, pw, ph), texts[i], texts[j]))
     stacked = [(k, c) for k, c in stacks.items() if c > 1]
     return dict(paper=(pw, ph), texts=len(texts), extra_visible=extra_visible, off_paper=off_paper,
-                unjustified=unjustified,
+                unjustified=unjustified, t_touches=t_touches(t, libs),
                 pairs=pairs, stacked=stacked, stacked_count=sum(c for _, c in stacked))
 
 
@@ -447,6 +523,8 @@ def run(root: Path = DEFAULT_ROOT, update_baseline: bool = False, verbose: bool 
             bad.append("{} visible fields other than Reference/Value".format(len(r["extra_visible"])))
         if r["off_paper"]:
             bad.append("{} items outside the paper".format(len(r["off_paper"])))
+        if r["t_touches"]:
+            bad.append("{} T-touches with no junction".format(len(r["t_touches"])))
         if r["unjustified"]:
             bad.append("{} labels with no justify (tidy_labels.py)".format(len(r["unjustified"])))
         if n_ov > b_ov:
@@ -469,6 +547,8 @@ def run(root: Path = DEFAULT_ROOT, update_baseline: bool = False, verbose: bool 
             print("      visible: " + item)
         for item in r["off_paper"][: 10 if not verbose else None]:
             print("      off paper: " + item)
+        for item in r["t_touches"]:
+            print("      T-touch: " + item)
         for item in r["unjustified"][: 10 if not verbose else None]:
             print("      no justify: " + item)
         if r["pairs"] and (worst or verbose):

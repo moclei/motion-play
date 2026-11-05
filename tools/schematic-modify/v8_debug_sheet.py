@@ -40,6 +40,9 @@ Usage:
   python3 tools/schematic-modify/v8_debug_sheet.py --check    # Phase 8-10 checks + Phase 11 pins,
                                                               # BOM audit, ERC summary,
                                                               # layout_check.py (Phase 11b)
+  python3 tools/schematic-modify/v8_debug_sheet.py --fix-11c  # Phase 11c fixes (idempotent): T-touch
+                                                              # geometry, SW1 wire tail, Q20/Q21/U10
+                                                              # embedded symbols re-copied from KiCad
   python3 tools/schematic-modify/v8_debug_sheet.py --annotate # ai_* properties on the v8 parts
                                                               # (Phases 8-11), via annotate.py
 """
@@ -216,6 +219,72 @@ def _place(docs, cache, part):
                                                "{} pins".format(len(nets))))
 
 
+# Phase 11c geometry fixes (T-touches: a point on a wire's interior with no junction, where the
+# KiCad editor and kicad-cli disagree; layout_check.py rule 6).
+#  - TCA: R29 pin 1's stub (128.27, 69.85)-(128.27, 72.39) ran through the shared end of the two
+#    I2C_SCL_IN wires at (128.27, 71.12). kicad-cli kept them apart (intended: R29 pin 1 is on
+#    PU_SCL_2K2, joined to the bus only by row d's JP20 1-2); the editor joined them. The stub is
+#    deleted and the PU_SCL_2K2 label moves onto R29 pin 1, reading left.
+#  - Power: the wire from SW1 pin 1 ran 1.27 mm past its VSYS_SENSE label (231.14, 24.13) to a
+#    dangling end; it now ends at the label (SW1 pin 1 stays on VSYS_SENSE).
+TCA_STUB = ((128.27, 69.85), (128.27, 72.39))
+TCA_PU_LABEL = ("PU_SCL_2K2", (128.27, 72.39), (128.27, 69.85), 180)
+SW1_WIRE = ((222.25, 24.13), (232.41, 24.13), (231.14, 24.13))
+# Embedded symbols that no longer match KiCad's library (ERC lib_symbol_mismatch): U10's copy lost
+# the NC pin's (hide yes) in a pre-shim kiutils round trip; Q20/Q21 likewise differ. Re-copied
+# from the stock library (same pins, so netlist-neutral). U10 is a derived symbol (extends
+# AP2204K-1.5): the GUI "Update Symbols from Library" didn't clear it, the scripted copy does.
+REFRESH_LIBS = ("Transistor_FET:CSD25402Q3A", "Regulator_Linear:AP2112K-3.3")
+
+
+def _wire(doc, a, b):
+    for w in doc.schematic.graphicalItems:
+        if getattr(w, "type", None) == "wire" and len(w.points) == 2:
+            ends = {(round(p.X, 2), round(p.Y, 2)) for p in w.points}
+            if ends == {a, b}:
+                return w
+    return None
+
+
+def fix_11c() -> int:
+    from kiutils.items.common import Justify
+    docs = modify.load_project(ROOT)
+    tca, pwr = docs.sheet(TCA), docs.sheet(PWR)
+    done = []
+    w = _wire(tca, *TCA_STUB)
+    if w is not None:
+        tca.schematic.graphicalItems.remove(w)
+        done.append("TCA: deleted R29 pin 1 stub {}-{}".format(*TCA_STUB))
+    text, old, new, ang = TCA_PU_LABEL
+    for lab in tca.schematic.labels:
+        if lab.text == text and (round(lab.position.X, 2), round(lab.position.Y, 2)) == old:
+            lab.position.X, lab.position.Y, lab.position.angle = new[0], new[1], ang
+            lab.effects.justify = Justify(horizontally="right", vertically="bottom")
+            done.append("TCA: label {} {} -> {} (on R29 pin 1), angle {}".format(text, old, new, ang))
+    a, b, end = SW1_WIRE
+    w = _wire(pwr, a, b)
+    if w is not None:
+        for pt in w.points:
+            if (round(pt.X, 2), round(pt.Y, 2)) == b:
+                pt.X, pt.Y = end
+        done.append("Power: SW1 pin 1 wire now ends at the VSYS_SENSE label {}".format(end))
+    libs = pwr.schematic.libSymbols
+    for lid in REFRESH_LIBS:
+        fresh = mcu.stock_symbol(lid)
+        for i, l in enumerate(libs):
+            if l.libId == lid and l.to_sexpr() != fresh.to_sexpr():
+                libs[i] = fresh
+                done.append("Power: embedded {} re-copied from the KiCad library".format(lid))
+    if not done:
+        print("Phase 11c fixes already applied: nothing to do")
+        return check()
+    for d in done:
+        print("  " + d)
+    docs.save_all()
+    print("Saved.")
+    return check()
+
+
 def apply_11c(docs) -> int:
     """Phase 11c parts only, on a schematic where Phase 11 is already applied. Idempotent."""
     all_refs = set()
@@ -282,7 +351,9 @@ def expected():
         exp["U3.{}".format(pin)] = net
     exp.update({"TP110.1": "I2C_SDA", "TP111.1": "I2C_SCL", "TP112.1": "LED_DATA",
                 "TPIO10.1": "TCA_RESET", "TPIO21.1": "CHRG_INT", "R1.2": "LED_D1_SJ", "D1.2": "Net-(D1-A)",
-                "JP1.4": "UART0_TX", "JP2.4": "UART0_RX"})
+                "JP1.4": "UART0_TX", "JP2.4": "UART0_RX",
+                # Phase 11c geometry fixes: nets kept as kicad-cli read them before the fix.
+                "R29.1": "PU_SCL_2K2", "R28.1": "PU_SDA_2K2", "SW1.1": "VSYS_SENSE"})
     return exp
 
 
@@ -553,9 +624,12 @@ def main() -> int:
     ap.add_argument("--apply", action="store_true")
     ap.add_argument("--check", action="store_true")
     ap.add_argument("--annotate", action="store_true")
+    ap.add_argument("--fix-11c", action="store_true")
     args = ap.parse_args()
     if args.apply:
         return apply()
+    if args.fix_11c:
+        return fix_11c()
     if args.annotate:
         return annotate()
     if args.check:
