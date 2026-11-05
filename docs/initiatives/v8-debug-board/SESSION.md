@@ -1215,3 +1215,12 @@ What you'll see, sheet by sheet:
 Record the decision here as "W3a decision: …". If you choose any re-layout (2–4), the Orchestrator sends a replan to the Planner before Phase 11d.
 
 **Status: PARTIAL at "W3a (user)".** Verify task done and committed. PLAN unchanged; no Rejected Approaches (the rule narrowing is a tool fix, logged here). No Deferred items.
+
+#### Result (GUI-pass verify)
+| # | Phase | Result | Escalation evaluated? | Commit | Notes |
+|---|-------|--------|-----------------------|--------|-------|
+| 14 | Phase 11c (verify) | PARTIAL | Yes — planned user gate (W3a) | cf61cb2 | GUI pass verified; overlap pairs 141 → 45; W3a renders ready |
+
+#### Verification (GUI-pass verify)
+- Re-derived: tree clean; `--check` chain passes (ERC 0 errors, LAYOUT CHECK PASSED, PHASE 11 CHECK PASSED); `--fresh` FRESH; W3a PNGs/PDF exist in the scratchpad.
+- Accepted: rule 6 narrowed to wire and pin ends (labels partway along a wire connect in both tools). The worker reports the narrowed rule still catches the original SCL case at `5ec6302`. tidy_fields now ignores empty fields, after KiCad added empty Description fields on save.
