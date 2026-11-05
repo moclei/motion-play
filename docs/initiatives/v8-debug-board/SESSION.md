@@ -1280,3 +1280,5 @@ Return DONE, PARTIAL, or BLOCKED with specifics.
 ```
 
 **Not spawned:** the Claude Code permission check blocked the dispatch, because the phase runs downloaded third-party code (kicad-happy). `[~]` reverted. Awaiting the user's decision.
+
+**User decision (2026-11-05):** "Allow kicad-happy". The user approved running kicad-happy v3.0.0 from its own scratch folder on a copy of the schematic, with nothing installed. Re-dispatching.
