@@ -1394,3 +1394,12 @@ Grounded in `circuit-context.json` as of `cf61cb2` (FRESH) and CONTEXT.md.
 **Task 2:** one-line pointer under CONTEXT.md's intro (`425b057`).
 
 **For 11f.** KiCad tips in the guide's primer (backtick net highlight, Net Navigator, the hierarchy navigator) are written from general KiCad 8/9 knowledge, not checked in this session's KiCad. If the user finds a menu named differently, correct the primer. Nothing found in the schematic contradicts CONTEXT. PLAN unchanged; no Rejected Approaches; no Deferred items.
+
+#### Result
+| # | Phase | Result | Escalation evaluated? | Commit | Notes |
+|---|-------|--------|-----------------------|--------|-------|
+| 16 | Phase 11e: plain-language tour | DONE | No — clean completion | 5cb05ee | REVIEW-GUIDE.md, 407 lines; refs/nets checked against circuit-context.json; W3 checklist has 11 items |
+
+#### Verification
+- Re-derived: 0 open boxes; tree clean; guide structure (primer, sections 2–6 by sheet, section 7 checklist) read. One wording slip for 11f to fix: section 7 says the SW1 wire was "removed"; it was trimmed (it carries SW1.1 to VSYS_SENSE).
+- Loop paused for W3: the user reviews against REVIEW-GUIDE.md. Phase 11f is dispatched with the user's answers.
