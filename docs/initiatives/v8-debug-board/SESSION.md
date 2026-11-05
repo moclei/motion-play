@@ -1329,3 +1329,38 @@ Return DONE, PARTIAL, or BLOCKED with specifics.
 **Recommendation for OQ-9: don't adopt kicad-happy as a standing step in the pre-order review in this form.** The one real hit was minor and came as an info line with no recommendation. 27 false positives came from blind spots this board triggers everywhere: headers used as jumpers, rails through fuses and shunts, a root-sheet GND label, and a guessed reference voltage. Its main selling point, datasheet-aware review, didn't run. It needs MPN fields, PDF downloads (network) and the Claude Code plugin skills: that is a config change and data egress, which this run excluded. If the user wants a second look later, a single PCB-analyzer run at Phase 18 (thermal vias, trace width vs current, DFM) is the cheapest next test. Same limits (scratch copy, Python 3.13, no install), about 15 minutes. Re-decide on that score.
 
 **For the next session.** Phase 11e's review checklist should carry item 23 as the only open kicad-happy finding. A scratch-copy schematic.json and the clone are in this session's scratchpad (not the repo; they disappear with the session). PLAN unchanged. No Deferred items.
+
+#### Result
+| # | Phase | Result | Escalation evaluated? | Commit | Notes |
+|---|-------|--------|-----------------------|--------|-------|
+| 15 | Phase 11d: kicad-happy review | DONE | No — clean completion | 6482ab4 | 56 classified: 1 new (J3 data line unprotected), 27 false positives; OQ-9 recommendation: don't adopt as a standing step |
+
+#### Verification
+- Re-derived: 0 open boxes; only SESSION/TASKS changed in the repo (read-only held); PLAN has no date-stamped headings. The run stayed within the user's limits: scratch only, nothing installed, and it used an existing python3.13.
+- Carry to 11e: item 23 (J3 series R / ESD) is the only open finding for the W3 checklist. OQ-9 stays open for the user; the recommendation is recorded.
+
+---
+
+### Worker #16 — Phase 11e: Plain-language schematic tour
+
+**Dispatch:**
+```
+Initiative: v8-debug-board
+Phase: 11e — Plain-language schematic tour
+Initiative path: docs/initiatives/v8-debug-board/
+Additional reading: hardware/pcb-main-v8/CONTEXT.md; SESSION.md Worker #11 Notes (W3 guide), Worker #14 Notes (W3a sheet summaries), Worker #15 Notes (item 23); docs/initiatives/v8-debug-board/debugger/RELAY-power.md and the PWR findings for the "why" of the power path.
+
+Tasks assigned (from TASKS.md Phase 11e):
+## Phase 11e: Plain-language schematic tour
+
+- [~] Write `hardware/pcb-main-v8/REVIEW-GUIDE.md` for the user, who is not an EE. Start with a short primer: symbols, wires vs net labels, power symbols, hierarchical sheets, and how this board's jumpers, links and test points are drawn. Then go sheet by sheet, block by block: where it is (sheet, refs), what it does, why it is there (cite the CONTEXT decision, jumper row or CL-ID), and what an obvious mistake would look like on screen (e.g. a label spelt differently from its partner, an LED or diode backwards, a jumper's default position wrong, a test point without its GND point). End with the review checklist for W3: the open kicad-happy findings (11d) and Worker #11's W3 points that are still open. Ground it in `circuit-context.json` and CONTEXT.md, not memory: check with a script that every ref and net it names exists in the current `circuit-context.json`
+- [ ] Add a one-line pointer to it in `hardware/pcb-main-v8/CONTEXT.md`
+- [ ] 🔄 Handoff
+
+The first task is marked `[~]` because it was dispatched to you — it is not someone else's work in progress.
+
+Phase-specific notes: the reader is the owner, an engineer but not an EE. Use plain language and define each term the first time it appears. On Power, follow the battery path by net name, since the user chose not to re-lay that sheet. REVIEW-GUIDE.md is the file the Planner named for this phase.
+
+You are not the Orchestrator. Do not create documents, work across phases, or replan.
+Return DONE, PARTIAL, or BLOCKED with specifics.
+```
