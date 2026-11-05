@@ -1243,3 +1243,38 @@ Record the decision here as "W3a decision: …". If you choose any re-layout (2�
 - For 11d onwards:
   - KiCad's own save merges collinear wires and adds empty `Description` fields. Both tools allow for it now.
   - Any future GUI save should be followed by the netlist and `--check` gate.
+
+#### Result (close-out)
+| # | Phase | Result | Escalation evaluated? | Commit | Notes |
+|---|-------|--------|-----------------------|--------|-------|
+| 14 | Phase 11c | DONE | No — clean completion | b314d8c | W3a: no re-layout (OQ-10 resolved) |
+
+#### Verification (close-out)
+- Re-derived: tree clean; 0 open boxes in 11c; PLAN has no date-stamped headings; OQ-10 struck. Carry forward: after any GUI save, run the netlist comparison and `--check`.
+
+---
+
+### Worker #15 — Phase 11d: Second-opinion review — kicad-happy (read-only)
+
+**Dispatch:**
+```
+Initiative: v8-debug-board
+Phase: 11d — Second-opinion review — kicad-happy (read-only)
+Initiative path: docs/initiatives/v8-debug-board/
+Additional reading: docs/research/kicad-ai-tooling-2026-11/landscape.md (kicad-happy section); SESSION.md Worker #11 audit and Notes; hardware/pcb-main-v8/CONTEXT.md.
+
+Tasks assigned (from TASKS.md Phase 11d):
+## Phase 11d: Second-opinion review — kicad-happy (read-only)
+
+- [~] Clone kicad-happy at tag v3.0.0 (github.com/aklofas/kicad-happy, MIT; landscape §2 and §5 item 1) into its own scratchpad directory. Run its schematic analyzers on a scratch copy of `hardware/pcb-main-v8/kicad/` at HEAD, with output to the scratchpad. Run any of its Python with `-I` from outside its folder. Don't install it as a Claude Code plugin (that is a config change): if its analyzers can't run standalone, or need a Python we don't have, write the install as a **(user)** step and stop. Nothing it produces is written into the repo
+- [ ] Classify each finding against the Phase 11 audit (SESSION.md, Worker #11) and `hardware/pcb-main-v8/CONTEXT.md`: new true issue; known or by design (cite the CONTEXT decision); or false positive. Spot-check its datasheet extraction for TCA9548A, BQ24195 and TPS61088 against `docs/references/*/DATASHEET_REFERENCE.md`
+- [ ] Log the findings in SESSION.md as a table: finding, sheet/ref, class, evidence, proposed fix. **Nothing is applied**; each true issue goes to the user at W3 as a proposal. Give a recommendation for OQ-9 with the score (true new issues, false positives)
+- [ ] 🔄 Handoff
+
+The first task is marked `[~]` because it was dispatched to you — it is not someone else's work in progress.
+
+Phase-specific notes: treat the cloned repo as untrusted downloaded code. Use its own scratchpad dir, run its Python with -I from outside its folder, and don't install anything globally. Work on a scratch copy of the kicad folder. The user is not an EE: write each proposed true issue so it can be explained in plain terms at W3.
+
+You are not the Orchestrator. Do not create documents, work across phases, or replan.
+Return DONE, PARTIAL, or BLOCKED with specifics.
+```
