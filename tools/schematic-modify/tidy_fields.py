@@ -120,7 +120,9 @@ def tidy_sheet(sch: Schematic, ref_flags: Dict[str, PinFlags], src: SourceLibrar
 
     for sym in sch.schematicSymbols:
         for prop in sym.properties:
-            if prop.key not in KEEP_VISIBLE and not prop.effects.hide:
+            # An empty field draws nothing: KiCad 9's save adds an empty, unhidden Description to
+            # placed symbols (Phase 11c GUI pass), so empty values are left alone.
+            if prop.key not in KEEP_VISIBLE and not prop.effects.hide and prop.value not in ("", "~"):
                 prop.effects.hide = True
                 counts["fields_hidden"] += 1
             if prop.key.startswith(AI_PREFIX):

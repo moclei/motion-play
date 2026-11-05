@@ -1165,3 +1165,53 @@ Tell the Orchestrator when you're done, and mention anything you undid in step 4
 #### Verification (resume)
 - Re-derived: tree clean. `--check` chain passes (ERC 0 errors, LAYOUT CHECK PASSED, PHASE 11 CHECK PASSED). kicad-cli ERC = 81 `pin_to_pin` + 2 `lib_symbol_issues`, matching the expected list in the new steps. `--fresh`: FRESH.
 - The new steps run ERC in the editor before any change, so editor/cli disagreement shows up before a save. Relayed to the user.
+
+#### Notes (verify the GUI pass, 2026-11-05)
+
+The user did the reworked steps 1–4 and 7–8, skipped the optional steps 5 (`+5V_LED_F`) and 6 (preference), and undid nothing.
+
+**Verify against `e365da3`.**
+- **Netlist identical** (kicad-cli, apart from date, source path and library `uri` paths). Pin → net: R29.1 PU_SCL_2K2, R28.1 PU_SDA_2K2, SW1.1 VSYS_SENSE, Q20.4/Q21.4 BAT_GATE, U10 pins 1/3/5 = +5V_CORE / +3.3V_MCU / +3.3V_BUS_REG, TP37 BAT_CONN.
+- `v8_debug_sheet.py --check`: CHECK PASSED (0 nets differ), PHASE 9/10/11 CHECK PASSED, LAYOUT CHECK PASSED. kicad-cli ERC = the expected list: 81 `pin_to_pin` + 2 `lib_symbol_issues` (J7, U5), 0 errors.
+- **Did KiCad's save undo the 11a/11c work?** No. A structural comparison of every sheet (`scratchpad/tests/cmp.py`) found the same labels (text, position, angle, justify), the same symbols (none moved, rotated, added or lost), all 1,138 `ai_*` fields still hidden, 0 visible extra fields, and no change in the embedded symbols' pin, pin-number or pin-name hiding. `tidy_labels.py --check`: 0. What KiCad did change on save:
+  - **TCA:** it merged the collinear wire pairs `I2C_SCL_IN` (119.38→128.27→146.05, y 71.12) and `I2C_SDA_IN` (119.38→139.7→146.05, y 73.66) into single wires. Their local labels now sit on a wire's interior. **This failed layout_check rule 6 as I first wrote it** (2 "T-touches"). Both tools connect a label on a wire's interior (kicad-cli joined SW1 pin 1 to VSYS_SENSE through just such a label before the trim, and the netlist is unchanged here). So the rule was too broad, and the GUI wasn't at fault. **Rule 6 is narrowed** to wire ends and pin ends on a wire's interior (fail); a label on a wire's interior is listed with `-v` only. Re-run on `5ec6302` (before the fix), the narrowed rule still catches the real SCL case.
+  - **LED:** it removed the junction at the C7 node (147.32, 102.87). Only two wire ends meet there (with the `+5V_LED_H4` label), so the junction was redundant; the netlist is unchanged.
+  - **All sheets:** it added an empty, unhidden `Description` field to 213 placed symbols and rewrote the files in KiCad's own multi-line format, hence the large diffs. An empty field draws nothing, but `tidy_fields.py --check` counted it. `tidy_fields.py` now leaves empty fields alone; `--check` is 0.
+- `layout_check.py --update-baseline`: root 4 (unchanged), MCU 19→13, LED 5→3, power 39→19, TCA 30→6. That is 45 pairs in all, down from 141 at 11b and 1,616 before 11a.
+- `circuit-context.json` re-extracted ("No structural changes"); `--fresh`: FRESH.
+
+**Remaining overlap spots by zone** (`layout_check.py -v`):
+- **Root (4):** C2 TP145 Value on its `GND` label; C4 TP110 and TP111 Values touch; B1 TP112 Reference on its Value; A5 TPIO10 Value ("TestPoint") on the TCA sheet name. Root counts didn't change, so autoplace probably didn't move these four.
+- **LED (3):** C3 R66 Reference / `+5V_LED_F` and R66 Value / `+5V_LED_H4`; B3 `+5V_LED_H4` / `+5V_LED_F` (the optional step 5 spot).
+- **MCU (13):** D6/D7 strap-pad Values (`STRAP U3_IO3/45/46`) on their GND points' Values (3); A2/A3 four `+3.3V_MCU` labels touching each other (v7 area); C3/C4 neighbouring labels in the U3 label column (`U3_IO9/U3_IO46`, `U3_IO3/U3_IO46`, `INT1/INT2`, `U3_IO45/DBG2`, `DBG1/DBG2`, `DBG1/U3_IO14`).
+- **Power (19):** D3 three hierarchical labels touching (+5V, +3.3V_MCU, GND); C2 `PWR_FLAG` value on R38/TH1 values; C5 C37/C39 fields; C8 C65 fields on `+3.3V_BUS_HDR`/`+3.3V_BUS` labels; single label-on-label touches in A5, B7, B8, D1, D2, D4, E1, E2, E3, E7.
+- **TCA (6):** A7/A8/B7/B8: each channel's `CHn_*_CONN` label touches the TVS's `GND` label.
+
+**W3a: readability look, ready for the user.**
+
+PNGs (rendered from the committed sheets by kicad-cli PDF, 150 dpi):
+- Root: `/private/tmp/claude-501/-Users-marcocleirigh-Workspace-motion-play/4463d79b-1453-4083-8508-d40852c5e639/scratchpad/w3a/1-root.png`
+- LED Controller: `/private/tmp/claude-501/-Users-marcocleirigh-Workspace-motion-play/4463d79b-1453-4083-8508-d40852c5e639/scratchpad/w3a/2-led_controller.png`
+- Power Management: `/private/tmp/claude-501/-Users-marcocleirigh-Workspace-motion-play/4463d79b-1453-4083-8508-d40852c5e639/scratchpad/w3a/3-power_management.png`
+- TCA9548A_Subsystem: `/private/tmp/claude-501/-Users-marcocleirigh-Workspace-motion-play/4463d79b-1453-4083-8508-d40852c5e639/scratchpad/w3a/4-tca9548A_subsystem.png`
+- ESP32_S3: `/private/tmp/claude-501/-Users-marcocleirigh-Workspace-motion-play/4463d79b-1453-4083-8508-d40852c5e639/scratchpad/w3a/5-esp32_s3.png`
+- All five in one PDF (zoomable): `/private/tmp/claude-501/-Users-marcocleirigh-Workspace-motion-play/4463d79b-1453-4083-8508-d40852c5e639/scratchpad/w3a/v8-schematic.pdf`
+
+What you'll see, sheet by sheet:
+- **Root:** the five sheet boxes and the root test points. Clean apart from four small touches among the TP110–TP112/TPIO10 texts.
+- **LED Controller:** small and readable. One spot: between F1 and R27 the labels `+5V_LED_F` and `+5V_LED_H4` run into each other (the optional step you skipped).
+- **ESP32_S3:** the v7 module drawing at the top, and below it (new in v8) a grid of test points, the debug LEDs, the UART0 header and the spare-GPIO header, all wired by labels. The few touches are neighbouring net names in U3's label column and the strap pads' value text.
+- **Power Management:** the busiest sheet (154 parts on A3; v7 had 59). The v7 circuit (USB-C, BQ24195, boost, regulators) is still drawn as a circuit across the top. Everything v8 added sits below and to the right as **rows of parts joined by net labels**: the passives row in the middle, the rail test points and their ground points in three rows at the bottom left, the debug LEDs bottom right, and the battery block (J8, F3, Q20/Q21, J30–J35 and the row c/h/i/j/k/l jumpers) as a column on the right. Nothing overlaps much any more (19 small touches), but the added parts read as a parts list: to follow the battery path J8 → F3 → Q20 → Q21 → BQ you trace net names, not lines.
+- **TCA9548A_Subsystem:** the TCA (U4) top left with its upstream pull-ups; the 24 channel test points as a grid top right; then one row of parts per channel (series R, row b bypass, TVS, its GND header, the downstream pull-up option) and the row d/f selectors at the bottom. A regular, label-wired layout. The only touches are each channel's connector-side label against the TVS's GND label.
+
+**OQ-10: should the power and TCA sheets be re-laid out?** The options (readability §3.3), in plain terms:
+1. **None.** Keep the sheets as they are. The circuit is complete and checked; the remaining roughness is cosmetic. The 11e plain-language tour explains the label-wired blocks, so a reader doesn't have to trace them unaided.
+2. **Hand layout in the GUI.** You move parts in KiCad (for example the test points into one labelled box, the jumper rows next to the circuitry they break). About 2–4 h. Every move risks a connection change, but the netlist check and the editor ERC run before saving catch that, as they did this time.
+3. **Scripted regroup.** I write a script that moves the generated parts into tidier groups and wires the battery chain with lines. Repeatable and checked by the same gates, but it is new script work on a sheet where the last scripted geometry hid a short. It needs a replan.
+4. **The battery block on its own sheet.** Move J8, F3, Q20/Q21 and their gate network onto a new "Battery protection" sheet, drawn as a left-to-right chain. That means a new hierarchical sheet, script work and an update to the `--check` chain, so it also needs a replan.
+
+**My recommendation: option 1 (none) for both sheets.** TCA is regular and nearly clean (6 touches). The power sheet's added parts are complete, checked against v7 and readable by net name. Re-laying them out costs hours and new geometry risk, and buys nothing the W3 review needs, because the tour (11e) can walk the battery path and the jumper rows. If, when you read the power sheet, you find you can't follow the battery path from the labels, take **option 4** for that block alone: it's the one part of the board whose drawing matters most for the review (it's what protects against the cooked-board faults).
+
+Record the decision here as "W3a decision: …". If you choose any re-layout (2–4), the Orchestrator sends a replan to the Planner before Phase 11d.
+
+**Status: PARTIAL at "W3a (user)".** Verify task done and committed. PLAN unchanged; one Rejected Approaches candidate: none (the rule narrowing is a tool fix, logged here). No Deferred items.

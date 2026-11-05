@@ -2,11 +2,11 @@
   "_about": "layout_check.py per-sheet baseline: overlap_pairs and stacked_labels only ratchet down (--update-baseline). Raise one only by hand, in a commit that says why.",
   "sheets": {
     "hardware/pcb-main-v8/kicad/esp32_s3.kicad_sch": {
-      "overlap_pairs": 19,
+      "overlap_pairs": 13,
       "stacked_labels": 0
     },
     "hardware/pcb-main-v8/kicad/led_controller.kicad_sch": {
-      "overlap_pairs": 5,
+      "overlap_pairs": 3,
       "stacked_labels": 0
     },
     "hardware/pcb-main-v8/kicad/motion-play-main-v8.kicad_sch": {
@@ -14,11 +14,11 @@
       "stacked_labels": 0
     },
     "hardware/pcb-main-v8/kicad/power_management.kicad_sch": {
-      "overlap_pairs": 39,
+      "overlap_pairs": 19,
       "stacked_labels": 0
     },
     "hardware/pcb-main-v8/kicad/tca9548A_subsystem.kicad_sch": {
-      "overlap_pairs": 30,
+      "overlap_pairs": 6,
       "stacked_labels": 0
     }
   }

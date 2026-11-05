@@ -16,10 +16,12 @@ Per sheet, it fails on:
      in such stacks), above the baseline;
   5. a local, global or hierarchical label with no justify (KiCad draws it centred across its
      wire end; Phase 11c, tidy_labels.py). No baseline: none is allowed;
-  6. a T-touch: a wire end, pin end or label anchor on the interior of a wire, with no junction
-     there. kicad-cli and the KiCad editor can disagree on whether it connects (Phase 11c: the
-     editor joined a TCA SCL wire end to a pull-up stub that kicad-cli kept separate). No
-     baseline: none is allowed. End a wire at the point, or move the item off the wire.
+  6. a T-touch: a wire end or pin end on the interior of a wire, with no junction there.
+     kicad-cli and the KiCad editor can disagree on whether it connects (Phase 11c: the editor
+     joined a TCA SCL wire end to a pull-up stub that kicad-cli kept separate). No baseline: none
+     is allowed. End the wire at the point, or add a junction. A label anchor on a wire's
+     interior is not a T-touch: both tools connect it, and KiCad's own save produces it when it
+     merges collinear wire segments (Phase 11c GUI pass). It is listed with -v only.
 
 The baseline (layout_baseline.json beside this script, keyed by repo-relative sheet path) only
 ratchets down. A count below it is reported, and --update-baseline records it. --update-baseline
@@ -300,7 +302,8 @@ def _on_interior(p, a, b, tol: float = 0.01) -> bool:
 
 
 def t_touches(t, libs) -> List[str]:
-    """Wire ends, pin ends and label anchors on the interior of a wire, with no junction there."""
+    """Wire ends and pin ends on the interior of a wire, with no junction there (fail), and label
+    anchors on a wire's interior (listed, not failed: both tools connect them)."""
     wires = []
     for w in kids(t, "wire"):
         xy = kids(kid(w, "pts") or [], "xy")
@@ -327,15 +330,15 @@ def t_touches(t, libs) -> List[str]:
         for l in kids(t, tag):
             x, y, _ = at_of(l)
             points.append(("{} '{}'".format(kind, l[1]), (x, y)))
-    out = []
+    out, labels = [], []
     for what, p in points:
         if any(abs(p[0] - j[0]) < 0.01 and abs(p[1] - j[1]) < 0.01 for j in junctions):
             continue
         for a, b in wires:
             if _on_interior(p, a, b):
-                out.append("{} at ({:.2f}, {:.2f}) on wire ({:.2f}, {:.2f})-({:.2f}, {:.2f})".format(
+                (labels if "label" in what else out).append("{} at ({:.2f}, {:.2f}) on wire ({:.2f}, {:.2f})-({:.2f}, {:.2f})".format(
                     what, p[0], p[1], a[0], a[1], b[0], b[1]))
-    return out
+    return out, labels
 
 
 def zone(x: float, y: float, pw: float, ph: float) -> str:
@@ -453,7 +456,7 @@ def analyse(path: Path) -> dict:
                 pairs.append((zone(cx, cy, pw, ph), texts[i], texts[j]))
     stacked = [(k, c) for k, c in stacks.items() if c > 1]
     return dict(paper=(pw, ph), texts=len(texts), extra_visible=extra_visible, off_paper=off_paper,
-                unjustified=unjustified, t_touches=t_touches(t, libs),
+                unjustified=unjustified, **dict(zip(("t_touches", "mid_wire_labels"), t_touches(t, libs))),
                 pairs=pairs, stacked=stacked, stacked_count=sum(c for _, c in stacked))
 
 
@@ -549,6 +552,9 @@ def run(root: Path = DEFAULT_ROOT, update_baseline: bool = False, verbose: bool 
             print("      off paper: " + item)
         for item in r["t_touches"]:
             print("      T-touch: " + item)
+        if verbose:
+            for item in r["mid_wire_labels"]:
+                print("      label on a wire's interior (connects in both tools): " + item)
         for item in r["unjustified"][: 10 if not verbose else None]:
             print("      no justify: " + item)
         if r["pairs"] and (worst or verbose):
