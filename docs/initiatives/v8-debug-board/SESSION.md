@@ -1081,3 +1081,78 @@ Tell the Orchestrator when you're done, and mention anything you undid in step 4
 - The user's GUI ERC (85 warnings) had a **new `multiple_net_names` on TCA: `I2C_SCL_IN` + `PU_SCL_2K2`**. That warning isn't in kicad-cli ERC of the committed files. Cause, from the file: the vertical wire (128.27, 69.85)–(128.27, 72.39) passes through the shared end (128.27, 71.12) of the two `I2C_SCL_IN` wires, with no junction. kicad-cli reads them as separate; the editor joins them. Saving would have baked in an SCL ↔ pull-up short. Latent scripted geometry; the v8 checks missed it.
 - The user quit without saving. The tree is clean at f583fbb. The user's ERC report was moved to the scratchpad (`user_gui_ERC.rpt`).
 - Evaluated: resolvable without replanning. Worker #14 was resumed to fix the geometry, add a check, trim the SW1 wire by script and confirm the KiCad 9 autoplace command.
+
+#### Notes (resumed after the aborted GUI pass)
+
+**T-touch fix (TCA)** (`e365da3`, `v8_debug_sheet.py --fix-11c`). Which side was intended: R29 pin 1 on **PU_SCL_2K2** only, separate from I2C_SCL_IN. Sources: the CONTEXT jumper matrix row d (upstream 2.2 k reaches the bus only through the JP19/JP20 selector, 1–2), the Phase 9 check (`PU_SCL_2K2 = JP20.2, R29.1`), and the v7-position comparison (0 nets differ with row d's v7 shorts applied). kicad-cli's reading was therefore the intended one, and the netlist didn't change. The SDA twin (R28) was already clean: its stub at x 139.7 crosses the SCL wire's interior, and a plain crossing joins in neither tool. Fix: the stub (128.27, 69.85)–(128.27, 72.39) is deleted; the `PU_SCL_2K2` label moves onto R29 pin 1 (128.27, 69.85), at 180° (reads left, right-bottom justify).
+
+**Scan of every v8 sheet** (wire ends, pin ends and label anchors on a wire's interior, with no junction):
+
+| Sheet | Item | Where | Both tools connect? | Fix |
+|---|---|---|---|---|
+| TCA | two `I2C_SCL_IN` wire ends | (128.27, 71.12), on R29's stub | No: the editor joins, kicad-cli doesn't | Stub deleted, label on R29 pin 1 (above) |
+| TCA | `I2C_SCL_IN` label anchor | (128.27, 71.12), on R29's stub | Same point | Same fix |
+| Power | `VSYS_SENSE` label anchor | (231.14, 24.13), 1.27 mm before the end of SW1 pin 1's wire | Yes (SW1.1 was on VSYS_SENSE in kicad-cli) | Wire now ends at the label (also clears `unconnected_wire_endpoint`) |
+
+No other sheet had one. No pin end sits on a wire's interior anywhere. For information: v7 `c2acffc` has only the SW1/VSYS_SENSE one (inherited); the TCA one came from the Phase 9 script.
+
+**`layout_check.py` rule 6** (`e365da3`): a T-touch with no junction fails, no baseline. It found exactly the 4 items above before the fix (2 wire ends and 1 label on TCA, 1 label on power) and 0 after.
+
+**U10 "Update Symbols from Library" didn't take: why.** The embedded `Regulator_Linear:AP2112K-3.3` had lost the NC pin's `(hide yes)` (and the library copy's hidden property flags) in a kiutils round trip before the 11a shim. AP2112K-3.3 is a derived symbol in KiCad 9's library (`extends "AP2204K-1.5"`). I didn't establish why the GUI update failed on it; Q20/Q21 (not derived) updated fine. Fix by script: Q20/Q21's `CSD25402Q3A` and U10's `AP2112K-3.3` embedded symbols are re-copied from the stock library (`mcu.stock_symbol`, which flattens `extends`). kicad-cli ERC then has no `lib_symbol_mismatch`. **The GUI symbol-update step is removed.** Finding for later: `tidy_fields.py` restored pin_numbers/pin_names flags but not per-pin or library-property hides. ERC flagged only these three, so no other embedded copy differs from its library.
+
+**Gate.** `kicad-cli sch export netlist` vs the pre-GUI export (`5ec6302`): only the `(date …)` line differs. `v8_debug_sheet.py --check`: CHECK PASSED (0 nets differ), PHASE 9/10/11 CHECK PASSED, LAYOUT CHECK PASSED, with expected pins added for R28.1/R29.1/SW1.1. kicad-cli ERC: 81 `pin_to_pin` + 2 `lib_symbol_issues` (J7 and U5 library names), nothing else. Overlap counts unchanged (power 39, TCA 30). `tidy_fields`/`tidy_labels --check`: 0. `circuit-context.json` re-extracted ("No structural changes"); `--fresh`: FRESH. A second `--fix-11c` does nothing.
+
+**Autoplace command, KiCad 9 (sources checked, not guessed).**
+- KiCad 9 English manual, shipped in the app (`SharedSupport/help/en/eeschema.html`): "Autoplace Fields action (select a symbol and press O)"; hotkey table: "Autoplace Fields | O".
+- KiCad 9.0 source, `eeschema/tools/sch_edit_tool.cpp`: the action is in the right-click menus (`selToolMenu`, `drawMenu`) whenever the selection holds a symbol or sheet. It acts on every selected symbol or sheet (or a selected field's parent), forces manual mode, and moves visible fields only.
+- `eeschema/menubar.cpp` puts it in **no main menu**, so there is no menu-bar path. The primary instruction is the right-click menu entry. Select All is Edit → Select All.
+- The autoplacer puts a symbol's fields on the side with no pins (right first), so a test point's Reference/Value should move from above the circle to its right. That gives the step a visible check. Why the user's Cmd+A then `O` showed nothing isn't known (perhaps keyboard focus). The new steps try one symbol first.
+
+##### GUI steps for the user (Phase 11c, rework; replaces the steps above)
+
+In short: the scripts have now fixed what the last attempt found (the SCL pull-up short the editor saw, the SW1 wire, the three symbols that didn't match the library). What's left is KiCad's field autoplace, which only the GUI has. About 15 minutes. You run ERC twice: once as soon as the project opens, before you change anything, and again before saving. That way any disagreement between the editor and the scripts' checks shows up before anything is saved.
+
+Before you start: the working tree is clean at the commit that logs these steps. If anything looks wrong, quit KiCad without saving; `git checkout -- hardware/pcb-main-v8/kicad/` also restores this point.
+
+**Expected ERC list** (both ERC runs): 0 errors; 83 warnings, which are 81 `pin_to_pin` and 2 `lib_symbol_issues` ("The current configuration does not include the symbol library 'USB-C_SMD-TYPE-C-31-M-12'" for J7 and the same for 'BQ24195RGET' for U5). Nothing else: no `multiple_net_names`, no `lib_symbol_mismatch`, no `unconnected_wire_endpoint`.
+
+1. **Open the project.**
+   DO: open `hardware/pcb-main-v8/kicad/motion-play-main-v8.kicad_pro` in KiCad 9, then open the Schematic Editor.
+   CHECK: the title bar says `motion-play-main-v8`, and the Schematic Hierarchy panel on the left lists the root and four sheets (ESP32_S3, LED Controller, Power Management, TCA9548A_Subsystem).
+
+2. **ERC before changing anything.**
+   DO: Inspect → Electrical Rules Checker → Run ERC. Compare the result with the expected list above.
+   CHECK: it matches the expected list exactly. **If it doesn't (in particular any `multiple_net_names`), stop: close the dialog, quit KiCad without saving, and send the Orchestrator the ERC report** (in the ERC dialog: Save… to a file). The editor and the scripts then disagree about a connection.
+
+3. **Try autoplace on one symbol first** (Power Management, bottom left, the test-point rows).
+   DO:
+   a. Go to Power Management. Find TP37 (value `BAT_CONN`, the last-but-one test point in the bottom row, about x 89, y 262 mm). Click its circle to select it.
+   b. Right-click on it and choose **Autoplace Fields** from the menu (the keyboard shortcut is `O`).
+   CHECK: TP37's "TP37" and "BAT_CONN" text jumps from above the circle to its right. If nothing moves, press Esc, click empty canvas once (so the drawing has keyboard focus), select TP37 again and retry. If it still doesn't move, stop and tell the Orchestrator what the right-click menu shows.
+
+4. **Autoplace each sheet** (root, ESP32_S3, LED Controller, Power Management, TCA9548A_Subsystem).
+   DO, on each sheet:
+   a. Click empty canvas, then Edit → Select All (Cmd+A).
+   b. Right-click on any selected symbol and choose **Autoplace Fields** (or press `O`). Press Esc to deselect.
+   c. Look over the sheet before you move on, especially the hand-placed v7 areas: on Power Management the BQ24195 (U5) and boost (U6) blocks, on TCA the TCA9548A (U4), on ESP32_S3 the module (U3). If one of those got worse, press Cmd+Z (this undoes that sheet's whole autoplace), drag-select only the regions you want autoplaced (leave the hand-tuned area out), and run Autoplace Fields again.
+   CHECK: on each sheet the test points' Reference/Value now sit to the right of their circles, not over the labels below them (Power Management bottom-left rows TP10–TP77; ESP32_S3 rows of TPIO*/TP13x; TCA test points TP80–TP103). No part's Reference/Value sits on its own pin's wire.
+
+5. **(Optional) LED Controller: move `+5V_LED_F` off `+5V_LED_H4`** (zone B3, between F1 and R27).
+   DO: on LED Controller, find F1 (3 A fuse) and R27 (0.1 Ω) at the top. The `+5V_LED_F` label at F1's right-hand wire end reads right, into the `+5V_LED_H4` label at the C7 junction. Select the `+5V_LED_F` label and press `R` until its text hangs down below the wire (3 presses, from reading right to reading down). Don't move it.
+   CHECK: `+5V_LED_F` reads downward from F1's right-hand wire end, clear of `+5V_LED_H4`, and its anchor is still on that wire end.
+
+6. **(Optional) Turn on field autoplace for future edits.**
+   DO: KiCad → Settings… (Preferences) → Schematic Editor → Editing Options → tick the option to automatically place symbol fields. OK.
+   CHECK: the box stays ticked when you reopen the dialog.
+
+7. **ERC again, before saving.**
+   DO: Inspect → Electrical Rules Checker → Run ERC.
+   CHECK: it still matches the expected list exactly (autoplace and label rotation don't change connections). If not, don't save: quit without saving and send the Orchestrator the ERC report.
+
+8. **Save and quit.**
+   DO: File → Save (Cmd+S). Quit KiCad completely (Cmd+Q; close the project manager too). Then in Terminal, from the repo: `ls -a hardware/pcb-main-v8/kicad | grep lck`
+   CHECK: the `ls` prints nothing (no `~*.lck` lock file). Don't commit. The verify task checks the netlist and commits.
+
+Tell the Orchestrator when you're done, and mention anything you undid in step 4 or skipped in 5–6.
+
+**Status: PARTIAL again, at "(user) Do the GUI pass".** Verify-task reference: `e365da3` (netlist = the pre-GUI export apart from the date line). Expect pin → net R29.1 = PU_SCL_2K2, R28.1 = PU_SDA_2K2, SW1.1 = VSYS_SENSE, Q20/Q21/U10 unchanged; ERC = the expected list; `layout_check.py` including rule 6 (T-touch) passes.
