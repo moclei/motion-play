@@ -168,7 +168,7 @@
 
 ## Phase 11f: Schematic review (W3) and freeze
 
-- [ ] **W3:** the user reviews the schematic in KiCad against `hardware/pcb-main-v8/REVIEW-GUIDE.md` and the 11d findings. Apply the agreed fixes through the tools; re-run `v8_debug_sheet.py --check` (including `layout_check.py`) and ERC; re-extract `circuit-context.json` (`--fresh`); tag the commit as the schematic freeze
+- [~] **W3:** the user reviews the schematic in KiCad against `hardware/pcb-main-v8/REVIEW-GUIDE.md` and the 11d findings. Apply the agreed fixes through the tools; re-run `v8_debug_sheet.py --check` (including `layout_check.py`) and ERC; re-extract `circuit-context.json` (`--fresh`); tag the commit as the schematic freeze
 - [ ] 🔄 Handoff
 
 # --- handoff point ---

@@ -1403,3 +1403,37 @@ Grounded in `circuit-context.json` as of `cf61cb2` (FRESH) and CONTEXT.md.
 #### Verification
 - Re-derived: 0 open boxes; tree clean; guide structure (primer, sections 2–6 by sheet, section 7 checklist) read. One wording slip for 11f to fix: section 7 says the SW1 wire was "removed"; it was trimmed (it carries SW1.1 to VSYS_SENSE).
 - Loop paused for W3: the user reviews against REVIEW-GUIDE.md. Phase 11f is dispatched with the user's answers.
+
+---
+
+### W3 — user review (2026-11-07)
+The user read REVIEW-GUIDE.md and the schematic: "I read through it and don't see any errors in the schematics or in the doc". Items 1–8 are approved as they stand. Items 9–11: "Apply suggestions": 33 Ω series R on the LED data line (a row-h-style link, v7 = 0 Ω, no diode); delete the TCA box's VCC_3V3 pin; keep all six PMID capacitors.
+
+---
+
+### Worker #17 — Phase 11f: Schematic review (W3) and freeze
+
+**Dispatch:**
+```
+Initiative: v8-debug-board
+Phase: 11f — Schematic review (W3) and freeze
+Initiative path: docs/initiatives/v8-debug-board/
+Additional reading: hardware/pcb-main-v8/REVIEW-GUIDE.md §7; SESSION.md Worker #15 Notes (item 23) and Worker #16 Notes.
+
+Tasks assigned (from TASKS.md Phase 11f):
+## Phase 11f: Schematic review (W3) and freeze
+
+- [~] **W3:** the user reviews the schematic in KiCad against `hardware/pcb-main-v8/REVIEW-GUIDE.md` and the 11d findings. Apply the agreed fixes through the tools; re-run `v8_debug_sheet.py --check` (including `layout_check.py`) and ERC; re-extract `circuit-context.json` (`--fresh`); tag the commit as the schematic freeze
+- [ ] 🔄 Handoff
+
+The first task is marked `[~]` because it was dispatched to you — it is not someone else's work in progress.
+
+Phase-specific notes: the user's W3 review (2026-11-07) is done: "I read through it and don't see any errors in the schematics or in the doc". Checklist items 1–8 are approved as they stand. For items 9–11 the user chose "Apply suggestions":
+- 9: add a 33 Ω series resistor on DATA_TO_LEDS at IC1 pin 4. Treat it as a row-h-style link: the v7 position is 0 Ω / bridged, and the v7-position comparison must still give 0 nets differ. No ESD diode. Record it in CONTEXT (jumper/link matrix + parts, LCSC part in stock).
+- 10: delete the unconnected v7 sheet pin VCC_3V3 on the TCA sheet box (root), together with its hierarchical label if one exists with no net.
+- 11: keep all six PMID 22 µF capacitors (no change; record it in CONTEXT).
+Make the changes through the tools (shim-guarded, 11b placement rules, layout_check). KiCad is closed. Fix REVIEW-GUIDE §7: SW1's wire was trimmed, not "removed". Mark items 1–11 as resolved there. Record OQ-9 as still open (the user hasn't decided; recommendation: no). Then: --check, ERC, re-extract with --previous, --fresh. Tag the freeze commit as an annotated git tag (e.g. v8-schematic-freeze) and give its name. Don't push.
+
+You are not the Orchestrator. Do not create documents, work across phases, or replan.
+Return DONE, PARTIAL, or BLOCKED with specifics.
+```
