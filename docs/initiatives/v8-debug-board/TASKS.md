@@ -182,10 +182,20 @@
 
 # --- handoff point ---
 
+## Phase 12a: circuit-context — sheet-pin nets resolve to real nets
+
+- [ ] `tools/schematic-context/extract.py`: resolve each sheet pin in `sheet_interfaces` to the net KiCad actually connects it to (from the kicad-cli netlist and the sheet/label geometry), not through `_POWER_NET_ALIASES` (`VCC_3V3` → `+3.3V`, a net v8 doesn't have; SESSION Worker #17 Notes). Remove the alias table, or keep it only for a stated use. Add a check mode that fails when any sheet pin resolves to a missing net or a net with no component pins, and lists each offender
+- [ ] Run the check on v8: the TCA box pin `VCC_3V3` must resolve to `+3.3V_BUS` with U4.24, C9.2 and C10.2 among its members. Also run it, output to the scratchpad only, on `hardware/pcb-main/kicad/` and `hardware/pcb-power-supply/kicad/`; commit no re-extraction of those (v7 files are cited at `c2acffc`). Re-extract v8 `circuit-context.json` with `--previous` and confirm `tools/lab/check_state.py --fresh`. No sheet is touched, so the `v8-schematic-freeze` tag stays
+- [ ] Correct any reader-facing text that relied on the old empty net (grep `hardware/pcb-main-v8/`; REVIEW-GUIDE §2 was fixed in 11f). Document the check in `tools/schematic-context/README.md` and the `tools/CONTEXT.md` row
+- [ ] 🔄 Handoff
+
+# --- handoff point ---
+
 ## Phase 13: AI placement — tooling (dry run on v7)
 
-- [ ] Present OQ-3 to the user and record the answer
-- [ ] `tools/pcb-context/place.py`: generalises `place_power.py`. It reads the board model and a rules config, and writes footprint positions/rotations/sides via kiutils (refuses if a KiCad lock file exists). `--dry-run` renders a PNG
+- [ ] OQ-3 (board write path): the Orchestrator asks the user before dispatching this phase, using PLAN OQ-3. Record the answer in PLAN (strike OQ-3; add the options not chosen to Rejected Approaches) and, if option 1, the extra toolchain line in BRIEF Constraints as the user approved it. If the answer is not option 1, stop and return to the Planner
+- [ ] `tools/pcb-context/pcb_write.py` (PLAN AI layout tooling): the only module that imports `pcbnew`, run with KiCad's bundled Python. Input: a JSON op list (ref → x, y, rotation, side). Refuses while a `~*.kicad_pcb.lck` exists. After writing: kicad-cli loads the board (DRC runs), and a board-model before/after check confirms only the named footprints changed and the netlist is unchanged. Test on a scratch copy of v7 `c2acffc`: an empty op list leaves the file byte-identical; a move, a rotation and a flip each load and check clean
+- [ ] `tools/pcb-context/place.py`: generalises `place_power.py`'s placement logic (not its text-edit write path). It reads the board model and a rules config and emits the op list for `pcb_write.py`. `--dry-run` renders a PNG and writes nothing
 - [ ] Rules config (`tools/pcb-context/rules/<board>.yaml` or JSON): keepouts, edge connectors, decoupling-to-pin max distance, test-point spacing and ground-point pairing, courtyard clearance, groups (block membership from `ai_block` annotations)
 - [ ] `place_check.py`: overlaps, courtyard and outline violations, rule violations, from the board model. Dry run: re-place one v7 block (e.g. TCA + pull-ups) in a scratch copy and check it. Record what the rules couldn't express
 - [ ] 🔄 Handoff
@@ -212,8 +222,8 @@
 
 ## Phase 16: AI routing — tentative subset
 
-- [ ] Present OQ-1 to the user and record the net split (AI-routed vs user-routed)
-- [ ] Routing writer (kiutils segments/vias, or the OQ-3 choice) for the AI net set, honouring the board config's clearances and widths. Run DRC via kicad-cli
+- [ ] Present OQ-1 to the user and record the net split (AI-routed vs user-routed) and the Freerouting answer
+- [ ] Routing writer for the AI net set, extending `pcb_write.py` (tracks and vias through the OQ-3 path; Freerouting only if OQ-1 allowed it), honouring the board config's clearances and widths. Run DRC via kicad-cli
 - [ ] **W6:** user reviews: keep, fix or rip up per net. Worker diffs and records the lessons in `tools/pcb-context/CONTEXT.md`
 - [ ] 🔄 Handoff
 
@@ -222,7 +232,7 @@
 ## Phase 17: Routing completion and zones
 
 - [ ] **(user)** routes the user-owned nets and pours the zones/planes. Worker supplies a per-net checklist from the board config (widths, loop areas, reference planes)
-- [ ] Zones refilled (kicad-cli or user). DRC clean, with each waived item listed. Board model + net/plane reports + renders regenerated with provenance
+- [ ] Zones refilled (through `pcb_write.py`, or by the user in KiCad). DRC clean, with each waived item listed. Board model + net/plane reports + renders regenerated with provenance
 - [ ] 🔄 Handoff
 
 # --- handoff point ---
@@ -249,5 +259,4 @@
 [from: v8-debug-board] Board-model diff mode (audit phase 3), v6 ↔ v7 ↔ v8 relational diff.
 [from: v8-debug-board] `routing_audit.py` as a thin consumer of the board model (audit §6.1), or retired: marked superseded in the README in Phase 6; the v7 debug track still cites its spec and outputs.
 [from: v8-debug-board] Board-model run on the sensor-rigid and sensor-flex boards (audit says it must run on all three; validation is main-only here).
-[from: v8-debug-board] `tools/schematic-context/extract.py` resolves a sheet pin's net through `_POWER_NET_ALIASES` (`VCC_3V3` → `+3.3V`), so on v8 the TCA box's `VCC_3V3` pin shows an empty net in `sheet_interfaces` although it carries `+3.3V_BUS` (it misled the W3 guide, Phase 11f). Resolve sheet-pin nets from the netlist instead.
 [from: lab-multi-investigation] Once PR #89 is merged, the Phase 2 power relay (`debugger/RELAY-power.md`) runs as `PWR` cards: the Debugger scaffolds at intake with `python3 tools/lab/new_investigation.py --name power --prefix PWR --title "<title>"` and decides whether board #0004 also belongs to `power` in `lab/BENCH.md`.
