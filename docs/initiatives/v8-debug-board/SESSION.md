@@ -1502,3 +1502,17 @@ Phase-specific notes: the schematic is frozen at tag v8-schematic-freeze. Take p
 You are not the Orchestrator. Do not create documents, work across phases, or replan.
 Return DONE, PARTIAL, or BLOCKED with specifics.
 ```
+
+#### Notes
+**Done.** All four Phase 12 tasks. Commits 8a03989 (envs + pin config), 307dbed (BQ comment), c911181 (builds).
+
+**What changed.**
+- `platformio.ini`: three new envs appended; v7 envs untouched. `motion-play-v8` (extends `motion-play-v7` for board, flash and libs; build_flags listed in full + `-DBOARD_MOTION_PLAY_V8`), `motion-play-v8-v7bus` (jumper (a) both lines at v7), `motion-play-v8-diag` (`DIAG_NO_WIFI`).
+- `firmware/include/pin_config.h`: `BOARD_MOTION_PLAY_V8` block. Jumper (a) per line: SDA = GPIO16, or 43 with `V8_I2C_SDA_ALT`; SCL = GPIO15, or 44 with `V8_I2C_SCL_ALT`. Jumper (g): LED_DATA = GPIO18, or 16 with `V8_LED_DATA_GPIO16`. A `#error` fires if LED_DATA and SDA are both GPIO16. For V7R-019's fixture state (JP1 at v8, JP5 at v7), build with the default LED pin, so firmware never drives SDA. `V8_UART0_HEADER` is set only when both lines are at v8. DBG LEDs are on 47/48 (high = on), CHRG_INT on 21. Nets were checked against circuit-context.json: JP1, JP2, JP5, J11, R103/R104 → D14/D15.
+- The hard-coded `Wire.begin(43, 44)` in `main.cpp` (configureBQ24195) and `SensorManager::init`, the DIAG_RELEASE `pinMode(43/44)` and `LED_PIN 16` (LEDController.h) now use the pin_config macros. The v6/v7 values are unchanged; the clang preprocess of the non-v8 path gives SDA 43, SCL 44, LED 16.
+- `main.cpp` setup (v8 only): DBG1 turns on, and a board/pin line goes to USB CDC. With `V8_UART0_HEADER`, `Serial0.begin(115200)` prints one app-started line on J11. The ROM and bootloader log needs no code: it reaches J11 as long as nothing reconfigures GPIO43/44.
+- `configureBQ24195()` is kept on v8. The reasons are in the comment above its `#define`s: rows j/k at v7 rebuild the fault; it's a small raise to 2 A, capped by R32 at about 1.32–1.61 A; REG05 must always go with REG00.
+
+**Verified.** `pio run` on all 8 envs: SUCCESS, no new warnings in main.cpp. Preprocessing pin_config.h for each jumper (a)/(g) combination gives the expected pins, and the `#error` fires on SDA = LED = 16.
+
+**For the next session / not done.** Nothing has been flashed on hardware (no v8 boards yet). `firmware/CONTEXT.md` Pin Configuration still lists only the T-Display/v7 pins. A v8 row set belongs there (Organizer). Row (e) external master needs no firmware: with JP1/JP2 bus shunts off, U3's I²C init simply fails. If a bus-release image is wanted for v8, it would be `-DDIAG_RELEASE_I2C` on a v8 env (its printed instructions name v7 TPIO43/44). No Rejected Approaches, no Deferred items.
