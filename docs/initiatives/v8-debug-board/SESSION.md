@@ -1526,3 +1526,36 @@ Return DONE, PARTIAL, or BLOCKED with specifics.
 - Re-derived: 0 open boxes; tree clean. In platformio.ini the only change to existing lines is an EOF newline, so no v7 env changed. Spot-built `motion-play-v7` and `motion-play-v8`: both SUCCESS.
 - Park for Outcome (Organizer): firmware/CONTEXT.md Pin Configuration needs a v8 section.
 - Before Phase 13: Planner request on the board-write path (OQ-11 answer: a kiutils save corrupts KiCad 9 boards) with OQ-3, plus the extract.py alias quirk (Deferred, Phase 11f).
+
+---
+
+### Replan — board write path and sheet-pin nets (2026-11-07)
+
+Planner `b30fd9b`: Phase 12a added (extract.py sheet-pin resolution). Phase 13 now writes boards through `pcb_write.py`, behind OQ-3 (recommended: KiCad bundled pcbnew; a pcbnew probe on v7 gave a byte-identical round trip). Phases 16/17 follow. OQ-3 goes to the user while 12a runs.
+
+---
+
+### Worker #19 — Phase 12a: circuit-context — sheet-pin nets resolve to real nets
+
+**Dispatch:**
+```
+Initiative: v8-debug-board
+Phase: 12a — circuit-context — sheet-pin nets resolve to real nets
+Initiative path: docs/initiatives/v8-debug-board/
+Additional reading: SESSION.md Worker #17 Notes (the VCC_3V3 finding); tools/schematic-context/README.md.
+
+Tasks assigned (from TASKS.md Phase 12a):
+## Phase 12a: circuit-context — sheet-pin nets resolve to real nets
+
+- [~] `tools/schematic-context/extract.py`: resolve each sheet pin in `sheet_interfaces` to the net KiCad actually connects it to (from the kicad-cli netlist and the sheet/label geometry), not through `_POWER_NET_ALIASES` (`VCC_3V3` → `+3.3V`, a net v8 doesn't have; SESSION Worker #17 Notes). Remove the alias table, or keep it only for a stated use. Add a check mode that fails when any sheet pin resolves to a missing net or a net with no component pins, and lists each offender
+- [ ] Run the check on v8: the TCA box pin `VCC_3V3` must resolve to `+3.3V_BUS` with U4.24, C9.2 and C10.2 among its members. Also run it, output to the scratchpad only, on `hardware/pcb-main/kicad/` and `hardware/pcb-power-supply/kicad/`; commit no re-extraction of those (v7 files are cited at `c2acffc`). Re-extract v8 `circuit-context.json` with `--previous` and confirm `tools/lab/check_state.py --fresh`. No sheet is touched, so the `v8-schematic-freeze` tag stays
+- [ ] Correct any reader-facing text that relied on the old empty net (grep `hardware/pcb-main-v8/`; REVIEW-GUIDE §2 was fixed in 11f). Document the check in `tools/schematic-context/README.md` and the `tools/CONTEXT.md` row
+- [ ] 🔄 Handoff
+
+The first task is marked `[~]` because it was dispatched to you — it is not someone else's work in progress.
+
+Phase-specific notes: no schematic sheet may change; the v8-schematic-freeze tag stays valid. Don't commit re-extractions of v7 or the power-supply board.
+
+You are not the Orchestrator. Do not create documents, work across phases, or replan.
+Return DONE, PARTIAL, or BLOCKED with specifics.
+```
