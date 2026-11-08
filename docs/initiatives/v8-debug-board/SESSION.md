@@ -1575,3 +1575,12 @@ Return DONE, PARTIAL, or BLOCKED with specifics.
 **Docs** (`84e10da`): REVIEW-GUIDE §2 and §7 item 10, and the CONTEXT W3 item-10 note, now say circuit-context gives `+3.3V_BUS`. README has a "Sheet pins" section, and the `tools/CONTEXT.md` extract.py row covers the check.
 
 **For the next session.** Phase 13 is unaffected. One timing note: the first v8 run took about 3 min (kicad-cli cold start). Later runs took about 4 s. Nothing Deferred.
+
+#### Result
+| # | Phase | Result | Escalation evaluated? | Commit | Notes |
+|---|-------|--------|-----------------------|--------|-------|
+| 19 | Phase 12a: sheet-pin nets | DONE | No — clean completion | 42db033 | Alias table removed; probe-netlist resolution; `--check-sheet-pins`; v8/v7/power 0 offenders |
+
+#### Verification
+- Re-derived: 0 open boxes; tree clean; no sheet diff against `v8-schematic-freeze`; `--fresh` FRESH; circuit-context now carries `VCC_3V3` → `+3.3V_BUS`. PLAN has no date-stamped headings.
+- Loop paused before Phase 13. The user asked about IPC vs MCP and wants to upgrade KiCad and the tooling. OQ-3 is unanswered pending that decision (2026-11-07).
