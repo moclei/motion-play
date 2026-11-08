@@ -168,7 +168,7 @@
 
 ## Phase 11f: Schematic review (W3) and freeze
 
-- [~] **W3:** the user reviews the schematic in KiCad against `hardware/pcb-main-v8/REVIEW-GUIDE.md` and the 11d findings. Apply the agreed fixes through the tools; re-run `v8_debug_sheet.py --check` (including `layout_check.py`) and ERC; re-extract `circuit-context.json` (`--fresh`); tag the commit as the schematic freeze
+- [x] **W3:** the user reviews the schematic in KiCad against `hardware/pcb-main-v8/REVIEW-GUIDE.md` and the 11d findings. Apply the agreed fixes through the tools; re-run `v8_debug_sheet.py --check` (including `layout_check.py`) and ERC; re-extract `circuit-context.json` (`--fresh`); tag the commit as the schematic freeze
 - [ ] 🔄 Handoff
 
 # --- handoff point ---
@@ -249,4 +249,5 @@
 [from: v8-debug-board] Board-model diff mode (audit phase 3), v6 ↔ v7 ↔ v8 relational diff.
 [from: v8-debug-board] `routing_audit.py` as a thin consumer of the board model (audit §6.1), or retired: marked superseded in the README in Phase 6; the v7 debug track still cites its spec and outputs.
 [from: v8-debug-board] Board-model run on the sensor-rigid and sensor-flex boards (audit says it must run on all three; validation is main-only here).
+[from: v8-debug-board] `tools/schematic-context/extract.py` resolves a sheet pin's net through `_POWER_NET_ALIASES` (`VCC_3V3` → `+3.3V`), so on v8 the TCA box's `VCC_3V3` pin shows an empty net in `sheet_interfaces` although it carries `+3.3V_BUS` (it misled the W3 guide, Phase 11f). Resolve sheet-pin nets from the netlist instead.
 [from: lab-multi-investigation] Once PR #89 is merged, the Phase 2 power relay (`debugger/RELAY-power.md`) runs as `PWR` cards: the Debugger scaffolds at intake with `python3 tools/lab/new_investigation.py --name power --prefix PWR --title "<title>"` and decides whether board #0004 also belongs to `power` in `lab/BENCH.md`.
