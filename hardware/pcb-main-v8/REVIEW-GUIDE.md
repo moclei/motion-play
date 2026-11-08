@@ -85,7 +85,7 @@ All 59 signal test points have their partner (script check, Phase 11e). **`TPIO<
 **What.**
 - The boxes are wired to each other by the board-wide signals: `I2C_SDA`, `I2C_SCL` (the I²C bus), `LED_DATA`, `TCA_RESET`, `CHRG_INT`, `USB_DP`/`USB_DN`, and `BQ_SDA`/`BQ_SCL` (the charger's own I²C pins, which reach the bus on the TCA sheet through row f).
 - **J4, J5, J6** are the three sensor-module cables (4-pin JST SH, CL-16): pin 1 `+3.3V_BUS`, pin 2 `GND`, pin 3 `CHn_SDA_CONN`, pin 4 `CHn_SCL_CONN` (n = 0, 1, 2).
-- **J3** is the LED strip: pin 1 `+5V_TO_LEDS`, pin 2 `DATA_TO_LEDS`, pin 3 `GND`.
+- **J3** is the LED strip: pin 1 `+5V_TO_LEDS`, pin 2 `DATA_TO_LEDS` (from R105 on the LED sheet), pin 3 `GND`.
 - **TP110/TP111** sit on `I2C_SDA`/`I2C_SCL` (the bus side of row a). **TP112** is on `LED_DATA` (row g's centre). TPIO10 is on `TCA_RESET`, TPIO21 on `CHRG_INT`.
 
 **Why.** v7's TPIO43/44/16 sat on these nets. On v8 the bus is no longer GPIO43/44's own net, so they were renamed TP110–TP112, and the new TPIO43/44/16 sit on the GPIO pads themselves (CONTEXT → Test points → As built).
@@ -93,7 +93,7 @@ All 59 signal test points have their partner (script check, Phase 11e). **`TPIO<
 **Mistakes to look for.**
 - A sensor connector with SDA and SCL swapped (pin 3 must be SDA, pin 4 SCL; the sensor boards expect it).
 - A wire on a sheet pin that ends on nothing, or a sheet pin with no wire.
-- The TCA box has a pin `VCC_3V3` from v7. `circuit-context.json` shows no net on it: the TCA sheet's parts take `+3.3V_BUS` from power symbols instead. It is a harmless leftover (checklist item 10).
+- The TCA box has a pin `VCC_3V3` from v7. It is the TCA's supply: on the root it is wired to a `+3.3V_BUS` power symbol (#PWR015), and inside the TCA sheet its label sits on U4 pin 24 with C9 and C10. `circuit-context.json` shows no net on it, which is an extractor quirk, not a missing wire (checklist item 10, corrected in Phase 11f).
 
 ---
 
@@ -354,11 +354,11 @@ Rail points TP10–TP37 and v7's TP1–TP3, each with its TP(n+40) ground point 
 
 ## 6. LED Controller sheet
 
-**Where.** F1, R66, J33, R27, C7, C8, IC1, TP22, TP36, TP23 (ground points TP62, TP76, TP63).
+**Where.** F1, R66, J33, R27, C7, C8, IC1, R105, TP22, TP36, TP23 (ground points TP62, TP76, TP63).
 
 **What.**
 - `+5V` → **F1** (3 A fuse) → `+5V_LED_F` (TP22) → **R66 (link h4)**, 10 mΩ shunt with header J33 → `+5V_LED_H4` (TP36, C7) → **R27** 0.1 Ω (v7's strip current sense) → `+5V_TO_LEDS` (TP23, C8) → J3 pin 1.
-- **IC1** (SN74AHCT1G125): pin 2 input `LED_DATA` (3.3 V from U3) → pin 4 output `DATA_TO_LEDS` (5 V) → J3 pin 2. Pin 5 VCC `+5V_TO_LEDS`; pin 1 (output enable) on `GND`, so it is always on.
+- **IC1** (SN74AHCT1G125): pin 2 input `LED_DATA` (3.3 V from U3) → pin 4 output `DATA_TO_LEDS_IC1` (5 V) → **R105** 33 Ω (row m, added at W3) → `DATA_TO_LEDS` → J3 pin 2. Pin 5 VCC `+5V_TO_LEDS`; pin 1 (output enable) on `GND`, so it is always on.
 
 **Why.**
 - IC1 changes the 3.3 V data to the 5 V the strip expects. It replaces v7's 4-gate chip with a single gate: v7's part is out of stock, and v7 used one gate anyway (CONTEXT → Kept v7 parts → Swaps).
@@ -366,12 +366,15 @@ Rail points TP10–TP37 and v7's TP1–TP3, each with its TP(n+40) ground point 
 
 **Mistakes to look for.**
 - IC1's pins 2 and 4 swapped (input and output reversed).
+- R105 not in line: IC1 pin 4 and J3's `DATA_TO_LEDS` must be on opposite ends of R105.
 - J33 not across R66 (its pins must be `+5V_LED_F` and `+5V_LED_H4`).
 - The labels `+5V_LED_F` and `+5V_LED_H4` near F1 and R27 run into each other on screen (a known text overlap, zone B3/C3). Check by highlight which wire each belongs to.
 
 ---
 
 ## 7. W3 checklist
+
+**Status: all 11 items resolved at W3 (user, 2026-11-07; applied in Phase 11f).** The user found no errors in the schematic or this guide. Items 1–8 approved as drawn. Items 9–11 below carry their outcome.
 
 Work through the sheets with sections 2–6, then these items. Each needs your decision or a look; nothing here is a known error.
 
@@ -385,18 +388,23 @@ Work through the sheets with sections 2–6, then these items. Each needs your d
 7. **Power Management:** the battery block (§5.4); rows c, h, i, j, k, l (§5.3, 5.5, 5.6); rail LEDs D11–D13 with JP41–JP43, and JP40 for D1 (§5.7).
 8. **LED Controller:** IC1 in its SOT-23-5 package and the h4 chain R66/J33/R27 (§6). R66 is decided (kept); this is a look only.
 
+*Items 1–8: resolved, approved as drawn (W3, 2026-11-07).*
+
 **Open from the kicad-happy review (Phase 11d, SESSION.md Worker #15, item 23).**
 
 9. **J3's LED data line has no protection.** IC1's output (pin 4, `DATA_TO_LEDS`) goes straight off the board to J3 pin 2, with no series resistor and no static clamp. v7 was the same. The strip cable is handled by hand, and a long cable makes the signal "ring". Common practice is a small resistor (33–100 Ω) in series at IC1, and sometimes a small clamp diode at J3. If you want it: fit the resistor (or a 0 Ω / solder-bridge footprint for v7 comparisons) on the LED sheet. Optional; nothing in the v7 debug track suspects the strip.
+   *Resolved (W3): added.* R105, 33 Ω (C23140), at IC1 pin 4; IC1 pin 4 is now on `DATA_TO_LEDS_IC1`. It is jumper row m: v7 position = 0 Ω or the pads bridged. No clamp diode. The all-v7 netlist check still shows 0 nets differing from v7.
 
 **Smaller items found while writing this guide.**
 
 10. **TCA box pin `VCC_3V3`** (root sheet) is a v7 leftover with no net on it (§2). Harmless; delete it or leave it.
+   *Resolved (W3, Phase 11f): kept, because this item was wrong.* The pin is how U4 gets power. With it deleted (tried on a scratch copy), U4 pin 24, C9 and C10 end up on a net of their own. `circuit-context.json` showed no net because of an extractor quirk (§2). `--check` now confirms that U4 pin 24 is on `+3.3V_BUS`.
 11. **PMID capacitors:** CONTEXT → Phase 10 checks allows trimming the 6 × 22 µF bank (C25, C26, C63, C64, C69, C70) if the capacitor maker's DC-bias curve says fewer are enough. Default: keep all six.
+   *Resolved (W3): all six kept.*
 
-**Decide when convenient (not needed for W3).** OQ-9: whether kicad-happy becomes a standing step in the pre-order review. The Phase 11d recommendation is no, with an optional PCB-analyzer trial at Phase 18 (SESSION.md Worker #15).
+**Decide when convenient (not needed for W3).** Still open after W3: the user hasn't decided. OQ-9: whether kicad-happy becomes a standing step in the pre-order review. The Phase 11d recommendation is no, with an optional PCB-analyzer trial at Phase 18 (SESSION.md Worker #15).
 
-**Already closed (for reference, no action).** R66 kept; BAT_CONN test point added (TP37/TP77); LED currents kept; Q20/Q21/U10 symbols updated from the library and the SW1 stray wire removed (Phase 11c); the field and label tidy and GUI autoplace done (Phases 11a–11c); no re-layout of the power and TCA sheets (W3a).
+**Already closed (for reference, no action).** R66 kept; BAT_CONN test point added (TP37/TP77); LED currents kept; Q20/Q21/U10 symbols updated from the library and the SW1 wire's stray tail trimmed (Phase 11c; the wire stays and carries SW1 pin 1 to `VSYS_SENSE`); the field and label tidy and GUI autoplace done (Phases 11a–11c); no re-layout of the power and TCA sheets (W3a).
 
 **After any edit in KiCad.** Save, close KiCad (no `~*.lck` file left in `hardware/pcb-main-v8/kicad/`), then:
 ```
