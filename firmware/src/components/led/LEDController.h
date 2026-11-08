@@ -3,6 +3,7 @@
 
 #include <Arduino.h>
 #include <FastLED.h>
+#include "pin_config.h"
 #include "../detection/DirectionDetector.h"
 
 /**
@@ -19,7 +20,7 @@
 // NUM_LEDS is the buffer/test cap. Production hoop uses 72; the buffer is sized
 // larger so the diagnostic strip-test command can drive longer test strips.
 #define NUM_LEDS 90
-#define LED_PIN 16
+#define LED_PIN PIN_LED_STRIP_DATA // 16 on v6/v7; v8 per jumper (g), see pin_config.h
 #define LED_TYPE WS2812B
 #define COLOR_ORDER GRB
 // Match the LED-test LEVEL_30 cap so operational modes stay within the

@@ -19,6 +19,7 @@
 #include "components/interrupt/InterruptManager.h"
 #include "components/calibration/CalibrationManager.h"
 #include "components/serialstudio/SerialStudioOutput.h"
+#include "pin_config.h"
 
 #ifdef HAS_BUTTONS
 // Button pins for T-Display-S3
@@ -115,6 +116,27 @@ void setup()
     Serial.println("Motion Play Device - BOOT");
     Serial.println("=================================");
     Serial.println("=================================\n");
+
+#ifdef BOARD_MOTION_PLAY_V8
+    // DBG1 on = firmware reached setup() (D14, blue).
+    pinMode(PIN_DBG_LED_1, OUTPUT);
+    digitalWrite(PIN_DBG_LED_1, HIGH);
+    pinMode(PIN_DBG_LED_2, OUTPUT);
+    digitalWrite(PIN_DBG_LED_2, LOW);
+    Serial.printf("Board: main PCB v8. I2C SDA=GPIO%d SCL=GPIO%d, LED_DATA=GPIO%d\n",
+                  PIN_IIC_SDA, PIN_IIC_SCL, PIN_LED_STRIP_DATA);
+#ifdef V8_UART0_HEADER
+    // Both bus lines are off GPIO43/44, so UART0 goes to header J11. The ROM
+    // and bootloader log is already there; this adds an app-level line so the
+    // header shows the image got past boot. Serial (USB CDC) stays the main log.
+    Serial0.begin(115200);
+    Serial0.printf("\r\nMotion Play v8: app started. I2C SDA=GPIO%d SCL=GPIO%d, LED_DATA=GPIO%d\r\n",
+                   PIN_IIC_SDA, PIN_IIC_SCL, PIN_LED_STRIP_DATA);
+    Serial.println("UART0 header (J11) active: GPIO43 TX / GPIO44 RX");
+#else
+    Serial.println("UART0 header off: GPIO43 and/or GPIO44 are on the I2C bus (jumper a = v7)");
+#endif
+#endif
 
 #ifdef HAS_BUTTONS
     Serial.println("Press RIGHT button (GPIO 14) to restart anytime");
@@ -233,8 +255,8 @@ void setup()
         delay(50);
 
         Wire.end();
-        pinMode(43, INPUT); // SDA — high-Z; on-board R28 (2.2 kΩ) holds it at +3.3V
-        pinMode(44, INPUT); // SCL — high-Z; on-board R29 (2.2 kΩ) holds it at +3.3V
+        pinMode(PIN_IIC_SDA, INPUT); // SDA — high-Z; on-board R28 (2.2 kΩ) holds it at +3.3V
+        pinMode(PIN_IIC_SCL, INPUT); // SCL — high-Z; on-board R29 (2.2 kΩ) holds it at +3.3V
 
         Serial.println();
         Serial.println("==============================================================");
@@ -286,7 +308,7 @@ void configureBQ24195()
 
     // Bring the I2C bus up early. SensorManager will call Wire.begin() again
     // later with the same pins, which is harmless.
-    Wire.begin(43, 44); // SDA=43, SCL=44 on T-Display-S3
+    Wire.begin(PIN_IIC_SDA, PIN_IIC_SCL); // 43/44 on T-Display-S3 and v7; v8 per jumper (a)
 
     // Full I2C scan so we can see which devices respond on this board.
     Serial.println("[I2C SCAN] Scanning 0x03..0x77...");

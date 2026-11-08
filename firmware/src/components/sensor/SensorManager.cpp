@@ -1,4 +1,5 @@
 #include "SensorManager.h"
+#include "pin_config.h"
 #include "../session/SessionManager.h" // For SessionSummary full definition
 
 extern bool serialStudioEnabled;
@@ -633,7 +634,7 @@ bool SensorManager::init(SensorConfiguration *config)
     activeConfig = config;
 
     // Initialize I2C
-    Wire.begin(43, 44);    // SDA=43, SCL=44 for T-Display S3
+    Wire.begin(PIN_IIC_SDA, PIN_IIC_SCL); // 43/44 on T-Display S3 and v7; v8 per jumper (a)
     Wire.setClock(400000); // 400 kHz (Fast Mode) - set BEFORE sensor initialization
     // Default drive strength, no I2C/IO_MUX glitch filters, internal pulls as
     // left by Wire.begin() (v7-clean baseline; matches 4da1c67).
