@@ -226,7 +226,8 @@ EXPECTED = {
     "JP5.1": "/ESP32_S3/U3_IO18", "JP5.2": "/LED_DATA", "JP5.3": "/ESP32_S3/U3_IO16", "D5.1": "/LED_DATA",
     # IC1 swap
     "IC1.1": "GND", "IC1.2": "/LED_DATA", "IC1.3": "GND",
-    "IC1.4": "/LED Controller/DATA_TO_LEDS", "IC1.5": "/LED Controller/+5V_TO_LEDS",
+    "IC1.4": "/LED Controller/DATA_TO_LEDS_IC1",  # Phase 11f: R105 33 R to DATA_TO_LEDS
+    "IC1.5": "/LED Controller/+5V_TO_LEDS",
 }
 # U3 module pins that must stay unconnected (no net or an unconnected-* net).
 U3_UNUSED = ["4", "5", "6", "7", "10", "12", "15", "16", "17", "22", "24", "25", "26",

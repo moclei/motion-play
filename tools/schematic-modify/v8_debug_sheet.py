@@ -28,6 +28,8 @@ Edits (all label-style, through modify.py helpers; KiCad must be closed during -
       (JP41, R100 1k), D12 yellow on +5V (JP42, R101 3.3k), D13 red on Protected_VBUS (JP43, R102 3.3k).
     - Phase 11c: TP37 on BAT_CONN (J8 pin 2, before F3) and its ground point TP77, in the rail
       test-point rows (power-sheet numbering: rail point TPn, its ground point TP(n+40)).
+  led_controller.kicad_sch
+    - Phase 11f (W3): IC1 pin 4 -> DATA_TO_LEDS_IC1, R105 33 R -> DATA_TO_LEDS (J3 pin 2), row m.
 
 Jumper positions: the LED SJ2s are closed by default (v8). v7 position: JP40 closed (v7 had D1),
 JP41-JP43 cut (v7 had no such LEDs).
@@ -43,6 +45,8 @@ Usage:
   python3 tools/schematic-modify/v8_debug_sheet.py --fix-11c  # Phase 11c fixes (idempotent): T-touch
                                                               # geometry, SW1 wire tail, Q20/Q21/U10
                                                               # embedded symbols re-copied from KiCad
+  python3 tools/schematic-modify/v8_debug_sheet.py --fix-11f  # Phase 11f (W3) fix (idempotent): R105 33 R
+                                                              # series R at IC1 pin 4 (row m)
   python3 tools/schematic-modify/v8_debug_sheet.py --annotate # ai_* properties on the v8 parts
                                                               # (Phases 8-11), via annotate.py
 """
@@ -124,6 +128,16 @@ PARTS_11C = [
 ]
 PAIR_11C = {"TP77": "TP37"}
 
+# Phase 11f (W3, user decision 2026-11-07; kicad-happy item 23): a 33 R series resistor at IC1's
+# output. IC1 pin 4 moves to DATA_TO_LEDS_IC1; R105 joins it to DATA_TO_LEDS (the hierarchical
+# net to J3 pin 2, the LED strip cable). Row m: v8 = 33 R (C23140); v7 = 0 R fitted or the pads
+# bridged, modelled as a short in V7_SHORTS. No ESD diode (user).
+LED = "led_controller.kicad_sch"
+IC1_OUT_NET = "DATA_TO_LEDS_IC1"
+PARTS_11F = [
+    (LED, "R105", L_R, "33", R0603, "C23140", (256.54, 120.65), {"1": IC1_OUT_NET, "2": "DATA_TO_LEDS"}, ()),
+]
+
 
 def build_parts():
     """(sheet, ref, lib_id, value, footprint, lcsc, position, pin_nets, no_connect_pins)."""
@@ -179,13 +193,14 @@ def build_parts():
     parts.append((PWR, sj, L_SJ2B, "LED load D1", SJ2_BRIDGED, "", (355.6, 233.68), {"1": rail, "2": mid}, ()))
     parts += PARTS_11C
     pair.update(PAIR_11C)
+    parts += PARTS_11F
     return parts, pair
 
 
 PARTS, GND_PAIR = build_parts()
 NEW_REFS = tuple(p[1] for p in PARTS)
 V8_SHORTS = [("{}.1".format(p[1]), "{}.2".format(p[1])) for p in PARTS if p[2] == L_SJ2B]
-V7_SHORTS = [("JP40.1", "JP40.2")]
+V7_SHORTS = [("JP40.1", "JP40.2"), ("R105.1", "R105.2")]   # row m v7: R105 as 0 R / bridged
 
 
 def rename_ref(doc, old, new, value):
@@ -281,6 +296,34 @@ def fix_11c() -> int:
     for d in done:
         print("  " + d)
     docs.save_all()
+    print("Saved.")
+    return check()
+
+
+R105_ANN = {"function": "LED strip data series resistor (row m): IC1 1Y -> DATA_TO_LEDS (J3 pin 2)",
+            "block": "led_controller", "role": "series_resistor",
+            "critical_specs": "33 R 0603 (C23140), next to IC1 pin 4; v7 position 0 R / pads bridged"}
+
+
+def fix_11f() -> int:
+    """Phase 11f (W3) fix, idempotent: IC1 pin 4 onto DATA_TO_LEDS_IC1 and R105 33 R to
+    DATA_TO_LEDS. The TCA box's VCC_3V3 pin is NOT removed: it is U4's supply path (see the
+    Phase 11f notes in SESSION.md)."""
+    sys.path.insert(0, str(REPO / "tools/schematic-context"))
+    import annotate as ann_tool
+    docs = modify.load_project(ROOT)
+    led = docs.sheet(LED)
+    if modify.find_component(led, "R105") is not None:
+        print("Phase 11f fix already applied: nothing to do")
+        return check()
+    print("  " + modify.set_pin_net(led, "IC1", "4", IC1_OUT_NET))
+    cache = {}
+    for part in PARTS_11F:
+        _place(docs, cache, part)
+    for line in ann_tool.write_ai_properties(modify.find_component(led, "R105"), R105_ANN):
+        print("  R105" + line)
+    import kiutils_k9
+    kiutils_k9.save_schematic(led.schematic, led.path)   # only the LED sheet changes
     print("Saved.")
     return check()
 
@@ -442,6 +485,12 @@ def check() -> int:
          "R103.1" in of(v8, "U3.24") and "R104.1" in of(v8, "U3.25")),
         ("TP37 on BAT_CONN: J8 pin 2, the cell side of F3",
          pin_net.get("TP37.1") == pin_net.get("J8.2") == pin_net.get("F3.1") != pin_net.get("F3.2")),
+        ("row m v8: R105 33 R between IC1 pin 4 and J3 pin 2",
+         pin_net.get("R105.1") == pin_net.get("IC1.4") and pin_net.get("R105.2") == pin_net.get("J3.2")
+         and pin_net.get("IC1.4") != pin_net.get("J3.2")),
+        ("row m v7 (R105 bridged): IC1 pin 4 and J3 pin 2 on one net", "J3.2" in of(
+            g(base + [("R105.1", "R105.2")]), "IC1.4")),
+        ("TCA VCC_3V3 sheet pin: U4 VCC on +3.3V_BUS", "U4.24" in of(v8, "U10.5")),
     ]
     gnd = of(v8, "U3.1")
     missing_gnd = [p for p in GND_PAIR if "{}.1".format(p) not in gnd]
@@ -575,7 +624,9 @@ def annotations():
     # Phase 11
     pair_of = {v: k for k, v in GND_PAIR.items()}
     for sheet, ref, lib_id, value, fp, lcsc, pos, nets, nc in PARTS:
-        if lib_id == L_TP and value != "GND":
+        if ref == "R105":
+            ann[ref] = dict(R105_ANN)
+        elif lib_id == L_TP and value != "GND":
             tp(ref, nets["1"], "test_points", pair_of.get(ref))
         elif lib_id == L_TP:
             gp(ref, GND_PAIR[ref])
@@ -625,11 +676,14 @@ def main() -> int:
     ap.add_argument("--check", action="store_true")
     ap.add_argument("--annotate", action="store_true")
     ap.add_argument("--fix-11c", action="store_true")
+    ap.add_argument("--fix-11f", action="store_true")
     args = ap.parse_args()
     if args.apply:
         return apply()
     if args.fix_11c:
         return fix_11c()
+    if args.fix_11f:
+        return fix_11f()
     if args.annotate:
         return annotate()
     if args.check:
