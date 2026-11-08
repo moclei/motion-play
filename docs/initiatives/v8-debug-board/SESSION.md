@@ -1465,3 +1465,40 @@ Return DONE, PARTIAL, or BLOCKED with specifics.
 **Freeze.** `v8_debug_sheet.py --check`: PHASE 11 CHECK PASSED. ERC: 83 violations, 0 errors (81 pin_to_pin and 2 lib_symbol_issues warnings, as before). `extract.py --previous`: 296 components, 132 nets (new: R105, `DATA_TO_LEDS_IC1`). `check_state.py --fresh`: FRESH. **Annotated tag `v8-schematic-freeze` on `0d6255b`** (not pushed).
 
 **For the next session.** Phase 12 (firmware) is unaffected: R105 is passive. A later schematic edit means moving the tag on purpose (`git tag -fa`). No Rejected Approaches. One Deferred item (extract.py sheet-pin alias).
+
+#### Result
+| # | Phase | Result | Escalation evaluated? | Commit | Notes |
+|---|-------|--------|-----------------------|--------|-------|
+| 17 | Phase 11f: W3 fixes and freeze | DONE | Yes — item 10 not applied (the pin is U4's power); the worker took the user's "leave it" alternative | bba9ff9 | R105 33 Ω (row m); tag `v8-schematic-freeze` on 0d6255b |
+
+#### Verification
+- Re-derived: tag `v8-schematic-freeze` → 0d6255b (annotated, not pushed). `--check` chain passes (ERC 0 errors, LAYOUT, PHASE 11). `--fresh` FRESH. From the freeze netlist: U4.24 is on `+3.3V_BUS` with C9/C10; IC1.4 → `DATA_TO_LEDS_IC1` → R105 → `DATA_TO_LEDS` → J3.2.
+- Item 10 was wrong in the guide, and the Orchestrator relayed it as "connected to nothing". The worker caught it with a scratch netlist and didn't apply it, so U4 keeps its power. The user is told.
+- Carry forward: extract.py's alias table maps `VCC_3V3` → `+3.3V`, so circuit-context.json shows an empty net for a powered pin (Deferred). AI readers of circuit-context could be misled until it's fixed. Raise it with the Planner together with the Phase 13 board-write question.
+
+---
+
+### Worker #18 — Phase 12: Firmware — v8 env
+
+**Dispatch:**
+```
+Initiative: v8-debug-board
+Phase: 12 — Firmware — v8 env
+Initiative path: docs/initiatives/v8-debug-board/
+Additional reading: hardware/pcb-main-v8/CONTEXT.md (GPIO allocation, jumper rows a/e/g, Phase 7 power-path part choice and its BQ24195 notes); firmware/CONTEXT.md; platformio.ini.
+
+Tasks assigned (from TASKS.md Phase 12):
+## Phase 12: Firmware — v8 env
+
+- [~] Add a `motion-play-v8` env and a v8 pin config selected at build time to match jumper (a) (default pair and alternate pair), with UART0 boot log available when the bus is off GPIO43/44. Add a v8 diag env. No change to v7 envs
+- [ ] Hardware BQ fix reflected: `configureBQ24195()` (or its replacement) is kept or dropped per the Phase 7 part choice, with the reason in a code comment
+- [ ] Build every v8 env and every existing v7 env (no regressions)
+- [ ] 🔄 Handoff
+
+The first task is marked `[~]` because it was dispatched to you — it is not someone else's work in progress.
+
+Phase-specific notes: the schematic is frozen at tag v8-schematic-freeze. Take pins from CONTEXT and circuit-context.json, not from memory. No v7 env changes.
+
+You are not the Orchestrator. Do not create documents, work across phases, or replan.
+Return DONE, PARTIAL, or BLOCKED with specifics.
+```
