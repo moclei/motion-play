@@ -1584,3 +1584,7 @@ Return DONE, PARTIAL, or BLOCKED with specifics.
 #### Verification
 - Re-derived: 0 open boxes; tree clean; no sheet diff against `v8-schematic-freeze`; `--fresh` FRESH; circuit-context now carries `VCC_3V3` → `+3.3V_BUS`. PLAN has no date-stamped headings.
 - Loop paused before Phase 13. The user asked about IPC vs MCP and wants to upgrade KiCad and the tooling. OQ-3 is unanswered pending that decision (2026-11-07).
+
+**User decision (2026-11-07):** upgrade KiCad and the tooling now, before layout. A Planner decides between a new initiative and a v8 replan, and the user chooses. Relay written: `RELAY-planner-tooling-upgrade.md`; the user runs it in another session.
+
+**Outcome:** Paused — awaiting user decision (KiCad 10 / tooling upgrade via the Planner relay; OQ-3 follows from it). Parked: firmware/CONTEXT.md v8 pin section (Organizer); OQ-9 open (recommendation no); Phase 19 carry: SW4-off-under-load linear-region risk, stock watch on BQ24195, the 2×3 header and WS2812B-MINI.
