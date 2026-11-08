@@ -9,8 +9,8 @@
       "hardware/pcb-main-v8/kicad/tca9548A_subsystem.kicad_sch": "27f8d853f994cc7d0b4a6c7ccda0cca53d7fa7074795d2601767af38123635b4"
     },
     "generator": "tools/schematic-context/extract.py",
-    "generator_commit": "0026d3bebe77637385a1823cbc63ae601c9774d7",
-    "generated": "2026-11-08T03:25:08+00:00"
+    "generator_commit": "5a1aaabd5c40a1c7e9ca7eb14951b99cd522d0e9",
+    "generated": "2026-11-08T05:36:08+00:00"
   },
   "schema_version": "1.0",
   "project": "motion-play-main-v8",
@@ -23,7 +23,7 @@
       "esp32_s3.kicad_sch": "ESP32_S3"
     },
     "source_hash": "5f43a5588220",
-    "extracted_at": "2026-11-08T03:25:08.558885+00:00"
+    "extracted_at": "2026-11-08T05:36:07.996373+00:00"
   },
   "description": "",
   "blocks": {},
@@ -8618,7 +8618,7 @@
         {
           "name": "DATA_IN",
           "direction": "input",
-          "net": ""
+          "net": "/LED_DATA"
         },
         {
           "name": "DATA_TO_LEDS",
@@ -8828,7 +8828,7 @@
         {
           "name": "VCC_3V3",
           "direction": "input",
-          "net": ""
+          "net": "+3.3V_BUS"
         }
       ]
     }
