@@ -99,6 +99,24 @@ void configureBQ24195();
 // brown out, T-Display resets in a loop. Fix: lift IINLIM via I2C and
 // disable the 40 s I2C watchdog so the setting sticks. Must run *before*
 // display.init() because the display draws enough to trigger the brownout.
+// (Root cause, hardware/pcb-main-v8/CONTEXT.md "BQ24195 needs an I2C command
+// to run": with D+/D- on GND and OTG low at detection the limit is 100 mA,
+// not 500 mA.)
+//
+// Main PCB v8: KEPT, but boot no longer depends on it. Phase 7 kept the
+// BQ24195 (no swap) and fixed the fault in hardware with two solder jumpers:
+// row j shorts D+ to D- (detects a charging port -> IINLIM 1.5 A with no I2C)
+// and row k pulls OTG up from REGN (500 mA floor if detection ever reads a
+// USB host). Reasons to keep it on v8:
+//   - All-v7 jumper set (rows j/k at v7) rebuilds v7's fault, so v8 must
+//     still be able to boot that configuration for A/B/A.
+//   - IINLIM register 2 A vs the hardware 1.5 A default; R32 (330 R) still
+//     caps the real limit at about 1.32-1.61 A, so the gain is small.
+//   - Row f keeps the BQ on the bus by default, so the write still reaches it;
+//     with row f open the probe misses and the function returns.
+// Any I2C write puts the BQ in host mode, where a watchdog expiry (40 s)
+// resets REG00 to 100 mA. So REG05 (watchdog off) must always be written
+// together with REG00; never drop it on its own.
 #define BQ24195_I2C_ADDR    0x6B
 #define BQ24195_REG00       0x00 // Input Source Control
 #define BQ24195_REG05       0x05 // Charge Term / Timer Control
@@ -146,7 +164,8 @@ void setup()
 
     // Reconfigure the BQ24195 input current limit BEFORE anything that draws
     // significant current (display init, WiFi). Without this the v6 board
-    // browns out under load. See note above the #defines for full context.
+    // browns out under load. See note above the #defines for full context
+    // (including why v8 keeps it).
     configureBQ24195();
 
     // Bring up the INA219 power monitor early so we can log VSYS voltage and

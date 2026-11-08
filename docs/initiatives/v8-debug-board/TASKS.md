@@ -176,7 +176,7 @@
 ## Phase 12: Firmware — v8 env
 
 - [x] Add a `motion-play-v8` env and a v8 pin config selected at build time to match jumper (a) (default pair and alternate pair), with UART0 boot log available when the bus is off GPIO43/44. Add a v8 diag env. No change to v7 envs
-- [ ] Hardware BQ fix reflected: `configureBQ24195()` (or its replacement) is kept or dropped per the Phase 7 part choice, with the reason in a code comment
+- [x] Hardware BQ fix reflected: `configureBQ24195()` (or its replacement) is kept or dropped per the Phase 7 part choice, with the reason in a code comment
 - [ ] Build every v8 env and every existing v7 env (no regressions)
 - [ ] 🔄 Handoff
 
