@@ -10,6 +10,12 @@ Usage:
     python extract.py <root.kicad_sch>
     python extract.py <root.kicad_sch> --output path/to/circuit-context.json
     python extract.py <root.kicad_sch> --previous path/to/old-circuit-context.json
+    python extract.py <root.kicad_sch> --check-sheet-pins [-v]
+
+Sheet pins in `sheet_interfaces` are resolved to the net KiCad connects them
+to (a probe netlist from a scratch copy; see probe_sheet_pins), not by name.
+--check-sheet-pins exits 1 and lists each sheet pin that resolves to no net or
+to a net with no component pins; alone it writes nothing.
 
 Environment:
     KICAD_CLI   Override path to the kicad-cli binary.
@@ -87,12 +93,15 @@ class Net:
 class SheetPin:
     name: str
     direction: str
+    x: float = 0.0  # connection point on the parent sheet (mm)
+    y: float = 0.0
 
 
 @dataclass
 class SheetInfo:
     filename: str
     display_name: str
+    uuid: str = ""  # the sheet symbol's uuid on the root
     pins: List[SheetPin] = field(default_factory=list)
 
 
@@ -445,12 +454,14 @@ def read_kiutils_properties(
         child_path = root_dir / filename
 
         pins = [
-            SheetPin(name=pin.name, direction=pin.connectionType)
+            SheetPin(name=pin.name, direction=pin.connectionType,
+                     x=pin.position.X, y=pin.position.Y)
             for pin in sheet.pins
         ]
         sheet_infos.append(SheetInfo(
             filename=filename,
             display_name=display_name,
+            uuid=sheet.uuid or "",
             pins=pins,
         ))
 
@@ -494,84 +505,338 @@ def _collect_ai_properties(
 
 
 # ---------------------------------------------------------------------------
-# Sheet interface resolution — match hierarchical pins to parent-side nets
+# Sheet interface resolution — the net KiCad connects each sheet pin to
 # ---------------------------------------------------------------------------
+#
+# A sheet pin's net is read from KiCad itself, not guessed from its name. In a
+# scratch copy of the project, a one-pin probe symbol is placed on the parent
+# sheet with its pin exactly on each sheet pin's connection point, and
+# kicad-cli exports a netlist. A probe's net holds everything KiCad joins to
+# that sheet pin on both sides: the parent-side wires/labels/power symbols and
+# the child's hierarchical label. The probe's fellow members are then looked up
+# in the real netlist (no probes), so the name reported is the real net's name
+# even when KiCad would have named the probed net after the probe. A probe is
+# accepted only if its members equal one real net's full member set, so a probe
+# that changed connectivity is caught and retried at another point.
+#
+# No name-matching fallback: the old `_POWER_NET_ALIASES` table (`VCC_3V3` ->
+# `+3.3V`) is gone (v8-debug-board Phase 12a); it gave empty or wrong nets on
+# boards that name their rails differently.
+
+PROBE_PREFIX = "PRB_SHEETPIN"
+PROBE_LIB_ID = "sheetpin_probe:PROBE"
+PROBE_LIB_SYMBOL = (
+    '\t\t(symbol "{lib}"\n'
+    '\t\t\t(pin_names (offset 0) (hide yes))\n'
+    '\t\t\t(exclude_from_sim yes) (in_bom yes) (on_board yes)\n'
+    '\t\t\t(property "Reference" "{pfx}" (at 0 0 0) (effects (font (size 1.27 1.27))))\n'
+    '\t\t\t(property "Value" "PROBE" (at 0 0 0) (effects (font (size 1.27 1.27))))\n'
+    '\t\t\t(symbol "PROBE_1_1"\n'
+    '\t\t\t\t(pin passive line (at 0 0 0) (length 1.27)\n'
+    '\t\t\t\t\t(name "~" (effects (font (size 1.27 1.27))))\n'
+    '\t\t\t\t\t(number "1" (effects (font (size 1.27 1.27))))\n'
+    '\t\t\t\t)\n'
+    '\t\t\t)\n'
+    '\t\t)\n'
+)
+PROBE_INSTANCE = (
+    '\t(symbol (lib_id "{lib}") (at {x} {y} 0) (unit 1)\n'
+    '\t\t(exclude_from_sim yes) (in_bom yes) (on_board yes) (dnp no)\n'
+    '\t\t(uuid "{uuid}")\n'
+    '\t\t(property "Reference" "{ref}" (at {x} {y} 0) (effects (font (size 1.27 1.27)) (hide yes)))\n'
+    '\t\t(property "Value" "PROBE" (at {x} {y} 0) (effects (font (size 1.27 1.27)) (hide yes)))\n'
+    '\t\t(property "Footprint" "" (at {x} {y} 0) (effects (font (size 1.27 1.27)) (hide yes)))\n'
+    '\t\t(pin "1" (uuid "{pin_uuid}"))\n'
+    '\t\t(instances (project "{project}" (path "{path}" (reference "{ref}") (unit 1))))\n'
+    '\t)\n'
+)
+
+
+@dataclass
+class PinResolution:
+    """What KiCad connects one sheet pin to."""
+    net: str                       # real net name, "" if none
+    members: List[Tuple[str, str]]  # (ref, pin) of component pins on it
+    problem: str = ""              # "" when the pin resolves to a net with component pins
+
+
+def _sexpr_block_end(text: str, start: int) -> int:
+    """Index just past the s-expression that opens at text[start] == '('."""
+    depth = 0
+    i = start
+    in_str = False
+    while i < len(text):
+        c = text[i]
+        if in_str:
+            if c == "\\":
+                i += 1
+            elif c == '"':
+                in_str = False
+        elif c == '"':
+            in_str = True
+        elif c == "(":
+            depth += 1
+        elif c == ")":
+            depth -= 1
+            if depth == 0:
+                return i + 1
+        i += 1
+    raise RuntimeError("unbalanced s-expression")
+
+
+def _fmt(v: float) -> str:
+    return ("%.4f" % v).rstrip("0").rstrip(".")
+
+
+def _insert_probes(text: str, project: str, path: str,
+                   probes: List[Tuple[str, float, float]]) -> str:
+    """Return a sheet's text with the probe lib symbol and one instance per probe.
+
+    `path` is the sheet instance path the probe references are written under
+    ("/<root uuid>" on the root, "/<root uuid>/<sheet uuid>" in a child).
+    """
+    import uuid as uuidlib
+
+    lib_start = text.find("(lib_symbols")
+    if lib_start < 0:
+        raise RuntimeError("sheet has no lib_symbols block")
+    lib_end = _sexpr_block_end(text, lib_start)
+    lib_sym = PROBE_LIB_SYMBOL.format(lib=PROBE_LIB_ID, pfx=PROBE_PREFIX)
+    instances = "".join(
+        PROBE_INSTANCE.format(
+            lib=PROBE_LIB_ID, x=_fmt(x), y=_fmt(y), uuid=uuidlib.uuid4(),
+            pin_uuid=uuidlib.uuid4(), ref=ref, project=project, path=path)
+        for ref, x, y in probes
+    )
+    close = lib_end - 1  # the ')' closing lib_symbols
+    return (text[:close] + lib_sym + "\t" + text[close:lib_end] + "\n"
+            + instances + text[lib_end:])
+
+
+def _root_uuid(text: str) -> str:
+    import re
+    m = re.search(r'^\t\(uuid "([^"]+)"\)', text, re.M)
+    if not m:
+        raise RuntimeError("root sheet has no top-level uuid")
+    return m.group(1)
+
+
+def _netlist_nets_raw(xml_path: Path) -> List[Tuple[str, List[Tuple[str, str]]]]:
+    """Every net in a kicad-cli XML netlist, unconnected-* stubs included."""
+    out = []
+    root = ET.parse(str(xml_path)).getroot()
+    nets_elem = root.find("nets")
+    for net_elem in (nets_elem.findall("net") if nets_elem is not None else []):
+        nodes = [(n.get("ref", ""), n.get("pin", "")) for n in net_elem.findall("node")]
+        out.append((net_elem.get("name", ""), nodes))
+    return out
+
+
+def _on_segment(p: Tuple[float, float], a: Tuple[float, float],
+                b: Tuple[float, float], tol: float = 0.01) -> bool:
+    (px, py), (ax, ay), (bx, by) = p, a, b
+    cross = (bx - ax) * (py - ay) - (by - ay) * (px - ax)
+    if abs(cross) > tol * max(1.0, abs(bx - ax) + abs(by - ay)):
+        return False
+    return (min(ax, bx) - tol <= px <= max(ax, bx) + tol
+            and min(ay, by) - tol <= py <= max(ay, by) + tol)
+
+
+def _probe_candidates(
+    schematic: Path,
+    sheet_infos: List[SheetInfo],
+) -> Dict[Tuple[str, str], List[Tuple[str, float, float]]]:
+    """Probe points to try for each sheet pin, in order: (sheet file, x, y).
+
+    1. The sheet pin itself, on the root.
+    2. The ends of each root wire that runs through or ends at the sheet pin.
+       KiCad joins a sheet pin lying inside a wire to that wire, but a probe
+       pin dropped on the same point splits it off (seen on the
+       power-supply board), so a wire end is the next place to probe.
+    3. The child's hierarchical label(s) of the same name (single-use
+       child sheets only).
+    A sheet file of "" means the root.
+    """
+    out = {}  # type: Dict[Tuple[str, str], List[Tuple[str, float, float]]]
+    root_sch = Schematic.from_file(str(schematic))
+    wires = []
+    for item in root_sch.graphicalItems:
+        if getattr(item, "type", "") == "wire" and len(item.points) >= 2:
+            pts = [(q.X, q.Y) for q in item.points]
+            wires.extend(zip(pts, pts[1:]))
+    uses = {}  # type: Dict[str, int]
+    for info in sheet_infos:
+        uses[info.filename] = uses.get(info.filename, 0) + 1
+    child_labels = {}  # type: Dict[str, List[Tuple[str, float, float]]]
+    for fname in uses:
+        path = schematic.parent / fname
+        if uses[fname] != 1 or not path.exists():
+            continue
+        child = Schematic.from_file(str(path))
+        child_labels[fname] = [
+            (hl.text, hl.position.X, hl.position.Y) for hl in child.hierarchicalLabels]
+
+    for info in sheet_infos:
+        for pin in info.pins:
+            p = (pin.x, pin.y)
+            cands = [("", pin.x, pin.y)]
+            for a, b in wires:
+                if _on_segment(p, a, b):
+                    for e in (a, b):
+                        c = ("", e[0], e[1])
+                        if c not in cands:
+                            cands.append(c)
+            for text, x, y in child_labels.get(info.filename, []):
+                if text == pin.name:
+                    cands.append((info.filename, x, y))
+            out[(info.filename, pin.name)] = cands
+    return out
+
+
+def _probe_round(
+    kicad_cli: str,
+    schematic: Path,
+    sheet_infos: List[SheetInfo],
+    placements: Dict[Tuple[str, str], Tuple[str, float, float]],
+) -> Dict[Tuple[str, str], List[Tuple[str, str]]]:
+    """One probe netlist: (sheet, pin) -> component pins on the probe's net.
+
+    A pin missing from the result had its probe on no net at all.
+    """
+    sheet_uuid = {i.filename: i.uuid for i in sheet_infos}
+    by_file = {}  # type: Dict[str, List[Tuple[str, float, float]]]
+    owner = {}  # type: Dict[str, Tuple[str, str]]
+    for n, (key, (fname, x, y)) in enumerate(sorted(placements.items()), 1):
+        ref = "{}{}".format(PROBE_PREFIX, n)
+        owner[ref] = key
+        by_file.setdefault(fname, []).append((ref, x, y))
+
+    with tempfile.TemporaryDirectory(prefix="sheetpin_probe_") as tmp:
+        tmp_dir = Path(tmp)
+        for f in schematic.parent.iterdir():
+            if f.is_file() and (f.suffix in (".kicad_sch", ".kicad_pro")
+                                or f.name in ("sym-lib-table", "fp-lib-table")):
+                shutil.copy2(str(f), str(tmp_dir / f.name))
+        root_uuid = _root_uuid(schematic.read_text())
+        for fname, probes in by_file.items():
+            if fname:
+                src = schematic.parent / fname
+                path = "/{}/{}".format(root_uuid, sheet_uuid[fname])
+            else:
+                src = schematic
+                path = "/" + root_uuid
+            (tmp_dir / src.name).write_text(
+                _insert_probes(src.read_text(), schematic.stem, path, probes))
+
+        xml_path = export_netlist_xml(kicad_cli, tmp_dir / schematic.name)
+        try:
+            raw = _netlist_nets_raw(xml_path)
+        finally:
+            xml_path.unlink()
+
+    found = {}  # type: Dict[Tuple[str, str], List[Tuple[str, str]]]
+    for _name, nodes in raw:
+        members = sorted(((r, p) for r, p in nodes if not r.startswith(PROBE_PREFIX)),
+                         key=lambda m: (m[0], _pin_sort_key(m[1])))
+        for r, _p in nodes:
+            if r in owner:
+                found[owner[r]] = members
+    return found
+
+
+def probe_sheet_pins(
+    kicad_cli: str,
+    schematic: Path,
+    sheet_infos: List[SheetInfo],
+    nets: Dict[str, Net],
+) -> Dict[Tuple[str, str], PinResolution]:
+    """Resolve every root-level sheet pin to the net KiCad connects it to.
+
+    Returns (sheet filename, pin name) -> PinResolution. Works on scratch
+    copies of the project folder; the real files are only read.
+
+    A probe is accepted only when its fellow members are exactly one real
+    net's full member set: the probe must not have changed connectivity.
+    A pin whose probe fails that (or lands on no component pins) is probed
+    again at its next candidate point (_probe_candidates), one kicad-cli
+    export per round. A pin still unresolved after its last candidate is
+    reported with the reason.
+    """
+    if Schematic is None:
+        raise RuntimeError("kiutils is required to resolve sheet pins")
+    cands = _probe_candidates(schematic, sheet_infos)
+    if not cands:
+        return {}
+
+    real_by_member = {}  # type: Dict[Tuple[str, str], str]
+    real_members = {}  # type: Dict[str, Set[Tuple[str, str]]]
+    for net in nets.values():
+        real_members[net.name] = set()
+        for c in net.connections:
+            real_by_member[(c.ref, c.pin)] = net.name
+            real_members[net.name].add((c.ref, c.pin))
+
+    result = {}  # type: Dict[Tuple[str, str], PinResolution]
+    pending = {key: 0 for key in cands}  # key -> index of the candidate to try
+    while pending:
+        placements = {key: cands[key][i] for key, i in pending.items()}
+        found = _probe_round(kicad_cli, schematic, sheet_infos, placements)
+        retry = {}
+        for key, i in pending.items():
+            members = found.get(key)
+            if members is None:
+                res = PinResolution("", [], "probe on no net")
+            elif not members:
+                res = PinResolution("", [], "no component pins on its net")
+            else:
+                names = sorted({real_by_member.get(m, "") for m in members})
+                if len(names) != 1 or not names[0]:
+                    res = PinResolution("", members, "probe members span real nets {}".format(names))
+                elif set(members) != real_members[names[0]]:
+                    res = PinResolution("", members, "probe split net {} (got {} of its {} pins)".format(
+                        names[0], len(members), len(real_members[names[0]])))
+                else:
+                    res = PinResolution(names[0], members)
+            if res.problem and i + 1 < len(cands[key]):
+                retry[key] = i + 1
+            else:
+                result[key] = res
+        pending = retry
+    return result
+
 
 def build_sheet_interfaces(
     sheet_infos: List[SheetInfo],
-    nets: Dict[str, Net],
+    resolved: Dict[Tuple[str, str], PinResolution],
 ) -> dict:
-    """Build the sheet_interfaces section from kiutils sheet data.
-
-    For each hierarchical sheet pin, attempts to resolve which net it
-    connects to on the parent side using name-based heuristics.
-    """
-    all_net_names = set(nets.keys())  # type: Set[str]
+    """Build the sheet_interfaces section: each sheet pin and its real net."""
     interfaces = {}  # type: dict
-
     for info in sheet_infos:
         pins_out = []
         for pin in info.pins:
-            net = _resolve_pin_net(pin.name, info.display_name, all_net_names)
+            res = resolved.get((info.filename, pin.name))
             pins_out.append({
                 "name": pin.name,
                 "direction": pin.direction,
-                "net": net,
+                "net": res.net if res else "",
             })
-
         pins_out.sort(key=lambda p: p["name"])
         interfaces[info.filename] = {
             "description": "",
             "pins": pins_out,
         }
-
     return interfaces
 
 
-_POWER_NET_ALIASES = {
-    "VCC_3V3": "+3.3V",
-    "VCC_5V": "+5V",
-    "VCC": "+3.3V",
-    "V3V3": "+3.3V",
-    "V5V": "+5V",
-}
-
-
-def _resolve_pin_net(
-    pin_name: str,
-    sheet_display_name: str,
-    all_net_names: Set[str],
-) -> str:
-    """Try to resolve which parent-side net a hierarchical sheet pin connects to.
-
-    Uses a series of name-matching heuristics since kiutils cannot trace
-    net connectivity. Returns empty string if unresolved.
-    """
-    scoped = "/{}/{}".format(sheet_display_name, pin_name)
-    if scoped in all_net_names:
-        return scoped
-
-    if pin_name in all_net_names:
-        return pin_name
-
-    rooted = "/{}".format(pin_name)
-    if rooted in all_net_names:
-        return rooted
-
-    for suffix in ("_IN", "_OUT"):
-        if pin_name.upper().endswith(suffix):
-            base = pin_name[:-len(suffix)]
-            if base in all_net_names:
-                return base
-            rooted_base = "/{}".format(base)
-            if rooted_base in all_net_names:
-                return rooted_base
-
-    alias = _POWER_NET_ALIASES.get(pin_name.upper())
-    if alias and alias in all_net_names:
-        return alias
-
-    return ""
+def sheet_pin_offenders(
+    resolved: Dict[Tuple[str, str], PinResolution],
+) -> List[str]:
+    """One line per sheet pin that resolves to no net or a net with no component pins."""
+    return [
+        "{} : {} — {}".format(sheet, pin, res.problem)
+        for (sheet, pin), res in sorted(resolved.items())
+        if res.problem
+    ]
 
 
 # ---------------------------------------------------------------------------
@@ -655,6 +920,7 @@ def build_context(
     schematic: Path,
     component_props: Optional[Dict[str, Dict[str, str]]] = None,
     sheet_infos: Optional[List[SheetInfo]] = None,
+    resolved_pins: Optional[Dict[Tuple[str, str], PinResolution]] = None,
 ) -> dict:
     """Assemble the circuit-context.json structure from parsed data.
 
@@ -666,6 +932,8 @@ def build_context(
         component_props = {}
     if sheet_infos is None:
         sheet_infos = []
+    if resolved_pins is None:
+        resolved_pins = {}
 
     ref_list = sorted(components.keys())
     net_list = sorted(nets.keys())
@@ -685,7 +953,7 @@ def build_context(
         "blocks": {},
         "components": {},
         "nets": {},
-        "sheet_interfaces": build_sheet_interfaces(sheet_infos, nets),
+        "sheet_interfaces": build_sheet_interfaces(sheet_infos, resolved_pins),
     }
 
     for ref in sorted(components.keys()):
@@ -791,6 +1059,20 @@ def main() -> None:
         "--previous",
         help="Path to a previous circuit-context.json to merge annotations from",
     )
+    parser.add_argument(
+        "--check-sheet-pins",
+        action="store_true",
+        help=(
+            "Resolve every sheet pin and exit non-zero if any resolves to no net "
+            "or to a net with no component pins (each offender is listed). "
+            "Writes nothing unless --output is also given."
+        ),
+    )
+    parser.add_argument(
+        "--verbose", "-v",
+        action="store_true",
+        help="With --check-sheet-pins: print every sheet pin, its net and members",
+    )
     args = parser.parse_args()
 
     schematic = resolve_schematic(args.schematic)
@@ -835,11 +1117,37 @@ def main() -> None:
             file=sys.stderr,
         )
 
-        # --- Step 4: Build context and merge ---
+        # --- Step 4: Resolve sheet pins to the nets KiCad connects them to ---
+        print("Resolving sheet pins (probe netlist)...", file=sys.stderr)
+        resolved_pins = probe_sheet_pins(kicad_cli, schematic, sheet_infos, nets)
+        offenders = sheet_pin_offenders(resolved_pins)
+        print(
+            f"  {len(resolved_pins)} sheet pins, {len(offenders)} unresolved",
+            file=sys.stderr,
+        )
+
+        if args.check_sheet_pins:
+            if args.verbose:
+                for (sheet, pin), res in sorted(resolved_pins.items()):
+                    members = " ".join("{}.{}".format(r, p) for r, p in res.members)
+                    print("{} : {} -> {} [{}]".format(
+                        sheet, pin, res.net or "(none)", members))
+            if offenders:
+                print("SHEET-PIN CHECK FAILED: {} offender(s)".format(len(offenders)))
+                for line in offenders:
+                    print("  " + line)
+            else:
+                print("SHEET-PIN CHECK PASSED: {} sheet pins, each on a net with "
+                      "component pins".format(len(resolved_pins)))
+            if not args.output:
+                sys.exit(1 if offenders else 0)
+
+        # --- Step 5: Build context and merge ---
         context = build_context(
             components, nets, sheet_map, schematic,
             component_props=component_props,
             sheet_infos=sheet_infos,
+            resolved_pins=resolved_pins,
         )
 
         if args.previous:
@@ -848,13 +1156,15 @@ def main() -> None:
         context = dict([("_provenance", build_provenance(
             schematic, [i.filename for i in sheet_infos] if sheet_infos else []))] + list(context.items()))
 
-        # --- Step 5: Write circuit-context.json ---
+        # --- Step 6: Write circuit-context.json ---
         write_context_json(context, output_path)
         print(
             f"Wrote {output_path.name} "
             f"({output_path.stat().st_size:,} bytes)",
             file=sys.stderr,
         )
+        if args.check_sheet_pins and offenders:
+            sys.exit(1)
 
     except subprocess.CalledProcessError as e:
         print(f"Error: kicad-cli failed (exit {e.returncode}):", file=sys.stderr)
