@@ -1516,3 +1516,13 @@ Return DONE, PARTIAL, or BLOCKED with specifics.
 **Verified.** `pio run` on all 8 envs: SUCCESS, no new warnings in main.cpp. Preprocessing pin_config.h for each jumper (a)/(g) combination gives the expected pins, and the `#error` fires on SDA = LED = 16.
 
 **For the next session / not done.** Nothing has been flashed on hardware (no v8 boards yet). `firmware/CONTEXT.md` Pin Configuration still lists only the T-Display/v7 pins. A v8 row set belongs there (Organizer). Row (e) external master needs no firmware: with JP1/JP2 bus shunts off, U3's I²C init simply fails. If a bus-release image is wanted for v8, it would be `-DDIAG_RELEASE_I2C` on a v8 env (its printed instructions name v7 TPIO43/44). No Rejected Approaches, no Deferred items.
+
+#### Result
+| # | Phase | Result | Escalation evaluated? | Commit | Notes |
+|---|-------|--------|-----------------------|--------|-------|
+| 18 | Phase 12: Firmware — v8 env | DONE | No — clean completion | c72aef5 | 3 v8 envs; all 8 envs build; configureBQ24195 kept (reason in comment) |
+
+#### Verification
+- Re-derived: 0 open boxes; tree clean. In platformio.ini the only change to existing lines is an EOF newline, so no v7 env changed. Spot-built `motion-play-v7` and `motion-play-v8`: both SUCCESS.
+- Park for Outcome (Organizer): firmware/CONTEXT.md Pin Configuration needs a v8 section.
+- Before Phase 13: Planner request on the board-write path (OQ-11 answer: a kiutils save corrupts KiCad 9 boards) with OQ-3, plus the extract.py alias quirk (Deferred, Phase 11f).
