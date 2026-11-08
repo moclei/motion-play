@@ -289,7 +289,7 @@ Stock from the JLCPCB parts API (`selectSmtComponentList`), checked 2026-11-03; 
 
 ## Jumper matrix
 
-**Status: approved by the user 2026-11-02 (W2 part 1), including the v7-valued defaults of rows d, f, h and i.** Rows a–h are the PLAN candidates; i–k come from changelist §3 and Phases 1–2. Every row has a v7 position that rebuilds v7's net membership for the nets it touches (Phase 9/11 check this against `c2acffc`). Defaults are the v8 position (BRIEF), except where the row says v8 = v7 because no fix is claimed. "SJ2" = 2-pad solder jumper, "SJ3" = 3-pad solder jumper (centre common); footprints and the SJ3 pad rule are in Parts.
+**Status: approved by the user 2026-11-02 (W2 part 1), including the v7-valued defaults of rows d, f, h and i.** Rows a–h are the PLAN candidates; i–k come from changelist §3 and Phases 1–2; l from Phase 7; m from the W3 review (2026-11-07). Every row has a v7 position that rebuilds v7's net membership for the nets it touches (Phase 9/11 check this against `c2acffc`). Defaults are the v8 position (BRIEF), except where the row says v8 = v7 because no fix is claimed. "SJ2" = 2-pad solder jumper, "SJ3" = 3-pad solder jumper (centre common); footprints and the SJ3 pad rule are in Parts.
 
 **Implementation changed by the W2 part 2 decision (user, 2026-11-02):** rows a, b, c, d (upstream) and f are now 2.54 mm pin headers with push-on shunts instead of solder jumpers. The positions (v7, v8, defaults) did not change; only the implementation column did. For a header row, "default" means where the shunt ships fitted. Details and footprints: Parts → Jumper headers.
 
@@ -307,15 +307,23 @@ Stock from the JLCPCB parts API (`selectSmtComponentList`), checked 2026-11-03; 
 | j | BQ D+/D− (input source detection) | Both to GND: SDP, IINLIM 100 mA without I²C | D+ shorted to D−: DCP, 1.5 A without I²C | as v7 | BQ fault (Phase 1, SLUSB97A §8.3.1.3); "verified unchanged" BQ support | SJ3: centre = D−; side 1 = GND, side 2 = D+, with D+ also to GND through an SJ2 (closed in v7, open in v8). Phase 7 keeps the BQ24195, so the row stays (pad 1 default = D+, pad 3 = GND) |
 | k | BQ OTG pull-up source | R35 10 k to +3.3V | REGN (approved 2026-11-03) | as v7 | BQ fault (Phase 1, option 2) | SJ3: centre = OTG pull-up resistor, pad 1 (default) = REGN, pad 3 = +3.3V_MCU. Phase 7 keeps the BQ24195, so the row stays |
 | l | BQ TS thermistor (new, Phase 7; approved 2026-11-03) | TH1 on the PCB | TH1 on the PCB (**v8 = v7**, user decision). Alternate position: 10 k NTC on the cell via J9 (with no NTC fitted there, charging is suspended and STAT blinks) | as v7 | Phase 2 mechanism 7 side finding | SJ3: centre = BQ_TS NTC leg, pad 1 (default) = TH1, pad 3 = J9. See Power path |
+| m | LED strip data series resistor (new, W3 2026-11-07) | 0 Ω: IC1 pin 4 straight to J3 pin 2 (v7 had no part here) | **33 Ω in series** at IC1 pin 4 (R105) | as v7 | kicad-happy 11d item 23; not a v7 debug-track suspect | Row-h-style link: one 0603 resistor (R105) between DATA_TO_LEDS_IC1 (IC1 1Y) and DATA_TO_LEDS (J3 pin 2). v8 fits 33 Ω; v7 position = R105 swapped for 0 Ω (C21189) or its pads bridged with solder. No ESD diode (user). The `--check` models the v7 position as a short (0 nets differ vs `c2acffc`) |
 
 Rows considered and not added: D5 on-board pixel isolation (CL-06; row g already takes the LED loads off GPIO16); USBLC6 fitted vs bypassed (CL-12; jumpers on the USB pair cost more than they test); LDO type alone (CL-08; folded into c); B.Cu GND pour and I²C route (CL-20, CL-21; copper, not jumperable: the board model and partner review cover them); J7 shell net, battery holder, reverse protection (power path, Phase 7).
 
-**All-v7 configuration** (for A/B/A): a = v7 both lines, b = bypassed, c = shared, d = 2.2 k upstream only, e = open, f = closed, g = GPIO16, h = closed, i = SW1, j = GND, k = +3.3V, l = TH1 (rows i and l per Phase 7, approved 2026-11-03). The v8 default differs from this list in rows a, b, c, g, i, j and k only: row l's default is also TH1. SW4 ON (v7 had no battery switch). The bring-up relay (Phase 19) carries this list.
+**All-v7 configuration** (for A/B/A): a = v7 both lines, b = bypassed, c = shared, d = 2.2 k upstream only, e = open, f = closed, g = GPIO16, h = closed, i = SW1, j = GND, k = +3.3V, l = TH1 (rows i and l per Phase 7, approved 2026-11-03), m = R105 as 0 Ω or bridged (W3). The v8 default differs from this list in rows a, b, c, g, i, j, k and m only: row l's default is also TH1. SW4 ON (v7 had no battery switch). The bring-up relay (Phase 19) carries this list.
 
 ### Decisions (user, 2026-11-02)
 
 - **OQ-2: no second master footprint.** Row (e) is a 4-pin external-master header behind open SJ2s only. Reason: it is the method the bench already uses (Nano ESP32 as external master, V7R-004) and adds no bus copper by default. Not chosen: a DevKitC-1 socket or a fixed dev-board footprint (board area, more nets near the bus, a new 3.3 V rail question).
 - **OQ-4: board ≤ 100 × 100 mm; the 18650 is on a cable through a keyed, polarised connector.** Reason: the cheapest JLC tier (PLAN), no holder body over copper (Phase 2 mechanism 5), and a reversed cell is blocked at the connector (mechanism 1). Cost: v7's battery-in-holder arrangement can't be A/B'd on v8 (the v7 boards still can). Phase 7 picks the connector (v6 used a JST-PH 2-pin, CL-10).
+
+### Decisions (user, 2026-11-07, W3 schematic review)
+
+The user reviewed the schematic against `REVIEW-GUIDE.md` and found no errors. REVIEW-GUIDE §7 items 1–8 approved as drawn. Items 9–11:
+- **Item 9: row m added.** A 33 Ω series resistor (R105, C23140) at IC1's output pin 4, on the line to the LED strip (J3 pin 2). It damps ringing on the strip cable and limits the current a static zap at J3 can push into IC1. No ESD diode. v7 position: 0 Ω or bridged (row m above). Applied by `v8_debug_sheet.py --fix-11f`.
+- **Item 10: the TCA sheet box's VCC_3V3 pin stays.** The guide called it an unconnected v7 leftover, from `circuit-context.json`, which gives it no net. That was wrong: it is U4's only supply path. On the root it is wired to #PWR015 (+3.3V_BUS); inside the TCA sheet its hierarchical label sits on U4 pin 24 (VCC) with C9 and C10. A scratch-copy netlist with the pin deleted put U4.24, C9.2 and C10.2 on a net of their own (U4 unpowered). The extractor's sheet-interface net comes from an alias table (`VCC_3V3` → `+3.3V`, a net v8 no longer has), hence the empty net. `--check` now guards U4.24 on +3.3V_BUS.
+- **Item 11: all six PMID 22 µF capacitors kept** (C25, C26, C63, C64, C69, C70; 132 µF nominal). No trim (Phase 10 checks, PMID row).
 
 ## Test points
 
@@ -502,6 +510,11 @@ Footprints carry over from the v7 project (`c2acffc`) unless a row says otherwis
 | v7 | Swap to | Reason | LCSC | Stock |
 |---|---|---|---|---|
 | IC1 SN74AHCT125PWR (TSSOP-14), C36365 | **SN74AHCT1G125DBVR** (TI, SOT-23-5), `Package_TO_SOT_SMD:SOT-23-5` | (1) C36365 is at **0 stock** (also the G4/E4 variants). (2) v7 uses one gate (1A = LED_DATA, 1Y = DATA_TO_LEDS, 1OE = GND); the other three gates' inputs have no net, i.e. float (v7 `circuit-context.json`). The single gate is the same AHCT family (TTL input thresholds, 5 V output), so LED_DATA sees the same kind of load. IC1 has no I²C role, so no jumper is needed for v7 fidelity | C7484 (extended) | 41 125 |
+
+**Added at W3 (2026-11-07).**
+| Ref | Part | Footprint | LCSC | Stock | Note |
+|---|---|---|---|---|---|
+| R105 | 33 Ω 1 % 0603, 0603WAF330JT5E (UNI-ROYAL) | `Resistor_SMD:R_0603_1608Metric` | C23140 (basic) | 3 692 557 (JLC, 2026-11-07) | Row m, LED data series R. v7 position part: 0 Ω 0603 C21189 (basic, 19 096 175), or bridge the pads |
 
 **Kept, with stock.**
 | Ref (v7) | Part | LCSC | Stock | Note |
