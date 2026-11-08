@@ -1559,3 +1559,19 @@ Phase-specific notes: no schematic sheet may change; the v8-schematic-freeze tag
 You are not the Orchestrator. Do not create documents, work across phases, or replan.
 Return DONE, PARTIAL, or BLOCKED with specifics.
 ```
+
+#### Notes
+
+**How sheet pins resolve now** (`c05c779`). `extract.py` no longer guesses by name. `_resolve_pin_net` and `_POWER_NET_ALIASES` are gone, with no stated use left. For each root-level sheet pin, it copies the project folder to a temp dir and puts a one-pin probe symbol (`PRB_SHEETPINn`, inserted as text into the scratch root, lib symbol included) on the pin's connection point. It then exports a second kicad-cli netlist. The probe's fellow members are looked up in the real netlist, so the reported name is the real net's.
+- A probe is accepted only if its members are exactly one real net's full member set. Otherwise it is retried at the ends of each root wire through the pin, then at the child's hierarchical label (single-use children), one export per round. If none works, the pin is an offender with the reason.
+- Why the retry exists: on the power-supply board, the sheet pins sit inside root wires (pins at x 81.153, wire ends at 80.01). KiCad joins those, but a probe dropped on the same point split the net (`/Battery Management/CHRG_INT` came back as {U3.7} and {J4.4}). The equality test catches that, and the wire-end probe resolves it. Recorded in PLAN Rejected Approaches.
+- `--check-sheet-pins [-v]`: exits 1 and lists each pin on no net or on a net with no component pins. Alone it writes nothing; with `--output` it also writes. Only sheets on the root are probed (no nested sheets on any board here).
+- Negative test (scratchpad copy of the power board, with an added `DANGLING_TEST` sheet pin): exit 1, offender listed ("no component pins on its net").
+
+**Results.**
+- v8: 42 pins, 0 offenders. TCA `VCC_3V3` → `+3.3V_BUS` (26 members, U4.24, C9.2 and C10.2 among them). The re-extract with `--previous` (`c1332dc`) shows no structural changes. Two `sheet_interfaces` values changed: `VCC_3V3` "" → `+3.3V_BUS`, and LED `DATA_IN` "" → `/LED_DATA`. Every other pin was already right. `--fresh`: FRESH. No sheet touched (`git diff v8-schematic-freeze` on the sheets is empty), so the tag stays valid.
+- v7 (`hardware/pcb-main/kicad/`): 37 pins, 0 offenders (VCC_3V3 → `+3.3V`, as the alias used to give). Power supply: 12 pins, 0 offenders, but only because of the wire-end retry. Output went to the scratchpad only; neither file was re-extracted or committed.
+
+**Docs** (`84e10da`): REVIEW-GUIDE §2 and §7 item 10, and the CONTEXT W3 item-10 note, now say circuit-context gives `+3.3V_BUS`. README has a "Sheet pins" section, and the `tools/CONTEXT.md` extract.py row covers the check.
+
+**For the next session.** Phase 13 is unaffected. One timing note: the first v8 run took about 3 min (kicad-cli cold start). Later runs took about 4 s. Nothing Deferred.

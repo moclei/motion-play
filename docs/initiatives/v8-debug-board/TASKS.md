@@ -187,7 +187,7 @@
 - [x] `tools/schematic-context/extract.py`: resolve each sheet pin in `sheet_interfaces` to the net KiCad actually connects it to (from the kicad-cli netlist and the sheet/label geometry), not through `_POWER_NET_ALIASES` (`VCC_3V3` → `+3.3V`, a net v8 doesn't have; SESSION Worker #17 Notes). Remove the alias table, or keep it only for a stated use. Add a check mode that fails when any sheet pin resolves to a missing net or a net with no component pins, and lists each offender
 - [x] Run the check on v8: the TCA box pin `VCC_3V3` must resolve to `+3.3V_BUS` with U4.24, C9.2 and C10.2 among its members. Also run it, output to the scratchpad only, on `hardware/pcb-main/kicad/` and `hardware/pcb-power-supply/kicad/`; commit no re-extraction of those (v7 files are cited at `c2acffc`). Re-extract v8 `circuit-context.json` with `--previous` and confirm `tools/lab/check_state.py --fresh`. No sheet is touched, so the `v8-schematic-freeze` tag stays
 - [x] Correct any reader-facing text that relied on the old empty net (grep `hardware/pcb-main-v8/`; REVIEW-GUIDE §2 was fixed in 11f). Document the check in `tools/schematic-context/README.md` and the `tools/CONTEXT.md` row
-- [ ] 🔄 Handoff
+- [x] 🔄 Handoff
 
 # --- handoff point ---
 

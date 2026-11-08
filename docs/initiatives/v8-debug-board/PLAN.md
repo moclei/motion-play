@@ -60,6 +60,7 @@ Review before ordering = the user's review + an AI partner review answered from 
 - Switching from kiutils to kicad-sch-api to escape the `(hide yes)` bug (Phase 11 replan): needs Python 3.10+ and a port of every tool; a 40-line shim fixes it.
 - KiCAD-MCP-Server (Avinash1286) autoplace/declutter tools for the tidy: unvetted, source not visible, writes files directly; our own tidy plus a netlist gate instead.
 - `layout_check.py` on the prototype probe's geometry (field angle taken as on screen, every label anchored at its start, 0.72 × height per character): differs from KiCad's plot for rotated fields, sheet pins and labels with no justify (drawn centred); replaced by geometry calibrated on kicad-cli SVG plots (Phase 11b).
+- Sheet-pin nets from a probe pin placed only on the sheet pin itself (Phase 12a): where a sheet pin lies inside a root wire (power-supply board), KiCad joins pin and wire, but a probe on that point splits them, so the probe's net was half the real one; replaced by accepting a probe only when its members equal one real net's full set, retrying at the wire's ends and then the child's label.
 
 ## Open Questions
 - OQ-1 (by Phase 16): which nets AI may route. Default: the user routes switching power (BQ_SW, BOOST_SW loops), the USB pair and battery/high-current paths. AI routes test-point stubs, LEDs, jumpers and the I²C channels, and the user reviews them. Asked with it (moved from OQ-3): may a scratch-copy Freerouting 2.5 experiment (landscape §5 item 2) be tried on the AI net set?
