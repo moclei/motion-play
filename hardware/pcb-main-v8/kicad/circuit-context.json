@@ -4,13 +4,13 @@
     "source_sha256": "d65c086f4f3cc5460e6e6557513d673def8ce83676495e8e9ff5fa3a78d093fb",
     "sources": {
       "hardware/pcb-main-v8/kicad/esp32_s3.kicad_sch": "9d0381f41bada0a3a28186cf1a75a4bda56c7f4e45b8880242f0a37a8a6e364c",
-      "hardware/pcb-main-v8/kicad/led_controller.kicad_sch": "7aab1f1120c9418ca79442467063ba38e851fe852301d21e173865e3fe145d9e",
+      "hardware/pcb-main-v8/kicad/led_controller.kicad_sch": "6b7e283afc65573bc87acce524fc50c607bb8e3184a1fbdea42103a6fc831bfb",
       "hardware/pcb-main-v8/kicad/power_management.kicad_sch": "ea7569f3da49dff5a030d0a9ee1375dc87b78d47c68690c824e74e1390c11e3a",
       "hardware/pcb-main-v8/kicad/tca9548A_subsystem.kicad_sch": "27f8d853f994cc7d0b4a6c7ccda0cca53d7fa7074795d2601767af38123635b4"
     },
     "generator": "tools/schematic-context/extract.py",
-    "generator_commit": "9cc421c8c51e245344c2010172d9a43212c2a1f2",
-    "generated": "2026-11-05T20:18:45+00:00"
+    "generator_commit": "0026d3bebe77637385a1823cbc63ae601c9774d7",
+    "generated": "2026-11-08T03:25:08+00:00"
   },
   "schema_version": "1.0",
   "project": "motion-play-main-v8",
@@ -22,8 +22,8 @@
       "tca9548A_subsystem.kicad_sch": "TCA9548A_Subsystem",
       "esp32_s3.kicad_sch": "ESP32_S3"
     },
-    "source_hash": "8e01fef3593a",
-    "extracted_at": "2026-11-05T20:18:45.440643+00:00"
+    "source_hash": "5f43a5588220",
+    "extracted_at": "2026-11-08T03:25:08.558885+00:00"
   },
   "description": "",
   "blocks": {},
@@ -1467,7 +1467,7 @@
           "number": "4",
           "name": "",
           "type": "tri_state",
-          "net": "/LED Controller/DATA_TO_LEDS"
+          "net": "/LED Controller/DATA_TO_LEDS_IC1"
         },
         {
           "number": "5",
@@ -3350,6 +3350,31 @@
           "name": "",
           "type": "passive",
           "net": "/ESP32_S3/DBG2_A"
+        }
+      ]
+    },
+    "R105": {
+      "part": "R",
+      "value": "33",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "lcsc": "C23140",
+      "sheet": "led_controller.kicad_sch",
+      "block": "led_controller",
+      "function": "LED strip data series resistor (row m): IC1 1Y -> DATA_TO_LEDS (J3 pin 2)",
+      "role": "series_resistor",
+      "critical_specs": "33 R 0603 (C23140), next to IC1 pin 4; v7 position 0 R / pads bridged",
+      "pins": [
+        {
+          "number": "1",
+          "name": "",
+          "type": "passive",
+          "net": "/LED Controller/DATA_TO_LEDS_IC1"
+        },
+        {
+          "number": "2",
+          "name": "",
+          "type": "passive",
+          "net": "/LED Controller/DATA_TO_LEDS"
         }
       ]
     },
@@ -8084,6 +8109,12 @@
       "description": ""
     },
     "/LED Controller/DATA_TO_LEDS": {
+      "type": "",
+      "protocol": "",
+      "direction": "",
+      "description": ""
+    },
+    "/LED Controller/DATA_TO_LEDS_IC1": {
       "type": "",
       "protocol": "",
       "direction": "",
