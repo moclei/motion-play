@@ -1437,3 +1437,31 @@ Make the changes through the tools (shim-guarded, 11b placement rules, layout_ch
 You are not the Orchestrator. Do not create documents, work across phases, or replan.
 Return DONE, PARTIAL, or BLOCKED with specifics.
 ```
+
+#### Notes
+
+**Item 9: R105 added** (`654ede6`). `v8_debug_sheet.py --fix-11f` (new and idempotent) moves IC1 pin 4's stub label from `DATA_TO_LEDS` to `DATA_TO_LEDS_IC1` (`set_pin_net`). It places R105 (Device:R, 33, 0603, C23140) at (256.54, 120.65) on the LED sheet, vertical: pin 1 = `DATA_TO_LEDS_IC1`, pin 2 = `DATA_TO_LEDS` (the hierarchical net to J3 pin 2). It also writes R105's `ai_*` fields. The hierarchy and the root are unchanged.
+- Row m in the shorts model: `V7_SHORTS` gets R105.1–R105.2, and R105 is a NEW_REF, so the all-v7 comparison drops it. Result: **0 nets differ in v7, 0 in v8.**
+- `v8_mcu_sheet.EXPECTED["IC1.4"]` is now `/LED Controller/DATA_TO_LEDS_IC1`.
+- New `--check` facts: row m v8 (R105 between IC1.4 and J3.2), row m v7 (bridged → one net), and U4.24 on +3.3V_BUS.
+- Stock: C23140 is basic, with 3 692 557 at JLC (public parts API, 2026-11-07). The v7-position part, 0 Ω C21189, has 19 096 175.
+- **Save scope:** the first run used `docs.save_all()`. That rewrote all five KiCad-saved sheets in kiutils format (−70 k lines of diff, netlist-neutral). I reverted it, and `--fix-11f` now saves only the LED sheet (`kiutils_k9.save_schematic`). The LED sheet is still reformatted (the first script save since the 11c GUI pass). `tidy_fields.py --check` gives 0 on every sheet. LED overlaps stay at 3.
+
+**Item 10: NOT applied. The premise was wrong.** The TCA box pin `VCC_3V3` is U4's only supply path:
+- On the root it is wired to #PWR015 (Value `+3.3V_BUS`; `v8_power_sheet.py` line 97 already named it "TCA VCC_3V3").
+- Inside the TCA sheet, its hierarchical label is at the end of the wire from U4 pin 24, C9 and C10.
+- Test: I deleted the pin in a scratch copy and exported a netlist. U4.24, C9.2 and C10.2 then formed `/TCA9548A_Subsystem/VCC_3V3` on their own, so U4 was unpowered.
+- Why the guide said "no net": `extract.py` resolves sheet-pin nets through `_POWER_NET_ALIASES` (`VCC_3V3` → `+3.3V`, a net v8 doesn't have). Added to Deferred.
+- Kept as is. It is recorded in CONTEXT (W3 decisions) and REVIEW-GUIDE §2/§7, and a `--check` fact now guards it. The user was offered "delete it or leave it". Leaving it is the only safe option, but **the user should hear that the guide's item 10 was wrong.**
+
+**Item 11:** all six PMID capacitors kept. Recorded in CONTEXT (W3 decisions).
+
+**Docs.**
+- CONTEXT: row m in the jumper matrix; the all-v7 list gains m; "Decisions (user, 2026-11-07, W3)"; an "Added at W3" parts table (R105).
+- REVIEW-GUIDE: §7 status line, items 1–11 marked resolved, the SW1 wire "trimmed" (not removed), OQ-9 still open; §2 VCC_3V3 text corrected; §6 has R105.
+- PLAN: OQ-9 still open after W3, recommendation no.
+- `tools/schematic-modify/CONTEXT.md`: `--fix-11f` listed.
+
+**Freeze.** `v8_debug_sheet.py --check`: PHASE 11 CHECK PASSED. ERC: 83 violations, 0 errors (81 pin_to_pin and 2 lib_symbol_issues warnings, as before). `extract.py --previous`: 296 components, 132 nets (new: R105, `DATA_TO_LEDS_IC1`). `check_state.py --fresh`: FRESH. **Annotated tag `v8-schematic-freeze` on `0d6255b`** (not pushed).
+
+**For the next session.** Phase 12 (firmware) is unaffected: R105 is passive. A later schematic edit means moving the tag on purpose (`git tag -fa`). No Rejected Approaches. One Deferred item (extract.py sheet-pin alias).
