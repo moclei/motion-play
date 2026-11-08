@@ -93,7 +93,7 @@ All 59 signal test points have their partner (script check, Phase 11e). **`TPIO<
 **Mistakes to look for.**
 - A sensor connector with SDA and SCL swapped (pin 3 must be SDA, pin 4 SCL; the sensor boards expect it).
 - A wire on a sheet pin that ends on nothing, or a sheet pin with no wire.
-- The TCA box has a pin `VCC_3V3` from v7. It is the TCA's supply: on the root it is wired to a `+3.3V_BUS` power symbol (#PWR015), and inside the TCA sheet its label sits on U4 pin 24 with C9 and C10. `circuit-context.json` shows no net on it, which is an extractor quirk, not a missing wire (checklist item 10, corrected in Phase 11f).
+- The TCA box has a pin `VCC_3V3` from v7. It is the TCA's supply: on the root it is wired to a `+3.3V_BUS` power symbol (#PWR015), and inside the TCA sheet its label sits on U4 pin 24 with C9 and C10. `circuit-context.json` used to show no net on it because of an extractor quirk, not a missing wire (checklist item 10, corrected in Phase 11f). Since Phase 12a it shows `+3.3V_BUS`, and `extract.py --check-sheet-pins` fails on any sheet pin with no net.
 
 ---
 
@@ -398,7 +398,7 @@ Work through the sheets with sections 2–6, then these items. Each needs your d
 **Smaller items found while writing this guide.**
 
 10. **TCA box pin `VCC_3V3`** (root sheet) is a v7 leftover with no net on it (§2). Harmless; delete it or leave it.
-   *Resolved (W3, Phase 11f): kept, because this item was wrong.* The pin is how U4 gets power. With it deleted (tried on a scratch copy), U4 pin 24, C9 and C10 end up on a net of their own. `circuit-context.json` showed no net because of an extractor quirk (§2). `--check` now confirms that U4 pin 24 is on `+3.3V_BUS`.
+   *Resolved (W3, Phase 11f): kept, because this item was wrong.* The pin is how U4 gets power. With it deleted (tried on a scratch copy), U4 pin 24, C9 and C10 end up on a net of their own. `circuit-context.json` showed no net because of an extractor quirk (§2; fixed in Phase 12a, it now shows `+3.3V_BUS`). `--check` now confirms that U4 pin 24 is on `+3.3V_BUS`.
 11. **PMID capacitors:** CONTEXT → Phase 10 checks allows trimming the 6 × 22 µF bank (C25, C26, C63, C64, C69, C70) if the capacitor maker's DC-bias curve says fewer are enough. Default: keep all six.
    *Resolved (W3): all six kept.*
 

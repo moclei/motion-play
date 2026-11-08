@@ -28,7 +28,7 @@ Extracts circuit data from `.kicad_sch` files into compact `circuit-context.json
 
 | Script | Purpose |
 |--------|---------|
-| `extract.py` | Combines `kicad-cli` netlist export + kiutils parsing → `circuit-context.json`. Use `--previous` to preserve net/block annotations across re-extractions. |
+| `extract.py` | Combines `kicad-cli` netlist export + kiutils parsing → `circuit-context.json`. Use `--previous` to preserve net/block annotations across re-extractions. Each `sheet_interfaces` pin carries the net KiCad connects it to (probe netlist on a scratch copy), not a name guess. `--check-sheet-pins [-v]` exits 1 and lists every sheet pin on no net or on a net with no component pins; it writes nothing unless `--output` is given. |
 | `annotate.py` | Writes hidden `ai_function`, `ai_block`, `ai_role`, `ai_critical_specs` properties to component symbols in `.kicad_sch`. |
 | `show.py` | Displays annotation coverage; `--unannotated` shows what still needs labeling. |
 
