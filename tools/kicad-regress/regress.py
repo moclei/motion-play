@@ -36,7 +36,8 @@ Subcommands
   treeeq A B                                    exact tree equality (whitespace ignored)
 
 Hashes: sha256 (first 16 hex) after normalizing: netlists drop the source/date/tool lines; JSON drops
-the top-level _provenance; Markdown drops its front matter; the run root becomes <ROOT>. The check
+the top-level _provenance, and the board model's DRC lists are sorted (kicad-cli's DRC order is not
+stable); Markdown drops its front matter; the run root becomes <ROOT>. The check
 outputs that Phase 1 recorded on the working tree (WT_OUTPUTS) also have the scratch prefix
 <ROOT>/v8src/ removed, so their paths read repo-relative as they did there.
 
@@ -130,16 +131,33 @@ def cli_version(cli):
 # Hashing
 # ---------------------------------------------------------------------------
 
+def canonical_json(d):
+    """Drop the top-level _provenance; for a kicad-cli ERC/DRC report, the date and item uuids;
+    sort the board model's DRC lists. kicad-cli 9.0.4 does not
+    write DRC violations in a stable order (Phase 4: 1 run in 4 swapped two), so board-model.json's
+    drc.violations / drc.unconnected are compared as sets."""
+    if isinstance(d, dict):
+        d.pop("_provenance", None)
+        if "kicad_version" in d and ("sheets" in d or "violations" in d):   # a kicad-cli ERC/DRC report
+            d.pop("date", None)   # and item uuids: KiCad re-creates some on every load (J7's pins)
+            for v in [v for s in d.get("sheets", []) for v in s.get("violations", [])] + d.get("violations", []):
+                for i in v.get("items", []):
+                    i.pop("uuid", None)
+        drc = d.get("drc")
+        if isinstance(drc, dict):
+            for k in ("violations", "unconnected"):
+                if isinstance(drc.get(k), list):
+                    drc[k] = sorted(drc[k], key=lambda v: json.dumps(v, sort_keys=True))
+    return d
+
+
 def normalized(path, root, rel):
     t = Path(path).read_text(encoding="utf-8")
     suffix = Path(path).suffix
     if suffix in (".net", ".xml"):
         t = "\n".join(l for l in t.splitlines() if not re.match(r"\s*(\((source|date|tool) |<(source|date|tool)>)", l))
     elif suffix == ".json":
-        d = json.loads(t)
-        if isinstance(d, dict):
-            d.pop("_provenance", None)
-        t = json.dumps(d, sort_keys=True)
+        t = json.dumps(canonical_json(json.loads(t)), sort_keys=True)
     elif suffix == ".md" and t.startswith("---"):
         t = t.split("\n---", 1)[1] if "\n---" in t[3:] else t
     if rel in WT_OUTPUTS:
@@ -312,7 +330,7 @@ def cmd_compare(a):
             continue
         na, nb = normalized(fa, str(A), rel), normalized(fb, str(B), rel)
         if fa.suffix == ".json":
-            out = kcompare.json_diff(json.loads(ta), json.loads(tb), a.tol)
+            out = kcompare.json_diff(canonical_json(json.loads(ta)), canonical_json(json.loads(tb)), a.tol)
             if not out:
                 print("EQUAL      {} (JSON leaves within {}; _provenance ignored)".format(rel, a.tol))
                 continue

@@ -13,7 +13,9 @@ d4d54268519deb64  v8/extract_sheetpins.txt
 ce93ab0ac74cd3f3  v8/tidy_fields.txt
 2a0e67e94db38928  v8/tidy_labels.txt
 c8d5d149dfbfa53d  v8/v8_debug_sheet_check.txt
-cc6589ad872205a1  v7/board-model.json
+# board-model.json: Phase 1 recorded cc6589ad872205a1 with the DRC violations in kicad-cli's order.
+# That order is not stable, so the hash now sorts them; the same Phase 1 file gives:
+84df69225ee16b00  v7/board-model.json
 b5ae052ac509f98f  v7/net-report.json
 3a4bed9e52025bda  v7/net-report.md
 491f464b93d5f9df  v7/plane-report.json
