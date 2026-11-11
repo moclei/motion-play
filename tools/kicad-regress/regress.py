@@ -37,6 +37,12 @@ Subcommands
       roundtrip set (plus the project symbol libraries) under OUTDIR/src, then load/save round trips,
       splice-save edits on KiCad 9 files and on kicad-cli 10 conversions, the guards' refusals, and
       set_num/hide forms. kicad-cli 9 and 10 run only on copies under OUTDIR.
+  modtest OUTDIR [--python PY] [--kicad-cli9 CLI] [--kicad-cli10 CLI | --no-k10] [--pre REF] [--ops a,b]
+      The modify.py differential test (test_modify.py, kicad10-tooling Phase 6b): every public
+      modify.py operation on fresh copies of v8 (--v8-ref) under OUTDIR, once with this working tree's
+      modify.py and once with the oracle's (--pre, default kicad10-preport, from a temporary worktree
+      at OUTDIR/wt-pre, removed afterwards); netlist, ERC counts, plotted strings, return values and
+      token census compared on kicad-cli 9, then the property and sheet ops on kicad-cli 10 copies.
   netlist A.net B.net [--strip-a] [--strip-b]   structural netlist compare (--strip-*: drop kicad-cli
                                                 10's '_<pin>' pinfunction suffix on that side)
   erc REPORT.json PROJECT_DIR                   ERC/DRC counts, library items split setup/real
@@ -436,6 +442,27 @@ def cmd_iotest(a):
     return subprocess.run(argv).returncode
 
 
+def cmd_modtest(a):
+    out = Path(a.outdir).resolve()
+    if inside_repo(out):
+        die("outdir must be outside the repository")
+    if out.exists() and any(out.iterdir()):
+        die("outdir exists and is not empty: {}".format(out))
+    py = Path(a.python) if a.python else DEFAULT_PY
+    archive(a.v8_ref, ["hardware/pcb-main-v8/kicad", "hardware/pcb-main/resources"], out / "src" / "0")
+    wt = tools_worktree(a.pre, out / "wt-pre")
+    argv = [str(py), str(HERE / "test_modify.py"), str(out), "--pre-tools", str(wt / "tools"),
+            "--kicad-cli9", a.kicad_cli9 or K9_CLI]
+    argv += ["--no-k10"] if a.no_k10 else (["--kicad-cli10", a.kicad_cli10] if a.kicad_cli10 else [])
+    argv += ["--ops", a.ops] if a.ops else []
+    print("sources: v8 {} = src/0; preport tools {} at {}".format(a.v8_ref, a.pre, wt / "tools"))
+    sys.stdout.flush()
+    try:
+        return subprocess.run(argv).returncode
+    finally:
+        git("worktree", "remove", "--force", str(wt))
+
+
 # ---------------------------------------------------------------------------
 # small subcommands
 # ---------------------------------------------------------------------------
@@ -524,6 +551,16 @@ def main():
     p.add_argument("--v8-ref", default="v8-schematic-freeze")
     p.add_argument("--v7-ref", default="c2acffc")
     p.set_defaults(fn=cmd_iotest)
+    p = sub.add_parser("modtest")
+    p.add_argument("outdir")
+    p.add_argument("--python")
+    p.add_argument("--kicad-cli9")
+    p.add_argument("--kicad-cli10")
+    p.add_argument("--no-k10", action="store_true")
+    p.add_argument("--pre", default="kicad10-preport")
+    p.add_argument("--ops")
+    p.add_argument("--v8-ref", default="v8-schematic-freeze")
+    p.set_defaults(fn=cmd_modtest)
     p = sub.add_parser("netlist")
     p.add_argument("a")
     p.add_argument("b")
