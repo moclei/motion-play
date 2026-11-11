@@ -323,3 +323,22 @@ Scratch root for this phase: `/private/tmp/claude-501/-Users-marcocleirigh-Works
 - BRIEF is unchanged; the Planner confirmed "replace" is inside its goal.
 - The stale ERC counts in PLAN "Migrating v8" are corrected.
 - About 8 phases are added compared with the shim path. Before Phase 4 is dispatched, the user is shown the new shape.
+
+User approved resuming the loop with the replanned shape ("Go — dispatch Phase 4").
+
+---
+
+### Worker #4 — Phase 4: Port groundwork: harness, scratch-root checks, kicad-tools pinned
+
+**Dispatch:**
+```
+Initiative: kicad10-tooling
+Phase: 4 — Port groundwork: harness, scratch-root checks, kicad-tools pinned (still kiutils, KiCad 9)
+Initiative path: docs/initiatives/kicad10-tooling/
+Additional reading: PLAN (read in full; it was replanned at 0d5b098), especially "Regression harness", "Scratch roots for the checks", "kicad-tools pin and upgrades". In SESSION.md: Worker #1–#3 Notes and the Orchestrator Verifications (reference hashes, path-length trap, .kicad_prl hazard).
+
+Tasks assigned: Phase 4, all 6 tasks (see TASKS.md)
+
+Notes: the scratchpad reference scripts (scratchpad/scripts/, scripts3/) and k9-ref/HASHES.txt are still present this session. KICAD_CLI stays on 9.0.4 for the whole phase. Cut the `kicad10-preport` tag yourself on the handoff commit (annotated, not pushed).
+Rules: hardware/ and lab/ unchanged; the global python3 and .githooks unchanged; kicad-cli 10 never runs on the working tree.
+```
