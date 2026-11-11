@@ -622,3 +622,44 @@ Tasks assigned: Phase 6a, all 4 tasks (see TASKS.md)
 Notes: Phase 5 prototypes are in scratchpad/p5/scripts/ (ktmod.py, savefmt.py, edits.py, cmp_edit.py). They are present now; build from them, but the committed module and test must not depend on the scratchpad. KICAD_CLI on 9 except for the KiCad 10 copy test.
 Rules: hardware/ and lab/ unchanged; kicad-cli 10 only on scratch copies; tools/requirements.txt pin unchanged; no tool ported or switched to kicad_io in this phase.
 ```
+
+#### Notes
+
+Scratch: `/private/tmp/claude-501/-Users-marcocleirigh-Workspace-motion-play/1edf598d-7bc7-4919-a0bd-71f5981db13e/scratchpad/p6a/` (smoke tests, `fpprobe/`, test runs `io1`–`io4`; `io4.log` is the passing run). `KICAD_CLI` unset (9.0.4); kicad-cli 10 ran only inside the test's `OUTDIR/k10src` copies.
+
+**Task 1, `tools/kicad-io/kicad_io.py` (`12a45e2`, one fix in `abc0880`).** Built from the Phase 5 prototype (`ktmod.py` helpers, `savefmt.py` splice); nothing imports the scratchpad. API: `PIN`, `check_pin`; `FORMATS`, `check_format`; `load_schematic`/`load_symbol_lib`/`load_board`/`load` returning a `Doc` (path, kind, tree, text, version, major, per-item spans); `save(doc, path=None)`, `save_project(docs)` (all guards and version checks first, so a refusal writes nothing), `render(doc)`, `plain_text(doc)`; `lock_files`, `assert_not_open`; `KiCadIOError` and its subclasses `KiCadIOVersionError`, `KiCadIOFormatError`, `KiCadOpenError`; helpers `kids`, `child`, `atoms`, `atom`, `atom_text`, `at_xy`, `num`, `q`, `set_str`, `set_bare`, `set_num`, `node`, `insert_item` (schematic and board order), `remove_items`, `is_hidden`, `hide`, `effects_text`, `make_property`, `to_lists`.
+- Splice save: an unchanged top-level item is matched by identity (then by compact text) and written as its original text with its original leading whitespace. A changed item is serialized by kicad-tools at depth 1, keeping the line breaks that preceded it (the kiutils-format LED sheet has a blank line between items; without this the diff spilled one line outside the item). After a save to the Doc's own path, the Doc's baseline is the written text, so a second save splices against it.
+- **Final newline.** Save always ends the file with `\n`, as PLAN "Save" says. 24 project symbol libraries (the easyeda2kicad `.kicad_sym` files, format 20211014) have no final newline, so their round trip is byte-identical apart from that added newline (tree-identical). No `.kicad_sch`/`.kicad_pcb` in the set lacks one. The test allows exactly this difference and lists the files.
+- **Format list widened (PLAN "Format check" edited, `12a45e2`).** The PLAN list would have refused files the task requires: the power-supply project is KiCad 8 (schematic 20231120, board 20240108), and the tools load project symbol libraries in 20211014 (v8's `sym-lib-table` names `TPS61088RHLR` and `INA219AIDCNR` in `resources/`) and 20231120. Accepted now: schematic 20231120/20250114/20260306, board 20240108/20241229/20260206, symbol library 20211014/20231120/20241209/20251024. The test loads and saves every one.
+- Hide: `is_hidden` reads `(hide yes)` on the node, `(hide yes)` in `effects`, and a bare `hide` in either. `hide(doc, n)` does nothing if the node is already hidden in any form, sets an existing `(hide no)` to yes where it is, and otherwise writes the Doc's form: on KiCad 10 schematics and libraries and on boards, on the property after `at`/`layer` (KiCad 10 writes `at, hide, show_name, do_not_autoplace` on placed symbols; embedded library symbols put `hide` after `do_not_autoplace`, which is the same tree apart from order); `(hide yes)` in `effects` on KiCad 8/9; bare `hide` for format majors below 8. It also handles `pin_numbers`/`pin_names`, where the flag is on the node itself.
+- `num(x)` gives the shortest exact text (repr; no exponent; `5.0` → `5`). The prototype's `fmt` rounded to 4 decimals, which would cut board coordinates (6 decimals). Phase 6b decides whether `modify.py`'s port rounds before calling `set_num`; kiutils wrote Python `repr`-style floats.
+- `to_lists` matches kiutils `parse_sexp` exactly (values and types) on all 5 v8 sheets, in both KiCad 9 and converted KiCad 10 form (one-off check against kiutils in the venv; not in the committed test). That's what `layout_check` needs in Phase 7.
+
+**Task 2, the test (`abc0880`).** `tools/kicad-regress/test_kicad_io.py`, run with `python3 tools/kicad-regress/regress.py iotest <outdir outside the repo>` (about 4 minutes; `--no-k10` skips the KiCad 10 parts). **107/107 PASS** (`p6a/io4.log`).
+- (1) Round trip: all 22 `.kicad_sch`/`.kicad_pcb` of the roundtrip set are byte-identical, tree-identical and keep their version token. So are 36 project symbol libraries (24 with the final-newline note above), 225 KiCad 9.0.4 stock libraries and 223 KiCad 10.0.8 stock libraries. The 12 KiCad 10 conversions are byte-identical too.
+- (2)/(3) Edits. Each splice save is tree-identical to a plain kicad-tools save of the same edit, and every changed diff line is inside the edited item:
+
+| Edit | KiCad 9 splice | KiCad 9 plain | KiCad 10 splice | KiCad 10 plain |
+|---|---|---|---|---|
+| R92 Value, TCA sheet (KiCad format) | +4 / −8 | +548 / −1,467 | +4 / −8 | +548 / −1,467 |
+| R105 Value, LED sheet (kiutils format on 9) | +97 / −40 (the whole symbol, now in kicad-tools layout) | +3,547 / −1,574 | +4 / −8 | +155 / −421 |
+| TPIO44 +0.5 mm in x, v7 board | **+1 / −1** | +361 / −4,596 | **+1 / −1** | +814 / −5,959 |
+
+  On the board the moved footprint's kicad-tools serialization matched KiCad's own layout except the `at` line, so the first board-edit measurement is +1/−1. kicad-cli 10 loads every KiCad 10 result: netlist component/net counts are equal and only the edited Value changes, and DRC counts by type are equal.
+- The footprint is TPIO44, not C9: moving C9 by 0.5 mm adds 4 clearance, 1 courtyard and 3 solder-mask-bridge errors on both 9 and 10. That's a real design effect of the move, not an I/O difference, so I picked a footprint whose move changes no DRC count (probe in `p6a/fpprobe/`; TPIO16, BT1 and TP4 also work).
+- (4) Refusals: the lock guard refuses `save` and `save_project` with `~*.kicad_sch.lck`, and a board save with `~*.kicad_pcb.lck`; the save goes through once the lock is gone. The format check refuses version 20990101; the pin check refuses 0.30.0 and passes 0.29.0; `save` refuses a schematic or board whose version token was changed, and `save_project` writes nothing when one of its docs has. Each refused file is unchanged.
+- (5) `set_num(181.6099)` and `set_num(63.123456789)` land with every digit (the trap: `SExp(value=…)` writes `181.61` and `63.1235`). Hiding on 9 writes `effects:(hide yes)`, and on 10 writes a property-level `(hide yes)` in KiCad's position. `make_property` writes the same forms. Hiding an already-hidden property adds nothing, in each of the three forms (9 effects, kiutils bare, 10 property-level).
+
+**Task 3, kicad-cli 9 reads every KiCad 9 file the test saved.** These checks are part of the test (stages 1b, 2 and 6):
+- Netlists of every project root after the round trip are structurally identical to the input's: v8 296/158, v7 93/102, power-supply 50/55, sensor-flex 9/12, sensor-rigid 22/17 (components/nets).
+- v7 DRC after the round trip and after the TPIO44 move is equal to the input's by type: 16 clearance and 2 hole_clearance errors, 2 padstack warnings, 0 unconnected, 2 parity.
+- Netlists after the TCA and LED edits: 296/158, and only the edited Value changes.
+- The v8 copies saved by the refusal and atom stages: 296/158.
+
+**For Phase 6b.**
+- Use `kio.num`/`set_num` for every number, and decide on rounding explicitly. The preport parity in Phase 5 relied on 4-decimal inputs.
+- `make_property` takes effects text without a hide flag and adds the flag itself. Pass custom effects (justify, a different size) through `effects=`.
+- `hide()` returns whether the tree changed. A property built for a KiCad 10 doc already carries `show_name`/`do_not_autoplace`.
+- No `ProjectDocs` lives in kicad_io; `modify.py` keeps its own and calls `save_project`.
+
+**Handoff checks.** No tool imports kicad_io yet. `kiutils_k9.py` and every tool are unchanged; `tools/requirements.txt` is unchanged. `git diff 5f162bb HEAD -- hardware lab .githooks` is empty. No lock file or edited KiCad file was ever in the working tree (every write went under `p6a/`). PLAN changed in one place (the format list, above). No new documents; nothing Deferred.
