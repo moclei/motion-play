@@ -211,7 +211,7 @@ Scratch root for this phase: `/private/tmp/claude-501/-Users-marcocleirigh-Works
 
 | Token (KiCad 10 form) | v8 before → after | Matters? (KiCad 10 re-save of the output) |
 |---|---|---|
-| `(show_name no)` on every property | 3,696 → 0; written back as bare `(show_name)` | **Yes. kiutils reads the token's presence as true and writes `(show_name)`, which KiCad 10 reads as `show_name yes`.** All 3,696 v8 properties (v7: 1,652) come back with their field name shown |
+| `(show_name no)` (new in 10, on every property) | 3,854 → 0; kiutils writes a bare `(show_name)` on 3,696 of them | **Yes. kiutils reads the token's presence as true and writes `(show_name)`, which KiCad 10 reads as `show_name yes`.** 3,696 v8 properties (v7: 1,652) come back with their field name shown; the other 158 are re-saved as `no` |
 | `(hide yes)` | 2,383 → 0 as a list, written as bare `hide` | No: the hide-flag count is unchanged and KiCad 10 reads bare `hide` as hidden (re-save restores `(hide yes)` on exactly the same items) |
 | `(fields_autoplaced yes)` | 334 → written as `(fields_autoplaced)` | No: re-save restores all 334 |
 | `(do_not_autoplace no)` | 3,854 → 0 | No: default |
