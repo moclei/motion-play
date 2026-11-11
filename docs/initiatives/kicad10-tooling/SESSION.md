@@ -273,3 +273,19 @@ Scratch root for this phase: `/private/tmp/claude-501/-Users-marcocleirigh-Works
 | # | Phase | Result | Commit | Notes |
 |---|-------|--------|--------|-------|
 | 3 | Phase 3: KiCad 10 file format and the kiutils round-trip survey | PARTIAL (stopped at G2 user gate, as planned) | see the last Phase 3 commit | Conversion netlist-neutral; kiutils loses only `show_name` on sheets and can't read populated KiCad 10 boards; kicad-tools lossless; kicad-sch-api destructive; recommend shim + 3.13 venv |
+
+#### Result
+| # | Phase | Result | Escalation evaluated? | Commit | Notes |
+|---|-------|--------|-----------------------|--------|-------|
+| 3 | Phase 3: KiCad 10 file format and the kiutils round-trip survey | PARTIAL | Yes — resolvable without replanning: the stop is the planned G2 user gate | 18fb84e | Tasks 1–4 done; G2 and Handoff wait on the user |
+
+(The Worker also wrote a Result table inside its own block. The table above is the Orchestrator's record.)
+
+#### Verification
+- 5 commits, `cc142e5`..`18fb84e`. Only SESSION.md and TASKS.md changed: `git diff 536954f HEAD -- hardware lab tools` is empty. Tasks 1–4 are `[x]`, and G2 and the Handoff are `[ ]`. PLAN is unchanged.
+- Re-derived from the Notes' ERC/DRC table: converting moves no reference count (v8 ERC 0/81/2, v7 DRC 20/0 unconnected). The only new items are ones KiCad 10 added (`same_local_global_label`, the footprint-vs-symbol field parity check) and library items caused by the setup.
+- Carry forward:
+  - **kicad-cli 10 netlists append `_<pin>` to every `pinfunction`.** `extract.py:332` reads that field, so this goes to Phase 4.
+  - **Phase 5 can't run `board_model.py` on a KiCad 10 board** until the shim covers net-by-name, zones with no net and NPTH `*.Cu`.
+  - kicad-sch-api left an empty folder outside the repo, `~/.cache/kicad-sch-api/symbols/`. The user is told about it.
+- G2 is taken to the user next.
