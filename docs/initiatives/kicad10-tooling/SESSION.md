@@ -732,3 +732,34 @@ Scratch: `/private/tmp/claude-501/-Users-marcocleirigh-Workspace-motion-play/1ed
 - `regress.py modtest` is a model for the `--apply` replays (fresh process per side, seeded uuids, census change against preport's no-op save).
 
 **Handoff checks.** `git status` clean after the last commit. `git diff 24fff46 HEAD -- hardware lab .githooks tools/requirements.txt` is empty. No `p6b` worktree is left (`git worktree list`). No tool other than `modify.py` was changed; `tools/CONTEXT.md` gained one sentence on `modtest` in the kicad-regress entry. PLAN unchanged. No new documents; nothing Deferred.
+
+#### Result
+| # | Phase | Result | Escalation evaluated? | Commit | Notes |
+|---|-------|--------|-----------------------|--------|-------|
+| 7 | Phase 6b: Port `modify.py` | DONE | No — clean completion | 7538dcf | 5 tasks; `regress.py modtest` 97/97 before and after the E2 fix (`8e12435`) |
+
+#### Verification
+- 4 commits, `f17fdd5`..`7538dcf`. Phase 6b is all `[x]`. `git diff 24fff46 HEAD` on hardware/, lab/, .githooks, tools/requirements.txt and PLAN.md is empty. `modify.py` no longer imports kiutils.
+- The Orchestrator re-ran `regress.py modtest` into scratchpad/orch6b: MODTEST PASSED, 97 passed, 0 failed. The tree is clean afterwards and no worktree is left.
+- E2 is the only difference from preport: 3 tree differences on KiCad 9 (the project name and the two sheet keys), none on 10, and netlist, ERC and plot are unchanged. This is inside PLAN's closed list.
+- Carry forward:
+  - **Transient breakage until Phase 7:** `tidy_fields` and `tidy_labels` (`--check` and `--apply`) and the `v8_mcu_sheet` write modes. `regress.py run` will show non-zero exits for the tidy tools until Phase 7 lands. The `v8_bus`/`power`/`debug` write modes stay broken until Phase 8.
+  - **`annotate_components` must not run on a KiCad 10 file until `annotate.py` is ported (Phase 9).** `annotate.py` is still kiutils and unhides fields on 10. No KiCad 10 file is in the working tree, so the risk is limited to scratch work.
+  - The `make_property` signature changed. It has no callers outside `modify.py`.
+
+---
+
+### Worker #8 — Phase 7: Tidy tools, `layout_check`, `v8_project_setup`, `v8_mcu_sheet`
+
+**Dispatch:**
+```
+Initiative: kicad10-tooling
+Phase: 7 — Tidy tools, layout_check, v8_project_setup, v8_mcu_sheet
+Initiative path: docs/initiatives/kicad10-tooling/
+Additional reading: PLAN in full ("Which layer", "Oracle", "Accepted differences from preport", "Raw-layer traps", "Scratch roots for the checks"). SESSION.md Worker #4 Notes (harness, scratch roots), Worker #6 Notes (kicad_io API), Worker #7 Notes and Orchestrator Verification (modify.py API changes, test method, transient breakage).
+
+Tasks assigned: Phase 7, all 4 tasks (see TASKS.md)
+
+Notes: reference side is a `kicad10-preport` worktree (remove after). The only allowed differences from preport are E1/E2 (E2 already landed in modify.py: an --apply replay that adds a sheet reference may show E2's three tree differences, nothing else). Never run --apply against the working tree; replays run on git-archive scratch copies.
+Rules: hardware/ and lab/ unchanged; kicad-cli 10 only on scratch copies; no tool outside Phase 7's list ported.
+```
