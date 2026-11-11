@@ -374,3 +374,35 @@ Scratch for this phase: `/private/tmp/claude-501/-Users-marcocleirigh-Workspace-
 - `tools/CONTEXT.md` "Dependencies" still says kiutils (Phase 11 owns it).
 
 **Handoff checks.** `git status` clean. `git diff dff387a HEAD -- hardware lab .githooks` empty; the working-tree `.kicad_prl` files are untouched (v8 Nov 4, v7 Apr 7). No harness worktree is left (`git worktree list`). My Phase 4 "before" worktree used `sparse-checkout`, which set `extensions.worktreeConfig` in `.git/config`; I removed the worktree and unset that key, so `.git/config` is as it was. The harness doesn't use sparse checkout. kicad-tools wrote nothing outside the venv and scratch that I found. No new documents, nothing Deferred, PLAN unchanged.
+
+#### Result
+| # | Phase | Result | Escalation evaluated? | Commit | Notes |
+|---|-------|--------|-----------------------|--------|-------|
+| 4 | Phase 4: Port groundwork | DONE | No — clean completion | b71c272 | 6 tasks; harness 24/24; kicad-tools 0.29.0 pinned; tag `kicad10-preport` = b71c272 |
+
+#### Verification
+- 5 commits, `123e651`..`b71c272`. Phase 4 is all `[x]`. PLAN is untouched since the replan. `git diff dff387a HEAD -- hardware lab .githooks` is empty.
+- `kicad10-preport` resolves to `b71c272`. `extensions.worktreeConfig` is unset. The only extra worktrees are the user's own Cursor worktrees, which existed before this phase.
+- Orchestrator re-run on the working tree: `tools/.venv` `v8_debug_sheet.py --check` gives PHASE 11 CHECK PASSED, and `pip check` is clean.
+- The `layout_baseline.json` re-key changes the keys but not the values. Byte-identical working-tree output was shown by the Worker.
+- Carry forward:
+  - `modify.annotate_components` resolves `annotate.py` through `root.parents[3]`, so it breaks on scratch roots. This matters for the Phase 5 annotation prototype and the Phase 7 `--apply` replays.
+  - `--root` has to be extended to the write modes in Phase 7.
+  - kicad-cli 9 DRC order is unstable. The harness sorts it, and `reference-k9.txt` records both hashes.
+
+---
+
+### Worker #5 — Phase 5: kicad-tools API spike
+
+**Dispatch:**
+```
+Initiative: kicad10-tooling
+Phase: 5 — kicad-tools API spike (scratch only; no tool is ported)
+Initiative path: docs/initiatives/kicad10-tooling/
+Additional reading: PLAN in full ("Port scope", "One I/O module", "Retire candidates", OQ-7). In SESSION.md: Worker #3 Notes (kicad-tools round-trip, loss table) and Worker #4 Notes (harness usage, annotate_components path caveat).
+
+Tasks assigned: Phase 5, tasks 1–5. Stop before G2a (task 6): the Orchestrator takes it to the user. Return PARTIAL at G2a; that stop is planned.
+
+Notes: use tools/kicad-regress (regress.py) for netlist, ERC, plot, tokens and treeeq comparisons. Prototypes live in the scratchpad, not the repo; no tool is ported. Prototype against `kicad10-preport` modify.py on identical inputs. KiCad 10 copies only via `kicad-cli sch/pcb upgrade` on fresh scratch copies. Give the G2a recommendation with the evidence: (a), (b) or (c), OQ-7 options, and the retire list.
+Rules: hardware/ and lab/ unchanged; kicad-cli 10 never on the working tree; tools/.venv and requirements.txt unchanged.
+```

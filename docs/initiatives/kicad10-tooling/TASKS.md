@@ -45,7 +45,7 @@
 
 ## Phase 5: kicad-tools API spike (scratch only; no tool is ported)
 
-- [ ] Coverage map: every kiutils class and function that the 23 files use (PLAN "Port scope"), mapped to kicad-tools' typed layer, its raw s-expression layer, or "gap". Table in SESSION.md
+- [~] Coverage map: every kiutils class and function that the 23 files use (PLAN "Port scope"), mapped to kicad-tools' typed layer, its raw s-expression layer, or "gap". Table in SESSION.md
 - [ ] Editing prototypes on a scratch v8 (KiCad 9, `KICAD_CLI` on 9) for each public `modify.py` operation: add and remove a component (with the library symbol embedded), wires, junctions, local and hierarchical labels, sheet references and sheet pins, no-connects, power symbols, property edits, annotation. Compare each with the same edit by the `kicad10-preport` `modify.py` on the same input. Netlist, ERC counts and plotted strings must be identical, and the token census may show only the intended change. Repeat a representative subset on a converted KiCad 10 copy (`KICAD_CLI` on 10)
 - [ ] Board read prototype: every value `board_model.py` reads (footprints, pad geometry including custom shapes and rotation, tracks, arcs, vias, zones and fills, stackup, outline, nets), from v7 on KiCad 9 and converted to 10, through kicad-tools. Compare with kiutils' read of the KiCad 9 board: the values must match
 - [ ] Save format (OQ-7). Measure the git diff of a one-property edit saved by kicad-tools, and state the options. Check that a kicad-tools save of a KiCad 9 file keeps it in KiCad 9 format (version token unchanged, and kicad-cli 9 loads it)
