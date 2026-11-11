@@ -14,7 +14,7 @@
 
 ## Phase 2: Python runtime parity (still KiCad 9)
 
-- [ ] `tools/requirements.txt` (merging `tools/pcb-context/requirements.txt`; the old file points to it or is removed) and a gitignored `tools/.venv` on `/usr/local/bin/python3.13`. Pin the versions that install. The global `python3` and `.githooks/pre-commit` don't change
+- [~] `tools/requirements.txt` (merging `tools/pcb-context/requirements.txt`; the old file points to it or is removed) and a gitignored `tools/.venv` on `/usr/local/bin/python3.13`. Pin the versions that install. The global `python3` and `.githooks/pre-commit` don't change
 - [ ] Re-run Phase 1's KiCad 9 reference set under the venv. Outputs must be byte-identical. For board-model floats, state a tolerance and list every value outside exact match. Fix any 3.13 incompatibility in the tools; they must keep running on 3.7 until G2
 - [ ] Record the parity result in SESSION.md, with the evidence OQ-1 needs (PLAN OQ-1)
 - [ ] 🔄 Handoff

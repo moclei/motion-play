@@ -64,3 +64,37 @@ Rules: v7 files at hardware/pcb-main/kicad/ are never opened or saved by KiCad 1
 | # | Phase | Result | Commit | Notes |
 |---|-------|--------|--------|-------|
 | 1 | Phase 1: install, one kicad-cli path, KiCad 9 baselines | DONE | see the handoff commit | 10.0.8 is current; KICAD_CLI in every tool; `sch/pcb upgrade` exist; reference run in the scratchpad; rollback drill OK; one new hazard |
+
+#### Result
+| # | Phase | Result | Escalation evaluated? | Commit | Notes |
+|---|-------|--------|-----------------------|--------|-------|
+| 1 | Phase 1: Install side by side, one kicad-cli path, KiCad 9 baselines | DONE | No — clean completion | 36c561b | 7 tasks; 10.0.8 is current; kicad-cli 10 has `sch/pcb upgrade` |
+
+#### Verification
+- 7 commits, `9eda0cc`..`36c561b`. Phase 1 is all `[x]` and Phases 2–9 are all `[ ]` (the Worker's slip on the later Handoff boxes was reverted in `36c561b`). PLAN has no date-stamped headings. Only "Converting the format" changed, and that edit was in scope for the task.
+- `git diff d7a299e HEAD -- hardware lab` is empty. The Orchestrator re-ran `v8_debug_sheet.py --check` at HEAD with `KICAD_CLI` unset (9.0.4 fallback): LAYOUT CHECK PASSED, PHASE 11 CHECK PASSED, and the tree is clean afterwards.
+- Read the tool diff. `modify.py` owns `KICAD_CLI` and `STOCK_SYMBOLS` (derived from the same install). `tidy_fields.py` and `v8_mcu_sheet.py` import them, and `v8_project_setup.py` reads the env var itself. The fallback is 9.0.4, as the task asked.
+- Carry forward:
+  - **PLAN "Migrating v8" quotes stale ERC warning counts** (81/3/2/1, from Phase 11a). At `v8-schematic-freeze` they are 0 errors, 81 pin_to_pin and 2 lib_symbol_issues. PLAN belongs to the Planner, so it isn't edited here. The Phase 6 dispatch will cite the freeze-record counts, and the next Planner touch corrects PLAN.
+  - **`layout_check.py --root <scratch>` has no baseline**, because its baseline is keyed by the path inside the repo. The Phase 3 and 4 dispatches must say how a scratch copy is checked against the baseline.
+  - **kicad-cli 10 writes `.kicad_prl` on read-only commands** (now in HAZARDS). Every scratch copy is fresh, and kicad-cli 10 never runs inside a KiCad 9 project folder.
+  - **Scratch copies need `hardware/pcb-main/resources` placed beside them.** KiCad 10 also has no global library tables, so ERC/DRC on 10 can show library issues that come from the setup, not the files.
+  - **`STOCK_SYMBOLS` follows `KICAD_CLI`.** Phase 4 must check whether the KiCad 10 stock symbols change what `tidy_fields` or the generators produce.
+- Phase 2's reference set: `/private/tmp/claude-501/-Users-marcocleirigh-Workspace-motion-play/1edf598d-7bc7-4919-a0bd-71f5981db13e/scratchpad/k9-ref/` (`HASHES.txt`), hashed with `scratchpad/scripts/refhash.py`.
+
+---
+
+### Worker #2 — Phase 2: Python runtime parity (still KiCad 9)
+
+**Dispatch:**
+```
+Initiative: kicad10-tooling
+Phase: 2 — Python runtime parity (still KiCad 9)
+Initiative path: docs/initiatives/kicad10-tooling/
+Additional reading: SESSION.md, Worker #1 Notes and the Orchestrator's Verification under it. The .context/HAZARDS.md pip/matplotlib entry. tools/pcb-context/requirements.txt.
+
+Tasks assigned: Phase 2, all 4 tasks (see TASKS.md)
+
+Notes: the KiCad 9 reference set is in scratchpad/k9-ref/ (HASHES.txt), hashed with scratchpad/scripts/refhash.py. Re-run it from fresh scratch copies; don't reuse k9-ref/v8src, because the rollback drill left a kicad-cli-10 .kicad_prl in it. Leave KICAD_CLI unset (9.0.4) for this whole phase. The global python3, its site-packages and .githooks/pre-commit don't change. Install only into tools/.venv. Make sure tools/.venv is gitignored before creating it. If a tool must change to run on 3.13, it must still give identical output on 3.7: show both.
+Rules: as for Phase 1. hardware/ and lab/ unchanged at handoff.
+```
