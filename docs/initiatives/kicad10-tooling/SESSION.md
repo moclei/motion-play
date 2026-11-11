@@ -458,7 +458,7 @@ Boards:
 | `layers`, `nets`, `graphicItems` (lines, arcs, circles, rects, polys), `version`, `generator` | pcb readers | `layers`, `nets`, `graphics` (`BoardGraphic`) | — | Covered (task 3) |
 | `Net(...)`, `Segment(...)`, `Via(...)` construction, `tstamp`, `locked` | v8_project_setup, route_esp32 | `segments`/`vias` setters | nodes | Raw; route_esp32 is a retire candidate |
 
-**What kicad-tools can't do in its typed layer (the gaps), and their size.** (1) No in-place edit or removal of any schematic item: the typed objects are snapshots. (2) No sheet or sheet-pin add, no no-connect add, no control of effects, justify or property placement. (3) `embed_lib_symbol` and `SymbolProperty.to_sexp` rewrite what they write, so they lose information. (4) No custom-pad primitives. Every gap is covered by the raw layer, which is lossless (Phase 3 and 4 round trips). The cost is our own helper layer: the prototype's (`p5/scripts/ktmod.py`) is about 120 lines of helpers (find, insert in KiCad's order, typed atom setters, text builders, the lock guard) under the about 330 lines that re-implement `modify.py`'s 30 public functions. Two raw-layer traps the helpers must handle: **a float atom created as `SExp(value=x)` is written with 6 significant digits** (`181.6099` → `181.61`; the helpers build numbers with an explicit string), and **properties hide in three forms** (above).
+**What kicad-tools can't do in its typed layer (the gaps), and their size.** (1) No in-place edit or removal of any schematic item: the typed objects are snapshots. (2) No sheet or sheet-pin add, no no-connect add, no control of effects, justify or property placement. (3) `embed_lib_symbol` and `SymbolProperty.to_sexp` rewrite what they write, so they lose information. (4) No custom-pad primitives. Every gap is covered by the raw layer, which is lossless (Phase 3 and 4 round trips). The cost is our own helper layer: the prototype (`p5/scripts/ktmod.py`, 814 lines with docstrings) is 169 lines of helpers and I/O (find, insert in KiCad's order, atom setters, text builders, the lock guard), then about 645 lines that re-implement `modify.py`'s public functions (`modify.py` itself is 919 lines). Two raw-layer traps the helpers must handle: **a float atom created as `SExp(value=x)` is written with 6 significant digits** (`181.6099` → `181.61`; the helpers build numbers with an explicit string), and **properties hide in three forms** (above).
 
 **Task 2: editing prototypes.** `p5/scripts/ktmod.py` re-implements every public `modify.py` function on kicad-tools' raw layer, with the same signatures and semantics (it reproduces two preport quirks on purpose: `add_sheet_reference` writes the project name `motion-play-main` and the KiCad 6 keys `Sheet name`/`Sheet file`; a repeated pin number keeps one `(pin …)` entry, as kiutils' pin dict does). The typed layer is used for nothing that writes. Driver `p5/scripts/edits.py IMPL OP BASE OUT`: a fresh copy of the base tree, one edit through either `modify.py` from the `kicad10-preport` worktree (kiutils) or `ktmod.py`, then save. `uuid.uuid4` is seeded in the driver, so both sides mint the same UUIDs and the netlists can be compared with tstamps included. Compare: `p5/scripts/cmp_edit.py` (harness `kcompare`: structural netlist, ERC counts by type, plotted strings per sheet; then each kicad-tools sheet's token census against the unedited base). Base: `git archive v8-schematic-freeze` with `hardware/pcb-main/resources` (`p5/base`). Results: `p5/cmp9.txt`, `p5/cmp10.txt`.
 
@@ -514,3 +514,59 @@ Boards:
   - **(2) kicad-cli 10 re-save.** The output is exactly KiCad's format (+1/−1). It works only for KiCad 10 files: there's no `upgrade` in kicad-cli 9, and kicad-cli 10 would convert a KiCad 9 file. Run it on a temporary copy outside the project folder, then copy the file back (the `.kicad_prl` hazard), so about one kicad-cli call per saved sheet. It ties the I/O module to the installed KiCad and can't apply before the v8 migration (Phase 14).
   - **(3) Splice save in the I/O module.** About 30–40 lines plus a test. The diff is only the touched items, on KiCad 9 and 10, with no kicad-cli. The touched item takes kicad-tools' layout (short lists on one line), until KiCad next saves the file.
   - **(4) Splice save, then the kicad-cli 10 re-save for KiCad 10 files only.** Exact KiCad format on 10 at option 2's cost; (3) alone on 9.
+
+**Task 5: the I/O module, and the retire candidates.**
+
+*Proposed I/O module: `tools/kicad-io/kicad_io.py`.* It sits in a folder of its own beside the other tool folders, because `schematic-*`, `pcb-context` and `kicad-regress` all use it. Tools put `tools/kicad-io` on `sys.path`, as they do for `kiutils_k9` today. It replaces `kiutils_k9.py`, and nothing else under `tools/` imports `kicad_tools` directly for file I/O.
+- **Version check, at import.** `importlib.metadata.version("kicad-tools")` must equal `PIN = "0.29.0"`, otherwise it raises `KiCadIOVersionError` naming `tools/requirements.txt` (PLAN "Pin and upgrades").
+- **Format check, at load.** Each file kind has the set of format versions the harness has tested (schematic 20250114 and 20260306; board 20241229 and 20260206; symbol libraries as found in the KiCad 9 and 10 stock libraries). A newer one, for example a KiCad 11 file, raises rather than being edited blind.
+- **Load.** `load_schematic(path)`, `load_symbol_lib(path)` and `load_board(path)` each return a `Doc`: path, kind, the raw `SExp` tree, the original text, and the format version. They use kicad-tools' raw loaders (`core.sexp_file`). Read-only tools may also wrap a `Doc` in the typed views (`schema.Schematic(doc.tree)`), but the typed `PCB` only with the task 3 corrections, or not at all (G2a recommendation below).
+- **Save.** `save(doc, path=None)`:
+  - It runs the lock guard (below).
+  - It refuses if the tree's format version differs from the one loaded, so a KiCad 9 file can't leave as 10 by accident.
+  - It writes with the OQ-7 strategy chosen at G2a (the splice save is the proposal), atomically (`core.atomic_write.atomic_write_text`), with a final newline.
+  - `save_project(docs)` saves several docs after one guard check, as `ProjectDocs.save_all` does today.
+- **Lock guard.** `lock_files(path)` and `assert_not_open(path)` raise `KiCadOpenError` while `~*.kicad_sch.lck` or `~*.kicad_pcb.lck` exists in the project folder (today's rule, extended to boards). kicad-tools' own check (`check_kicad_lock`) only looks at the exact file's marker and only warns by default, so the module doesn't rely on it.
+- **Raw-tree helpers** (the prototype's 169 lines, which every writer needs):
+  - finding: `kids`, `child`, `atom`, `at_xy`;
+  - safe atom setters: `set_str`, `set_bare`, `set_num` (exact number text, against the six-digit float trap);
+  - `node(text)` for building items from KiCad-form text;
+  - `insert_item` (keeps KiCad's top-level order) and `remove_items`;
+  - version-aware properties: `make_property`, `is_hidden`, `hide` (property-level hide on 10, in `effects` on 9, and bare `hide`);
+  - `to_lists(tree)` for `layout_check`.
+  - Board accessors stay in `pcb-context` (Phase 10).
+- **Phase 6 test.** It includes `kicad-regress/rt_kicad_tools.py`'s round trip through `kicad_io` (load + save tree-identical, version token unchanged, on every board and project), and the splice save's "tree-identical to a plain save" check.
+
+*Retire candidates: confirmed.* `git grep` over the whole repo finds no import, subprocess, runpy or import_module call of `esp32_integration.py`, `esp32_integration_phase2.py` or `route_esp32.py`. Each appears only in its own docstring and in documentation:
+- `tools/CONTEXT.md:57` (the `esp32_integration.py` row) and `tools/schematic-modify/CONTEXT.md:52` and `:61`. Line 61 is workflow step 1, which names `esp32_integration.py --apply` as the example script, so it needs rewording rather than deleting.
+- History, which stays: `docs/initiatives/archive/esp32-integration/` PLAN and TASKS, `docs/research/v7-retry/kicad-extraction-audit.md:28`, and v8-debug-board SESSION:845.
+- The `esp32_integration_phase_1c` strings in both `circuit-context.json` files are `ai_role` values, not calls.
+
+The two schematic scripts hard-code v7's `hardware/pcb-main/kicad/motion-play-main.kicad_sch`, which is never re-saved. `route_esp32.py` writes the board through kiutils `to_file`, the path OQ-11 ruled out. All three were last changed in March 2026 (`cc5e603`). Retiring them saves porting about 3 scripts, and their Phase 8 and 10 replays.
+
+**Handoff checks.** The `p5/wt-pre` worktree was removed (`git worktree list` shows only the user's Cursor worktrees). `git status` is clean after the last commit. Nothing under `hardware/` or `lab/` changed (`git diff 7ad78bc HEAD -- hardware lab .githooks` is empty). `tools/.venv` and `tools/requirements.txt` are unchanged. kicad-cli 10 ran only on scratch copies in `p5/` (`base10`, `v7k10`, the `k10/*/pre` upgrades and the `sf10` re-saves). The global `python3` is unchanged. No new documents, no PLAN edits. G2a and the Handoff stay `[ ]`.
+
+**G2a recommendation.**
+- **Port: option (b), raw layer with our own helpers. Not (c); (a) only for read-only views.**
+  - Every public `modify.py` operation worked on kicad-tools' raw layer, with identical netlist, ERC counts and plotted strings: 11/11 on KiCad 9 and 8/8 on KiCad 10. The census showed only the intended edit (task 2). Nothing needed a capability kicad-tools lacks, so there's no case for (c).
+  - (a) doesn't buy much. For `modify.py` the typed layer covers only reads: no edit or removal, no sheet, sheet-pin or no-connect add. Its `add_symbol`/`add_label` differ from `modify.py` (field placement, justify, ids). `embed_lib_symbol` and `SymbolProperty.to_sexp` rewrite what they write (task 1).
+  - For boards, the typed `PCB` reads 51,354 of 51,367 values the same as kiutils, but only after six corrections. It rebases coordinates onto the outline corner, and substitutes defaults for absent tokens, for oval drills and for a zero zone clearance (task 3). Those are silent changes in `board-model.json` if missed. So I'd port `board_model.py` and the other board readers on the raw layer as well, with small accessors in `pcb-context`. The typed `Schematic`/`PCB` stay acceptable as read-only conveniences in read-only tools, behind the I/O module's `Doc`.
+  - Effort, from the prototype: about 170 lines of shared helpers plus I/O, and a `modify.py` port of about 650 lines with the same signatures.
+- **What kicad-tools can't do, and how big each gap is:**
+  - No typed editing at all (large, covered by the raw layer: done in the prototype).
+  - Lossy typed writers for library symbols and properties (avoid them: small).
+  - No custom-pad model (5 pads on v7; raw: small).
+  - Six silent typed-PCB defaults (avoid the typed `PCB`, or correct each one: medium).
+  - Programmatic float atoms written with 6 significant digits (one helper: small).
+  - No formatting control (OQ-7 below).
+  - KiCad 10 moved property `hide` (version-aware helper: small).
+- **OQ-7: recommend option (3), the splice save in the I/O module, for KiCad 9 and 10 alike.** About 30–40 lines plus a test. A one-property edit becomes a +4/−8 diff instead of +548/−1,467, with no kicad-cli dependency. Its cost: the touched item takes kicad-tools' layout until KiCad next saves the file, and a file still in kiutils format changes only where it's touched.
+  - Option (1), accept the plain save: no effort, but about 2,000 lines of noise per saved 13,000-line sheet.
+  - Option (2), the kicad-cli 10 re-save: exact KiCad format (+1/−1), but for KiCad 10 files only, and one kicad-cli call per saved file.
+  - Option (4): (3) plus (2) for KiCad 10 files, if exact KiCad layout after a tool save matters more than speed.
+  - In every option, KiCad 9 files stay in KiCad 9 format (checked).
+- **Retire list: delete all three** (`esp32_integration.py`, `esp32_integration_phase2.py`, `route_esp32.py`). Nothing calls them, they can only edit v7, and v7 is never re-saved. Git history keeps them. Phase 8 removes the `tools/CONTEXT.md:57` row and the `schematic-modify/CONTEXT.md:52` line, and rewords `:61`.
+- **For the port phases, found here:**
+  - **Two preport board-model values are kiutils misreads.** `connect_pads` is null on all 8 v7 zones, and the F.Cu `gr_rect` is buffered at 0.12 instead of its 0.2 stroke. A correct port changes them, so Phase 10's "identical to preport" needs them accepted as listed fixes (a Planner call).
+  - **`add_sheet_reference` hard-codes the project name `motion-play-main`** and writes the KiCad 6 keys `Sheet name`/`Sheet file`. The prototype reproduced it for the comparison. On v8 the project is `motion-play-main-v8`. The port could take the project name from `ProjectDocs`, but that changes the output against preport, so it needs the same acceptance.
+  - Typed views are snapshots: after a raw edit, a typed `Schematic` over the same tree must be rebuilt (`invalidate_cache()`).
