@@ -32,6 +32,11 @@ Subcommands
       .kicad_pcb of v8 (--v8-ref), v7 (c2acffc) and, at --ref (default HEAD), the power-supply,
       sensor-rigid and sensor-flex projects; each output must be tree-identical to its input.
       Part of a kicad-tools upgrade (kicad10-tooling PLAN "Pin and upgrades").
+  iotest OUTDIR [--python PY] [--kicad-cli9 CLI] [--kicad-cli10 CLI | --no-k10] [--ref REF]
+      The I/O module's test (test_kicad_io.py, kicad10-tooling Phase 6a): fresh copies of the
+      roundtrip set (plus the project symbol libraries) under OUTDIR/src, then load/save round trips,
+      splice-save edits on KiCad 9 files and on kicad-cli 10 conversions, the guards' refusals, and
+      set_num/hide forms. kicad-cli 9 and 10 run only on copies under OUTDIR.
   netlist A.net B.net [--strip-a] [--strip-b]   structural netlist compare (--strip-*: drop kicad-cli
                                                 10's '_<pin>' pinfunction suffix on that side)
   erc REPORT.json PROJECT_DIR                   ERC/DRC counts, library items split setup/real
@@ -411,6 +416,26 @@ def cmd_roundtrip(a):
     return 1 if (fails or differ) else 0
 
 
+def cmd_iotest(a):
+    out = Path(a.outdir).resolve()
+    if inside_repo(out):
+        die("outdir must be outside the repository")
+    if out.exists() and any(out.iterdir()):
+        die("outdir exists and is not empty: {}".format(out))
+    py = Path(a.python) if a.python else DEFAULT_PY
+    src = out / "src"
+    archive(a.v8_ref, ["hardware/pcb-main-v8/kicad", "hardware/pcb-main/resources"], src / "0")
+    archive(a.v7_ref, ["hardware/pcb-main/kicad", "hardware/pcb-main/resources"], src / "1")
+    archive(a.ref, ["hardware/pcb-power-supply/kicad", "hardware/pcb-power-supply/resources",
+                    "hardware/sensor-rigid", "hardware/sensor-flex", "hardware/libraries",
+                    ":(glob)hardware/components/**/*.kicad_sym"], src / "2")
+    argv = [str(py), str(HERE / "test_kicad_io.py"), str(out), "--kicad-cli9", a.kicad_cli9 or K9_CLI]
+    argv += ["--no-k10"] if a.no_k10 else (["--kicad-cli10", a.kicad_cli10] if a.kicad_cli10 else [])
+    print("sources: v8 {} = src/0, v7 {} = src/1, {} = src/2".format(a.v8_ref, a.v7_ref, a.ref))
+    sys.stdout.flush()
+    return subprocess.run(argv).returncode
+
+
 # ---------------------------------------------------------------------------
 # small subcommands
 # ---------------------------------------------------------------------------
@@ -489,6 +514,16 @@ def main():
     p.add_argument("--v8-ref", default="v8-schematic-freeze")
     p.add_argument("--v7-ref", default="c2acffc")
     p.set_defaults(fn=cmd_roundtrip)
+    p = sub.add_parser("iotest")
+    p.add_argument("outdir")
+    p.add_argument("--python")
+    p.add_argument("--kicad-cli9")
+    p.add_argument("--kicad-cli10")
+    p.add_argument("--no-k10", action="store_true")
+    p.add_argument("--ref", default="HEAD")
+    p.add_argument("--v8-ref", default="v8-schematic-freeze")
+    p.add_argument("--v7-ref", default="c2acffc")
+    p.set_defaults(fn=cmd_iotest)
     p = sub.add_parser("netlist")
     p.add_argument("a")
     p.add_argument("b")

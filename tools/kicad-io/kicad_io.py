@@ -251,13 +251,14 @@ def render(doc: Doc) -> Tuple[str, List[Tuple[int, int]]]:
     spans = []
     for c in doc.tree.children:
         compact = c.to_string(compact=True)
-        hit = doc._by_id.get(id(c))
-        if hit is None or hit.compact != compact:
-            hit = doc._by_text.get(compact)     # unchanged text, but a new or moved node
-        if hit is not None:
+        was = doc._by_id.get(id(c))
+        hit = was if was is not None and was.compact == compact else doc._by_text.get(compact)
+        if hit is not None:                     # unchanged (or re-created with the same text)
             lead, body = hit.lead, hit.text
         else:
-            lead = "\n\t"
+            # a changed item keeps the line breaks before it (a blank line in kiutils-format files);
+            # a new one starts on the next line
+            lead = (was.lead[:was.lead.rfind("\n") + 1] if was is not None and "\n" in was.lead else "\n") + "\t"
             body = c.to_string(compact=True) if c._should_inline() else \
                 c.to_string(indent=1, preserve_source=preserve).lstrip("\t")
         parts.append(lead)
