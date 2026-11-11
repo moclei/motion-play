@@ -98,3 +98,39 @@ Tasks assigned: Phase 2, all 4 tasks (see TASKS.md)
 Notes: the KiCad 9 reference set is in scratchpad/k9-ref/ (HASHES.txt), hashed with scratchpad/scripts/refhash.py. Re-run it from fresh scratch copies; don't reuse k9-ref/v8src, because the rollback drill left a kicad-cli-10 .kicad_prl in it. Leave KICAD_CLI unset (9.0.4) for this whole phase. The global python3, its site-packages and .githooks/pre-commit don't change. Install only into tools/.venv. Make sure tools/.venv is gitignored before creating it. If a tool must change to run on 3.13, it must still give identical output on 3.7: show both.
 Rules: as for Phase 1. hardware/ and lab/ unchanged at handoff.
 ```
+
+#### Notes
+
+**Parity result (task 3): the Python 3.13 venv reproduces the KiCad 9 reference set exactly.** KiCad 9.0.4 throughout (`KICAD_CLI` unset). All 21 entries of `k9-ref/HASHES.txt` match under 3.13.3 (`tools/.venv`) and, in a parallel run, under the global 3.7.3, after one tool fix (below). Run folders: `/private/tmp/claude-501/-Users-marcocleirigh-Workspace-motion-play/1edf598d-7bc7-4919-a0bd-71f5981db13e/scratchpad/p2-313/` (3.13) and `/private/tmp/claude-501/-Users-marcocleirigh-Workspace-motion-play/1edf598d-7bc7-4919-a0bd-71f5981db13e/scratchpad/p2-037/` (3.7), each with its own `HASHES.txt`. Runner: `scratchpad/scripts/run_refset.sh <python> <run root>` (fresh `git archive` copies of v8 at `v8-schematic-freeze` and v7 at `c2acffc`, each with `hardware/pcb-main/resources`; then every Phase 1 command). Compare: `scratchpad/scripts/cmp_ref.sh <run root>` (refhash + diff against k9-ref) and `scratchpad/scripts/rawcmp.py <root A> <root B>` (raw and JSON leaf-by-leaf).
+
+| Output | 3.13 vs k9-ref | 3.13 vs 3.7 (raw) |
+|---|---|---|
+| v8 netlist (.net, kicadxml), ERC counts | match | identical apart from the `date` line (kicad-cli, not Python) |
+| `extract.py --check-sheet-pins` (42 pins, 0 offenders) | match | identical |
+| `layout_check.py` (PASSED, 4/3/13/19/6) and the scratch-root no-baseline run | match | identical |
+| `tidy_fields.py --check`, `tidy_labels.py --check` (all 0) | match | identical |
+| `v8_debug_sheet.py --check` (PHASE 11 CHECK PASSED) | match after the fix | identical; also identical to Phase 1 `post-edit-k9/` |
+| `v8_power_sheet`, `v8_bus_sheet`, `v8_mcu_sheet --check` (extra, not in HASHES) | = Phase 1 `post-edit-k9/` | identical |
+| v7 `board-model.json` (93 fp, 362 pads, 102 nets, DRC 18 err / 2 warn) | match | identical bytes apart from `_provenance.generated` |
+| v7 net-report and plane-report (.json, .md) | match | identical apart from `generated` and `model_sha256` (the model's timestamp) |
+| probe-points `pads U5 C21 C9` | match | identical |
+
+- **Float tolerance.** Stated before comparing: 1e-9 mm on any board-model or report number. Observed: no value outside exact match. The board model has 60,348 float leaves and 965 int leaves, the net report 1,600 floats, the plane report 1,803; every one is equal, and the serialized JSON is byte-identical once the timestamp is removed. No value to list.
+- **The one 3.13 incompatibility (`4e1f90c`).** `c.find("fields") or []` tests an ElementTree Element's truth value. From 3.12 that raises a DeprecationWarning, which went to stderr inside `v8_debug_sheet.py --check`'s output and changed its hash (the check itself passed). Fixed in `v8_debug_sheet.py` and the identical line in `v8_project_setup.py` (`... if c.find("fields") is not None else []`). Same behaviour on 3.7: `v8_debug_sheet --check` output is identical on 3.7 and 3.13 and to Phase 1, and `v8_project_setup.load_netlist` on the v8 netlist gives the same result before and after on both (296 components, 158 nets, 2,214 fields, digest `ba5c45da32428e0d`; `scratchpad/p2-fix/`). `v8_project_setup.py --verify` wasn't run (it's hard-wired to the working tree and runs DRC there).
+- **Other 3.13 checks.** All 28 `.py` files under `tools/schematic-*`, `tools/pcb-context` and `tools/lab/probe_points` compile on 3.13 with warnings as errors (no invalid-escape SyntaxWarnings). No imports of stdlib modules removed in 3.12/3.13.
+- **Trap for anyone repeating this: keep the run root's name the same length as `k9-ref`.** `extract.py` prints the XML netlist's byte count, and the netlist carries the source path three times. A first 3.13 run in `p2-py313/` (two characters longer) differed by 6 bytes on that line only. `p2-313` and `p2-037` are six characters, like `k9-ref`.
+
+**Evidence for OQ-1 beyond the reference set.**
+- **Rendered PNGs differ (matplotlib 3.5.3 vs 3.11.2).** `render.py` on the v7 model under each Python (11 PNGs, `p2-313/v7/img` vs `p2-037/v7/img`): same image sizes and same sidecar metadata apart from paths and timestamps, but 0.9–3.1 % of pixels differ. A diff mask (`scratchpad/p2-render/diffmask_I2C_SCL.png`, side by side in `side_I2C_SCL.png`) shows the differences are only text glyphs, label boxes and their leader lines; copper, pads and zones are the same. So images regenerated on 3.13 will not be byte-identical to the committed v7 `hardware/pcb-main/kicad/board-model/img/` PNGs. That's churn, not a content change, but a regeneration on the venv would rewrite every PNG. `render.py` wasn't in the Phase 1 reference set.
+- **Package set.** shapely is the same version on both (2.0.7). numpy 1.21.6 → 2.5.4, matplotlib 3.5.3 → 3.11.2, Pillow 9.5.0 → 13.0.0, PyYAML 6.0.1 → 6.0.3; kiutils 1.4.8 on both. Everything installed from wheels with the venv's pip (26.3), with none of the 3.7 pip workaround (HAZARDS pip/matplotlib entry). A second venv built from `tools/requirements.txt` alone gives an identical `pip freeze`, and `pip check` is clean.
+- **Not tested here:** `probe_points.py render` (needs Chrome), `annotate.py`, `show.py`, the `schematic-gen` generators and the `--apply` paths. Phase 4/5 re-validate those on KiCad 10.
+- **Recommendation for G2:** the 3.13 venv is safe for the KiCad tools: every checked text and JSON output is identical, and only the render PNGs differ in text anti-aliasing and label placement.
+
+**Task 1 (`4c30098`).** `tools/requirements.txt` holds the four direct dependencies plus their transitive dependencies, pinned to what installed on 3.13.3. Its header lists the global 3.7 set for reference. `tools/pcb-context/requirements.txt` and `tools/schematic-context/requirements.txt` (which had kiutils and pyyaml) are now `-r ../requirements.txt` pointers. Installing either pointer on 3.7 will fail on the pins (numpy 2.5.4 has no 3.7 build), and pip resolves the whole set before it installs anything, so the global site-packages can't be changed by mistake. `.gitignore` gained `tools/.venv/`, added and checked with `git check-ignore` before the venv was created. The run instructions in `tools/schematic-context/README.md` ("Python 3.7+", `pip install -r requirements.txt`) and `tools/pcb-context/README.md` aren't changed; the TASKS for Phases 4 and 5 own that.
+
+**Handoff checks.** `git status` is clean after the handoff commit. `git diff 7894745 HEAD -- hardware lab` is empty. The working-tree `.kicad_prl` files are untouched (v8 Nov 4, v7 Apr 7). The global `python3` is still pyenv 3.7.3 with the same package versions, and `.githooks/pre-commit` is unchanged. The 3.13 runs left `cpython-313` `.pyc` files in the tools' `__pycache__/` folders, which are gitignored. No new documents and nothing Deferred.
+
+#### Result
+| # | Phase | Result | Commit | Notes |
+|---|-------|--------|--------|-------|
+| 2 | Phase 2: Python runtime parity (still KiCad 9) | DONE | see the handoff commit | 3.13 venv: 21/21 reference hashes match, board model exact; one fix (Element truthiness); render PNGs differ in text only |
