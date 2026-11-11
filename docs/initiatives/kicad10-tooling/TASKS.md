@@ -7,7 +7,7 @@
 - [x] One kicad-cli path: grep `tools/` for hard-coded KiCad app paths and the `kicad-cli` lookup. Every tool reads `KICAD_CLI` (env), falling back to the 9.0.4 path for now. No behaviour change on 9: every `--check` chain still passes
 - [x] Check KiCad 10's kicad-cli for a schematic/board upgrade command (`sch --help`, `pcb --help`). Record the answer in PLAN Technical Notes "Converting the format". If there isn't one, write the exact GUI open-and-save steps for scratch copies
 - [x] KiCad 9 reference run, outputs to the scratchpad. Record hashes and counts in SESSION.md. For v8 at `v8-schematic-freeze`: netlist, ERC counts, `v8_debug_sheet.py --check`, `layout_check.py`, `extract.py --check-sheet-pins`, `tidy_fields.py --check`, `tidy_labels.py --check`. For v7 from `git archive c2acffc`: board model, net and plane reports, and the probe-points `pads` output
-- [ ] Rollback drill: with `KICAD_CLI` set to 10, run one read-only check (v8 netlist export), set it back to 9 and re-run. Record it
+- [x] Rollback drill: with `KICAD_CLI` set to 10, run one read-only check (v8 netlist export), set it back to 9 and re-run. Record it
 - [ ] 🔄 Handoff
 
 # --- handoff point ---
