@@ -72,6 +72,9 @@ tools/ml-training/*.tflite
 tools/ml-training/*.h5
 tools/ml-training/output/
 
+# KiCad tools venv (Python 3.13, built from tools/requirements.txt)
+tools/.venv/
+
 # Mechanical CAD
 mechanical/.venv/
 mechanical/models/**/*.stl

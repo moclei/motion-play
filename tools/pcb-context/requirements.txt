@@ -1,3 +1,2 @@
-kiutils>=1.4.8
-shapely>=2.0
-matplotlib>=3.5
+# Merged into tools/requirements.txt (kicad10-tooling Phase 2). Install that file into tools/.venv.
+-r ../requirements.txt

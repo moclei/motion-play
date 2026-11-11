@@ -1,0 +1,31 @@
+# Python dependencies for the KiCad tools: tools/schematic-context, tools/schematic-gen,
+# tools/schematic-modify, tools/pcb-context and tools/lab/probe_points.
+#
+# Target: a venv at tools/.venv (gitignored) on /usr/local/bin/python3.13.
+#   /usr/local/bin/python3.13 -m venv tools/.venv
+#   tools/.venv/bin/pip install -r tools/requirements.txt
+# The pins are the versions that installed on Python 3.13.3 (macOS, 2026-11-10).
+#
+# The global python3 (pyenv 3.7.3) is not built from this file and keeps its own set:
+# kiutils 1.4.8, shapely 2.0.7, numpy 1.21.6, matplotlib 3.5.3, PyYAML 6.0.1, Pillow 9.5.0
+# (pip 24.0 is needed for matplotlib on 3.7; see .context/HAZARDS.md). The tools must keep
+# running on it until the runtime decision (kicad10-tooling OQ-1, gate G2).
+# The lab tools (tools/lab/*.py, the pre-commit hook) run on the global python3, not this venv.
+
+# Direct dependencies
+kiutils==1.4.8          # schematic/board parsing (tools/CONTEXT.md kiutils rule; use kiutils_k9)
+shapely==2.0.7          # pcb-context geometry; same version as the 3.7 install
+matplotlib==3.11.2      # pcb-context render / plane_report plots
+PyYAML==6.0.3           # schematic-context annotation, lab tools
+
+# Transitive, pinned for a reproducible venv
+contourpy==1.4.0
+cycler==0.12.1
+fonttools==4.68.0
+kiwisolver==1.5.1
+numpy==2.5.4
+packaging==26.3
+pillow==13.0.0
+pyparsing==3.3.3
+python-dateutil==4.0.0
+tzdata==2026.6

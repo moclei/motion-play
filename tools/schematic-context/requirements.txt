@@ -1,8 +1,2 @@
-# Schematic Context System — extraction and annotation tools
-# Python 3.7+
-
-# KiCad schematic parsing and property writing
-kiutils>=1.4.8
-
-# YAML handling (for future annotation workflows)
-pyyaml>=6.0
+# Merged into tools/requirements.txt (kicad10-tooling Phase 2). Install that file into tools/.venv.
+-r ../requirements.txt
