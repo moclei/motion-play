@@ -165,7 +165,7 @@ def load_netlist(path: Path):
     root = ET.parse(str(path)).getroot()
     comps = {}
     for c in root.find("components"):
-        fields = {x.get("name"): (x.text or "") for x in (c.find("fields") or [])}
+        fields = {x.get("name"): (x.text or "") for x in (c.find("fields") if c.find("fields") is not None else [])}
         comps[c.get("ref")] = (c.findtext("value"), c.findtext("footprint"),
                                tuple(sorted(fields.items())))
     nets = {}

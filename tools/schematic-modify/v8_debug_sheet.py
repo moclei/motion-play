@@ -411,7 +411,7 @@ def bom_audit(comps_xml):
     for c in root.find("components"):
         ref = c.get("ref")
         fp = c.findtext("footprint") or ""
-        fields = {f.get("name"): (f.text or "") for f in (c.find("fields") or [])}
+        fields = {f.get("name"): (f.text or "") for f in (c.find("fields") if c.find("fields") is not None else [])}
         lcsc = fields.get("LCSC Part") or fields.get("LCSC") or ""
         if not fp:
             bad.append("{}: no footprint".format(ref))
