@@ -90,6 +90,12 @@ See `tools/pcb-context/README.md` for full usage.
 
 Verifies PCB routing against spec constraints (trace widths, clearances, net classes). Currently hardcoded to a specific board revision — needs genericization to accept an input spec file.
 
+## KiCad Regression Harness
+
+### kicad-regress/
+
+`regress.py` shows that a change to the KiCad tools (parser port, dependency upgrade, new KiCad) changes no output. `run <root>` makes fresh `git archive` copies (v8 at `v8-schematic-freeze`, v7 at `c2acffc`, each with `hardware/pcb-main/resources`) and runs the reference set: kicad-cli netlists and ERC, `extract.py --check-sheet-pins`, `layout_check`, `tidy_*` and every `v8_*.py` check with `--root`, the v7 board model and reports, probe-points `pads`. `--python`, `--kicad-cli` (default 9.0.4) and `--tools <ref>` (a temporary worktree, e.g. the oracle tag `kicad10-preport`; default the working tree) choose what runs. `hash --against reference-k9.txt` checks a run against the KiCad 9 reference; `compare <rootA> <rootB>` compares two runs (JSON leaf by leaf within 1e-9, netlists structurally). Also `netlist`, `erc` (setup vs real library items), `plot`/`svg` (plotted strings), `tokens` (census) and `treeeq`. Scratch only: it refuses a run root inside the repo. Run roots are 6-character names, and two runs compare cleanly only if their full paths have the same length (`extract.py` prints the netlist's byte count). Stdlib only. Usage in the `regress.py` docstring.
+
 ## Firmware & Data Tools
 
 | Tool | Type | Purpose |

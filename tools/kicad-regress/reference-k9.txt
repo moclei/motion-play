@@ -1,0 +1,34 @@
+# KiCad 9.0.4 reference for regress.py (hash --against / run --against).
+# v8 at v8-schematic-freeze, v7 at c2acffc; tools as of kicad10-tooling Phase 1 (kiutils 1.4.8).
+# Hash method: regress.py docstring. Phase 1 (SESSION.md Worker #1 Notes) recorded these in a run root
+# of 121 characters; extract_sheetpins.txt matches only from a root of that length (see 'run').
+#
+# Phase 1 reference set (v8/layout_check.txt and v8/v8_debug_sheet_check.txt were recorded on the
+# working tree; a scratch run reproduces them through the WT_OUTPUTS rule):
+4d12a57a8f5dedbf  v8/netlist.net
+2002f89e22294468  v8/netlist.xml
+96ff50a0680a3820  v8/erc_counts.txt
+d4d54268519deb64  v8/extract_sheetpins.txt
+706766624be6692a  v8/layout_check.txt
+ce93ab0ac74cd3f3  v8/tidy_fields.txt
+2a0e67e94db38928  v8/tidy_labels.txt
+c8d5d149dfbfa53d  v8/v8_debug_sheet_check.txt
+cc6589ad872205a1  v7/board-model.json
+b5ae052ac509f98f  v7/net-report.json
+3a4bed9e52025bda  v7/net-report.md
+491f464b93d5f9df  v7/plane-report.json
+8b16a7bc9620600b  v7/plane-report.md
+3ce3e444257eb167  v7/pads_U5_C21_C9.txt
+ff6857d0bf797fc7  v7src/hardware/pcb-main/kicad/motion-play-main.kicad_pcb
+9d0381f41bada0a3  v8src/hardware/pcb-main-v8/kicad/esp32_s3.kicad_sch
+6b7e283afc65573b  v8src/hardware/pcb-main-v8/kicad/led_controller.kicad_sch
+d65c086f4f3cc546  v8src/hardware/pcb-main-v8/kicad/motion-play-main-v8.kicad_sch
+ea7569f3da49dff5  v8src/hardware/pcb-main-v8/kicad/power_management.kicad_sch
+27f8d853f994cc7d  v8src/hardware/pcb-main-v8/kicad/tca9548A_subsystem.kicad_sch
+#
+# The other v8 checks, from Phase 1's working-tree outputs (post-edit-k9), and v8_project_setup.py
+# --verify --no-v7-compare run by the pre-Phase-4 tools in a scratch worktree at dff387a:
+d98cde2575db3cc0  checks/v8_mcu_sheet.txt
+01a79abb7fed2f08  checks/v8_bus_sheet.txt
+cdc8da39a6c7c434  checks/v8_power_sheet.txt
+8913193d690332d1  checks/v8_project_setup_verify.txt
