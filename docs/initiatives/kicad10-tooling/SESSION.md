@@ -593,3 +593,32 @@ The two schematic scripts hard-code v7's `hardware/pcb-main/kicad/motion-play-ma
 - The two gate exceptions the spike found change the definition of Phase 10's gate and of the `add_sheet_reference` comparison against preport: the kiutils board misreads, and `add_sheet_reference`'s hard-coded project name and KiCad 6 sheet keys. Gate definitions belong to the Planner, so the decisions go to the Planner to record in PLAN.
 
 [ORCH] Spawning Planner — record the G2a decisions and the two preport-gate exceptions in PLAN/TASKS before Phase 6
+
+### Planner — G2a recorded
+
+[ORCH] Planner → REPLANNED: ready to continue (`d1174b7`)
+
+**Verification:**
+- Only PLAN.md and TASKS.md changed. PLAN has no date-stamped headings, and OQ-7 is struck.
+- G2a and the Phase 5 Handoff are `[x]`.
+- Phase 6 is split into 6a (the I/O module and its committed test) and 6b (the `modify.py` port and the E2 fix). Phase numbers cited earlier stay valid.
+- PLAN "Accepted differences from preport" is a closed list: E1 (the kiutils board misreads, accepted as fixes in Phase 10) and E2 (the port reproduces the `add_sheet_reference` bug, then a separate commit fixes it). Any other difference stops the Worker.
+- The retirements are definite, in Phases 8 and 10.
+- Deferred gained one line: regenerating v7's committed `board-model/` needs the user's and the Debugger's agreement.
+
+---
+
+### Worker #6 — Phase 6a: The I/O module
+
+**Dispatch:**
+```
+Initiative: kicad10-tooling
+Phase: 6a — The I/O module (still KiCad 9; no tool is ported)
+Initiative path: docs/initiatives/kicad10-tooling/
+Additional reading: PLAN in full (replanned at d1174b7), especially "Which layer", "One I/O module", "Raw-layer traps", "Accepted differences from preport". SESSION.md Worker #5 Notes (coverage map, prototype method, save-format measurements) and Worker #4 Notes (harness usage).
+
+Tasks assigned: Phase 6a, all 4 tasks (see TASKS.md)
+
+Notes: Phase 5 prototypes are in scratchpad/p5/scripts/ (ktmod.py, savefmt.py, edits.py, cmp_edit.py). They are present now; build from them, but the committed module and test must not depend on the scratchpad. KICAD_CLI on 9 except for the KiCad 10 copy test.
+Rules: hardware/ and lab/ unchanged; kicad-cli 10 only on scratch copies; tools/requirements.txt pin unchanged; no tool ported or switched to kicad_io in this phase.
+```
