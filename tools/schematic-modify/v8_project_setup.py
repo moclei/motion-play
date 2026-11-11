@@ -32,6 +32,7 @@ from __future__ import annotations
 import argparse
 import datetime
 import json
+import os
 import subprocess
 import sys
 import tempfile
@@ -50,7 +51,7 @@ V7_DIR = "hardware/pcb-main/kicad"
 DEST = REPO / "hardware/pcb-main-v8/kicad"
 OLD = "motion-play-main"
 NEW = "motion-play-main-v8"
-KICAD_CLI = "/Applications/KiCad/KiCad.app/Contents/MacOS/kicad-cli"
+KICAD_CLI = os.environ.get("KICAD_CLI") or "/Applications/KiCad/KiCad.app/Contents/MacOS/kicad-cli"
 SHEETS = [
     "esp32_s3.kicad_sch",
     "led_controller.kicad_sch",

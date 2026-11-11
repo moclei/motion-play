@@ -61,8 +61,8 @@ ROOT = KICAD / "motion-play-main-v8.kicad_sch"
 PROJECT = "motion-play-main-v8"
 MCU = "esp32_s3.kicad_sch"
 LEDC = "led_controller.kicad_sch"
-STOCK = Path("/Applications/KiCad/KiCad.app/Contents/SharedSupport/symbols")
-KICAD_CLI = "/Applications/KiCad/KiCad.app/Contents/MacOS/kicad-cli"
+STOCK = modify.STOCK_SYMBOLS  # follows KICAD_CLI
+KICAD_CLI = modify.KICAD_CLI  # $KICAD_CLI, else 9.0.4
 V7_COMMIT = "c2acffc"
 
 HDR_1X4 = "Connector_PinHeader_2.54mm:PinHeader_1x04_P2.54mm_Vertical"

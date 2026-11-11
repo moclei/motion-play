@@ -10,6 +10,8 @@ It intentionally delegates ai_* annotation writes to:
 from __future__ import annotations
 
 import copy
+import os
+import shutil
 import subprocess
 import sys
 import uuid
@@ -36,6 +38,12 @@ from kiutils.items.schitems import (
 )
 from kiutils.schematic import Schematic
 from kiutils.symbol import SymbolLib
+
+# KiCad install: one place. KICAD_CLI (env) picks the kicad-cli binary, falling back to 9.0.4.
+# The stock symbol libraries are read from the same install (<app>/Contents/SharedSupport/symbols).
+KICAD_CLI_DEFAULT = "/Applications/KiCad/KiCad.app/Contents/MacOS/kicad-cli"
+KICAD_CLI = os.environ.get("KICAD_CLI") or KICAD_CLI_DEFAULT
+STOCK_SYMBOLS = Path(shutil.which(KICAD_CLI) or KICAD_CLI).resolve().parents[1] / "SharedSupport" / "symbols"
 
 FONT_SIZE = 1.27
 # Pin -> label stub. 5.08 mm (Phase 11b; was 2.54) leaves room for a label beside the part's own
