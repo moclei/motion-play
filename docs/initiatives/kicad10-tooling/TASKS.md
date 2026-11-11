@@ -23,7 +23,7 @@
 
 ## Phase 3: KiCad 10 file format and the kiutils round-trip survey
 
-- [ ] Scratch copies (never a GUI open of the working tree): v8 at `v8-schematic-freeze`, and v7 via `git archive c2acffc`. Convert both to the KiCad 10 format (Phase 1's method). kicad-cli 10's netlist of each copy against kicad-cli 9's netlist of the original: identical apart from header lines. ERC/DRC counts listed side by side
+- [~] Scratch copies (never a GUI open of the working tree): v8 at `v8-schematic-freeze`, and v7 via `git archive c2acffc`. Convert both to the KiCad 10 format (Phase 1's method). kicad-cli 10's netlist of each copy against kicad-cli 9's netlist of the original: identical apart from header lines. ERC/DRC counts listed side by side
 - [ ] Round-trip survey (PLAN "Round-trip survey"): kiutils 1.4.8 with `kiutils_k9`, a load + save of every converted v8 sheet, v8's board and v7's board. Count every token kind before and after; compare the netlist and plotted strings per sheet. Also check whether the KiCad 9 tools still read the unconverted KiCad 9 files on kicad-cli 10 (the other boards stay on 9)
 - [ ] Read-only parse test of the same files with kicad-sch-api and kicad-tools (in the 3.13 venv, not added to requirements): do they load the files, round-trip them, and keep the tokens kiutils drops?
 - [ ] Loss table plus a recommendation for OQ-1 and OQ-2 in SESSION.md

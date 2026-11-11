@@ -134,3 +134,34 @@ Rules: as for Phase 1. hardware/ and lab/ unchanged at handoff.
 | # | Phase | Result | Commit | Notes |
 |---|-------|--------|--------|-------|
 | 2 | Phase 2: Python runtime parity (still KiCad 9) | DONE | see the handoff commit | 3.13 venv: 21/21 reference hashes match, board model exact; one fix (Element truthiness); render PNGs differ in text only |
+
+#### Result
+| # | Phase | Result | Escalation evaluated? | Commit | Notes |
+|---|-------|--------|-----------------------|--------|-------|
+| 2 | Phase 2: Python runtime parity (still KiCad 9) | DONE | No — clean completion | aea1201 | 4 tasks; 21/21 hashes match on 3.13.3; one DeprecationWarning fix |
+
+#### Verification
+- 4 commits, `4c30098`..`aea1201`. 11 boxes are `[x]` (Phases 1–2), and Phases 3–9 are untouched. PLAN is unchanged. `git diff 7894745 HEAD -- hardware lab .githooks` is empty.
+- Read the diff. The two `find("fields") or []` fixes are behaviour-preserving (an explicit None test). Both old requirements files are `-r ../requirements.txt` pointers, and `tools/.venv/` is gitignored (confirmed with `git check-ignore`). The global `python3` is still pyenv 3.7.3.
+- Orchestrator re-run with `KICAD_CLI` unset: `v8_debug_sheet.py --check` gives PHASE 11 CHECK PASSED under `tools/.venv/bin/python -W error::DeprecationWarning` and under the global 3.7.3. The tree is clean afterwards.
+- Carry forward:
+  - **G2 / OQ-1:** the evidence supports the 3.13 venv. One caveat for the user: `render.py` output on matplotlib 3.11.2 changes text glyph pixels, so regenerating the committed v7 `board-model/img/` PNGs would rewrite every file with no change in content.
+  - **The reference-set runner is sensitive to the scratch path's length.** `extract.py` prints the netlist's byte count, so run roots must have names the same length as `k9-ref`.
+  - Phase 2 didn't cover `annotate.py`, `show.py`, the generators, the `--apply` paths or `probe_points render`. Phases 4 and 5 re-validate them.
+
+---
+
+### Worker #3 — Phase 3: KiCad 10 file format and the kiutils round-trip survey
+
+**Dispatch:**
+```
+Initiative: kicad10-tooling
+Phase: 3 — KiCad 10 file format and the kiutils round-trip survey
+Initiative path: docs/initiatives/kicad10-tooling/
+Additional reading: SESSION.md, the Notes and Orchestrator Verification for Workers #1 and #2. PLAN "Converting the format" and "Round-trip survey". docs/research/kicad-ai-tooling-2026-11/schematic-readability.md §1 (counting method). v8-debug-board SESSION.md Worker #12 Notes (grep, around line 814), for the KiCad 9 round-trip counts. landscape.md §2 (kicad-sch-api, kicad-tools rows).
+
+Tasks assigned: Phase 3, tasks 1–4. Stop before G2 (task 5): the Orchestrator takes the decision to the user. Return PARTIAL at G2; that stop is planned.
+
+Notes: convert with `kicad-cli sch upgrade` (each sheet separately) and `kicad-cli pcb upgrade`, on fresh scratch copies only (HAZARDS: kicad-cli 10 writes .kicad_prl). Put hardware/pcb-main/resources beside each copy. KiCad 10 has no global library tables: separate setup-caused library ERC/DRC items from real ones. Use tools/.venv (3.13) for kiutils; parity is proven. Install kicad-sch-api and kicad-tools into a separate scratch venv, not tools/.venv and not requirements.txt. The ERC reference at v8-schematic-freeze: 0 errors, 81 pin_to_pin, 2 lib_symbol_issues (Phase 1). v7 DRC reference: 20 violations, 0 unconnected.
+Rules: as for Phases 1–2. Nothing under hardware/ or lab/ changes. No PLAN edits besides recording facts in Technical Notes, if needed.
+```
