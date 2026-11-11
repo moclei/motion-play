@@ -570,3 +570,17 @@ The two schematic scripts hard-code v7's `hardware/pcb-main/kicad/motion-play-ma
   - **Two preport board-model values are kiutils misreads.** `connect_pads` is null on all 8 v7 zones, and the F.Cu `gr_rect` is buffered at 0.12 instead of its 0.2 stroke. A correct port changes them, so Phase 10's "identical to preport" needs them accepted as listed fixes (a Planner call).
   - **`add_sheet_reference` hard-codes the project name `motion-play-main`** and writes the KiCad 6 keys `Sheet name`/`Sheet file`. The prototype reproduced it for the comparison. On v8 the project is `motion-play-main-v8`. The port could take the project name from `ProjectDocs`, but that changes the output against preport, so it needs the same acceptance.
   - Typed views are snapshots: after a raw edit, a typed `Schematic` over the same tree must be rebuilt (`invalidate_cache()`).
+
+#### Result
+| # | Phase | Result | Escalation evaluated? | Commit | Notes |
+|---|-------|--------|-----------------------|--------|-------|
+| 5 | Phase 5: kicad-tools API spike | PARTIAL | Yes — resolvable without replanning: the stop is the planned G2a user gate | 78c2059 | Tasks 1–5 done; G2a and Handoff wait on the user |
+
+#### Verification
+- 5 commits, `4d86d21`..`78c2059`. Only SESSION.md and TASKS.md changed. PLAN is untouched. No extra worktree is left.
+- Re-derived from the scratch output: `p5/cmp9.txt` has 11/11 VERDICT PASS and `p5/cmp10.txt` 8/8 PASS, with no non-PASS verdicts.
+- Carry forward to the G2a Planner touch:
+  - **Two kiutils misreads in today's `board-model.json`:** `connect_pads` is null on all 8 zones, and 2 `gr_rect` widths read 0.12. Phase 10's "identical to preport" gate needs them listed as accepted fixes.
+  - **Preport `add_sheet_reference` writes the wrong things:** it hard-codes `motion-play-main` and writes the KiCad 6 sheet keys. Fixing either changes output against preport, so it needs a listed exception, or the bug is kept until Phase 11.
+  - **The v8 LED sheet and v8 board are still in kiutils' format.** A first splice-save will reformat them once.
+- G2a is taken to the user next.
