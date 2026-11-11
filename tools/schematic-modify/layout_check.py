@@ -35,7 +35,8 @@ The worst spots are printed by sheet grid zone (KiCad's default frame: columns 1
 from the 10 mm margin, rows A.. every 50 mm), e.g. "C3".
 
 Text boxes are approximate (0.72 x height per character, 1.1 x height tall), so overlap counts
-are indicators. It parses the files as raw s-expressions and writes nothing but the baseline.
+are indicators. It reads the files through tools/kicad-io/kicad_io.py (kicad-tools' raw layer, as
+nested lists: kicad_io.to_lists) and writes nothing but the baseline.
 
 Usage:
   python3 tools/schematic-modify/layout_check.py                     # v8 main board
@@ -55,7 +56,8 @@ import sys
 from pathlib import Path
 from typing import Dict, List, Optional, Tuple
 
-from kiutils.utils.sexpr import parse_sexp
+sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "kicad-io"))
+import kicad_io as kio  # noqa: E402
 
 REPO = Path(__file__).resolve().parents[2]
 DEFAULT_ROOT = REPO / "hardware/pcb-main-v8/kicad/motion-play-main-v8.kicad_sch"
@@ -366,8 +368,13 @@ class Text:
         return "{} {}".format(self.owner, self.kind) if self.owner else "{} '{}'".format(self.kind, self.text)
 
 
+def read_lists(path: Path) -> list:
+    """The schematic as nested lists ([name, *children]; numbers int/float, strings str)."""
+    return kio.to_lists(kio.load_schematic(path).tree)
+
+
 def analyse(path: Path) -> dict:
-    t = parse_sexp(path.read_text())
+    t = read_lists(path)
     pw, ph = paper_size(t)
 
     def outside(b: Box) -> bool:
@@ -477,7 +484,7 @@ def project_sheets(root: Path) -> List[Path]:
             return
         seen.add(p)
         out.append(p)
-        t = parse_sexp(p.read_text())
+        t = read_lists(p)
         for sh in kids(t, "sheet"):
             f = next((q[2] for q in kids(sh, "property") if q[1] in ("Sheetfile", "Sheet file")), None)
             if f:

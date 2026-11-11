@@ -21,6 +21,9 @@ label with no justify the placement rule of modify.py (_label_angle, _make_local
 Positions, text and kind never change, so the netlist can't change. It also removes stacked
 duplicates: labels of the same kind and text at the same position and angle (one is kept).
 
+Files are read and written through tools/kicad-io/kicad_io.py (raw s-expression layer, splice
+save).
+
 Overlap gate: the pass is first written to a scratch copy and measured with layout_check.py. If
 a sheet's overlap count would go up, every changed label in a new pair is flipped to the other
 side (0 <-> 180, 90 <-> 270) and measured again. If the count still goes up, nothing is written
@@ -42,16 +45,17 @@ from pathlib import Path
 from typing import Dict, List, Optional, Tuple
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-import kiutils_k9  # noqa: E402,F401  (KiCad 8/9 '(hide yes)' shim; must precede any load)
 import layout_check  # noqa: E402
 import modify  # noqa: E402
-from kiutils.items.common import Justify  # noqa: E402
+from modify import kio  # noqa: E402
+from kicad_io import atom, child, kids, node  # noqa: E402
 
 REPO = Path(__file__).resolve().parents[2]
 DEFAULT_ROOT = REPO / "hardware/pcb-main-v8/kicad/motion-play-main-v8.kicad_sch"
 TOL = 0.01
-KINDS = (("label", "labels", "label"), ("hier label", "hierarchicalLabels", "shaped"),
-         ("global label", "globalLabels", "shaped"))
+KINDS = (("label", "label", "label"), ("hier label", "hierarchical_label", "shaped"),
+         ("global label", "global_label", "shaped"))   # (kind, s-expression tag, layout_check kind)
+JUSTIFY_WORDS = ("left", "right", "top", "bottom")
 
 Pt = Tuple[float, float]
 
@@ -60,44 +64,64 @@ def _same(a: Pt, b: Pt) -> bool:
     return abs(a[0] - b[0]) < TOL and abs(a[1] - b[1]) < TOL
 
 
+def _num(n, i: int):
+    """The i-th atom of n as kiutils read it: int if integral, else float."""
+    return kio.to_lists(kio.atoms(n)[i])
+
+
+def _pos(label) -> Tuple[float, float]:
+    at = child(label, "at")
+    return _num(at, 0), _num(at, 1)
+
+
+def _text(label) -> str:
+    return str(atom(label, 0))
+
+
 def _angle(label) -> int:
-    return int(round(float(label.position.angle or 0))) % 360
-
-
-def _justify(angle: int, kind: str) -> Justify:
-    horiz = "right" if angle in (180, 270) else "left"
-    return Justify(horizontally=horiz, vertically="bottom" if kind == "label" else None)
+    at = child(label, "at")
+    a = atom(at, 2) if len(kio.atoms(at)) > 2 else 0
+    return int(round(float(a or 0))) % 360
 
 
 def _just_list(angle: int, kind: str) -> List[str]:
-    j = _justify(angle, kind)
-    return [x for x in (j.horizontally, j.vertically) if x]
+    horiz = "right" if angle in (180, 270) else "left"
+    return [horiz, "bottom"] if kind == "label" else [horiz]
 
 
 def _has_justify(label) -> bool:
-    j = getattr(label.effects, "justify", None) if label.effects is not None else None
-    return j is not None and bool(j.horizontally or j.vertically)
+    eff = child(label, "effects")
+    j = child(eff, "justify") if eff is not None else None
+    return j is not None and any(atom(j, k) in JUSTIFY_WORDS for k in range(len(kio.atoms(j))))
+
+
+def _font_h(label) -> float:
+    eff = child(label, "effects")
+    font = child(eff, "font") if eff is not None else None
+    size = child(font, "size") if font is not None else None
+    return float(atom(size, 0) or 1.27) if size is not None else 1.27
 
 
 def _wires(sch) -> List[Tuple[Pt, Pt]]:
     out = []
-    for w in sch.graphicalItems:
-        if getattr(w, "type", None) == "wire" and len(w.points) == 2:
-            out.append(((w.points[0].X, w.points[0].Y), (w.points[1].X, w.points[1].Y)))
+    for w in kids(sch, "wire"):
+        pts = modify._wire_pts(w)
+        if len(pts) == 2:
+            out.append((pts[0], pts[1]))
     return out
 
 
 def _pins(doc) -> Dict[Tuple[float, float], Pt]:
     """Pin end (rounded) -> its symbol's origin, for every placed symbol on the sheet."""
     out = {}
-    for sym in doc.schematic.schematicSymbols:
-        lib = modify.get_lib_symbol_for(doc, sym.libId)
-        if lib is None or getattr(sym, "mirror", None):
+    for sym in kids(doc.schematic, "symbol"):
+        lib = modify.get_lib_symbol_for(doc, modify._lib_id(sym))
+        if lib is None or child(sym, "mirror") is not None:
             continue
-        ang = float(sym.position.angle or 0)
+        sx, sy, ang = kio.at_xy(sym)
         for _, px, py, _ in modify._pin_records(lib):
-            x, y = modify._compute_pin_position(sym.position.X, sym.position.Y, ang, px, py)
-            out[(round(x, 2), round(y, 2))] = (sym.position.X, sym.position.Y)
+            x, y = modify._compute_pin_position(sx, sy, ang, px, py)
+            out[(round(x, 2), round(y, 2))] = (sx, sy)
     return out
 
 
@@ -139,19 +163,20 @@ def plan_sheet(doc) -> Tuple[List[dict], List[tuple], Dict[str, int]]:
     counts = collections.Counter()
     changes = []
     dupes = []
-    for kind, attr, lc_kind in KINDS:
+    for kind, tag, lc_kind in KINDS:
         seen = {}
-        for lab in getattr(sch, attr):
-            key = (lab.text, round(lab.position.X, 2), round(lab.position.Y, 2), _angle(lab))
+        for lab in kids(sch, tag):
+            x, y = _pos(lab)
+            key = (_text(lab), round(x, 2), round(y, 2), _angle(lab))
             if key in seen:
-                dupes.append((attr, lab, kind))
+                dupes.append((tag, lab, kind))
                 counts["deduped"] += 1
                 continue
             seen[key] = lab
-        for lab in getattr(sch, attr):
+        for lab in kids(sch, tag):
             if any(lab is d[1] for d in dupes) or _has_justify(lab):
                 continue
-            p = (lab.position.X, lab.position.Y)
+            p = _pos(lab)
             old = _angle(lab)
             dirs, far = _directions(p, wires)
             new = old
@@ -178,18 +203,31 @@ def plan_sheet(doc) -> Tuple[List[dict], List[tuple], Dict[str, int]]:
 
 def apply_changes(doc, changes, dupes) -> None:
     sch = doc.schematic
-    for attr, lab, _ in dupes:
-        getattr(sch, attr).remove(lab)
+    kio.remove_items(sch, [lab for _, lab, _ in dupes])
     for c in changes:
         lab = c["label"]
-        lab.position.angle = c["new"]
-        lab.effects.justify = _justify(c["new"], c["lc_kind"])
+        at = child(lab, "at")
+        if len(kio.atoms(at)) > 2:
+            kio.set_num(at, 2, c["new"])
+        else:
+            at.children.append(node("(at 0 0 {})".format(c["new"])).children[2])
+        eff = child(lab, "effects")
+        if eff is None:
+            eff = node(kio.effects_text())
+            lab.children.insert(lab.children.index(at) + 1, eff)
+        j = node("(justify {})".format(" ".join(_just_list(c["new"], c["lc_kind"]))))
+        old = child(eff, "justify")
+        if old is not None:
+            eff.children[eff.children.index(old)] = j
+        else:   # KiCad's order in effects: font, justify, hide
+            font = child(eff, "font")
+            eff.children.insert(eff.children.index(font) + 1 if font is not None else 0, j)
 
 
 def _box(c) -> tuple:
     lab = c["label"]
-    h = float(lab.effects.font.height or 1.27) if lab.effects.font else 1.27
-    return layout_check.label_box(lab.position.X, lab.position.Y, c["new"], lab.text, h,
+    x, y = _pos(lab)
+    return layout_check.label_box(x, y, c["new"], _text(lab), _font_h(lab),
                                   _just_list(c["new"], c["lc_kind"]), c["lc_kind"])
 
 
@@ -199,7 +237,7 @@ def _pair_keys(pairs) -> collections.Counter:
 
 def measure(doc, tmp: Path) -> dict:
     out = tmp / doc.path.name
-    kiutils_k9.save_schematic(doc.schematic, out)
+    kio.save(doc.doc, out)
     return layout_check.analyse(out)
 
 
@@ -213,7 +251,7 @@ def main() -> int:
     args = ap.parse_args()
 
     if args.apply:
-        kiutils_k9.assert_not_open(args.root)
+        kio.assert_not_open(args.root)
     docs = modify.load_project(args.root)
     cols = ("justified", "turned_horizontal", "flipped", "no_wire", "both_sides", "deduped", "gate_flips")
     print("{:30s} {:>9s} {:>10s} {:>7s} {:>7s} {:>10s} {:>7s} {:>10s}  overlaps before -> after".format(
@@ -253,10 +291,9 @@ def main() -> int:
                 for c in changes:
                     lab = c["label"]
                     print("    {:10s} {:22s} ({}, {}) {:3d} -> {:3d}".format(
-                        c["kind"], lab.text, lab.position.X, lab.position.Y, c["old"], c["new"]))
+                        c["kind"], _text(lab), *_pos(lab), c["old"], c["new"]))
                 for _, lab, kind in dupes:
-                    print("    removed duplicate {} '{}' at ({}, {})".format(kind, lab.text, lab.position.X,
-                                                                         lab.position.Y))
+                    print("    removed duplicate {} '{}' at ({}, {})".format(kind, _text(lab), *_pos(lab)))
     print("{:30s} {:9d} {:10d} {:7d} {:7d} {:10d} {:7d} {:10d}".format("TOTAL", *(total[k] for k in cols)))
     if blocked:
         print("BLOCKED: overlap count would go up even after flipping; nothing written")
