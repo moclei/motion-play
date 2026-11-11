@@ -307,3 +307,19 @@ Scratch root for this phase: `/private/tmp/claude-501/-Users-marcocleirigh-Works
 - Per PLAN G2 and TASKS Phase 3 task 5, a "replace" answer goes to the Planner before Phase 4. G2 and the Phase 3 Handoff stay `[ ]` until the Planner records the decisions in PLAN.
 
 [ORCH] Spawning Planner — G2 chose OQ-2 "replace": the kiutils → kicad-tools port needs its own phases before Phase 4
+
+### Planner — replan after G2
+
+[ORCH] Planner → REPLANNED: ready to continue (`0d5b098`)
+
+**Verification:**
+- Only PLAN.md and TASKS.md changed. PLAN has no date-stamped headings, and OQ-1 and OQ-2 are struck. G2 and the Phase 3 Handoff are `[x]`.
+- The old Phases 4–9 are now Phases 4–17. The port is Phases 4–11:
+  - Phase 4: groundwork.
+  - Phase 5: API spike, ending at the new gate **G2a** (go/no-go on the port, OQ-7 save formatting, which scripts to retire).
+  - Phases 6–10: port by tool group.
+  - Phase 11: remove kiutils.
+- The KiCad 10 work moves to Phases 12–17: schematic tools, board tools with OQ-3, the v8 migration (**G3**, which now adds a library-table question), the IPC trial (**G4**), the MCP trial (**G5**) and the close.
+- BRIEF is unchanged; the Planner confirmed "replace" is inside its goal.
+- The stale ERC counts in PLAN "Migrating v8" are corrected.
+- About 8 phases are added compared with the shim path. Before Phase 4 is dispatched, the user is shown the new shape.
