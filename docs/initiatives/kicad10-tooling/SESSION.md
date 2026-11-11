@@ -492,4 +492,25 @@ Boards:
   - Custom pads (5: U6.21 and four J7 pads) have no typed anchor or primitives; they're read from `Pad._sexp_node`.
   - Single-layer zones have `layer` and empty `layers` (7).
   - Zones have no back-reference to their raw node; they were matched to the raw `zone` nodes by order.
-- **What that means for the port (Phase 10).** The typed `PCB` reads everything, but with six silent default or rebasing behaviours. Each changes `board-model.json` unless it's undone. Reading the raw tree (`load_pcb`) with our own small accessors avoids all six, and also reads the two values kiutils got wrong. The preport oracle has those two wrong, so Phase 10's leaf compare will show them as differences in any case: `connect_pads` (8 zones) and the F.Cu rectangle's buffer width (one entry in `copper_graphics`). The Planner or Phase 10 needs to accept them as listed fixes.
+- **What that means for the port (Phase 10).** The typed `PCB` reads everything, but with six silent default or rebasing behaviours. Each changes `board-model.json` unless it's undone. Reading the raw tree (`load_pcb`) with our own small accessors avoids all six, and also reads the two values kiutils got wrong. The preport oracle has those two wrong, so Phase 10's leaf compare will show them as differences in any case: `connect_pads` (8 zones) and the F.Cu rectangle's buffer width (one entry in `graphic_copper`). The Planner or Phase 10 needs to accept them as listed fixes.
+
+**Task 4: save format (OQ-7).** Script `p5/scripts/savefmt.py`: one edit (a symbol's Value through `set_property`) on two sheets, each saved several ways, measured with `git diff --no-index --numstat` against the unedited file. Outputs: `p5/sf9/`, `p5/sf10/`.
+- **The v8 files aren't in one format today.** At `v8-schematic-freeze`, four sheets are in KiCad's own tab format (last saved by the KiCad GUI). `led_controller.kicad_sch` and `motion-play-main-v8.kicad_pcb` are in kiutils' two-space format (last saved by a tool).
+
+| Lines changed by one Value edit (+added / −removed) | TCA sheet, KiCad format (13,447 lines) | LED sheet, kiutils format (1,574 lines) |
+|---|---|---|
+| Preport kiutils save (today's behaviour), KiCad 9 | +5,199 / −13,446 (whole file) | +3 / −3 |
+| kicad-tools plain save, KiCad 9 | +548 / −1,467 | +3,547 / −1,574 (whole file, once) |
+| kicad-tools plain save, KiCad 10 copy | +548 / −1,467 | +155 / −421 (the copy is in KiCad format after `sch upgrade`) |
+| **Splice save** (prototype), KiCad 9 | **+4 / −8** | +97 / −41 (the edited symbol, now in KiCad's layout) |
+| **Splice save**, KiCad 10 copy | **+4 / −8** | **+4 / −8** |
+| Plain save, then a kicad-cli 10 `sch upgrade --force` re-save (KiCad 10 files only) | **+1 / −1** | **+1 / −1** |
+
+- **No formatting option in kicad-tools 0.29.0.** `SExp.to_string`/`serialize_sexp` have no style settings (the `indent` argument is ignored). `preserve_source=True` keeps original text only for untouched copper arcs.
+- **Splice save (prototype, about 15 lines in `savefmt.py`).** kicad-tools records each top-level item's source span at parse. At save, an item whose compact serialization is unchanged is written as its original text, with the original whitespace before it. A changed or new item is serialized by kicad-tools. The output is tree-identical to the plain save in all four cases (`kcompare.tree_equal`). It needs no kicad-cli and works on KiCad 9 and 10. The same mechanism applies to boards (spans are recorded there too); I didn't measure it on a board edit.
+- **KiCad 9 format kept.** Every kicad-tools save of a KiCad 9 file keeps its version token: 9 sheet saves keep `(version 20250114)`, and v7's board keeps `(version 20241229)`. kicad-cli 9 loads them all. The task 2 netlists and ERC of the kicad-tools-saved v8 copies were all run by kicad-cli 9. For v7's board, kicad-cli 9 DRC on a kicad-tools load + save gives exactly the original's counts (16 clearance and 2 hole_clearance errors, 2 padstack warnings, 0 unconnected, 2 parity). That no-op board save alone is +360 / −4,595 lines of whitespace.
+- **The options, with their costs:**
+  - **(1) Accept the plain save.** No effort. Every tool save reformats the whole file: about 2,000 lines on a 13,000-line sheet, and a full rewrite of any file still in kiutils format, once. That's still less noise than today's kiutils saves of KiCad-format sheets (+5,199/−13,446).
+  - **(2) kicad-cli 10 re-save.** The output is exactly KiCad's format (+1/−1). It works only for KiCad 10 files: there's no `upgrade` in kicad-cli 9, and kicad-cli 10 would convert a KiCad 9 file. Run it on a temporary copy outside the project folder, then copy the file back (the `.kicad_prl` hazard), so about one kicad-cli call per saved sheet. It ties the I/O module to the installed KiCad and can't apply before the v8 migration (Phase 14).
+  - **(3) Splice save in the I/O module.** About 30–40 lines plus a test. The diff is only the touched items, on KiCad 9 and 10, with no kicad-cli. The touched item takes kicad-tools' layout (short lists on one line), until KiCad next saves the file.
+  - **(4) Splice save, then the kicad-cli 10 re-save for KiCad 10 files only.** Exact KiCad format on 10 at option 2's cost; (3) alone on 9.
