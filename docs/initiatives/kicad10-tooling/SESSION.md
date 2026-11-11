@@ -289,3 +289,21 @@ Scratch root for this phase: `/private/tmp/claude-501/-Users-marcocleirigh-Works
   - **Phase 5 can't run `board_model.py` on a KiCad 10 board** until the shim covers net-by-name, zones with no net and NPTH `*.Cu`.
   - kicad-sch-api left an empty folder outside the repo, `~/.cache/kicad-sch-api/symbols/`. The user is told about it.
 - G2 is taken to the user next.
+
+### G2 — user decision (2026-11-10)
+
+- **OQ-1:** the 3.13 venv (`tools/.venv`, built from `tools/requirements.txt`). The user took the recommendation.
+- **OQ-2:** full replace with kicad-tools. Before deciding, the user asked for a cost/benefit rundown. The Orchestrator gave one:
+  - **For kicad-tools:**
+    - It is lossless by design, against the shim's list of known losses, where any loss not yet found is silent.
+    - It reads KiCad 10 boards natively.
+    - A board save path exists for when `pcbnew` is removed in KiCad 11.
+  - **Against:**
+    - A port of 20 kiutils-importing files, with every check chain re-validated.
+    - The library changes fast (0.27 → 0.29 in ten days, about 8.3k commits, one maintainer) and pulls in 73 packages.
+    - Its editing API is untested; Phase 3 tested load and save only.
+  - **The framing:** the shim's cost recurs with every KiCad release, and the next forcing point is KiCad 11 (about January 2027).
+  - The recommendation was the shim now, with kicad-tools at KiCad 11. The user chose the full replace.
+- Per PLAN G2 and TASKS Phase 3 task 5, a "replace" answer goes to the Planner before Phase 4. G2 and the Phase 3 Handoff stay `[ ]` until the Planner records the decisions in PLAN.
+
+[ORCH] Spawning Planner — G2 chose OQ-2 "replace": the kiutils → kicad-tools port needs its own phases before Phase 4
