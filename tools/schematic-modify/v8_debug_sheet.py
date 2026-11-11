@@ -52,6 +52,7 @@ Usage:
   python3 tools/schematic-modify/v8_debug_sheet.py --check --root <copy>/motion-play-main-v8.kicad_sch
                                                               # the whole check chain on a scratch
                                                               # copy of the project
+  --root also works with the modes that write, on a scratch copy outside the repository (a replay).
 """
 
 from __future__ import annotations

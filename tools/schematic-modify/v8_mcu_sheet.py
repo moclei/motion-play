@@ -38,6 +38,7 @@ Usage:
   python3 tools/schematic-modify/v8_mcu_sheet.py --check --root <copy>/motion-play-main-v8.kicad_sch
                                                             # the same check on another copy of
                                                             # the project (a scratch copy)
+  --root also works with --apply, on a scratch copy outside the repository (a replay).
 KiCad must be closed while --apply runs.
 """
 
@@ -71,7 +72,7 @@ V8_MODULES = ("v8_mcu_sheet", "v8_bus_sheet", "v8_power_sheet", "v8_debug_sheet"
 
 
 def set_root(root) -> None:
-    """--root: point the v8 scripts at another copy of the v8 project (a scratch copy), for --check.
+    """--root: point the v8 scripts at another copy of the v8 project (a scratch copy).
     Sets ROOT and KICAD (and FP_DIR, which derives from KICAD) in every v8 script module loaded now,
     including the one running as __main__. A v8 script imported later copies ROOT/KICAD from
     v8_mcu_sheet, which is loaded first so it carries the new root."""
@@ -93,15 +94,24 @@ def set_root(root) -> None:
 
 def add_root_arg(ap) -> None:
     ap.add_argument("--root", type=Path, help="root .kicad_sch of another copy of the v8 project "
-                    "(a scratch copy); --check only")
+                    "(a scratch copy); with a mode that writes, it must be outside this repository")
+
+
+def inside_repo(path) -> bool:
+    try:
+        Path(path).resolve().relative_to(REPO.resolve())
+        return True
+    except ValueError:
+        return False
 
 
 def apply_root_arg(ap, args, write_modes) -> None:
-    """Handle --root after parse_args: refused with any mode that writes."""
+    """Handle --root after parse_args. With a mode that writes, --root must be outside this
+    repository: --root is for scratch copies, and the working tree is written only without it."""
     if args.root is None:
         return
-    if any(getattr(args, m) for m in write_modes):
-        ap.error("--root works with --check only")
+    if any(getattr(args, m) for m in write_modes) and inside_repo(args.root):
+        ap.error("--root with a mode that writes must be a scratch copy outside the repository")
     set_root(args.root)
 
 HDR_1X4 = "Connector_PinHeader_2.54mm:PinHeader_1x04_P2.54mm_Vertical"

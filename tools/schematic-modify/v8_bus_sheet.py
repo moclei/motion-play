@@ -45,6 +45,7 @@ Usage:
                                                             # positions, all-v7 vs v7 @ c2acffc
   python3 tools/schematic-modify/v8_bus_sheet.py --check --root <copy>/motion-play-main-v8.kicad_sch
                                                             # the same check on a scratch copy
+  --root also works with the modes that write, on a scratch copy outside the repository (a replay).
 """
 
 from __future__ import annotations

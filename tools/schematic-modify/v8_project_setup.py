@@ -29,6 +29,11 @@ Usage:
                                                                  # the checks on another copy of the
                                                                  # v8 project (a scratch copy); DRC
                                                                  # runs there, not on the working tree
+  python3 tools/schematic-modify/v8_project_setup.py --apply --root <scratch>/hardware/pcb-main-v8/kicad/motion-play-main-v8.kicad_sch
+                                                                 # create the project in a scratch folder
+                                                                 # outside the repository (a replay); the
+                                                                 # lib tables expect hardware/pcb-main/resources
+                                                                 # two levels up, as in the repository
 """
 
 from __future__ import annotations
@@ -64,6 +69,14 @@ SHEETS = [
 ]
 TITLE = "Motion Play Main Board v8 (debug board)"
 REVISION = "8.0"
+
+
+def inside_repo(path: Path) -> bool:
+    try:
+        Path(path).resolve().relative_to(REPO.resolve())
+        return True
+    except ValueError:
+        return False
 
 
 def git(*args: str) -> bytes:
@@ -270,14 +283,17 @@ def main() -> int:
     ap.add_argument("--no-v7-compare", action="store_true",
                     help="skip the netlist comparison with v7 (use once the v8 schematic is edited)")
     ap.add_argument("--root", type=Path, help="root .kicad_sch of another copy of the v8 project "
-                    "(a scratch copy); --verify only")
+                    "(a scratch copy); with --apply, the file to create, outside this repository")
     args = ap.parse_args()
     if args.root is not None:
         global DEST
-        if args.apply:
-            ap.error("--root works with --verify only")
         root = args.root.resolve()
-        if root.name != "{}.kicad_sch".format(NEW) or not root.is_file():
+        if root.name != "{}.kicad_sch".format(NEW):
+            ap.error("--root must name {}.kicad_sch".format(NEW))
+        if args.apply:
+            if inside_repo(root):
+                ap.error("--root with --apply must be a scratch copy outside the repository")
+        elif not root.is_file():
             ap.error("--root must be an existing {}.kicad_sch".format(NEW))
         DEST = root.parent
 
@@ -285,7 +301,8 @@ def main() -> int:
         if DEST.exists() and any(DEST.iterdir()):
             print("Refusing: {} is not empty".format(DEST))
             return 1
-        print("Copying v7 project @ {} -> {}".format(args.commit, DEST.relative_to(REPO)))
+        print("Copying v7 project @ {} -> {}".format(
+            args.commit, DEST.relative_to(REPO) if inside_repo(DEST) else DEST))
         copy_project(args.commit)
         print("Renaming project instances and title blocks")
         rename_instances()

@@ -38,6 +38,7 @@ Usage:
                                                               # every power part, rows c/h/i/j/k/l
   python3 tools/schematic-modify/v8_power_sheet.py --check --root <copy>/motion-play-main-v8.kicad_sch
                                                               # the same check on a scratch copy
+  --root also works with the modes that write, on a scratch copy outside the repository (a replay).
 """
 
 from __future__ import annotations

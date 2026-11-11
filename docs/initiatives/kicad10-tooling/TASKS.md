@@ -76,7 +76,7 @@
 
 ## Phase 7: Tidy tools, `layout_check`, `v8_project_setup`, `v8_mcu_sheet`
 
-- [~] Extend `--root` to the write modes (`--apply`, `--erc-fixes`, `--fix-11c/f`, `--annotate`) of the v8 scripts and to `v8_project_setup.py --apply` (its `DEST.relative_to(REPO)` print must work outside the repo), so the replays below run on scratch roots. On the working tree, `--check` output is byte-identical before and after
+- [x] Extend `--root` to the write modes (`--apply`, `--erc-fixes`, `--fix-11c/f`, `--annotate`) of the v8 scripts and to `v8_project_setup.py --apply` (its `DEST.relative_to(REPO)` print must work outside the repo), so the replays below run on scratch roots. On the working tree, `--check` output is byte-identical before and after
 - [ ] Port `tidy_fields.py`, `tidy_labels.py` and `layout_check.py` (`layout_check` reads through `to_lists`). `--check` outputs are identical to `kicad10-preport` on scratch v8 and v7 (KiCad 9). `--apply` on a scratch copy with something to tidy: identical netlist, ERC and plotted strings to the preport `--apply`
 - [ ] Port `v8_project_setup.py` (its board strip through `load_board`/`save`) and `v8_mcu_sheet.py` (its one-level `extends` flatten on the raw node). `--check`/`--verify` are identical to preport on a scratch root. `--apply` replay: run `git archive` of the v8 project at the commit before that script's `--apply` landed (for `v8_project_setup`, from v7 `c2acffc`). Run the preport and the ported `--apply` on two copies; the netlist, ERC and plotted strings must be identical, and for `v8_project_setup` the board's DRC counts too
 - [ ] 🔄 Handoff
