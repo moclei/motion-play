@@ -50,16 +50,25 @@
 - [x] Board read prototype: every value `board_model.py` reads (footprints, pad geometry including custom shapes and rotation, tracks, arcs, vias, zones and fills, stackup, outline, nets), from v7 on KiCad 9 and converted to 10, through kicad-tools. Compare with kiutils' read of the KiCad 9 board: the values must match
 - [x] Save format (OQ-7). Measure the git diff of a one-property edit saved by kicad-tools, and state the options. Check that a kicad-tools save of a KiCad 9 file keeps it in KiCad 9 format (version token unchanged, and kicad-cli 9 loads it)
 - [x] Propose the I/O module: its name, its functions, the lock guard and the version check (PLAN "One I/O module"). Confirm the retire candidates (PLAN "Retire candidates"): check that nothing else calls them. Record both in SESSION.md
-- [ ] **G2a (user):** go or no-go on the full port, given the coverage map. The options: (a) proceed, using the typed API where it covers and the raw s-expression layer for the gaps; (b) proceed on the raw layer for `modify.py`, with our own helpers; (c) stop and reopen OQ-2 (back to the Planner). Also answer OQ-7 and the retire list. Record all three in PLAN
+- [x] **G2a (user):** go or no-go on the full port, given the coverage map. The options: (a) proceed, using the typed API where it covers and the raw s-expression layer for the gaps; (b) proceed on the raw layer for `modify.py`, with our own helpers; (c) stop and reopen OQ-2 (back to the Planner). Also answer OQ-7 and the retire list. Record all three in PLAN. Decided: (b) for every writer and the board readers (typed views read-only), the splice save, and delete all three retire candidates. The Planner recorded them and the preport exceptions E1 and E2
+- [x] 🔄 Handoff
+
+# --- handoff point ---
+
+## Phase 6a: The I/O module (still KiCad 9; no tool is ported)
+
+- [ ] Build `tools/kicad-io/kicad_io.py` (PLAN "One I/O module"): the pin check, the format check, `load_schematic`/`load_symbol_lib`/`load_board` returning a `Doc`, `save`/`save_project` with the lock guard, the version-unchanged check and the splice save, and the raw-tree helpers (PLAN "Raw-layer traps": `set_num` writes exact number text; `make_property`/`is_hidden`/`hide` handle all three hide forms by the `Doc`'s version). Start from the Phase 5 prototype (`p5/scripts/ktmod.py` and `savefmt.py` in the session scratchpad) if it's still there. `kiutils_k9.py` and every tool stay as they are
+- [ ] A committed test under `tools/kicad-regress/` (and a `regress.py` subcommand to run it): (1) load + save through `kicad_io` of every `.kicad_sch` and `.kicad_pcb` that `regress.py roundtrip` covers (v8 at `v8-schematic-freeze`, v7 `c2acffc`, power-supply, sensor-rigid, sensor-flex at HEAD) is tree-identical and keeps the version token, and an unedited splice save is byte-identical to the input; (2) one property edit on a KiCad-format sheet, one on the kiutils-format LED sheet, and one footprint move on v7's board (a scratch copy): each splice save is tree-identical to a plain kicad-tools save of the same edit, and the git diff touches only the edited item (record the line counts); (3) the same on a converted KiCad 10 copy, where kicad-cli 10 loads the result; (4) the lock guard refuses with a `~*.lck` present, the format check refuses a made-up newer version, the pin check refuses a different version, and `save` refuses a tree whose version token was changed; (5) a float written through `set_num` keeps all its digits; a hide written on 9 and on 10 lands in that version's form, and hiding an already-hidden property adds no second flag
+- [ ] kicad-cli 9 loads every KiCad 9 file the test saved (netlist for schematics, DRC for v7's board), with counts equal to the unsaved input's
 - [ ] 🔄 Handoff
 
 # --- handoff point ---
 
-## Phase 6: I/O module and `modify.py`
+## Phase 6b: Port `modify.py`
 
-- [ ] Build the I/O module (G2a design): load and save for schematics, symbol libraries and boards; the lock guard; the version check; the save formatting chosen at OQ-7. `kiutils_k9.py` stays until Phase 11
-- [ ] Port `modify.py`: every public operation, the same signatures where the callers allow
-- [ ] A committed differential test under `tools/kicad-regress/` that drives every public `modify.py` operation on a scratch copy, with the ported tools and with `kicad10-preport` (PLAN "Oracle", write tools). Everything must pass on KiCad 9. Also run it once on a converted KiCad 10 copy: a kicad-cli 10 re-save of the output must differ from the input only by the edit
+- [ ] Port `modify.py` onto `kicad_io` and its helpers: every public operation, the same signatures where the callers allow, raw layer only (PLAN "Which layer"). Reproduce preport's `add_sheet_reference` (E2) and the one-entry-per-pin-number behaviour exactly. `annotate_components` finds `annotate.py` from `Path(__file__)`
+- [ ] A committed differential test under `tools/kicad-regress/` that drives every public `modify.py` operation on a scratch copy, with the ported tools and with `kicad10-preport` (PLAN "Oracle", write tools; Phase 5's 11 ops, `edits.py`/`cmp_edit.py`, are the model, with seeded UUIDs). All pass on KiCad 9, and the kicad-tools census shows only the intended edit. Also run it on a converted KiCad 10 copy (`KICAD_CLI` on 10) for the property-writing ops and the sheet ops: pass, census only the edit
+- [ ] E2 fix, as its own commit after the test passes (PLAN "Accepted differences from preport", E2): the project name from the root schematic's stem, keys `Sheetname`/`Sheetfile`. Update the test's `add_sheet_reference` case to the E2 rule and re-run. Record the commit and the tree differences in SESSION
 - [ ] Handoff note: list the scripts that can't run until Phases 7–8 (PLAN "Transient breakage")
 - [ ] 🔄 Handoff
 
@@ -67,43 +76,44 @@
 
 ## Phase 7: Tidy tools, `layout_check`, `v8_project_setup`, `v8_mcu_sheet`
 
-- [ ] Port `tidy_fields.py`, `tidy_labels.py` and `layout_check.py`. `--check` outputs are identical to `kicad10-preport` on scratch v8 and v7 (KiCad 9). `--apply` on a scratch copy with something to tidy: identical netlist, ERC and plotted strings to the preport `--apply`
-- [ ] Port `v8_project_setup.py` and `v8_mcu_sheet.py`. `--check`/`--verify` are identical to preport on a scratch root. `--apply` replay: run `git archive` of the v8 project at the commit before that script's `--apply` landed (for `v8_project_setup`, from v7 `c2acffc`). Run the preport and the ported `--apply` on two copies; the netlist, ERC and plotted strings must be identical
+- [ ] Extend `--root` to the write modes (`--apply`, `--erc-fixes`, `--fix-11c/f`, `--annotate`) of the v8 scripts and to `v8_project_setup.py --apply` (its `DEST.relative_to(REPO)` print must work outside the repo), so the replays below run on scratch roots. On the working tree, `--check` output is byte-identical before and after
+- [ ] Port `tidy_fields.py`, `tidy_labels.py` and `layout_check.py` (`layout_check` reads through `to_lists`). `--check` outputs are identical to `kicad10-preport` on scratch v8 and v7 (KiCad 9). `--apply` on a scratch copy with something to tidy: identical netlist, ERC and plotted strings to the preport `--apply`
+- [ ] Port `v8_project_setup.py` (its board strip through `load_board`/`save`) and `v8_mcu_sheet.py` (its one-level `extends` flatten on the raw node). `--check`/`--verify` are identical to preport on a scratch root. `--apply` replay: run `git archive` of the v8 project at the commit before that script's `--apply` landed (for `v8_project_setup`, from v7 `c2acffc`). Run the preport and the ported `--apply` on two copies; the netlist, ERC and plotted strings must be identical, and for `v8_project_setup` the board's DRC counts too
 - [ ] 🔄 Handoff
 
 # --- handoff point ---
 
-## Phase 8: `v8_debug_sheet`, `v8_bus_sheet`, `v8_power_sheet`
+## Phase 8: `v8_debug_sheet`, `v8_bus_sheet`, `v8_power_sheet`; delete the v7 schematic scripts
 
-- [ ] Port the three, by the same method as Phase 7 task 2: `--check` identical on a scratch root, and an `--apply` replay from the commit before each apply landed (including `v8_power_sheet`'s one-off ERC-fix mode)
-- [ ] If G2a kept `esp32_integration.py` and `esp32_integration_phase2.py`: port them, and run `--apply` replays on a scratch v7 `c2acffc` copy (never the working tree). If G2a retired them: delete them, and remove their `tools/CONTEXT.md` and `tools/schematic-modify/CONTEXT.md` lines
-- [ ] Every script that imports `modify.py` runs again (the Phase 6 handoff list is empty)
+- [ ] Port the three, by the same method as Phase 7 task 3: `--check` identical on a scratch root, and an `--apply` replay from the commit before each apply landed (including `v8_power_sheet`'s one-off ERC-fix mode)
+- [ ] Delete `tools/schematic-modify/esp32_integration.py` and `esp32_integration_phase2.py` (G2a). Remove the `tools/CONTEXT.md` row (line 57 at `5060d05`) and the `tools/schematic-modify/CONTEXT.md` line (52), and reword its Typical Workflow step 1 (61) to name a `v8_*.py` script. `git grep` finds neither name outside history (archive initiatives, research, SESSION files)
+- [ ] Every remaining script that imports `modify.py` runs again (the Phase 6b handoff list is empty)
 - [ ] 🔄 Handoff
 
 # --- handoff point ---
 
 ## Phase 9: `schematic-context` and `schematic-gen`
 
-- [ ] Port `extract.py`, `annotate.py` and `show.py`. On scratch v8 (at `v8-schematic-freeze`) and v7 (`c2acffc`), KiCad 9, compare with `kicad10-preport`: `circuit-context.json` is identical (with and without `--previous`), `--check-sheet-pins` is identical, and the `annotate.py` and `show.py` outputs are identical
-- [ ] Port the three generators. Generate into scratch with preport and with the ported version: the netlist and ERC must be identical. Outputs go to scratch, never to their default paths under `hardware/pcb-main/kicad/`
+- [ ] Port `extract.py`, `annotate.py` and `show.py` (raw layer; typed `Schematic` views allowed for reads). On scratch v8 (at `v8-schematic-freeze`) and v7 (`c2acffc`), KiCad 9, compare with `kicad10-preport`: `circuit-context.json` is identical (with and without `--previous`), `--check-sheet-pins` is identical, and the `annotate.py` and `show.py` outputs are identical
+- [ ] Port the three generators (`Schematic.create_new` becomes a template parsed by `node()`). Generate into scratch with preport and with the ported version: the netlist and ERC must be identical. Outputs go to scratch, never to their default paths under `hardware/pcb-main/kicad/`
 - [ ] 🔄 Handoff
 
 # --- handoff point ---
 
-## Phase 10: Board readers
+## Phase 10: Board readers; delete `route_esp32.py`
 
-- [ ] Port `board_model.py`. On v7 `c2acffc` (KiCad 9), `board-model.json` matches `kicad10-preport` on every leaf (1e-9 mm). The net and plane reports and probe-points `pads U5 C21 C9` are identical
-- [ ] Port `pcb-context/extract.py`, `routing_extract.py` and `tools/verify-routing.py`. Their outputs on v7 `c2acffc` are identical to preport
-- [ ] `tools/route_esp32.py`: if G2a retired it, delete it and its doc lines. If it was kept, port it and run it with `--dry-run` only, on a scratch copy; the plan it prints must be identical to preport's
+- [ ] Port `board_model.py` onto `load_board` with small raw accessors in `pcb-context` (no typed `PCB`; PLAN "Raw-layer traps"), including custom-pad anchor and primitives. On v7 `c2acffc` (KiCad 9), `board-model.json` matches `kicad10-preport` on every leaf (1e-9 mm) except the E1 leaves (PLAN "Accepted differences from preport"); list each E1 leaf in SESSION with old value, new value and the file token. The net and plane reports and probe-points `pads U5 C21 C9` are identical, with no exception. `hardware/pcb-main/kicad/board-model/` isn't regenerated
+- [ ] Port `pcb-context/extract.py`, `routing_extract.py` and `tools/verify-routing.py` on the same accessors. Their outputs on v7 `c2acffc` are identical to preport (an E1 field carried into one of them takes the E1 rule; list it)
+- [ ] Delete `tools/route_esp32.py` (G2a). Re-grep for doc lines that name it outside history and remove any found
 - [ ] 🔄 Handoff
 
 # --- handoff point ---
 
 ## Phase 11: Remove kiutils; KiCad 9 reads; the parser rule
 
-- [ ] Final run of the full harness against `kicad10-preport`, on KiCad 9, before kiutils is removed: everything matches. Then delete `kiutils_k9.py`, take kiutils out of `tools/requirements.txt`, and rebuild the venv from the file. `pip check` must be clean, and grep must find no `kiutils` import under `tools/` (outside `.venv`)
+- [ ] Final run of the full harness, the Phase 6a I/O test and the Phase 6b differential test against `kicad10-preport`, on KiCad 9, before kiutils is removed: everything matches, apart from E1 and E2 as listed. Then delete `kiutils_k9.py`, take kiutils out of `tools/requirements.txt`, and rebuild the venv from the file. `pip check` must be clean, and grep must find no `kiutils` import under `tools/` (outside `.venv`)
 - [ ] KiCad 9 files are still read (they stay on 9). Use `git archive` copies of v7 (`c2acffc`) and of sensor-rigid, sensor-flex and power-supply at HEAD. An I/O-module load and save of every `.kicad_sch` and `.kicad_pcb` must be tree-identical, with the version token unchanged. `schematic-context/extract.py` must run on each schematic project into scratch. Nothing under `hardware/` changes
-- [ ] Rules and run instructions. `tools/CONTEXT.md`: the kiutils Rule becomes the I/O-module rule (load and save through it, the lock guard, the pinned version, and the upgrade procedure from PLAN "Pin and upgrades"); the "Dependencies" line; the kiutils_k9 row. `tools/schematic-modify/CONTEXT.md`, `tools/schematic-context/README.md` and `tools/pcb-context/README.md`: run with `tools/.venv/bin/python`. `.context/HAZARDS.md`: replace the kiutils entry
+- [ ] Rules and run instructions. `tools/CONTEXT.md`: the kiutils Rule becomes the I/O-module rule (load and save only through `kicad_io`, the raw layer for writes and board reads with typed views read-only, the splice save, the lock guard, the pinned version, and the upgrade procedure from PLAN "Pin and upgrades"); the "Dependencies" line; the kiutils_k9 row becomes a `kicad-io/` entry. `tools/schematic-modify/CONTEXT.md`, `tools/schematic-context/README.md` and `tools/pcb-context/README.md`: run with `tools/.venv/bin/python`. `.context/HAZARDS.md`: replace the kiutils entry, and add the 6-significant-digit float atom trap
 - [ ] 🔄 Handoff
 
 # --- handoff point ---
@@ -164,4 +174,5 @@
 
 [from: kicad10-tooling] Uninstall KiCad 9.0.4 once v8 has placed its first block on 10 (OQ-6).
 [from: kicad10-tooling] Migrating the sensor-rigid, sensor-flex and power-supply projects to KiCad 10 when they next get design work. v7 is never migrated.
+[from: kicad10-tooling] Regenerate v7's committed `hardware/pcb-main/kicad/board-model/` with the ported reader: it would change `connect_pads` on 5 zones and the F.Cu rectangle's copper polygon (PLAN E1). Only with the user's and the v7-i2c Debugger's agreement, since lab work cites it.
 [from: kicad10-tooling] KiCad 11 (around early 2027): headless IPC and the schematic API, and `pcbnew` removed. Revisit the board writer then (OQ-3's kicad-tools candidate), and re-check the pinned kicad-tools against KiCad 11 files with the regression harness.
