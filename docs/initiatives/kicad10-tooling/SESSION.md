@@ -584,3 +584,12 @@ The two schematic scripts hard-code v7's `hardware/pcb-main/kicad/motion-play-ma
   - **Preport `add_sheet_reference` writes the wrong things:** it hard-codes `motion-play-main` and writes the KiCad 6 sheet keys. Fixing either changes output against preport, so it needs a listed exception, or the bug is kept until Phase 11.
   - **The v8 LED sheet and v8 board are still in kiutils' format.** A first splice-save will reformat them once.
 - G2a is taken to the user next.
+
+### G2a — user decision (2026-11-11)
+
+- **Port:** option (b). The port goes on kicad-tools' raw s-expression layer with our own helpers; typed views are used only for reads.
+- **OQ-7:** splice save in the I/O module, for KiCad 9 and 10.
+- **Retire list:** delete `esp32_integration.py`, `esp32_integration_phase2.py` and `route_esp32.py`.
+- The two gate exceptions the spike found change the definition of Phase 10's gate and of the `add_sheet_reference` comparison against preport: the kiutils board misreads, and `add_sheet_reference`'s hard-coded project name and KiCad 6 sheet keys. Gate definitions belong to the Planner, so the decisions go to the Planner to record in PLAN.
+
+[ORCH] Spawning Planner — record the G2a decisions and the two preport-gate exceptions in PLAN/TASKS before Phase 6
