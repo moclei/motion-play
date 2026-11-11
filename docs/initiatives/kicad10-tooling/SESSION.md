@@ -165,3 +165,41 @@ Tasks assigned: Phase 3, tasks 1–4. Stop before G2 (task 5): the Orchestrator 
 Notes: convert with `kicad-cli sch upgrade` (each sheet separately) and `kicad-cli pcb upgrade`, on fresh scratch copies only (HAZARDS: kicad-cli 10 writes .kicad_prl). Put hardware/pcb-main/resources beside each copy. KiCad 10 has no global library tables: separate setup-caused library ERC/DRC items from real ones. Use tools/.venv (3.13) for kiutils; parity is proven. Install kicad-sch-api and kicad-tools into a separate scratch venv, not tools/.venv and not requirements.txt. The ERC reference at v8-schematic-freeze: 0 errors, 81 pin_to_pin, 2 lib_symbol_issues (Phase 1). v7 DRC reference: 20 violations, 0 unconnected.
 Rules: as for Phases 1–2. Nothing under hardware/ or lab/ changes. No PLAN edits besides recording facts in Technical Notes, if needed.
 ```
+
+#### Notes
+
+Scratch root for this phase: `/private/tmp/claude-501/-Users-marcocleirigh-Workspace-motion-play/1edf598d-7bc7-4919-a0bd-71f5981db13e/scratchpad/p3/` (`v8k9`, `v7k9` unconverted and run only on kicad-cli 9; `v8k10`, `v7k10` converted; `v8k9x`, `v7k9x` unconverted copies run on kicad-cli 10; outputs in `out/`). Scripts: `scratchpad/scripts3/` (`sexp.py` raw s-expression reader, `netconn.py`, `netsem2.py`, `erc_split.py`, plus the round-trip scripts below). Every copy is a fresh `git archive` (v8 at `v8-schematic-freeze`, v7 at `c2acffc`) with `hardware/pcb-main/resources` beside it.
+
+**Task 1: conversion, netlist, ERC/DRC.**
+- **Conversion.** `kicad-cli sch upgrade` on each of the five sheets, then `pcb upgrade` on the board, in both projects (`out/convert.log`). Every sheet 20250114 → 20260306, both boards 20241229 → 20260206, exit 0; a second `sch upgrade` prints "Schematic file was not updated" for all ten sheets. `pcb upgrade` created a `.kicad_prl` and left the `.kicad_pro` untouched, as Phase 1 saw.
+- **The conversion itself is netlist-neutral.** kicad-cli 10's netlist of the unconverted copy (`v8k9x`, `v7k9x`) and of the converted copy are byte-identical apart from the `source`, `date` and `tool` lines, in both formats (s-expression and kicadxml), for v8 and v7. ERC and DRC counts are also identical between unconverted and converted on kicad-cli 10. So every difference below comes from kicad-cli 10's exporter and checker, not from the file format.
+- **kicad-cli 9 (original) vs kicad-cli 10 (converted): connectivity identical, the text isn't.** A raw diff isn't usable: 10 writes tab-indented, one token per line, and reorders sheets. A structural compare (`netconn.py`): v8 296 components, 158 nets; v7 93 components, 102 nets; 0 components differ (value, footprint, every field, libsource, sheetpath, tstamps, properties) and 0 nets differ (name and node set by ref, pin, pintype, pinfunction) once the items below are accounted for. Exporter differences, each counted (`netsem2.py`):
+  - **Every `pinfunction` gets `_<pin number>` appended** (v8 471 of 471, v7 206): `IO48` → `IO48_25`, `Pin_1` → `Pin_1_1`. Also in the kicadxml export. **`tools/schematic-context/extract.py:332` reads `pinfunction` from the XML netlist, so circuit-context pin names will change on 10.** Phase 4 must handle it (strip the suffix or read pin names elsewhere).
+  - Net `class`: 9 writes `Default` for all; 10 writes the pattern-assigned classes from the `.kicad_pro` (`Power_Med,Default` etc.): 14 nets in v8, 16 in v7.
+  - Root-sheet components' `Sheetname` property: `""` on 9, the project name on 10 (v8 28 components, v7 18).
+  - Sheet `number`s follow the sheets' page numbers on 10 (TCA becomes 2, LED 3, Power 4); names and tstamps unchanged.
+  - Dropped on 10: `(datasheet "~")` (v8 295, v7 91), the `~` value of the `Datasheet` field (327 / 119) and libpart `(docs "~")`. Added on 10: `(units …)` per component and libpart, and empty `groups` and `variants` sections.
+  - `libraries`: 9 lists 18 (v7 14) libraries with absolute URIs; 10 lists 2 (the project-table ones, as `${KIPRJMOD}` URIs), because 10 has no global table.
+
+| ERC (`--severity-all`) | v8 on 9 | v8 on 10 | v7 on 9 | v7 on 10 |
+|---|---|---|---|---|
+| errors | 0 | 0 | 0 | 0 |
+| pin_to_pin | 81 | 81 | 56 | 56 |
+| lib_symbol_issues, real (J7 USB-C, U5 BQ24195RGET: in no table) | 2 | 2 | 2 | 2 |
+| unconnected_wire_endpoint | 0 | 0 | 1 | 1 |
+| same_local_global_label (new check in 10) | – | 5 | – | 3 |
+| lib_symbol_issues, setup | 0 | 330 | 0 | 121 |
+| footprint_link_issues, setup | 0 | 281 | 0 | 79 |
+
+| DRC (`--severity-all --schematic-parity`) | v8 on 9 | v8 on 10 | v7 on 9 | v7 on 10 |
+|---|---|---|---|---|
+| clearance / hole_clearance (errors) | 0 / 0 | 0 / 0 | 16 / 2 | 16 / 2 |
+| padstack (warning) | 0 | 0 | 2 | 2 |
+| invalid_outline (error) | 1 | 1 | 0 | 0 |
+| unconnected | 0 | 0 | 0 | 0 |
+| schematic parity | 199 (outline-only board) | 199 | 2 | 3 |
+| lib_footprint_issues, setup | 0 | 0 | 0 | 79 |
+
+- "Setup" means the library is in KiCad 9's global `sym-lib-table`/`fp-lib-table` and not in the project table, so it resolves on 9 and not on 10 (10 has no global tables yet). Every setup item was checked by name (`erc_split.py`): the stock libraries (`Device`, `power`, `Connector`, `TestPoint`, `Resistor_SMD`, …), the JLC-MCP 3rd-party libraries and `motion-play-symbols`/`-footprints`. Real library items are the same 2 on both versions.
+- **New on 10, not setup:** `same_local_global_label` flags a power symbol and a label with the same name on one sheet (v8: `+5V`, `+3.3V_MCU` on root, `+3.3V_BUS` on TCA, `GND` on LED, `+5V_CORE` on power; v7: the root and LED ones). The v7 DRC parity count rises 2 → 3 because 10 compares footprint fields with symbol fields: R2's `ai_block` is `battery_mgmt` in the schematic and empty on the board. Both are warnings that 9 didn't check for, not changes in the design.
+- v8 ERC against the freeze baseline (0 errors, 81 pin_to_pin, 2 lib_symbol_issues): unchanged on 10, plus 5 `same_local_global_label` and the setup items. v7 DRC against the reference (20 violations, 0 unconnected): unchanged on 10, plus the setup items and the one field-parity item.
