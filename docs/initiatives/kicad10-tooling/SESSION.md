@@ -406,3 +406,56 @@ Tasks assigned: Phase 5, tasks 1–5. Stop before G2a (task 6): the Orchestrator
 Notes: use tools/kicad-regress (regress.py) for netlist, ERC, plot, tokens and treeeq comparisons. Prototypes live in the scratchpad, not the repo; no tool is ported. Prototype against `kicad10-preport` modify.py on identical inputs. KiCad 10 copies only via `kicad-cli sch/pcb upgrade` on fresh scratch copies. Give the G2a recommendation with the evidence: (a), (b) or (c), OQ-7 options, and the retire list.
 Rules: hardware/ and lab/ unchanged; kicad-cli 10 never on the working tree; tools/.venv and requirements.txt unchanged.
 ```
+
+#### Notes
+
+Scratch for this phase: `/private/tmp/claude-501/-Users-marcocleirigh-Workspace-motion-play/1edf598d-7bc7-4919-a0bd-71f5981db13e/scratchpad/p5/` (scripts in `p5/scripts/`). The preport worktree was `p5/wt-pre` (`kicad10-preport` = `b71c272`), removed at handoff. kicad-tools 0.29.0 and kiutils 1.4.8 from `tools/.venv`, unchanged.
+
+**Task 1: coverage map.** Method: `p5/scripts/kiutils_usage.py` lists, for each of the 23 files, the kiutils names imported and every attribute access whose name is a kiutils dataclass field (output `p5/usage.json`), then each use site was read. kicad-tools was read from its source in the venv. "Typed" is `kicad_tools.schema` (`Schematic`, `PCB`, `SymbolLibrary`). "Raw" is `kicad_tools.sexp.SExp` with `core.sexp_file.load_/save_schematic`, `load_symbol_lib`, `load_/save_pcb`. Files: modify = `schematic-modify/modify.py`; gens = the three `schematic-gen` scripts; sc-extract = `schematic-context/extract.py`; pcb readers = `pcb-context/board_model.py`, `extract.py`, `routing_extract.py`, `tools/verify-routing.py`.
+
+Schematics and symbol libraries:
+
+| kiutils (what we use) | Used by | kicad-tools typed | Raw layer | Verdict |
+|---|---|---|---|---|
+| `Schematic.from_file` | modify, tidy_fields, v8_project_setup, sc-extract, annotate, show, gens; via modify: every `v8_*`, tidy_labels, esp32_integration* | `Schematic.load` (read views) | `load_schematic` | Covered |
+| `to_file` through `kiutils_k9.save_schematic` | modify, tidy_*, v8_*, annotate, gens | `Schematic.save` | `save_schematic` (tree-identical) | Covered. Keep our lock guard: kicad-tools checks only `~<that file>.lck` and by default only warns. Formatting differs (task 4) |
+| `Schematic.create_new` | gens | none | parse a template text | Raw, small |
+| `kiutils_k9` hide patches | every schematic loader | not needed: kicad-tools keeps tokens as written | readers must accept `(hide yes)`, bare `hide` (kiutils-saved files) and, on KiCad 10, a property-level `(hide yes)` | Helper `is_hidden()` |
+| `SymbolLib.from_file`, `.symbols`, `libId` | modify (`extract_lib_symbol`), tidy_fields, v8_mcu_sheet, gens | `SymbolLibrary.load` (model) | `load_symbol_lib` | Covered (raw for copying a symbol into a sheet) |
+| `Symbol.units[*].pins` (`number`, `position`) | modify, gens, v8_mcu_sheet | `LibrarySymbol.pins` (`LibraryPin` number, position, rotation, unit) | `symbol/symbol/pin` nodes | Covered |
+| `Symbol.extends`, `entryName` (flatten one `extends` level) | v8_mcu_sheet | `resolve_extends` / `resolve_base`, but on the model (see embed) | copy the parent's raw node and rename it | Raw, small |
+| `hidePinNumbers`, `pinNamesHide` | tidy_fields | none | `(pin_numbers (hide yes))`, `(pin_names … (hide yes))` | Raw |
+| `libSymbols`; `ensure_lib_symbol` appends a deep copy | modify, gens, tidy_fields, v8_debug_sheet | `lib_symbols` returns the raw node; `embed_lib_symbol(LibrarySymbol)` **rebuilds the symbol from the model** (property positions reset to stacked offsets, no `pin_names`/`pin_numbers` flags) | deep copy of the raw node (proved in task 2) | **Typed embed unusable**; raw covers |
+| `schematicSymbols` / `SchematicSymbol` (`libId`, `position`, `unit`, `inBom`, `onBoard`, `dnp`, `fieldsAutoplaced`, `uuid`, `pins`, `instances`, `mirror`) | modify, every `v8_*`, tidy_*, sc-extract, annotate, show, gens | read: `symbols` (`SymbolInstance` snapshot, `_sexp` back-reference). Add: `add_symbol`/`add_power`, but Value at +2.54 instead of the library offset, no field justify or angle, no `fields_autoplaced`, only 4 properties, uuid5 ids. No remove, no edit (snapshots) | the symbol node | **Edit and remove: raw only.** Typed add is not equivalent to `modify.add_component` |
+| `Property` (`key`, `value`, `id`, `position`, `effects`) | modify, annotate, tidy_fields, gens | `SymbolProperty` snapshot: name, value, position, visible; no effects; `to_sexp` writes a fixed font | `property` node | Raw. KiCad 10 moved `hide` to the property (`(hide yes) (show_name no) (do_not_autoplace no)` before `effects`) |
+| `Effects`, `Font`, `Justify`, `Stroke`, `Position` | modify, gens, annotate, v8_mcu/debug/bus_sheet, tidy_labels, tidy_fields | none (fixed values inside `add_*`) | `effects`/`font`/`justify`/`stroke`/`at` nodes | Raw helpers |
+| `graphicalItems` / `Connection` (wires: `type`, `points`) | modify, gens, tidy_labels, v8_*, sc-extract | read `wires` (`Wire` start/end); `add_wire` (uuid5) | `wire` node | Read/add typed; remove raw |
+| `labels` / `LocalLabel` | modify, gens, tidy_*, v8_* | read `labels`; `add_label` always writes `justify left bottom` and `fields_autoplaced` (wrong for 180/270, where `modify` writes `right bottom`) | `label` node | Raw |
+| `hierarchicalLabels` | modify, gens, tidy_fields, v8_bus_sheet, sc-extract, esp32_integration_phase2 | read; `add_hierarchical_label`; no shape change or rename | `hierarchical_label` node | Raw for edits |
+| `globalLabels`, `texts` | tidy_fields, v8_bus_sheet | `global_labels` read; no texts | nodes | Raw for texts |
+| `junctions` | modify | read; `add_junction`; no remove | `junction` node | Raw for remove |
+| `noConnects` / `NoConnect` | modify, gens | read only (no `to_sexp`, no add) | `no_connect` node | Raw |
+| `sheets` / `HierarchicalSheet` (`fileName`, `sheetName`, `position`, `width`, `height`, `pins`, `instances`/page) | modify, sc-extract, annotate, show, v8_project_setup | `sheets` (name, file, uuid, position, size; no pins, no page); `hierarchy.SheetPin` read | `sheet` node | Read typed or raw; add and edit raw |
+| `HierarchicalPin` (`name`, `connectionType`, `position`) | modify, v8_mcu_sheet | read only (`SheetPin`) | `sheet/pin` node | Raw |
+| `SymbolProjectInstance/Path`, `HierarchicalSheetProjectInstance/Path` | modify, gens | written only inside `add_symbol` | `instances` blocks | Raw |
+| `paper.paperSize` | tidy_fields, v8_bus/debug/power_sheet | `paper` | — | Covered |
+| `titleBlock` (`title`, `revision`, `date`), `uuid`, `version`, `generator` | v8_project_setup, gens | read (`title_block`, `uuid`, `version`, `generator`) | — | Read typed; write raw |
+| `.to_sexpr()` (comparing two library symbols) | v8_debug_sheet | — | `serialize_sexp` or tree compare | Covered |
+| `kiutils.utils.sexpr.parse_sexp` (nested lists) | layout_check | — | `parse_string` gives `SExp` nodes, not lists | Raw plus a 10-line to-list adapter |
+
+Boards:
+
+| kiutils (what we use) | Used by | kicad-tools typed | Raw layer | Verdict |
+|---|---|---|---|---|
+| `Board.from_file` | pcb readers, v8_project_setup, route_esp32 | `PCB.load` (builds the net table on KiCad 10) | `load_pcb` | Covered |
+| `Board.to_file` | v8_project_setup (strips v7's board to v8's outline-only board), route_esp32 | `PCB.save` | `save_pcb` (tree-identical) | Raw for v8_project_setup's strip. A board write on KiCad 10 is OQ-3's question (Phase 13) |
+| `footprints` (`libId`/`entryName`, `position`+angle, `layer`, `properties` dict, `attributes`, `pads`, `graphicItems`) | pcb readers | `Footprint` (name, position, rotation, layer, reference, value, properties, attr, exclude_from_bom, pads, graphics; `board_only` kept as an unmodelled token) | `_sexp_node` | Covered; `board_only` raw (task 3) |
+| `pads` (`number`, `type`, `shape`, `position`+angle, `size`, `drill`, `layers`, `net`, `pinFunction`, `pinType`, `roundrectRatio`) | pcb readers | `Pad` | — | Covered (task 3) |
+| `customPadOptions.anchor`, `customPadPrimitives` | board_model | **none** | `pad/options`, `pad/primitives` via `Pad._sexp_node` | Raw (task 3) |
+| `traceItems`: `Segment`, `Arc`, `Via` | pcb readers, route_esp32 | `segments`, `arcs`, `vias` | — | Covered (task 3) |
+| `zones` (`layers`, `polygons`, `filledPolygons` per layer, `keepoutSettings`, `netName`, `name`, `priority`, `clearance`, `minThickness`, `connectPads`) | board_model, verify-routing | `Zone` | — | Covered (task 3) |
+| `setup.stackup.layers` (`name`, `type`, `thickness`, `material`, `epsilonR`), `general.thickness` | board_model, v8_project_setup | `setup.stackup` (`StackupLayer`) | — | Covered |
+| `layers`, `nets`, `graphicItems` (lines, arcs, circles, rects, polys), `version`, `generator` | pcb readers | `layers`, `nets`, `graphics` (`BoardGraphic`) | — | Covered (task 3) |
+| `Net(...)`, `Segment(...)`, `Via(...)` construction, `tstamp`, `locked` | v8_project_setup, route_esp32 | `segments`/`vias` setters | nodes | Raw; route_esp32 is a retire candidate |
+
+**What kicad-tools can't do in its typed layer (the gaps), and their size.** (1) No in-place edit or removal of any schematic item: the typed objects are snapshots. (2) No sheet or sheet-pin add, no no-connect add, no control of effects, justify or property placement. (3) `embed_lib_symbol` and `SymbolProperty.to_sexp` rewrite what they write, so they lose information. (4) No custom-pad primitives. Every gap is covered by the raw layer, which is lossless (Phase 3 and 4 round trips). The cost is our own helper layer: the prototype's (`p5/scripts/ktmod.py`) is about 120 lines of helpers (find, insert in KiCad's order, typed atom setters, text builders, the lock guard) under the about 330 lines that re-implement `modify.py`'s 30 public functions. Two raw-layer traps the helpers must handle: **a float atom created as `SExp(value=x)` is written with 6 significant digits** (`181.6099` → `181.61`; the helpers build numbers with an explicit string), and **properties hide in three forms** (above).
