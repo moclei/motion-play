@@ -36,6 +36,8 @@ Usage:
   python3 tools/schematic-modify/v8_power_sheet.py --apply    # edit (refuses if U10 exists)
   python3 tools/schematic-modify/v8_power_sheet.py --check    # Phase 8+9 checks, pin -> net for
                                                               # every power part, rows c/h/i/j/k/l
+  python3 tools/schematic-modify/v8_power_sheet.py --check --root <copy>/motion-play-main-v8.kicad_sch
+                                                              # the same check on a scratch copy
 """
 
 from __future__ import annotations
@@ -389,7 +391,9 @@ def main() -> int:
     ap.add_argument("--check", action="store_true")
     ap.add_argument("--erc-fixes", action="store_true",
                     help="one-off: the ERC fixes on a sheet where --apply ran before they were added")
+    mcu.add_root_arg(ap)
     args = ap.parse_args()
+    mcu.apply_root_arg(ap, args, ("apply", "erc_fixes"))
     if args.apply:
         return apply()
     if args.erc_fixes:

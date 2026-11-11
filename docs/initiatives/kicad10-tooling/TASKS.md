@@ -35,7 +35,7 @@
 ## Phase 4: Port groundwork: harness, scratch-root checks, kicad-tools pinned (still kiutils, KiCad 9)
 
 - [x] Regression harness under `tools/kicad-regress/` (PLAN "Regression harness"): fresh `git archive` copies with `hardware/pcb-main/resources`, fixed-length run roots, a choice of Python, `KICAD_CLI` and tools ref (working tree or a worktree at a git ref), and a compare mode. Add a short entry for it in `tools/CONTEXT.md`
-- [ ] Scratch roots for the checks (PLAN "Scratch roots for the checks"). `layout_check.py`'s baseline is keyed relative to the project root. `v8_*.py --check` and `v8_project_setup.py --verify` take `--root`. On the working tree, the output is byte-identical before and after (show both)
+- [x] Scratch roots for the checks (PLAN "Scratch roots for the checks"). `layout_check.py`'s baseline is keyed relative to the project root. `v8_*.py --check` and `v8_project_setup.py --verify` take `--root`. On the working tree, the output is byte-identical before and after (show both)
 - [ ] The harness, run on the current tools with KiCad 9, reproduces the Phase 1 reference hashes (SESSION Worker #1 Notes). Every `v8_*.py --check` also passes on a scratch root
 - [ ] Add `kicad-tools==0.29.0` to `tools/requirements.txt`, with every transitive package pinned; kiutils stays. Rebuild `tools/.venv` from the file; `pip check` must be clean. If kicad-tools forces new shapely, numpy or matplotlib versions, the harness must still match the reference (1e-9 mm). Any difference stops the phase. The global `python3` doesn't change
 - [ ] Tag `kicad10-preport` on the handoff commit: it's the oracle for Phases 6–11

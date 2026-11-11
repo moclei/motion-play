@@ -43,6 +43,8 @@ Usage:
   python3 tools/schematic-modify/v8_bus_sheet.py --apply    # edit (refuses if R80 exists)
   python3 tools/schematic-modify/v8_bus_sheet.py --check    # pin -> net, each jumper's two
                                                             # positions, all-v7 vs v7 @ c2acffc
+  python3 tools/schematic-modify/v8_bus_sheet.py --check --root <copy>/motion-play-main-v8.kicad_sch
+                                                            # the same check on a scratch copy
 """
 
 from __future__ import annotations
@@ -435,7 +437,9 @@ def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--apply", action="store_true")
     ap.add_argument("--check", action="store_true")
+    mcu.add_root_arg(ap)
     args = ap.parse_args()
+    mcu.apply_root_arg(ap, args, ("apply",))
     if args.apply:
         return apply()
     if args.check:

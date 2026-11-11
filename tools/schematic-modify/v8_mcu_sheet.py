@@ -35,6 +35,9 @@ Usage:
   python3 tools/schematic-modify/v8_mcu_sheet.py --apply    # edit (refuses if JP1 exists)
   python3 tools/schematic-modify/v8_mcu_sheet.py --check    # netlist check vs GPIO allocation
                                                             # and v7 positions vs v7 @ c2acffc
+  python3 tools/schematic-modify/v8_mcu_sheet.py --check --root <copy>/motion-play-main-v8.kicad_sch
+                                                            # the same check on another copy of
+                                                            # the project (a scratch copy)
 KiCad must be closed while --apply runs.
 """
 
@@ -64,6 +67,42 @@ LEDC = "led_controller.kicad_sch"
 STOCK = modify.STOCK_SYMBOLS  # follows KICAD_CLI
 KICAD_CLI = modify.KICAD_CLI  # $KICAD_CLI, else 9.0.4
 V7_COMMIT = "c2acffc"
+V8_MODULES = ("v8_mcu_sheet", "v8_bus_sheet", "v8_power_sheet", "v8_debug_sheet")
+
+
+def set_root(root) -> None:
+    """--root: point the v8 scripts at another copy of the v8 project (a scratch copy), for --check.
+    Sets ROOT and KICAD (and FP_DIR, which derives from KICAD) in every v8 script module loaded now,
+    including the one running as __main__. A v8 script imported later copies ROOT/KICAD from
+    v8_mcu_sheet, which is loaded first so it carries the new root."""
+    import importlib
+    root = Path(root).resolve()
+    if not root.is_file():
+        raise SystemExit("--root: no such schematic: {}".format(root))
+    importlib.import_module("v8_mcu_sheet")
+    for name in ("__main__",) + V8_MODULES:
+        m = sys.modules.get(name)
+        if m is None or not hasattr(m, "ROOT"):
+            continue
+        m.ROOT = root
+        if hasattr(m, "FP_DIR") and hasattr(m, "KICAD"):
+            m.FP_DIR = root.parent / m.FP_DIR.relative_to(m.KICAD)
+        if hasattr(m, "KICAD"):
+            m.KICAD = root.parent
+
+
+def add_root_arg(ap) -> None:
+    ap.add_argument("--root", type=Path, help="root .kicad_sch of another copy of the v8 project "
+                    "(a scratch copy); --check only")
+
+
+def apply_root_arg(ap, args, write_modes) -> None:
+    """Handle --root after parse_args: refused with any mode that writes."""
+    if args.root is None:
+        return
+    if any(getattr(args, m) for m in write_modes):
+        ap.error("--root works with --check only")
+    set_root(args.root)
 
 HDR_1X4 = "Connector_PinHeader_2.54mm:PinHeader_1x04_P2.54mm_Vertical"
 SJ2_OPEN = "Jumper:SolderJumper-2_P1.3mm_Open_RoundedPad1.0x1.5mm"
@@ -392,7 +431,9 @@ def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--apply", action="store_true")
     ap.add_argument("--check", action="store_true")
+    add_root_arg(ap)
     args = ap.parse_args()
+    apply_root_arg(ap, args, ("apply",))
     if args.apply:
         return apply()
     if args.check:

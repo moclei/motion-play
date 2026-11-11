@@ -23,10 +23,13 @@ Per sheet, it fails on:
      interior is not a T-touch: both tools connect it, and KiCad's own save produces it when it
      merges collinear wire segments (Phase 11c GUI pass). It is listed with -v only.
 
-The baseline (layout_baseline.json beside this script, keyed by repo-relative sheet path) only
-ratchets down. A count below it is reported, and --update-baseline records it. --update-baseline
-never raises a baseline; a sheet with no baseline yet is recorded as it stands. To accept more
-overlaps on purpose, edit the JSON by hand in a commit that says why.
+The baseline (layout_baseline.json beside this script) is keyed by "<project>/<sheet>": the root
+sheet's file stem, then the sheet's path relative to the root sheet's folder. So a scratch copy of
+a project (--root <copy>/X.kicad_sch) is checked against the same baseline as the working tree.
+It only ratchets down. A count below it is reported, and --update-baseline records it.
+--update-baseline never raises a baseline; a sheet with no baseline yet is recorded as it stands.
+It refuses a root outside this repository, so a scratch copy never writes the committed baseline.
+To accept more overlaps on purpose, edit the JSON by hand in a commit that says why.
 
 The worst spots are printed by sheet grid zone (KiCad's default frame: columns 1.. every 50 mm
 from the 10 mm margin, rows A.. every 50 mm), e.g. "C3".
@@ -491,6 +494,16 @@ def rel(p: Path) -> str:
         return str(p.resolve())
 
 
+def baseline_key(sheet: Path, root: Path) -> str:
+    """'<root sheet stem>/<sheet path relative to the root sheet's folder>'."""
+    root = root.resolve()
+    try:
+        r = sheet.resolve().relative_to(root.parent).as_posix()
+    except ValueError:
+        r = sheet.resolve().as_posix()
+    return "{}/{}".format(root.stem, r)
+
+
 def load_baseline() -> Dict[str, dict]:
     if BASELINE.exists():
         return json.loads(BASELINE.read_text()).get("sheets", {})
@@ -507,13 +520,16 @@ def save_baseline(sheets: Dict[str, dict]) -> None:
 def run(root: Path = DEFAULT_ROOT, update_baseline: bool = False, verbose: bool = False,
         worst: int = 3) -> int:
     """Check every sheet of the project; print a report. Returns the number of failures."""
+    if update_baseline and rel(root) == str(root.resolve()):
+        print("Refusing --update-baseline: {} is outside the repository (a scratch copy)".format(root))
+        return 1
     base = load_baseline()
     new_base = dict(base)
     fails = 0
     changed = []
     print("=== Layout check ({}) ===".format(rel(root)))
     for sheet in project_sheets(root):
-        key = rel(sheet)
+        key = baseline_key(sheet, root)
         r = analyse(sheet)
         b = base.get(key)
         n_ov, n_st = len(r["pairs"]), r["stacked_count"]

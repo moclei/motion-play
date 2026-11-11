@@ -49,6 +49,9 @@ Usage:
                                                               # series R at IC1 pin 4 (row m)
   python3 tools/schematic-modify/v8_debug_sheet.py --annotate # ai_* properties on the v8 parts
                                                               # (Phases 8-11), via annotate.py
+  python3 tools/schematic-modify/v8_debug_sheet.py --check --root <copy>/motion-play-main-v8.kicad_sch
+                                                              # the whole check chain on a scratch
+                                                              # copy of the project
 """
 
 from __future__ import annotations
@@ -677,7 +680,9 @@ def main() -> int:
     ap.add_argument("--annotate", action="store_true")
     ap.add_argument("--fix-11c", action="store_true")
     ap.add_argument("--fix-11f", action="store_true")
+    mcu.add_root_arg(ap)
     args = ap.parse_args()
+    mcu.apply_root_arg(ap, args, ("apply", "fix_11c", "fix_11f", "annotate"))
     if args.apply:
         return apply()
     if args.fix_11c:

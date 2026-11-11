@@ -25,6 +25,10 @@ Usage:
   python3 tools/schematic-modify/v8_project_setup.py            # dry run: verify only if present
   python3 tools/schematic-modify/v8_project_setup.py --apply    # create (refuses if dest exists)
   python3 tools/schematic-modify/v8_project_setup.py --verify   # re-run the checks on dest
+  python3 tools/schematic-modify/v8_project_setup.py --verify --root <copy>/motion-play-main-v8.kicad_sch
+                                                                 # the checks on another copy of the
+                                                                 # v8 project (a scratch copy); DRC
+                                                                 # runs there, not on the working tree
 """
 
 from __future__ import annotations
@@ -265,7 +269,17 @@ def main() -> int:
     ap.add_argument("--verify", action="store_true", help="run the checks on the v8 project")
     ap.add_argument("--no-v7-compare", action="store_true",
                     help="skip the netlist comparison with v7 (use once the v8 schematic is edited)")
+    ap.add_argument("--root", type=Path, help="root .kicad_sch of another copy of the v8 project "
+                    "(a scratch copy); --verify only")
     args = ap.parse_args()
+    if args.root is not None:
+        global DEST
+        if args.apply:
+            ap.error("--root works with --verify only")
+        root = args.root.resolve()
+        if root.name != "{}.kicad_sch".format(NEW) or not root.is_file():
+            ap.error("--root must be an existing {}.kicad_sch".format(NEW))
+        DEST = root.parent
 
     if args.apply:
         if DEST.exists() and any(DEST.iterdir()):
