@@ -27,6 +27,11 @@ Subcommands
       Every output file of RUNA against RUNB: identical after replacing each run root, else JSON leaf by
       leaf (numbers within --tol, _provenance ignored), netlists structurally, Markdown without front
       matter. Also the exit codes. Exit 1 if anything differs.
+  roundtrip OUTDIR [--python PY] [--ref REF]
+      kicad-tools load + save (raw and typed layers, rt_kicad_tools.py) of every .kicad_sch and
+      .kicad_pcb of v8 (--v8-ref), v7 (c2acffc) and, at --ref (default HEAD), the power-supply,
+      sensor-rigid and sensor-flex projects; each output must be tree-identical to its input.
+      Part of a kicad-tools upgrade (kicad10-tooling PLAN "Pin and upgrades").
   netlist A.net B.net [--strip-a] [--strip-b]   structural netlist compare (--strip-*: drop kicad-cli
                                                 10's '_<pin>' pinfunction suffix on that side)
   erc REPORT.json PROJECT_DIR                   ERC/DRC counts, library items split setup/real
@@ -366,6 +371,47 @@ def cmd_compare(a):
 
 
 # ---------------------------------------------------------------------------
+# roundtrip
+# ---------------------------------------------------------------------------
+
+def cmd_roundtrip(a):
+    out = Path(a.outdir).resolve()
+    if inside_repo(out):
+        die("outdir must be outside the repository")
+    if out.exists() and any(out.iterdir()):
+        die("outdir exists and is not empty: {}".format(out))
+    py = Path(a.python) if a.python else DEFAULT_PY
+    src = out / "src"
+    sets = [(a.v8_ref, ["hardware/pcb-main-v8/kicad"]), (a.v7_ref, ["hardware/pcb-main/kicad"]),
+            (a.ref, ["hardware/pcb-power-supply/kicad", "hardware/sensor-rigid", "hardware/sensor-flex"])]
+    files = []
+    for i, (ref, paths) in enumerate(sets):
+        d = src / str(i)
+        archive(ref, paths, d)
+        files += sorted(p for p in d.rglob("*") if p.suffix in (".kicad_sch", ".kicad_pcb"))
+    r = subprocess.run([str(py), str(HERE / "rt_kicad_tools.py"), str(out), str(src)] + [str(f) for f in files],
+                       stdout=subprocess.PIPE, stderr=subprocess.STDOUT, universal_newlines=True)
+    fails = sum(1 for l in r.stdout.splitlines() if l.startswith("FAIL"))
+    for l in r.stdout.splitlines():
+        if not l.startswith("OK "):
+            print(l)
+    differ = 0
+    for f in files:
+        rel = f.relative_to(src)
+        for layer in ("raw", "typed"):
+            o = out / layer / rel
+            if not o.exists():
+                continue
+            eq, d = kcompare.tree_equal(str(f), str(o))
+            differ += not eq
+            print("{} {:5s} {}{}".format("EQUAL    " if eq else "DIFFERENT", layer, rel, "" if eq else " " + str(d)))
+    refs = "v8 {} = src/0, v7 {} = src/1, {} = src/2".format(a.v8_ref, a.v7_ref, a.ref)
+    print("ROUNDTRIP {}: {} files x 2 layers, {} load/save failures, {} not tree-identical ({})".format(
+        "PASSED" if not (fails or differ) else "FAILED", len(files), fails, differ, refs))
+    return 1 if (fails or differ) else 0
+
+
+# ---------------------------------------------------------------------------
 # small subcommands
 # ---------------------------------------------------------------------------
 
@@ -436,6 +482,13 @@ def main():
     p.add_argument("run_b")
     p.add_argument("--tol", type=float, default=1e-9)
     p.set_defaults(fn=cmd_compare)
+    p = sub.add_parser("roundtrip")
+    p.add_argument("outdir")
+    p.add_argument("--python")
+    p.add_argument("--ref", default="HEAD")
+    p.add_argument("--v8-ref", default="v8-schematic-freeze")
+    p.add_argument("--v7-ref", default="c2acffc")
+    p.set_defaults(fn=cmd_roundtrip)
     p = sub.add_parser("netlist")
     p.add_argument("a")
     p.add_argument("b")
