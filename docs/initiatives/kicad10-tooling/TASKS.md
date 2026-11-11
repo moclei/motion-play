@@ -68,7 +68,7 @@
 
 - [x] Port `modify.py` onto `kicad_io` and its helpers: every public operation, the same signatures where the callers allow, raw layer only (PLAN "Which layer"). Reproduce preport's `add_sheet_reference` (E2) and the one-entry-per-pin-number behaviour exactly. `annotate_components` finds `annotate.py` from `Path(__file__)`
 - [x] A committed differential test under `tools/kicad-regress/` that drives every public `modify.py` operation on a scratch copy, with the ported tools and with `kicad10-preport` (PLAN "Oracle", write tools; Phase 5's 11 ops, `edits.py`/`cmp_edit.py`, are the model, with seeded UUIDs). All pass on KiCad 9, and the kicad-tools census shows only the intended edit. Also run it on a converted KiCad 10 copy (`KICAD_CLI` on 10) for the property-writing ops and the sheet ops: pass, census only the edit
-- [ ] E2 fix, as its own commit after the test passes (PLAN "Accepted differences from preport", E2): the project name from the root schematic's stem, keys `Sheetname`/`Sheetfile`. Update the test's `add_sheet_reference` case to the E2 rule and re-run. Record the commit and the tree differences in SESSION
+- [x] E2 fix, as its own commit after the test passes (PLAN "Accepted differences from preport", E2): the project name from the root schematic's stem, keys `Sheetname`/`Sheetfile`. Update the test's `add_sheet_reference` case to the E2 rule and re-run. Record the commit and the tree differences in SESSION
 - [ ] Handoff note: list the scripts that can't run until Phases 7–8 (PLAN "Transient breakage")
 - [ ] 🔄 Handoff
 

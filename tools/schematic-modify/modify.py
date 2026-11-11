@@ -16,8 +16,9 @@ Numbers are written with kicad_io.num (exact text). The port does no rounding be
 calls modify.py always made, so every coordinate is the same float kiutils wrote (kiutils wrote
 str(float); num drops a trailing ".0").
 
-Preport parity kept on purpose (kicad10-tooling PLAN "Accepted differences from preport", "Raw-layer
-traps"): a placed symbol gets one (pin ...) entry per pin number (a repeated number keeps its first
+Differences from kicad10-preport: add_sheet_reference writes the root schematic's stem as the instance
+project and the keys Sheetname/Sheetfile (PLAN "Accepted differences from preport", E2). Preport parity
+kept on purpose (PLAN "Raw-layer traps"): a placed symbol gets one (pin ...) entry per pin number (a repeated number keeps its first
 position and its last uuid, as kiutils' pin dict did).
 """
 
@@ -522,14 +523,15 @@ def add_sheet_reference(
                             pass
         page = max(pages) + 1
 
-    # Preport parity (kicad10-tooling PLAN E2): the project name and the KiCad 6 property keys
-    # are what kicad10-preport wrote.
+    # The instance's project is the root schematic's stem (the .kicad_pro stem); the keys are the
+    # KiCad 7+ Sheetname/Sheetfile. (kicad10-preport hard-coded "motion-play-main" and wrote the
+    # KiCad 6 keys: kicad10-tooling PLAN E2.)
     sheet = node("(sheet (at {} {}) (size {} {}) (stroke (width 0)) (fill (color 0 0 0 0)) (uuid {}) "
                  "(instances (project {} (path {} (page {})))))".format(
                      num(x), num(y), num(width), num(height), q(sheet_uuid),
-                     q("motion-play-main"), q("/" + _uuid_of(sch)), q(str(page))))
-    props = [make_property(root_doc, "Sheet name", sheet_name, x, round(y - 2.54, 2), 0),
-             make_property(root_doc, "Sheet file", file_name, x, round(y + height + 2.54, 2), 0)]
+                     q(root_doc.path.stem), q("/" + _uuid_of(sch)), q(str(page))))
+    props = [make_property(root_doc, "Sheetname", sheet_name, x, round(y - 2.54, 2), 0),
+             make_property(root_doc, "Sheetfile", file_name, x, round(y + height + 2.54, 2), 0)]
 
     pin_step = 5.08
     left_x = x

@@ -85,9 +85,16 @@ CENSUS_KIUTILS = {"L:id", "L:hide", "F:fields_autoplaced", "L:exclude_from_sim",
 def allowed(key, allow):
     return key in allow or any(a.endswith("*") and key.startswith(a[:-1]) for a in allow)
 
-# The only differences allowed between preport's new sheet node and the port's (E2). Empty while the
-# port reproduces preport; the E2 fix commit fills it.
-SHEET_E2_DIFFS = []
+# The only differences allowed between preport's new sheet node and the port's, per stage: the E2 fix
+# (PLAN "Accepted differences from preport"): the instance project is the root schematic's stem, and the
+# keys are KiCad 7+'s Sheetname/Sheetfile. On KiCad 10 there are none: kicad-cli 10's conversion of
+# preport's output already rewrites both (and the port's re-save is compared there).
+SHEET_E2_DIFFS = {
+    "KiCad 9": [("/sheet[3]/instances[1]/project[1]", "motion-play-main", "motion-play-main-v8"),
+                ("/sheet[7]/property[1]", "Sheet file", "Sheetfile"),
+                ("/sheet[8]/property[1]", "Sheet name", "Sheetname")],
+    "KiCad 10": [],
+}
 
 RESULTS = collections.Counter()
 
@@ -440,7 +447,7 @@ def sheet_check(pre, port, stage):
         return check(False, "[{}] sheet node".format(stage), "new sheet {} missing (preport {}, port {})".format(
             sid, a is not None, b is not None))
     d = tree_diffs(_norm(a), _norm(b))
-    expected = [tuple(x) for x in SHEET_E2_DIFFS]
+    expected = [tuple(x) for x in SHEET_E2_DIFFS[stage]]
     ok = check(sorted(d) == sorted(expected), "[{}] sheet node, port against preport".format(stage),
                "{} differences{}".format(len(d), " (E2)" if d and d == expected else ""))
     for x in d:
