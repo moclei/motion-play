@@ -8,4 +8,5 @@
   (lib (name "TYPE-C-31-M-12")(type "KiCad")(uri "${KIPRJMOD}/../../pcb-main/resources/TYPE-C-31-M-12/TYPE-C-31-M-12.pretty")(options "")(descr "TYPE-C-31-M-12 USB-C connector footprint"))
   (lib (name "JLC-MCP")(type "KiCad")(uri "${KIPRJMOD}/libraries/footprints/JLC-MCP.pretty")(options "")(descr "JLC-MCP Component Library (LCSC/EasyEDA)"))
   (lib (name "motion-play-v8")(type "KiCad")(uri "${KIPRJMOD}/libraries/footprints/motion-play-v8.pretty")(options "")(descr "v8-only footprints (Phase 10)"))
+  (lib (name "motion-play-footprints")(type "KiCad")(uri "${KIPRJMOD}/../../libraries/motion-play-footprints.pretty")(options "")(descr "Project footprints (hardware/libraries)"))
 )

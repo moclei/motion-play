@@ -1,29 +1,29 @@
 {
   "_provenance": {
     "source": "hardware/pcb-main-v8/kicad/motion-play-main-v8.kicad_sch",
-    "source_sha256": "d65c086f4f3cc5460e6e6557513d673def8ce83676495e8e9ff5fa3a78d093fb",
+    "source_sha256": "955b95da8f77c29706b2a05cc6e57d60224e51c4334460ff60b950a12f382d3b",
     "sources": {
-      "hardware/pcb-main-v8/kicad/esp32_s3.kicad_sch": "9d0381f41bada0a3a28186cf1a75a4bda56c7f4e45b8880242f0a37a8a6e364c",
-      "hardware/pcb-main-v8/kicad/led_controller.kicad_sch": "6b7e283afc65573bc87acce524fc50c607bb8e3184a1fbdea42103a6fc831bfb",
-      "hardware/pcb-main-v8/kicad/power_management.kicad_sch": "ea7569f3da49dff5a030d0a9ee1375dc87b78d47c68690c824e74e1390c11e3a",
-      "hardware/pcb-main-v8/kicad/tca9548A_subsystem.kicad_sch": "27f8d853f994cc7d0b4a6c7ccda0cca53d7fa7074795d2601767af38123635b4"
+      "hardware/pcb-main-v8/kicad/esp32_s3.kicad_sch": "601cd47ca117f1bd0396f96669dc6736d1487e13325fea6f3faf8b1861485241",
+      "hardware/pcb-main-v8/kicad/led_controller.kicad_sch": "8089a776df0112304c594d8bd42a25ebdbcd89b2871e148eb61d8873919313cc",
+      "hardware/pcb-main-v8/kicad/power_management.kicad_sch": "c9867eb45925cd612788dfdd971dbe5f8c39fa7156fceec42d5d8f6d56fb2936",
+      "hardware/pcb-main-v8/kicad/tca9548A_subsystem.kicad_sch": "a0331085a104a967da9937221b8e0c306d790c01f32bea8687dffa47cdffb317"
     },
     "generator": "tools/schematic-context/extract.py",
-    "generator_commit": "5a1aaabd5c40a1c7e9ca7eb14951b99cd522d0e9",
-    "generated": "2026-11-08T05:36:08+00:00"
+    "generator_commit": "6bd9bc8029ffc8c18fe9a3494f573f53008de849",
+    "generated": "2026-11-12T07:35:23+00:00"
   },
   "schema_version": "1.0",
   "project": "motion-play-main-v8",
   "source": {
     "root": "motion-play-main-v8.kicad_sch",
     "sheets": {
+      "tca9548A_subsystem.kicad_sch": "TCA9548A_Subsystem",
       "led_controller.kicad_sch": "LED Controller",
       "power_management.kicad_sch": "Power Management",
-      "tca9548A_subsystem.kicad_sch": "TCA9548A_Subsystem",
       "esp32_s3.kicad_sch": "ESP32_S3"
     },
     "source_hash": "5f43a5588220",
-    "extracted_at": "2026-11-08T05:36:07.996373+00:00"
+    "extracted_at": "2026-11-12T07:35:23.726155+00:00"
   },
   "description": "",
   "blocks": {},
