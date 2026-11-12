@@ -114,7 +114,7 @@
 - [x] Final run of the full harness, the Phase 6a I/O test and the Phase 6b differential test against `kicad10-preport`, on KiCad 9, before kiutils is removed: everything matches, apart from E1 and E2 as listed. Then delete `kiutils_k9.py`, take kiutils out of `tools/requirements.txt`, and rebuild the venv from the file. `pip check` must be clean, and grep must find no `kiutils` import under `tools/` (outside `.venv`)
 - [x] KiCad 9 files are still read (they stay on 9). Use `git archive` copies of v7 (`c2acffc`) and of sensor-rigid, sensor-flex and power-supply at HEAD. An I/O-module load and save of every `.kicad_sch` and `.kicad_pcb` must be tree-identical, with the version token unchanged. `schematic-context/extract.py` must run on each schematic project into scratch. Nothing under `hardware/` changes
 - [x] Rules and run instructions. `tools/CONTEXT.md`: the kiutils Rule becomes the I/O-module rule (load and save only through `kicad_io`, the raw layer for writes and board reads with typed views read-only, the splice save, the lock guard, the pinned version, and the upgrade procedure from PLAN "Pin and upgrades"); the "Dependencies" line; the kiutils_k9 row becomes a `kicad-io/` entry. `tools/schematic-modify/CONTEXT.md`, `tools/schematic-context/README.md` and `tools/pcb-context/README.md`: run with `tools/.venv/bin/python`. `.context/HAZARDS.md`: replace the kiutils entry, and add the 6-significant-digit float atom trap
-- [ ] 🔄 Handoff
+- [x] 🔄 Handoff
 
 # --- handoff point ---
 
@@ -177,3 +177,4 @@
 [from: kicad10-tooling] Regenerate v7's committed `hardware/pcb-main/kicad/board-model/` with the ported reader: it would change `connect_pads` on 5 zones and the F.Cu rectangle's copper polygon (PLAN E1). Only with the user's and the v7-i2c Debugger's agreement, since lab work cites it.
 [from: kicad10-tooling] KiCad 11 (around early 2027): headless IPC and the schematic API, and `pcbnew` removed. Revisit the board writer then (OQ-3's kicad-tools candidate), and re-check the pinned kicad-tools against KiCad 11 files with the regression harness.
 [from: kicad10-tooling] The three `tools/schematic-gen` generators default `--output` into v7's project folder (`hardware/pcb-main/kicad/`, never re-saved), and `spec.json`/`poc_generate.py` still name `3v3_Power_Supply.kicad_sch`, deleted in `fd632ef` (Phase 9 restored it into scratch from `fd632ef^`). Make `--output` required and refresh the sources, or retire the generators.
+[from: kicad10-tooling] `tools/pcb-context/place_power.py` writes footprint positions into a `.kicad_pcb` by text replacement, outside `kicad_io` and its lock guard (tools/CONTEXT.md I/O-module Rule, exception). Port it onto `kicad_io` or retire it when v8 placement generalises it.
