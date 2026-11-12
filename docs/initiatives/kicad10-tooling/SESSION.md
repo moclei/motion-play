@@ -854,3 +854,32 @@ Scratch: `/private/tmp/claude-501/-Users-marcocleirigh-Workspace-motion-play/1ed
 - Do not run `annotate.py` itself, or `modify.annotate_components`, on a KiCad 10 file until Phase 9. `v8_debug_sheet --annotate` no longer goes through it.
 
 **Handoff checks.** `git diff 249fac3 HEAD -- hardware lab .githooks tools/requirements.txt docs/initiatives/kicad10-tooling/PLAN.md` is empty. No `p8` worktree is left, and `extensions.worktreeConfig` is unset. No new documents; nothing Deferred.
+
+#### Result
+| # | Phase | Result | Escalation evaluated? | Commit | Notes |
+|---|-------|--------|-----------------------|--------|-------|
+| 9 | Phase 8: v8_debug/bus/power_sheet; delete the v7 schematic scripts | DONE | No — clean completion | 2b261ea | 4 tasks; 8 `--apply` replays match preport; both esp32_integration scripts deleted |
+
+#### Verification
+- 4 commits, `c464817`..`2b261ea`. Phases 1–8 (with 6a and 6b) have their Handoffs `[x]` and nothing later is ticked: the Worker's slip that ticked every Handoff was reverted before commit. `git diff 249fac3 HEAD` on hardware/, lab/, .githooks, tools/requirements.txt and PLAN.md is empty. No `v8_*.py` imports kiutils. Both esp32_integration scripts are gone. No extra worktree is left.
+- Orchestrator re-run on the working tree: `v8_debug_sheet --check` gives PHASE 11 CHECK PASSED. The tree is clean afterwards.
+- Carry forward:
+  - **`v8_debug_sheet.py` has its own raw-tree `write_ai_properties`.** It is a stop-gap for `annotate.write_ai_properties`, which is still kiutils. Phase 9 should replace it with the ported `annotate.py` function so there is one copy.
+  - **Stale doc lines for Phase 11/17's docs pass** in `tools/schematic-modify/CONTEXT.md`: "v8_*.py refuse --root with write modes" (Phase 7 changed this), the `kiutils_k9.py` description, and "v8_project_setup renames via kiutils".
+
+---
+
+### Worker #10 — Phase 9: schematic-context and schematic-gen
+
+**Dispatch:**
+```
+Initiative: kicad10-tooling
+Phase: 9 — schematic-context and schematic-gen
+Initiative path: docs/initiatives/kicad10-tooling/
+Additional reading: PLAN in full ("Which layer", "Oracle", "Accepted differences from preport", "Raw-layer traps"). SESSION.md Worker #6 Notes (kicad_io API), Worker #8/#9 Notes + Orchestrator Verifications (replay method, kiutils-form folding, write_ai_properties stop-gap). tools/schematic-context/README.md.
+
+Tasks assigned: Phase 9, all 3 tasks (see TASKS.md)
+
+Notes: after annotate.py is ported, point v8_debug_sheet's write_ai_properties at it (one copy) and show debug --annotate/--fix-11f replays still match. Generators write only to scratch. Only E1/E2 differences allowed.
+Rules: hardware/ and lab/ unchanged; kicad-cli 10 only on scratch copies; board readers are Phase 10.
+```
