@@ -54,7 +54,6 @@ Surgical in-place edits on existing `.kicad_sch` files — adding/removing compo
 | File | Purpose |
 |------|---------|
 | `modify.py` | Reusable helpers: `add_component`, `remove_component`, `add_hierarchical_label`, `add_sheet_reference`, `annotate_components`, `set_pin_net` (move a label-wired pin to another net), `pin_position`, `remove_no_connect_at`, `remove_junction_at`, `add_local_label`, `add_wire`, `rename_hlabel`, `rename_sheet_pin`, `remove_component_with_stubs`, `set_property`, `add_power_symbol`. |
-| `esp32_integration.py` | Initiative-specific script that used `modify.py` to integrate the ESP32-S3 into the main schematic. |
 | `kiutils_k9.py` | KiCad 8/9 `(hide yes)` shim for kiutils 1.4.8 plus the lock-file save guard. Imported by every schematic load path (kiutils Rule above). |
 | `layout_check.py` | Read-only readability check (visible extra fields, off-paper items, labels with no justify, wire/pin-end T-touches with no junction, text overlaps and stacked labels against a per-sheet baseline that only ratchets down, worst grid zones). Part of every `--check` (end of `v8_debug_sheet.py --check`); placement rules in `schematic-modify/CONTEXT.md`. |
 | `tidy_fields.py` | `--check / --apply`: netlist-neutral field tidy (hide all but Reference/Value, restore pin-number/name hiding, re-home `ai_*` to the symbol). |
