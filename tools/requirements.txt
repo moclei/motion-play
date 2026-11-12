@@ -9,15 +9,15 @@
 # The global python3 (pyenv 3.7.3) is not built from this file and keeps its own set:
 # kiutils 1.4.8, shapely 2.0.7, numpy 1.21.6, matplotlib 3.5.3, PyYAML 6.0.1, Pillow 9.5.0
 # (pip 24.0 is needed for matplotlib on 3.7; see .context/HAZARDS.md). G2 (kicad10-tooling
-# OQ-1) chose this venv; once the kicad-tools port starts the tools need Python >= 3.10.
+# OQ-1) chose this venv; the tools need Python >= 3.10 (kicad-tools), so they no longer run on 3.7.
 # The lab tools (tools/lab/*.py, the pre-commit hook) run on the global python3, not this venv.
 
 # Direct dependencies
-kiutils==1.4.8          # schematic/board parsing (tools/CONTEXT.md kiutils rule; use kiutils_k9)
 shapely==2.0.7          # pcb-context geometry; same version as the 3.7 install
 matplotlib==3.11.2      # pcb-context render / plane_report plots
 PyYAML==6.0.3           # schematic-context annotation, lab tools
-kicad-tools==0.29.0     # replaces kiutils (kicad10-tooling G2). Upgrade only by the procedure in
+kicad-tools==0.29.0     # the only KiCad parser, used only through tools/kicad-io/kicad_io.py (tools/CONTEXT.md
+                        # I/O-module Rule; it replaced kiutils, kicad10-tooling G2). Upgrade only by the procedure in
                         # kicad10-tooling PLAN "Pin and upgrades": second venv, regression harness
                         # (tools/kicad-regress) old vs new, every --check chain
 

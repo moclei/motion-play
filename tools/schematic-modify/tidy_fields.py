@@ -3,7 +3,7 @@
 tidy_fields.py - Netlist-neutral field tidy for a KiCad schematic project.
 
 Undoes the damage from kiutils round trips made before the KiCad 8/9 shim
-(kiutils_k9.py) existed (docs/research/kicad-ai-tooling-2026-11/
+(kiutils_k9.py, since removed) existed (docs/research/kicad-ai-tooling-2026-11/
 schematic-readability.md section 3.1 steps 2-4):
 
   1. Hide every placed-symbol field except Reference and Value.

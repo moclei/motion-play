@@ -22,7 +22,7 @@ Subcommands
       netlist carries the source path. Pick roots like <dir>/run-a1, <dir>/run-b1.
   hash RUNROOT [--against FILE]
       Recompute RUNROOT/HASHES.txt; with --against, diff it with a reference list (only the entries
-      the reference has). reference-k9.txt here is the KiCad 9.0.4 / kiutils reference.
+      the reference has). reference-k9.txt here is the KiCad 9.0.4 reference.
   compare RUNA RUNB [--tol 1e-9]
       Every output file of RUNA against RUNB: identical after replacing each run root, else JSON leaf by
       leaf (numbers within --tol, _provenance ignored), netlists structurally, Markdown without front
@@ -58,6 +58,12 @@ outputs that Phase 1 recorded on the working tree (WT_OUTPUTS) also have the scr
 <ROOT>/v8src/ removed, so their paths read repo-relative as they did there.
 
 Python: stdlib only (runs on the global python3 or tools/.venv); the tools run on --python.
+The oracle tag kicad10-preport's tools import kiutils, which tools/.venv no longer has (kicad10-tooling
+Phase 11). For `run --tools kicad10-preport` and `modtest` (whose preport side runs on the same --python),
+pass --python a venv built from that tag's requirements file:
+  git show kicad10-preport:tools/requirements.txt > <scratch>/req-pre.txt
+  /usr/local/bin/python3.13 -m venv <scratch>/venv-pre && <scratch>/venv-pre/bin/pip install -r <scratch>/req-pre.txt
+It has kicad-tools 0.29.0 too, so the working-tree side runs on it unchanged.
 """
 from __future__ import print_function
 

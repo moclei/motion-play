@@ -1,5 +1,6 @@
 # KiCad 9.0.4 reference for regress.py (hash --against / run --against).
-# v8 at v8-schematic-freeze, v7 at c2acffc; tools as of kicad10-tooling Phase 1 (kiutils 1.4.8).
+# v8 at v8-schematic-freeze, v7 at c2acffc; tools as of kicad10-tooling Phase 1 (kiutils 1.4.8), except
+# the two entries re-recorded in Phase 11 (board-model.json, extract_sheetpins.txt; notes beside them).
 # Hash method: regress.py docstring. Phase 1 (SESSION.md Worker #1 Notes) recorded these in a run root
 # of 121 characters; extract_sheetpins.txt matches only from a root of that length (see 'run').
 #
@@ -8,14 +9,22 @@
 4d12a57a8f5dedbf  v8/netlist.net
 2002f89e22294468  v8/netlist.xml
 96ff50a0680a3820  v8/erc_counts.txt
-d4d54268519deb64  v8/extract_sheetpins.txt
+# extract_sheetpins.txt: Phase 1 recorded d4d54268519deb64. kicad10-tooling Phase 11 reworded one stderr
+# line ("Reading schematic properties via kiutils..." -> "...via kicad_io..."); nothing else changed
+# (regress.py compare before/after: that one line). Re-recorded:
+804e174e87ed142b  v8/extract_sheetpins.txt
 706766624be6692a  v8/layout_check.txt
 ce93ab0ac74cd3f3  v8/tidy_fields.txt
 2a0e67e94db38928  v8/tidy_labels.txt
 c8d5d149dfbfa53d  v8/v8_debug_sheet_check.txt
 # board-model.json: Phase 1 recorded cc6589ad872205a1 with the DRC violations in kicad-cli's order.
-# That order is not stable, so the hash now sorts them; the same Phase 1 file gives:
-84df69225ee16b00  v7/board-model.json
+# That order is not stable, so the hash now sorts them; the same Phase 1 file gives 84df69225ee16b00.
+# kicad10-tooling Phase 11 re-recorded it for the ported reader (kicad_io + pcb_raw.py), which reads
+# two things kiutils 1.4.8 misread: PLAN "Accepted differences from preport" E1. Against
+# kicad10-preport exactly 144 leaves differ: zones[0,1,3,6,7]/connect_pads null -> "yes", and 139
+# points of graphic_copper[0]/polygon[0] (the F.Cu gr_rect buffered at its 0.2 stroke, not 0.12).
+# Leaf list with file tokens: docs/initiatives/kicad10-tooling/SESSION.md, Worker #11 Notes, task 1.
+6994b724e9f71528  v7/board-model.json
 b5ae052ac509f98f  v7/net-report.json
 3a4bed9e52025bda  v7/net-report.md
 491f464b93d5f9df  v7/plane-report.json
