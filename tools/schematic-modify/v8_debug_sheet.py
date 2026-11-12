@@ -69,7 +69,10 @@ import modify  # noqa: E402
 import v8_mcu_sheet as mcu  # noqa: E402
 import v8_bus_sheet as bus  # noqa: E402
 from modify import kio  # noqa: E402
-from kicad_io import atom, atom_text, child, kids, node  # noqa: E402
+from kicad_io import atom, child, kids, node  # noqa: E402
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "schematic-context"))
+from annotate import write_ai_properties  # noqa: E402  (the one writer of ai_* fields)
 
 REPO = mcu.REPO
 ROOT = mcu.ROOT
@@ -226,46 +229,6 @@ def rename_ref(doc, old, new, value):
                 kio.set_str(r, 0, new)
 
 
-AI_PREFIX = "ai_"
-
-
-def write_ai_properties(doc, symbol, props):
-    """annotate.write_ai_properties on the raw tree: every ai_* field written (new or existing) is
-    hidden and placed at the symbol's origin, angle 0; a new one goes after the last property.
-    Returns the same action lines."""
-    actions = []
-    sx, sy = atom_text(child(symbol, "at"), 0), atom_text(child(symbol, "at"), 1)
-    for field_name, value in sorted(props.items()):
-        full_key = AI_PREFIX + field_name
-        existing = modify._prop(symbol, full_key)
-        if existing is not None:
-            changed = False
-            if child(existing, "effects") is None:
-                existing.children.append(node(kio.effects_text()))
-                changed = True
-            changed |= kio.hide(doc.doc, existing)
-            at = child(existing, "at")
-            if at is None or float(atom(at, 0)) != float(sx) or float(atom(at, 1)) != float(sy):
-                new_at = node("(at {} {} 0)".format(sx, sy))
-                if at is None:
-                    existing.children.insert(2, new_at)
-                else:
-                    existing.children[existing.children.index(at)] = new_at
-                changed = True
-            if changed:
-                actions.append("  re-homed {} (hidden, at symbol)".format(full_key))
-            old = str(atom(existing, 1))
-            if old != value:
-                kio.set_str(existing, 1, value)
-                actions.append("  updated {}: {!r} -> {!r}".format(full_key, old, value))
-            else:
-                actions.append("  unchanged {}: {!r}".format(full_key, value))
-        else:
-            modify._append_prop(symbol, modify.make_property(doc, full_key, value, sx, sy, 0, hide=True))
-            actions.append("  added {}: {!r}".format(full_key, value))
-    return actions
-
-
 def _place(docs, cache, part):
     sheet, ref, lib_id, value, fp, lcsc, pos, nets, nc = part
     doc = docs.sheet(sheet)
@@ -391,7 +354,7 @@ def fix_11f() -> int:
     cache = {}
     for part in PARTS_11F:
         _place(docs, cache, part)
-    for line in write_ai_properties(led, modify.find_component(led, "R105"), R105_ANN):
+    for line in write_ai_properties(led.doc, modify.find_component(led, "R105"), R105_ANN):
         print("  R105" + line)
     kio.assert_not_open(led.path)
     kio.save(led.doc)   # only the LED sheet changes
@@ -729,7 +692,7 @@ def annotate() -> int:
         for sym in kids(d.schematic, "symbol"):
             ref = modify._symbol_ref(sym)
             if ref in ann:
-                write_ai_properties(d, sym, ann[ref])
+                write_ai_properties(d.doc, sym, ann[ref])
                 done.add(ref)
     missing = sorted(set(ann) - done)
     docs.save_all()

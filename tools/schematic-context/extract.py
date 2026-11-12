@@ -17,6 +17,9 @@ to (a probe netlist from a scratch copy; see probe_sheet_pins), not by name.
 --check-sheet-pins exits 1 and lists each sheet pin that resolves to no net or
 to a net with no component pins; alone it writes nothing.
 
+Schematic files are read through tools/kicad-io/kicad_io.py (raw s-expression
+layer; read only). Run with tools/.venv/bin/python.
+
 Environment:
     KICAD_CLI   Override path to the kicad-cli binary.
 """
@@ -37,16 +40,12 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Dict, List, Optional, Set, Tuple
 
-sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "schematic-modify"))
+sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "kicad-io"))
 try:
-    import kiutils_k9  # noqa: E402,F401  (KiCad 8/9 '(hide yes)' shim; must precede any load)
+    import kicad_io as kio  # noqa: E402
+    from kicad_io import atom, child, kids  # noqa: E402
 except ImportError:
-    pass  # no kiutils: the netlist-only path below still works
-
-try:
-    from kiutils.schematic import Schematic
-except ImportError:
-    Schematic = None
+    kio = None  # no kicad-tools (not tools/.venv): the netlist-only path below still works
 
 KICAD_CLI_CANDIDATES = [
     "/Applications/KiCad/KiCad.app/Contents/MacOS/kicad-cli",
@@ -412,17 +411,35 @@ def _pin_sort_key(pin_number: str) -> Tuple[int, str]:
 
 
 # ---------------------------------------------------------------------------
-# kiutils integration — component properties and sheet hierarchy
+# Schematic reads (kicad_io raw tree) — component properties and sheet hierarchy
 # ---------------------------------------------------------------------------
 
 AI_PROP_PREFIX = "ai_"
 AI_PROP_FIELDS = ("function", "block", "role", "critical_specs")
 
 
-def read_kiutils_properties(
+def _load_tree(path: Path):
+    """A schematic's raw tree (kicad_io; read only)."""
+    return kio.load_schematic(path).tree
+
+
+def _sheet_prop_value(sheet, keys: Tuple[str, ...]) -> str:
+    """A sheet reference's property value by key (KiCad 7+ and KiCad 6 spellings), '' if absent."""
+    for p in kids(sheet, "property"):
+        if atom(p, 0) in keys:
+            return str(atom(p, 1))
+    return ""
+
+
+def _xy(n) -> Tuple[float, float]:
+    at = child(n, "at")
+    return float(atom(at, 0)), float(atom(at, 1))
+
+
+def read_schematic_properties(
     schematic: Path,
 ) -> Tuple[Dict[str, Dict[str, str]], List[SheetInfo]]:
-    """Read component ai_ properties and sheet hierarchy via kiutils.
+    """Read component ai_ properties and sheet hierarchy from the raw tree.
 
     Discovers child sheets from the root schematic's sheet objects,
     then reads each .kicad_sch file for component properties.
@@ -433,35 +450,37 @@ def read_kiutils_properties(
       - sheet_infos: list of SheetInfo with filename, display name, and
         hierarchical pin interfaces
     """
-    if Schematic is None:
+    if kio is None:
         print(
-            "Warning: kiutils not installed — skipping property extraction",
+            "Warning: kicad-tools not installed (run with tools/.venv/bin/python) — "
+            "skipping property extraction",
             file=sys.stderr,
         )
         return {}, []
 
     root_dir = schematic.parent
-    sch = Schematic.from_file(str(schematic))
+    sch = _load_tree(schematic)
 
     component_props = {}  # type: Dict[str, Dict[str, str]]
     sheet_infos = []  # type: List[SheetInfo]
 
     _collect_ai_properties(sch, component_props)
 
-    for sheet in sch.sheets:
-        filename = sheet.fileName.value
-        display_name = sheet.sheetName.value
+    for sheet in kids(sch, "sheet"):
+        filename = _sheet_prop_value(sheet, ("Sheetfile", "Sheet file"))
+        display_name = _sheet_prop_value(sheet, ("Sheetname", "Sheet name"))
         child_path = root_dir / filename
 
         pins = [
-            SheetPin(name=pin.name, direction=pin.connectionType,
-                     x=pin.position.X, y=pin.position.Y)
-            for pin in sheet.pins
+            SheetPin(name=str(atom(pin, 0)), direction=str(atom(pin, 1)),
+                     x=_xy(pin)[0], y=_xy(pin)[1])
+            for pin in kids(sheet, "pin")
         ]
+        u = child(sheet, "uuid")
         sheet_infos.append(SheetInfo(
             filename=filename,
             display_name=display_name,
-            uuid=sheet.uuid or "",
+            uuid=str(atom(u)) if u is not None else "",
             pins=pins,
         ))
 
@@ -472,33 +491,33 @@ def read_kiutils_properties(
             )
             continue
 
-        child_sch = Schematic.from_file(str(child_path))
-        _collect_ai_properties(child_sch, component_props)
+        _collect_ai_properties(_load_tree(child_path), component_props)
 
     return component_props, sheet_infos
 
 
 def _collect_ai_properties(
-    sch: "Schematic",
+    sch,
     out: Dict[str, Dict[str, str]],
 ) -> None:
-    """Extract ai_-prefixed properties from all symbols in a schematic."""
-    for sym in sch.schematicSymbols:
+    """Extract ai_-prefixed properties from all symbols in a schematic's raw tree."""
+    for sym in kids(sch, "symbol"):
+        props = [(str(atom(p, 0)), str(atom(p, 1))) for p in kids(sym, "property")]
         ref = ""
-        for prop in sym.properties:
-            if prop.key == "Reference":
-                ref = prop.value
+        for key, val in props:
+            if key == "Reference":
+                ref = val
                 break
 
         if not ref or ref.startswith("#"):
             continue
 
         ai_props = {}  # type: Dict[str, str]
-        for prop in sym.properties:
-            if prop.key.startswith(AI_PROP_PREFIX):
-                field_name = prop.key[len(AI_PROP_PREFIX):]
-                if field_name in AI_PROP_FIELDS and prop.value:
-                    ai_props[field_name] = prop.value
+        for key, val in props:
+            if key.startswith(AI_PROP_PREFIX):
+                field_name = key[len(AI_PROP_PREFIX):]
+                if field_name in AI_PROP_FIELDS and val:
+                    ai_props[field_name] = val
 
         if ai_props:
             out[ref] = ai_props
@@ -658,11 +677,13 @@ def _probe_candidates(
     A sheet file of "" means the root.
     """
     out = {}  # type: Dict[Tuple[str, str], List[Tuple[str, float, float]]]
-    root_sch = Schematic.from_file(str(schematic))
+    root_sch = _load_tree(schematic)
     wires = []
-    for item in root_sch.graphicalItems:
-        if getattr(item, "type", "") == "wire" and len(item.points) >= 2:
-            pts = [(q.X, q.Y) for q in item.points]
+    for item in kids(root_sch, "wire"):
+        pts_node = child(item, "pts")
+        pts = [(float(atom(xy, 0)), float(atom(xy, 1)))
+               for xy in (kids(pts_node, "xy") if pts_node is not None else [])]
+        if len(pts) >= 2:
             wires.extend(zip(pts, pts[1:]))
     uses = {}  # type: Dict[str, int]
     for info in sheet_infos:
@@ -672,9 +693,8 @@ def _probe_candidates(
         path = schematic.parent / fname
         if uses[fname] != 1 or not path.exists():
             continue
-        child = Schematic.from_file(str(path))
         child_labels[fname] = [
-            (hl.text, hl.position.X, hl.position.Y) for hl in child.hierarchicalLabels]
+            (str(atom(hl, 0)),) + _xy(hl) for hl in kids(_load_tree(path), "hierarchical_label")]
 
     for info in sheet_infos:
         for pin in info.pins:
@@ -762,8 +782,8 @@ def probe_sheet_pins(
     export per round. A pin still unresolved after its last candidate is
     reported with the reason.
     """
-    if Schematic is None:
-        raise RuntimeError("kiutils is required to resolve sheet pins")
+    if kio is None:
+        raise RuntimeError("kicad-tools is required to resolve sheet pins (run with tools/.venv/bin/python)")
     cands = _probe_candidates(schematic, sheet_infos)
     if not cands:
         return {}
@@ -924,7 +944,7 @@ def build_context(
 ) -> dict:
     """Assemble the circuit-context.json structure from parsed data.
 
-    Annotation fields for components are populated from kiutils ai_
+    Annotation fields for components are populated from the schematic's ai_
     properties when available; otherwise emitted as empty strings
     (populated during the annotation pass in Phase 3).
     """
@@ -1107,9 +1127,9 @@ def main() -> None:
             file=sys.stderr,
         )
 
-        # --- Step 3: Read kiutils data ---
-        print("Reading schematic properties via kiutils...", file=sys.stderr)
-        component_props, sheet_infos = read_kiutils_properties(schematic)
+        # --- Step 3: Read the schematic files ---
+        print("Reading schematic properties via kicad_io...", file=sys.stderr)
+        component_props, sheet_infos = read_schematic_properties(schematic)
         annotated = sum(1 for v in component_props.values() if v)
         print(
             f"  {len(sheet_infos)} child sheets, "

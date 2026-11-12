@@ -4,9 +4,8 @@ Python scripts that extract circuit data from KiCad schematics and produce AI-op
 
 ## Prerequisites
 
-- **Python 3.7+** (tested on 3.7.3)
+- **Python:** `tools/.venv/bin/python` (Python 3.13, built from `tools/requirements.txt`; kicad-tools is pinned there). Schematic files are loaded and saved only through `tools/kicad-io/kicad_io.py`.
 - **KiCad 9** — `kicad-cli` must be available (macOS default: `/Applications/KiCad/KiCad.app/Contents/MacOS/kicad-cli`)
-- **Dependencies:** `pip install -r requirements.txt` (kiutils >= 1.4.8)
 
 Override the kicad-cli path with the `KICAD_CLI` environment variable if needed.
 
@@ -14,7 +13,7 @@ Override the kicad-cli path with the `KICAD_CLI` environment variable if needed.
 
 ### extract.py
 
-Main extraction pipeline. Combines `kicad-cli` netlist export (for connectivity) with `kiutils` schematic parsing (for component properties and hierarchy) to produce `circuit-context.json`.
+Main extraction pipeline. Combines `kicad-cli` netlist export (for connectivity) with a read of the schematic files through `kicad_io` (for component properties and hierarchy) to produce `circuit-context.json`.
 
 ```bash
 # Basic extraction — outputs circuit-context.json next to the schematic
@@ -45,7 +44,7 @@ python tools/schematic-context/extract.py hardware/pcb-main-v8/kicad/motion-play
 
 ### annotate.py
 
-Writes `ai_`-prefixed custom properties to component symbols in `.kicad_sch` files via kiutils. Properties are hidden in the schematic editor and survive schematic edits.
+Writes `ai_`-prefixed custom properties to component symbols in `.kicad_sch` files through `kicad_io` (raw s-expression layer, splice save: only the edited symbols' text changes). Properties are hidden in the schematic editor, in the file's own hide form (KiCad 9 or 10), and survive schematic edits. `write_ai_properties(doc, symbol, props)` is the one writer of `ai_*` fields; `v8_debug_sheet.py` imports it.
 
 ```bash
 # Annotate a single component

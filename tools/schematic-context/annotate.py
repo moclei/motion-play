@@ -3,8 +3,10 @@
 annotate.py — Write AI annotation properties to KiCad schematic components.
 
 Writes ai_-prefixed custom properties (ai_function, ai_block, ai_role,
-ai_critical_specs) to component symbols in .kicad_sch files via kiutils.
-Properties are hidden in the schematic editor and survive schematic edits.
+ai_critical_specs) to component symbols in .kicad_sch files. Files are loaded
+and saved through tools/kicad-io/kicad_io.py (raw s-expression layer, splice
+save). Properties are hidden in the schematic editor, in the file's own hide
+form (KiCad 9 or 10), and survive schematic edits.
 
 Usage:
     python annotate.py <root.kicad_sch> <ref> key=value [key=value ...]
@@ -17,7 +19,7 @@ Examples:
     python annotate.py main.kicad_sch C1 --clear
 
 Environment:
-    Python 3.7+, kiutils >= 1.4.8
+    tools/.venv/bin/python (kicad-tools pinned in tools/requirements.txt)
 """
 
 from __future__ import annotations
@@ -27,18 +29,9 @@ import sys
 from pathlib import Path
 from typing import Dict, List, Optional, Tuple
 
-sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "schematic-modify"))
-import kiutils_k9  # noqa: E402  (KiCad 8/9 '(hide yes)' shim; must precede any load)
-
-try:
-    from kiutils.schematic import Schematic
-    from kiutils.items.common import Effects, Font, Position, Property
-except ImportError:
-    print(
-        "Error: kiutils is required. Install with: pip install kiutils>=1.4.8",
-        file=sys.stderr,
-    )
-    sys.exit(1)
+sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "kicad-io"))
+import kicad_io as kio  # noqa: E402
+from kicad_io import atom, atom_text, child, kids, node  # noqa: E402
 
 
 AI_PROP_PREFIX = "ai_"
@@ -47,21 +40,29 @@ VALID_FIELDS = ("function", "block", "role", "critical_specs")
 FONT_SIZE = 1.27
 
 
+def _sheet_file(sheet) -> str:
+    """A sheet reference's file name (KiCad 7+ ``Sheetfile``, KiCad 6 ``Sheet file``)."""
+    for p in kids(sheet, "property"):
+        if atom(p, 0) in ("Sheetfile", "Sheet file"):
+            return str(atom(p, 1))
+    return ""
+
+
 def load_all_schematics(
     root_path: Path,
-) -> Dict[str, Tuple[Path, "Schematic"]]:
+) -> Dict[str, Tuple[Path, "kio.Doc"]]:
     """Load root and all child schematics, keyed by resolved path string.
 
-    Returns a dict mapping file path string → (Path, Schematic).
+    Returns a dict mapping file path string -> (Path, kicad_io Doc).
     Schematics are loaded once and reused for all operations.
     """
-    loaded = {}  # type: Dict[str, Tuple[Path, Schematic]]
-    root_sch = Schematic.from_file(str(root_path))
-    loaded[str(root_path)] = (root_path, root_sch)
+    loaded = {}  # type: Dict[str, Tuple[Path, kio.Doc]]
+    root_doc = kio.load_schematic(root_path)
+    loaded[str(root_path)] = (root_path, root_doc)
 
     root_dir = root_path.parent
-    for sheet in root_sch.sheets:
-        child_path = (root_dir / sheet.fileName.value).resolve()
+    for sheet in kids(root_doc.tree, "sheet"):
+        child_path = (root_dir / _sheet_file(sheet)).resolve()
         if not child_path.exists():
             print(
                 "Warning: child sheet not found: {}".format(child_path),
@@ -69,127 +70,134 @@ def load_all_schematics(
             )
             continue
         if str(child_path) not in loaded:
-            child_sch = Schematic.from_file(str(child_path))
-            loaded[str(child_path)] = (child_path, child_sch)
+            loaded[str(child_path)] = (child_path, kio.load_schematic(child_path))
 
     return loaded
 
 
 def find_symbol(
-    schematics: Dict[str, Tuple[Path, "Schematic"]],
+    schematics: Dict[str, Tuple[Path, "kio.Doc"]],
     ref: str,
-) -> Tuple[Optional[Path], Optional["Schematic"], Optional[object]]:
+) -> Tuple[Optional[Path], Optional["kio.Doc"], Optional[object]]:
     """Locate a symbol by reference designator across loaded schematics.
 
-    Returns (schematic_path, schematic_object, symbol) or (None, None, None)
+    Returns (schematic_path, doc, raw symbol node) or (None, None, None)
     if the component is not found.
     """
-    for sch_path, sch in schematics.values():
-        result = _find_symbol_in_schematic(sch, ref)
+    for sch_path, doc in schematics.values():
+        result = _find_symbol_in_schematic(doc, ref)
         if result is not None:
-            return sch_path, sch, result
+            return sch_path, doc, result
 
     return None, None, None
 
 
 def _find_symbol_in_schematic(
-    sch: "Schematic",
+    doc: "kio.Doc",
     ref: str,
 ) -> Optional[object]:
     """Find a symbol with the given Reference property value."""
-    for sym in sch.schematicSymbols:
-        for prop in sym.properties:
-            if prop.key == "Reference" and prop.value == ref:
+    for sym in kids(doc.tree, "symbol"):
+        for prop in kids(sym, "property"):
+            if atom(prop, 0) == "Reference" and atom(prop, 1) == ref:
                 return sym
     return None
 
 
-def _home_hidden(prop: object, symbol: object) -> bool:
-    """Hide an ai_* property and put it at its symbol's origin.
+def _prop(symbol, key: str):
+    for p in kids(symbol, "property"):
+        if atom(p, 0) == key:
+            return p
+    return None
+
+
+def _append_prop(symbol, prop) -> None:
+    """After the symbol's last property (properties come before pins and instances)."""
+    idx = max((i for i, c in enumerate(symbol.children) if c.name == "property"), default=None)
+    if idx is None:
+        idx = max(i for i, c in enumerate(symbol.children) if c.name in ("uuid", "at", "lib_id"))
+    symbol.children.insert(idx + 1, prop)
+
+
+def _home_hidden(doc: "kio.Doc", prop, sx: str, sy: str) -> bool:
+    """Hide an ai_* property and put it at its symbol's origin (``sx``, ``sy``: the symbol's
+    ``at`` text).
 
     A hidden field still has a position: KiCad uses it for the sheet's
     bounding box and "zoom to fit", so a field left at (0, 0) drags the view
-    off the sheet (readability section 1.2). Returns True if anything changed.
+    off the sheet (readability section 1.2). The hide flag is written in the
+    file's own form (kicad_io.hide). Returns True if anything changed.
     """
     changed = False
-    if prop.effects is None:
-        prop.effects = Effects(font=Font(height=FONT_SIZE, width=FONT_SIZE))
+    if child(prop, "effects") is None:
+        prop.children.append(node(kio.effects_text(size=FONT_SIZE)))
         changed = True
-    if not prop.effects.hide:
-        prop.effects.hide = True
-        changed = True
-    sx, sy = symbol.position.X, symbol.position.Y
-    pos = prop.position
-    if pos is None or pos.X != sx or pos.Y != sy:
-        prop.position = Position(X=sx, Y=sy, angle=0)
+    changed |= kio.hide(doc, prop)
+    at = child(prop, "at")
+    if at is None or float(atom(at, 0)) != float(sx) or float(atom(at, 1)) != float(sy):
+        new_at = node("(at {} {} 0)".format(sx, sy))
+        if at is None:
+            prop.children.insert(2, new_at)
+        else:
+            prop.children[prop.children.index(at)] = new_at
         changed = True
     return changed
 
 
 def write_ai_properties(
-    symbol: object,
+    doc: "kio.Doc",
+    symbol,
     props: Dict[str, str],
 ) -> List[str]:
-    """Write ai_-prefixed properties to a symbol.
+    """Write ai_-prefixed properties to a symbol (a raw node in ``doc``).
 
     Updates existing properties or creates new ones as needed. Every ai_*
-    property written (new or existing) is hidden and placed at the symbol's
-    position. Returns a list of actions taken (for logging).
+    property written (new or existing) is hidden (in the file's own form) and
+    placed at the symbol's position, angle 0; a new one goes after the
+    symbol's last property. Returns a list of actions taken (for logging).
     """
     actions = []  # type: List[str]
+    at = child(symbol, "at")
+    sx, sy = atom_text(at, 0), atom_text(at, 1)
 
     for field_name, value in sorted(props.items()):
         full_key = AI_PROP_PREFIX + field_name
-
-        existing = None
-        for prop in symbol.properties:
-            if prop.key == full_key:
-                existing = prop
-                break
+        existing = _prop(symbol, full_key)
 
         if existing is not None:
-            if _home_hidden(existing, symbol):
+            if _home_hidden(doc, existing, sx, sy):
                 actions.append("  re-homed {} (hidden, at symbol)".format(full_key))
-            if existing.value != value:
-                old = existing.value
-                existing.value = value
+            old = str(atom(existing, 1))
+            if old != value:
+                kio.set_str(existing, 1, value)
                 actions.append(
                     "  updated {}: {!r} -> {!r}".format(full_key, old, value)
                 )
             else:
                 actions.append("  unchanged {}: {!r}".format(full_key, value))
         else:
-            new_prop = Property(
-                key=full_key,
-                value=value,
-                position=Position(X=symbol.position.X, Y=symbol.position.Y, angle=0),
-                effects=Effects(
-                    font=Font(height=FONT_SIZE, width=FONT_SIZE),
-                    hide=True,
-                ),
-            )
-            symbol.properties.append(new_prop)
+            _append_prop(symbol, kio.make_property(doc, full_key, value, sx, sy, 0, hide=True))
             actions.append("  added {}: {!r}".format(full_key, value))
 
     return actions
 
 
-def clear_ai_properties(symbol: object) -> List[str]:
-    """Remove all ai_-prefixed properties from a symbol.
+def clear_ai_properties(symbol) -> List[str]:
+    """Remove all ai_-prefixed properties from a symbol (a raw node).
 
     Returns a list of actions taken (for logging).
     """
     actions = []  # type: List[str]
-    remaining = []
+    drop = []
 
-    for prop in symbol.properties:
-        if prop.key.startswith(AI_PROP_PREFIX):
-            actions.append("  removed {}: {!r}".format(prop.key, prop.value))
-        else:
-            remaining.append(prop)
+    for prop in kids(symbol, "property"):
+        key = str(atom(prop, 0))
+        if key.startswith(AI_PROP_PREFIX):
+            actions.append("  removed {}: {!r}".format(key, str(atom(prop, 1))))
+            drop.append(prop)
 
     if actions:
-        symbol.properties = remaining
+        kio.remove_items(symbol, drop)
     else:
         actions.append("  no ai_ properties to clear")
 
@@ -303,7 +311,7 @@ def main() -> None:
     errors = 0
 
     for ref in refs:
-        sch_path, sch, symbol = find_symbol(schematics, ref)
+        sch_path, doc, symbol = find_symbol(schematics, ref)
 
         if symbol is None:
             print("Error: component {} not found in any sheet".format(ref), file=sys.stderr)
@@ -315,7 +323,7 @@ def main() -> None:
         if parsed.clear:
             actions = clear_ai_properties(symbol)
         else:
-            actions = write_ai_properties(symbol, props)
+            actions = write_ai_properties(doc, symbol, props)
 
         for action in actions:
             print(action)
@@ -325,9 +333,10 @@ def main() -> None:
     if errors and not modified_keys:
         sys.exit(1)
 
+    # one lock check before any write, so a refusal writes nothing
+    kio.save_project(schematics[k][1] for k in sorted(modified_keys))
     for file_key in sorted(modified_keys):
-        sch_path, sch = schematics[file_key]
-        kiutils_k9.save_schematic(sch, sch_path)
+        sch_path, _doc = schematics[file_key]
         print("\nSaved {}".format(sch_path.name))
 
     if errors:

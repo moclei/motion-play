@@ -51,6 +51,7 @@ TOOLS = HERE.parent
 sys.path.insert(0, str(HERE))
 import kcompare  # noqa: E402
 from sexp import Q, load  # noqa: E402
+from sexp import child as sx_child  # noqa: E402
 
 K9_CLI = "/Applications/KiCad/KiCad.app/Contents/MacOS/kicad-cli"
 K10_CLI = "/Applications/KiCad10/KiCad.app/Contents/MacOS/kicad-cli"
@@ -63,9 +64,9 @@ NEW_SHEET = "p6_new.kicad_sch"
 
 OPS = ["reads", "add_comp", "remove_comp", "wires", "labels", "nc", "hlabels", "sheet", "power", "props",
        "pin_net", "annotate"]
-# annotate is not run on KiCad 10: annotate_components only calls annotate.py, which is kiutils until
-# Phase 9 and on a KiCad 10 file unhides every property-level-hidden field (Phase 12 validates it on 10).
-K10_OPS = ["add_comp", "remove_comp", "hlabels", "sheet", "power", "props", "pin_net"]
+# annotate runs on KiCad 10 since Phase 9 ported annotate.py (preport's kiutils annotate.py unhid every
+# property-level-hidden field on a KiCad 10 file; the port writes the file's own hide form).
+K10_OPS = ["add_comp", "remove_comp", "hlabels", "sheet", "power", "props", "pin_net", "annotate"]
 
 # Census kinds where kiutils 1.4.8 (through kiutils_k9) writes a new item's token in another form than
 # KiCad 9 and the port. Only these may differ between the two census changes on KiCad 9; the kinds that
@@ -273,7 +274,8 @@ def apply_op(impl, op, base, out, pre_tools):
     elif op == "annotate":
         script = (Path(pre_tools) / "schematic-context/annotate.py") if impl == "pre" else None
         m.annotate_components(root_path, ["R92", "R105", "TP99"],
-                              {"block": "p6_block", "role": "p6_role", "function": "new"}, annotate_script=script)
+                              {"block": "p6_block", "role": "p6_role", "function": "new",
+                               "critical_specs": "p6 spec"}, annotate_script=script)
     else:
         raise SystemExit("unknown op " + op)
 
@@ -392,16 +394,18 @@ def compare(op, pre, port, base_pre, base_port, cli, stage, census_allow, census
     check(seq, tag + " plot", "{} sheets".format(len(sl)))
     if not seq:
         info("\n     ".join(l for l in sl if l.startswith("DIFF")))
-    if op == "annotate":
-        # annotate_components runs annotate.py (kiutils until Phase 9) in both: the files must be equal
-        same = [f.name for f in sorted((port / REL).glob("*.kicad_sch"))
-                if f.read_bytes() == (pre / REL / f.name).read_bytes()]
-        n = len(list((port / REL).glob("*.kicad_sch")))
-        check(len(same) == n, tag + " files", "{}/{} sheets byte-identical to preport's (the same annotate.py "
-              "writes both)".format(len(same), n))
-        return pre, port
     la, lb = json.loads((pre / "log.json").read_text()), json.loads((port / "log.json").read_text())
     check(la == lb, tag + " returns", "{} values".format(len(lb)))
+    if op == "annotate":
+        # the census counts kinds, not values: compare every ai_* field (value, hidden, position)
+        ai_bad, ai_n = [], 0
+        for sh in sorted((port / REL).glob("*.kicad_sch")):
+            fa, fb = ai_fields(pre / REL / sh.name), ai_fields(sh)
+            ai_n += len(fb)
+            ai_bad += [(sh.name, k, fa.get(k), fb.get(k)) for k in sorted(set(fa) | set(fb)) if fa.get(k) != fb.get(k)]
+        check(not ai_bad, tag + " ai fields", "{} ai_* fields equal (value, hidden, at)".format(ai_n))
+        for x in ai_bad[:10]:
+            info("{} {}: preport {} port {}".format(*x))
     if la != lb:
         for x, y in zip(la, lb):
             if x != y:
@@ -419,7 +423,10 @@ def compare(op, pre, port, base_pre, base_port, cli, stage, census_allow, census
             touched.append(sh.name + " (new file)")
             continue
         dp = census_delta(sh, base_port / REL / sh.name)
-        dr = census_delta(pre / REL / sh.name, base_pre / REL / sh.name)
+        if op == "annotate" and (pre / REL / sh.name).read_bytes() == (base_port / REL / sh.name).read_bytes():
+            dr = {}   # preport's annotate.py saves only the sheets it edits (no whole-project no-op save)
+        else:
+            dr = census_delta(pre / REL / sh.name, base_pre / REL / sh.name)
         if not dp and not dr:
             continue
         touched.append("{} {}".format(sh.name, _fmt_delta(dp)))
@@ -434,6 +441,30 @@ def compare(op, pre, port, base_pre, base_port, cli, stage, census_allow, census
         ok &= not bad
     check(ok, tag + " census", "only the edit; " + " | ".join(touched))
     return pre, port
+
+
+def ai_fields(path):
+    """{(ref, key): (value, hidden, at)} for every ai_* property of every placed symbol on a sheet.
+    hidden reads all three hide forms (effects (hide yes), bare hide, property-level (hide yes))."""
+    def hidden(n):
+        for c in n:
+            if c == "hide" and not isinstance(c, Q):
+                return True
+            if isinstance(c, list) and c and c[0] == "hide" and len(c) > 1 and c[1] == "yes":
+                return True
+        eff = sx_child(n, "effects")
+        return eff is not None and hidden(eff)
+    out = {}
+    for sym in load(path):
+        if not (isinstance(sym, list) and sym and sym[0] == "symbol"):
+            continue
+        props = [c for c in sym if isinstance(c, list) and c and c[0] == "property"]
+        ref = next((p[2] for p in props if p[1] == "Reference"), "")
+        for p in props:
+            if p[1].startswith("ai_"):
+                at = sx_child(p, "at")
+                out[(ref, str(p[1]))] = (str(p[2]), hidden(p), tuple(float(v) for v in at[1:]) if at else None)
+    return out
 
 
 def _fmt_delta(d):

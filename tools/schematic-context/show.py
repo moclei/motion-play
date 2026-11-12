@@ -12,7 +12,7 @@ Usage:
     python show.py <root.kicad_sch> --sheet led_controller.kicad_sch
 
 Environment:
-    Python 3.7+, kiutils >= 1.4.8
+    tools/.venv/bin/python (reads through tools/kicad-io/kicad_io.py)
 """
 
 from __future__ import annotations
@@ -22,17 +22,9 @@ import sys
 from pathlib import Path
 from typing import Dict, List, Optional, Tuple
 
-sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "schematic-modify"))
-import kiutils_k9  # noqa: E402  (KiCad 8/9 '(hide yes)' shim; must precede any load)
-
-try:
-    from kiutils.schematic import Schematic
-except ImportError:
-    print(
-        "Error: kiutils is required. Install with: pip install kiutils>=1.4.8",
-        file=sys.stderr,
-    )
-    sys.exit(1)
+sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "kicad-io"))
+import kicad_io as kio  # noqa: E402
+from kicad_io import atom, kids  # noqa: E402
 
 
 AI_PROP_PREFIX = "ai_"
@@ -47,46 +39,56 @@ def collect_components(
     Returns a list of dicts with keys: ref, part, value, sheet, and each
     ai_ field (empty string if not set).
     """
-    root_sch = Schematic.from_file(str(root_path))
+    root_sch = kio.load_schematic(root_path).tree
     root_dir = root_path.parent
 
     components = []  # type: List[Dict[str, str]]
 
     _collect_from_schematic(root_sch, root_path.name, components)
 
-    for sheet in root_sch.sheets:
-        child_path = root_dir / sheet.fileName.value
+    for sheet in kids(root_sch, "sheet"):
+        fname = _sheet_file(sheet)
+        child_path = root_dir / fname
         if not child_path.exists():
             print(
                 "Warning: child sheet not found: {}".format(child_path),
                 file=sys.stderr,
             )
             continue
-        child_sch = Schematic.from_file(str(child_path))
-        _collect_from_schematic(child_sch, sheet.fileName.value, components)
+        child_sch = kio.load_schematic(child_path).tree
+        _collect_from_schematic(child_sch, fname, components)
 
     components.sort(key=lambda c: _ref_sort_key(c["ref"]))
     return components
 
 
+def _sheet_file(sheet) -> str:
+    """A sheet reference's file name (KiCad 7+ ``Sheetfile``, KiCad 6 ``Sheet file``)."""
+    for p in kids(sheet, "property"):
+        if atom(p, 0) in ("Sheetfile", "Sheet file"):
+            return str(atom(p, 1))
+    return ""
+
+
 def _collect_from_schematic(
-    sch: "Schematic",
+    sch,
     sheet_name: str,
     out: List[Dict[str, str]],
 ) -> None:
-    """Extract component info and ai_ properties from one schematic file."""
-    for sym in sch.schematicSymbols:
+    """Extract component info and ai_ properties from one schematic's raw tree."""
+    for sym in kids(sch, "symbol"):
         ref = ""
         part = ""
         value = ""
+        props = [(str(atom(p, 0)), str(atom(p, 1))) for p in kids(sym, "property")]
 
-        for prop in sym.properties:
-            if prop.key == "Reference":
-                ref = prop.value
-            elif prop.key == "Value":
-                value = prop.value
-            elif prop.key == "Description":
-                part = prop.value
+        for key, val in props:
+            if key == "Reference":
+                ref = val
+            elif key == "Value":
+                value = val
+            elif key == "Description":
+                part = val
 
         if not ref or ref.startswith("#"):
             continue
@@ -101,11 +103,11 @@ def _collect_from_schematic(
         for field in AI_PROP_FIELDS:
             comp[field] = ""
 
-        for prop in sym.properties:
-            if prop.key.startswith(AI_PROP_PREFIX):
-                field_name = prop.key[len(AI_PROP_PREFIX):]
-                if field_name in AI_PROP_FIELDS and prop.value:
-                    comp[field_name] = prop.value
+        for key, val in props:
+            if key.startswith(AI_PROP_PREFIX):
+                field_name = key[len(AI_PROP_PREFIX):]
+                if field_name in AI_PROP_FIELDS and val:
+                    comp[field_name] = val
 
         out.append(comp)
 
