@@ -179,7 +179,10 @@ def tree_version(tree: SExp) -> Optional[int]:
 
 def _load(path: Union[str, Path], kind: str) -> Doc:
     path = Path(path)
-    text = read_text_exact(path)
+    return _from_text(path, read_text_exact(path), kind)
+
+
+def _from_text(path: Path, text: str, kind: str) -> Doc:
     tree = parse_string(text)
     if tree.name != ROOT_TAG[kind]:
         raise KiCadIOFormatError("{}: not a {} (root is ({} ...))".format(path, kind, tree.name))
@@ -203,6 +206,17 @@ def load_symbol_lib(path: Union[str, Path]) -> Doc:
 
 def load_board(path: Union[str, Path]) -> Doc:
     return _load(path, PCB)
+
+
+def new_doc(path: Union[str, Path], text: str) -> Doc:
+    """A Doc for a file that doesn't exist yet: ``text`` is a template in KiCad form (a generator's
+    empty sheet, say), checked like a loaded file. ``save(doc)`` writes it to ``path``; its items
+    keep the template's text, and items added to the tree are serialized by kicad-tools."""
+    path = Path(path)
+    kind = {".kicad_sch": SCH, ".kicad_sym": SYM, ".kicad_pcb": PCB}.get(path.suffix)
+    if kind is None:
+        raise KiCadIOFormatError("{}: not a .kicad_sch, .kicad_sym or .kicad_pcb".format(path))
+    return _from_text(path, text, kind)
 
 
 def load(path: Union[str, Path]) -> Doc:

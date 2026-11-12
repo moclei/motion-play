@@ -13,12 +13,16 @@ Usage:
     python generate_power_sheet.py [--output path/to/output.kicad_sch]
 
 Default output: hardware/pcb-main/kicad/power_management.kicad_sch
+
+Built on kicad_io's raw s-expression layer (tools/kicad-io; run with tools/.venv/bin/python): the
+empty sheet is SHEET_TEMPLATE parsed into a kicad_io Doc, items are raw nodes, kio.save writes it.
+Library symbols come from modify.extract_lib_symbol. The --output default points into the v7 project
+(hardware/pcb-main/kicad/), which is never re-saved: always pass --output.
 """
 
 from __future__ import annotations
 
 import argparse
-import copy
 import json
 import math
 import sys
@@ -27,21 +31,9 @@ from pathlib import Path
 
 import sys as _sys
 _sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "schematic-modify"))
-import kiutils_k9  # noqa: E402  (KiCad 8/9 '(hide yes)' shim; must precede any load)
-
-from kiutils.schematic import Schematic
-from kiutils.symbol import SymbolLib
-from kiutils.items.schitems import (
-    Connection,
-    HierarchicalLabel,
-    LocalLabel,
-    NoConnect,
-    SchematicSymbol,
-    SymbolProjectInstance,
-    SymbolProjectPath,
-)
-from kiutils.items.common import Effects, Font, Position, Property, Stroke
-
+import modify  # noqa: E402  (extract_lib_symbol: raw library-symbol nodes through kicad_io)
+from modify import kio  # noqa: E402
+from kicad_io import at_xy, atom_text, child, kids, node, num, q  # noqa: E402
 
 KICAD9_VERSION = "20250114"
 PROJECT_NAME = "motion-play-main"
@@ -50,6 +42,22 @@ WIRE_STUB_LEN = 2.54
 REPO_ROOT = Path(__file__).resolve().parent.parent.parent
 SPEC_PATH = Path(__file__).resolve().parent / "spec.json"
 DEFAULT_OUTPUT = REPO_ROOT / "hardware/pcb-main/kicad/power_management.kicad_sch"
+
+# An empty KiCad 9 sheet (what kiutils' Schematic.create_new() gave: A4 paper, one sheet instance).
+# The uuid is filled in; items are added to the parsed tree, and kicad_io saves it.
+SHEET_TEMPLATE = """(kicad_sch
+\t(version {version})
+\t(generator "eeschema")
+\t(uuid "{uuid}")
+\t(paper "A4")
+\t(lib_symbols)
+\t(sheet_instances
+\t\t(path "/"
+\t\t\t(page "1")
+\t\t)
+\t)
+)
+"""
 
 
 def new_uuid() -> str:
@@ -66,28 +74,15 @@ def load_spec() -> dict:
 # ---------------------------------------------------------------------------
 
 def extract_lib_symbol_from_sch(source_path: Path, lib_id: str):
-    sch = Schematic.from_file(str(source_path))
-    for sym in sch.libSymbols:
-        if sym.libId == lib_id:
-            return copy.deepcopy(sym)
-    raise ValueError(f"lib_symbol {lib_id!r} not found in {source_path.name}")
+    """A deep copy of the raw lib symbol node from a sheet's lib_symbols (modify.extract_lib_symbol)."""
+    return modify.extract_lib_symbol(lib_id, source_path)
 
 
 def extract_lib_symbol_from_symlib(source_path: Path, lib_id: str):
-    """Extract a symbol from a .kicad_sym library file.
-
-    Sets the top-level libId to the full lib_id (e.g. 'INA219AIDCNR:INA219AIDCNR')
-    so it matches the lib_id used in placed SchematicSymbol references.
-    Sub-symbol entryNames keep the short name (e.g. 'INA219AIDCNR').
-    """
-    lib = SymbolLib.from_file(str(source_path))
-    sym_name = lib_id.split(":")[1] if ":" in lib_id else lib_id
-    for sym in lib.symbols:
-        if sym.libId == sym_name:
-            result = copy.deepcopy(sym)
-            result.libId = lib_id
-            return result
-    raise ValueError(f"symbol {sym_name!r} not found in {source_path.name}")
+    """A symbol from a .kicad_sym library (raw node), renamed to the full lib_id (e.g.
+    'INA219AIDCNR:INA219AIDCNR') so it matches the placed symbols' lib_id; its units keep their
+    short names (modify.extract_lib_symbol)."""
+    return modify.extract_lib_symbol(lib_id, source_path)
 
 
 def extract_all_lib_symbols(spec: dict) -> dict:
@@ -127,25 +122,9 @@ def extract_all_lib_symbols(spec: dict) -> dict:
 # Pin position computation
 # ---------------------------------------------------------------------------
 
-def get_pin_list(lib_symbol) -> list[tuple[str, float, float, float]]:
-    """Return [(pin_number, lib_x, lib_y, angle_deg), ...] from a lib symbol.
-
-    Preserves duplicate pin numbers (e.g. USB-C shield pins).
-    """
-    pins = []
-    for unit in lib_symbol.units:
-        for pin in unit.pins:
-            pins.append((str(pin.number), pin.position.X, pin.position.Y, pin.position.angle or 0))
-    return pins
-
-
-def get_unique_pin_numbers(lib_symbol) -> set[str]:
+def get_unique_pin_numbers(lib_symbol) -> set:
     """Return set of all unique pin numbers."""
-    nums = set()
-    for unit in lib_symbol.units:
-        for pin in unit.pins:
-            nums.add(str(pin.number))
-    return nums
+    return {p[0] for p in get_pin_list(lib_symbol)}
 
 
 def compute_pin_position(
@@ -212,113 +191,99 @@ def compute_stub_endpoint(
 # Schematic object construction
 # ---------------------------------------------------------------------------
 
-def make_property(key: str, value: str, pos: Position, hide: bool = False, prop_id=None) -> Property:
-    eff = Effects(
-        font=Font(height=1.27, width=1.27),
-        hide=hide,
-    )
-    return Property(key=key, value=value, position=pos, effects=eff, id=prop_id)
+# ---------------------------------------------------------------------------
+# Raw-node builders (kicad_io; KiCad 9 form). Numbers are written with kio.num (exact text).
+# ---------------------------------------------------------------------------
+
+FONT = "(effects (font (size 1.27 1.27)))"
 
 
-def make_symbol(
-    comp: dict,
-    lib_symbols: dict,
-    root_uuid: str,
-    sheet_ref_uuid: str,
-) -> SchematicSymbol:
-    """Create a placed SchematicSymbol from a spec component entry."""
-    sym = SchematicSymbol()
-    sym.libId = comp["lib_id"]
+def get_pin_list(lib_symbol) -> list:
+    """Return [(pin_number, lib_x, lib_y, angle_deg), ...] from a raw lib symbol node.
+
+    Preserves duplicate pin numbers (e.g. USB-C shield pins).
+    """
+    pins = []
+    for unit in kids(lib_symbol, "symbol"):
+        for pin in kids(unit, "pin"):
+            x, y, a = at_xy(pin)
+            pins.append((str(atom_text(child(pin, "number"), 0)), x, y, a or 0))
+    return pins
+
+
+def make_property(doc, key, value, x, y, angle=0, hide=False):
+    return kio.make_property(doc, key, value, x, y, angle, hide=hide, effects=FONT)
+
+
+def _append_props(sym, props) -> None:
+    idx = sym.children.index(child(sym, "uuid"))
+    for k, p in enumerate(props, 1):
+        sym.children.insert(idx + k, p)
+
+
+def symbol_node(doc, lib_id, x, y, angle, props, pin_numbers, sheet_path, ref):
+    """A placed symbol: one (pin ...) per pin number (a repeated number keeps its first position and
+    its last uuid; a uuid is minted per pin record, as kiutils' pin dict did)."""
+    sym = node("(symbol (lib_id {}) (at {} {} {}) (unit 1) (exclude_from_sim no) (in_bom yes) "
+               "(on_board yes) (dnp no) (uuid {}))".format(q(lib_id), num(x), num(y), num(angle),
+                                                           q(new_uuid())))
+    pins = {}
+    for pin_num in pin_numbers:
+        pins[str(pin_num)] = new_uuid()
+    _append_props(sym, [make_property(doc, *p[:5], hide=p[5]) for p in props])
+    for pn, u in pins.items():
+        sym.children.append(node("(pin {} (uuid {}))".format(q(pn), q(u))))
+    sym.children.append(node('(instances (project {} (path {} (reference {}) (unit 1))))'.format(
+        q(PROJECT_NAME), q(sheet_path), q(ref))))
+    return sym
+
+
+def make_wire(start, end):
+    return node("(wire (pts (xy {} {}) (xy {} {})) (stroke (width 0) (type default)) (uuid {}))".format(
+        num(start[0]), num(start[1]), num(end[0]), num(end[1]), q(new_uuid())))
+
+
+def make_net_label(text, x, y, angle=0):
+    return node("(label {} (at {} {} {}) {} (uuid {}))".format(
+        q(text), num(x), num(y), num(angle), FONT, q(new_uuid())))
+
+
+def make_no_connect(x, y):
+    return node("(no_connect (at {} {}) (uuid {}))".format(num(x), num(y), q(new_uuid())))
+
+
+def make_hierarchical_label(name, shape, x, y, angle=0):
+    return node("(hierarchical_label {} (shape {}) (at {} {} {}) {} (uuid {}))".format(
+        q(name), shape, num(x), num(y), num(angle), FONT, q(new_uuid())))
+
+
+def new_sheet(output_path: Path):
+    """An empty sheet Doc from SHEET_TEMPLATE (its uuid minted first, as before)."""
+    return kio.new_doc(output_path, SHEET_TEMPLATE.format(version=KICAD9_VERSION, uuid=new_uuid()))
+
+
+def make_symbol(doc, comp, lib_symbols, root_uuid, sheet_ref_uuid):
+    """A placed symbol (raw node) from a spec component entry."""
     x, y = comp["position"]
     angle = comp.get("angle", 0)
-    sym.position = Position(X=x, Y=y, angle=angle)
-    sym.unit = 1
-    sym.inBom = True
-    sym.onBoard = True
-    sym.dnp = False
-    sym.uuid = new_uuid()
-
     ref = comp["ref"]
     value = comp["value"]
     footprint = comp["footprint"]
     lcsc = comp.get("lcsc") or ""
 
     hide_ref = ref.startswith("#")
-    sym.properties = [
-        make_property("Reference", ref,
-                       Position(X=round(x + 2.54, 2), Y=round(y - 1.27, 2), angle=angle),
-                       hide=hide_ref),
-        make_property("Value", value,
-                       Position(X=x, Y=round(y + 2.54, 2), angle=angle)),
-        make_property("Footprint", footprint,
-                       Position(X=x, Y=y, angle=0), hide=True),
-        make_property("Datasheet", "~",
-                       Position(X=x, Y=y, angle=0), hide=True),
+    props = [
+        ("Reference", ref, round(x + 2.54, 2), round(y - 1.27, 2), angle, hide_ref),
+        ("Value", value, x, round(y + 2.54, 2), angle, False),
+        ("Footprint", footprint, x, y, 0, True),
+        ("Datasheet", "~", x, y, 0, True),
     ]
     if lcsc:
-        sym.properties.append(
-            make_property("LCSC Part", lcsc,
-                           Position(X=x, Y=y, angle=0), hide=True)
-        )
+        props.append(("LCSC Part", lcsc, x, y, 0, True))
 
-    lib_sym = lib_symbols[comp["lib_id"]]
-    pin_list = get_pin_list(lib_sym)
-    sym.pins = {}
-    for pin_num, _, _, _ in pin_list:
-        sym.pins[str(pin_num)] = new_uuid()
-
-    sym.instances = [
-        SymbolProjectInstance(
-            name=PROJECT_NAME,
-            paths=[
-                SymbolProjectPath(
-                    sheetInstancePath=f"/{root_uuid}/{sheet_ref_uuid}",
-                    reference=ref,
-                    unit=1,
-                )
-            ],
-        )
-    ]
-
-    return sym
-
-
-def make_wire(start: tuple[float, float], end: tuple[float, float]) -> Connection:
-    return Connection(
-        type="wire",
-        points=[
-            Position(X=start[0], Y=start[1]),
-            Position(X=end[0], Y=end[1]),
-        ],
-        stroke=Stroke(width=0, type="default"),
-        uuid=new_uuid(),
-    )
-
-
-def make_net_label(text: str, x: float, y: float, angle: float = 0) -> LocalLabel:
-    label = LocalLabel()
-    label.text = text
-    label.position = Position(X=x, Y=y, angle=angle)
-    label.uuid = new_uuid()
-    label.effects = Effects(font=Font(height=1.27, width=1.27))
-    return label
-
-
-def make_no_connect(x: float, y: float) -> NoConnect:
-    nc = NoConnect()
-    nc.position = Position(X=x, Y=y)
-    nc.uuid = new_uuid()
-    return nc
-
-
-def make_hierarchical_label(name: str, shape: str, x: float, y: float, angle: float = 0) -> HierarchicalLabel:
-    label = HierarchicalLabel()
-    label.text = name
-    label.shape = shape
-    label.position = Position(X=x, Y=y, angle=angle)
-    label.uuid = new_uuid()
-    label.effects = Effects(font=Font(height=1.27, width=1.27))
-    return label
+    pin_numbers = [p[0] for p in get_pin_list(lib_symbols[comp["lib_id"]])]
+    return symbol_node(doc, comp["lib_id"], x, y, angle, props, pin_numbers,
+                       "/{}/{}".format(root_uuid, sheet_ref_uuid), ref)
 
 
 def label_angle_for_stub(pin_sch: tuple, stub_end: tuple) -> float:
@@ -351,19 +316,17 @@ def generate(output_path: Path) -> None:
     root_uuid = meta["root_sheet_uuid"]
     sheet_ref_uuid = meta["hierarchical_sheet_uuid"]
 
-    sch = Schematic.create_new()
-    sch.version = KICAD9_VERSION
-    sch.generator = "eeschema"
-    sch.uuid = new_uuid()
+    doc = new_sheet(output_path)
+    sch = doc.tree
 
     used_lib_ids = set()
     for comp in spec["components"]:
         if isinstance(comp, dict) and "lib_id" in comp:
             used_lib_ids.add(comp["lib_id"])
 
-    sch.libSymbols = []
+    lib_node = child(sch, "lib_symbols")
     for lib_id in sorted(used_lib_ids):
-        sch.libSymbols.append(lib_symbols[lib_id])
+        lib_node.children.append(lib_symbols[lib_id])
 
     wire_count = 0
     label_count = 0
@@ -373,8 +336,8 @@ def generate(output_path: Path) -> None:
         if not isinstance(comp, dict) or "ref" not in comp:
             continue
 
-        sym = make_symbol(comp, lib_symbols, root_uuid, sheet_ref_uuid)
-        sch.schematicSymbols.append(sym)
+        sym = make_symbol(doc, comp, lib_symbols, root_uuid, sheet_ref_uuid)
+        kio.insert_item(sch, sym)
 
         lib_sym = lib_symbols[comp["lib_id"]]
         all_pins = get_pin_list(lib_sym)
@@ -393,16 +356,16 @@ def generate(output_path: Path) -> None:
             )
 
             if pin_num in pin_nets:
-                sch.graphicalItems.append(make_wire(pin_sch, stub_end))
+                kio.insert_item(sch, make_wire(pin_sch, stub_end))
                 wire_count += 1
 
                 net_name = pin_nets[pin_num]
                 lbl_angle = label_angle_for_stub(pin_sch, stub_end)
-                sch.labels.append(make_net_label(net_name, stub_end[0], stub_end[1], lbl_angle))
+                kio.insert_item(sch, make_net_label(net_name, stub_end[0], stub_end[1], lbl_angle))
                 label_count += 1
 
             elif str(pin_num) in no_connect_pins:
-                sch.noConnects.append(make_no_connect(pin_sch[0], pin_sch[1]))
+                kio.insert_item(sch, make_no_connect(pin_sch[0], pin_sch[1]))
                 nc_count += 1
 
     # Hierarchical sheet labels for interface pins
@@ -420,15 +383,15 @@ def generate(output_path: Path) -> None:
         y = hlabel_y_start + i * hlabel_spacing
         shape = type_to_shape.get(iface["type"], "bidirectional")
         hlabel = make_hierarchical_label(iface["name"], shape, hlabel_x, y, angle=180)
-        sch.hierarchicalLabels.append(hlabel)
+        kio.insert_item(sch, hlabel)
 
         stub_end_x = hlabel_x + WIRE_STUB_LEN
-        sch.graphicalItems.append(make_wire((hlabel_x, y), (stub_end_x, y)))
+        kio.insert_item(sch, make_wire((hlabel_x, y), (stub_end_x, y)))
         wire_count += 1
-        sch.labels.append(make_net_label(iface["net"], stub_end_x, y, angle=0))
+        kio.insert_item(sch, make_net_label(iface["net"], stub_end_x, y, angle=0))
         label_count += 1
 
-    kiutils_k9.save_schematic(sch, output_path)
+    kio.save(doc)
 
     real_comps = [c for c in spec["components"] if isinstance(c, dict) and "ref" in c]
     print(f"Generated: {output_path}")
@@ -437,7 +400,7 @@ def generate(output_path: Path) -> None:
     print(f"  {label_count} net labels")
     print(f"  {nc_count} no-connect flags")
     print(f"  {len(spec['interface_pins'])} hierarchical labels")
-    print(f"  {len(sch.libSymbols)} unique lib symbols")
+    print(f"  {len(kids(lib_node, "symbol"))} unique lib symbols")
     print(f"  Version: {KICAD9_VERSION}")
     print(f"\nOpen in KiCad 9 to verify:")
     print(f"  {output_path}")

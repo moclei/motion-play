@@ -95,7 +95,7 @@
 ## Phase 9: `schematic-context` and `schematic-gen`
 
 - [x] Port `extract.py`, `annotate.py` and `show.py` (raw layer; typed `Schematic` views allowed for reads). On scratch v8 (at `v8-schematic-freeze`) and v7 (`c2acffc`), KiCad 9, compare with `kicad10-preport`: `circuit-context.json` is identical (with and without `--previous`), `--check-sheet-pins` is identical, and the `annotate.py` and `show.py` outputs are identical
-- [ ] Port the three generators (`Schematic.create_new` becomes a template parsed by `node()`). Generate into scratch with preport and with the ported version: the netlist and ERC must be identical. Outputs go to scratch, never to their default paths under `hardware/pcb-main/kicad/`
+- [x] Port the three generators (`Schematic.create_new` becomes a template parsed by `node()`). Generate into scratch with preport and with the ported version: the netlist and ERC must be identical. Outputs go to scratch, never to their default paths under `hardware/pcb-main/kicad/`
 - [ ] 🔄 Handoff
 
 # --- handoff point ---
@@ -176,3 +176,4 @@
 [from: kicad10-tooling] Migrating the sensor-rigid, sensor-flex and power-supply projects to KiCad 10 when they next get design work. v7 is never migrated.
 [from: kicad10-tooling] Regenerate v7's committed `hardware/pcb-main/kicad/board-model/` with the ported reader: it would change `connect_pads` on 5 zones and the F.Cu rectangle's copper polygon (PLAN E1). Only with the user's and the v7-i2c Debugger's agreement, since lab work cites it.
 [from: kicad10-tooling] KiCad 11 (around early 2027): headless IPC and the schematic API, and `pcbnew` removed. Revisit the board writer then (OQ-3's kicad-tools candidate), and re-check the pinned kicad-tools against KiCad 11 files with the regression harness.
+[from: kicad10-tooling] The three `tools/schematic-gen` generators default `--output` into v7's project folder (`hardware/pcb-main/kicad/`, never re-saved), and `spec.json`/`poc_generate.py` still name `3v3_Power_Supply.kicad_sch`, deleted in `fd632ef` (Phase 9 restored it into scratch from `fd632ef^`). Make `--output` required and refresh the sources, or retire the generators.
