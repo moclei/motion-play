@@ -911,3 +911,37 @@ Scratch: `/private/tmp/claude-501/-Users-marcocleirigh-Workspace-motion-play/1ed
 - No E1 or E2 case arose. No difference outside the kiutils forms listed.
 
 **Handoff checks.** `git diff 5f31380 HEAD -- hardware lab .githooks tools/requirements.txt docs/initiatives/kicad10-tooling/PLAN.md` is empty. `git worktree list` shows only the user's Cursor worktrees; `extensions.worktreeConfig` unset. PLAN unchanged. One Deferred line added (generators). No new documents.
+
+#### Result
+| # | Phase | Result | Escalation evaluated? | Commit | Notes |
+|---|-------|--------|-----------------------|--------|-------|
+| 10 | Phase 9: schematic-context and schematic-gen | DONE | No — clean completion | 2641aac | 3 tasks; read tools identical to preport; annotate replays and 3 generators match; one `write_ai_properties` |
+
+#### Verification
+- 4 commits, `5de9a72`..`2641aac`. Phase 9 is all `[x]`. `git diff 5f31380 HEAD` on hardware/, lab/, .githooks, tools/requirements.txt and PLAN.md is empty. No extra worktree is left.
+- Remaining kiutils importers: `pcb-context/board_model.py`, `extract.py`, `routing_extract.py`, `tools/route_esp32.py`, `tools/verify-routing.py` (all Phase 10), and `kiutils_k9.py` (Phase 11). That is exactly the plan.
+- Orchestrator re-run: `regress.py modtest --ops annotate` gives 13/13 PASS, and the working-tree `v8_debug_sheet --check` gives PHASE 11 CHECK PASSED. The tree is clean afterwards.
+- **Test change, accepted.** `test_modify.py`'s `annotate` op no longer requires byte-identical sheets, because preport and port now run different `annotate.py` code. It now uses the census check plus a field-level check of every `ai_*` field's value, hide flag and position, and it also runs on KiCad 10. The strictness moved to what matters. The replays against preport still compare netlist, ERC, plots and the folded tree.
+- **API addition: `kicad_io.new_doc(path, text)`**, which builds a Doc from a template with the same format check as a load. iotest gives 71/71 (`--no-k10`) per the Worker.
+- **The KiCad 10 annotate hazard (Worker #7) is cleared**: on a converted v8, every `ai_*` field has exactly one hide flag, in KiCad 10's form.
+- Carry forward to Phase 11:
+  - Reword `extract.py`'s "via kiutils" stderr line and re-record that harness hash.
+  - Stale lines in `tools/schematic-modify/CONTEXT.md`.
+  - A Deferred line was added: the generator defaults point into v7's folder, and the specs name a deleted file.
+
+---
+
+### Worker #11 — Phase 10: Board readers; delete route_esp32.py
+
+**Dispatch:**
+```
+Initiative: kicad10-tooling
+Phase: 10 — Board readers; delete route_esp32.py
+Initiative path: docs/initiatives/kicad10-tooling/
+Additional reading: PLAN in full ("Which layer", "Raw-layer traps", "Accepted differences from preport" E1). SESSION.md Worker #5 Notes (board-read prototype, the six typed-PCB corrections, the 13 kiutils misreads) and Worker #6 Notes (kicad_io). tools/pcb-context/README.md.
+
+Tasks assigned: Phase 10, all 4 tasks (see TASKS.md)
+
+Notes: Phase 5 board prototype at scratchpad/p5/scripts/board_values.py. E1 is the only allowed difference; list each E1 leaf (old, new, file token) in SESSION. hardware/pcb-main/kicad/board-model/ is not regenerated. KICAD_CLI on 9.
+Rules: hardware/ and lab/ unchanged; kicad-cli 10 only on scratch copies; kiutils_k9.py and requirements stay (Phase 11).
+```
