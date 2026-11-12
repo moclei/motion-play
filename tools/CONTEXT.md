@@ -69,7 +69,7 @@ See `tools/schematic-modify/CONTEXT.md` for relationship details and typical wor
 
 ### pcb-context/
 
-The **board model** is the one source for PCB context: `board_model.py` parses a `.kicad_pcb` once (kiutils + kicad-cli) into `board-model.json` (true pad polygons, bodies, outline, tracks/vias, zones with de-fractured fills, stackup, per-net topology, kicad-cli DRC, `_provenance`). Every report is derived from that model, so placement, routing and planes can't drift apart. Validated on v7 `c2acffc` against the extraction audit's fixtures (`docs/research/v7-retry/kicad-extraction-audit.md` §6.1; results in `docs/initiatives/v8-debug-board/SESSION.md`, Workers #5 and #6).
+The **board model** is the one source for PCB context: `board_model.py` parses a `.kicad_pcb` once (`kicad_io` raw tree through `pcb_raw.py`, + kicad-cli) into `board-model.json` (true pad polygons, bodies, outline, tracks/vias, zones with de-fractured fills, stackup, per-net topology, kicad-cli DRC, `_provenance`). Every report is derived from that model, so placement, routing and planes can't drift apart. Validated on v7 `c2acffc` against the extraction audit's fixtures (`docs/research/v7-retry/kicad-extraction-audit.md` §6.1; results in `docs/initiatives/v8-debug-board/SESSION.md`, Workers #5 and #6).
 
 | Script | Purpose |
 |--------|---------|

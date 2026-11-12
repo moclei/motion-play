@@ -1,6 +1,6 @@
 # PCB Context Tools
 
-Scripts for extracting structured data from KiCad PCB files and automating component placement. Both tools use [kiutils](https://pypi.org/project/kiutils/) (v1.4.8+) to parse and write `.kicad_pcb` files.
+Scripts for extracting structured data from KiCad PCB files and automating component placement. The readers (`board_model.py`, `extract.py`, `routing_extract.py`, and `tools/verify-routing.py`) load the `.kicad_pcb` through `tools/kicad-io/kicad_io.py` and read the raw tree with the views in `pcb_raw.py` (not kicad-tools' typed `PCB`). `place_power.py` writes positions by text replacement.
 
 ## Historical outputs (v7 main board) — do not cite
 

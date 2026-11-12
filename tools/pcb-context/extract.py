@@ -2,7 +2,7 @@
 """
 extract.py — PCB layout context extraction.
 
-Parses a KiCad .kicad_pcb file via kiutils and produces a
+Parses a KiCad .kicad_pcb file (kicad_io + pcb_raw) and produces a
 pcb-layout-context.json for AI-assisted PCB layout sessions.
 
 Extracts board outline, placed component positions/bounding boxes,
@@ -26,8 +26,11 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
 
-from kiutils.board import Board
-from kiutils.items.common import Position
+_HERE = Path(__file__).resolve().parent
+sys.path.insert(0, str(_HERE))
+# The board is read raw through kicad_io, with pcb_raw's views (never kicad-tools' typed PCB).
+import pcb_raw  # noqa: E402
+from pcb_raw import Board  # noqa: E402
 
 
 # ---------------------------------------------------------------------------
@@ -596,7 +599,7 @@ def main() -> None:
 
     # Load PCB
     print(f"Loading {pcb_path.name}...", file=sys.stderr)
-    board = Board.from_file(str(pcb_path))
+    board = pcb_raw.load(pcb_path)
     print(f"  {len(board.footprints)} footprints loaded", file=sys.stderr)
 
     # Resolve schematic context for cross-referencing

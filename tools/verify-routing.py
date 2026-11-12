@@ -2,7 +2,7 @@
 """
 verify-routing.py — PCB routing verification against ROUTING_GUIDE.md specs.
 
-Parses the routed .kicad_pcb file via kiutils, extracts all routing
+Parses the routed .kicad_pcb file (kicad_io + pcb-context/pcb_raw.py), extracts all routing
 primitives (traces, vias, zones, pads), and runs structured checks
 derived from the routing guide. Produces a Markdown report and JSON sidecar.
 
@@ -23,7 +23,10 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Dict, List, NamedTuple, Optional, Set, Tuple
 
-from kiutils.board import Board
+sys.path.insert(0, str(Path(__file__).resolve().parent / "pcb-context"))
+# The board is read raw through kicad_io, with pcb_raw's views (never kicad-tools' typed PCB).
+import pcb_raw  # noqa: E402
+from pcb_raw import Board  # noqa: E402
 
 
 # ---------------------------------------------------------------------------
@@ -1189,7 +1192,7 @@ def main() -> None:
 
     # Load board
     print(f"Loading {pcb_path.name}...", file=sys.stderr)
-    board = Board.from_file(str(pcb_path))
+    board = pcb_raw.load(pcb_path)
 
     # Extract all routing data
     print("Extracting routing primitives...", file=sys.stderr)
