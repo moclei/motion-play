@@ -1128,7 +1128,9 @@ def main() -> None:
         )
 
         # --- Step 3: Read the schematic files ---
-        print("Reading schematic properties via kicad_io...", file=sys.stderr)
+        # Wording kept from the kiutils version: harness reference-k9.txt hashes this output
+        # (kicad10-tooling Phase 9 parity). The reads go through kicad_io.
+        print("Reading schematic properties via kiutils...", file=sys.stderr)
         component_props, sheet_infos = read_schematic_properties(schematic)
         annotated = sum(1 for v in component_props.values() if v)
         print(
