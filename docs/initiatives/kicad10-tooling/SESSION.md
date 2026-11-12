@@ -1447,3 +1447,22 @@ Scratch: `/private/tmp/claude-501/-Users-marcocleirigh-Workspace-motion-play/1ed
 - **The harness still defaults to the KiCad 9 freeze.** Use `--v8-ref v8-schematic-freeze-k10` to run it on the migrated v8.
 - v8's `.kicad_prl` was rewritten by `pcb upgrade`. It's gitignored, and the original is saved in scratchpad/p14w/out/prl.before.
 - **Next: Phase 15 (live IPC trial)** has user steps. The user is asked before dispatch.
+
+User chose to run Phase 15 now (2026-11-12). The Worker can't talk to the user, so the Orchestrator relays: the Worker stops at each user step and is continued with the user's report.
+
+---
+
+### Worker #18 — Phase 15: Live IPC trial (kipy)
+
+**Dispatch:**
+```
+Initiative: kicad10-tooling
+Phase: 15 — Live IPC trial (kipy)
+Initiative path: docs/initiatives/kicad10-tooling/
+Additional reading: PLAN "Trials", "Board write path". SESSION.md Worker #15 Notes (pcbnew/kicad_io board edits on v7, C9 DRC effects), Worker #16/#17 Notes (KICAD_CONFIG_HOME). landscape.md §2 kipy row.
+
+Tasks assigned: Phase 15 tasks 1–2; stop before G4.
+
+Notes: work in stages and return at each user step with exact numbered instructions (the Orchestrator relays and continues you). Stage A: kipy venv (scratchpad), scratch KiCad-10 copy of v7 board, the trial script, user steps to enable the API server and open the copy. Stage B: run the trial (list, move 3, rotate 1, read back) with timings; then ask the user to move one named part and save. Stage C: read the correction back, compare disk vs live. Choose footprints whose moves are harmless to DRC where possible.
+Rules: never open or touch working-tree board files; hardware/ and lab/ unchanged; the user's real KiCad 10 prefs will change when the GUI enables the API server — record that.
+```
