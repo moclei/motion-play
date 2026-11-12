@@ -5,7 +5,9 @@ place_power.py — Automated power section component placement.
 Reads enriched pcb-layout-context.json (with --pads data) and spec.json,
 computes optimal positions for ~39 power support components relative to
 manually-placed anchor ICs, and writes results to the .kicad_pcb file
-via kiutils.
+by text replacement of each footprint's (at ...). That write bypasses
+tools/kicad-io/kicad_io.py and its lock guard (tools/CONTEXT.md I/O-module
+Rule, exception): close KiCad first, and don't use it on a board in use.
 
 Prerequisites:
     python extract.py <pcb> --pads    (generates enriched context)
@@ -513,7 +515,7 @@ def run_placement(comp_index: Dict[str, CompInfo],
 
 
 # ---------------------------------------------------------------------------
-# PCB write via kiutils
+# PCB write (text replacement, outside kicad_io)
 # ---------------------------------------------------------------------------
 
 def write_placements_to_pcb(pcb_path: Path,
@@ -521,8 +523,8 @@ def write_placements_to_pcb(pcb_path: Path,
     """Update component positions/rotations in the .kicad_pcb file.
 
     Uses text-based replacement to preserve KiCad 9 file formatting.
-    kiutils v1.4.8 rewrites uuid→tstamp and reformats the whole file,
-    so we avoid its write path entirely.
+    (Written when kiutils 1.4.8 was the parser: it rewrote uuid→tstamp and
+    reformatted the whole file, so its write path was avoided.)
     """
     import re
 

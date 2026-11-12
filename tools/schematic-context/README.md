@@ -17,14 +17,14 @@ Main extraction pipeline. Combines `kicad-cli` netlist export (for connectivity)
 
 ```bash
 # Basic extraction — outputs circuit-context.json next to the schematic
-python tools/schematic-context/extract.py hardware/pcb-main/kicad/motion-play-main.kicad_sch
+tools/.venv/bin/python tools/schematic-context/extract.py hardware/pcb-main/kicad/motion-play-main.kicad_sch
 
 # Custom output path
-python tools/schematic-context/extract.py hardware/pcb-main/kicad/motion-play-main.kicad_sch \
+tools/.venv/bin/python tools/schematic-context/extract.py hardware/pcb-main/kicad/motion-play-main.kicad_sch \
   --output path/to/circuit-context.json
 
 # Re-extract with annotation merge — carries forward net/block annotations from a previous run
-python tools/schematic-context/extract.py hardware/pcb-main/kicad/motion-play-main.kicad_sch \
+tools/.venv/bin/python tools/schematic-context/extract.py hardware/pcb-main/kicad/motion-play-main.kicad_sch \
   --previous hardware/pcb-main/kicad/circuit-context.json
 ```
 
@@ -36,7 +36,7 @@ Each hierarchical sheet pin in `sheet_interfaces` carries the net KiCad actually
 
 ```bash
 # Check only: exit 1 and list each sheet pin on no net or on a net with no component pins
-python tools/schematic-context/extract.py hardware/pcb-main-v8/kicad/motion-play-main-v8.kicad_sch \
+tools/.venv/bin/python tools/schematic-context/extract.py hardware/pcb-main-v8/kicad/motion-play-main-v8.kicad_sch \
   --check-sheet-pins          # add -v to print every pin, its net and its members
 ```
 
@@ -48,15 +48,15 @@ Writes `ai_`-prefixed custom properties to component symbols in `.kicad_sch` fil
 
 ```bash
 # Annotate a single component
-python tools/schematic-context/annotate.py hardware/pcb-main/kicad/motion-play-main.kicad_sch \
+tools/.venv/bin/python tools/schematic-context/annotate.py hardware/pcb-main/kicad/motion-play-main.kicad_sch \
   U1 function="3.3V LDO regulator" block=power role=voltage_regulator
 
 # Annotate multiple components with the same properties (use -- separator)
-python tools/schematic-context/annotate.py hardware/pcb-main/kicad/motion-play-main.kicad_sch \
+tools/.venv/bin/python tools/schematic-context/annotate.py hardware/pcb-main/kicad/motion-play-main.kicad_sch \
   R28 R29 -- role=pull_up block=i2c_mux
 
 # Clear all ai_ properties from a component
-python tools/schematic-context/annotate.py hardware/pcb-main/kicad/motion-play-main.kicad_sch \
+tools/.venv/bin/python tools/schematic-context/annotate.py hardware/pcb-main/kicad/motion-play-main.kicad_sch \
   C1 --clear
 ```
 
@@ -70,13 +70,13 @@ Displays annotation coverage across all components. Useful during interactive an
 
 ```bash
 # Show all components with annotation status
-python tools/schematic-context/show.py hardware/pcb-main/kicad/motion-play-main.kicad_sch
+tools/.venv/bin/python tools/schematic-context/show.py hardware/pcb-main/kicad/motion-play-main.kicad_sch
 
 # Show only unannotated components
-python tools/schematic-context/show.py hardware/pcb-main/kicad/motion-play-main.kicad_sch --unannotated
+tools/.venv/bin/python tools/schematic-context/show.py hardware/pcb-main/kicad/motion-play-main.kicad_sch --unannotated
 
 # Filter to a specific sheet
-python tools/schematic-context/show.py hardware/pcb-main/kicad/motion-play-main.kicad_sch \
+tools/.venv/bin/python tools/schematic-context/show.py hardware/pcb-main/kicad/motion-play-main.kicad_sch \
   --sheet led_controller
 ```
 

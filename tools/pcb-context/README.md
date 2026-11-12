@@ -19,8 +19,8 @@ Source: `docs/research/v7-retry/kicad-extraction-audit.md` §2.
 One parse of a `.kicad_pcb` into one model (`board-model.json`): true rotated pad polygons, footprint bodies, outline, tracks/vias, zones with de-fractured fills, stackup, per-net topology (branches, stubs, islands), kicad-cli DRC, and `_provenance`. Reports are derived from it. Spec: the extraction audit §5.2 / §6.1. Validated on v7 `c2acffc` (`docs/initiatives/v8-debug-board/SESSION.md`, Worker #5).
 
 ```bash
-python board_model.py hardware/pcb-main/kicad/motion-play-main.kicad_pcb [-o out.json] [--config cfg.json] [--no-drc] [--source-ref REF]
-python board_model.py --check out.json     # 0 fresh, 1 stale, 2 no provenance
+tools/.venv/bin/python tools/pcb-context/board_model.py hardware/pcb-main/kicad/motion-play-main.kicad_pcb [-o out.json] [--config cfg.json] [--no-drc] [--source-ref REF]
+tools/.venv/bin/python tools/pcb-context/board_model.py --check out.json     # 0 fresh, 1 stale, 2 no provenance
 ```
 
 Per-board definitions (high-current, high dv/dt, neighbour radii, clearance metric, driver pads, critical nets) live in `board-config/<pcb stem>.json`, picked up automatically. Python use: `from board_model import BoardModel; m = BoardModel.load(path); m.net_copper("/I2C_SDA")`.
@@ -31,10 +31,10 @@ All three read a `board-model.json` and nothing else. Shared geometry and the me
 
 ```bash
 D=hardware/pcb-main/kicad/board-model
-python board_model.py hardware/pcb-main/kicad/motion-play-main.kicad_pcb -o $D/board-model.json --source-ref c2acffc
-python net_report.py   $D/board-model.json [--net NET ...]      # → $D/net-report.md, net-report.json
-python plane_report.py $D/board-model.json                       # → $D/plane-report.md, plane-report.json
-python render.py       $D/board-model.json [--net NET] [--layer L]  # → $D/img/*.png + *.png.meta.json
+tools/.venv/bin/python tools/pcb-context/board_model.py hardware/pcb-main/kicad/motion-play-main.kicad_pcb -o $D/board-model.json --source-ref c2acffc
+tools/.venv/bin/python tools/pcb-context/net_report.py   $D/board-model.json [--net NET ...]      # → $D/net-report.md, net-report.json
+tools/.venv/bin/python tools/pcb-context/plane_report.py $D/board-model.json                       # → $D/plane-report.md, plane-report.json
+tools/.venv/bin/python tools/pcb-context/render.py       $D/board-model.json [--net NET] [--layer L]  # → $D/img/*.png + *.png.meta.json
 ```
 
 - **net_report.py**: one full block per critical net (board config `critical_nets`, or `--net`): route tree from the driver with each chain's layer, length, width and straight legs; endpoints with length/vias/layers from the driver; reference plane per segment and each unreferenced stretch; footprint bodies the net passes under or over; every neighbour within the radius on any layer (same-layer gaps, plan-view gap with dielectric separation, coupled length, crossings, the closest item pair); per via, the planes on each side and the nearest via of each plane net. A summary row for every other net.
@@ -63,11 +63,11 @@ Generated outputs are committed beside the PCB they describe, in `<kicad folder>
 ```
 User positions anchor components in KiCad, saves
     ↓
-python extract.py <pcb> --pads       → pcb-layout-context.json (enriched)
+tools/.venv/bin/python tools/pcb-context/extract.py <pcb> --pads       → pcb-layout-context.json (enriched)
     ↓
-python place_power.py <pcb> --dry-run → review proposed positions
+tools/.venv/bin/python tools/pcb-context/place_power.py <pcb> --dry-run → review proposed positions
     ↓
-python place_power.py <pcb>           → writes positions to .kicad_pcb
+tools/.venv/bin/python tools/pcb-context/place_power.py <pcb>           → writes positions to .kicad_pcb
     ↓
 User opens KiCad, reviews placement, runs DRC
 ```
@@ -79,7 +79,7 @@ KiCad must be closed before running `place_power.py` without `--dry-run` — bot
 Parses a `.kicad_pcb` file and produces `pcb-layout-context.json` — a structured snapshot of board outline, component positions, bounding boxes, and optionally per-component pad data. Used by `place_power.py` and by AI-assisted layout sessions.
 
 ```
-python extract.py <file.kicad_pcb> [options]
+tools/.venv/bin/python tools/pcb-context/extract.py <file.kicad_pcb> [options]
 ```
 
 | Flag | Description |
@@ -92,13 +92,13 @@ python extract.py <file.kicad_pcb> [options]
 
 ```bash
 # Basic extraction
-python extract.py hardware/pcb-main/kicad/motion-play-main.kicad_pcb
+tools/.venv/bin/python tools/pcb-context/extract.py hardware/pcb-main/kicad/motion-play-main.kicad_pcb
 
 # With pad data (needed for placement)
-python extract.py hardware/pcb-main/kicad/motion-play-main.kicad_pcb --pads
+tools/.venv/bin/python tools/pcb-context/extract.py hardware/pcb-main/kicad/motion-play-main.kicad_pcb --pads
 
 # Custom output path
-python extract.py hardware/pcb-main/kicad/motion-play-main.kicad_pcb --pads -o /tmp/context.json
+tools/.venv/bin/python tools/pcb-context/extract.py hardware/pcb-main/kicad/motion-play-main.kicad_pcb --pads -o /tmp/context.json
 ```
 
 ### Output format
@@ -110,7 +110,7 @@ The JSON includes `board_outline`, `placed_components` (with optional `pads` arr
 Reads the enriched `pcb-layout-context.json` and `tools/schematic-gen/spec.json`, then computes collision-free positions for power section support components relative to manually-placed anchor ICs (U5, U6, J7, J8, L1, R44).
 
 ```
-python place_power.py <file.kicad_pcb> [options]
+tools/.venv/bin/python tools/pcb-context/place_power.py <file.kicad_pcb> [options]
 ```
 
 | Flag | Description |
@@ -123,13 +123,13 @@ python place_power.py <file.kicad_pcb> [options]
 
 ```bash
 # Preview placement without writing
-python place_power.py hardware/pcb-main/kicad/motion-play-main.kicad_pcb --dry-run
+tools/.venv/bin/python tools/pcb-context/place_power.py hardware/pcb-main/kicad/motion-play-main.kicad_pcb --dry-run
 
 # Apply placement (KiCad must be closed)
-python place_power.py hardware/pcb-main/kicad/motion-play-main.kicad_pcb
+tools/.venv/bin/python tools/pcb-context/place_power.py hardware/pcb-main/kicad/motion-play-main.kicad_pcb
 
 # Custom input paths
-python place_power.py hardware/pcb-main/kicad/motion-play-main.kicad_pcb \
+tools/.venv/bin/python tools/pcb-context/place_power.py hardware/pcb-main/kicad/motion-play-main.kicad_pcb \
     --context /tmp/context.json \
     --spec path/to/spec.json \
     --dry-run
@@ -168,7 +168,7 @@ If a component can't be placed within its tier distance, the constraint is relax
 Parses a `.kicad_pcb` file and produces `pcb-routing-context.json` — a structured snapshot of per-net trace segments and vias, per-footprint pads in world-space coordinates, and per-layer footprint bounding boxes. Complements `extract.py`: where `pcb-layout-context.json` captures placement, `pcb-routing-context.json` captures routing. The two files live side-by-side in the PCB's `kicad/` folder.
 
 ```
-python routing_extract.py <file.kicad_pcb> [options]
+tools/.venv/bin/python tools/pcb-context/routing_extract.py <file.kicad_pcb> [options]
 ```
 
 | Flag | Description |
@@ -180,13 +180,13 @@ python routing_extract.py <file.kicad_pcb> [options]
 
 ```bash
 # Extract routing context (writes pcb-routing-context.json next to the PCB)
-python routing_extract.py hardware/pcb-main/kicad/motion-play-main.kicad_pcb
+tools/.venv/bin/python tools/pcb-context/routing_extract.py hardware/pcb-main/kicad/motion-play-main.kicad_pcb
 
 # Discover net names before authoring an audit spec
-python routing_extract.py hardware/pcb-main/kicad/motion-play-main.kicad_pcb --list-nets
+tools/.venv/bin/python tools/pcb-context/routing_extract.py hardware/pcb-main/kicad/motion-play-main.kicad_pcb --list-nets
 
 # Custom output path
-python routing_extract.py hardware/pcb-main/kicad/motion-play-main.kicad_pcb -o /tmp/routing.json
+tools/.venv/bin/python tools/pcb-context/routing_extract.py hardware/pcb-main/kicad/motion-play-main.kicad_pcb -o /tmp/routing.json
 ```
 
 ### Output format
@@ -200,7 +200,7 @@ The JSON includes a `meta` block (source path, timestamp), a `nets` map keyed by
 Reads a `pcb-routing-context.json` plus a small audit spec (declarative JSON listing target nets, noisy components, noisy pads, noisy nets, and a compare pair) and writes a JSON report and a Markdown report. Computes per-net length, per-layer length, and minimum clearance from each target net to each item in the spec, all layer-aware. Used to produce hard numbers for design audits and debugging investigations (see `docs/debugging/v7-i2c-investigation.md` Phase 16 for an applied example).
 
 ```
-python routing_audit.py <audit-spec.json> [options]
+tools/.venv/bin/python tools/pcb-context/routing_audit.py <audit-spec.json> [options]
 ```
 
 | Flag | Description |
@@ -212,10 +212,10 @@ python routing_audit.py <audit-spec.json> [options]
 
 ```bash
 # Run an audit using the v7 main-PCB I2C spec
-python routing_audit.py audit-specs/v7-main-i2c.json
+tools/.venv/bin/python tools/pcb-context/routing_audit.py tools/pcb-context/audit-specs/v7-main-i2c.json
 
 # Custom output paths
-python routing_audit.py audit-specs/v7-main-i2c.json \
+tools/.venv/bin/python tools/pcb-context/routing_audit.py tools/pcb-context/audit-specs/v7-main-i2c.json \
     --output-json /tmp/audit.json \
     --output-md /tmp/audit.md
 ```
@@ -242,7 +242,7 @@ Two practical notes when authoring a spec:
 
 ## Dependencies
 
-- Python 3.7+
-- kiutils ≥ 1.4.8 (`pip install kiutils`)
-- shapely ≥ 2.0 (`pip install shapely`) — required by `routing_extract.py`, `routing_audit.py` and `board_model.py` for 2D geometry math
-- matplotlib ≥ 3.5 for rendering. On Python 3.7 under macOS ≥ 11, upgrade pip first (`pip install "pip<24.1"`): pip 20 finds no wheels there
+Run every script with `tools/.venv/bin/python` from the repository root (Python 3.13; build the venv from `tools/requirements.txt`, see `tools/CONTEXT.md` "Dependencies"). That file pins:
+- kicad-tools 0.29.0, used only through `tools/kicad-io/kicad_io.py` (the readers' raw views are `pcb_raw.py`)
+- shapely 2.0.7 — required by `routing_extract.py`, `routing_audit.py` and `board_model.py` for 2D geometry math
+- matplotlib 3.11.2 for rendering
