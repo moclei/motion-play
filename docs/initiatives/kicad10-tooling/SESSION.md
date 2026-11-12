@@ -1032,3 +1032,33 @@ Scratch: `/private/tmp/claude-501/-Users-marcocleirigh-Workspace-motion-play/1ed
 - Deferred line added: `place_power.py` writes `.kicad_pcb` outside `kicad_io`.
 
 **Handoff checks.** `git diff 11af873 HEAD` on hardware/, lab/, .githooks and PLAN.md is empty. `git worktree list` shows only the user's Cursor worktrees: my `p11/wt-pre` is removed and pruned, and the harness/modtest worktrees removed themselves. The global `python3` is pyenv 3.7.3. No new documents; PLAN unchanged.
+
+#### Result
+| # | Phase | Result | Escalation evaluated? | Commit | Notes |
+|---|-------|--------|-----------------------|--------|-------|
+| 12 | Phase 11: Remove kiutils; KiCad 9 reads; the parser rule | DONE | No — clean completion | d91321f | 4 tasks; final compare shows only E1 (and E2 in modtest); kiutils removed; harness 24/24 on the rebuilt venv |
+
+#### Verification
+- 4 commits, `e80dedf`..`d91321f`. `git diff 11af873 HEAD` on hardware/, lab/, .githooks and PLAN.md is empty. `kiutils_k9.py` is deleted. No kiutils import is left under tools/ (outside .venv). `tools/requirements.txt` mentions kiutils only in history comments. `tools/.venv` can't import kiutils, and `pip check` is clean. No extra worktree is left.
+- Orchestrator re-run on the working tree with the rebuilt venv: `v8_debug_sheet --check` gives PHASE 11 CHECK PASSED, `tidy_fields --check` and `tidy_labels --check` exit 0, and the tree is clean afterwards.
+- **The port is complete (Phases 4–11).**
+- **Reference re-records:** `reference-k9.txt` now holds the board-model hash for the ported reader and the reworded `extract.py` line, each with a note citing why.
+- **The preport oracle now needs its own venv.** It is built from `git show kicad10-preport:tools/requirements.txt`, and the recipe is in the `regress.py` docstring and the `tools/CONTEXT.md` harness entry. The saved copy in scratchpad/p11/venv-old is temporary.
+- Deferred gained one line: `place_power.py` writes `.kicad_pcb` outside `kicad_io` and its lock guard. It is listed as an exception in the I/O-module Rule.
+
+---
+
+### Worker #13 — Phase 12: Schematic tools on KiCad 10
+
+**Dispatch:**
+```
+Initiative: kicad10-tooling
+Phase: 12 — Schematic tools on KiCad 10
+Initiative path: docs/initiatives/kicad10-tooling/
+Additional reading: PLAN in full ("kicad-cli 10 differences", "Migrating v8" ERC counts, "Scratch roots for the checks"). SESSION.md Worker #3 Notes (KiCad 10 conversion, exporter differences, ERC setup items) and Worker #10 Notes (schematic-context port, generator inputs via gen.sh). tools/CONTEXT.md I/O-module Rule.
+
+Tasks assigned: Phase 12, all 4 tasks (see TASKS.md)
+
+Notes: converted copies only (kicad-cli 10 sch upgrade per sheet on fresh scratch copies). KICAD_CLI on 10 for this phase's runs, never against a working-tree path. layout_check calibration changes need before/after evidence on 9 and 10. KiCad 9 behaviour must not regress: harness 24/24 on 9 at handoff.
+Rules: hardware/ and lab/ unchanged; global python3 and .githooks unchanged.
+```

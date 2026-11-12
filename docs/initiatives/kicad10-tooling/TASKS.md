@@ -120,7 +120,7 @@
 
 ## Phase 12: Schematic tools on KiCad 10
 
-- [ ] `extract.py` and the kicad-cli 10 `pinfunction` suffix (PLAN "kicad-cli 10 differences"). With `KICAD_CLI` on 10, `circuit-context.json` from a converted scratch v8 must equal the KiCad 9 one, apart from the listed exporter differences
+- [~] `extract.py` and the kicad-cli 10 `pinfunction` suffix (PLAN "kicad-cli 10 differences"). With `KICAD_CLI` on 10, `circuit-context.json` from a converted scratch v8 must equal the KiCad 9 one, apart from the listed exporter differences
 - [ ] Re-validate on a converted KiCad 10 scratch v8, with `KICAD_CLI` on 10, through the harness `--root`. Run every `v8_*.py --check`; `tidy_fields.py --check` and `tidy_labels.py --check` (0 to do); `layout_check.py` (its geometry is calibrated on kicad-cli 9 SVG plots, so re-check the calibration on 10 plots and fix it if they differ); `extract.py --check-sheet-pins` (0 offenders); `annotate.py`; `show.py`. ERC is listed against the freeze counts (PLAN "Migrating v8"), with setup items separate
 - [ ] `STOCK_SYMBOLS` follows `KICAD_CLI`. Check whether KiCad 10's stock symbols change what `tidy_fields` or the generators produce, and explain each difference. Generate one sheet with each generator into scratch, convert it, and run ERC on 10
 - [ ] 🔄 Handoff
