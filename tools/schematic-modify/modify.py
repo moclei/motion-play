@@ -258,6 +258,8 @@ def _lib_symbols_node(sch):
 
 
 def ensure_lib_symbol(sheet_doc: SheetDoc, lib_symbol) -> None:
+    # A symbol from a newer KiCad's library can't go into this sheet (kicad_io refuses at save too).
+    kio.check_embed(sheet_doc.doc, lib_symbol)
     ls = _lib_symbols_node(sheet_doc.schematic)
     for existing in kids(ls, "symbol"):
         if atom(existing, 0) == atom(lib_symbol, 0):

@@ -25,6 +25,12 @@ Stages (each check prints PASS or FAIL; exit 1 if any FAIL):
   4 refusals     lock guard (~*.kicad_sch.lck, ~*.kicad_pcb.lck, save and save_project), format check
                  (made-up newer version), pin check (different version), save of a tree whose version
                  token was changed; a refused save writes nothing.
+  4b embed check  a library symbol loaded from a newer KiCad's library is refused in an older sheet
+                 (KiCad 10 stock into a KiCad 9 sheet: check_embed, save and save_project refuse, the
+                 file is byte-unchanged, the message names the symbol and both formats; the same tree
+                 written past the guard loses components in kicad-cli 9). KiCad 9 stock into 9 and 10,
+                 KiCad 10 stock into 10, and a project-library symbol (20211014) into 9 and 10 save,
+                 and kicad-cli of the sheet's version reads each with the input's netlist counts.
   5 atoms, hide  set_num keeps every digit of a float; hide and make_property write KiCad 9's form on
                  a 9 file and KiCad 10's on a 10 file; hiding an already-hidden property (each of the
                  three forms) changes nothing.
@@ -403,6 +409,92 @@ def stage4(out):
                  "save_project refuses (and writes none) when one tree's version changed", led)
 
 
+EMBED_SHEET = "tca9548A_subsystem.kicad_sch"
+EMBED_ROOT = "motion-play-main-v8.kicad_sch"
+EMBED_STOCK = "Device:D_Schottky"                                        # not embedded in v8
+EMBED_PROJECT = ("hardware/pcb-main/resources/INA219AIDCNR/INA219AIDCNR.kicad_sym", 20211014)
+
+
+def lib_copy(lib_path, name, lib_id):
+    """A library symbol as the tools take one: loaded through kicad_io, deep-copied, renamed."""
+    import copy
+    sym = next(s for s in kio.kids(kio.load_symbol_lib(lib_path).tree, "symbol") if kio.atom(s, 0) == name)
+    sym = copy.deepcopy(sym)
+    kio.set_str(sym, 0, lib_id)
+    return sym
+
+
+def stage4b(out, stock, k10base, cli9, cli10):
+    """The embedded-symbol check (PLAN "One I/O module", Save): a library symbol from a newer KiCad's
+    library can't go into an older sheet; every other combination saves and kicad-cli reads it."""
+    print("== 4b embedded-symbol check (library format against the sheet's)")
+    w = out / "embed"
+    if w.exists():
+        shutil.rmtree(str(w))
+    stock = dict(stock)
+    plib, pver = EMBED_PROJECT
+    plib = out / "src" / "0" / plib
+    check(kio.load_symbol_lib(plib).version == pver, "project library {} is format {}".format(plib.name, pver))
+    sources = [("KiCad 9 stock", stock["KiCad 9"] / "Device.kicad_sym", "D_Schottky", EMBED_STOCK)]
+    if "KiCad 10" in stock:
+        sources.append(("KiCad 10 stock", stock["KiCad 10"] / "Device.kicad_sym", "D_Schottky", EMBED_STOCK))
+    sources.append(("project library ({})".format(pver), plib, "INA219AIDCNR", "motion-play:INA219AIDCNR"))
+    targets = [("9", out / "src" / V8, cli9)]
+    if k10base is not None:
+        targets.append(("10", k10base / V8, cli10))
+    w.mkdir(parents=True)
+    for ttag, tdir, cli in targets:
+        n_in = netlist(cli, tdir / EMBED_ROOT, w / "in-{}.net".format(ttag))
+        for i, (stag, lib, name, lib_id) in enumerate(sources):
+            proj = copytree(tdir, w / "k{}-{}".format(ttag, i))
+            sheet = proj / EMBED_SHEET
+            doc = kio.load_schematic(sheet)
+            sym = lib_copy(lib, name, lib_id)
+            refuse = stag == "KiCad 10 stock" and ttag == "9"
+            what = "{} {} into a KiCad {} sheet".format(stag, lib_id, ttag)
+            if refuse:
+                expect_raise(kio.KiCadIOFormatError, lambda: kio.check_embed(doc, sym),
+                             "check_embed refuses " + what, sheet)
+                kio.child(doc.tree, "lib_symbols").children.append(sym)    # past the embed check
+                before = sheet.read_bytes()
+                try:
+                    kio.save(doc)
+                    msg = None
+                except kio.KiCadIOFormatError as e:
+                    msg = str(e)
+                named = msg is not None and all(s in msg for s in (lib_id, "20251024", "20250114"))
+                check(msg is not None and sheet.read_bytes() == before and named,
+                      "save refuses " + what + "; file byte-unchanged; message names symbol and both formats",
+                      (msg or "no KiCadIOFormatError raised")[-170:])
+                expect_raise(kio.KiCadIOFormatError, lambda: kio.save_project([doc]), "save_project refuses " + what,
+                             sheet)
+                # Why: the same tree written past the guard is a sheet kicad-cli 9 can't read.
+                bad = copytree(tdir, w / "k9-unguarded")
+                (bad / EMBED_SHEET).write_text(kio.render(doc)[0], encoding="utf-8")
+                n_bad = netlist(cli, bad / EMBED_ROOT, w / "k9-unguarded.net")
+                check(n_bad is None or len(n_bad[0]) < len(n_in[0]),
+                      "  (the refused sheet, written past the guard, loses components in kicad-cli 9)",
+                      "input {} unguarded {}".format(len(n_in[0]), "no netlist" if n_bad is None else len(n_bad[0])))
+                continue
+            kio.check_embed(doc, sym)
+            kio.child(doc.tree, "lib_symbols").children.append(sym)
+            kio.save(doc)
+            back = kio.load_schematic(sheet)
+            held = any(kio.atom(s, 0) == lib_id for s in kio.lib_symbol_nodes(back.tree))
+            check(held and back.version == doc.version, "save passes " + what,
+                  "embedded {}, version {} kept".format(held, back.version))
+            same_counts("  kicad-cli {} reads it (netlist counts equal to the input's)".format(ttag), n_in,
+                        netlist(cli, proj / EMBED_ROOT, w / "k{}-{}.net".format(ttag, i)))
+    # a deep copy of a deep copy keeps its source; a node built in code has none
+    s10 = [s for s in sources if s[0] == "KiCad 10 stock"]
+    if s10:
+        import copy
+        twice = copy.deepcopy(lib_copy(*s10[0][1:]))
+        check(kio.lib_symbol_source(twice) == (kio.SYM, 20251024, 10),
+              "a copied copy keeps its source", str(kio.lib_symbol_source(twice)))
+    check(kio.lib_symbol_source(kio.node('(symbol "X:Y")')) is None, "a node built in code has no source")
+
+
 def stage5(out, k10base):
     print("== 5 atoms and hide flags")
     w = out / "atoms"
@@ -488,6 +580,7 @@ def main():
         k10 = convert10(out, a.kicad_cli10)
         stage_edits(out, k10, a.kicad_cli10, "10")
     stage4(out)
+    stage4b(out, stock, k10, a.kicad_cli9, a.kicad_cli10)
     stage5(out, k10)
     print("== 6 kicad-cli 9 reads the KiCad 9 sheets stages 4 and 5 saved")
     n_in = netlist(a.kicad_cli9, out / "src" / V8 / "motion-play-main-v8.kicad_sch", out / "cli9-in6.net")

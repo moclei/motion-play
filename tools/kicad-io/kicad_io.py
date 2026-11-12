@@ -16,6 +16,12 @@ Guards
   is in the target's folder (KiCad has the project open).
 - Version-unchanged check, at save: the tree's ``(version N)`` must be the one loaded, so a KiCad 9
   file can't leave as KiCad 10.
+- Embedded-symbol check, at save (and at embed, ``check_embed``): a library symbol in a schematic's
+  ``lib_symbols`` (or a library's top level) that was loaded from a file whose KiCad version is newer
+  than the target's is refused. Every library symbol a ``Doc`` loads carries its source format in its
+  node class (``lib_symbol_source``), and ``copy.deepcopy`` keeps it, so a KiCad 10 stock symbol
+  copied into a KiCad 9 sheet is caught however it got there. kicad-cli 9 silently drops the contents
+  of a sheet holding one (kicad10-tooling SESSION, Worker #13 Notes task 3).
 
 Splice save (PLAN OQ-7). kicad-tools records each top-level item's source span at parse. At save,
 a top-level item whose serialization is unchanged is written as its original text, with the
@@ -193,7 +199,65 @@ def _from_text(path: Path, text: str, kind: str) -> Doc:
         raise KiCadIOError("{}: kicad-tools recorded no source span for a top-level item".format(path))
     doc = Doc(path=path, kind=kind, tree=tree, text=text, version=version, major=major)
     _baseline(doc, text, tree.children, spans)
+    _tag_lib_symbols(doc)
     return doc
+
+
+# ---------------------------------------------------------------------------
+# Library-symbol provenance (the embedded-symbol check)
+# ---------------------------------------------------------------------------
+
+_SOURCE_CLASSES: Dict[Tuple[str, int], type] = {}
+
+
+def _source_class(kind: str, version: int, major: int) -> type:
+    """An ``SExp`` subclass with no slots of its own (so a parsed node's class can be swapped to it)
+    whose class attribute ``kio_source`` records the format its nodes were loaded from."""
+    cls = _SOURCE_CLASSES.get((kind, version))
+    if cls is None:
+        cls = type("SExpFrom_{}_{}".format(kind, version), (SExp,),
+                   {"__slots__": (), "__module__": __name__, "kio_source": (kind, version, major)})
+        _SOURCE_CLASSES[(kind, version)] = cls
+    return cls
+
+
+def lib_symbol_nodes(tree: SExp) -> List[SExp]:
+    """The library symbols a tree holds: a schematic's ``lib_symbols`` entries, or a symbol
+    library's top-level ``symbol`` items (none for a board)."""
+    if tree.name == ROOT_TAG[SYM]:
+        return kids(tree, "symbol")
+    if tree.name == ROOT_TAG[SCH]:
+        ls = child(tree, "lib_symbols")
+        return kids(ls, "symbol") if ls is not None else []
+    return []
+
+
+def _tag_lib_symbols(doc: Doc) -> None:
+    cls = _source_class(doc.kind, doc.version, doc.major)
+    for s in lib_symbol_nodes(doc.tree):
+        if type(s) is SExp:
+            s.__class__ = cls
+
+
+def lib_symbol_source(sym: SExp) -> Optional[Tuple[str, int, int]]:
+    """(kind, format version, KiCad major) of the file ``sym`` (or the node it was deep-copied
+    from) was loaded from, or None for a node built in code."""
+    return getattr(type(sym), "kio_source", None)
+
+
+def check_embed(doc: Doc, sym: SExp) -> None:
+    """KiCadIOFormatError if ``sym`` came from a file of a newer KiCad version than ``doc``: KiCad
+    can't read a newer library symbol's syntax (kicad-cli 9 drops a sheet holding a KiCad 10 one)."""
+    src = lib_symbol_source(sym)
+    if src is None or src[2] <= doc.major:
+        return
+    kind, version, major = src
+    raise KiCadIOFormatError(
+        "{}: library symbol {} comes from a {} in format {} (KiCad {}), newer than this {}'s format {} "
+        "(KiCad {}), which KiCad {} can't read. Embed it from a KiCad {} library (stock symbols: "
+        "KICAD_CLI on KiCad {})".format(
+            doc.path, q(atom(sym, 0)), "symbol library" if kind == SYM else kind, version, major,
+            doc.kind, doc.version, doc.major, doc.major, doc.major, doc.major))
 
 
 def load_schematic(path: Union[str, Path]) -> Doc:
@@ -255,6 +319,8 @@ def _check_version(doc: Doc) -> None:
                                  "does not change a file's format".format(doc.path, v, doc.version))
     if doc.tree.name != ROOT_TAG[doc.kind]:
         raise KiCadIOFormatError("{}: root is ({} ...), not {}".format(doc.path, doc.tree.name, ROOT_TAG[doc.kind]))
+    for s in lib_symbol_nodes(doc.tree):
+        check_embed(doc, s)
 
 
 def render(doc: Doc) -> Tuple[str, List[Tuple[int, int]]]:
