@@ -1062,3 +1062,61 @@ Tasks assigned: Phase 12, all 4 tasks (see TASKS.md)
 Notes: converted copies only (kicad-cli 10 sch upgrade per sheet on fresh scratch copies). KICAD_CLI on 10 for this phase's runs, never against a working-tree path. layout_check calibration changes need before/after evidence on 9 and 10. KiCad 9 behaviour must not regress: harness 24/24 on 9 at handoff.
 Rules: hardware/ and lab/ unchanged; global python3 and .githooks unchanged.
 ```
+
+#### Notes
+
+Scratch: `/private/tmp/claude-501/-Users-marcocleirigh-Workspace-motion-play/1edf598d-7bc7-4919-a0bd-71f5981db13e/scratchpad/p12/` (scripts in `p12/scripts/`: `leafdiff.py`, `svgboxes.py`, `rd10.sh`, `aifields.py`, `gen10.sh`, `stockcmp.py`, `mixembed.py`); harness run roots `scratchpad/p12k09` (KiCad 9) and `p12k10` (v8 converted, kicad-cli 10). kicad-cli 10 ran only on scratch copies; `KICAD_CLI` was set per command. Every KiCad 10 copy is a fresh `git archive` of v8 at `v8-schematic-freeze` with `kicad-cli sch upgrade` run on each of the five sheets (all 20250114 → 20260306).
+
+**Task 1 (`9874709`). `extract.py` and the `pinfunction` suffix.**
+- On v8, kicad-cli 10 writes all 471 named pinfunctions as `<name>_<pin>`. Unnamed pins have no pinfunction on 9 or on 10. 110 of the KiCad 9 names already end in `_<their own pin number>` (`Pin_1` on pin 1, and so on), so a plain strip would be wrong on 9 output.
+- The fix: `_parse_nets` strips `_<that pin's number>` only when the netlist's `<design><tool>` says KiCad 10 or later (`_netlist_kicad_major`, `_pin_name`). KiCad 9 netlists are never touched.
+- On a converted v8 with kicad-cli 10, `circuit-context.json` equals the KiCad 9 one leaf for leaf, apart from `_provenance` and `extracted_at`. None of the exporter differences reach it. Without the fix, 445 pin-name leaves differed (`'1'` → `'1_1'`). v7's KiCad 9 sheets through kicad-cli 10 give the same result. The only change in stderr is the netlist byte count (536,367 → 571,868).
+
+**Task 2 (`3a53b35`). Re-validation on a KiCad 10 v8.**
+- The harness gained `run --upgrade-v8`: after archiving, it runs `sch upgrade` on every v8 sheet with `--kicad-cli`, which must be 10 or later. One line was added to the harness entry in `tools/CONTEXT.md`.
+- Runs: `regress.py run p12k10 --kicad-cli <10> --upgrade-v8` and `regress.py run p12k09`. In p12k10 every command exits 0. p12k09 matches 24/24 against `reference-k9.txt`, after the task 1 change.
+- `compare p12k09 p12k10`:
+  - IDENTICAL on 10: `layout_check`, `tidy_fields --check`, `tidy_labels --check` (TOTAL 0 on every sheet), and `v8_mcu/bus/power_sheet --check` (CHECK PASSED, PHASE 9/10).
+  - `v8_debug_sheet --check` passes (LAYOUT CHECK PASSED, PHASE 11 CHECK PASSED). Its output and `v8_project_setup --verify` differ from 9 only in their ERC lines.
+  - `extract --check-sheet-pins`: 42 pins, 0 offenders. Only the byte count differs.
+  - The netlist is structurally equal with the suffix stripped: 296 components, 158 nets. What remains are the PLAN exporter items: net classes on 14 nets, sheet numbering, `Sheetname`, `datasheet`.
+  - The converted sheets are byte-identical after the run, so the checks wrote nothing.
+- ERC on 10 against the freeze counts: errors 0, pin_to_pin 81, lib_symbol_issues real 2 (J7 USB-C, U5 BQ24195RGET), all unchanged. New in 10: 5 `same_local_global_label` on root `+5V` and `+3.3V_MCU`, TCA `+3.3V_BUS`, LED `GND` and power `+5V_CORE`. Setup items, listed separately: lib_symbol_issues 330 and footprint_link_issues 281, broken down by library in `regress.py erc`.
+- `extract.py`, `show.py` and `annotate.py` (`rd10.sh`), run on a 9 copy and a converted 10 copy:
+  - Outputs and exit codes are identical for extract (plain, `--previous`, `--check-sheet-pins`, `-v`), show (plain, `--unannotated`, `--sheet led_controller`, and after annotation), and the 8 annotate commands from Phase 9 (update, multiple refs, new fields, root part, `--clear`, missing ref, partial miss, bad key). stderr differs only in the byte count.
+  - Every `circuit-context.json` (before, `--previous`, after annotation) is equal apart from `_provenance` and `extracted_at`.
+  - After annotation: the netlist is structurally equal (suffix stripped), ERC is as above, and the plotted strings are equal apart from the title-block "KiCad E.D.A." version and TCA's page "Id: 4/5" → "2/5" (sheet numbers follow page numbers on 10).
+  - The 1,140 `ai_*` fields have the same value, hidden flag and position. On 10 each has exactly one hide flag, the property-level KiCad 10 form.
+- **layout_check calibration: no change needed.** `svgboxes.py` compares the box of every plotted string in kicad-cli 9 and kicad-cli 10 SVGs of the same v8 sheets. 2,696 strings were matched. 1,992 have identical boxes (within 0.005 mm). The other 704 are all pin texts, which layout_check doesn't model: pin numbers, USB-C pin numbers such as `A1B12` and `B6`, and three `A`/`B`/`C` pin names. Each one is moved 0.102 mm along its pin (KiCad 10 moved pin text). Every field, label, sheet pin and text item plots in the same box on 10, so the geometry calibrated on 9 holds. `layout_check -v` on the 9 and 10 copies gives identical output, and the baseline is unchanged.
+- The harness also ran v7's KiCad 9 board through kicad-cli 10. That belongs to Phase 13 and wasn't assessed here: board-model and DRC gain 79 setup `lib_footprint_issues`, and the reports are identical.
+
+**Task 3 (not checked off: stopped on a finding). `STOCK_SYMBOLS` follows `KICAD_CLI`.**
+- **tidy_fields: no change.** It reads only the pin flags (`pin_numbers`/`pin_names` hidden) from the stock libraries. `stockcmp.py` checked all 25 stock lib_ids embedded in v8: the pin flags are the same in 9.0.4 and 10.0.8. `tidy_fields --check` on 10 is identical (above).
+- **schematic-gen generators: no change.** None of them reads `STOCK_SYMBOLS`. Their symbols come from project sheets, `resources/` and the JLC-MCP libraries under `~/Documents/KiCad/9.0/3rdparty`, and they always write format 20250114. Run with `KICAD_CLI` on 9 and on 10 (`gen10.sh`, Phase 9's scratch repo root, seeded uuids), each output sheet (poc, power, esp32) is byte-identical and the tool output is identical.
+- **Generator outputs converted and run on 10.**
+  - The conversion is netlist-neutral: kicad-cli 10's netlist of the unconverted and of the converted output are equal, and so are the non-library ERC items.
+  - Against kicad-cli 9: poc's netlist is equal. power has 8 and esp32 25 extra single-node `unconnected-(…)` nets on 10, each with one pin and nothing else changed. This is kicad-cli 9 behaviour, not a tool difference: kicad-cli 9 leaves those nets out when a child sheet is exported as a standalone root. v8's own `power_management.kicad_sch` exported alone gives 0 of them on 9 and 5 on 10, while the v8 project gives 26 on both. extract.py drops `unconnected-*` nets in any case.
+  - ERC poc: 0 on 9. On 10, setup items only (2 + 2).
+  - ERC power: pin_not_connected 6, pin_not_driven 1, pin_to_pin 28, real library items 4 + 5. Same items at the same positions on 9 and 10. 9's one `lib_symbol_mismatch` (TH1 `Device:Thermistor_NTC`) becomes a setup item on 10, because 10 can't find `Device` to compare against. 10 adds setup items 51 + 46.
+  - ERC esp32: 9's 26 `label_dangling` errors are reported on 10 as 26 `isolated_pin_label` warnings, the same labels at the same positions (KiCad 10 renamed and downgraded the check). pin_not_connected 37 and pin_to_pin 14 are the same items. The 2 `multiple_net_names` are the same pairs of names, with a different label copy as the marker. 10 adds setup items 14 + 14.
+  - These are the generators' own open pins and labels, as recorded in Phase 9.
+- **What KiCad 10's stock symbols change.** All 25 v8 stock symbols differ at least in format: property-level `hide`, `show_name`, `do_not_autoplace`, `in_pos_files`, `duplicate_pin_numbers_are_jumpers`, and `(power global)`. After those are folded back to the 9 form, none is identical. Content changes: Datasheet `~` → `""` on most symbols. `Device:Thermistor_NTC` has new `ki_fp_filters`. `Jumper:SolderJumper_*` have 2 body arcs instead of 4. 74AHCT1G125, TPD2E2U06DRL, CSD25402Q3A, AP2112K-3.3, Conn_02x*, C, R, Fuse, C_Polarized_Small_US and SW_SPDT have different pin or body records (CSD25402Q3A's first pin changes type and position). So a part placed with `KICAD_CLI` on 10 gets KiCad 10's symbol, as placing it in the KiCad 10 GUI would. A `v8_*.py --apply` replay run on 10 would no longer reproduce its historical output.
+- **FINDING (the reason for the stop): with `KICAD_CLI` on 10, a stock-symbol embed into a KiCad 9 sheet produces a sheet KiCad 9 can't read.**
+  - The embed path is `v8_mcu_sheet.stock_symbol`, used by the `--apply` modes of `v8_mcu/bus/power/debug_sheet.py`, then `modify.add_component`, `ensure_lib_symbol` and `kio.save`. It copies the KiCad 10 library symbol (`show_name`, `do_not_autoplace`, `in_pos_files`, property-level `hide`) into a file whose version token stays 20250114. `kicad_io`'s save checks only that token, so it doesn't refuse.
+  - Experiment (`mixembed.py`, scratch `p12/mix/`): add `Device:D_Schottky` as D900 to v8's LED sheet (KiCad 9 copy) with `KICAD_CLI` on 9 (`s9`) and on 10 (`s10`). With 9, kicad-cli 9 reads 297 components and 160 nets; ERC is the freeze counts plus 2 dangling labels for the test nets; the LED sheet plots 158 strings.
+  - With 10, kicad-cli 9 still exits 0 on the project, but **silently drops the LED sheet's contents**: 282 components, 155 nets, 5 `hier_label_mismatch` errors, and 33 plotted strings on the LED sheet. Exported on its own, the sheet gives "Failed to load schematic", exit 3.
+  - On a converted (KiCad 10) v8 copy (`t9`, `t10`), the 9-stock and 10-stock embeds are equivalent: the netlist differs only in D900's random uuid, the plotted strings are equal, and ERC is the same. So the problem is only `KICAD_CLI` on 10 combined with a KiCad 9 target.
+  - Today it bites only the `--apply`/write modes. Once Phase 14 migrates v8 to KiCad 10, v8 is safe. The other boards stay on KiCad 9.
+  - The generators would hit the same mix if their `.kicad_sym` sources were ever KiCad 10 libraries (for example JLC-MCP re-downloaded under a KiCad 10 setup), since they always write 20250114.
+  - Options, not acted on, since it's a design choice:
+    - (a) `modify.ensure_lib_symbol` or `kio.save` refuses a lib symbol from a library newer than the target sheet. `kio.load_symbol_lib` knows the library's version: 20241209 is 9.0.4 stock, 20251024 is 10.0.8.
+    - (b) Choose the stock folder from the target sheet's version rather than from `KICAD_CLI`.
+    - (c) A HAZARDS line only.
+  - I didn't fix it or add a hazard. Task 3 and the Handoff are left `[ ]`.
+
+**For the next session.**
+- `--upgrade-v8` on the harness is ready for Phase 14's gate runs.
+- The KiCad 9 harness is 24/24 on the current tools (`p12k09`).
+- Fix the finding above (or have it decided), then check off task 3. Its other evidence is complete above.
+
+**Handoff checks.** `git diff aa470dd HEAD` on hardware/, lab/, .githooks and PLAN.md is empty. The working-tree `.kicad_prl` files are untouched (v8 Nov 4, v7 Apr 7). The global `python3` is pyenv 3.7.3. No worktree was created. No new documents, nothing Deferred, PLAN unchanged.
