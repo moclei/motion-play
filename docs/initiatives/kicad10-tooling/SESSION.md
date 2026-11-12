@@ -794,3 +794,31 @@ Scratch: `/private/tmp/claude-501/-Users-marcocleirigh-Workspace-motion-play/1ed
 
 **Handoff checks.** `git diff bb4d3c8 HEAD -- hardware lab .githooks tools/requirements.txt` empty. The preport worktree is removed (`git worktree list` shows only the user's Cursor worktrees); `extensions.worktreeConfig` unset. No write mode ran on the working tree; no `.kicad_prl` or lock file appeared. PLAN unchanged. No new documents; nothing Deferred.
 
+
+#### Result
+| # | Phase | Result | Escalation evaluated? | Commit | Notes |
+|---|-------|--------|-----------------------|--------|-------|
+| 8 | Phase 7: Tidy tools, layout_check, v8_project_setup, v8_mcu_sheet | DONE | No — clean completion | c6bcb1b | 4 tasks; 5 `--apply` replays match preport; harness 24/24, COMPARE SAME |
+
+#### Verification
+- 4 commits, `ed67ed9`..`c6bcb1b`. Phase 7 is all `[x]`. `git diff bb4d3c8 HEAD` on hardware/, lab/, .githooks, tools/requirements.txt and PLAN.md is empty. None of the five ported tools has a kiutils import line (only comments mention it). No extra worktree is left, and `extensions.worktreeConfig` is unset.
+- Orchestrator re-run on the working tree with `tools/.venv` and KiCad 9: `tidy_fields --check` and `tidy_labels --check` exit 0 (the Phase 6b breakage is cleared), and `v8_debug_sheet --check` gives PHASE 11 CHECK PASSED. The tree is clean afterwards.
+- The tree differences against preport are kiutils' own forms only (bare `hide` and child order), with equal counts. Netlist, ERC and plots are identical, and no E1 or E2 case arose. This is inside the oracle rule.
+- Carry forward: the replay helpers for Phase 8 are at scratchpad/p7/replay.py and seedrun.py. Preport refuses `--root` with write modes, so use `--pre-in-wt`. The phase ran for about 4.3 hours wall-clock, so Phase 8's dispatch keeps the same shape.
+
+---
+
+### Worker #9 — Phase 8: v8_debug_sheet, v8_bus_sheet, v8_power_sheet; delete the v7 schematic scripts
+
+**Dispatch:**
+```
+Initiative: kicad10-tooling
+Phase: 8 — v8_debug_sheet, v8_bus_sheet, v8_power_sheet; delete the v7 schematic scripts
+Initiative path: docs/initiatives/kicad10-tooling/
+Additional reading: PLAN in full ("Oracle", "Accepted differences from preport", "Raw-layer traps", "Retired"). SESSION.md Worker #7 Notes (modify.py API) and Worker #8 Notes + Orchestrator Verification (replay method, raw stock_symbol node, --pre-in-wt).
+
+Tasks assigned: Phase 8, all 4 tasks (see TASKS.md)
+
+Notes: replay helpers scratchpad/p7/replay.py and seedrun.py. Only E1/E2 differences allowed; anything else, stop and report. Write modes never on the working tree.
+Rules: hardware/ and lab/ unchanged; kicad-cli 10 only on scratch copies; no tool outside Phase 8's list ported.
+```
