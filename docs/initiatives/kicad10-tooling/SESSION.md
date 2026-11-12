@@ -1120,3 +1120,36 @@ Scratch: `/private/tmp/claude-501/-Users-marcocleirigh-Workspace-motion-play/1ed
 - Fix the finding above (or have it decided), then check off task 3. Its other evidence is complete above.
 
 **Handoff checks.** `git diff aa470dd HEAD` on hardware/, lab/, .githooks and PLAN.md is empty. The working-tree `.kicad_prl` files are untouched (v8 Nov 4, v7 Apr 7). The global `python3` is pyenv 3.7.3. No worktree was created. No new documents, nothing Deferred, PLAN unchanged.
+
+#### Result
+| # | Phase | Result | Escalation evaluated? | Commit | Notes |
+|---|-------|--------|-----------------------|--------|-------|
+| 13 | Phase 12: Schematic tools on KiCad 10 | BLOCKED | Yes — resolvable without replanning: it's a guard gap in this initiative's own I/O module, and the fix extends PLAN's existing "a KiCad 9 file can't leave as 10" save rule | dabb7b4 | Tasks 1–2 done; task 3's evidence is done, but it found that KiCad 10 stock symbols get embedded into KiCad 9 sheets |
+
+#### Verification
+- 3 commits, `9874709`..`dabb7b4`. Tasks 1–2 are `[x]`; task 3 and the Handoff are `[ ]`. `git diff aa470dd HEAD` on hardware/, lab/, .githooks and PLAN.md is empty. The tree is clean.
+- **The finding is a real silent-loss path.** It happens when `KICAD_CLI` points at 10 and a `v8_*.py` write mode runs on a KiCad 9 sheet. `stock_symbol` then reads the KiCad 10 stock library, `add_component` embeds that symbol, and `kio.save` passes, because the sheet's version token is unchanged. kicad-cli 9 then drops the sheet's contents and exits 0.
+  - Exposure today: write modes only, and only with `KICAD_CLI` set to 10. v8 stays on 9 until Phase 14, and the other boards stay on 9 permanently.
+- **Decision (Orchestrator, within PLAN):** option (a). The I/O module refuses to save a lib symbol taken from a library whose format is newer than the target file's KiCad version. This is the same rule as the existing version-unchanged check, carried down to embedded content, so it fails loudly.
+  - Option (b), picking the stock folder from the sheet's version, would change which symbols the tools pick, which is a behaviour change. It isn't needed once (a) refuses.
+  - Option (c), a HAZARDS line only, leaves the silent loss in place.
+  - A HAZARDS line is added alongside (a).
+
+[ORCH] Adjusting and re-dispatching
+
+---
+
+### Worker #14 — Phase 12 (continued): stock-symbol version guard, then task 3
+
+**Dispatch:**
+```
+Initiative: kicad10-tooling
+Phase: 12 — Schematic tools on KiCad 10 (continued from Worker #13)
+Initiative path: docs/initiatives/kicad10-tooling/
+Additional reading: SESSION.md Worker #13 Notes and the Orchestrator Result/Verification under them. PLAN "One I/O module" (Save, Format check). tools/kicad-io/kicad_io.py, tools/kicad-regress/test_kicad_io.py, test_modify.py.
+
+Tasks assigned: Phase 12 task 3 and the Handoff (tasks 1–2 are done).
+
+Adjustment: before checking off task 3, close the finding with option (a): the I/O module refuses to embed or save a lib symbol from a library whose format is newer than the target file's KiCad version (9.0.4 stock = 20241209, 10.0.8 stock = 20251024). Committed test cases: KiCad 10 stock into a KiCad 9 sheet refuses, and the file is unchanged; KiCad 9 stock into 9, and 9 or 10 stock into a KiCad 10 sheet, pass. Record the rule in PLAN "One I/O module" (one sentence) and in the tools/CONTEXT.md I/O-module Rule. Add a HAZARDS line. Then re-run iotest, modtest, and the KiCad 9 harness (24/24), and check off task 3 from Worker #13's evidence.
+Rules: hardware/ and lab/ unchanged; kicad-cli 10 only on scratch copies.
+```
