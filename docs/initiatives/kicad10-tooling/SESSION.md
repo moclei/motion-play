@@ -973,3 +973,33 @@ Scratch: `/private/tmp/claude-501/-Users-marcocleirigh-Workspace-motion-play/1ed
 **Task 3 (`606d44f`).** `tools/route_esp32.py` deleted. `git grep route_esp32`: only this initiative's PLAN, SESSION and TASKS (history); no other doc line. Remaining kiutils importer under `tools/`: `schematic-modify/kiutils_k9.py` only (Phase 11).
 
 **Handoff checks.** `git status` clean. `git diff 6498283 HEAD` on hardware/, lab/, .githooks, tools/requirements.txt, `kiutils_k9.py` and PLAN.md is empty. `git worktree list`: only the user's Cursor worktrees; `extensions.worktreeConfig` unset. No new documents (pcb_raw.py is code), nothing Deferred, PLAN unchanged.
+
+#### Result
+| # | Phase | Result | Escalation evaluated? | Commit | Notes |
+|---|-------|--------|-----------------------|--------|-------|
+| 11 | Phase 10: Board readers; delete route_esp32.py | DONE | No — clean completion | 5efc551 | 4 tasks; new `pcb-context/pcb_raw.py` views; only E1 differs (144 leaves); route_esp32.py deleted |
+
+#### Verification
+- 4 commits, `1c20f31`..`5efc551`. `git diff 6498283 HEAD` on hardware/, lab/, .githooks, tools/requirements.txt, kiutils_k9.py and PLAN.md is empty. The only kiutils importer left is `tools/schematic-modify/kiutils_k9.py`. route_esp32.py is gone. No extra worktree is left.
+- Orchestrator re-ran `regress.py run` (ported tools, venv, KiCad 9) into scratchpad/orc10a. No exit is non-zero. 23/24 reference hashes match; the miss is `v7/board-model.json`. `compare` against the Worker's preport run `p10pr1` shows one differing item, `v7/board-model.json`, with 144 leaves, all of them `graphic_copper` polygon points or zone `connect_pads`. That is exactly PLAN E1. The tree is clean afterwards.
+- Carry forward:
+  - **Phase 11:** `reference-k9.txt` still holds the preport board-model hash. Re-record it for the ported reader, and cite E1 and the SESSION leaf list in the file, so later harness runs report 24/24.
+  - **Phase 13:** on KiCad 10, a zone with no net token reads "unknown" rather than `''` (kiutils' default for an absent token). Decide what it should read on 10. `routing_extract` shows net names instead of net numbers on 10.
+  - **Phase 11 docs:** the "kiutils ≥ 1.4.8" line in the pcb-context README, the kiutils lines in `tools/CONTEXT.md`, the `place_power.py` "via kiutils" docstring, the `extract.py` stderr line (Worker #10), and the stale `tools/schematic-modify/CONTEXT.md` lines (Worker #9).
+
+---
+
+### Worker #12 — Phase 11: Remove kiutils; KiCad 9 reads; the parser rule
+
+**Dispatch:**
+```
+Initiative: kicad10-tooling
+Phase: 11 — Remove kiutils; KiCad 9 reads; the parser rule
+Initiative path: docs/initiatives/kicad10-tooling/
+Additional reading: PLAN in full ("Pin and upgrades", "One I/O module", "Which layer", "Raw-layer traps", "Accepted differences from preport"). SESSION.md Orchestrator Verifications for Workers #9, #10, #11 (the doc-line carry-forwards and the reference-k9 re-record). Worker #4 Notes (harness).
+
+Tasks assigned: Phase 11, all 4 tasks (see TASKS.md)
+
+Notes: also re-record reference-k9.txt's board-model hash for the ported reader (cite E1), reword extract.py's "via kiutils" stderr line and re-record that hash; both re-records only after the final preport compare. Old venv backup before rebuilding. Only E1/E2 differences allowed.
+Rules: hardware/ and lab/ unchanged; kicad-cli 10 only on scratch copies; global python3 and .githooks unchanged.
+```
