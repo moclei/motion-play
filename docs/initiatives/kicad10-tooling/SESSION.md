@@ -1430,3 +1430,20 @@ Scratch: `/private/tmp/claude-501/-Users-marcocleirigh-Workspace-motion-play/1ed
 - Before any GUI use of v8 on 10 (Phase 15), the user accepts KiCad 10's default global library table on first launch (G3).
 
 **Handoff checks.** `git status` is clean. Nothing under `hardware/pcb-main/`, other boards, `lab/`, `.githooks` or `tools/` changed (`git diff 982efcc HEAD --stat`). The global `python3` is unchanged. No new documents, nothing Deferred.
+
+#### Result
+| # | Phase | Result | Escalation evaluated? | Commit | Notes |
+|---|-------|--------|-----------------------|--------|-------|
+| 17 | Phase 14: Migrate v8 to KiCad 10 | DONE | No — clean completion | d0bcc1c | Migration `60e9d12`, tagged `v8-schematic-freeze-k10`; `-k9` alias on `0d6255b`; every gate item passed |
+
+#### Verification
+- 3 commits, `6bd9bc8`..`d0bcc1c`. Every changed file is under `hardware/pcb-main-v8/kicad/` or this initiative's folder. v8's sheets are at format 20260306 (generator_version 10.0), and the board at 20260206.
+- Tags: `v8-schematic-freeze` and `v8-schematic-freeze-k9` both resolve to `0d6255b`. `v8-schematic-freeze-k10` is an annotated tag on `60e9d12`.
+- **Orchestrator re-run** on the migrated working tree, with `KICAD_CLI` on 10 and a scratch `KICAD_CONFIG_HOME` seeded with KiCad 10's template tables:
+  - `v8_debug_sheet --check`: PHASE 9/10/11 CHECK PASSED and LAYOUT CHECK PASSED.
+  - ERC: 0 errors, 81 pin_to_pin, 2 lib_symbol_issues, 5 same_local_global_label, 19 lib_symbol_mismatch. This is exactly PLAN's gate list.
+  - `check_state.py --fresh`: FRESH.
+  - The tree is clean afterwards.
+- **The harness still defaults to the KiCad 9 freeze.** Use `--v8-ref v8-schematic-freeze-k10` to run it on the migrated v8.
+- v8's `.kicad_prl` was rewritten by `pcb upgrade`. It's gitignored, and the original is saved in scratchpad/p14w/out/prl.before.
+- **Next: Phase 15 (live IPC trial)** has user steps. The user is asked before dispatch.
