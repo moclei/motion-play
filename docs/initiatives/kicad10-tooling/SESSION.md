@@ -1369,3 +1369,31 @@ Scratch: `/private/tmp/claude-501/-Users-marcocleirigh-Workspace-motion-play/1ed
 - 1 commit (`345fcbb`). Only SESSION.md and TASKS.md changed. The tree is clean.
 - **Machine-side observation (Orchestrator):** both `~/Library/Preferences/kicad/9.0/kicad_common.json` (22:40) and `10.0/kicad_common.json` (22:39) have mtimes of 2026-11-11, each at its earlier byte size (2398 and 2691). At session start, 9.0's was Nov 7. The likeliest cause is a kicad-cli run without `KICAD_CONFIG_HOME` rewriting the common settings on exit; Worker #16 showed this for kicad-cli 10. Same size suggests the same content, but there's no before-copy to prove it. The user is told. For Phase 14 onward, every kicad-cli run uses a scratch `KICAD_CONFIG_HOME`, seeded with the agreed tables.
 - G3 goes to the user with four items: the migration, OQ-4, the library table, and accepting the 19 `lib_symbol_mismatch` warnings into the gate's warning list.
+
+### G3 — user decision (2026-11-11)
+
+- **Migrate v8:** yes.
+- **OQ-4:** a new tag `v8-schematic-freeze-k10` on the migration commit becomes the reference for v8 work. `v8-schematic-freeze` stays as the KiCad 9 record, with the alias `v8-schematic-freeze-k9` on the same commit.
+- **Library tables:** option (b), project tables.
+  - Copy the six JLC-MCP `.kicad_sym` files into `hardware/pcb-main-v8/kicad/libraries/symbols/`, and add project-relative entries to v8's `sym-lib-table` (7) and `fp-lib-table` (1).
+  - The stock libraries come from KiCad 10's default global table.
+- **Gate warnings:** accept the 19 `lib_symbol_mismatch` (TH1 and 18 solder jumpers, from KiCad 10's changed stock symbols) into the gate's warning list. The embedded symbols stay as frozen.
+- **For the gate runs:** kicad-cli uses a scratch `KICAD_CONFIG_HOME`, seeded with KiCad 10's default global tables, so no machine prefs are touched.
+- **The user's step, before any GUI use of v8 on 10 (Phase 15):** accept KiCad 10's default global library table on first launch.
+
+---
+
+### Worker #17 — Phase 14: Migrate v8 to KiCad 10
+
+**Dispatch:**
+```
+Initiative: kicad10-tooling
+Phase: 14 — Migrate v8 to KiCad 10 (G3 onward)
+Initiative path: docs/initiatives/kicad10-tooling/
+Additional reading: PLAN "Migrating v8", OQ-4. SESSION.md Worker #16 Notes and the "G3 — user decision" entry. Worker #13 Notes (ERC on 10). tools/CONTEXT.md I/O-module Rule. lab/ STATE rules for check_state.py --fresh (read only).
+
+Tasks assigned: Phase 14 tasks 2–5 (G3 record, convert, gate, Handoff).
+
+Notes: record the G3 decisions in PLAN (strike OQ-4; library-table and 19-warning decisions in "Migrating v8"). Every kicad-cli run uses a scratch KICAD_CONFIG_HOME seeded with KiCad 10's default global tables; never the real prefs. "Only those files change" includes the new libraries/symbols/ folder and the two lib tables. Tags annotated, not pushed. If any gate item fails, stop and report; do not commit the migration.
+Rules: nothing under hardware/pcb-main/, other boards or lab/ changes.
+```
