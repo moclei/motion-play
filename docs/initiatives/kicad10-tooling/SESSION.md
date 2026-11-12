@@ -1242,3 +1242,34 @@ Scratch: `/private/tmp/claude-501/-Users-marcocleirigh-Workspace-motion-play/1ed
 **For v8's replan (not done here):** v8 PLAN OQ-3 and "AI layout tooling" still name KiCad 9.0.4's Python 3.9 and its byte-identical round trip. They need the KiCad 10 path and the three writer guards from this PLAN. Also, a board-model before/after check keyed by segment ids fails after pcbnew's first save, because ids are positional.
 
 **Handoff checks.** KiCad 9 harness `regress.py run …/p13k09 --against reference-k9.txt`: 24 of 24. `git diff 367eadf HEAD` on hardware/, lab/ and .githooks is empty; the global python3 wasn't touched. No worktree created. Nothing Deferred. No new documents.
+
+#### Result
+| # | Phase | Result | Escalation evaluated? | Commit | Notes |
+|---|-------|--------|-----------------------|--------|-------|
+| 15 | Phase 13: Board tools and the write path on KiCad 10 | DONE | No — clean completion | cfbfc3d | 3 tasks; board tools on 10 match 9 apart from format items; keepout net reads `''`; OQ-3 answered: pcbnew (KiCad 10 Python) for v8 Phase 13 |
+
+#### Verification
+- 3 commits, `ce8c7a1`..`cfbfc3d`. Phase 13 is all `[x]`. `git diff 367eadf HEAD` on hardware/, lab/ and .githooks is empty. OQ-3 is struck in PLAN, and PLAN has no date-stamped headings.
+- The Orchestrator looked at the KiCad 10 probe-points render (`scratchpad/p13/pp10/v7-k10-probe-points.png`). Markers A–F and both X sit on their pads: TPIO43/44, C9.1, U5 pins 5 and 6, and C21/C20.
+- The `pcb_raw` keepout change applies only to boards with no net table (KiCad 10). The Worker showed KiCad 9 output unchanged and the harness at 24/24.
+- **For the v8 replan (Phase 17 resume note):**
+  - The v8 PLAN OQ-3 and "AI layout tooling" still cite KiCad 9's Python and a byte-identical round trip. On 10, pcbnew's first save of a kicad-cli-converted board regroups the tracks (+10k lines), and from then on it's stable.
+  - pcbnew 10 silently saves a KiCad 9 board as 10, so `pcb_write.py` needs the three guards in PLAN "Board write path".
+- The footprint guard isn't needed for either probed path. PLAN records what's needed if `.kicad_mod` text is ever inserted through kicad_io.
+- Next: Phase 14 task 1 (the library list, before G3), then the loop pauses for G3.
+
+---
+
+### Worker #16 — Phase 14 (pre-G3): v8's library resolution on KiCad 10
+
+**Dispatch:**
+```
+Initiative: kicad10-tooling
+Phase: 14 — Migrate v8 to KiCad 10 (task 1 only; stop at G3)
+Initiative path: docs/initiatives/kicad10-tooling/
+Additional reading: PLAN "Migrating v8", OQ-4. SESSION.md Worker #3 Notes (setup lib items on 10) and Worker #13 Notes (ERC on 10 with setup items). hardware/pcb-main-v8/kicad/sym-lib-table and fp-lib-table (read only). ~/Library/Preferences/kicad/9.0/sym-lib-table and fp-lib-table (read only).
+
+Tasks assigned: Phase 14 task 1. Stop before G3 and return PARTIAL; that stop is planned.
+
+Notes: read-only on hardware/ and on both KiCad prefs folders. Trial either option only on scratch copies (a scratch project table; a scratch KICAD10 config dir via KICAD_CONFIG_HOME if that works for kicad-cli 10), never the real ~/Library/Preferences/kicad/10.0. For each option, show ERC on converted scratch v8 drops the setup items to 0. Give a recommendation.
+```
