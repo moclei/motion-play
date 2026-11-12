@@ -260,7 +260,7 @@ def parse_netlist_xml(
     root = tree.getroot()
 
     components = _parse_components(root)
-    nets = _parse_nets(root, components)
+    nets = _parse_nets(root, components, _netlist_kicad_major(root) >= 10)
     sheet_map = _parse_sheet_map(root)
 
     for comp in components.values():
@@ -303,14 +303,40 @@ def _parse_components(root: ET.Element) -> Dict[str, Component]:
     return components
 
 
+def _netlist_kicad_major(root: ET.Element) -> int:
+    """KiCad major version that wrote the netlist, from <design><tool> ("Eeschema 10.0.8"); 0 if unknown."""
+    tool = root.find("design/tool")
+    words = (tool.text or "").split() if tool is not None else []
+    try:
+        return int(words[-1].split(".")[0]) if words else 0
+    except ValueError:
+        return 0
+
+
+def _pin_name(pinfunction: str, pin_number: str, suffixed: bool) -> str:
+    """The pin's name from a netlist node's pinfunction.
+
+    kicad-cli 10 writes every pinfunction as "<name>_<pin number>" ("IO48" on pin 25 -> "IO48_25"),
+    on KiCad 9 and 10 schematics alike; kicad-cli 9 writes the bare name. A name can itself end in
+    "_<its number>" (Pin_1 on pin 1), so the suffix is stripped only when the netlist came from
+    KiCad 10 or later (`suffixed`), and only that pin's own number.
+    """
+    suffix = "_" + pin_number
+    if suffixed and pin_number and pinfunction.endswith(suffix):
+        return pinfunction[:-len(suffix)]
+    return pinfunction
+
+
 def _parse_nets(
     root: ET.Element,
     components: Dict[str, Component],
+    suffixed: bool = False,
 ) -> Dict[str, Net]:
     """Extract nets from the <nets> section and populate component pin lists.
 
     Each <node> in a net contributes both a NetConnection to the net and
-    a Pin entry on the referenced component.
+    a Pin entry on the referenced component. `suffixed`: the netlist's
+    pinfunctions carry kicad-cli 10's "_<pin number>" (see _pin_name).
     """
     nets = {}  # type: Dict[str, Net]
 
@@ -328,7 +354,7 @@ def _parse_nets(
         for node_elem in net_elem.findall("node"):
             ref = node_elem.get("ref", "")
             pin_number = node_elem.get("pin", "")
-            pin_name = node_elem.get("pinfunction", "")
+            pin_name = _pin_name(node_elem.get("pinfunction", ""), pin_number, suffixed)
             pin_type = node_elem.get("pintype", "")
 
             if ref:
