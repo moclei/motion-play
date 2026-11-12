@@ -58,7 +58,8 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import modify  # noqa: E402
 import v8_mcu_sheet as mcu  # noqa: E402
-from kiutils.items.common import Position  # noqa: E402
+from modify import kio  # noqa: E402
+from kicad_io import atom, child, kids  # noqa: E402
 
 ROOT = mcu.ROOT
 PROJECT = mcu.PROJECT
@@ -176,24 +177,36 @@ def _check_free(doc, xy, half=(1.0, 1.0), what="", symbols=True):
     x0, y0 = xy[0] - half[0], xy[1] - half[1]
     x1, y1 = xy[0] + half[0], xy[1] + half[1]
     s = doc.schematic
-    for w in s.graphicalItems:
-        if getattr(w, "type", None) == "wire":
-            (ax, ay), (bx, by) = [(p.X, p.Y) for p in w.points]
-            if max(ax, bx) >= x0 and min(ax, bx) <= x1 and max(ay, by) >= y0 and min(ay, by) <= y1:
-                raise ValueError("{}: wire near {} on {}".format(what, xy, doc.path.name))
-    for l in list(s.labels) + list(s.hierarchicalLabels) + list(s.globalLabels):
-        if x0 <= l.position.X <= x1 and y0 <= l.position.Y <= y1:
-            raise ValueError("{}: label {} near {} on {}".format(what, l.text, xy, doc.path.name))
-    for sym in (s.schematicSymbols if symbols else []):
-        if x0 - 5 <= sym.position.X <= x1 + 5 and y0 - 5 <= sym.position.Y <= y1 + 5:
+    for w in kids(s, "wire"):
+        (ax, ay), (bx, by) = modify._wire_pts(w)
+        if max(ax, bx) >= x0 and min(ax, bx) <= x1 and max(ay, by) >= y0 and min(ay, by) <= y1:
+            raise ValueError("{}: wire near {} on {}".format(what, xy, doc.path.name))
+    for l in kids(s, "label") + kids(s, "hierarchical_label") + kids(s, "global_label"):
+        lx, ly = modify._xy(l)
+        if x0 <= lx <= x1 and y0 <= ly <= y1:
+            raise ValueError("{}: label {} near {} on {}".format(what, atom(l, 0), xy, doc.path.name))
+    for sym in (kids(s, "symbol") if symbols else []):
+        sx, sy = modify._xy(sym)
+        if x0 - 5 <= sx <= x1 + 5 and y0 - 5 <= sy <= y1 + 5:
             raise ValueError("{}: symbol {} near {} on {}".format(what, modify._symbol_ref(sym), xy, doc.path.name))
+
+
+def set_paper(doc, size):
+    """Set the sheet's paper size (the `(paper "A4")` atom)."""
+    kio.set_str(child(doc.schematic, "paper"), 0, size)
+
+
+def set_at(n, x, y, angle):
+    """Replace an item's `(at ...)` with `(at x y angle)`."""
+    at = child(n, "at")
+    at.children[:] = kio.node("(at {} {} {})".format(kio.num(x), kio.num(y), kio.num(angle))).children
 
 
 def _sheet_pin_with_label(root, file_name, name):
     modify.add_pin_to_sheet_ref(root, file_name, name, "bidirectional")
-    pin = [p for p in modify.find_sheet_ref(root, file_name).pins if p.name == name][0]
-    pin.position.angle = 180
-    x, y = pin.position.X, pin.position.Y
+    pin = [p for p in kids(modify.find_sheet_ref(root, file_name), "pin") if atom(p, 0) == name][0]
+    kio.set_num(child(pin, "at"), 2, 180)
+    x, y = modify._xy(pin)
     end = (round(x - modify.WIRE_STUB_LEN, 2), y)
     _check_free(root, end, (0.6, 0.6), "root label " + name, symbols=False)
     modify.add_wire(root, (x, y), end)
@@ -207,7 +220,7 @@ def apply() -> int:
     if modify.find_component(tca, "R80") is not None:
         print("Refusing: R80 already on {} (already applied)".format(TCA))
         return 1
-    tca.schematic.paper.paperSize = "A3"
+    set_paper(tca, "A3")
     print("{}: paper A4 -> A3".format(TCA))
 
     print("Channel split (row b)")
@@ -218,12 +231,12 @@ def apply() -> int:
             raise RuntimeError("U4.{}: wire to the hierarchical label not found".format(pin))
         print("  " + modify.set_pin_net(tca, "U4", pin, ch(n, line)))
         old, new = ch(n, line), ch(n, line, "_CONN")
-        hls = [h for h in tca.schematic.hierarchicalLabels if h.text == old]
-        if len(hls) != 1 or abs(hls[0].position.Y - y) > 0.05:
+        hls = [h for h in kids(tca.schematic, "hierarchical_label") if atom(h, 0) == old]
+        if len(hls) != 1 or abs(modify._xy(hls[0])[1] - y) > 0.05:
             raise RuntimeError("hierarchical label {} not at y {}".format(old, y))
         _check_free(tca, (HL_NEW_X - 1.27, y), (1.4, 0.6), "hlabel " + new)
-        hls[0].text = new
-        hls[0].position = Position(X=HL_NEW_X, Y=y, angle=0)
+        kio.set_str(hls[0], 0, new)
+        set_at(hls[0], HL_NEW_X, y, 0)
         end = (round(HL_NEW_X - modify.WIRE_STUB_LEN, 2), y)
         modify.add_wire(tca, (HL_NEW_X, y), end)
         modify.add_local_label(tca, new, end, 180)
@@ -241,9 +254,9 @@ def apply() -> int:
         print("  {} stub and junction {} removed; label {} on the bus wire".format(ref, junction, BUS[line]))
         print("  " + modify.set_pin_net(tca, ref, "1", "PU_{}_2K2".format(line)))
         sym = modify.find_component(tca, ref)
-        for p in sym.properties:
-            if p.key in ("LCSC Part", "LCSC Part No"):
-                p.value = "C4190"
+        for p in modify._props(sym):
+            if atom(p, 0) in ("LCSC Part", "LCSC Part No"):
+                kio.set_str(p, 1, "C4190")
         print("  {} LCSC -> C4190 (Parts: same value, basic)".format(ref))
     modify.add_local_label(tca, RAIL, RAIL_POINT, 0)
     modify.add_local_label(tca, "GND", GND_POINT, 0)

@@ -67,6 +67,9 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import modify  # noqa: E402
 import v8_mcu_sheet as mcu  # noqa: E402
+import v8_bus_sheet as bus  # noqa: E402
+from modify import kio  # noqa: E402
+from kicad_io import atom, atom_text, child, kids, node  # noqa: E402
 
 REPO = mcu.REPO
 ROOT = mcu.ROOT
@@ -211,19 +214,59 @@ def rename_ref(doc, old, new, value):
     sym = modify.find_component(doc, old)
     if sym is None:
         raise ValueError("{} not on {}".format(old, doc.path.name))
-    for p in sym.properties:
-        if p.key == "Reference":
-            p.value = new
-        elif p.key == "Value":
-            p.value = value
-    for inst in sym.instances:
-        for path in inst.paths:
-            if path.reference == old:
-                path.reference = new
+    for p in modify._props(sym):
+        if atom(p, 0) == "Reference":
+            kio.set_str(p, 1, new)
+        elif atom(p, 0) == "Value":
+            kio.set_str(p, 1, value)
+    for project in kids(child(sym, "instances"), "project"):
+        for path in kids(project, "path"):
+            r = child(path, "reference")
+            if r is not None and atom(r, 0) == old:
+                kio.set_str(r, 0, new)
+
+
+AI_PREFIX = "ai_"
+
+
+def write_ai_properties(doc, symbol, props):
+    """annotate.write_ai_properties on the raw tree: every ai_* field written (new or existing) is
+    hidden and placed at the symbol's origin, angle 0; a new one goes after the last property.
+    Returns the same action lines."""
+    actions = []
+    sx, sy = atom_text(child(symbol, "at"), 0), atom_text(child(symbol, "at"), 1)
+    for field_name, value in sorted(props.items()):
+        full_key = AI_PREFIX + field_name
+        existing = modify._prop(symbol, full_key)
+        if existing is not None:
+            changed = False
+            if child(existing, "effects") is None:
+                existing.children.append(node(kio.effects_text()))
+                changed = True
+            changed |= kio.hide(doc.doc, existing)
+            at = child(existing, "at")
+            if at is None or float(atom(at, 0)) != float(sx) or float(atom(at, 1)) != float(sy):
+                new_at = node("(at {} {} 0)".format(sx, sy))
+                if at is None:
+                    existing.children.insert(2, new_at)
+                else:
+                    existing.children[existing.children.index(at)] = new_at
+                changed = True
+            if changed:
+                actions.append("  re-homed {} (hidden, at symbol)".format(full_key))
+            old = str(atom(existing, 1))
+            if old != value:
+                kio.set_str(existing, 1, value)
+                actions.append("  updated {}: {!r} -> {!r}".format(full_key, old, value))
+            else:
+                actions.append("  unchanged {}: {!r}".format(full_key, value))
+        else:
+            modify._append_prop(symbol, modify.make_property(doc, full_key, value, sx, sy, 0, hide=True))
+            actions.append("  added {}: {!r}".format(full_key, value))
+    return actions
 
 
 def _place(docs, cache, part):
-    import v8_bus_sheet as bus
     sheet, ref, lib_id, value, fp, lcsc, pos, nets, nc = part
     doc = docs.sheet(sheet)
     bus._check_free(doc, pos, (7.0, 7.0) if lib_id != L_2X15 else (10.0, 21.0), ref, symbols=False)
@@ -257,42 +300,68 @@ REFRESH_LIBS = ("Transistor_FET:CSD25402Q3A", "Regulator_Linear:AP2112K-3.3")
 
 
 def _wire(doc, a, b):
-    for w in doc.schematic.graphicalItems:
-        if getattr(w, "type", None) == "wire" and len(w.points) == 2:
-            ends = {(round(p.X, 2), round(p.Y, 2)) for p in w.points}
-            if ends == {a, b}:
-                return w
+    for w in kids(doc.schematic, "wire"):
+        pts = modify._wire_pts(w)
+        if len(pts) == 2 and {(round(x, 2), round(y, 2)) for x, y in pts} == {a, b}:
+            return w
     return None
 
 
+def _norm(n):
+    """A node as a comparable value, with kiutils' own forms folded (quoting, number text, a bare
+    `hide`, and the tokens kiutils drops: exclude_from_sim, embedded_fonts, a property's id).
+    fix_11c's refresh test was kiutils' to_sexpr() of both sides, which never saw those."""
+    if n.is_atom:
+        v = n.value
+        if isinstance(v, (int, float)) and not isinstance(v, bool):
+            return float(v)
+        if v == "hide" and not n._originally_quoted:
+            return ("hide", "yes")
+        return str(v)
+    return (n.name,) + tuple(_norm(c) for c in n.children if c.is_atom or not (
+        c.name in ("exclude_from_sim", "embedded_fonts") or (c.name == "id" and n.name == "property")))
+
+
+def _set_justify(label, horiz, vert):
+    eff = child(label, "effects")
+    j = node("(justify {} {})".format(horiz, vert))
+    old = child(eff, "justify")
+    if old is not None:
+        eff.children[eff.children.index(old)] = j
+    else:
+        font = child(eff, "font")
+        eff.children.insert(eff.children.index(font) + 1 if font is not None else 0, j)
+
+
 def fix_11c() -> int:
-    from kiutils.items.common import Justify
     docs = modify.load_project(ROOT)
     tca, pwr = docs.sheet(TCA), docs.sheet(PWR)
     done = []
     w = _wire(tca, *TCA_STUB)
     if w is not None:
-        tca.schematic.graphicalItems.remove(w)
+        kio.remove_items(tca.schematic, [w])
         done.append("TCA: deleted R29 pin 1 stub {}-{}".format(*TCA_STUB))
     text, old, new, ang = TCA_PU_LABEL
-    for lab in tca.schematic.labels:
-        if lab.text == text and (round(lab.position.X, 2), round(lab.position.Y, 2)) == old:
-            lab.position.X, lab.position.Y, lab.position.angle = new[0], new[1], ang
-            lab.effects.justify = Justify(horizontally="right", vertically="bottom")
+    for lab in kids(tca.schematic, "label"):
+        x, y = modify._xy(lab)
+        if atom(lab, 0) == text and (round(x, 2), round(y, 2)) == old:
+            bus.set_at(lab, new[0], new[1], ang)
+            _set_justify(lab, "right", "bottom")
             done.append("TCA: label {} {} -> {} (on R29 pin 1), angle {}".format(text, old, new, ang))
     a, b, end = SW1_WIRE
     w = _wire(pwr, a, b)
     if w is not None:
-        for pt in w.points:
-            if (round(pt.X, 2), round(pt.Y, 2)) == b:
-                pt.X, pt.Y = end
+        for xy in kids(child(w, "pts"), "xy"):
+            if (round(float(atom(xy, 0)), 2), round(float(atom(xy, 1)), 2)) == b:
+                kio.set_num(xy, 0, end[0])
+                kio.set_num(xy, 1, end[1])
         done.append("Power: SW1 pin 1 wire now ends at the VSYS_SENSE label {}".format(end))
-    libs = pwr.schematic.libSymbols
+    libs = child(pwr.schematic, "lib_symbols")
     for lid in REFRESH_LIBS:
         fresh = mcu.stock_symbol(lid)
-        for i, l in enumerate(libs):
-            if l.libId == lid and l.to_sexpr() != fresh.to_sexpr():
-                libs[i] = fresh
+        for i, l in enumerate(libs.children):
+            if l.name == "symbol" and atom(l, 0) == lid and _norm(l) != _norm(fresh):
+                libs.children[i] = fresh
                 done.append("Power: embedded {} re-copied from the KiCad library".format(lid))
     if not done:
         print("Phase 11c fixes already applied: nothing to do")
@@ -313,8 +382,6 @@ def fix_11f() -> int:
     """Phase 11f (W3) fix, idempotent: IC1 pin 4 onto DATA_TO_LEDS_IC1 and R105 33 R to
     DATA_TO_LEDS. The TCA box's VCC_3V3 pin is NOT removed: it is U4's supply path (see the
     Phase 11f notes in SESSION.md)."""
-    sys.path.insert(0, str(REPO / "tools/schematic-context"))
-    import annotate as ann_tool
     docs = modify.load_project(ROOT)
     led = docs.sheet(LED)
     if modify.find_component(led, "R105") is not None:
@@ -324,10 +391,10 @@ def fix_11f() -> int:
     cache = {}
     for part in PARTS_11F:
         _place(docs, cache, part)
-    for line in ann_tool.write_ai_properties(modify.find_component(led, "R105"), R105_ANN):
+    for line in write_ai_properties(led, modify.find_component(led, "R105"), R105_ANN):
         print("  R105" + line)
-    import kiutils_k9
-    kiutils_k9.save_schematic(led.schematic, led.path)   # only the LED sheet changes
+    kio.assert_not_open(led.path)
+    kio.save(led.doc)   # only the LED sheet changes
     print("Saved.")
     return check()
 
@@ -368,7 +435,7 @@ def apply() -> int:
         rename_ref(root, old, new, value)
         print("  {} -> {} ({})".format(old, new, value))
 
-    mcu_doc.schematic.paper.paperSize = "A3"
+    bus.set_paper(mcu_doc, "A3")
     print("{}: paper A4 -> A3".format(MCU))
     for pin, net in U3_PIN_NETS:
         print("  " + modify.set_pin_net(mcu_doc, "U3", pin, net))
@@ -442,7 +509,6 @@ def erc_summary():
 
 def check() -> int:
     import xml.etree.ElementTree as ET
-    import v8_bus_sheet as bus
     import v8_power_sheet as pwr
     fails = pwr.check() != 0
     print("=== Phase 11 check (test points, ground points, debug LEDs, UART0 and spare headers) ===")
@@ -531,7 +597,6 @@ def check() -> int:
 
 def annotations():
     """ref -> {function, block, role, critical_specs}."""
-    import v8_bus_sheet as bus
     import v8_power_sheet as pwr
     ann = {}
 
@@ -657,16 +722,14 @@ def annotations():
 
 
 def annotate() -> int:
-    sys.path.insert(0, str(REPO / "tools/schematic-context"))
-    import annotate as ann_tool
     docs = modify.load_project(ROOT)
     ann = annotations()
     done = set()
     for key, d in docs.by_key.items():
-        for sym in d.schematic.schematicSymbols:
+        for sym in kids(d.schematic, "symbol"):
             ref = modify._symbol_ref(sym)
             if ref in ann:
-                ann_tool.write_ai_properties(sym, ann[ref])
+                write_ai_properties(d, sym, ann[ref])
                 done.add(ref)
     missing = sorted(set(ann) - done)
     docs.save_all()

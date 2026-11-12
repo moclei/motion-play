@@ -53,6 +53,9 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import modify  # noqa: E402
 import v8_mcu_sheet as mcu  # noqa: E402
+import v8_bus_sheet as bus  # noqa: E402
+from modify import kio  # noqa: E402
+from kicad_io import atom, child, kids  # noqa: E402
 
 REPO = mcu.REPO
 ROOT = mcu.ROOT
@@ -195,7 +198,7 @@ def apply() -> int:
     if taken:
         raise RuntimeError("references already used: {}".format(taken))
 
-    pwr.schematic.paper.paperSize = "A3"
+    bus.set_paper(pwr, "A3")
     print("{}: paper A4 -> A3".format(PWR))
     for ref in V7_REMOVED:
         print("  removed {} (labels {})".format(ref, modify.remove_component_with_stubs(pwr, ref)))
@@ -208,29 +211,25 @@ def apply() -> int:
 
     print("Rails")
     for key, d in docs.by_key.items():
-        for sym in d.schematic.schematicSymbols:
+        for sym in kids(d.schematic, "symbol"):
             ref = modify._symbol_ref(sym)
             if not ref.startswith("#PWR"):
                 continue
-            val = [p for p in sym.properties if p.key == "Value"][0]
+            val = modify._prop(sym, "Value")
+            value = str(atom(val, 1))
             if (key, ref) in TO_BUS:
-                assert val.value == "+3.3V", (key, ref, val.value)
-                val.value = "+3.3V_BUS"
+                assert value == "+3.3V", (key, ref, value)
+                kio.set_str(val, 1, "+3.3V_BUS")
                 print("  {} {} +3.3V -> +3.3V_BUS ({})".format(key, ref, TO_BUS[(key, ref)]))
             elif (key, ref) in TO_CORE:
-                assert val.value == "+5V", (key, ref, val.value)
-                val.value = "+5V_CORE"
+                assert value == "+5V", (key, ref, value)
+                kio.set_str(val, 1, "+5V_CORE")
                 print("  {} {} +5V -> +5V_CORE ({})".format(key, ref, TO_CORE[(key, ref)]))
-            elif val.value == "+3.3V":
-                val.value = "+3.3V_MCU"
+            elif value == "+3.3V":
+                kio.set_str(val, 1, "+3.3V_MCU")
                 print("  {} {} +3.3V -> +3.3V_MCU".format(key, ref))
     for key, old, new in ((PWR, "+3.3V", "+3.3V_MCU"), (MCU, "+3.3V", "+3.3V_MCU"), (MCU, "+5V", "+5V_CORE")):
-        s = docs.sheet(key).schematic
-        n = 0
-        for l in s.labels:
-            if l.text == old:
-                l.text = new
-                n += 1
+        n = rename_labels(docs.sheet(key), old, new)
         h = modify.rename_hlabel(docs.sheet(key), old, new)
         ok = modify.rename_sheet_pin(root, key, old, new)
         print("  {}: {} labels, {} hlabels, sheet pin {} {} -> {}".format(key, n, h, "renamed" if ok else "MISSING",
@@ -260,8 +259,8 @@ def apply() -> int:
             modify.add_no_connect(doc, modify.pin_position(doc, c["ref"], p)[0])
         if c.get("dnp"):
             sym = modify.find_component(doc, c["ref"])
-            sym.dnp = True
-            sym.inBom = False
+            kio.set_bare(child(sym, "dnp"), 0, "yes")
+            kio.set_bare(child(sym, "in_bom"), 0, "no")
         print("  {:6s} {:5s} {:22s} {}: {}".format(sheet[:6], c["ref"], c["value"], pos, c["pins"]))
     erc_fixes(docs)
     docs.save_all()
@@ -269,15 +268,21 @@ def apply() -> int:
     return check()
 
 
+def rename_labels(doc, old, new) -> int:
+    """Rename every local label `old` on a sheet; returns how many."""
+    n = 0
+    for l in kids(doc.schematic, "label"):
+        if atom(l, 0) == old:
+            kio.set_str(l, 0, new)
+            n += 1
+    return n
+
+
 def erc_fixes(docs) -> None:
     for sheet, ref, lib_id, value, pt in ERC_FLAGS:
         modify.add_power_symbol(docs.sheet(sheet), mcu.stock_symbol(lib_id), lib_id, ref, value, pt, PROJECT)
         print("  {} {} at {}".format(sheet, ref, pt))
-    n = 0
-    for l in docs.sheet(TCA).schematic.labels:
-        if l.text == RAIL_LABEL[0]:
-            l.text = RAIL_LABEL[1]
-            n += 1
+    n = rename_labels(docs.sheet(TCA), *RAIL_LABEL)
     print("  {}: {} labels {} -> {}".format(TCA, n, *RAIL_LABEL))
 
 
@@ -308,7 +313,6 @@ def expected():
 
 
 def check() -> int:
-    import v8_bus_sheet as bus
     fails = bus.check() != 0
     print("=== Phase 10 check (power sheet; rows c, h, i, j, k, l) ===")
     with tempfile.TemporaryDirectory() as td:
