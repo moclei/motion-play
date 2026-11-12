@@ -96,7 +96,7 @@
 
 - [x] Port `extract.py`, `annotate.py` and `show.py` (raw layer; typed `Schematic` views allowed for reads). On scratch v8 (at `v8-schematic-freeze`) and v7 (`c2acffc`), KiCad 9, compare with `kicad10-preport`: `circuit-context.json` is identical (with and without `--previous`), `--check-sheet-pins` is identical, and the `annotate.py` and `show.py` outputs are identical
 - [x] Port the three generators (`Schematic.create_new` becomes a template parsed by `node()`). Generate into scratch with preport and with the ported version: the netlist and ERC must be identical. Outputs go to scratch, never to their default paths under `hardware/pcb-main/kicad/`
-- [ ] 🔄 Handoff
+- [x] 🔄 Handoff
 
 # --- handoff point ---
 
