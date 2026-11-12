@@ -30,7 +30,10 @@ KiCad 10 boards write nets by name only (``(net "GND")``, no top-level net
 table). Then a net's ``number`` is its name, and ``Board.nets`` lists each
 name once, in file order, so ``{n.number: n.name}`` still resolves every
 item's ``net``. A zone with a name-only net and no ``net_name`` takes that
-name as ``netName``.
+name as ``netName``. A zone with no ``net`` token at all is a zone on no net
+(KiCad 10 omits net 0; KiCad 9 wrote ``(net 0) (net_name "")``), so on a board
+with no net table it reads ``netName`` ``""``, as KiCad 9's file does. On a
+board with a net table, kiutils' absent default "unknown" stays.
 
 Usage:
     import pcb_raw
@@ -398,17 +401,21 @@ class FilledPolygon:
 
 
 class Zone:
-    """kiutils ``Zone``. Absent: net 0, netName "unknown", name/priority None, clearance and
-    minThickness 0.254. ``connectPads`` is the type atom or None (E1)."""
+    """kiutils ``Zone``. Absent: net 0, netName "unknown" ("" on a board with no net table, KiCad 10),
+    name/priority None, clearance and minThickness 0.254. ``connectPads`` is the type atom or None (E1)."""
 
-    def __init__(self, n):
+    def __init__(self, n, name_only=False):
         self.node = n
         c = _last(n, "net")
         net = Net.of(c) if c is not None else None
         self.net = net.number if net is not None else 0
         self.netName = _val(n, "net_name", None)
         if self.netName is None:
-            self.netName = net.name if net is not None and net.number == net.name else "unknown"
+            if net is not None and net.number == net.name:
+                self.netName = net.name
+            else:
+                # KiCad 10 (no net table) writes a no-net zone with no net token: net 0, name "".
+                self.netName = "" if net is None and name_only else "unknown"
         self.layers: List[str] = []
         for c in _lists(n):
             if c.name in ("layers", "layer"):
@@ -499,6 +506,7 @@ class Board:
         self.layers = [LayerToken(c) for c in _lists(ls)] if ls is not None else []
         self.setup = Setup(_last(t, "setup"))
         self.nets = [Net.of(c) for c in _lists(t) if c.name == "net"]
+        name_only = not self.nets
         self.footprints: List[Footprint] = []
         self.graphicItems: List[_Graphic] = []
         self.traceItems: List[Any] = []
@@ -511,7 +519,7 @@ class Board:
             elif c.name in TRACK_KINDS:
                 self.traceItems.append(TRACK_KINDS[c.name](c))
             elif c.name == "zone":
-                self.zones.append(Zone(c))
+                self.zones.append(Zone(c, name_only))
         if not self.nets:
             self.nets = self._name_only_nets()
 
