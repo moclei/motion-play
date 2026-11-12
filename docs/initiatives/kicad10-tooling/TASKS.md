@@ -131,7 +131,7 @@
 
 - [x] `board_model.py` and the reports on scratch v7 converted to 10, with `KICAD_CLI` on 10. Compare with the KiCad 9 model: identical, or each difference explained by the format (Phase 3: NPTH `*.Cu`, a keepout zone with no net, the DRC block, the R2 field-parity item). Probe-points `pads` and `render` on 10: the markers are still on their pads (look at the PNG)
 - [x] OQ-3 probe (PLAN "Board write path"), both candidates: `pcbnew` from KiCad 10's bundled Python, and kicad-tools' board save through the I/O module. Record the paths and results in PLAN. Strike OQ-3, stating the recommended path for v8 Phase 13 and what changes at KiCad 11
-- [ ] 🔄 Handoff
+- [x] 🔄 Handoff
 
 # --- handoff point ---
 
