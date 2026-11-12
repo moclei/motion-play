@@ -105,7 +105,7 @@
 - [x] Port `board_model.py` onto `load_board` with small raw accessors in `pcb-context` (no typed `PCB`; PLAN "Raw-layer traps"), including custom-pad anchor and primitives. On v7 `c2acffc` (KiCad 9), `board-model.json` matches `kicad10-preport` on every leaf (1e-9 mm) except the E1 leaves (PLAN "Accepted differences from preport"); list each E1 leaf in SESSION with old value, new value and the file token. The net and plane reports and probe-points `pads U5 C21 C9` are identical, with no exception. `hardware/pcb-main/kicad/board-model/` isn't regenerated
 - [x] Port `pcb-context/extract.py`, `routing_extract.py` and `tools/verify-routing.py` on the same accessors. Their outputs on v7 `c2acffc` are identical to preport (an E1 field carried into one of them takes the E1 rule; list it)
 - [x] Delete `tools/route_esp32.py` (G2a). Re-grep for doc lines that name it outside history and remove any found
-- [ ] 🔄 Handoff
+- [x] 🔄 Handoff
 
 # --- handoff point ---
 
