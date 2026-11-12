@@ -53,11 +53,9 @@ import xml.etree.ElementTree as ET
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-import kiutils_k9  # noqa: E402,F401  (KiCad 8/9 '(hide yes)' shim; must precede any load)
 import modify  # noqa: E402
-from kiutils.items.common import Effects, Font, Position  # noqa: E402
-from kiutils.items.schitems import HierarchicalPin  # noqa: E402
-from kiutils.symbol import SymbolLib  # noqa: E402
+from modify import kio  # noqa: E402
+from kicad_io import atom, child, kids, node, num, q  # noqa: E402
 
 REPO = Path(__file__).resolve().parents[2]
 KICAD = REPO / "hardware/pcb-main-v8/kicad"
@@ -154,22 +152,25 @@ IC1_PIN_MAP_V7_TO_V8 = {"1": "1", "2": "2", "3": "4", "7": "3", "14": "5"}
 
 
 def stock_symbol(lib_id: str):
-    """Load a stock KiCad symbol, flattening one level of `extends`."""
+    """A stock KiCad symbol's raw node, named lib_id, flattening one level of `extends`: the
+    parent's body with the child's properties, renamed to the child (units too)."""
     lib, name = lib_id.split(":")
-    sl = SymbolLib.from_file(str(STOCK / (lib + ".kicad_sym")))
-    by = {s.libId: s for s in sl.symbols}
+    tree = kio.load_symbol_lib(STOCK / (lib + ".kicad_sym")).tree
+    by = {str(atom(s, 0)): s for s in kids(tree, "symbol")}
     sym = by[name]
-    if sym.extends:
-        parent = copy.deepcopy(by[sym.extends])
-        parent.properties = copy.deepcopy(sym.properties)
-        parent.extends = None
-        parent.libId = name
-        for unit in parent.units:
-            unit.entryName = name
+    ext = child(sym, "extends")
+    if ext is not None:
+        parent = copy.deepcopy(by[str(atom(ext, 0))])
+        at = next((i for i, c in enumerate(parent.children) if c.name == "property"), len(parent.children))
+        parent.children = [c for c in parent.children if c.name != "property"]
+        parent.children[at:at] = copy.deepcopy(kids(sym, "property"))
+        kio.set_str(parent, 0, name)
+        for unit in kids(parent, "symbol"):
+            kio.set_str(unit, 0, "_".join([name] + str(atom(unit, 0)).rsplit("_", 2)[1:]))
         sym = parent
     else:
         sym = copy.deepcopy(sym)
-    sym.libId = lib_id
+    kio.set_str(sym, 0, lib_id)
     return sym
 
 
@@ -198,14 +199,14 @@ def apply() -> int:
     print("  hierarchical label {} at {}".format(name, pos))
 
     sheet = modify.find_sheet_ref(root, MCU)
-    x = round(sheet.position.X, 2)
-    sheet.pins.append(HierarchicalPin(
-        name=name, connectionType="input", position=Position(X=x, Y=ROOT_PIN_Y, angle=180),
-        effects=Effects(font=Font(height=modify.FONT_SIZE, width=modify.FONT_SIZE)),
-        uuid=modify.new_uuid()))
+    x = round(kio.at_xy(sheet)[0], 2)
+    pin = node("(pin {} input (at {} {} 180) (uuid {}) (effects (font (size {} {}))))".format(
+        q(name), num(x), num(ROOT_PIN_Y), q(modify.new_uuid()), num(modify.FONT_SIZE), num(modify.FONT_SIZE)))
+    idx = max(i for i, c in enumerate(sheet.children) if c.name in ("pin", "property"))
+    sheet.children.insert(idx + 1, pin)
     stub = (round(x - modify.WIRE_STUB_LEN, 2), ROOT_PIN_Y)
-    root.schematic.graphicalItems.append(modify._make_wire((x, ROOT_PIN_Y), stub))
-    root.schematic.labels.append(modify._make_local_label(name, stub[0], stub[1], 180))
+    kio.insert_item(root.schematic, modify._make_wire((x, ROOT_PIN_Y), stub))
+    kio.insert_item(root.schematic, modify._make_local_label(name, stub[0], stub[1], 180))
     print("Root: sheet pin {} on ESP32_S3 at ({}, {}), label at {}".format(name, x, ROOT_PIN_Y, stub))
 
     print("IC1 swap ({})".format(LEDC))
@@ -213,15 +214,16 @@ def apply() -> int:
     for pin in IC1_OLD_PIN_LABELS:
         old_pins[pin] = modify.pin_position(ledc, "IC1", pin)[0]
     all_old = [modify.pin_position(ledc, "IC1", str(n))[0] for n in range(1, 15)]
-    old_lib = modify.find_component(ledc, "IC1").libId
+    old_lib = modify._lib_id(modify.find_component(ledc, "IC1"))
     removed_nc = sum(modify.remove_no_connect_at(ledc, p) for p in all_old)
     modify.remove_component(ledc, "IC1")
-    if not any(s.libId == old_lib for s in ledc.schematic.schematicSymbols):
-        ledc.schematic.libSymbols = [l for l in ledc.schematic.libSymbols if l.libId != old_lib]
+    if not any(modify._lib_id(s) == old_lib for s in kids(ledc.schematic, "symbol")):
+        ls = child(ledc.schematic, "lib_symbols")
+        kio.remove_items(ls, [l for l in kids(ls, "symbol") if atom(l, 0) == old_lib])
     for pin, net in IC1_OLD_PIN_LABELS.items():
         p = old_pins[pin]
         angle = 180 if pin == "14" else 0
-        ledc.schematic.labels.append(modify._make_local_label(net, p[0], p[1], angle))
+        kio.insert_item(ledc.schematic, modify._make_local_label(net, p[0], p[1], angle))
     print("  removed old IC1 ({}), {} no-connects; labels at old pins: {}".format(
         old_lib, removed_nc, IC1_OLD_PIN_LABELS))
     ref, lib_id, value, fp, lcsc, pos, nets = IC1_NEW

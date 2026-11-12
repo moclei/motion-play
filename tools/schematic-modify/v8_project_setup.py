@@ -4,7 +4,8 @@ v8_project_setup.py - Create the v8 debug-board KiCad project from the v7 projec
 
 Initiative: docs/initiatives/v8-debug-board (Phase 8, task 1).
 
-What it does (all through git + kiutils; no .kicad_sch/.kicad_pcb text is edited by hand):
+What it does (all through git + tools/kicad-io/kicad_io.py; no .kicad_sch/.kicad_pcb text is edited
+by hand):
   1. Copies the v7 project files from a git commit (default c2acffc) into
      hardware/pcb-main-v8/kicad/, renaming motion-play-main.* to motion-play-main-v8.*.
      Copied: .kicad_pro, the five .kicad_sch sheets, .kicad_dru, sym-lib-table,
@@ -13,7 +14,7 @@ What it does (all through git + kiutils; no .kicad_sch/.kicad_pcb text is edited
   2. Rewrites the lib tables so ${KIPRJMOD}/../resources points at the v7 resources
      folder (hardware/pcb-main/resources), which stays the single copy.
   3. Renames every symbol and sheet instance's project to motion-play-main-v8 and sets
-     the title blocks to v8 (kiutils round-trip; checked netlist-identical to v7).
+     the title blocks to v8 (raw-tree edit, splice save; checked netlist-identical to v7).
   4. Writes a fresh .kicad_pcb from the v7 board: setup (stackup, design settings),
      layers, paper and title block only. No footprints, nets, tracks, zones, graphics
      or outline.
@@ -48,12 +49,9 @@ import tempfile
 import xml.etree.ElementTree as ET
 from pathlib import Path
 
-sys.path.insert(0, str(Path(__file__).resolve().parent))
-import kiutils_k9  # noqa: E402  (KiCad 8/9 '(hide yes)' shim; must precede any load)
-
-from kiutils.board import Board  # noqa: E402
-from kiutils.items.common import Net
-from kiutils.schematic import Schematic
+sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "kicad-io"))
+import kicad_io as kio  # noqa: E402
+from kicad_io import atom, child, kids, node  # noqa: E402
 
 REPO = Path(__file__).resolve().parents[2]
 V7_DIR = "hardware/pcb-main/kicad"
@@ -125,49 +123,84 @@ def copy_project(commit: str) -> None:
         p.write_text(text)
 
 
+# title_block children in KiCad's order; a missing one is inserted at its place.
+TITLE_BLOCK_ORDER = ("title", "date", "rev", "company", "comment")
+
+
+def _set_title_field(tb, key: str, value: str) -> None:
+    n = child(tb, key)
+    if n is not None:
+        kio.set_str(n, 0, value)
+        return
+    rank = TITLE_BLOCK_ORDER.index(key)
+    idx = len(tb.children)
+    for i, c in enumerate(tb.children):
+        if c.name in TITLE_BLOCK_ORDER and TITLE_BLOCK_ORDER.index(c.name) > rank:
+            idx = i
+            break
+    tb.children.insert(idx, node("({} {})".format(key, kio.q(value))))
+
+
 def rename_instances() -> None:
     today = datetime.date.today().isoformat()
     for f in [DEST / "{}.kicad_sch".format(NEW)] + [DEST / s for s in SHEETS]:
-        sch = Schematic.from_file(str(f))
+        doc = kio.load_schematic(f)
         n = 0
-        for sym in sch.schematicSymbols:
-            for inst in sym.instances:
-                inst.name = NEW
+        for item in kids(doc.tree, "symbol") + kids(doc.tree, "sheet"):
+            inst = child(item, "instances")
+            for proj in (kids(inst, "project") if inst is not None else []):
+                kio.set_str(proj, 0, NEW)
                 n += 1
-        for sheet in sch.sheets:
-            for inst in sheet.instances:
-                inst.name = NEW
-                n += 1
-        if sch.titleBlock is not None:
-            sch.titleBlock.title = TITLE
-            sch.titleBlock.revision = REVISION
-            sch.titleBlock.date = today
-        kiutils_k9.save_schematic(sch, f)
+        tb = child(doc.tree, "title_block")
+        if tb is not None:
+            _set_title_field(tb, "title", TITLE)
+            _set_title_field(tb, "rev", REVISION)
+            _set_title_field(tb, "date", today)
+        kio.save(doc)
         print("  {}: {} instances renamed".format(f.name, n))
+
+
+# Top-level board items the fresh board drops (everything but setup, layers, paper, title block and
+# the like); nets are reduced to net 0.
+BOARD_DROP = {"footprint", "segment", "arc", "via", "zone", "dimension", "target", "group", "property",
+              "gr_line", "gr_arc", "gr_circle", "gr_rect", "gr_poly", "gr_curve", "gr_text", "gr_text_box",
+              "gr_bbox"}
+
+
+def _val(n):
+    """An atom's value as kiutils read it (numbers int/float), or None."""
+    return kio.to_lists(n) if n is not None else None
+
+
+def _stackup_layers(board):
+    setup = child(board, "setup")
+    st = child(setup, "stackup") if setup is not None else None
+    return kids(st, "layer") if st is not None else None
 
 
 def fresh_board(commit: str) -> None:
     with tempfile.TemporaryDirectory() as td:
         src = Path(td) / "v7.kicad_pcb"
         src.write_bytes(git("show", "{}:{}/{}.kicad_pcb".format(commit, V7_DIR, OLD)))
-        board = Board.from_file(str(src))
-    board.nets = [Net(number=0, name="")]
-    board.footprints = []
-    board.graphicItems = []
-    board.traceItems = []
-    board.zones = []
-    board.dimensions = []
-    board.targets = []
-    board.groups = []
-    board.properties = {}
-    if board.titleBlock is not None:
-        board.titleBlock.title = TITLE
-        board.titleBlock.revision = REVISION
+        doc = kio.load_board(src)
+    board = doc.tree
+    drop = [c for c in board.children if c.name in BOARD_DROP]
+    drop += [c for c in kids(board, "net") if atom(c, 0) != 0]
+    kio.remove_items(board, drop)
+    if not kids(board, "net"):
+        kio.insert_item(board, node('(net 0 "")'))
+    tb = child(board, "title_block")
+    if tb is not None:
+        _set_title_field(tb, "title", TITLE)
+        _set_title_field(tb, "rev", REVISION)
     out = DEST / "{}.kicad_pcb".format(NEW)
-    board.to_file(str(out))
-    st = board.setup.stackup
+    kio.save(doc, out)
+    st = _stackup_layers(board)
+    general = child(board, "general")
+    th = child(general, "thickness") if general is not None else None
     print("  board: {} layers, stackup {} entries, thickness {}".format(
-        len(board.layers), len(st.layers) if st else 0, board.general.thickness))
+        len([c for c in child(board, "layers").children if not c.is_atom]), len(st) if st else 0,
+        _val(kio.atoms(th)[0]) if th is not None else None))
 
 
 # ---------------------------------------------------------------------------
@@ -265,13 +298,17 @@ def verify(commit: str, compare_v7: bool) -> int:
             len(drc.get("schematic_parity", []))))
         for v in drc.get("violations", [])[:5]:
             print("  ", v.get("type"), "-", v.get("description"))
-    board = Board.from_file(str(pcb))
-    st = board.setup.stackup
-    print("board stackup: " + ", ".join(
-        "{}({})".format(l.name, l.thickness) for l in st.layers if l.type in ("copper", "core", "prepreg")))
+    board = kio.load_board(pcb).tree
+    layers = []
+    for l in _stackup_layers(board) or []:
+        typ, th = child(l, "type"), child(l, "thickness")
+        if typ is not None and atom(typ, 0) in ("copper", "core", "prepreg"):
+            layers.append("{}({})".format(atom(l, 0), _val(kio.atoms(th)[0]) if th is not None else None))
+    print("board stackup: " + ", ".join(layers))
     print("board items: footprints {}, tracks {}, zones {}, graphics {}, nets {}".format(
-        len(board.footprints), len(board.traceItems), len(board.zones), len(board.graphicItems),
-        len(board.nets)))
+        len(kids(board, "footprint")), sum(len(kids(board, k)) for k in ("segment", "arc", "via")),
+        len(kids(board, "zone")), sum(len(kids(board, k)) for k in sorted(BOARD_DROP) if k.startswith("gr_")),
+        len(kids(board, "net"))))
     return fails
 
 
