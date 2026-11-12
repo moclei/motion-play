@@ -88,7 +88,7 @@
 - [x] Port the three, by the same method as Phase 7 task 3: `--check` identical on a scratch root, and an `--apply` replay from the commit before each apply landed (including `v8_power_sheet`'s one-off ERC-fix mode)
 - [x] Delete `tools/schematic-modify/esp32_integration.py` and `esp32_integration_phase2.py` (G2a). Remove the `tools/CONTEXT.md` row (line 57 at `5060d05`) and the `tools/schematic-modify/CONTEXT.md` line (52), and reword its Typical Workflow step 1 (61) to name a `v8_*.py` script. `git grep` finds neither name outside history (archive initiatives, research, SESSION files)
 - [x] Every remaining script that imports `modify.py` runs again (the Phase 6b handoff list is empty)
-- [ ] 🔄 Handoff
+- [x] 🔄 Handoff
 
 # --- handoff point ---
 
