@@ -10,12 +10,14 @@ Every run works only on scratch copies under the run root; it never touches the 
 hardware/ (kicad-cli 10 writes a .kicad_prl even on read-only commands: .context/HAZARDS.md).
 
 Subcommands
-  run RUNROOT [--python PY] [--kicad-cli CLI] [--tools REF] [--v8-ref REF] [--v7-ref REF]
+  run RUNROOT [--python PY] [--kicad-cli CLI] [--tools REF] [--v8-ref REF] [--v7-ref REF] [--upgrade-v8]
       Fresh copies: RUNROOT/v8src = v8 project at --v8-ref (default v8-schematic-freeze), RUNROOT/v7src
       = v7 at --v7-ref (default c2acffc), each with hardware/pcb-main/resources beside it (the lib
       tables point there). Then the reference set (REFSET below) with PY (default tools/.venv/bin/python)
       and KICAD_CLI=CLI (default 9.0.4). --tools REF runs the tools from a temporary git worktree at REF
       (for example the oracle tag kicad10-preport); without it they run from this working tree.
+      --upgrade-v8 converts the v8 copy to the CLI's format first (`kicad-cli sch upgrade` on every
+      sheet; needs kicad-cli 10 or later), so the set runs on a KiCad 10 v8 (kicad10-tooling Phase 12).
       Writes RUNROOT/run.json (settings, exit codes) and RUNROOT/HASHES.txt.
       RUNROOT's last path component must be 6 characters long, and two runs are comparable only if
       their run roots have the same full length: extract.py prints the netlist's byte count, and the
@@ -262,6 +264,18 @@ def cmd_run(a):
         (root / d).mkdir()
     archive(a.v8_ref, ["hardware/pcb-main-v8/kicad", "hardware/pcb-main/resources"], root / "v8src")
     archive(a.v7_ref, ["hardware/pcb-main/kicad", "hardware/pcb-main/resources"], root / "v7src")
+    upgraded = []
+    if a.upgrade_v8:
+        m = re.match(r"(\d+)\.", cli_version(cli))
+        if not m or int(m.group(1)) < 10:
+            die("--upgrade-v8 needs kicad-cli 10 or later (9 has no 'sch upgrade'): " + cli)
+        v8dir = (root / V8_SCH).parent
+        for s in V8_SHEETS:
+            r = subprocess.run([cli, "sch", "upgrade", str(v8dir / s)], stdout=subprocess.PIPE,
+                               stderr=subprocess.STDOUT, universal_newlines=True)
+            if r.returncode != 0:
+                die("sch upgrade failed on {}: {}".format(s, r.stdout.strip()))
+            upgraded.append(s)
     tools = tools_worktree(a.tools, root / "wt") if a.tools else REPO
     tools_commit = subprocess.run(["git", "-C", str(tools), "rev-parse", "HEAD"], stdout=subprocess.PIPE,
                                   universal_newlines=True).stdout.strip()
@@ -274,7 +288,7 @@ def cmd_run(a):
                                              stdout=subprocess.PIPE, universal_newlines=True).stdout.strip(),
             "kicad_cli": cli, "kicad_cli_version": cli_version(cli), "tools": a.tools or "working tree",
             "tools_commit": tools_commit, "tools_dirty": bool(dirty.strip()), "v8_ref": a.v8_ref,
-            "v7_ref": a.v7_ref, "exit": {}}
+            "v7_ref": a.v7_ref, "v8_upgraded": upgraded, "exit": {}}
     try:
         for out, kind, argv in REFSET:
             argv = [subst.get(x, x) for x in argv]
@@ -530,6 +544,7 @@ def main():
     p.add_argument("--v8-ref", default="v8-schematic-freeze")
     p.add_argument("--v7-ref", default="c2acffc")
     p.add_argument("--against", help="reference hash list to check the run against")
+    p.add_argument("--upgrade-v8", action="store_true", help="convert the v8 copy with kicad-cli sch upgrade first")
     p.set_defaults(fn=cmd_run)
     p = sub.add_parser("hash")
     p.add_argument("run_root")
