@@ -1153,3 +1153,39 @@ Tasks assigned: Phase 12 task 3 and the Handoff (tasks 1–2 are done).
 Adjustment: before checking off task 3, close the finding with option (a): the I/O module refuses to embed or save a lib symbol from a library whose format is newer than the target file's KiCad version (9.0.4 stock = 20241209, 10.0.8 stock = 20251024). Committed test cases: KiCad 10 stock into a KiCad 9 sheet refuses, and the file is unchanged; KiCad 9 stock into 9, and 9 or 10 stock into a KiCad 10 sheet, pass. Record the rule in PLAN "One I/O module" (one sentence) and in the tools/CONTEXT.md I/O-module Rule. Add a HAZARDS line. Then re-run iotest, modtest, and the KiCad 9 harness (24/24), and check off task 3 from Worker #13's evidence.
 Rules: hardware/ and lab/ unchanged; kicad-cli 10 only on scratch copies.
 ```
+
+#### Notes
+
+Scratch: `/private/tmp/claude-501/-Users-marcocleirigh-Workspace-motion-play/1edf598d-7bc7-4919-a0bd-71f5981db13e/scratchpad/`. These are `p12w14-io` (iotest) and `p12w14-mt` (modtest), each with a `.log`, plus `w14k09` (harness run, KiCad 9) and `p12/mix2` (the mixed-embed re-run). The scripts are `p12/scripts/mixembed.py` and the new `mixembed_bypass.py`. kicad-cli 10 ran only on scratch copies. `KICAD_CLI` was set per command and was unset (9.0.4) for the harness run.
+
+**Guard (`a757e18`).** `kicad_io` now refuses a library symbol loaded from a file of a newer KiCad version than the target file.
+- **How provenance travels.** At load, every library symbol in a Doc gets its node's class swapped to a slot-less `SExp` subclass whose class attribute `kio_source` = (kind, format version, KiCad major). For a library these are the top-level `symbol` items; for a schematic, the `lib_symbols` entries. `SExp` uses `__slots__`, so an instance attribute or weakref isn't possible. A class with no slots of its own has the same layout, so the swap is allowed, and `copy.deepcopy` rebuilds the copy with the same class. As a result the source survives `extract_lib_symbol`, `stock_symbol`'s `extends` flattening, `ensure_lib_symbol`'s deepcopy, and copies of copies. Serialization and the splice save are unaffected (kicad-tools has no type checks on `SExp`; iotest round trips are still byte-identical).
+- **Where it's checked.** In both places:
+  - At save. `_check_version` (run by `save` and, for every doc before any write, by `save_project`) calls `check_embed` on each library symbol in the tree. Nothing reaches disk past it, whatever the edit path. `v8_debug_sheet`'s REFRESH_LIBS, for example, replaces `lib_symbols` children directly and never calls `ensure_lib_symbol`.
+  - At embed. `modify.ensure_lib_symbol` calls `kio.check_embed` first, so an `--apply` fails before it makes any other edit.
+  - The comparison is by KiCad major. Project libraries in 20211014 (6) and 20231120 (8) format embed into 9 and 10 sheets. A node built in code with `node()` has no source and isn't checked (documented in the module and in tools/CONTEXT.md).
+- **The message.** `<sheet>: library symbol "Device:D_Schottky" comes from a symbol library in format 20251024 (KiCad 10), newer than this schematic's format 20250114 (KiCad 9), which KiCad 9 can't read. Embed it from a KiCad 9 library (stock symbols: KICAD_CLI on KiCad 9)`. The exception is `KiCadIOFormatError`.
+- **Tests: iotest stage 4b.** 17 new checks; IOTEST PASSED 124/124, against 107 before.
+  - KiCad 10 stock into a KiCad 9 sheet: `check_embed`, `save` and `save_project` each refuse; the file is byte-unchanged; the message names the symbol, 20251024 and 20250114.
+  - That same tree, written past the guard with `render`, gives a sheet kicad-cli 9 reads as 224 components instead of 296. This is the loss the guard prevents.
+  - Each of these saves passes, and kicad-cli of the sheet's version reads the result with the input's counts (296/158):
+    - KiCad 9 stock into a KiCad 9 sheet and into a KiCad 10 sheet.
+    - KiCad 10 stock into a KiCad 10 sheet.
+    - The 20211014 project symbol `INA219AIDCNR` into both.
+  - A copy of a copy keeps its source, and a `node()` symbol has none.
+- **Mixed-embed re-run through the real write path.** `mixembed.py` adds D900 `Device:D_Schottky` to the LED sheet, going through `stock_symbol`, `add_component` and `save_all`. Fresh `git archive` copies of v8 at `v8-schematic-freeze` were used, two of them converted by `sch upgrade`:
+  - KiCad 9 sheet, `KICAD_CLI` on 9: saved. kicad-cli 9 reads 297 components and 160 nets, as Worker #13's `s9`.
+  - KiCad 9 sheet, `KICAD_CLI` on 10: **refused** at `ensure_lib_symbol`, exit 1, all five sheets byte-unchanged. This is Worker #13's `s10` case.
+  - KiCad 9 sheet, `KICAD_CLI` on 10, `mixembed_bypass.py`: the bypass appends the stock symbol to `lib_symbols` directly. **Refused** at `save_project`, exit 1, sheets byte-unchanged.
+  - KiCad 10 sheet, `KICAD_CLI` on 9 and on 10: both saved. kicad-cli 10's netlists of the two are the same size.
+- **Re-runs.**
+  - `regress.py iotest`: 124/124.
+  - `regress.py modtest --python scratchpad/p11/venv-old/bin/python`: MODTEST PASSED 105/105, the same count as Phase 11. The guard changes nothing on the 9-stock-into-9 and 9-stock-into-10 paths modtest exercises.
+  - Harness `run w14k09` + `hash --against reference-k9.txt`: 24 of 24.
+- **Recorded in:** the PLAN "One I/O module" Save bullet (one clause), the tools/CONTEXT.md I/O-module Rule Save bullet, and a `.context/HAZARDS.md` line.
+
+**Task 3 checked off.** The evidence is Worker #13's Notes task 3: tidy_fields and the generators are unchanged, the generator outputs were converted and run through ERC on 10, and KiCad 10's stock-symbol differences are explained. Its finding is closed by `a757e18`.
+
+**For the next session.** Phase 13 (board tools) is untouched. `scratchpad/p11/venv-old` is still the preport venv that modtest needs. The guard doesn't cover footprints in boards, because no board write path embeds library footprints yet; if Phase 13's write path does, the same check applies.
+
+**Handoff checks.** `git diff dabb7b4 HEAD` on hardware/, lab/ and .githooks is empty. The working-tree `.kicad_prl` files are untouched (v8 Nov 4, v7 Apr 7). The global `python3` is 3.7.3. No worktree was left: modtest's `wt-pre` removed itself, and `git worktree list` shows only the user's Cursor worktrees. No new documents and nothing Deferred. PLAN changed only by the one Save clause.
