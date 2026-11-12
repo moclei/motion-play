@@ -1273,3 +1273,89 @@ Tasks assigned: Phase 14 task 1. Stop before G3 and return PARTIAL; that stop is
 
 Notes: read-only on hardware/ and on both KiCad prefs folders. Trial either option only on scratch copies (a scratch project table; a scratch KICAD10 config dir via KICAD_CONFIG_HOME if that works for kicad-cli 10), never the real ~/Library/Preferences/kicad/10.0. For each option, show ERC on converted scratch v8 drops the setup items to 0. Give a recommendation.
 ```
+
+#### Notes
+
+Scratch: `/private/tmp/claude-501/-Users-marcocleirigh-Workspace-motion-play/1edf598d-7bc7-4919-a0bd-71f5981db13e/scratchpad/p14/`. `base` is a `git archive v8-schematic-freeze` of `hardware/pcb-main-v8/kicad`, `hardware/pcb-main/resources` and `hardware/libraries`. (The five sheets are the same at HEAD.) `conv` is `base` with `kicad-cli sch upgrade` run on each sheet (all 20250114 → 20260306). Each trial is a copy of `conv` (`convA1`, `convA2`, `convB1`, `convB2`, `convB9`) with its own scratch config home (`cfg0`, `cfgA1`, `cfgA2`, `cfgB1`, `cfgB2`). Scripts are in `scripts/`: `libuse.py` (library use per sheet), `mktables.py` (the project-table entries), `erc.sh`, `ercitems.py` (compares the non-library ERC items) and `tools.sh` (the schematic checks). Every kicad-cli 10 run in this session had `KICAD_CONFIG_HOME` pointed at a scratch folder.
+
+**How kicad-cli 10 finds its config (tested, not assumed).** kicad-cli 10 honours `KICAD_CONFIG_HOME`. With it set, it reads and writes `$KICAD_CONFIG_HOME/10.0/`: `kicad-cli version` alone created `kicad.json`, `kicad_common.json` and `colors/` there. Without it, a kicad-cli 10 run rewrites the real `~/Library/Preferences/kicad/10.0/kicad_common.json`. Its mtime was 22:39 today, before this session started, presumably from an earlier run. The listings (stat and shasum, `p14/prefs{9.0,10.0}_{before,after}.txt`) are identical before and after this session for both `~/Library/Preferences/kicad/9.0` and `/10.0`. Nothing under `~/Documents/KiCad/10.0` is newer than the before-listing either. The real 10.0 folder still has no lib tables. Phase 14 can use this: the gate runs can set `KICAD_CONFIG_HOME` to a scratch folder seeded with the agreed tables. Then the results don't depend on the machine's prefs, and the real ones are never written.
+
+**Baseline, empty scratch config (`cfg0`, the state of the machine today).** ERC on `conv`: 0 errors, 81 pin_to_pin, 2 real lib_symbol_issues, 5 same_local_global_label, and the setup items 330 lib_symbol_issues and 281 footprint_link_issues. These are the Worker #3/#13 counts.
+
+**What v8 uses that resolves only through KiCad 9's global tables** (`libuse.py`, the 334 placed symbols across the five sheets). The per-library counts add up to the setup items exactly: symbols 321 + 9 = 330, footprints 280 + 1 = 281.
+
+- **Own libraries (not KiCad's), 9 symbols and 1 footprint.** KiCad 10 does not provide these.
+
+| Library | Kind | Parts | In 9's global table as |
+|---|---|---|---|
+| `JLC-MCP-Capacitors` | symbol | 2 (C42, C43) | `${KICAD9_3RD_PARTY}/jlc_mcp/symbols/…` (`~/Documents/KiCad/9.0/3rdparty`, outside the repo) |
+| `JLC-MCP-ICs` | symbol | 2 (SW2, SW3) | same |
+| `JLC-MCP-Diodes` | symbol | 1 (U9) | same |
+| `JLC-MCP-Inductors` | symbol | 1 (D5) | same |
+| `JLC-MCP-MCUs` | symbol | 1 (U3) | same |
+| `JLC-MCP-Power` | symbol | 1 (U8) | same |
+| `motion-play-symbols` | symbol | 1 (U4 TCA9548APWR) | absolute path to the working tree, `…/motion-play/hardware/libraries/motion-play-symbols.kicad_sym` |
+| `motion-play-footprints` | footprint | 1 (U4 `SOP65P640X120-24N`) | absolute path, `…/hardware/libraries/motion-play-footprints.pretty` |
+
+- **KiCad stock libraries, 321 symbols and 280 footprints.** KiCad 10.0.8 ships all of these, and its default global table lists them.
+  - Symbols: Connector 119, Device 108, power 38, Connector_Generic 29, Jumper 18, Power_Protection 3, Switch 2, Transistor_FET 2, 74xGxx 1, Regulator_Linear 1.
+  - Footprints: TestPoint 119, Resistor_SMD 53, Capacitor_SMD 43, Connector_PinHeader_2.54mm 23, Jumper 18, LED_SMD 7, Connector_JST 5, Package_TO_SOT_SMD 5, Fuse 3, Package_SON 2, Connector_AMASS 1, Inductor_SMD 1.
+- **Already resolved through v8's project tables, no change needed:** symbols `TPS61088RHLR` and `INA219AIDCNR`. Footprints `JLC-MCP` (10 parts), `motion-play-v8` (J7), `BQ24195RGET`, `FXL0630-2R2-M`, `INA219AIDCNR` and `TPS61088RHLR`.
+- **The 2 real lib_symbol_issues** are the symbol libraries `BQ24195RGET` (U5) and `USB-C_SMD-TYPE-C-31-M-12` (J7). They are in no table, on 9 or on 10. No option changes them.
+
+**New finding: 19 `lib_symbol_mismatch` warnings once the stock libraries resolve on 10.** In every trial that points the stock names at KiCad 10's stock libraries, ERC reports 19 new `lib_symbol_mismatch` warnings: TH1 `Device:Thermistor_NTC`, and 18 jumpers. Those are JP3, 4, 21–26 and 33 (`SolderJumper_2_Open`), JP40–43 (`SolderJumper_2_Bridged`) and JP5, 31, 32, 34, 35 (`SolderJumper_3_Bridged12`). They are the embedded symbols differing from KiCad 10's stock copies. Worker #13 found the same library changes: Thermistor_NTC has new `ki_fp_filters`, and the SolderJumpers have 2 body arcs instead of 4. They are not a design change. Control trial `B9`: the same project table pointed at KiCad 9.0.4's stock folders (`/Applications/KiCad/KiCad.app/Contents/SharedSupport/{symbols,footprints}`) gives 0 mismatches. On 9 these 19 were hidden because 9's stock matched; with no table on 10 they were hidden because nothing resolved. **So the PLAN gate's warning list (81 pin_to_pin, 2 lib_symbol_issues, 5 same_local_global_label) needs 19 lib_symbol_mismatch added at G3, whichever option is chosen.** The other way to clear them is "Update symbols from library" in KiCad 10. That changes the design's embedded symbols, so it isn't part of the migration. B9 is a control only: pointing at 9.0.4's install would break when 9 is uninstalled (OQ-6).
+
+**The two options, each trialled on a converted scratch v8.** For each trial:
+
+| Trial | Config (scratch) | Project tables | errors | pin_to_pin | lib_symbol_issues (real) | same_local_global_label | lib_symbol_mismatch | setup sym / fp |
+|---|---|---|---|---|---|---|---|---|
+| baseline `cfg0` | none | as committed | 0 | 81 | 2 | 5 | 0 | 330 / 281 |
+| (a) `A1`: 9's two tables copied verbatim | 9's tables | as committed | 0 | 81 | 2 | 5 | 19 | **8** / 0 |
+| (a) `A2`: as A1, plus the path `KICAD9_3RD_PARTY` set in `kicad_common.json` | 9's tables + path | as committed | 0 | 81 | 2 | 5 | 19 | 0 / 0 |
+| (b) `B1`: own libraries in the project tables | KiCad 10's default tables (`SharedSupport/template/{sym,fp}-lib-table`) | +7 sym, +1 fp entries; 6 JLC-MCP files copied | 0 | 81 | 2 | 5 | 19 | 0 / 0 |
+| (b) `B2`: own and stock libraries in the project tables | none | +17 sym, +13 fp entries; 6 JLC-MCP files copied | 0 | 81 | 2 | 5 | 19 | 0 / 0 |
+| control `B9`: as B2 with stock pointed at 9.0.4's install | none | as B2 | 0 | 81 | 2 | 5 | 0 | 0 / 0 |
+
+- **The non-library items are the same items.** `ercitems.py` compared them (type, sheet, description, item uuids and positions; 88 items including the 2 real library issues). A1env, A2, B2, B9 and two reruns of B1 are identical to the baseline. The first B1 run named the other one of J7's two stacked shell pins "0" (same position, 39.37/72.39) in one Power-sheet pin_to_pin. Reruns of B1 and of `cfg0` named the usual one, so kicad-cli picks between duplicate pins arbitrarily; it isn't caused by the table.
+- **Netlist** (kicad-cli 10, `regress.py netlist`). `cfg0` against A2 and against B1: structurally equal. Only the `libraries` section changes, so `extract --check-sheet-pins` reports a different byte count.
+- **The schematic checks** (`tools.sh`, `KICAD_CLI` on 10, `--root` on the scratch copy): `tidy_fields`, `tidy_labels`, `v8_power/mcu/bus/debug_sheet --check`, `v8_project_setup --verify --no-v7-compare`, `layout_check` and `extract --check-sheet-pins`. Every one exits 0 for `cfg0`, A2, B1 and B2. A2 and B1 match `cfg0` except in the ERC lines (the setup items are gone and the 19 mismatches appear) and in the netlist byte count. B2 matches B1 except for `tidy_fields`. Its `_lib_table` (`tidy_fields.py:90`) reads v8's project table literally, so `${KICAD10_SYMBOL_DIR}/…` doesn't resolve. It then reports "no reference or library copy" for 7 stock symbols instead of reading `STOCK_SYMBOLS`. `--check` still passes, but the tool has lost its source for those symbols. B1 adds JLC-MCP and `motion-play-symbols` to the table `tidy_fields` reads, and its output is unchanged.
+
+**(a) KiCad 10 global tables, set up by the user.**
+- Machine: `~/Library/Preferences/kicad/10.0/sym-lib-table` and `fp-lib-table`, plus one more step for JLC-MCP.
+  - By import: KiCad 10's first-run "import settings from 9.0" copies 9's tables. The import itself is a GUI step and wasn't run; A1 is the tables copied by hand.
+  - kicad-cli 10 resolves `${KICAD9_SYMBOL_DIR}`/`${KICAD9_FOOTPRINT_DIR}` to its own stock folders, which is where the 19 mismatches in A1 come from. It resolves `${KICAD9_3RD_PARTY}` to `~/Documents/KiCad/10.0/3rdparty`, which is empty: "library 'JLC-MCP-ICs' was not found at '/Users/marcocleirigh/Documents/KiCad/10.0/3rdparty//jlc_mcp/…'". So an import alone leaves 8 symbols unresolved (A1).
+  - The fix is one of three: a `KICAD9_3RD_PARTY` path in Preferences → Configure Paths, which is stored in `kicad_common.json` `environment.vars` (A2 tested this, as did setting it in the process environment); absolute paths in the six entries; or copying or linking `jlc_mcp/` into `~/Documents/KiCad/10.0/3rdparty`.
+  - By hand: start from KiCad 10's default tables and add the 8 own entries with absolute paths. That ends up as A2.
+- Repo: no change.
+- Other boards: none. They stay on 9 and 9 reads only `…/9.0/`. v8's project tables are unchanged.
+- Costs:
+  - v8 depends on machine state again: six libraries outside the repo, and absolute working-tree paths.
+  - Each new machine or KiCad version repeats the setup.
+  - The gate's ERC depends on the user's prefs, unless the gate seeds a scratch `KICAD_CONFIG_HOME`.
+  - JLC-MCP parts added later through the MCP tool reach v8 with no copy step. That's a plus, but the libraries can drift under it.
+
+**(b) The own libraries in v8's project tables (B1), with stock from KiCad 10's own default global table.**
+- Repo, all under `hardware/pcb-main-v8/kicad/`:
+  - `sym-lib-table` gains 7 entries: `motion-play-symbols` → `${KIPRJMOD}/../../libraries/motion-play-symbols.kicad_sym`, and the six `JLC-MCP-*` → `${KIPRJMOD}/libraries/symbols/JLC-MCP-*.kicad_sym`.
+  - `fp-lib-table` gains 1: `motion-play-footprints` → `${KIPRJMOD}/../../libraries/motion-play-footprints.pretty`.
+  - The six JLC-MCP `.kicad_sym` files (about 45 KB, KiCad 9 format 20241209, 3–6 symbols each) are copied from `~/Documents/KiCad/9.0/3rdparty/jlc_mcp/symbols/` into `libraries/symbols/`, beside the `JLC-MCP-Misc.kicad_sym` already there. kicad_io's FORMATS already accepts 20241209.
+- Machine: KiCad 10's default global tables, for the stock libraries only. KiCad ships them as `SharedSupport/template/{sym,fp}-lib-table`, and KiCad 10 offers "copy default global table" the first time the GUI opens the symbol table. kicad-cli needs them in `~/Library/Preferences/kicad/10.0`, or in a seeded `KICAD_CONFIG_HOME`.
+- Other boards: none. Only v8's tables and its own `libraries/` change. `hardware/libraries/` is referenced, not edited. v7 and the others stay on 9 with 9's tables.
+- Costs:
+  - The six files are a snapshot. A new JLC part for v8 has to be copied into the project, as `JLC-MCP-Misc` was.
+  - The repo change goes beyond the format conversion, so the gate's "only those files change" check has to allow these files.
+- Variant B2 (stock entries in the project table too): no global table needed at all. But it needs `tidy_fields._lib_table` to expand `${KICADn_SYMBOL_DIR}` to `STOCK_SYMBOLS`, and it puts 23 stock entries in v8's tables. Not recommended.
+
+**Recommendation: (b), as B1.**
+- v8 then resolves everything that isn't KiCad's from the repo, with project-relative paths and no environment variables.
+- It no longer depends on `~/Documents/KiCad/9.0/3rdparty`, which an uninstall of 9 (OQ-6) could remove, or on an absolute working-tree path.
+- The only machine step is KiCad 10's own default table.
+- No tool changes. The checks are unchanged apart from the expected ERC lines.
+- In both options, G3 also has to accept the 19 `lib_symbol_mismatch` into the gate's warning list.
+
+**For the next session.**
+- G3 is the user's: approve the migration, OQ-4 and the library table. Add "accept 19 lib_symbol_mismatch" to the same gate. PLAN is unchanged, and its Open Questions weren't touched.
+- If (b): Phase 14 task 3 copies the six JLC-MCP files and adds the 8 entries by `mktables.py own`'s text (the descriptions can be adjusted). The machine needs KiCad 10's default global tables before the gate's kicad-cli runs. Alternatively, the gate seeds a scratch `KICAD_CONFIG_HOME` with them.
+- If (a): the user sets up `~/Library/Preferences/kicad/10.0` and includes the JLC-MCP path, or ERC will show 8 setup items.
+
+**Handoff checks.** `git status` was clean before the commits. The working-tree `.kicad_prl` of v8 is untouched (Nov 4). Nothing under hardware/ or lab/ changed. Both KiCad prefs folders match their before-listings. The global python3 and .githooks weren't touched. No PLAN edits, no new documents, nothing Deferred.
