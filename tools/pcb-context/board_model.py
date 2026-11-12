@@ -51,8 +51,6 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
 
-from kiutils.board import Board
-from kiutils.items.brditems import Arc, Segment, Via
 from shapely.geometry import (LineString, MultiPolygon, Point, Polygon, box,
                               mapping)
 from shapely.ops import polygonize, unary_union
@@ -60,6 +58,10 @@ from shapely import affinity
 
 _HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(_HERE))
+
+# The board is read raw through kicad_io, with pcb_raw's views (never kicad-tools' typed PCB).
+from pcb_raw import Arc, Board, Segment, Via  # noqa: E402
+import pcb_raw  # noqa: E402
 
 # Reused from the existing extractors (spot-checked; see README).
 from routing_extract import (_arc_to_polyline, _polyline_length,  # noqa: E402
@@ -313,7 +315,7 @@ def _pad_local_shape(pad):
             elif len(p) >= 2:
                 parts.append(LineString(p).buffer(max(sw, 1e-3) / 2.0, ARC_QUAD))
         return unary_union(parts) if parts else Point(0, 0).buffer(0.01)
-    # rect, trapezoid (kiutils 1.4.8 has no rect_delta; treated as rect), unknown
+    # rect, trapezoid (rect_delta is not read; treated as rect), unknown
     return box(-w / 2, -h / 2, w / 2, h / 2)
 
 
@@ -502,7 +504,7 @@ def extract_zones(board: Board, cu: List[str], warnings: List[str]) -> List[Dict
             "priority": z.priority if z.priority is not None else 0,
             "keepout": keepout,
             "clearance_mm": z.clearance, "min_thickness_mm": z.minThickness,
-            "connect_pads": getattr(z.connectPads, "type", None) if z.connectPads else None,
+            "connect_pads": z.connectPads,     # the type atom, or None (pcb_raw, E1)
             "outline": poly_to_json(outline),
             "outline_area_mm2": _r(outline.area),
             "filled": filled,
@@ -1028,7 +1030,7 @@ def load_config(pcb: Path, explicit: Optional[str]) -> Tuple[Dict[str, Any], Opt
 def build_model(pcb: Path, cfg: Dict[str, Any], cfg_path: Optional[str], drc: bool,
                 kicad_cli: str, source_ref: Optional[str]) -> Dict[str, Any]:
     warnings: List[str] = []
-    board = Board.from_file(str(pcb))
+    board = pcb_raw.load(pcb)
     cu = copper_layers(board)
     net_index = build_net_index(board)
     stackup = extract_stackup(board, cu, warnings)
