@@ -1397,3 +1397,36 @@ Tasks assigned: Phase 14 tasks 2–5 (G3 record, convert, gate, Handoff).
 Notes: record the G3 decisions in PLAN (strike OQ-4; library-table and 19-warning decisions in "Migrating v8"). Every kicad-cli run uses a scratch KICAD_CONFIG_HOME seeded with KiCad 10's default global tables; never the real prefs. "Only those files change" includes the new libraries/symbols/ folder and the two lib tables. Tags annotated, not pushed. If any gate item fails, stop and report; do not commit the migration.
 Rules: nothing under hardware/pcb-main/, other boards or lab/ changes.
 ```
+
+#### Notes
+
+Scratch: `/private/tmp/claude-501/-Users-marcocleirigh-Workspace-motion-play/1edf598d-7bc7-4919-a0bd-71f5981db13e/scratchpad/p14w/`. `cfg/` is the scratch `KICAD_CONFIG_HOME`: `cfg/10.0/{sym,fp}-lib-table` are KiCad 10's default tables, copied from `KiCad10.app/Contents/SharedSupport/template/`. Every kicad-cli 9 and 10 run in this session used it, including the runs the tools make (they inherit the environment: the only `env=` in the KiCad tools is `regress.py`/`test_modify.py`, built from `os.environ`). kicad-cli 9 wrote its own `cfg/9.0/` with no tables. `ref/` is a `git archive v8-schematic-freeze` of v8, `pcb-main/resources` and `hardware/libraries`. Outputs are in `out/` and `tools_out/`; `scripts/tools.sh` is Worker #16's, pointed at a root sheet path. The real `~/Library/Preferences/kicad/9.0` and `/10.0` match their before-listing (`out/prefs_before.txt`, shasum of every file).
+
+**Task 2 (`6bd9bc8`). G3 recorded in PLAN.** OQ-4 struck with the answer. "Migrating v8" gains the library-table decision (option b, the B1 entries) and the gate's warning list (0 errors; 81 pin_to_pin, 2 lib_symbol_issues, 5 same_local_global_label, 19 lib_symbol_mismatch; 0 setup items), with the 19 named and the embedded symbols left as frozen. G3 marked done under User gates. Three Rejected Approaches lines: option (a), variant B2, and updating the 19 symbols from the library.
+
+**Task 3. Conversion.**
+- Before: `pgrep -i kicad` found nothing. No `~*.lck` in v8's folder. The only lock files in `hardware/` are the old stale ones (v7 `~motion-play-v3.kicad_sch.lck`, Sep 2025; power-supply sch and pcb, Oct 2025).
+- `v8-schematic-freeze-k9`: annotated, on `0d6255b` (the `v8-schematic-freeze` commit).
+- kicad-cli 10.0.8 `sch upgrade` on each of the five sheets (20250114 → 20260306); a second run on each printed "Schematic file was not updated". `pcb upgrade` on the board (20241229 → 20260206). The `.kicad_pro` and `.kicad_dru` weren't touched (the upgrade commands don't write them).
+- **`.kicad_prl`: `pcb upgrade` rewrote v8's `motion-play-main-v8.kicad_prl`** (2,501 → 2,666 bytes, Nov 4 → 23:32 today). It's gitignored. The original is saved at `p14w/out/prl.before`.
+- Library tables: the six JLC-MCP `.kicad_sym` files copied from `~/Documents/KiCad/9.0/3rdparty/jlc_mcp/symbols/` (read only) into `libraries/symbols/`; the 7 + 1 entries added by Worker #16's `mktables.py own`. Both tables and all seven library files are byte-identical to Worker #16's B1 trial copy.
+- `git status` showed only the five sheets, the board, the two tables and the six new library files, all under `hardware/pcb-main-v8/kicad/`. No file under `hardware/` or `lab/` outside v8's folder is newer than the start of the conversion. `kicad_io` loads all of them (sheets 20260306, board 20260206, libraries 20241209).
+
+**Task 4 (`60e9d12`). Gate, all on the migrated working tree, `KICAD_CLI` on 10, `tools/.venv/bin/python`.**
+- **Netlist.** kicad-cli 10's netlist of the migrated v8 against kicad-cli 9's of the `ref/` copy at the freeze (`regress.py netlist --strip-b`): 296/296 components, 158/158 nets, 0 components and 0 nets differing. The only differences are the 14 net-class strings, the PLAN exporter item. NETLISTS EQUAL.
+- **ERC.** 107 violations, all warnings, 0 errors: 81 pin_to_pin, 2 lib_symbol_issues (J7 `USB-C_SMD-TYPE-C-31-M-12`, U5 `BQ24195RGET`), 5 same_local_global_label, 19 lib_symbol_mismatch. 0 setup items. Exactly the PLAN list. The 19 mismatches are the same items (sheet and symbol uuids) as in Worker #16's B1 trial: TH1 `Thermistor_NTC` and the 18 jumpers. Worker #16's `ercitems.py` finds the 88 non-setup items identical to B1 and to the `cfg0` baseline (description, uuids and positions).
+- **Checks** (`tools.sh`): `tidy_fields --check` and `tidy_labels --check` (TOTAL 0, nothing written), `v8_power_sheet` (PHASE 10 CHECK PASSED), `v8_mcu_sheet` (CHECK PASSED), `v8_bus_sheet` (PHASE 9 CHECK PASSED), `v8_debug_sheet` (LAYOUT CHECK PASSED, PHASE 11 CHECK PASSED), `v8_project_setup --verify --no-v7-compare`, `layout_check`, `extract --check-sheet-pins`. All exit 0. Each output equals B1's, apart from two lines:
+  - `v8_project_setup`: "board items … nets 1" → "nets 0". B1 converted only the sheets; here the board is converted too. The KiCad 9 board has one `(net 0 "")` declaration, and the KiCad 10 format declares no nets (name-only nets, PLAN "Board write path"). The empty board's DRC is unchanged: one `invalid_outline`.
+  - `extract`: the netlist byte count (573,760 → 573,677), because the netlist carries the source path and the paths have different lengths.
+- **`layout_check` re-baselined: no change.** `--update-baseline` printed "Baseline unchanged." and `tools/schematic-modify/layout_baseline.json` has no diff. `layout_check` and `layout_check -v` on the migrated v8 with kicad-cli 10 are identical to the same commands on `ref/` with kicad-cli 9 (paths normalised), and nothing is below baseline. Phase 12 showed why: every field, label, sheet pin and text item plots in the same box on 10.
+- **`extract.py --previous`** (previous = the committed file, copied to scratch first): "No structural changes", 42 sheet pins, 0 unresolved. Against the previous file, the only differences are `_provenance` (the five new source hashes, `generator_commit` `6bd9bc8`, `generated`) and `source.extracted_at`. Its provenance keeps the root plus 4 `sources` form.
+- **`--check-sheet-pins`:** 42 pins, 0 offenders.
+- **`check_state.py --fresh hardware/pcb-main-v8/kicad/circuit-context.json`** (global python3): FRESH ("source … and 4 more match"), before and after the commit.
+- Committed as `60e9d12` (5 sheets, board, two tables, six libraries, circuit-context.json, TASKS ticks). The lab pre-commit hook ran and accepted it. Then `v8-schematic-freeze-k10` (annotated) went on `60e9d12`. Neither tag was pushed.
+
+**For the next session.**
+- v8 is on KiCad 10 from `v8-schematic-freeze-k10`. Run kicad-cli on v8 only with `KICAD_CLI` on 10 and a `KICAD_CONFIG_HOME` that has KiCad 10's default tables. Without one, ERC shows the setup items, and kicad-cli 10 writes the real `~/Library/Preferences/kicad/10.0`.
+- The harness's `run` still archives v8 at `v8-schematic-freeze` (KiCad 9) by default, and `reference-k9.txt` is unchanged. `--v8-ref v8-schematic-freeze-k10` runs it on the migrated v8.
+- Before any GUI use of v8 on 10 (Phase 15), the user accepts KiCad 10's default global library table on first launch (G3).
+
+**Handoff checks.** `git status` is clean. Nothing under `hardware/pcb-main/`, other boards, `lab/`, `.githooks` or `tools/` changed (`git diff 982efcc HEAD --stat`). The global `python3` is unchanged. No new documents, nothing Deferred.

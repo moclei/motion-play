@@ -141,7 +141,7 @@
 - [x] **G3 (user):** approve the migration, and answer OQ-4 (freeze tag) and the library-table question. Record all three in PLAN
 - [x] KiCad is closed (no `~*.lck`). Tag `v8-schematic-freeze-k9` on the `v8-schematic-freeze` commit. Convert `hardware/pcb-main-v8/kicad/` (schematic, board, project) to KiCad 10 by Phase 1's method, and apply the library-table answer. Only those files change (check `git status`; nothing under `hardware/pcb-main/`, other boards or `lab/`)
 - [x] Gate (PLAN "Migrating v8"). The netlist is structurally identical to 9.0.4 at `v8-schematic-freeze`. ERC has 0 errors, and its warnings are listed against the freeze counts. Every `v8_*.py --check` passes. `layout_check` is re-baselined, with each change explained. `extract.py --previous` reports no structural changes. `--check-sheet-pins` has 0 offenders. `check_state.py --fresh` reports FRESH. Commit, then cut the tag chosen at G3
-- [ ] 🔄 Handoff
+- [x] 🔄 Handoff
 
 # --- handoff point ---
 
