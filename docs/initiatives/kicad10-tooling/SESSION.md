@@ -1189,3 +1189,34 @@ Scratch: `/private/tmp/claude-501/-Users-marcocleirigh-Workspace-motion-play/1ed
 **For the next session.** Phase 13 (board tools) is untouched. `scratchpad/p11/venv-old` is still the preport venv that modtest needs. The guard doesn't cover footprints in boards, because no board write path embeds library footprints yet; if Phase 13's write path does, the same check applies.
 
 **Handoff checks.** `git diff dabb7b4 HEAD` on hardware/, lab/ and .githooks is empty. The working-tree `.kicad_prl` files are untouched (v8 Nov 4, v7 Apr 7). The global `python3` is 3.7.3. No worktree was left: modtest's `wt-pre` removed itself, and `git worktree list` shows only the user's Cursor worktrees. No new documents and nothing Deferred. PLAN changed only by the one Save clause.
+
+#### Result
+| # | Phase | Result | Escalation evaluated? | Commit | Notes |
+|---|-------|--------|-----------------------|--------|-------|
+| 14 | Phase 12 (cont.): stock-symbol guard, task 3 | DONE | No — clean completion | 04a9611 | Guard `a757e18`; iotest 124/124; modtest 105/105; KiCad 9 harness 24/24; mixed embed now refused |
+
+#### Verification
+- 2 commits, `a757e18` and `04a9611`. Phase 12 is all `[x]`. `git diff bf0a5ca HEAD` on hardware/, lab/ and .githooks is empty. The PLAN edit is one clause in the "One I/O module" Save bullet, and it records the rule this dispatch asked for. No extra worktree is left.
+- Orchestrator re-ran `regress.py iotest` into scratchpad/orch12: 124 passed, 0 failed. The tree is clean afterwards.
+- **How the guard works.** Library-symbol nodes are re-classed at load to an `SExp` subclass that carries their source version. The source survives deepcopy. The guard checks at embed time (`ensure_lib_symbol`) and again at save, so nothing gets past it. Serialization is unchanged. One known gap: a symbol built in code with `node()` has no source and isn't checked. This is documented.
+- Carry forward to Phase 13:
+  - The guard doesn't cover footprints. If a board write path copies library footprints, apply the same rule there.
+  - Worker #11 found that a zone with no net reads "unknown" on KiCad 10, where KiCad 9 gives `''`. Decide what it should read.
+  - `routing_extract` shows net names instead of net numbers on 10.
+
+---
+
+### Worker #15 — Phase 13: Board tools and the write path on KiCad 10
+
+**Dispatch:**
+```
+Initiative: kicad10-tooling
+Phase: 13 — Board tools and the write path on KiCad 10
+Initiative path: docs/initiatives/kicad10-tooling/
+Additional reading: PLAN in full ("Board write path", "Which layer", "One I/O module"). SESSION.md Worker #3 Notes (KiCad 10 board format: nets by name, NPTH *.Cu, keepout zone, DRC parity item), Worker #11 Notes + Orchestrator Verification (pcb_raw views, KiCad 10 smoke test, absent-net "unknown"), Worker #14 Verification (footprint guard). docs/initiatives/v8-debug-board/PLAN.md OQ-3 and "AI layout tooling" (grep), and the v8 SESSION "Replan — board write path" section (grep) for the KiCad 9 probe method.
+
+Tasks assigned: Phase 13, all 3 tasks (see TASKS.md)
+
+Notes: decide the absent-net zone value on 10 with evidence (match KiCad 9's '' or keep "unknown") and record why. pcbnew probe runs KiCad 10's bundled Python only, on scratch copies. If a write path copies library footprints, state whether the version guard must cover it.
+Rules: hardware/ and lab/ unchanged; kicad-cli 10 and KiCad 10's Python only on scratch copies; harness 24/24 on KiCad 9 at handoff.
+```
