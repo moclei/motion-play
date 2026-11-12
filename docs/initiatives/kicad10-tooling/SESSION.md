@@ -1359,3 +1359,13 @@ Scratch: `/private/tmp/claude-501/-Users-marcocleirigh-Workspace-motion-play/1ed
 - If (a): the user sets up `~/Library/Preferences/kicad/10.0` and includes the JLC-MCP path, or ERC will show 8 setup items.
 
 **Handoff checks.** `git status` was clean before the commits. The working-tree `.kicad_prl` of v8 is untouched (Nov 4). Nothing under hardware/ or lab/ changed. Both KiCad prefs folders match their before-listings. The global python3 and .githooks weren't touched. No PLAN edits, no new documents, nothing Deferred.
+
+#### Result
+| # | Phase | Result | Escalation evaluated? | Commit | Notes |
+|---|-------|--------|-----------------------|--------|-------|
+| 16 | Phase 14 (pre-G3): v8 library resolution | PARTIAL | Yes — resolvable without replanning: the stop is the planned G3 user gate | 345fcbb | Task 1 done; recommends option (b) project tables; found 19 `lib_symbol_mismatch` from KiCad 10's changed stock symbols |
+
+#### Verification
+- 1 commit (`345fcbb`). Only SESSION.md and TASKS.md changed. The tree is clean.
+- **Machine-side observation (Orchestrator):** both `~/Library/Preferences/kicad/9.0/kicad_common.json` (22:40) and `10.0/kicad_common.json` (22:39) have mtimes of 2026-11-11, each at its earlier byte size (2398 and 2691). At session start, 9.0's was Nov 7. The likeliest cause is a kicad-cli run without `KICAD_CONFIG_HOME` rewriting the common settings on exit; Worker #16 showed this for kicad-cli 10. Same size suggests the same content, but there's no before-copy to prove it. The user is told. For Phase 14 onward, every kicad-cli run uses a scratch `KICAD_CONFIG_HOME`, seeded with the agreed tables.
+- G3 goes to the user with four items: the migration, OQ-4, the library table, and accepting the 19 `lib_symbol_mismatch` warnings into the gate's warning list.
