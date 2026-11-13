@@ -1600,3 +1600,22 @@ The case for dropping it: the same loop can run on files instead (the user saves
 #### Verification (continued)
 - `git diff 162ca91 adb185e`: .gitignore (+`tools/.venv-kipy/` only), PLAN (IPC outcome bullet; G4 marked done), TASKS (Phase 15 all `[x]`), the Worker's own Notes block, tools/CONTEXT.md (Live board edits paragraph plus a Dependencies line), and the new tools/requirements-kipy.txt. Nothing under hardware/, lab/ or .githooks. PLAN has no date-stamped headings. The tree is clean.
 - My G4 decision and Result blocks are untouched.
+
+---
+
+### Worker #19 — Phase 16: MCP server trial
+
+**Dispatch:**
+```
+Initiative: kicad10-tooling
+Phase: 16 — MCP server trial
+Initiative path: docs/initiatives/kicad10-tooling/
+Additional reading: PLAN "Trials" (incl. the IPC outcome bullet), OQ-5. SESSION.md Worker #18 Notes (trial method, timings, prefs effects, .history). Phase 15 artefacts in scratchpad/p15/ (trial.py, trial-log.jsonl, pn-plan).
+
+Tasks assigned (from TASKS.md Phase 16): tasks 1–2; stop before G5.
+
+OQ-5 answered by the user (2026-11-12): kicad-mcp-pro. Record it in PLAN (strike OQ-5) as part of task 1.
+
+Notes: work in stages and return at each user step with exact numbered instructions (the Orchestrator relays and continues you). Pin kicad-mcp-pro to a release in its own venv (scratchpad, or gitignored under tools/); configure it project-local for the trial only, read-only profile first, then the gated write profile for the moves. Fresh scratch KiCad-10 copy of v7's board (git archive c2acffc, converted as in p15). The same task as Phase 15 (list, move TPIO21/TPIO16/TPIO43, rotate TP3, read back; the user corrects one part and saves; read back; disk compare, board_model diff, DRC with a scratch KICAD_CONFIG_HOME). Measurements as in Phase 15, plus tool calls and tokens per task against Phase 15's script. The MCP tools have to be driven by an agent: if a project-local MCP server can't be loaded into a running session, say so and propose how to run it (e.g. the user restarting Claude Code, or a sub-session) rather than improvising. KiCad 10 still has the API enabled from Phase 15.
+Rules: never open or touch working-tree board files; hardware/ and lab/ unchanged; no change to global python3 or the lab hook; any MCP config added must be removable and named in your Notes; record any change to the user's KiCad or Claude config.
+```

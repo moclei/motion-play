@@ -156,7 +156,7 @@
 
 ## Phase 16: MCP server trial
 
-- [ ] Ask OQ-5 (which server; PLAN recommends kicad-mcp-pro and lists kicad-tools' `kct mcp serve` as an option), then record the answer. Install it pinned to a release, configured project-local for the trial only, with the read-only profile first
+- [~] Ask OQ-5 (which server; PLAN recommends kicad-mcp-pro and lists kicad-tools' `kct mcp serve` as an option), then record the answer. Install it pinned to a release, configured project-local for the trial only, with the read-only profile first
 - [ ] The same trial task as Phase 15, on a fresh scratch copy, with the same measurements. Also count the tool calls and tokens per task, against Phase 15's script
 - [ ] **G5 (user):** keep or drop, with the evidence side by side with Phase 15. If dropped, remove the server config and add a Rejected Approaches line. If kept, its config is committed and a tools/CONTEXT.md line says what it's for and what it may write
 - [ ] 🔄 Handoff
