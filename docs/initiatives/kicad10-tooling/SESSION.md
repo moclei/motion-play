@@ -1570,6 +1570,8 @@ The case for dropping it: the same loop can run on files instead (the user saves
 - KiCad is still open on the scratch board, as the Orchestrator asked.
 - No new documents. Nothing Deferred: the `.history` finding is for Phase 17.
 
+**G4 close-out (after the user's decision).** Kept, in the narrow role. `tools/requirements-kipy.txt` pins kicad-python 0.8.0 and its 10 transitive packages (the trial venv's freeze), and its header says to skip `check_version()`. Its venv `tools/.venv-kipy/` is gitignored; `tools/requirements.txt` and `tools/.venv` are unchanged. tools/CONTEXT.md gains a "Live board edits (IPC)" paragraph under pcb-context and a line under Dependencies. PLAN Trials gains an "IPC outcome" bullet: W4–W5, `pcb_write.py` stays the writer, W6 / v8 Phase 16 untested, skip the version check. The G4 line is marked done. The `.history/` gitignore is left for Phase 17. `hardware/`, `lab/` and `.githooks` are unchanged.
+
 #### Result
 | # | Phase | Result | Escalation evaluated? | Commit | Notes |
 |---|-------|--------|-----------------------|--------|-------|

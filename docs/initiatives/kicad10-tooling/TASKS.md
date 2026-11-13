@@ -149,8 +149,8 @@
 
 - [x] kipy in its own venv (scratchpad, or gitignored under `tools/`). **(user)** enables the API server in KiCad 10 (Preferences → Plugins) and opens a scratch KiCad-10 copy of v7's board. Never the working tree
 - [x] Run the trial task (PLAN "Trials") while the user watches: list the footprints, move three named footprints, rotate one, read back. Then the user moves one part and the script reads that correction back. Record the time per call, any busy or timeout failures, and whether the board on disk matches after the user saves
-- [ ] **G4 (user):** keep or drop, with the evidence. If kept: where it fits in v8 (W4–W6 and/or v8 Phase 16) and a tools/CONTEXT.md line. If dropped: a line in PLAN Rejected Approaches
-- [ ] 🔄 Handoff
+- [x] **G4 (user):** keep or drop, with the evidence. If kept: where it fits in v8 (W4–W6 and/or v8 Phase 16) and a tools/CONTEXT.md line. If dropped: a line in PLAN Rejected Approaches
+- [x] 🔄 Handoff
 
 # --- handoff point ---
 

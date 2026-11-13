@@ -1,0 +1,22 @@
+# Python dependencies for live board edits over KiCad's IPC API (kipy, kicad-python).
+# Kept apart from tools/requirements.txt so the main tools venv is untouched (kicad10-tooling G4).
+#
+# Target: a venv at tools/.venv-kipy (gitignored) on /usr/local/bin/python3.13.
+#   /usr/local/bin/python3.13 -m venv tools/.venv-kipy
+#   tools/.venv-kipy/bin/pip install -r tools/requirements-kipy.txt
+#
+# Needs KiCad 10 running with the board open and "Enable KiCad API" ticked (Preferences > Plugins).
+# kicad-python 0.8.0 is built against API 10.0.6; on KiCad 10.0.8 every call used in the Phase 15
+# trial worked, but kipy's own KiCad.check_version() raises FutureVersionError: don't call it.
+# Upgrades are a commit of their own, re-checked with the Phase 15 trial on a scratch copy.
+attrs==26.1.0
+cffi==2.1.1
+jsonschema==4.26.0
+jsonschema-specifications==2025.9.1
+kicad-python==0.8.0
+protobuf==5.29.6
+pycparser==3.12
+pynng==0.9.0
+referencing==0.37.0
+rpds-py==2026.9.1
+sniffio==1.3.1

@@ -98,6 +98,8 @@ The **board model** is the one source for PCB context: `board_model.py` parses a
 
 See `tools/pcb-context/README.md` for full usage.
 
+**Live board edits (IPC, kicad10-tooling G4).** Live board edits and read-back go through kipy (`kicad-python`, pinned in `tools/requirements-kipy.txt`, venv `tools/.venv-kipy`) over KiCad's IPC API, with KiCad 10 open on the board and "Enable KiCad API" ticked. One commit per edit (`begin_commit`/`push_commit`), so each AI edit is a named undo step the user can see and revert; the user's hand corrections are read back with `get_footprints`. Nothing reaches disk until the user saves: after the save, verify the file with kicad-cli DRC and a `board_model.py` diff keyed by footprint ref. Don't call kipy's `check_version()` (0.8.0 targets 10.0.6 and raises on 10.0.8). Role: v8's W4–W5 placement reviews; `pcb_write.py` (pcbnew on KiCad 10) stays the batch writer. Hand-routing read-back (W6, v8 Phase 16) is untested.
+
 ### verify-routing.py
 
 Verifies PCB routing against spec constraints (trace widths, clearances, net classes). Currently hardcoded to a specific board revision — needs genericization to accept an input spec file.
@@ -166,4 +168,4 @@ Tooling for the bench-debug `lab/` tree at the repo root (STATE, cards, log, evi
 
 ## Dependencies
 
-The KiCad Python tools (`schematic-*`, `pcb-context`, `kicad-io`, `lab/probe_points`) run in `tools/.venv` on Python 3.13, built from `tools/requirements.txt` (`/usr/local/bin/python3.13 -m venv tools/.venv && tools/.venv/bin/pip install -r tools/requirements.txt`; `pip check` clean). KiCad files are parsed by kicad-tools 0.29.0 through `kicad-io/kicad_io.py` only (I/O-module Rule). The lab tools and the pre-commit hook run on the global `python3`, not the venv. Shell scripts require AWS CLI + jq.
+The KiCad Python tools (`schematic-*`, `pcb-context`, `kicad-io`, `lab/probe_points`) run in `tools/.venv` on Python 3.13, built from `tools/requirements.txt` (`/usr/local/bin/python3.13 -m venv tools/.venv && tools/.venv/bin/pip install -r tools/requirements.txt`; `pip check` clean). KiCad files are parsed by kicad-tools 0.29.0 through `kicad-io/kicad_io.py` only (I/O-module Rule). The lab tools and the pre-commit hook run on the global `python3`, not the venv. Live IPC board edits use a separate venv, `tools/.venv-kipy`, built from `tools/requirements-kipy.txt` (same recipe). Shell scripts require AWS CLI + jq.
