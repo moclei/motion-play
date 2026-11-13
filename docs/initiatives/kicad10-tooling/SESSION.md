@@ -1591,3 +1591,12 @@ The case for dropping it: the same loop can run on files instead (the user saves
 
 - **Keep, in a narrow role.** Live IPC (kipy, pinned) is the channel for the v8 W4–W5 placement reviews: the AI proposes moves into the open board, one commit (undo step) per edit; the user corrects by hand; the AI reads the corrections back. `pcb_write.py` (pcbnew on 10) stays the batch writer. Hand-routing read-back (W6 / v8 Phase 16) is untested.
 - **KiCad 10 `.history/`: gitignore it.** This is Phase 17 work (the .gitignore entry plus a HAZARDS line).
+
+#### Result (continued after G4)
+| # | Phase | Result | Escalation evaluated? | Commit | Notes |
+|---|-------|--------|-----------------------|--------|-------|
+| 18 | Phase 15: Live IPC trial (kipy) | DONE | No — clean completion after G4 | adb185e | G4 closed (keep, narrow); Handoff checked |
+
+#### Verification (continued)
+- `git diff 162ca91 adb185e`: .gitignore (+`tools/.venv-kipy/` only), PLAN (IPC outcome bullet; G4 marked done), TASKS (Phase 15 all `[x]`), the Worker's own Notes block, tools/CONTEXT.md (Live board edits paragraph plus a Dependencies line), and the new tools/requirements-kipy.txt. Nothing under hardware/, lab/ or .githooks. PLAN has no date-stamped headings. The tree is clean.
+- My G4 decision and Result blocks are untouched.
