@@ -1569,3 +1569,16 @@ The case for dropping it: the same loop can run on files instead (the user saves
 - kicad-cli ran only with the scratch config home.
 - KiCad is still open on the scratch board, as the Orchestrator asked.
 - No new documents. Nothing Deferred: the `.history` finding is for Phase 17.
+
+#### Result
+| # | Phase | Result | Escalation evaluated? | Commit | Notes |
+|---|-------|--------|-----------------------|--------|-------|
+| 18 | Phase 15: Live IPC trial (kipy) | PARTIAL | Yes — resolvable: a planned stop at the G4 user gate (Stages A and B also stopped at planned user steps) | a2571a0 | Tasks 1–2 done; G4 open |
+
+#### Verification
+- `git diff 3f9ce36 a2571a0` touches only SESSION.md and TASKS.md. The tree is clean. TASKS Phase 15 tasks 1 and 2 are `[x]`; G4 and the Handoff are `[ ]`. PLAN has no date-stamped headings.
+- trial-log.jsonl re-read: all 6 command `end` records show busy 0, timeouts 0, errors 0. kipy's API is 10.0.6 and KiCad is 10.0.8.
+- disk-saved.json vs ipc-after-save.json re-compared for the four parts: TPIO21 (115.5, 126.5, 0°), TPIO16 (142.3, 129.1), TPIO43 (142.8, 110.4, 90°), TP3 (78.455, 104.0, 135°). They are identical, 93 footprints each.
+- DRC JSONs recounted: pn-base, pn-plan and saved each have 22 violations, 0 unconnected and 3 parity items (25 in total), which matches the Worker.
+- `git check-ignore` confirms that `hardware/pcb-main-v8/kicad/.history/` is not ignored.
+- Carries to Phase 17: KiCad 10 `.history/` (gitignore it, or turn off Project Backup); the user's KiCad 10 global lib tables are nested app-path references rather than copies; api.enable_server stays true; kipy's version check fails against 10.0.8.
