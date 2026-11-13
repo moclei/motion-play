@@ -1466,3 +1466,106 @@ Tasks assigned: Phase 15 tasks 1–2; stop before G4.
 Notes: work in stages and return at each user step with exact numbered instructions (the Orchestrator relays and continues you). Stage A: kipy venv (scratchpad), scratch KiCad-10 copy of v7 board, the trial script, user steps to enable the API server and open the copy. Stage B: run the trial (list, move 3, rotate 1, read back) with timings; then ask the user to move one named part and save. Stage C: read the correction back, compare disk vs live. Choose footprints whose moves are harmless to DRC where possible.
 Rules: never open or touch working-tree board files; hardware/ and lab/ unchanged; the user's real KiCad 10 prefs will change when the GUI enables the API server — record that.
 ```
+
+#### Notes
+
+Scratch: `/private/tmp/claude-501/-Users-marcocleirigh-Workspace-motion-play/1edf598d-7bc7-4919-a0bd-71f5981db13e/scratchpad/p15/`.
+- `venv`: python3.13 with `kicad-python==0.8.0`; the full freeze is in `requirements-kipy.txt`.
+- `v7k10`: `git archive c2acffc` of the kicad and resources folders, converted with kicad-cli 10 `pcb upgrade`. The user opened this copy in the GUI.
+- `orig`: the converted board before the GUI touched it (sha1 `8e6bfd4f`).
+- `cfg`: the scratch `KICAD_CONFIG_HOME`, seeded with KiCad 10's template tables. Every kicad-cli and pcbnew run here used it.
+- Scripts in `scripts/`:
+  - `trial.py`: the IPC trial. Commands `probe`, `list`, `apply`, `read` and `dump`. Every call is timed, and busy replies are retried and counted.
+  - `pn_plan.py`: the same edits through pcbnew.
+  - `disk_fps.py`: footprints read from a file with pcbnew.
+  - `bmdiff.py`: a board-model diff keyed by ref, with segments and vias compared as multisets.
+  - `drcdiff.py`: the one from p13.
+- Outputs:
+  - `trial-log.jsonl`: every call.
+  - `ipc-after-apply.json` and `ipc-after-save.json`: IPC dumps.
+  - `disk-*.json`, `bm/`, `drc/`.
+  - `saved/`: a snapshot of the GUI-saved project.
+  - `prefs10_{before,after_stageB,after_stageC}.txt`.
+
+**Setup (task 1).**
+- **Version.** kipy 0.8.0 is the latest release, and it was built against API 10.0.6. Against KiCad 10.0.8 every call worked. kipy's own `check_version()` would raise `FutureVersionError` on the patch-level gap, so the script doesn't call it.
+- **Connection.** The socket is `/tmp/kicad/api.sock`, and the sandbox let the script reach it.
+- **User steps.** The user enabled the API (Preferences → Plugins, "Enable KiCad API", then restarted KiCad). They opened the scratch project through the project manager. `probe` confirmed the project path is the scratch `p15/v7k10/...`.
+
+**The parts chosen, and why.** Every footprint on v7 is routed, so any move risks DRC. I used round test-point pads, each moved toward or along its single track by 0.5 mm. That keeps the track end inside the 1 mm pad radius.
+- Moves: TPIO21 by −0.5 mm in x, TPIO16 by −0.5 mm in x, TPIO43 by +0.5 mm in y.
+- Rotate: TP3 by +45°. It's a 1.5 mm circle, so the rotation changes the pad angle and fields but no copper.
+- The same edits through pcbnew, DRC'd with kicad-cli 10, gave 25 items before and after. The only change was the U6 pad 2/4 item, which swaps with track order (Worker #15).
+
+**Trial (task 2).**
+
+*Timings.* 42 API calls across six runs. **0 busy, 0 timeouts, 0 errors.** Per call:
+
+| Call | Time |
+|---|---|
+| ping, get_version, get_open_documents, get_board | 0.3–7.6 ms each |
+| get_footprints (93 footprints) | 27–39 ms; 120 ms straight after the commits |
+| update_items | 0.8–12.6 ms |
+| push_commit | 10–15 ms |
+| first begin_commit | 0.5 ms |
+| begin_commit straight after a push | 98–163 ms (the GUI redrawing) |
+| the whole `apply` run (connect, list, 4 commits, fresh read-back) | 620 ms |
+
+*What the trial showed.*
+- **Edits.** Each edit is one commit, so it shows in the GUI's Undo History as its own step ("Phase 15 trial: …"). The user saw the four steps there. They didn't see the 0.5 mm moves by eye on a busy board.
+- **Read-back.** It matched the plan exactly: positions, pad positions and angles, and the reference text. Only those 4 of the 93 footprints changed.
+- **The user's correction.** The user set TPIO21 back to (115.5, 126.5) in its Properties dialog and saved with Cmd-S, with no dialogs. IPC then read back TPIO21 at (115.5, 126.5) and the other three as the script had moved them.
+
+*Disk against IPC.*
+- **Footprints.** `disk_fps.py` read all 93 footprints from the saved file, and they match the IPC dump on every value: position, rotation, pads, and reference-text position and angle.
+- **Changed against the original.** On disk only TPIO16, TPIO43 and TP3 differ from `orig`. TPIO21 is back exactly.
+
+*KiCad's save normalisation.*
+- **Size.** The saved file differs from the converted original by 10,422 lines (5,211 each way).
+- **Cause.** This is the one-time track regrouping on a converted board's first KiCad 10 save, which Phase 13 recorded for pcbnew (+10,444).
+- **Proof.** I made `pn-corr`, the same final state written by pcbnew from `orig`. The GUI's save and pcbnew's file differ by **only 2 lines**: TP3's reference and value field offsets are `-1.647999`/`1.749999` in the GUI save against pcbnew's `-1.648`/`1.75`. That's 1 nm of rounding. kipy's `orientation` setter rotates the field positions in the client (in nm), whereas pcbnew rotates them inside KiCad.
+
+*Board model and DRC.*
+- **Board model (`bmdiff.py`).** The board model of the saved file is identical to `pn-corr`'s, with 0 differing leaves. Against the original, segments and vias are equal as multisets, and only the three footprints change.
+  - **Nets.** The `nets` leaves that differ are segment ids (positional, renumbered by the regrouping). The two changed pad positions show in the `/I2C_SDA` and `/LED_DATA` topologies. GND's chain and branch split follows traversal order, with the same nodes and connectivity.
+- **DRC.** kicad-cli 10 on the saved file (scratch config home) gives 25 items, the same as the original. The only change is the same U6 pad 2/4 swap.
+
+**Side effects to know about.**
+- **KiCad 10 local history.** KiCad 10 created a `.history/` git repo (2.8 MB) in the opened project folder. It has commits "Autosave" and "PCB Save", plus a README; it can be turned off under Preferences → Common → Project Backup.
+  - `git check-ignore` says `hardware/pcb-main-v8/kicad/.history/` is **not** ignored. The first GUI save of v8 on 10 will leave an untracked `.history/` with a nested `.git`. That's for Phase 17 HAZARDS/GARDEN; it's not fixed here.
+- **The user's real `~/Library/Preferences/kicad/10.0`** (before and after listings in scratch).
+  - **New global library tables.** `sym-lib-table`, `fp-lib-table` and `design-block-lib-table` are new. Each is one nested entry, `(name "KiCad") (type "Table") (uri "/Applications/KiCad10/KiCad.app/Contents/SharedSupport/template/…")`. That's what the "use KiCad libraries" first-run choice wrote. They aren't copies of the template tables, which is what Phase 14's scratch `KICAD_CONFIG_HOME` holds. The stock libraries resolve the same way, but these tables depend on the app's path.
+  - **Changed.** `kicad_common.json` now has `api.enable_server: true`. `kicad.json` changed too.
+  - **Other new files.** `gerbview.json`, `pl_editor.json`, `installed_packages.json`, `user.hotkeys`, `toolbars/kicad-toolbars.json`. Also `~/Documents/KiCad/10.0/scripting/plugins/` (an empty folder).
+  - **Nothing changed between Stage B and Stage C.**
+- **The API stays enabled** in the user's KiCad 10 until they untick it.
+
+**Evidence for G4 and my recommendation: keep, in a narrow role.** IPC is the live channel for the W4–W6 placement reviews (AI proposes, the user watches and corrects in the open GUI, the AI reads the corrections back). It is not the board writer.
+
+For keeping it:
+- On this task it was exact, fast (tens of ms per edit) and never busy.
+- Each AI edit is one named undo step the user can see and revert.
+- Reading the user's correction back takes one call.
+- After the user saves, the file on disk matches what IPC reported, and matches pcbnew's writer apart from a 1 nm field rounding. DRC was unchanged.
+
+Its limits:
+- The GUI must be running, with the API enabled in the user's prefs.
+- It covers the board only.
+- kipy trails KiCad (0.8.0 targets 10.0.6), so it needs a pin.
+- Rotation runs in the client, which causes the 1 nm drift.
+- What reaches disk depends on the user's save, so the file-level checks (kicad-cli DRC, the board-model diff keyed by ref) still run on the saved file afterwards.
+
+Where it would fit in v8:
+- **v8 Phase 13 (AI placement).** `pcb_write.py` (pcbnew) stays the batch writer.
+- **W4 and W5 placement reviews.** A small `pcb_live.py` in the pinned kipy venv proposes moves into the open board, one commit per block, and reads the positions back into the placement report after the user's edits.
+- **W6 and v8 Phase 16 (routing).** Read-back of the user's hand routing (`get_tracks`/`get_vias`) is plausible. It wasn't tested here, and this trial doesn't support live track writes.
+- **A tools/CONTEXT.md line if kept.** Something like: "Live board edits and read-back use kipy (pinned) over IPC with KiCad 10 open on the board; edits are one commit each; after the user saves, verify on disk with kicad-cli DRC and board_model."
+
+The case for dropping it: the same loop can run on files instead (the user saves, the AI reads with `kicad_io`), with no prefs change and no extra venv. That costs a save-and-reload on every turn, and the AI's moves stop being undo steps.
+
+**Handoff checks.**
+- `hardware/`, `lab/` and `.githooks` are unchanged, and no working-tree board was opened.
+- The global python3 is untouched.
+- kicad-cli ran only with the scratch config home.
+- KiCad is still open on the scratch board, as the Orchestrator asked.
+- No new documents. Nothing Deferred: the `.history` finding is for Phase 17.
