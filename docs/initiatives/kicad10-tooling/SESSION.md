@@ -1582,3 +1582,10 @@ The case for dropping it: the same loop can run on files instead (the user saves
 - DRC JSONs recounted: pn-base, pn-plan and saved each have 22 violations, 0 unconnected and 3 parity items (25 in total), which matches the Worker.
 - `git check-ignore` confirms that `hardware/pcb-main-v8/kicad/.history/` is not ignored.
 - Carries to Phase 17: KiCad 10 `.history/` (gitignore it, or turn off Project Backup); the user's KiCad 10 global lib tables are nested app-path references rather than copies; api.enable_server stays true; kipy's version check fails against 10.0.8.
+
+---
+
+### G4 — user decision (2026-11-12)
+
+- **Keep, in a narrow role.** Live IPC (kipy, pinned) is the channel for the v8 W4–W5 placement reviews: the AI proposes moves into the open board, one commit (undo step) per edit; the user corrects by hand; the AI reads the corrections back. `pcb_write.py` (pcbnew on 10) stays the batch writer. Hand-routing read-back (W6 / v8 Phase 16) is untested.
+- **KiCad 10 `.history/`: gitignore it.** This is Phase 17 work (the .gitignore entry plus a HAZARDS line).
