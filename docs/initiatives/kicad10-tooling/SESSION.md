@@ -1661,3 +1661,55 @@ Scratch: `/private/tmp/claude-501/-Users-marcocleirigh-Workspace-motion-play/1ed
   - All of this is in `rebuild.sh`. A rerun with the board open kept the board and lists 44 and 107 tools again.
 - **Claude-side effect.** Each `run.sh` sub-session writes its transcript under `~/.claude/projects/-private-tmp-claude-501--Users-marcocleirigh-Workspace-motion-play-1edf598d-7bc7-4919-a0bd-71f5981db13e-scratchpad-p16/`. Run 1 also left one oversized tool result there (`pcb_get_board_as_string`). The folder is removable and isn't config.
 
+**Run 2 (the four edits, 14:41:39–14:42:08) and run 3 (read-back, 14:44:48–14:45:06).** Transcripts are `run-2.jsonl` and `run-3.jsonl`. Server logs are `logs/server-write.log` and `logs/server-readonly.log`.
+- **Run 2.** 10 turns, 25.5 s wall (24.6 s of it model time). 9 tool calls, 0 errors: 1 ToolSearch, `kicad_get_project_info`, `pcb_get_board_summary`, `pcb_get_footprints` ×2 and `pcb_move_footprint` ×4. Tokens: input 20, cache write 21,064, cache read 191,571, output 1,618. Cost $0.239.
+  - **Start check.** The start positions passed within 0.01 mm.
+  - **Each move call's reply.** TPIO21 (115.0, 126.5) "verified rotation 0.000"; TPIO16 (142.3, 129.1) 0.000; TPIO43 (142.8, 110.4) 90.000; TP3 (78.455, 104.0) 135.000.
+  - **The agent's caveat.** It noted that `rotation_deg=135` is absolute, so "+45°" holds only if TP3 started at 90°, which it couldn't check.
+  - **Its "no other footprint changed".** This was the model comparing two 93-row listings by eye, not a computed diff.
+- **Run 3.** 5 turns, 13.1 s wall. 4 tool calls: 1 ToolSearch, `kicad_get_project_info` and `pcb_get_footprints` ×2. Tokens: cache write 18,033, cache read 82,548, output 856. Cost $0.178. It found the user's correction: TPIO21 at (115.50, 126.50), the other three as moved, and no other footprint different.
+- **Totals for the three runs.** 21 tool calls (4 of them ToolSearch), $0.654, 73 s of agent time. Each sub-session also had about 4.5 s of server start.
+- **Server latency.** `pcb_move_footprint` 171, 144, 134 and 146 ms. `pcb_get_footprints` 30–37 ms. `pcb_get_board_summary` 53 ms. `kicad_get_project_info` about 0.8 ms. No busy replies, retries or timeouts. Wall time between successive moves was 2.2–2.4 s, almost all of it the model's turn.
+- **Undo History: not observed.** The user didn't report the entries. The server log doesn't name commits. From the source, a move made outside a `pcb_begin_commit` transaction is a bare kipy `update_items` with no `begin_commit`/`push_commit` and no commit message. Phase 15 named each undo step itself.
+- **The save.** The user set TPIO21 back by hand and saved with Cmd-S, with no dialog. Snapshot in `saved/`.
+
+**Disk, board model and DRC.**
+- **Footprints on disk.** `scripts/disk_fps.py` (pcbnew, KiCad 10's bundled Python, scratch config) compares the saved file with `orig` across all 93 footprints and their pads. Only TPIO16 (142.3, 129.1), TPIO43 (142.8, 110.4, 90°) and TP3 (78.455, 104.0, 135°) differ. TPIO21 is back exactly. This agrees with every MCP read, within its 0.01 mm.
+- **Saved file against `orig`.** 10,422 differing lines: the same first-save track regrouping as Phase 15.
+- **Saved file against `pn-corr`.** `pn-corr` is the same final state written by pcbnew from `orig` (`scripts/pn_corr.py`). The two differ by **2 lines**, TP3's reference and value field offsets (`-1.647999`/`1.749999` against `-1.648`/`1.75`). That's kipy's client-side rotation, the same as Phase 15, because kicad-mcp-pro rotates through kipy.
+- **Board model.** `board_model.py` from the tools venv on `orig`, `saved` and `pn-corr`, with KiCad 10's kicad-cli and the scratch config; output in `bm/`. Diffed with `scripts/bmdiff.py` (rewritten: footprints keyed by ref, segments and vias as multisets).
+  - saved against pn-corr: identical.
+  - saved against orig: only TP3, TPIO16 and TPIO43 change. Segments, vias and zones are equal. The `nets` leaves that differ are positional segment ids.
+- **DRC.** `kicad-cli pcb drc --schematic-parity --severity-all` on copies of the project (`drcproj/`, reports in `drc/`). orig, saved and pn-corr each give 22 violations, 0 unconnected and 3 parity items. The only change is the U6 pad 2/4 swap. Both match Phase 15.
+
+**Side by side with Phase 15** (the same task, board and parts).
+
+| | Phase 15: kipy script | Phase 16: kicad-mcp-pro via agent |
+|---|---|---|
+| Worked | Yes | Yes, but run 1 stopped (no rotation), and run 2 needed exact targets in the prompt |
+| Time per edit | update 1–13 ms + push 10–15 ms (+98–163 ms for the next `begin_commit` while the GUI redraws) | 134–171 ms in the server; 2.2–2.4 s wall per edit with the model's turn |
+| Total wall time | `apply` 620 ms (list, 4 edits, read-back) | Runs 1–3: 34.5 + 25.5 + 13.1 s, plus about 4.5 s server start each |
+| Calls | 42 API calls in 6 script commands | 21 tool calls (4 ToolSearch) in 3 sessions |
+| Tokens and cost | About 1.8k output tokens to write `trial.py` once, then about 1.7k tokens per listing read back. Not metered. | Run 1 $0.237, run 2 $0.239, run 3 $0.178 (17.6–21.1k cache write, 82–192k cache read, 0.9–3.5k output per run) |
+| Busy, timeouts, errors | 0 / 0 / 0 | 0 / 0 / 0 |
+| Read precision | Exact (nm) | 0.01 mm (TP3's 78.455 reads 78.45) |
+| Rotation readable | Yes | No read tool reports it. Only a move's reply does. |
+| Undo steps | One named commit per edit (seen by the user) | A bare update per edit, no name (not observed) |
+| Disk after save | Matches the reads; 2 lines (1 nm) from pcbnew | The same: 2 lines from pcbnew; board model identical; DRC unchanged |
+| Setup | 1 pinned package (+10 deps), a script of about 7 kB | 90-package venv (releases almost daily); `pcb_only` profile, because `default` lacks the tools; per-session config; a new `claude` session per mode |
+| Failure modes seen | `check_version()` raises on 10.0.8 | The tool list is fixed at session start and depends on a board being open (44/107 tools with a board, 41/56 without; the move tools drop out). `pcb_get_board_as_string` is truncated at 50k chars and spilled into `~/.claude/projects`. Write mode exposes 107 tools (save, delete, auto-place…), with safety only from the prompt. The agent's "nothing else changed" is an eyeball comparison. |
+
+**Recommendation for G5: drop.**
+- kicad-mcp-pro drives the same kipy calls Phase 15 kept, and the result on disk is identical.
+- But its reads lose what a placement review needs: rotation, and position below 0.01 mm.
+- Its writes aren't named undo steps.
+- Its tool surface depends on KiCad's state when the session starts, and write mode can't be narrowed to "move only" except by the prompt.
+- Each review turn costs about $0.18–0.24 and 13–35 s, against milliseconds and a few hundred tokens for a pinned script.
+- Phase 15's kept role (kipy scripts for W4–W5) covers this loop better.
+- **If dropped:**
+  - delete the scratch configs (`p16/mcp-readonly.json`, `p16/mcp-write.json`), `run.sh` and the venv;
+  - optionally delete the sub-session folder `~/.claude/projects/-private-tmp-claude-501--Users-marcocleirigh-Workspace-motion-play-1edf598d-7bc7-4919-a0bd-71f5981db13e-scratchpad-p16/`;
+  - add a Rejected Approaches line.
+  - Nothing in the repo or in Claude Code's settings needs removing.
+- **The case for keeping it:** none for this loop. Its DFM/manufacturing and review tools weren't tested and are out of the trial's scope.
+
