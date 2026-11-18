@@ -1772,3 +1772,60 @@ Carry-forward items to land (HAZARDS unless noted):
 Merge: `feat/kicad10-tooling` into `feat/v8-debug-board`. If it doesn't merge cleanly, or that branch is checked out in another worktree, stop and return BLOCKED with specifics — don't resolve conflicts in v8 files.
 Rules: no edits to the v8 initiative's own docs (the resume note lives in this initiative's SESSION.md); hardware/ and lab/ unchanged apart from hardware/CONTEXT.md; no change to global python3 or the lab hook.
 ```
+
+#### Notes
+
+**Task 1 (`9a7ee17`). Tools docs.**
+- `tools/CONTEXT.md` gains a **KiCad Version Rule**: 10.0.8 and 9.0.4 side by side; `KICAD_CLI` picks the KiCad and **still defaults to 9.0.4** (`modify.py`, `board_model.py --kicad-cli`); match it to the files (v8 on 10, write modes on KiCad 9 files on 9.0.4); a scratch `KICAD_CONFIG_HOME` seeded with KiCad 10's template tables; the kicad-cli 10 exporter differences the tools absorb; the harness's `--v8-ref v8-schematic-freeze-k10`.
+- Under pcb-context: a **Board write path** paragraph (pcbnew on KiCad 10's Python, `pcb_write.py` planned for v8 Phase 13 and not built, its three guards, the one-time track regroup, the KiCad 11 fallback) and an **MCP servers: none** line (G5). The IPC paragraph gains the state note: the API server is enabled in the user's KiCad 10 prefs. The `place_power.py` exception now points at the write-path paragraph instead of "OQ-3". Dependencies names the writer's interpreter.
+- **Parser rule (Phase 11) still holds.** `git grep` finds no kiutils import under `tools/`, and kicad-tools is called directly only by the harness (`rt_kicad_tools.py`, `test_kicad_io.py`), which tests kicad-tools and `kicad_io` themselves. That exception is now written into the rule. `kicad_io.PIN` is 0.29.0, matching `tools/requirements.txt`.
+- `tools/schematic-modify/CONTEXT.md`: a bullet on running with `KICAD_CLI` matching the sheets (v8 on 10; `STOCK_SYMBOLS` follows it; `check_embed` refuses newer symbols into KiCad 9 sheets; `--apply` replays on 10 don't reproduce history), and the text-geometry line says the calibration holds on 10 (Worker #13). `tools/pcb-context/README.md`: a "KiCad 9 and 10 boards" paragraph (Phase 13: what differs in the model on 10, the keepout net `''`, `net_number` carries the name, DRC follows `--kicad-cli`). `tools/schematic-context/README.md`: its "KiCad 9" requirement line now names 10 and `KICAD_CLI` for v8.
+
+**Task 2 (`1cda70c`). HAZARDS, .gitignore, hardware/CONTEXT.md, PROJECT.md.**
+- HAZARDS, seven new entries (none duplicated an existing one): KiCad 10 files can't be opened by 9 / never open v7 in 10 and save (TASKS wording); pcbnew 10 silently saves a KiCad 9 board as 10 (a Phase 13 trap); `KICAD_CLI` still defaults to 9.0.4 while v8 is 10; kicad-cli rewrites `kicad_common.json` without a scratch `KICAD_CONFIG_HOME`; KiCad 10's `.history/` nested repo; the global lib tables are nested references to the app path; macOS `/tmp` cleanup wipes the scratchpad after about 3 days.
+- **kipy `check_version()` is not in HAZARDS.** It's a durable "don't do X" rule, already in `tools/CONTEXT.md` (Live board edits) and in the `tools/requirements-kipy.txt` header, which is where anyone writing a kipy script looks. PROTOCOL routes durable rules to CONTEXT.md.
+- **The API server state** went to `tools/CONTEXT.md` (task 1) and the resume note below, not HAZARDS.
+- `.gitignore`: `.history/` (repo-wide). `git check-ignore -v` on `hardware/pcb-main-v8/kicad/.history/`, a file inside it, and `hardware/pcb-main/kicad/.history/` all match `.gitignore:90:.history/`. No tracked path contains `.history/`.
+- `hardware/CONTEXT.md`: a **KiCad Versions** section with a table of each board's format, read from the committed files: v8 KiCad 10 (20260306 / 20260206); v7, sensor-rigid, sensor-flex KiCad 9 (20250114 / 20241229); power supply KiCad 8 (20231120 / 20240108). The two Tooling rows that still said kiutils now say `kicad_io`. Nothing else under `hardware/` changed.
+- `.context/PROJECT.md` Development Environment: an EDA line (10.0.8 working, 9.0.4 alongside).
+
+**Task 3. v8 resume note and the merge.** The note is below. The merge is a fast-forward: `feat/v8-debug-board` (`e8e739e`) is an ancestor of this branch, and no worktree has it checked out (the Cursor worktrees are detached at `48d5691`).
+
+**v8 resume note (for the v8 Planner replan).**
+- **Where v8 starts.** Branch `feat/v8-debug-board`, fast-forwarded to the end of kicad10-tooling. v8's project has been KiCad 10 since `60e9d12`, tagged **`v8-schematic-freeze-k10`**: that is the reference for v8 work from now on. `v8-schematic-freeze` and its alias `v8-schematic-freeze-k9` (both `0d6255b`) are the KiCad 9 record and the rollback point. No tag is pushed. The ERC baseline on 10 (kicad-cli 10, scratch config): 0 errors; 81 `pin_to_pin`, 2 `lib_symbol_issues` (J7, U5), 5 `same_local_global_label`, 19 `lib_symbol_mismatch` (TH1 and 18 solder jumpers, accepted at G3; the embedded symbols stay as frozen, so no "Update symbols from library").
+- **BRIEF Constraints, the toolchain line.** It reads "Python 3.7 + kiutils + shapely 2.0.7; kicad-cli 9.0.4 …". All of it is out of date. Proposed wording: "KiCad 10.0.8 (`/Applications/KiCad10/KiCad.app`; tools run with `KICAD_CLI` set to its kicad-cli and a scratch `KICAD_CONFIG_HOME`). KiCad tools in `tools/.venv` (Python 3.13, `tools/requirements.txt`: kicad-tools 0.29.0, used only through `tools/kicad-io/kicad_io.py`; shapely 2.0.7). Board writes: `pcbnew` on KiCad 10's bundled Python 3.9. Live placement reviews: kipy (kicad-python 0.8.0) in `tools/.venv-kipy`. The lab tools and the pre-commit hook stay on the global python3." This also covers the "extra toolchain line" v8 Phase 13 task 1 would have added.
+- **PLAN OQ-3: answered (kicad10-tooling Phase 13; its PLAN "Board write path").** Option 1, but on KiCad 10: `pcbnew` from `/Applications/KiCad10/KiCad.app/Contents/Frameworks/Python.framework/Versions/Current/bin/python3 -I` (3.9.13, pcbnew 10.0.8), in one module `pcb_write.py` behind the JSON op list. What differs from v8 PLAN's text:
+  - The round trip is **not** byte-identical on the first save of a kicad-cli-converted board: every track is regrouped by net once (+10,444 lines on v7), and from then on it's a fixed point. v8's board has no tracks yet, so this doesn't show on v8.
+  - pcbnew 10 silently saves a KiCad 9 board as 10, so the writer must refuse any board that isn't KiCad 10's format, as well as refusing while a `~*.kicad_pcb.lck` exists.
+  - The before/after board-model check must be keyed by footprint ref and geometry: segment and via ids are positional and change after pcbnew's first save.
+  - Footprints enter v8's board through KiCad's Update PCB from Schematic, not the writer.
+  - At KiCad 11 (no `pcbnew`) the same interface moves to IPC if it's headless, else to kicad-tools raw edits through `kicad_io`. Those match pcbnew's copper, but get the field angles wrong on a flip, so they'd need KiCad's rule first (kicad10-tooling Deferred).
+  - v8 OQ-3's text says "deferred to kicad10-tooling Phase 5". It was answered in Phase 13. Strike it with the answer; options 2–5 go to Rejected Approaches. Option 4's reason ("kipy isn't installed … revisit at KiCad 11") is superseded for live reviews by G4 (next bullet), but it still holds for unattended writes.
+- **PLAN "AI layout tooling".**
+  - Replace the KiCad 9.0.4 interpreter path and the "byte-identical" probe with the KiCad 10 findings above.
+  - "Our tools stay on Python 3.7 + kiutils for reading and computing" becomes the 3.13 venv with `kicad_io` and `pcb_raw.py` (board readers never use kicad-tools' typed `PCB`).
+  - Add G4's live channel: kipy over IPC, pinned (`tools/requirements-kipy.txt`), with KiCad 10 open on the board and the API enabled. It is used for the W4–W5 placement reviews: the AI proposes moves into the open board, one named commit (undo step) per edit; the user corrects by hand; the AI reads the corrections back with `get_footprints`. After the user saves, the file is checked with kicad-cli DRC and the board-model diff. Skip kipy's `check_version()`. The Phase 15 trial measured tens of ms per edit, 0 busy, and the file on disk matching pcbnew's to 1 nm.
+  - "The user's corrections are measured as a before/after model diff of positions only" still works; kipy read-back is the faster alternative while the board is open.
+- **Parser change.** kiutils is gone from `tools/` (kicad10-tooling Phase 11). Every KiCad load and save goes through `tools/kicad-io/kicad_io.py` (kicad-tools 0.29.0 raw s-expression layer, splice save, lock guard, format and pin checks; `tools/CONTEXT.md` I/O-module Rule). So v8 OQ-11 (the kiutils board round trip) is moot, and PLAN "Schematic readability"'s kiutils shim is history (`kiutils_k9.py` is deleted). With `KICAD_CLI` on 10, `STOCK_SYMBOLS` is KiCad 10's, so a `v8_*.py --apply` replayed today places KiCad 10 symbols and doesn't reproduce its historical output; their `--check` modes all pass on the migrated v8.
+- **v8 Phase 13 (AI placement tooling), changes.**
+  - Task 1 (ask OQ-3): answered here. The replan records it and the BRIEF line, unless the Planner wants the user to re-confirm.
+  - Task 2 (`pcb_write.py`): on KiCad 10's Python, with the format guard added. The test copy is v7 `c2acffc` converted with `kicad-cli 10 pcb upgrade` (scratch config), never the working tree. "An empty op list leaves the file byte-identical" holds only from the fixed point (after one pcbnew save) or on a board with no tracks, so restate it. The board-model check is keyed by ref and geometry.
+  - Tasks 3–5 (`place.py`, rules, `place_check.py`): unchanged, apart from running on the 3.13 venv with `KICAD_CLI` on 10. `board_model.py` on a KiCad 10 board matches 9 apart from format items (kicad10-tooling Phase 13).
+  - New, from G4: a small `pcb_live.py` (kipy) for the W4–W5 loop: propose moves into the open board, one commit per block, read the positions back into the placement report. Phases 14–15's W4/W5 tasks can use it.
+- **v8 Phase 16 (AI routing), changes from G4/G5.**
+  - No MCP server: kicad-mcp-pro was dropped at G5 (kicad10-tooling PLAN Rejected Approaches).
+  - Tracks and vias go through `pcb_write.py` (pcbnew 10).
+  - kipy read-back of the user's hand routing (`get_tracks`/`get_vias`) for W6 is plausible but untested, and live track writes weren't tested. A short probe would be needed before W6 relies on it.
+  - Freerouting and OQ-1 are unchanged (out of kicad10-tooling's scope).
+  - v8 Phase 17's zone refill stays on `pcb_write.py` or the GUI.
+- **Machine state the replan inherits.**
+  - KiCad 9.0.4 is still installed. Uninstall it only after v8 has placed its first block on 10 (kicad10-tooling OQ-6, Deferred).
+  - The user accepted KiCad 10's default global library table on first launch. It's a nested reference to the app path (HAZARDS).
+  - The KiCad 10 API server is enabled in the user's prefs (`api.enable_server: true`).
+  - `.history/` is gitignored.
+  - New HAZARDS entries: the KiCad 10 / 9 file wall, pcbnew's silent upgrade, the `KICAD_CLI` default, `KICAD_CONFIG_HOME`, `.history/`, the lib-table app path, and `/tmp` cleanup.
+- **kicad10-tooling's Deferred items that touch v8:** `place_power.py` writes outside `kicad_io` (port it or retire it when `place.py` generalises it); the KiCad 11 writer revisit; the generators' `--output` default.
+
+**Handoff checks.**
+- `git diff b3fd55b HEAD --stat` touches only: `.context/HAZARDS.md`, `.context/PROJECT.md`, `.gitignore`, `hardware/CONTEXT.md`, `tools/CONTEXT.md`, `tools/pcb-context/README.md`, `tools/schematic-context/README.md`, `tools/schematic-modify/CONTEXT.md`, and this initiative's TASKS and SESSION. Nothing else under `hardware/`, nothing under `lab/` or `.githooks`, and no v8 initiative doc. The global python3 is untouched. No kicad-cli was run.
+- No new documents. Nothing new Deferred.
