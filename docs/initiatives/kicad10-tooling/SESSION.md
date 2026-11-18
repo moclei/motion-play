@@ -1637,3 +1637,27 @@ Scratch: `/private/tmp/claude-501/-Users-marcocleirigh-Workspace-motion-play/1ed
 - **`rebuild.sh`** (`p16/rebuild.sh`) rebuilds all of Stage A in one idempotent command: the 4.14.0 venv (reinstalled only if missing or a different version), `cfg/10.0` seeded with KiCad 10's template `{sym,fp}-lib-table`, the board from `git archive c2acffc` plus `kicad-cli 10 pcb upgrade` (only if missing, or with `--fresh-board`, so a rerun mid-trial keeps the user's edits), `orig/` and the sha1 check (`8e6bfd4f`, matched again), both MCP configs, the three prompts, `run.sh`, `scripts/smoke.py` and `scripts/usage.py`, then the smoke test. The script itself lives in `/tmp` too: if it's lost, its full text is in Worker #19's second return to the Orchestrator.
 - **The tool list depends on KiCad's state when the client lists tools.** With KiCad running but no board open (as now): readonly 41 tools (~11.2k tokens), write 56 (~23.3k). `pcb_move_footprint`, `pcb_save` and the commit tools are absent. On 2026-11-12, with the p15 board open: 44 and 107 (~35k). Claude Code lists tools once when the session starts, so the board must be open in KiCad before each `run.sh`. For G5: an agent session started before the board is open can't edit, and the tool budget changes with KiCad's state.
 - **HAZARD for Phase 17:** macOS's periodic cleanup deletes files under `/private/tmp` (this includes the Claude Code scratchpad) that haven't been touched for about three days. A multi-day initiative with user gates must not keep anything it needs for a later gate only in the scratchpad: keep a rebuild script, or keep it under a gitignored repo path.
+
+**Task 1 closed.** The user ran `run.sh 1` with this setup. The server config reaches only the sub-sessions that `run.sh` starts (`--mcp-config` from the scratch folder, `--strict-mcp-config`). Nothing was added to the repo or to Claude Code's settings.
+
+**Run 1 (read-only listing, 2026-11-18 14:36–14:37).** `run-1.jsonl` and `logs/server-readonly.log` in p16.
+- **Agent.** claude-opus-5-5, 9 turns, 34.5 s wall (33.9 s of it model time). 8 tool calls, 0 errors:
+  - Claude Code deferred the MCP schemas, so 2 of the calls were ToolSearch loading them;
+  - the other 6 were `kicad_get_project_info`, `pcb_get_board_summary`, `pcb_get_footprints`, `pcb_get_live_edit_state`, `pcb_get_board_as_string` and `pcb_list_test_points`.
+- **Tokens and cost.** Input 18, cache write 17,652, cache read 129,197, output 3,472; $0.237. Tool results were 10.7k chars. Phase 15's equivalent was one script run (`list` output 6.7k chars, about 1.7k tokens) after writing `trial.py` once (7.1k chars, about 1.8k tokens).
+- **Server latency.** `kicad_get_project_info` 0.8 ms; `pcb_get_board_summary` 93 ms; `pcb_get_footprints` 35 ms for 93 footprints (Phase 15's `get_footprints` took 27–39 ms); `pcb_get_live_edit_state` 0.7 ms; `pcb_get_board_as_string` 77 ms; `pcb_list_test_points` 1.2 ms. No busy replies and no retries. Server start to first call took about 4.5 s.
+- **Result.** 93 footprints, with the four parts at the expected positions and the open board confirmed. The agent stopped because nothing reported rotation. Nothing was edited, and the board on disk still has sha1 `8e6bfd4f`.
+- **The rotation gap is real, not something the model missed.**
+  - Read from the source: `pcb_get_footprints` formats reference, value, x/y at `:.2f`, layer and id, with no orientation. `pcb_get_pads` gives positions only. `pcb_get_board_as_string` is truncated at 50,000 chars of a 1.1 MB board.
+  - No read tool in the full 342-tool catalog prints footprint orientation. The only live source is the reply from `pcb_move_footprint` ("verified rotation …"), which you get only by writing.
+  - Positions come back rounded to 0.01 mm, so TP3's true x of 78.455 reads as 78.45. An agent that derives a relative move from the list moves off-grid parts by up to 5 µm.
+  - Phase 15's kipy script read exact nm values and the orientation.
+- **Changes for run 2 and run 3.**
+  - Run 2 is limited to `kicad_get_project_info`, `pcb_get_board_summary`, `pcb_get_footprints` and `pcb_move_footprint`.
+  - Run 2 checks only the start positions (within 0.01 mm), and refuses to edit if any is off.
+  - Run 2 is given exact absolute targets (TPIO21 115.0/126.5; TPIO16 142.3/129.1; TPIO43 142.8/110.4; TP3 78.455/104.0 at 135°, from Phase 15's known start). It reports the rotation each move call returns. It still never saves.
+  - Run 3 compares positions only.
+  - The `run.sh` summary line now comes from the last `"type":"result"` record, parsed with python. The old sed version printed usage JSON.
+  - All of this is in `rebuild.sh`. A rerun with the board open kept the board and lists 44 and 107 tools again.
+- **Claude-side effect.** Each `run.sh` sub-session writes its transcript under `~/.claude/projects/-private-tmp-claude-501--Users-marcocleirigh-Workspace-motion-play-1edf598d-7bc7-4919-a0bd-71f5981db13e-scratchpad-p16/`. Run 1 also left one oversized tool result there (`pcb_get_board_as_string`). The folder is removable and isn't config.
+
