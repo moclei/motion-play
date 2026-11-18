@@ -23,6 +23,8 @@ tools/.venv/bin/python tools/pcb-context/board_model.py hardware/pcb-main/kicad/
 tools/.venv/bin/python tools/pcb-context/board_model.py --check out.json     # 0 fresh, 1 stale, 2 no provenance
 ```
 
+**KiCad 9 and 10 boards.** Both formats are read. The DRC block comes from the kicad-cli that `--kicad-cli` names (default `$KICAD_CLI`, else 9.0.4, which can't load a KiCad 10 board; `tools/CONTEXT.md` "KiCad Version Rule"), so run v8 with `KICAD_CLI` on 10 and a scratch `KICAD_CONFIG_HOME`. On v7 converted to 10 (kicad10-tooling Phase 13) the model equals the KiCad 9 one apart from `meta/kicad_format_version` and the DRC block (`kicad_version`, some violation pairs listed in the other order, and 79 setup `lib_footprint_issues` when kicad-cli 10 has no global library table). KiCad 10 boards have no net numbers: a zone with no net (a keepout) reads `''`, and `routing_extract.py`'s `net_number` carries the net name. Scripts don't write boards here; the board write path (pcbnew on KiCad 10) is in `tools/CONTEXT.md`.
+
 Per-board definitions (high-current, high dv/dt, neighbour radii, clearance metric, driver pads, critical nets) live in `board-config/<pcb stem>.json`, picked up automatically. Python use: `from board_model import BoardModel; m = BoardModel.load(path); m.net_copper("/I2C_SDA")`.
 
 ## Reports from the model: net_report.py, plane_report.py, render.py

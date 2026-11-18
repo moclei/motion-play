@@ -5,7 +5,7 @@ Python scripts that extract circuit data from KiCad schematics and produce AI-op
 ## Prerequisites
 
 - **Python:** `tools/.venv/bin/python` (Python 3.13, built from `tools/requirements.txt`; kicad-tools is pinned there). Schematic files are loaded and saved only through `tools/kicad-io/kicad_io.py`.
-- **KiCad 9** — `kicad-cli` must be available (macOS default: `/Applications/KiCad/KiCad.app/Contents/MacOS/kicad-cli`)
+- **KiCad 9 or 10** — `kicad-cli` must be available (default: 9.0.4 at `/Applications/KiCad/KiCad.app/Contents/MacOS/kicad-cli`; for a KiCad 10 project such as v8, set `KICAD_CLI` to `/Applications/KiCad10/KiCad.app/Contents/MacOS/kicad-cli`; `tools/CONTEXT.md` "KiCad Version Rule")
 
 Override the kicad-cli path with the `KICAD_CLI` environment variable if needed.
 
