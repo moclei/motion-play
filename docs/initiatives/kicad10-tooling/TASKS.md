@@ -165,7 +165,7 @@
 
 ## Phase 17: Docs and close
 
-- [ ] `tools/CONTEXT.md`: the KiCad version and `KICAD_CLI`, the board write path, and the trial outcomes. Check the parser rule (Phase 11) still holds. Check `tools/schematic-modify/CONTEXT.md` and `tools/pcb-context/README.md` against what Phases 12–13 changed
+- [~] `tools/CONTEXT.md`: the KiCad version and `KICAD_CLI`, the board write path, and the trial outcomes. Check the parser rule (Phase 11) still holds. Check `tools/schematic-modify/CONTEXT.md` and `tools/pcb-context/README.md` against what Phases 12–13 changed
 - [ ] `.context/HAZARDS.md`: add "files saved by KiCad 10 can't be opened by 9; never open v7 (`hardware/pcb-main/kicad/`) in KiCad 10 and save", and any trap found in Phases 4–16. `hardware/CONTEXT.md`: note which boards are in which KiCad format. `.context/PROJECT.md` Development Environment: the KiCad version
 - [ ] v8 resume note in SESSION.md for the v8 Planner replan. It covers the v8 BRIEF Constraints line (toolchain), v8 PLAN OQ-3's answer and the "AI layout tooling" path, the parser change (kicad-tools via the I/O module), the changes to v8 Phases 13 and 16 from G4/G5, and the freeze-tag name. Merge `feat/kicad10-tooling` into `feat/v8-debug-board`
 - [ ] 🔄 Handoff

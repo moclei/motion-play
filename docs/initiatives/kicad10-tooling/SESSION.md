@@ -1738,3 +1738,37 @@ Scratch: `/private/tmp/claude-501/-Users-marcocleirigh-Workspace-motion-play/1ed
 
 - **Drop kicad-mcp-pro.** Remove the scratch MCP configs, run.sh and the venv; add a PLAN Rejected Approaches line with the evidence. The kipy scripts (G4) stay the live channel.
 - **Remove the sub-session transcripts** in `~/.claude/projects/-private-tmp-claude-501--Users-marcocleirigh-Workspace-motion-play-1edf598d-7bc7-4919-a0bd-71f5981db13e-scratchpad-p16/`.
+
+#### Result (continued after G5)
+| # | Phase | Result | Escalation evaluated? | Commit | Notes |
+|---|-------|--------|-----------------------|--------|-------|
+| 19 | Phase 16: MCP server trial | DONE | No — clean completion after G5 | 2a86413 | G5 closed (drop); cleanup done |
+
+#### Verification (continued)
+- `git diff 260d2dd 2a86413` touches PLAN (Rejected Approaches line; G5 done), TASKS (Phase 16 all `[x]`) and the Worker's own Notes. Nothing under hardware/, lab/ or .githooks; the tree is clean; PLAN has no date-stamped headings.
+- The scratch MCP configs, run.sh and venv are gone; the `~/.claude/projects/*p16*` folder is gone. I deleted the leftover p16/rebuild.sh myself so the server can't be reinstalled by accident.
+
+---
+
+### Worker #20 — Phase 17: Docs and close
+
+**Dispatch:**
+```
+Initiative: kicad10-tooling
+Phase: 17 — Docs and close
+Initiative path: docs/initiatives/kicad10-tooling/
+Additional reading: SESSION.md G3, G4 and G5 decision blocks; the Orchestrator Verification "carries forward" lines for Workers #16–#19; the Worker #18 and #19 Notes. The v8 initiative docs (docs/initiatives/ for the v8 debug board: BRIEF Constraints, PLAN OQ-3 and "AI layout tooling", Phases 13 and 16) for the resume note.
+
+Tasks assigned: all of Phase 17.
+
+Carry-forward items to land (HAZARDS unless noted):
+- KiCad 10 files can't be opened by 9; never open v7 (hardware/pcb-main/kicad/) in KiCad 10 and save (TASKS wording).
+- kicad-cli rewrites kicad_common.json unless KICAD_CONFIG_HOME points at a scratch dir.
+- KiCad 10 creates a `.history/` project-backup folder (with nested .git) on GUI save; G4 decided: add `.history/` to .gitignore (repo-wide pattern), plus the HAZARDS line.
+- The user's KiCad 10 global lib tables are nested references to the app's template tables (/Applications/KiCad10/...), not copies; they depend on the app path. v8 resolves its own libs through project tables (G3).
+- macOS periodic cleanup wipes /private/tmp files (incl. the Claude Code scratchpad) untouched for ~3 days; anything needed across a user gate needs a rebuild script or a gitignored repo path.
+- kipy 0.8.0's check_version() raises on 10.0.8 (already in tools/CONTEXT.md; check HAZARDS needs it).
+- The KiCad 10 API server is enabled in the user's prefs (state note, not a hazard).
+Merge: `feat/kicad10-tooling` into `feat/v8-debug-board`. If it doesn't merge cleanly, or that branch is checked out in another worktree, stop and return BLOCKED with specifics — don't resolve conflicts in v8 files.
+Rules: no edits to the v8 initiative's own docs (the resume note lives in this initiative's SESSION.md); hardware/ and lab/ unchanged apart from hardware/CONTEXT.md; no change to global python3 or the lab hook.
+```
