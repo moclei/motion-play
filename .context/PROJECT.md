@@ -130,6 +130,7 @@ Standard terms used across code, docs, and conversation.
 - **IDE**: Cursor (VSCode-based)
 - **Version Control**: GitHub
 - **Laptop**: MacBook Pro
+- **EDA**: KiCad 10.0.8 (working version; the v8 board is in KiCad 10 format), with KiCad 9.0.4 installed alongside for the boards still in KiCad 9 format. Files saved by 10 can't be opened by 9. Which board is in which: `hardware/CONTEXT.md` "KiCad Versions"
 - **PCB Fabrication**: JLCPCB (PCB + assembly)
 - **Component Sourcing**: LCSC — `@jlcpcb/mcp` MCP server configured in `.cursor/mcp.json` for in-chat component search, stock checks, and pricing
 

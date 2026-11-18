@@ -18,7 +18,7 @@
 
 ## KiCad Version Rule
 
-**KiCad 10.0.8 is the working version; 9.0.4 stays installed for the boards still in KiCad 9 format.** 10.0.8 is at `/Applications/KiCad10/KiCad.app`, 9.0.4 at `/Applications/KiCad/KiCad.app` (it is uninstalled only after v8 has placed its first block on 10; kicad10-tooling OQ-6). Which board is in which format: `hardware/CONTEXT.md` "KiCad versions".
+**KiCad 10.0.8 is the working version; 9.0.4 stays installed for the boards still in KiCad 9 format.** 10.0.8 is at `/Applications/KiCad10/KiCad.app`, 9.0.4 at `/Applications/KiCad/KiCad.app` (it is uninstalled only after v8 has placed its first block on 10; kicad10-tooling OQ-6). Which board is in which format: `hardware/CONTEXT.md` "KiCad Versions".
 
 - **`KICAD_CLI` picks the KiCad.** Every tool takes the kicad-cli path from the `KICAD_CLI` environment variable (read in `schematic-modify/modify.py`); unset, it **still falls back to 9.0.4**. `STOCK_SYMBOLS` (the stock symbol libraries `tidy_fields` and the `v8_*.py` scripts read) is derived from the same install, so it follows `KICAD_CLI`.
 - **Match `KICAD_CLI` to the files.** v8 (`hardware/pcb-main-v8/kicad/`, KiCad 10 since tag `v8-schematic-freeze-k10`): `KICAD_CLI=/Applications/KiCad10/KiCad.app/Contents/MacOS/kicad-cli`. kicad-cli 9 can't load KiCad 10 files. v7, the sensor boards and the power-supply board (KiCad 9): write modes run with `KICAD_CLI` on 9.0.4, because KiCad 10 stock symbols can't go into a KiCad 9 sheet (`kicad_io` refuses; `.context/HAZARDS.md`). Read-only checks on KiCad 9 files work with either, but kicad-cli 10 only on scratch copies (it writes the `.kicad_prl`).

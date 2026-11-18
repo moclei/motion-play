@@ -85,3 +85,6 @@ mechanical/models/**/*.step
 # Lab bench data (raw dumps and renamed captures; backed up to iCloud Drive, not git)
 lab/inbox/
 lab/captures/
+
+# KiCad 10 local history (Project Backup): a nested git repo per project folder
+.history/

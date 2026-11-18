@@ -110,6 +110,20 @@ Connected to rigid base via ZIF FPC connector (C132510, 1.0mm pitch, top contact
 See `docs/initiatives/flex-sensor-pcb/DESIGN_PLAN.md` for detailed design rationale.
 See `hardware/sensor-flex/FLEX_PCB_SETUP.md` for flex PCB manufacturing notes.
 
+## KiCad Versions
+
+Two KiCad versions are installed side by side: 10.0.8 (`/Applications/KiCad10/KiCad.app`, the working version) and 9.0.4 (`/Applications/KiCad/KiCad.app`). **Files saved by KiCad 10 can't be opened by 9**, so a board moves to 10 only on purpose, after the tools have passed on a scratch copy (kicad10-tooling).
+
+| Board | Folder | Format |
+|-------|--------|--------|
+| Main v8 (debug board) | `hardware/pcb-main-v8/kicad/` | **KiCad 10** (schematic 20260306, board 20260206), since tag `v8-schematic-freeze-k10`. `v8-schematic-freeze` (alias `v8-schematic-freeze-k9`) is the KiCad 9 record. Its own libraries resolve through its project `sym-lib-table`/`fp-lib-table`; the stock libraries through KiCad 10's default global table. |
+| Main v7 | `hardware/pcb-main/kicad/` | KiCad 9 (20250114 / 20241229). Cited at `c2acffc` by the lab; **never re-saved by any tool or KiCad version, and never opened in KiCad 10 and saved.** |
+| Sensor rigid base | `hardware/sensor-rigid/` | KiCad 9 (20250114 / 20241229) |
+| Sensor flex strip | `hardware/sensor-flex/` | KiCad 9 (20250114 / 20241229) |
+| Power supply | `hardware/pcb-power-supply/kicad/` | KiCad 8 (20231120 / 20240108) |
+
+The sensor boards and the power supply move to KiCad 10 when they next get design work (kicad10-tooling Deferred). Run the KiCad tools with `KICAD_CLI` matching the board's version (`tools/CONTEXT.md` "KiCad Version Rule").
+
 ## Component Nicknames
 
 | Component | Part Number | Function | Shorthand |
@@ -150,8 +164,8 @@ Scripts live in `tools/schematic-context/` (see that folder's README for full us
 
 | Script | Purpose |
 |--------|---------|
-| `extract.py` | Runs kicad-cli + kiutils to produce `circuit-context.json` from a root `.kicad_sch` |
-| `annotate.py` | Writes `ai_` properties to components in `.kicad_sch` files via kiutils |
+| `extract.py` | Runs kicad-cli + a `kicad_io` read of the sheets to produce `circuit-context.json` from a root `.kicad_sch` |
+| `annotate.py` | Writes `ai_` properties to components in `.kicad_sch` files through `kicad_io` (`tools/CONTEXT.md` "I/O-module Rule") |
 | `show.py` | Displays annotation coverage — useful during interactive annotation sessions |
 
 ### Workflow
