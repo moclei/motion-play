@@ -1713,6 +1713,12 @@ Scratch: `/private/tmp/claude-501/-Users-marcocleirigh-Workspace-motion-play/1ed
   - Nothing in the repo or in Claude Code's settings needs removing.
 - **The case for keeping it:** none for this loop. Its DFM/manufacturing and review tools weren't tested and are out of the trial's scope.
 
+**G5 close-out (after the user's decision to drop).**
+- **Removed from the scratchpad:** `p16/mcp-readonly.json`, `p16/mcp-write.json`, `p16/run.sh` and `p16/venv`. The trial outputs stay until the scratchpad clears itself: `run-*.jsonl`, `logs/`, `saved/`, `bm/`, `drc/`, `drcproj/`, `pn-corr/` and `orig/`. `p16/rebuild.sh` is left too, and running it would reinstall the server, so don't run it.
+- **Removed from `~/.claude`:** the sub-session folder `~/.claude/projects/-private-tmp-claude-501--Users-marcocleirigh-Workspace-motion-play-1edf598d-7bc7-4919-a0bd-71f5981db13e-scratchpad-p16/`, which held the three run transcripts, one spilled tool result and an empty `memory/`. The user approved this. Nothing else under `~/.claude` was touched.
+- **Recorded:** a PLAN Rejected Approaches line, and G5 marked done under User gates. TASKS Phase 16 is all `[x]`.
+- **Untouched:** nothing was added to the repo, and no Claude Code settings changed. The user's KiCad 10 still has the API enabled, which Phase 15 kept.
+
 
 #### Result
 | # | Phase | Result | Escalation evaluated? | Commit | Notes |

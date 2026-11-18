@@ -87,7 +87,7 @@ Change one thing at a time, and compare each step against a baseline taken befor
 - **G2a:** after the API spike (end of Phase 5). Done: port on the raw layer with our own helpers (typed views read-only); OQ-7 splice save; delete the three v7-only scripts.
 - **G3:** approve the v8 migration, the freeze-tag answer (OQ-4) and the library-table answer (start of Phase 14). Done: migrate; `v8-schematic-freeze-k10` (with the alias `v8-schematic-freeze-k9`); project tables; accept 19 `lib_symbol_mismatch`.
 - **G4:** IPC keep or drop (Phase 15). Done: keep, narrow role (Trials, "IPC outcome").
-- **G5:** MCP keep or drop (Phase 16).
+- **G5:** MCP keep or drop (Phase 16). Done: drop kicad-mcp-pro (Rejected Approaches); its trial config was removed.
 
 ## Rejected Approaches
 - Replan inside v8-debug-board: the tooling serves every board, v8's BRIEF constraint line would have to change from inside v8, and its SESSION and TASKS are already long. The user chose a new initiative (2026-11-07).
@@ -107,6 +107,7 @@ Change one thing at a time, and compare each step against a baseline taken befor
 - v8's own libraries through KiCad 10 global tables set up by the user (G3 option a): v8 would again depend on machine state (six libraries outside the repo under `KICAD9_3RD_PARTY`, absolute working-tree paths), repeated per machine and KiCad version (Phase 14, Worker #16 Notes).
 - Stock libraries in v8's project tables too (G3 variant B2): 23 stock entries in v8's tables, and `tidy_fields._lib_table` would need to expand `${KICAD10_SYMBOL_DIR}` (Worker #16 Notes).
 - Updating the 19 mismatched embedded symbols from KiCad 10's library at migration (G3): it changes the design's embedded symbols, which the migration must not do.
+- kicad-mcp-pro 4.14.0 as the live board channel (G5, Phase 16): it drives the same kipy calls as Phase 15, with the same result on disk (2 lines from pcbnew, board model identical, DRC unchanged). But its reads lose the rotation and anything below 0.01 mm, its edits are unnamed undo steps, the tool list depends on KiCad's state when the session starts (no move tools if no board is open), and write mode (107 tools) can't be limited to moves except by the prompt. Each agent run cost about $0.18–0.24 and 13–35 s, against milliseconds for the pinned kipy script (SESSION Worker #19 Notes).
 
 ## Open Questions
 - ~~OQ-1 (G2): Python runtime for the KiCad tools.~~ Decided at G2: the 3.13 venv (`tools/.venv` from `tools/requirements.txt`). See Technical Notes "Python".
