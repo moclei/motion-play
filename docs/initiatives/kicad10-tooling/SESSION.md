@@ -1829,3 +1829,20 @@ Rules: no edits to the v8 initiative's own docs (the resume note lives in this i
 **Handoff checks.**
 - `git diff b3fd55b HEAD --stat` touches only: `.context/HAZARDS.md`, `.context/PROJECT.md`, `.gitignore`, `hardware/CONTEXT.md`, `tools/CONTEXT.md`, `tools/pcb-context/README.md`, `tools/schematic-context/README.md`, `tools/schematic-modify/CONTEXT.md`, and this initiative's TASKS and SESSION. Nothing else under `hardware/`, nothing under `lab/` or `.githooks`, and no v8 initiative doc. The global python3 is untouched. No kicad-cli was run.
 - No new documents. Nothing new Deferred.
+
+#### Result
+| # | Phase | Result | Escalation evaluated? | Commit | Notes |
+|---|-------|--------|-----------------------|--------|-------|
+| 20 | Phase 17: Docs and close | DONE | No — clean completion | f8d1cf5 | 4 tasks; feat/v8-debug-board fast-forwarded |
+
+#### Verification
+- `git diff b3fd55b f8d1cf5`: 10 files (tools/CONTEXT, schematic-modify/CONTEXT, pcb-context/README, schematic-context/README, HAZARDS, PROJECT, .gitignore, hardware/CONTEXT, TASKS, SESSION). Nothing under lab/ or .githooks; under hardware/ only CONTEXT.md; no v8 initiative doc touched. The tree is clean.
+- `git check-ignore -v` matches `.gitignore:90 .history/` for v8's project folder.
+- No `import kiutils` / `from kiutils` remains under tools/ (the remaining text hits are comments and docs).
+- TASKS: no `[ ]` or `[~]` left in Phases 1–17. PLAN: no date-stamped headings; OQ-5 struck; OQ-6 stays open by design (Deferred).
+- `feat/v8-debug-board` was at f8d1cf5, the same as feat/kicad10-tooling (fast-forward, no push). I'll fast-forward it again after this Outcome commit.
+- Carried to the user: the tools still default `KICAD_CLI` to 9.0.4 (modify.py:44, board_model.py:74), so v8 work must set it every time. Changing the default is a v8 Planner decision.
+
+---
+
+**Outcome:** Loop complete — 20 Workers dispatched across 1 orchestration run (plus Planner replans at 0d5b098 and d1174b7), 0 unresolved blockers. Gates G1–G5 and G2a were decided by the user. v8 is on KiCad 10 (tag `v8-schematic-freeze-k10`). Parser: kicad-tools 0.29.0 via `kicad_io`. Board writer: pcbnew on KiCad 10 (pcb_write.py, to be built in v8 Phase 13). Live channel: kipy over IPC (G4 keep). MCP: dropped (G5). The v8 resume note is in Worker #20's Notes. No notes are addressed to another initiative beyond that resume note, which the v8 Planner replan consumes. OQ-6 and the other Deferred items stay in TASKS Deferred.
