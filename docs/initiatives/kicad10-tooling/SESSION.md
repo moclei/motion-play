@@ -1725,3 +1725,10 @@ Scratch: `/private/tmp/claude-501/-Users-marcocleirigh-Workspace-motion-play/1ed
 - usage.py re-run on run-1/2/3.jsonl: 8/9/4 tool calls, 0 errors; $0.237/$0.239/$0.178; 34.5/25.5/13.1 s.
 - DRC JSONs recounted: orig, saved and pn-corr each have 22 violations, 0 unconnected and 3 parity items.
 - Carries to Phase 17 HAZARDS: macOS /tmp cleanup wipes the scratchpad after about 3 days untouched, so anything that must survive a user gate needs a rebuild script or a gitignored repo path. kicad-mcp-pro's tool list depends on a board being open when the session starts (only relevant if kept).
+
+---
+
+### G5 — user decision (2026-11-18)
+
+- **Drop kicad-mcp-pro.** Remove the scratch MCP configs, run.sh and the venv; add a PLAN Rejected Approaches line with the evidence. The kipy scripts (G4) stay the live channel.
+- **Remove the sub-session transcripts** in `~/.claude/projects/-private-tmp-claude-501--Users-marcocleirigh-Workspace-motion-play-1edf598d-7bc7-4919-a0bd-71f5981db13e-scratchpad-p16/`.
