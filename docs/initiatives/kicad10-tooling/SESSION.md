@@ -1713,3 +1713,15 @@ Scratch: `/private/tmp/claude-501/-Users-marcocleirigh-Workspace-motion-play/1ed
   - Nothing in the repo or in Claude Code's settings needs removing.
 - **The case for keeping it:** none for this loop. Its DFM/manufacturing and review tools weren't tested and are out of the trial's scope.
 
+
+#### Result
+| # | Phase | Result | Escalation evaluated? | Commit | Notes |
+|---|-------|--------|-----------------------|--------|-------|
+| 19 | Phase 16: MCP server trial | PARTIAL | Yes — resolvable each time: planned user steps (B1, B2), one environment block (scratchpad wiped by macOS /tmp cleanup; Stage A rebuilt from notes, `rebuild.sh` added), final stop at the G5 gate | 5783438 | Tasks 1–2 done; G5 open |
+
+#### Verification
+- `git diff d3bd56b 5783438` touches only PLAN (OQ-5 struck, MCP bullet), SESSION (Worker #19 Notes) and TASKS (Phase 16 tasks 1–2 `[x]`). Nothing under hardware/, lab/ or .githooks; the tree is clean.
+- The p16 rebuild was checked before the user ran it: the three project files exist, orig sha1 is 8e6bfd4f, and run.sh has strict MCP config, only mcp__kicad allowed and the built-ins disallowed. The prompts were read: no save, start-position guard, four edits only.
+- usage.py re-run on run-1/2/3.jsonl: 8/9/4 tool calls, 0 errors; $0.237/$0.239/$0.178; 34.5/25.5/13.1 s.
+- DRC JSONs recounted: orig, saved and pn-corr each have 22 violations, 0 unconnected and 3 parity items.
+- Carries to Phase 17 HAZARDS: macOS /tmp cleanup wipes the scratchpad after about 3 days untouched, so anything that must survive a user gate needs a rebuild script or a gitignored repo path. kicad-mcp-pro's tool list depends on a board being open when the session starts (only relevant if kept).
