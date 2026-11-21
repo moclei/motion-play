@@ -191,22 +191,39 @@
 
 # --- handoff point ---
 
-## Phase 13: AI placement — tooling (dry run on v7)
+## Phase 13: Board write path and kicad-cli selection (KiCad 10)
 
-- [ ] OQ-3 (board write path): the Orchestrator asks the user before dispatching this phase, using PLAN OQ-3. Record the answer in PLAN (strike OQ-3; add the options not chosen to Rejected Approaches) and, if option 1, the extra toolchain line in BRIEF Constraints as the user approved it. If the answer is not option 1, stop and return to the Planner
-- [ ] `tools/pcb-context/pcb_write.py` (PLAN AI layout tooling): the only module that imports `pcbnew`, run with KiCad's bundled Python. Input: a JSON op list (ref → x, y, rotation, side). Refuses while a `~*.kicad_pcb.lck` exists. After writing: kicad-cli loads the board (DRC runs), and a board-model before/after check confirms only the named footprints changed and the netlist is unchanged. Test on a scratch copy of v7 `c2acffc`: an empty op list leaves the file byte-identical; a move, a rotation and a flip each load and check clean
-- [ ] `tools/pcb-context/place.py`: generalises `place_power.py`'s placement logic (not its text-edit write path). It reads the board model and a rules config and emits the op list for `pcb_write.py`. `--dry-run` renders a PNG and writes nothing
+Every task in Phases 13–19 runs in `tools/.venv` (or KiCad 10's Python for `pcbnew`, `tools/.venv-kipy` for kipy), with kicad-cli under a scratch `KICAD_CONFIG_HOME` seeded with KiCad 10's default lib tables (tools/CONTEXT.md KiCad Version Rule). v7 test boards are scratch copies of `c2acffc` converted with `kicad-cli 10 pcb upgrade`, never the working tree; v7 itself is never opened or saved in KiCad 10 (HAZARDS).
+
+- [ ] kicad-cli picked by file format (PLAN "KiCad 10"; user decision 2026-11-20). One helper in `kicad_io` returns KiCad 10's kicad-cli for a KiCad 10 file and 9.0.4's for an older one; `KICAD_CLI` set still overrides. Use it wherever a tool falls back today: `schematic-modify/modify.py` (and `STOCK_SYMBOLS`, which must follow the sheet being written, not a value fixed at import), `pcb-context/board_model.py`, `schematic-context/extract.py`, `schematic-modify/v8_project_setup.py`. `lab/probe_points/probe_points.py` stays on 9 (global python3, v7 only). Test: with `KICAD_CLI` unset, the v8 `--check` chains and `regress.py run --v8-ref v8-schematic-freeze-k10` pass; a read-only check on v7 picks 9.0.4 and `git status hardware/pcb-main` stays clean; `regress.py iotest` passes. Update the KiCad Version Rule in tools/CONTEXT.md, and add a GARDEN.md line for the Gardener to reword or retire the HAZARDS "`KICAD_CLI` still defaults to KiCad 9.0.4" entry
+- [ ] `tools/pcb-context/pcb_write.py` (PLAN AI layout tooling, batch writer): the only module that imports `pcbnew`, run with KiCad 10's bundled Python (`-I`). Input: the JSON op list (ref → x, y, rotation, side), behind a narrow interface (KiCad 11 swap). Refuses a board not in KiCad 10's format, and refuses while a `~*.kicad_pcb.lck` exists. After writing: kicad-cli 10 loads the board and runs DRC, and a board-model before/after check keyed by footprint ref and geometry confirms only the named footprints changed and the netlist is unchanged. Tests on a converted v7 copy: it refuses an unconverted KiCad 9 copy (file untouched); after one pcbnew save (the fixed point), an empty op list leaves the file byte-identical; a move, a rotation and a flip each load and check clean. Update tools/CONTEXT.md "Board write path" (built, not planned)
+- [ ] 🔄 Handoff
+
+# --- handoff point ---
+
+## Phase 13a: AI placement tooling (dry run on v7)
+
+- [ ] `tools/pcb-context/place.py`: generalises `place_power.py`'s placement logic (not its text-edit write path). It reads the board model and a rules config and emits the op list that `pcb_write.py` and `pcb_live.py` both take. `--dry-run` renders a PNG and writes nothing
 - [ ] Rules config (`tools/pcb-context/rules/<board>.yaml` or JSON): keepouts, edge connectors, decoupling-to-pin max distance, test-point spacing and ground-point pairing, courtyard clearance, groups (block membership from `ai_block` annotations)
-- [ ] `place_check.py`: overlaps, courtyard and outline violations, rule violations, from the board model. Dry run: re-place one v7 block (e.g. TCA + pull-ups) in a scratch copy and check it. Record what the rules couldn't express
+- [ ] `place_check.py`: overlaps, courtyard and outline violations, rule violations, from the board model. Dry run: re-place one v7 block (e.g. TCA + pull-ups) in a converted v7 copy, write it with `pcb_write.py` and check it. Record what the rules couldn't express
+- [ ] Retire `place_power.py` (user decision 2026-11-20; kicad10-tooling Deferred): once `place.py` covers its logic, delete it, remove its exception from tools/CONTEXT.md's I/O-module Rule and any README mention. `git grep place_power` finds only history docs
+- [ ] 🔄 Handoff
+
+# --- handoff point ---
+
+## Phase 13b: Live placement channel (kipy)
+
+- [ ] `tools/pcb-context/pcb_live.py` (PLAN AI layout tooling, live channel), in `tools/.venv-kipy`: takes `place.py`'s op list and pushes it into the board open in KiCad 10, one named commit (undo step) per block; reads footprint positions back (`get_footprints`) into the same placement-report form as the board-model position diff. Never calls kipy's `check_version()`. Refuses if the open board isn't the file named on the command line
+- [ ] **(user)** live smoke test: the user opens the Phase 13a converted v7 copy in KiCad 10 (API server on). The Worker pushes the dry-run block live; the user undoes one commit and moves one footprint by hand; the Worker reads back and reports the change. The user saves; kicad-cli 10 DRC and the ref-keyed board-model diff agree with the read-back. Record timings and any busy/timeout in SESSION.md
 - [ ] 🔄 Handoff
 
 # --- handoff point ---
 
 ## Phase 14: AI placement — v8 first blocks
 
-- [ ] **(user)** in KiCad: Update PCB from Schematic into the empty v8 board. Worker defines the outline (OQ-4), mounting holes, the antenna keepout and the edge connectors via the tools
+- [ ] **(user)** in KiCad 10: Update PCB from Schematic into the v8 board, then save and close (the board is then KiCad 10 format with no tracks). Worker sets the outline (OQ-4), mounting holes, the antenna keepout and the edge connectors via the tools (`pcb_write.py`, extended with an op kind if needed; a user step with exact instructions for anything pcbnew can't do headless)
 - [ ] Place the module, power path and connector blocks with `place.py`. `place_check.py` clean. Render
-- [ ] **W4:** user reviews and corrects in KiCad. Worker diffs before/after positions from the board model and turns each correction into a rule (or a note of why it can't be one) in the rules config + `tools/pcb-context/CONTEXT.md`. Log the corrections in SESSION.md
+- [ ] **W4:** live review. The user opens the board in KiCad 10; the Worker pushes the placement with `pcb_live.py`, one commit per block; the user corrects by hand; the Worker reads the corrections back, and after the user saves, checks with kicad-cli 10 DRC and the ref-keyed board-model diff. Each correction becomes a rule (or a note of why it can't be one) in the rules config + `tools/pcb-context/CONTEXT.md`. Log the corrections in SESSION.md. (If the live channel fails, fall back to `pcb_write.py` with the board closed and a board-model diff after the user's edits)
 - [ ] 🔄 Handoff
 
 # --- handoff point ---
@@ -214,8 +231,8 @@
 ## Phase 15: AI placement — rest of board
 
 - [ ] Place the TCA/bus, jumper, test-point, LED and remaining blocks with the updated rules. `place_check.py` clean. Render
-- [ ] **W5:** user reviews and corrects. Worker diffs and updates the rules as in Phase 14
-- [ ] Retrospective in SESSION.md: corrections per block, Phase 14 vs 15, and which rules made the difference. Propose workflow changes to the user, and update `tools/pcb-context/CONTEXT.md`
+- [ ] **W5:** live review and corrections as in Phase 14 (`pcb_live.py`). Worker diffs and updates the rules
+- [ ] Retrospective in SESSION.md: corrections per block, Phase 14 vs 15, which rules made the difference, and how the live loop worked against batch write + diff. Propose workflow changes to the user, and update `tools/pcb-context/CONTEXT.md` and `hardware/pcb-main-v8/CONTEXT.md` "Layout rules pointer"
 - [ ] 🔄 Handoff
 
 # --- handoff point ---
@@ -223,16 +240,17 @@
 ## Phase 16: AI routing — tentative subset
 
 - [ ] Present OQ-1 to the user and record the net split (AI-routed vs user-routed) and the Freerouting answer
-- [ ] Routing writer for the AI net set, extending `pcb_write.py` (tracks and vias through the OQ-3 path; Freerouting only if OQ-1 allowed it), honouring the board config's clearances and widths. Run DRC via kicad-cli
-- [ ] **W6:** user reviews: keep, fix or rip up per net. Worker diffs and records the lessons in `tools/pcb-context/CONTEXT.md`
+- [ ] kipy track read-back probe (short, before W6 relies on it): on a converted v7 copy open in KiCad 10, read tracks and vias with `get_tracks`/`get_vias`; the user hand-routes one short track and adds a via; the Worker reads them back. After the user saves, compare with the board model (keyed by net and geometry, not ids). Record the result in PLAN AI layout tooling. If it fails, W6 uses the board-model diff after save only
+- [ ] Routing writer for the AI net set, extending `pcb_write.py` (tracks and vias through pcbnew 10; no MCP server; Freerouting only if OQ-1 allowed it), honouring the board config's clearances and widths. Run DRC with kicad-cli 10
+- [ ] **W6:** user reviews: keep, fix or rip up per net. Worker reads the changes back (kipy if the probe passed, else the board-model diff after save) and records the lessons in `tools/pcb-context/CONTEXT.md`
 - [ ] 🔄 Handoff
 
 # --- handoff point ---
 
 ## Phase 17: Routing completion and zones
 
-- [ ] **(user)** routes the user-owned nets and pours the zones/planes. Worker supplies a per-net checklist from the board config (widths, loop areas, reference planes)
-- [ ] Zones refilled (through `pcb_write.py`, or by the user in KiCad). DRC clean, with each waived item listed. Board model + net/plane reports + renders regenerated with provenance
+- [ ] **(user)** routes the user-owned nets and pours the zones/planes in KiCad 10. Worker supplies a per-net checklist from the board config (widths, loop areas, reference planes)
+- [ ] Zones refilled (through `pcb_write.py`, or by the user in KiCad 10). DRC clean (kicad-cli 10), with each waived item listed. Board model + net/plane reports + renders regenerated with provenance
 - [ ] 🔄 Handoff
 
 # --- handoff point ---
@@ -248,7 +266,7 @@
 
 ## Phase 19: Fabrication and order
 
-- [ ] Fab outputs: gerbers, drill, BOM, CPL (Fabrication Toolkit or kicad-cli), 5 assembled. Cross-check CPL rotations against footprints
+- [ ] Fab outputs: gerbers, drill, BOM, CPL (Fabrication Toolkit or kicad-cli 10), 5 assembled. Cross-check CPL rotations against footprints
 - [ ] Preflight: stock for every LCSC part (BQ-class parts first), substitutions recorded as built (CL-14 lesson), hand-fit parts listed
 - [ ] **W-order (user):** user places the order. Record the order date and any checkout substitutions in `hardware/pcb-main-v8/CONTEXT.md`
 - [ ] Write the bring-up relay for the Debugger (`debugger/RELAY-bringup.md`): power-on sequence, the v7-config jumper set, and the A/B/A cards the board enables. Update PROJECT.md status line

@@ -20,5 +20,5 @@ Out: the v7 I²C debug track and anything in `lab/` (the Debugger runs the bench
 - Jumpers default to the v8 (fixed) configuration; every suspected v7 → v8 difference has a v7 position.
 - The power-path design waits on the bench findings from the battery investigation.
 - `.kicad_sch` / `.kicad_pcb` are touched only through tools (tools/CONTEXT.md Critical Rule). Generated context carries provenance (Source-Hash Rule).
-- Python 3.7 + kiutils + shapely 2.0.7; kicad-cli 9.0.4 at `/Applications/KiCad/KiCad.app/Contents/MacOS/kicad-cli` (not on PATH).
+- KiCad 10.0.8 (`/Applications/KiCad10/KiCad.app`; tools run with `KICAD_CLI` set to its kicad-cli and a scratch `KICAD_CONFIG_HOME`). KiCad tools in `tools/.venv` (Python 3.13, `tools/requirements.txt`: kicad-tools 0.29.0, used only through `tools/kicad-io/kicad_io.py`; shapely 2.0.7). Board writes: `pcbnew` on KiCad 10's bundled Python 3.9. Live placement reviews: kipy (kicad-python 0.8.0) in `tools/.venv-kipy`. The lab tools and the pre-commit hook stay on the global python3. v7 and the lab stay on KiCad 9 files; v8's reference is tag `v8-schematic-freeze-k10`.
 - BQ24195 (C90862) stock is chronically low: check stock before committing to any part.
